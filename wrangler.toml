@@ -6,4 +6,4 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "abc-resolve-db"
-database_id = "d6377d06-af3e-4dc6-b275-7657f5111b37"
+database_id = "b49473d4-8e86-4990-a8f4-d56df0f2a261"
