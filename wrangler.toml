@@ -1,0 +1,9 @@
+name = "abc-resolve"
+pages_build_output_dir = ".pages-dist"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "abc-resolve-db"
+database_id = "d6377d06-af3e-4dc6-b275-7657f5111b37"

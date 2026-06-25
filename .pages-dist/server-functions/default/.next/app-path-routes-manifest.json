@@ -1,0 +1,22 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/admin/convert/route": "/api/admin/convert",
+  "/api/admin/providers/route": "/api/admin/providers",
+  "/api/admin/requests/route": "/api/admin/requests",
+  "/api/admin/cron/route": "/api/admin/cron",
+  "/api/admin/login/route": "/api/admin/login",
+  "/api/admin/subscriptions/route": "/api/admin/subscriptions",
+  "/api/requests/route": "/api/requests",
+  "/api/admin/stats/route": "/api/admin/stats",
+  "/api/providers/route": "/api/providers",
+  "/api/categories/route": "/api/categories",
+  "/api/subscription/qrcode/route": "/api/subscription/qrcode",
+  "/admin/dashboard/page": "/admin/dashboard",
+  "/privacidade/page": "/privacidade",
+  "/admin/page": "/admin",
+  "/page": "/",
+  "/assinatura/page": "/assinatura",
+  "/solicitar-servico/page": "/solicitar-servico",
+  "/cadastro-prestador/page": "/cadastro-prestador",
+  "/termos/page": "/termos"
+}
