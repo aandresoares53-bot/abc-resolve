@@ -1,0 +1,13 @@
+name = "abc-resolve-marketplace"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = ".next"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "abc-resolve-db"
+database_id = "78393711-7014-4901-be03-4d7f5af3bb94"
+migrations_dir = "migrations"
+
+[vars]
+APP_URL = "https://abc-resolve-online.pages.dev"
+JWT_EXPIRY = "7d"
