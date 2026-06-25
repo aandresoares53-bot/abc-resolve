@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import { Search, Star, Shield, Clock, ChevronRight, CheckCircle } from 'lucide-react';
 import { getDB } from '@/lib/db';
 import { StatsSection } from '@/components/StatsSection';
+import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 
 const COLORS = [
   'bg-orange-50 text-orange-600 border-orange-100',
@@ -45,51 +46,6 @@ const STEPS = [
     desc: 'Compare avaliações, escolha o melhor profissional e feche o negócio.',
     icon: CheckCircle,
   },
-];
-
-const TESTIMONIALS: { name: string; city: string; rating: number; text: string; service: string }[] = [
-  {
-    name: 'Maria Silva',
-    city: 'Santo André',
-    rating: 5,
-    text: 'Encontrei um eletricista excelente em 2 horas. O profissional foi pontual, competente e cobrou um preço justo. Recomendo!',
-    service: 'Elétrica'
-  },
-  {
-    name: 'João Santos',
-    city: 'São Bernardo do Campo',
-    rating: 5,
-    text: 'Precisava de um encanador urgente e a plataforma me conectou com um profissional de qualidade. Super recomendo o ABCResolve!',
-    service: 'Hidráulica'
-  },
-  {
-    name: 'Ana Costa',
-    city: 'Diadema',
-    rating: 5,
-    text: 'Solicitei um serviço de limpeza e recebi 3 orçamentos diferentes. Escolhi o melhor custo-benefício. Muito satisfeita!',
-    service: 'Limpeza'
-  },
-  {
-    name: 'Carlos Mendes',
-    city: 'São Caetano do Sul',
-    rating: 5,
-    text: 'O pintor que contratei fez um trabalho impecável. A plataforma torna tudo muito mais fácil e seguro.',
-    service: 'Pintura'
-  },
-  {
-    name: 'Fernanda Oliveira',
-    city: 'Mauá',
-    rating: 5,
-    text: 'Procurava professora de inglês particular e achei a profissional perfeita aqui. Muito bom!',
-    service: 'Educação'
-  },
-  {
-    name: 'Roberto Alves',
-    city: 'Ribeirão Pires',
-    rating: 5,
-    text: 'Contratei um mecânico pela plataforma. Profissional, prestativo e com preço ótimo. Voltaria a usar com certeza!',
-    service: 'Automóvel'
-  }
 ];
 
 const STATS = [
@@ -256,41 +212,7 @@ export default async function HomePage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="depoimentos" className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="section-title">O que dizem nossos clientes</h2>
-              <p className="section-subtitle">Avaliações reais de quem já usou o ABCResolve</p>
-            </div>
-            {TESTIMONIALS.length === 0 ? (
-              <div className="text-center py-16 text-gray-400">
-                <Star size={40} className="mx-auto mb-3 opacity-20" />
-                <p className="text-lg font-medium text-gray-500">Em breve os primeiros depoimentos</p>
-                <p className="text-sm mt-1">Seja um dos primeiros a usar o ABCResolve!</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {TESTIMONIALS.map((t) => (
-                  <div key={t.name} className="card p-6">
-                    <div className="flex items-center gap-1 mb-3">
-                      {Array.from({ length: t.rating }).map((_, i) => (
-                        <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                    <p className="text-gray-700 text-sm leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                    <div className="flex items-center justify-between border-t border-gray-100 pt-4">
-                      <div>
-                        <p className="font-semibold text-sm text-gray-900">{t.name}</p>
-                        <p className="text-xs text-gray-400">{t.city}</p>
-                      </div>
-                      <span className="badge bg-primary-50 text-primary-700 text-xs">{t.service}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+        <TestimonialsCarousel />
 
         {/* CTA FINAL */}
         <section className="py-20 bg-gradient-to-r from-primary-700 to-primary-500 text-white">
