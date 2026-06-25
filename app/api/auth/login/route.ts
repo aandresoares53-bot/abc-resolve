@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { signToken } from '@/lib/auth';
+import bcryptjs from 'bcryptjs';
 import type { User, AuthPayload, ApiResponse, AuthResponse } from '@/lib/types';
+
+type Env = {
+  DB: D1Database;
+  JWT_SECRET?: string;
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,23 +20,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Verify credentials against D1 database
-    // TODO: Check password hash
+    // Get D1 database from environment
+    const env = process.env as unknown as Env;
+    const db = env.DB;
 
-    // Mock user (in production, fetch from DB)
+    if (!db) {
+      console.error('D1 database not configured');
+      return NextResponse.json(
+        { success: false, error: 'Erro no servidor' },
+        { status: 500 }
+      );
+    }
+
+    // Find user by email
+    const dbUser = await db.prepare(
+      'SELECT id, email, password_hash, tipo, nome, telefone, estado, cidade, avatar_url, bio, verificado, criado_em, atualizado_em FROM users WHERE email = ?'
+    ).bind(email).first() as any;
+
+    if (!dbUser) {
+      return NextResponse.json(
+        { success: false, error: 'Email ou senha incorretos' },
+        { status: 401 }
+      );
+    }
+
+    // Verify password
+    const passwordMatch = await bcryptjs.compare(senha, dbUser.password_hash);
+
+    if (!passwordMatch) {
+      return NextResponse.json(
+        { success: false, error: 'Email ou senha incorretos' },
+        { status: 401 }
+      );
+    }
+
+    // Create user object for token
     const user: User = {
-      id: 1,
-      email,
-      tipo: 'cliente',
-      nome: 'João Silva',
-      telefone: '11999999999',
-      estado: 'SP',
-      cidade: 'São Paulo',
-      avatar_url: undefined,
-      bio: undefined,
-      verificado: false,
-      criado_em: new Date().toISOString(),
-      atualizado_em: new Date().toISOString(),
+      id: dbUser.id,
+      email: dbUser.email,
+      tipo: dbUser.tipo,
+      nome: dbUser.nome,
+      telefone: dbUser.telefone || '',
+      estado: dbUser.estado,
+      cidade: dbUser.cidade,
+      avatar_url: dbUser.avatar_url,
+      bio: dbUser.bio,
+      verificado: Boolean(dbUser.verificado),
+      criado_em: dbUser.criado_em,
+      atualizado_em: dbUser.atualizado_em,
     };
 
     const token = signToken(user);

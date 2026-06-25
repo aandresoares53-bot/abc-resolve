@@ -1,6 +1,5 @@
 name = "abc-resolve-marketplace"
 compatibility_date = "2024-12-01"
-pages_build_output_dir = ".next"
 
 [[d1_databases]]
 binding = "DB"

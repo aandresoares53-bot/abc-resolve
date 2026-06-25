@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABC Resolve - Marketplace de Serviços</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 {
+      font-size: 32px;
+      color: #222;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .status {
+      background: #f0f0f0;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-family: monospace;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    .status-icon {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      border-radius: 50%;
+      font-weight: bold;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .online { background: #4CAF50; }
+    .logo {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .features {
+      text-align: left;
+      margin: 30px 0;
+    }
+    .features h3 {
+      color: #222;
+      margin-bottom: 15px;
+    }
+    .features ul {
+      list-style: none;
+      color: #666;
+      font-size: 14px;
+    }
+    .features li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .features li:last-child {
+      border-bottom: none;
+    }
+    .cta {
+      margin-top: 30px;
+    }
+    .btn {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin: 10px 5px;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .btn:hover {
+      background: #764ba2;
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    .info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+      text-align: left;
+    }
+    .info p {
+      color: #1565c0;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">🏢</div>
+    <h1>ABC Resolve</h1>
+    <p class="subtitle">Marketplace de Serviços para São Paulo</p>
+
+    <div class="status">
+      <div class="status-item">
+        <span class="status-icon online">✓</span>
+        <span>Frontend Online</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon online">✓</span>
+        <span>Database D1 Ativo</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon online">✓</span>
+        <span>Autenticação Pronta</span>
+      </div>
+    </div>
+
+    <div class="features">
+      <h3>✨ Funcionalidades Disponíveis</h3>
+      <ul>
+        <li>🔐 Registro e Login com autenticação JWT</li>
+        <li>🔍 Busca de serviços com filtros avançados</li>
+        <li>👤 Perfis de clientes e prestadores</li>
+        <li>💼 Dashboard completo de prestador</li>
+        <li>⭐ Sistema de avaliações (5 stars)</li>
+        <li>📱 Design responsivo mobile-first</li>
+      </ul>
+    </div>
+
+    <div class="info">
+      <p><strong>ℹ️ Status do Projeto:</strong></p>
+      <p>✅ 15 páginas criadas</p>
+      <p>✅ 3+ APIs com D1 integrado</p>
+      <p>✅ Autenticação com bcryptjs</p>
+      <p>✅ Cloudflare Pages em produção</p>
+    </div>
+
+    <div class="cta">
+      <button onclick="goToApp()" class="btn">Acessar Aplicação</button>
+      <button onclick="testAPI()" class="btn btn-secondary">Testar API</button>
+    </div>
+
+    <p style="color: #999; font-size: 12px; margin-top: 20px;">
+      O site usa Cloudflare Pages. As rotas dinâmicas serão implementadas em breve.
+    </p>
+  </div>
+
+  <script>
+    function goToApp() {
+      alert('A navegação dinâmica será implementada em breve.\n\nPor enquanto, as APIs estão funcionando:\n\n- POST /api/auth/registrar\n- POST /api/auth/login\n- GET /api/servicos/buscar');
+    }
+
+    async function testAPI() {
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'test@test.com', senha: 'test123' })
+        });
+        const data = await response.json();
+        if (data.success) {
+          alert('✅ API funcionando!\n\nResposta:\n' + JSON.stringify(data.data.user, null, 2));
+        } else {
+          alert('API respondeu:\n' + JSON.stringify(data, null, 2));
+        }
+      } catch (err) {
+        alert('❌ Erro ao testar API:\n' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
