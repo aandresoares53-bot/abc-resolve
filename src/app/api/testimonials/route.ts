@@ -88,7 +88,13 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json() as {
+      client_name?: string;
+      rating?: number;
+      comment?: string;
+      city?: string;
+      service_name?: string;
+    };
     const { client_name, rating, comment, city, service_name } = body;
 
     // Validação básica

@@ -23,7 +23,7 @@ export function TestimonialsCarousel() {
     const fetchTestimonials = async () => {
       try {
         const res = await fetch('/api/testimonials');
-        const data = await res.json();
+        const data = await res.json() as { testimonials?: Testimonial[] };
         setTestimonials(data.testimonials || []);
       } catch (error) {
         console.error('Erro ao buscar depoimentos:', error);
