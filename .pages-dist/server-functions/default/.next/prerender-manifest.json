@@ -49,30 +49,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/assinatura": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/assinatura",
-      "dataRoute": "/assinatura.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -88,30 +64,6 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/",
       "dataRoute": "/index.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/cadastro-prestador": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/cadastro-prestador",
-      "dataRoute": "/cadastro-prestador.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -145,6 +97,54 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/termos": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/termos",
+      "dataRoute": "/termos.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/cadastro-prestador": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/cadastro-prestador",
+      "dataRoute": "/cadastro-prestador.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/solicitar-servico": {
       "experimentalBypassFor": [
         {
@@ -169,7 +169,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/termos": {
+    "/assinatura": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -182,8 +182,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/termos",
-      "dataRoute": "/termos.rsc",
+      "srcRoute": "/assinatura",
+      "dataRoute": "/assinatura.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -197,8 +197,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "fa7e2af94ecfda877a2263fa0bcef931",
-    "previewModeSigningKey": "a45ea72ac6c58ad251cb265f3d327fe3a4d0eb91aed9967050d219f171dd7bbb",
-    "previewModeEncryptionKey": "6d2431b7d2830360132ecaeafbed04644442d6cedf9325dead19fa71bf900f1e"
+    "previewModeId": "53fc76a02d8b85b70643814eab426078",
+    "previewModeSigningKey": "ebe4f8baa6c284d0a1b5ef52fd0ce9553b6e61228353c3c38ee09ff2d5b8d532",
+    "previewModeEncryptionKey": "64589e9d2a21ba92247e012ed15e31a02a975c95f26e35af04a090e6a51cd2d1"
   }
 }
