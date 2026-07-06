@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import type { CloudflareEnv, User } from '@/lib/db';
 
-export const runtime = 'edge';
 
 interface AdminEnv extends CloudflareEnv {
   ADMIN_SECRET: string;

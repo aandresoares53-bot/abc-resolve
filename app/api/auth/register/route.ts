@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { hashPassword, signToken, type User, type CloudflareEnv } from '@/lib/db';
 
-export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
