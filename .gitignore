@@ -36,6 +36,12 @@ yarn-error.log*
 .wrangler/
 dist/
 
+# cloudflare build output
+.open-next/
+
+# typescript build info
+*.tsbuildinfo
+
 # IDE
 .vscode/
 .idea/
