@@ -1,0 +1,13 @@
+name = "abc-resolve"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next/assets"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "abc-resolve-db"
+database_id = "00a24c68-825e-4a48-90c2-f01329310da5"
+migrations_dir = "migrations"
+
+[vars]
+ENVIRONMENT = "production"
