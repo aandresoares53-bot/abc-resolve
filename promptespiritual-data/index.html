@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal das Sombras — Gerador de Imagens Espirituais</title>
+  <meta name="description" content="Crie prompts para geração de imagens de entidades da Umbanda, Quimbanda e do mundo espiritual afro-brasileiro.">
+  <style>
+    :root {
+      --bg-deep:    #F5F0EA;
+      --bg-surface: #EDE5DC;
+      --bg-card:    #FFFFFF;
+      --bg-card-hover: #F8F2EC;
+      --border:     #D4C4B0;
+      --border-lit: #A8866A;
+      --ember:      #C8320A;
+      --blood:      #8B0C2C;
+      --gold:       #A8700A;
+      --gold-dim:   #7A5206;
+      --violet:     #6B1F8A;
+      --forest:     #1E6B2E;
+      --silver:     #5A7A8A;
+      --text:       #2A1A10;
+      --text-muted: #7A5A46;
+      --text-dim:   #C4B0A0;
+      --glow-ember: rgba(200,50,10,0.12);
+      --glow-blood: rgba(139,12,44,0.12);
+      --glow-gold:  rgba(168,112,10,0.12);
+      --glow-forest:rgba(30,107,46,0.12);
+      --glow-violet:rgba(107,31,138,0.12);
+      --glow-silver:rgba(90,122,138,0.10);
+      --accent: var(--ember);
+      --glow: var(--glow-ember);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 16px;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    canvas#ritual-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+    }
+
+    #app {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    header {
+      text-align: center;
+      padding: 64px 0 48px;
+    }
+
+    .sigil {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 24px;
+      opacity: 0.85;
+    }
+
+    header h1 {
+      font-family: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-wrap: balance;
+      line-height: 1.1;
+    }
+
+    header h1 span {
+      display: block;
+      font-size: 0.45em;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      font-weight: 400;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    header p {
+      margin-top: 16px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .divider {
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      margin: 32px auto;
+    }
+
+    .section-label {
+      font-family: Georgia, serif;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .cat-tab {
+      padding: 8px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: Georgia, serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      outline: none;
+      appearance: none;
+    }
+
+    .cat-tab:hover {
+      border-color: var(--border-lit);
+      color: var(--text);
+    }
+
+    .cat-tab.active {
+      background: var(--bg-card-hover);
+      border-color: var(--accent);
+      color: var(--text);
+      box-shadow: 0 0 16px var(--glow);
+    }
+
+    .cat-tab[data-cat="orixa"].active    { --accent: var(--forest); --glow: var(--glow-forest); }
+    .cat-tab[data-cat="exu"].active      { --accent: var(--ember);  --glow: var(--glow-ember); }
+    .cat-tab[data-cat="pombo"].active    { --accent: var(--blood);  --glow: var(--glow-blood); }
+    .cat-tab[data-cat="bruxa"].active    { --accent: var(--violet); --glow: var(--glow-violet); }
+    .cat-tab[data-cat="demonio"].active  { --accent: var(--silver); --glow: var(--glow-silver); }
+    .cat-tab[data-cat="malandro"].active { --accent: #C9860A;       --glow: rgba(201,134,10,0.18); }
+    .cat-tab[data-cat="baiano"].active   { --accent: #B85A0A;       --glow: rgba(184,90,10,0.18); }
+    .cat-tab[data-cat="preto"].active    { --accent: #7A6270;       --glow: rgba(122,98,112,0.18); }
+    .cat-tab[data-cat="boiadeiro"].active{ --accent: #8B5A1A;       --glow: rgba(139,90,26,0.18); }
+    .cat-tab[data-cat="ere"].active      { --accent: #1A9A6A;       --glow: rgba(26,154,106,0.18); }
+    .cat-tab[data-cat="caboclo"].active  { --accent: #2A6B9A;       --glow: rgba(42,107,154,0.18); }
+    .cat-tab[data-cat="egungun"].active  { --accent: #8A6A2A;       --glow: rgba(138,106,42,0.18); }
+    .cat-tab[data-cat="eguns"].active    { --accent: #5A3A7A;       --glow: rgba(90,58,122,0.18); }
+
+    /* ── Pill Selector ── */
+    .vc-wrapper { margin-bottom: 32px; }
+    .vc-section { margin-bottom: 20px; }
+    .vc-label { display:block; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
+    .vc-scroll { max-height: 320px; overflow-y: auto; padding-right: 4px; scroll-behavior: smooth; }
+    .vc-scroll::-webkit-scrollbar { width: 3px; }
+    .vc-scroll::-webkit-scrollbar-track { background: var(--bg-surface); }
+    .vc-scroll::-webkit-scrollbar-thumb { background: var(--border-lit); border-radius: 2px; }
+    .vc-group-hdr {
+      font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-muted); padding: 12px 0 6px;
+      border-bottom: 1px solid var(--border); margin-bottom: 8px;
+    }
+    .vc-group-hdr:first-child { padding-top: 2px; }
+    .vc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 4px; }
+    .vc-card {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 4px; padding: 10px 6px; border: 1px solid var(--border);
+      background: var(--bg-card); border-radius: 7px; cursor: pointer;
+      transition: all 0.15s; font-family: Georgia, serif;
+    }
+    .vc-card:hover { border-color: var(--border-lit); background: var(--bg-card-hover); transform: translateY(-1px); }
+    .vc-card.sel {
+      border-color: var(--accent, var(--ember)); background: var(--bg-card-hover);
+      box-shadow: 0 0 10px var(--glow, var(--glow-ember));
+    }
+    .vc-icon { font-size: 1.35rem; line-height: 1; }
+    .vc-name { font-size: 0.62rem; color: var(--text); font-weight: bold; line-height: 1.2; }
+    .vc-desc { font-size: 0.54rem; color: var(--text-muted); line-height: 1.2; }
+    .vc-comp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+    .vc-comp-card {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 5px; padding: 14px 8px; border: 1px solid var(--border);
+      background: var(--bg-card); border-radius: 7px; cursor: pointer;
+      transition: all 0.15s; font-family: Georgia, serif;
+    }
+    .vc-comp-card:hover { border-color: var(--border-lit); background: var(--bg-card-hover); transform: translateY(-1px); }
+    .vc-comp-card.sel {
+      border-color: var(--accent, var(--ember)); background: var(--bg-card-hover);
+      box-shadow: 0 0 10px var(--glow, var(--glow-ember));
+    }
+    .vc-comp-icon { font-size: 1.6rem; line-height: 1; }
+    .vc-comp-name { font-size: 0.63rem; color: var(--text); font-weight: bold; line-height: 1.2; }
+    .vc-comp-desc { font-size: 0.54rem; color: var(--text-muted); line-height: 1.2; }
+
+    .entity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .entity-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 14px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .entity-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--glow-color, transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .entity-card:hover::before,
+    .entity-card.selected::before { opacity: 1; }
+
+    .entity-card:hover,
+    .entity-card.selected {
+      border-color: var(--entity-accent);
+      color: var(--text);
+    }
+
+    .entity-card.selected {
+      box-shadow: 0 0 20px var(--entity-glow);
+    }
+
+    .entity-card .icon {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 6px;
+      position: relative;
+    }
+
+    .entity-card .name {
+      font-family: 'Palatino Linotype', Palatino, Georgia, serif;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      line-height: 1.3;
+      position: relative;
+    }
+
+    .entity-card.selected .name { color: var(--text); }
+
+    .custom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 560px) {
+      .custom-grid { grid-template-columns: 1fr; }
+    }
+
+    .custom-group label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .custom-group select {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: Georgia, serif;
+      font-size: 0.88rem;
+      padding: 10px 14px;
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237A6270'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .custom-group select:hover,
+    .custom-group select:focus { border-color: var(--border-lit); }
+
+    .btn-generate {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid var(--accent, var(--ember));
+      color: var(--text);
+      font-family: 'Palatino Linotype', Palatino, Georgia, serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .btn-generate::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--glow, var(--glow-ember));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .btn-generate:hover::before { opacity: 1; }
+    .btn-generate:hover { box-shadow: 0 0 24px var(--glow, var(--glow-ember)); }
+    .btn-generate:active { transform: scale(0.99); }
+    .btn-generate span { position: relative; }
+
+    .output-section {
+      display: none;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .output-section.visible { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .output-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-lit);
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+
+    .output-box p {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .output-lang-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .lang-btn {
+      padding: 5px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .lang-btn.active {
+      border-color: var(--accent, var(--ember));
+      color: var(--text);
+      background: var(--bg-card);
+    }
+
+    .copy-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-copy, .btn-regen {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-copy:hover, .btn-regen:hover {
+      border-color: var(--border-lit);
+      color: var(--text);
+    }
+
+    .btn-copy.copied {
+      border-color: var(--forest);
+      color: #7ecf8c;
+    }
+
+    .tips {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .tips h3 {
+      font-family: 'Palatino Linotype', Palatino, Georgia, serif;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .tip-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .tip-card .tip-icon { font-size: 1.2rem; margin-bottom: 8px; display: block; }
+    .tip-card h4 { font-size: 0.82rem; color: var(--text); font-weight: 400; margin-bottom: 6px; letter-spacing: 0.05em; }
+    .tip-card p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
+
+    footer {
+      text-align: center;
+      padding: 48px 0 24px;
+      border-top: 1px solid var(--border);
+      margin-top: 64px;
+    }
+
+    footer p {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--border-lit); }
+
+    /* ── PIX Banner (topo) ── */
+    .pix-banner {
+      background: linear-gradient(180deg, #1C0D18 0%, #130A10 100%);
+      border-bottom: 1px solid var(--border-lit);
+      padding: 36px 32px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+    .pix-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% -20%, rgba(201,134,10,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .pix-banner::after {
+      content: '✦  Apoie o Portal das Sombras  ✦';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      white-space: nowrap;
+    }
+    .pix-banner-qr-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .pix-banner-qr {
+      display: block;
+      padding: 10px;
+      background: #F5EDE4;
+      box-shadow: 0 0 0 1px rgba(201,134,10,0.3), 0 8px 32px rgba(0,0,0,0.5), 0 0 40px rgba(201,134,10,0.15);
+    }
+    .pix-scan-hint {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      text-align: center;
+      max-width: 200px;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+    .pix-scan-hint em { color: var(--gold); font-style: normal; }
+    .pix-banner-divider {
+      width: 1px;
+      height: 160px;
+      background: linear-gradient(to bottom, transparent, var(--border-lit), transparent);
+      flex-shrink: 0;
+    }
+    @media (max-width: 640px) { .pix-banner-divider { display: none; } }
+    .pix-banner-info {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 300px;
+    }
+    .pix-banner-heading {
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 400;
+      line-height: 1.6;
+    }
+    .pix-banner-heading span { color: var(--gold); }
+    .pix-banner-amount {
+      font-size: 2rem;
+      color: var(--gold);
+      font-family: Georgia, serif;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .pix-banner-key-block {
+      border-left: 2px solid var(--border-lit);
+      padding-left: 12px;
+    }
+    .pix-banner-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+    .pix-banner-val {
+      font-family: 'Courier New', monospace;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: 0.06em;
+    }
+    .pix-banner-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .pix-cola-hint {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+    .pix-cola-input { display: none; }
+    .btn-copy-pix {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 8px 16px;
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .btn-copy-pix:hover { background: var(--gold); color: #08060A; }
+    .btn-copy-pix.copied { border-color: var(--forest); color: var(--forest); }
+
+    /* ── Donation Section (rodapé) ── */
+    .donation-section {
+      margin: 64px auto 0;
+      max-width: 680px;
+      padding: 32px 24px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      text-align: center;
+      position: relative;
+    }
+    .donation-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .donation-heading {
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .donation-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 0;
+    }
+    .donation-desc strong { color: var(--gold); }
+    .pix-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .pix-qr-wrap {
+      background: #EDE0D4;
+      padding: 10px;
+      border-radius: 4px;
+      display: inline-flex;
+      box-shadow: 0 0 24px rgba(201,134,10,0.2);
+    }
+    .pix-qr-wrap canvas { display: block; }
+    .pix-details {
+      text-align: left;
+    }
+    .pix-amount {
+      font-size: 2rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-family: Georgia, serif;
+    }
+    .pix-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+    .pix-key-val {
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+      font-family: 'Courier New', monospace;
+    }
+    .btn-copy-pix {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px 20px;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-copy-pix:hover { background: var(--gold); color: #08060A; }
+    .btn-copy-pix.copied { border-color: var(--forest); color: var(--forest); }
+    .donation-note {
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* ── Mobile Responsiveness ────────────────────────────────────── */
+    @media (max-width: 600px) {
+      #app { padding: 0 14px 60px; }
+
+      header { padding: 40px 0 32px; }
+
+      header h1 { font-size: clamp(1.5rem, 7vw, 2.2rem); letter-spacing: 0.06em; }
+
+      /* Category tabs — allow horizontal scroll on very small screens */
+      .category-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+        gap: 6px;
+      }
+      .category-tabs::-webkit-scrollbar { height: 3px; }
+      .category-tabs::-webkit-scrollbar-thumb { background: var(--border-lit); border-radius: 2px; }
+      .cat-tab { font-size: 0.75rem; padding: 7px 12px; flex-shrink: 0; }
+
+      /* Entity grid: 3 columns on small screens */
+      .vc-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .vc-icon { font-size: 1.1rem; }
+      .vc-name { font-size: 0.58rem; }
+      .vc-desc { display: none; }
+
+      /* Composition grid: 3 columns on small screens */
+      .vc-comp-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .vc-comp-card { padding: 10px 6px; }
+
+      /* Output box */
+      .output-box { padding: 16px; }
+      .output-box p { font-size: 0.78rem; }
+
+      /* Copy/regen buttons stack vertically */
+      .copy-row { display: flex; align-items: center; flex-wrap: wrap; flex-direction: column; gap: 10px; }
+      .btn-copy, .btn-regen { width: 100%; text-align: center; }
+
+      /* Tips grid: single column */
+      .tips-grid { grid-template-columns: 1fr; }
+
+      /* PIX banner */
+      .pix-banner { flex-direction: column; text-align: center; gap: 16px; }
+      .pix-banner-divider { display: none; }
+    }
+
+    @media (max-width: 400px) {
+      /* Very small phones: 2 columns for entities */
+      .vc-grid { grid-template-columns: repeat(2, 1fr); }
+      .vc-comp-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+  </style>
+
+  <!-- SEO & Open Graph -->
+  <meta name="robots" content="index, follow">
+  <meta name="keywords" content="gerador de prompts espirituais, umbanda, quimbanda, orixás, exu, pomba-gira, entidades, midjourney, dall-e, stable diffusion, imagens espirituais, afro-brasileiro">
+  <meta name="author" content="Portal das Sombras">
+  <link rel="canonical" href="https://promptespiritual.vercel.app/">
+
+  <!-- Open Graph (Facebook / WhatsApp) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://promptespiritual.vercel.app/">
+  <meta property="og:title" content="Portal das Sombras — Gerador de Imagens Espirituais">
+  <meta property="og:description" content="Crie prompts detalhados para geração de imagens de Orixás, Exus, Pombas-Giras e entidades da Umbanda e Quimbanda. Compatível com Midjourney, DALL·E 3 e Stable Diffusion.">
+  <meta property="og:image" content="https://promptespiritual.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Portal das Sombras">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Portal das Sombras — Gerador de Imagens Espirituais">
+  <meta name="twitter:description" content="Crie prompts detalhados para geração de imagens de Orixás, Exus, Pombas-Giras e entidades da Umbanda e Quimbanda.">
+  <meta name="twitter:image" content="https://promptespiritual.vercel.app/og-image.png">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Portal das Sombras",
+    "description": "Gerador de prompts para imagens de entidades espirituais da Umbanda, Quimbanda e tradições afro-brasileiras.",
+    "url": "https://promptespiritual.vercel.app/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "inLanguage": ["pt-BR", "en"],
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }
+  }
+  </script>
+</head>
+<body>
+
+<!-- ── PIX Banner (topo) ── -->
+<div class="pix-banner">
+  <div class="pix-banner-qr-col">
+    <img class="pix-banner-qr" id="pix-banner-qr" src="" width="180" height="180" alt="QR PIX" />
+    <div class="pix-scan-hint">
+      Abra seu banco<br>
+      <em>PIX → Pagar → Ler QR Code</em>
+    </div>
+  </div>
+
+  <div class="pix-banner-divider"></div>
+
+  <div class="pix-banner-info">
+    <div class="pix-banner-heading">
+      Uma contribuição de <span>R$ 10</span> mantém<br>as portas entre os mundos abertas.
+    </div>
+
+    <div class="pix-banner-amount">R$ 10,00</div>
+
+    <div class="pix-banner-key-block">
+      <div class="pix-banner-label">Chave PIX · CPF</div>
+      <div class="pix-banner-val">192.284.088-20</div>
+    </div>
+
+    <div class="pix-banner-actions">
+      <button class="btn-copy-pix" id="btn-copy-pix" onclick="copyPixKey()">◈ Copiar Chave PIX</button>
+      <div class="pix-cola-hint">ou copie o código Pix Copia e Cola</div>
+      <button class="btn-copy-pix" id="btn-cola" onclick="copyColaCode()">◈ Copiar Pix Copia e Cola</button>
+    </div>
+    <textarea id="pix-copiacola" class="pix-cola-input" readonly></textarea>
+  </div>
+</div>
+
+<canvas id="ritual-bg"></canvas>
+
+<div id="app">
+  <header>
+    <svg class="sigil" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="28" cy="28" r="26" stroke="#C9860A" stroke-width="0.8" opacity="0.6"/>
+      <circle cx="28" cy="28" r="18" stroke="#C9860A" stroke-width="0.5" opacity="0.4"/>
+      <polygon points="28,6 51,42 5,42" fill="none" stroke="#C8320A" stroke-width="0.8" opacity="0.7"/>
+      <polygon points="28,50 5,14 51,14" fill="none" stroke="#8B0C2C" stroke-width="0.8" opacity="0.5"/>
+      <circle cx="28" cy="28" r="3" fill="#C9860A" opacity="0.8"/>
+      <line x1="28" y1="2" x2="28" y2="54" stroke="#C9860A" stroke-width="0.4" opacity="0.3"/>
+      <line x1="2" y1="28" x2="54" y2="28" stroke="#C9860A" stroke-width="0.4" opacity="0.3"/>
+    </svg>
+    <h1>
+      <span>Portal das Sombras</span>
+      Gerador de Imagens<br>Espirituais
+    </h1>
+    <p>Crie prompts para geração de imagens de entidades da Umbanda, Quimbanda e do mundo espiritual afro-brasileiro.</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="section-label">I — Escolha a Categoria</div>
+  <div class="category-tabs" id="cat-tabs">
+    <button class="cat-tab active" data-cat="orixa">Orixás</button>
+    <button class="cat-tab" data-cat="exu">Exus</button>
+    <button class="cat-tab" data-cat="pombo">Pombogiras</button>
+    <button class="cat-tab" data-cat="malandro">Malandros</button>
+    <button class="cat-tab" data-cat="baiano">Baianos &amp; Baianas</button>
+    <button class="cat-tab" data-cat="preto">Pretos Velhos &amp; Pretas Velhas</button>
+    <button class="cat-tab" data-cat="boiadeiro">Boiadeiros</button>
+    <button class="cat-tab" data-cat="ere">Erês</button>
+    <button class="cat-tab" data-cat="caboclo">Caboclos &amp; Caboclas</button>
+    <button class="cat-tab" data-cat="bruxa">Bruxas &amp; Feiticeiras</button>
+    <button class="cat-tab" data-cat="demonio">Entidades da Quimbanda</button>
+    <button class="cat-tab" data-cat="egungun">Egunguns</button>
+    <button class="cat-tab" data-cat="eguns">Eguns</button>
+  </div>
+
+  <div class="section-label">II — Selecione a Entidade</div>
+  <div class="entity-grid" id="entity-grid"></div>
+
+  <div class="section-label">III — Personalize o Visual</div>
+  <div class="vc-wrapper">
+    <div class="vc-section">
+      <span class="vc-label">Estilo Artístico</span>
+      <div class="vc-scroll" id="pill-style">
+        <div class="vc-group-hdr">🎨 Digital &amp; Concept Art</div>
+        <div class="vc-grid">
+          <button class="vc-card sel" data-group="style" data-val="hyperrealistic digital painting, ultra-detailed, 8K"><span class="vc-icon">🖼️</span><span class="vc-name">Pintura Digital 8K</span><span class="vc-desc">Ultra-realista</span></button>
+          <button class="vc-card" data-group="style" data-val="dark fantasy concept art, cinematic lighting, dramatic"><span class="vc-icon">🌑</span><span class="vc-name">Dark Fantasy</span><span class="vc-desc">Sombrio épico</span></button>
+          <button class="vc-card" data-group="style" data-val="3D render, octane render, photorealistic, volumetric lighting"><span class="vc-icon">⚡</span><span class="vc-name">3D Octane</span><span class="vc-desc">Render 3D</span></button>
+          <button class="vc-card" data-group="style" data-val="digital illustration, comic book style, bold outlines"><span class="vc-icon">📖</span><span class="vc-name">Estilo HQ</span><span class="vc-desc">Quadrinhos</span></button>
+          <button class="vc-card" data-group="style" data-val="character concept art, professional game art style"><span class="vc-icon">🎮</span><span class="vc-name">Concept Art Game</span><span class="vc-desc">Game art</span></button>
+        </div>
+        <div class="vc-group-hdr">🕯️ Pintura Clássica</div>
+        <div class="vc-grid">
+          <button class="vc-card" data-group="style" data-val="oil painting on dark canvas, baroque style, chiaroscuro"><span class="vc-icon">🕯️</span><span class="vc-name">Óleo Barroco</span><span class="vc-desc">Chiaroscuro</span></button>
+          <button class="vc-card" data-group="style" data-val="oil painting, romanticism style, dramatic brushstrokes"><span class="vc-icon">🌪️</span><span class="vc-name">Óleo Romantismo</span><span class="vc-desc">Dramático</span></button>
+          <button class="vc-card" data-group="style" data-val="tempera painting, renaissance sacred art style"><span class="vc-icon">✝️</span><span class="vc-name">Arte Sacra Renascentista</span><span class="vc-desc">Sacro</span></button>
+          <button class="vc-card" data-group="style" data-val="fresco painting, ancient sacred mural style"><span class="vc-icon">🏛️</span><span class="vc-name">Afresco Mural</span><span class="vc-desc">Mural antigo</span></button>
+          <button class="vc-card" data-group="style" data-val="impasto oil painting, thick textured brushwork"><span class="vc-icon">🖌️</span><span class="vc-name">Óleo Impasto</span><span class="vc-desc">Textura espessa</span></button>
+        </div>
+        <div class="vc-group-hdr">✒️ Ilustração &amp; Gravura</div>
+        <div class="vc-grid">
+          <button class="vc-card" data-group="style" data-val="watercolor illustration, mystical, soft washes, ethereal"><span class="vc-icon">💧</span><span class="vc-name">Aquarela Mística</span><span class="vc-desc">Etéreo</span></button>
+          <button class="vc-card" data-group="style" data-val="ink illustration, intricate linework, stippling"><span class="vc-icon">✒️</span><span class="vc-name">Nanquim Pontilhismo</span><span class="vc-desc">Intrincado</span></button>
+          <button class="vc-card" data-group="style" data-val="woodcut printmaking, bold lines, high contrast"><span class="vc-icon">🪵</span><span class="vc-name">Xilogravura</span><span class="vc-desc">Alto contraste</span></button>
+          <button class="vc-card" data-group="style" data-val="linocut print, flat colors, rough texture"><span class="vc-icon">🎭</span><span class="vc-name">Linoleogravura</span><span class="vc-desc">Cores planas</span></button>
+          <button class="vc-card" data-group="style" data-val="etching, fine lines, engraved metal plate style"><span class="vc-icon">🔩</span><span class="vc-name">Água-Forte</span><span class="vc-desc">Linhas finas</span></button>
+          <button class="vc-card" data-group="style" data-val="lithograph, grainy texture, limited palette"><span class="vc-icon">🪨</span><span class="vc-name">Litogravura</span><span class="vc-desc">Textura granular</span></button>
+        </div>
+        <div class="vc-group-hdr">💎 Estilos Decorativos</div>
+        <div class="vc-grid">
+          <button class="vc-card" data-group="style" data-val="gothic art nouveau, ornate borders, floral tendrils"><span class="vc-icon">🌿</span><span class="vc-name">Art Nouveau Gótico</span><span class="vc-desc">Ornamental</span></button>
+          <button class="vc-card" data-group="style" data-val="art deco, geometric patterns, gold and black"><span class="vc-icon">💎</span><span class="vc-name">Art Déco</span><span class="vc-desc">Geométrico dourado</span></button>
+          <button class="vc-card" data-group="style" data-val="symbolist painting, mystical allegory, Gustave Moreau style"><span class="vc-icon">🔮</span><span class="vc-name">Pintura Simbolista</span><span class="vc-desc">Alegórico</span></button>
+          <button class="vc-card" data-group="style" data-val="pre-raphaelite painting, jewel tones, medieval fantasy"><span class="vc-icon">👸</span><span class="vc-name">Pré-Rafaelita</span><span class="vc-desc">Medieval</span></button>
+          <button class="vc-card" data-group="style" data-val="tarot card illustration, flat gold borders, mystical"><span class="vc-icon">🃏</span><span class="vc-name">Ilustração de Tarô</span><span class="vc-desc">Místico</span></button>
+        </div>
+        <div class="vc-group-hdr">📷 Realismo &amp; Foto</div>
+        <div class="vc-grid">
+          <button class="vc-card" data-group="style" data-val="hyperrealistic portrait photography, Canon EOS R5, 85mm f/1.4 lens, studio Rembrandt lighting, skin pore detail, ultra-sharp 8K, photojournalism quality, award-winning portrait"><span class="vc-icon">📸</span><span class="vc-name">Foto Hiper-Realista 8K</span><span class="vc-desc">Detalhes de pele</span></button>
+          <button class="vc-card" data-group="style" data-val="cinematic photorealism, movie still, anamorphic lens flare, shallow depth of field, filmic color grading, Kodak Portra 400 film emulation, golden hour natural light, magazine cover quality"><span class="vc-icon">🎬</span><span class="vc-name">Fotorrealismo Cinemático</span><span class="vc-desc">Movie still</span></button>
+          <button class="vc-card" data-group="style" data-val="photo-realistic photography, dramatic studio lighting, professional"><span class="vc-icon">📷</span><span class="vc-name">Fotorrealismo Estúdio</span><span class="vc-desc">Foto profissional</span></button>
+          <button class="vc-card" data-group="style" data-val="100% RAW photorealistic photography, no filters, no digital art, no painting, real photograph, Canon EOS R5, 85mm lens, natural lighting, ultra-sharp, 8K RAW, DSLR, photojournalism style"><span class="vc-icon">🤳</span><span class="vc-name">Fotografia 100% RAW</span><span class="vc-desc">Sem filtros</span></button>
+          <button class="vc-card" data-group="style" data-val="ultra-realistic 3D sculpt render, ZBrush quality, subsurface scattering skin, photorealistic textures, museum-quality figurative sculpture rendered, cinematic HDRI lighting"><span class="vc-icon">🗽</span><span class="vc-name">Escultura 3D ZBrush</span><span class="vc-desc">3D esculpido</span></button>
+          <button class="vc-card" data-group="style" data-val="photorealistic oil painting, classical realism technique, old masters brushwork, Bouguereau-level figurative painting, museum-quality realism, smooth blended tones, academic painting"><span class="vc-icon">🖼️</span><span class="vc-name">Óleo Grandes Mestres</span><span class="vc-desc">Classicismo</span></button>
+        </div>
+        <div class="vc-group-hdr">✏️ Sketch &amp; Desenho</div>
+        <div class="vc-grid">
+          <button class="vc-card" data-group="style" data-val="pencil sketch, graphite on white paper, detailed crosshatching, expressive gestural lines, fine art drawing, sketch texture visible, monochrome"><span class="vc-icon">✏️</span><span class="vc-name">Sketch Lápis</span><span class="vc-desc">Grafite suave</span></button>
+          <button class="vc-card" data-group="style" data-val="ink sketch, bold pen and ink drawing, expressive brushpen strokes, dramatic black ink on white paper, Japanese sumi-e influenced, calligraphic line quality, high contrast monochrome"><span class="vc-icon">🖊️</span><span class="vc-name">Sketch Nanquim</span><span class="vc-desc">Tinta expressiva</span></button>
+          <button class="vc-card" data-group="style" data-val="colored pencil sketch, soft hatching with vibrant colored pencils, textured paper grain visible, semi-realistic illustration, warm color palette, fine art sketchbook style"><span class="vc-icon">🎨</span><span class="vc-name">Sketch Lápis de Cor</span><span class="vc-desc">Colorido suave</span></button>
+          <button class="vc-card" data-group="style" data-val="charcoal portrait sketch, rich charcoal on textured paper, smudged and blended shadows, expressive gestural marks, fine art academy drawing, high tonal contrast, detailed realism"><span class="vc-icon">⚫</span><span class="vc-name">Sketch Carvão</span><span class="vc-desc">Carvão rico</span></button>
+          <button class="vc-card" data-group="style" data-val="digital sketch, loose gestural digital brushwork, painterly lines, concept art sketch phase, color rough with visible strokes, sketchbook feel, expressive and energetic"><span class="vc-icon">💻</span><span class="vc-name">Sketch Digital</span><span class="vc-desc">Esboço digital</span></button>
+          <button class="vc-card" data-group="style" data-val="ink wash and sketch, sepia ink on rough watercolor paper, loose gestural brushstrokes and fine linework combined, limited tone palette, traditional illustration style"><span class="vc-icon">🟤</span><span class="vc-name">Sketch Aguada Sépia</span><span class="vc-desc">Sépia e tinta</span></button>
+          <button class="vc-card" data-group="style" data-val="black and white pencil sketch, pure monochrome, detailed graphite linework on white paper, crosshatching and stippling, fine art drawing, no color whatsoever, stark contrast, expressive shadows in grayscale only"><span class="vc-icon">⬜</span><span class="vc-name">Sketch P&amp;B Grafite</span><span class="vc-desc">Puro grafite</span></button>
+          <button class="vc-card" data-group="style" data-val="black and white ink illustration, high contrast monochrome, bold pen strokes and fine detail lines, scratchboard-style, dramatic black fills and pure white highlights, no gray tones, woodcut-inspired"><span class="vc-icon">⬛</span><span class="vc-name">Sketch P&amp;B Nanquim</span><span class="vc-desc">Tinta P&amp;B</span></button>
+          <button class="vc-card" data-group="style" data-val="black and white charcoal sketch, rich grayscale tonal range, smudged velvety shadows, expressive gestural marks on white paper, pure monochrome, deep blacks and bright whites, no color"><span class="vc-icon">🌑</span><span class="vc-name">Sketch P&amp;B Carvão</span><span class="vc-desc">Carvão P&amp;B</span></button>
+          <button class="vc-card" data-group="style" data-val="black and white fine line illustration, ultra-detailed stippling and hatching, engraving style, pure monochrome like a vintage book plate illustration, intricate linework, no color, etching quality"><span class="vc-icon">🔲</span><span class="vc-name">Sketch P&amp;B Gravura</span><span class="vc-desc">Gravura P&amp;B</span></button>
+          <button class="vc-card" data-group="style" data-val="black and white pencil sketch with rich shading, graphite pencil on white paper, smooth graduated shading from deep black to bright white, soft blended shadows, detailed realistic pencil rendering, no color, hatching and blending technique, classical academic pencil drawing with full tonal range"><span class="vc-icon">🌫️</span><span class="vc-name">Sketch P&amp;B Sombreado</span><span class="vc-desc">Tons de cinza</span></button>
+          <button class="vc-card" data-group="style" data-val="simple black and white pencil sketch, clean graphite lines on white paper, minimal shading, no effects, no color, no background, pure sketch style"><span class="vc-icon">📝</span><span class="vc-name">Sketch P&amp;B Simples</span><span class="vc-desc">Linhas puras</span></button>
+        </div>
+        <div class="vc-group-hdr">☀️ Claros &amp; Limpos</div>
+        <div class="vc-grid">
+          <button class="vc-card" data-group="style" data-val="bright studio portrait, clean white seamless background, soft diffused lighting, vivid saturated colors, sharp focus, professional photography look, high clarity"><span class="vc-icon">🤍</span><span class="vc-name">Estúdio Fundo Branco</span><span class="vc-desc">Fundo branco</span></button>
+          <button class="vc-card" data-group="style" data-val="clean digital illustration, flat bright background, bold vivid colors, smooth cel-shading, sharp clean outlines, graphic novel cover style, high contrast clarity"><span class="vc-icon">✨</span><span class="vc-name">Ilustração Limpa</span><span class="vc-desc">Vivid e limpo</span></button>
+          <button class="vc-card" data-group="style" data-val="luminous fantasy art, bright ambient lighting, pastel and vivid color palette, soft glowing aura, clean background gradient from white to soft color, crisp sharp details"><span class="vc-icon">☀️</span><span class="vc-name">Arte Luminosa</span><span class="vc-desc">Glow suave</span></button>
+          <button class="vc-card" data-group="style" data-val="golden hour portrait, warm bright natural light, rich saturated golden tones, soft bokeh background, cinematic clarity, Rembrandt lighting, skin-tone warmth, ultra sharp subject"><span class="vc-icon">🌅</span><span class="vc-name">Luz Dourada</span><span class="vc-desc">Hora dourada</span></button>
+          <button class="vc-card" data-group="style" data-val="clean concept art, bright midtone background, vibrant jewel-tone colors, sharp detailed linework, professional character illustration, crisp textures, balanced exposure"><span class="vc-icon">🎯</span><span class="vc-name">Concept Art Limpo</span><span class="vc-desc">Equilibrado</span></button>
+          <button class="vc-card" data-group="style" data-val="soft light oil painting, bright warm palette, visible brushstrokes, clean airy background, Baroque portrait style with bright fill light, rich but luminous colors"><span class="vc-icon">🕊️</span><span class="vc-name">Óleo Luminoso</span><span class="vc-desc">Barroco claro</span></button>
+          <button class="vc-card" data-group="style" data-val="ethereal glow portrait, light pastel background, subject surrounded by soft luminous halo, airy translucent light, bright and clean atmosphere, angelic radiance"><span class="vc-icon">👼</span><span class="vc-name">Retrato Etéreo</span><span class="vc-desc">Aura luminosa</span></button>
+          <button class="vc-card" data-group="style" data-val="ink and watercolor, white paper background, vivid ink outlines, clean bright watercolor washes, light airy composition, minimal clutter, Japanese woodblock influenced"><span class="vc-icon">🎋</span><span class="vc-name">Aquarela e Nanquim</span><span class="vc-desc">Minimalista</span></button>
+        </div>
+        <div class="vc-group-hdr">✨ Efeitos Especiais</div>
+        <div class="vc-grid">
+          <button class="vc-card" data-group="style" data-val="pure white background seamlessly blended with the central figure, the figure rendered in ultra high relief with full vivid colors, ethereal smoke wisps and mist splashes merging into the white background at the edges, supernatural vapor tendrils dissolving into white, figure emerging dramatically from ethereal fog, soft chromatic light halo, cinematic special effects compositing, the background fades to pure white through layers of translucent mystical smoke, bokeh particles, high-end digital art"><span class="vc-icon">💨</span><span class="vc-name">Fumaça Etérea</span><span class="vc-desc">Névoa dissoluta</span></button>
+          <button class="vc-card" data-group="style" data-val="pure white background, ultra high relief sculptural effect, 3D embossed figure with full vivid colors preserved on the figure, deep cast shadows on white surface, bas-relief carving style, studio lighting from above, luxurious tactile effect, colored subject on white background"><span class="vc-icon">🗿</span><span class="vc-name">Alto Relevo Escultórico</span><span class="vc-desc">Relevo 3D</span></button>
+          <button class="vc-card" data-group="style" data-val="holographic foil effect, iridescent rainbow reflections, chromatic aberration, metallic sheen, prism light diffraction, ultra-glossy surface"><span class="vc-icon">🌈</span><span class="vc-name">Holográfico</span><span class="vc-desc">Arco-íris metálico</span></button>
+          <button class="vc-card" data-group="style" data-val="neon glow effect, vibrant neon lights, dark city night backdrop, neon signs, electric color bleeding, cyberpunk atmosphere, luminous aura"><span class="vc-icon">💜</span><span class="vc-name">Neon Glow</span><span class="vc-desc">Cyberpunk</span></button>
+          <button class="vc-card" data-group="style" data-val="double exposure photography, two images merged, silhouette filled with mystical scenery, dreamlike composite, artistic overlay"><span class="vc-icon">👁️</span><span class="vc-name">Dupla Exposição</span><span class="vc-desc">Duas imagens</span></button>
+          <button class="vc-card" data-group="style" data-val="chromatic aberration glitch art, RGB color shift, digital distortion, vaporwave aesthetics, scanline noise, pixel corruption"><span class="vc-icon">📺</span><span class="vc-name">Glitch Art</span><span class="vc-desc">Distorção digital</span></button>
+          <button class="vc-card" data-group="style" data-val="liquid metal effect, mercury and molten silver, fluid metallic surface, reflective liquid sculpture, ultra-glossy chrome finish"><span class="vc-icon">🪞</span><span class="vc-name">Metal Líquido</span><span class="vc-desc">Cromo fluido</span></button>
+          <button class="vc-card" data-group="style" data-val="bioluminescence, glowing from within, deep ocean bioluminescent light, ethereal inner glow, dark background, particles of light surrounding"><span class="vc-icon">🫧</span><span class="vc-name">Bioluminescência</span><span class="vc-desc">Brilho interno</span></button>
+          <button class="vc-card" data-group="style" data-val="smoke and fire photography, dynamic smoke trails, embers and flames, long exposure light painting, dramatic dark background, pyrography art"><span class="vc-icon">🔥</span><span class="vc-name">Fumaça e Fogo</span><span class="vc-desc">Labaredas</span></button>
+          <button class="vc-card" data-group="style" data-val="pure white background, high-relief paper sculpture, 3D papercut layered art, figure retains full vivid colors, white cardstock layers as background, dramatic directional lighting, deep cast shadows on white, colored figure on white background"><span class="vc-icon">📄</span><span class="vc-name">Papercut 3D</span><span class="vc-desc">Papel esculpido</span></button>
+          <button class="vc-card" data-group="style" data-val="ink in water photography, ink drop diffusion, swirling dark ink in clear water, macro photography, ethereal flowing tendrils, high contrast"><span class="vc-icon">🌊</span><span class="vc-name">Tinta na Água</span><span class="vc-desc">Difusão de tinta</span></button>
+          <button class="vc-card" data-group="style" data-val="scratchboard illustration, white on black, detailed"><span class="vc-icon">🌟</span><span class="vc-name">Scratchboard</span><span class="vc-desc">Branco no preto</span></button>
+          <button class="vc-card" data-group="style" data-val="pastel painting, soft colors, dreamlike"><span class="vc-icon">🌸</span><span class="vc-name">Pastel Sonhador</span><span class="vc-desc">Suave e sonho</span></button>
+          <button class="vc-card" data-group="style" data-val="mosaic art, ancient Byzantine style, gold tiles"><span class="vc-icon">🟡</span><span class="vc-name">Mosaico Bizantino</span><span class="vc-desc">Tesselas douradas</span></button>
+          <button class="vc-card" data-group="style" data-val="psychedelic art, surrealist, vivid colors, distorted reality"><span class="vc-icon">🎆</span><span class="vc-name">Arte Psicodélica</span><span class="vc-desc">Cores vibrantes</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="vc-section">
+      <span class="vc-label">Composição</span>
+      <div class="vc-comp-grid" id="pill-comp">
+        <button class="vc-comp-card sel" data-group="comp" data-val="full body portrait, powerful stance, symmetrical composition"><span class="vc-comp-icon">🧍</span><span class="vc-comp-name">Corpo Inteiro</span><span class="vc-comp-desc">Figura completa</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="dramatic close-up portrait, intense gaze, filling the frame"><span class="vc-comp-icon">👁️</span><span class="vc-comp-name">Close Dramático</span><span class="vc-comp-desc">Rosto impactante</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="dynamic pose, action, energy flowing, movement"><span class="vc-comp-icon">⚡</span><span class="vc-comp-name">Pose Dinâmica</span><span class="vc-comp-desc">Movimento e energia</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="ethereal half-body portrait, floating elements around"><span class="vc-comp-icon">✨</span><span class="vc-comp-name">Meio-Corpo Flutuante</span><span class="vc-comp-desc">Elementos ao redor</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="silhouette against glowing dramatic background"><span class="vc-comp-icon">🌑</span><span class="vc-comp-name">Silhueta</span><span class="vc-comp-desc">Contraluz dramático</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="seated on a throne, commanding presence, regal"><span class="vc-comp-icon">👑</span><span class="vc-comp-name">Entronizado</span><span class="vc-comp-desc">Pose régia</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="in ritual ceremony, surrounded by offerings and candles"><span class="vc-comp-icon">🕯️</span><span class="vc-comp-name">Em Cerimônia</span><span class="vc-comp-desc">Ritual e oferendas</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="three-quarter view, dramatic lighting from below"><span class="vc-comp-icon">💡</span><span class="vc-comp-name">3/4 Luz de Baixo</span><span class="vc-comp-desc">Iluminação baixa</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="wide establishing shot, figure in vast atmospheric landscape"><span class="vc-comp-icon">🌄</span><span class="vc-comp-name">Plano Aberto</span><span class="vc-comp-desc">Paisagem épica</span></button>
+        <button class="vc-comp-card" data-group="comp" data-val="overhead top-down view, ritual circle, sacred geometry below"><span class="vc-comp-icon">🔭</span><span class="vc-comp-name">Vista Aérea</span><span class="vc-comp-desc">De cima</span></button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-generate" id="btn-gen" onclick="generatePrompt()">
+    <span>✦ Gerar Prompt ✦</span>
+  </button>
+
+  <div class="output-section" id="output-section">
+    <div class="section-label">IV — Prompt Gerado</div>
+    <div class="output-lang-toggle">
+      <button class="lang-btn active" id="btn-pt" onclick="switchLang('pt')">Português</button>
+      <button class="lang-btn" id="btn-en" onclick="switchLang('en')">English</button>
+    </div>
+    <div class="output-box">
+      <p id="output-text"></p>
+    </div>
+    <div class="copy-row">
+      <button class="btn-copy" id="btn-copy" onclick="copyPrompt()">Copiar Prompt</button>
+      <button class="btn-regen" onclick="generatePrompt()">Gerar Novamente</button>
+    </div>
+  </div>
+
+  <div class="tips">
+    <h3>Onde Usar os Prompts</h3>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <span class="tip-icon">◈</span>
+        <h4>Midjourney</h4>
+        <p>Cole no Discord com <em>/imagine</em>. Use <code>--ar 2:3</code> para retratos e <code>--style raw</code> para maior realismo.</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">◈</span>
+        <h4>DALL·E 3</h4>
+        <p>No ChatGPT ou API. Prompts em inglês têm melhor resultado. Use a versão EN gerada aqui.</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">◈</span>
+        <h4>Stable Diffusion</h4>
+        <p>SDXL ou Flux recomendam-se. Adicione <em>negative prompts</em>: <code>blurry, watermark, cartoon</code>.</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">◈</span>
+        <h4>Adobe Firefly</h4>
+        <p>Excelente para estilos artísticos tradicionais. Funciona bem com as opções de Aquarela e Óleo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção de Doação PIX -->
+  <footer>
+    <p>Portal das Sombras · Ferramenta de geração de prompts espirituais</p>
+    <p style="margin-top:8px;">Axé · Laroyê · Saravá</p>
+  </footer>
+</div>
+
+<script>
+// ── Entity data loaded from GitHub ──────────────────────────────────────
+let ENTITIES = {};
+
+
+const CAT_COLORS = {
+  orixa:    { accent: '#1E6B2E', glow: 'rgba(30,107,46,0.18)' },
+  exu:      { accent: '#C8320A', glow: 'rgba(200,50,10,0.18)' },
+  pombo:    { accent: '#8B0C2C', glow: 'rgba(139,12,44,0.18)' },
+  malandro: { accent: '#C9860A', glow: 'rgba(201,134,10,0.18)' },
+  baiano:   { accent: '#B85A0A', glow: 'rgba(184,90,10,0.18)' },
+  preto:    { accent: '#7A6270', glow: 'rgba(122,98,112,0.18)' },
+  boiadeiro:{ accent: '#8B5A1A', glow: 'rgba(139,90,26,0.18)' },
+  ere:      { accent: '#1A9A6A', glow: 'rgba(26,154,106,0.18)' },
+  caboclo:  { accent: '#2A6B9A', glow: 'rgba(42,107,154,0.18)' },
+  bruxa:    { accent: '#6B1F8A', glow: 'rgba(107,31,138,0.18)' },
+  demonio:  { accent: '#9EB4C0', glow: 'rgba(158,180,192,0.18)' },
+  egungun:  { accent: '#8A6A2A', glow: 'rgba(138,106,42,0.18)' },
+  eguns:    { accent: '#5A3A7A', glow: 'rgba(90,58,122,0.18)' },
+};
+
+const NAME_LABEL_PT = {
+  orixa:     (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia elegante e refinada em dourado suave, traço de pincel fino e fluido, letras leves porém imponentes com serifa delicada, brilho dourado sutil ao redor, sobre faixa translúcida escura.`,
+  exu:       (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia de pincel expressivo em carmesim e prata, traços fluidos com força e delicadeza ao mesmo tempo, letras altas e esguias com finos ornamentos nas pontas, brilho sobrenatural suave ao redor.`,
+  pombo:     (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia italiana cursiva em dourado rosê e carmesim suave, letras alongadas e inclinadas como assinatura de diva, traço de pincel fino e sensual, ornamentos de pétalas delicadas nas extremidades.`,
+  malandro:  (n) => `Texto obrigatório na parte inferior: "${n}" — lettering cursivo fluido em branco pérola com contorno vermelho fino, estilo assinatura elegante de malandro, traço de pincel solto e confiante, leveza com personalidade forte.`,
+  baiano:    (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia festiva em azul turquesa e branco, letras arredondadas e suaves com alegria natural, traço de pincel molhado e espontâneo, ornamentos de conchas e flores pequenas.`,
+  preto:     (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia sepia ancestral de traço suave e envelhecido, letras com serifa delicada e alma de manuscrito colonial, luz amarelada de vela em volta das letras, leveza sábia e afetuosa.`,
+  boiadeiro: (n) => `Texto obrigatório na parte inferior: "${n}" — lettering rústico e elegante em ocre e marrom couro, traço de pincel seco com textura natural, letras fortes porém com delicadeza sertaneja, bordas finas de corda estilizada.`,
+  ere:       (n) => `Texto obrigatório na parte inferior: "${n}" — letras arredondadas e suaves em cores pastel alegres, caligrafia infantil delicada com personalidade, traço de pincel leve e saltitante, pequenas estrelas e flores decorativas ao redor.`,
+  caboclo:   (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia indígena de traço limpo e elegante em ocre e terracota, letras com força ancestral e delicadeza natural, inspiradas em pinturas corporais tribais estilizadas, ornamentos de penas finas.`,
+  bruxa:     (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia arcana de pincel fino em lilás prateado e roxo suave, letras alongadas com pontas delicadas como ramos de lua, traço etéreo e misterioso com brilho espectral suave ao redor.`,
+  demonio:   (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia poderosa e refinada em vermelho profundo e prata, traço de pincel largo com elegância contida, letras majestosas com serifa afiada e ornamentos de espirais finos, névoa sutil nas bordas.`,
+  egungun:   (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia ancestral africana em dourado envelhecido e marrom de terra sagrada, traço de pincel largo e firme com autoridade dos antepassados, letras majestosas com ornamentos de tecido ritual entrelaçados.`,
+  eguns:     (n) => `Texto obrigatório na parte inferior: "${n}" — caligrafia espectral em branco prateado e roxo translúcido, letras que parecem flutuar entre o mundo dos vivos e dos mortos, traço de pincel etéreo com brilho ancestral suave.`,
+};
+const NAME_LABEL_EN = {
+  orixa:     (n) => `Mandatory text at the bottom: "${n}" — elegant refined calligraphy in soft gold, thin fluid brush stroke, light yet imposing letters with delicate serif, subtle golden glow surrounding, on a translucent dark band.`,
+  exu:       (n) => `Mandatory text at the bottom: "${n}" — expressive brush calligraphy in crimson and silver, fluid strokes with simultaneous strength and delicacy, tall slender letters with fine ornamental tips, soft supernatural glow surrounding.`,
+  pombo:     (n) => `Mandatory text at the bottom: "${n}" — Italian cursive calligraphy in rose gold and soft crimson, elongated and inclined letters like a diva's signature, thin sensual brush stroke, delicate petal ornaments at the ends.`,
+  malandro:  (n) => `Mandatory text at the bottom: "${n}" — fluid cursive lettering in pearl white with thin red outline, elegant rogue signature style, loose confident brush stroke, lightness with strong personality.`,
+  baiano:    (n) => `Mandatory text at the bottom: "${n}" — festive calligraphy in turquoise blue and white, rounded and soft letters with natural joy, wet and spontaneous brush stroke, small shell and flower ornaments.`,
+  preto:     (n) => `Mandatory text at the bottom: "${n}" — ancestral sepia calligraphy with soft aged stroke, letters with delicate serif and colonial manuscript soul, warm candlelight glow around letters, wise and affectionate lightness.`,
+  boiadeiro: (n) => `Mandatory text at the bottom: "${n}" — rustic yet elegant lettering in ochre and leather brown, dry brush stroke with natural texture, strong letters with backlands delicacy, fine stylized rope border details.`,
+  ere:       (n) => `Mandatory text at the bottom: "${n}" — rounded and soft letters in cheerful pastel colors, delicate childlike calligraphy with personality, light and bouncy brush stroke, small stars and flowers decorating around.`,
+  caboclo:   (n) => `Mandatory text at the bottom: "${n}" — clean and elegant indigenous calligraphy in ochre and terracotta, letters with ancestral strength and natural delicacy, inspired by stylized tribal body paintings, fine feather ornaments.`,
+  bruxa:     (n) => `Mandatory text at the bottom: "${n}" — arcane thin-brush calligraphy in silvery lilac and soft purple, elongated letters with delicate moon-branch tips, ethereal and mysterious stroke with soft spectral glow.`,
+  demonio:   (n) => `Mandatory text at the bottom: "${n}" — powerful and refined calligraphy in deep red and silver, wide brush stroke with contained elegance, majestic letters with sharp serif and fine spiral ornaments, subtle mist at edges.`,
+  egungun:   (n) => `Mandatory text at the bottom: "${n}" — ancestral African calligraphy in aged gold and sacred earth brown, wide firm brush stroke with ancestral authority, majestic letters with ritual fabric ornaments interwoven.`,
+  eguns:     (n) => `Mandatory text at the bottom: "${n}" — spectral calligraphy in silver white and translucent purple, letters that seem to float between the world of the living and the dead, ethereal brush stroke with soft ancestral glow.`,
+};
+
+const PROMPTS_PT = {
+  orixa: (e, style, comp) => `✦ ${e.name.toUpperCase()} ✦\n\nIlustração sacra do Candomblé e Umbanda afro-brasileira. ${comp} do orixá ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'presença divina majestosa, pele radiante, aura visível de divindade'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'conforme tradição sagrada'} — tecidos nobres e fluidos, bordados rituais impecáveis, joias e guias de búzios sagrados.\n▸ ATRIBUTOS SAGRADOS (obrigatório na imagem): ${e.tools_pt || 'atributos rituais do orixá em destaque'}.\n▸ POSE E EXPRESSÃO: postura divina e majestosa de orixá soberano, olhar transcendente que irradia amor e poder celestial ao mesmo tempo.\n▸ CENÁRIO: ${e.local_pt || 'reino espiritual sagrado com colunas de luz dourada, flores rituais ao redor, céu entre o divino e o terreno'}.\n▸ ILUMINAÇÃO: luz dourada divina emanando do próprio corpo do orixá, raios de claridade celestial ao redor, atmosfera de presença sagrada pulsante e vibrante.\n\n${NAME_LABEL_PT.orixa(e.name)}\nEstilo artístico: ${style}. Pintura digital épica de arte sacra afro-brasileira, nível masterpiece de galeria, ultra-detalhado, cores vibrantes e profundas, iluminação cinematográfica dramática de divindade, renderização fotorrealista de alta qualidade. --ar 2:3`,
+
+  exu: (e, style, comp) => `⚡ ${e.name.toUpperCase()} ⚡\n\nIlustração sacra da Quimbanda afro-brasileira. ${comp} do Exu ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'presença soberana das encruzilhadas, olhos vermelhos penetrantes, aura de poder e mistério'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'preto e vermelho'} — vestes poderosas das encruzilhadas, detalhes de couro e metal negro, adornos rituais de Exu.\n▸ ATRIBUTOS RITUAIS (obrigatório na imagem): ${e.tools_pt || 'tridente e bengala de exu com detalhes rituais'}.\n▸ POSE E EXPRESSÃO: postura soberana e intimidante de senhor das encruzilhadas, olhar de predador ancestral, energia das vias espirituais emanando do corpo.\n▸ CENÁRIO: ${e.local_pt || 'encruzilhada às três da madrugada, velas acesas nas quatro pontas, brasa e fumaça densa de charuto, paralelepípedo molhado'}.\n▸ ILUMINAÇÃO: chiaroscuro dramático de Caravaggio, luz vermelha e laranja de chamas de velas, sombras profundas e expressivas, fumaça como névoa de mistério.\n\n${NAME_LABEL_PT.exu(e.name)}\nEstilo artístico: ${style}. Pintura digital sombria e épica da Quimbanda brasileira, ultra-detalhado com texturas ricas, atmosfera sobrenatural das encruzilhadas, iluminação dramática de chamas e madrugada, qualidade de arte sacra de alta galeria. --ar 2:3`,
+
+  pombo: (e, style, comp) => `🌹 ${e.name.toUpperCase()} 🌹\n\nIlustração sacra da Quimbanda afro-brasileira. ${comp} da Pombogira ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'beleza sobrenatural devastadora, cabelos longos adornados, presença sedutora e poderosa'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'vermelho e preto'} — tecidos sensuais esvoaçantes de alta qualidade, joias exuberantes, adornos de poder feminino sagrado.\n▸ ATRIBUTOS RITUAIS (obrigatório na imagem): ${e.tools_pt || 'rosas vermelhas, leque ornamentado e charuto fino'}.\n▸ POSE E EXPRESSÃO: pose sedutora e soberana de rainha espiritual, sorriso que domina e hipnotiza, olhar de quem governa com beleza e poder absolutos.\n▸ CENÁRIO: ${e.local_pt || 'encruzilhada coberta de rosas vermelhas e velas carmesim, noite de lua cheia, pétalas ao vento como neve vermelha'}.\n▸ ILUMINAÇÃO: luz vermelha sensual e rosada de velas ardentes, reflexos dourados nos joias e detalhes, atmosfera de sedução, mistério e poder feminino.\n\n${NAME_LABEL_PT.pombo(e.name)}\nEstilo artístico: ${style}. Pintura digital épica e sedutora da Quimbanda brasileira, ultra-detalhado, beleza sobrenatural em cada detalhe, iluminação sensual de velas vermelhas e luar, qualidade de pintura de arte sacra de altíssimo nível. --ar 2:3`,
+
+  malandro: (e, style, comp) => `🎩 ${e.name.toUpperCase()} 🎩\n\nIlustração sacra da Umbanda afro-brasileira. ${comp} do Malandro ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'ginga irresistível de malandro carioca, astúcia nos olhos, charme e perigo em igual medida'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'branco e vermelho'} — roupa impecável de malandro clássico, chapéu panamá inclinado com charme, sapato bicolor bem engraxado.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'navalha de prata, chapéu panamá e bengala com pomo'}.\n▸ POSE E EXPRESSÃO: ginga de malandro nato, sorriso irônico de quem já ganhou antes de jogar, confiança absoluta no olhar e na postura.\n▸ CENÁRIO: ${e.local_pt || 'beco carioca iluminado por lampião antigo, paralelepípedo molhado de chuva, noite boêmia do Rio de Janeiro'}.\n▸ ILUMINAÇÃO: luz quente e dramática de lampião de ferro e lua, sombras compridas de beco urbano, atmosfera boêmia, perigosa e sedutora.\n\n${NAME_LABEL_PT.malandro(e.name)}\nEstilo artístico: ${style}. Pintura digital urbana e estilizada de arte sacra afro-brasileira, ultra-detalhado, cultura carioca autêntica e estilizada, iluminação noturna cinematográfica de lampião, qualidade de arte de galeria premium. --ar 2:3`,
+
+  baiano: (e, style, comp) => `🌊 ${e.name.toUpperCase()} 🌊\n\nIlustração sacra da Umbanda afro-brasileira. ${comp} do Baiano ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'alegria genuína e sabedoria popular baiana, sorriso largo, olhos que guardam o oceano'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'branco e azul do mar'} — trajes humildes e alegres da Bahia profunda, tecido simples com dignidade, autenticidade popular nordestina.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'cachimbo de barro e chapéu de palha com flores'}.\n▸ POSE E EXPRESSÃO: postura descontraída e sábia de homem do povo, sorriso genuíno de quem encontrou a felicidade, olhos com mar dentro.\n▸ CENÁRIO: ${e.local_pt || 'praia baiana ao entardecer dourado, coqueiros inclinados, mar azul turquesa, areia branca quente'}.\n▸ ILUMINAÇÃO: luz dourada e quente do pôr do sol baiano, tons de laranja e âmbar no horizonte, reflexo do sol no mar, atmosfera festiva e acolhedora.\n\n${NAME_LABEL_PT.baiano(e.name)}\nEstilo artístico: ${style}. Pintura digital quente e festiva de arte sacra afro-brasileira, ultra-detalhado, cultura popular baiana autêntica e vibrante, iluminação cinematográfica de entardecer tropical, riqueza de cores tropicais. --ar 2:3`,
+
+  preto: (e, style, comp) => `🕯️ ${e.name.toUpperCase()} 🕯️\n\nIlustração sacra da Umbanda afro-brasileira. ${comp} do Preto Velho ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'curvado pelo peso dos séculos mas luminoso de amor, olhar profundo de sabedoria ancestral africana'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'branco velho e marrom de terra'} — roupas simples de tecido rústico desgastado pelo tempo, rosário de madeira no pescoço, descalço na terra.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'cachimbo de barro e bengala de madeira envelhecida'}.\n▸ POSE E EXPRESSÃO: curvado com dignidade de ancestral, mãos calejadas abertas em bênção, olhar de amor incondicional que atravessa gerações.\n▸ CENÁRIO: ${e.local_pt || 'cabana humilde de terreiro ao entardecer, velas brancas acesas, ervas medicinais penduradas, chão de terra batida, cheiro de mato e fumaça'}.\n▸ ILUMINAÇÃO: luz suave e dourada de velas brancas, sombras acolhedoras e quentes, atmosfera de cura espiritual profunda e ancestralidade africana.\n\n${NAME_LABEL_PT.preto(e.name)}\nEstilo artístico: ${style}. Pintura digital ancestral e emocionante de arte sacra afro-brasileira, ultra-detalhado, espiritualidade africana profunda e autêntica, iluminação suave de vela ancestral, qualidade fotorrealista de pintura de alta galeria. --ar 2:3`,
+
+  boiadeiro: (e, style, comp) => `🐂 ${e.name.toUpperCase()} 🐂\n\nIlustração sacra da Umbanda afro-brasileira. ${comp} do Boiadeiro ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'força bruta e nobreza do homem do sertão, pele curtida pelo sol, olhar que domina o horizonte'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'couro marrom curtido e bege de poeira'} — couro trabalhado à mão, chapéu de vaqueiro nordestino com marcas de uso, esporas de metal, botas pesadas.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'laço de couro grosso e chapéu de vaqueiro'}.\n▸ POSE E EXPRESSÃO: postura forte e altiva do dono do sertão, olhar que domina o horizonte infinito, presença de homem que a terra respeita.\n▸ CENÁRIO: ${e.local_pt || 'sertão nordestino ao pôr do sol épico, poeira dourada em suspensão no ar, horizonte infinito de caatinga, manada de bois ao fundo'}.\n▸ ILUMINAÇÃO: luz laranja e dourada do pôr do sol sertanejo, poeira em suspensão como névoa dourada dramática, sombras quentes e compridas no chão ressecado.\n\n${NAME_LABEL_PT.boiadeiro(e.name)}\nEstilo artístico: ${style}. Pintura digital épica do sertão de arte sacra afro-brasileira, ultra-detalhado, paisagem nordestina grandiosa e autêntica, iluminação cinematográfica de pôr do sol sertanejo épico, texturas de couro e poeira riquíssimas. --ar 2:3`,
+
+  ere: (e, style, comp) => `⭐ ${e.name.toUpperCase()} ⭐\n\nIlustração sacra da Umbanda afro-brasileira. ${comp} do Erê ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'inocência pura radiante, alegria infantil contagiante, energia frenética e luminosa de criança espiritual'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'branco e cores vivas de criança'} — roupinha colorida de criança feliz, descalça e espontânea, detalhes infantis encantadores.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'brinquedos coloridos e doces rituais'}.\n▸ POSE E EXPRESSÃO: criança em pleno movimento de alegria e brincadeira, sorriso genuíno que encanta tudo ao redor, energia inocente que tudo ilumina.\n▸ CENÁRIO: ${e.local_pt || 'jardim encantado de terreiro com flores coloridas, borboletas douradas, luz filtrada pelas árvores, chão gramado e macio'}.\n▸ ILUMINAÇÃO: luz mágica e suave de conto de fadas brasileiro, tons pastel dourados e vibrantes, atmosfera de magia, inocência e alegria encantada.\n\n${NAME_LABEL_PT.ere(e.name)}\nEstilo artístico: ${style}. Pintura digital encantada e colorida de arte sacra afro-brasileira, ultra-detalhado, magia e inocência da infância espiritual, iluminação mágica de jardim encantado, cores vivas e alegres de alta qualidade. --ar 2:3`,
+
+  caboclo: (e, style, comp) => `🪶 ${e.name.toUpperCase()} 🪶\n\nIlustração sacra da Umbanda afro-brasileira. ${comp} do Caboclo ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'altivez e nobreza do guerreiro indígena, olhar de águia que tudo vê, presença de filho legítimo da floresta'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'penas coloridas e couro natural'} — adornos indígenas autênticos e elaborados, pintura de guerra com pigmentos naturais, couro de animal sagrado.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'arco de madeira sagrada, flechas e maracá de couro'}.\n▸ POSE E EXPRESSÃO: postura altiva e guerreira de nobre indígena em plena força, olhar de águia que vê o invisível, presença de guardião da floresta ancestral.\n▸ CENÁRIO: ${e.local_pt || 'floresta amazônica primária ao amanhecer, rio cristalino ao fundo, luz dourada filtrada entre gigantes árvores centenárias'}.\n▸ ILUMINAÇÃO: luz verde-dourada e dramática da floresta tropical, raios de sol filtrados entre as copas altas, sombras naturais da mata densa, névoa de madrugada na floresta.\n\n${NAME_LABEL_PT.caboclo(e.name)}\nEstilo artístico: ${style}. Pintura digital épica de floresta de arte sacra afro-indígena brasileira, ultra-detalhado, natureza e espiritualidade indígena autêntica, iluminação cinematográfica da floresta amazônica, texturas naturais riquíssimas. --ar 2:3`,
+
+  bruxa: (e, style, comp) => `🌙 ${e.name.toUpperCase()} 🌙\n\nIlustração de arte mística e esotérica do folclore mundial. ${comp} de ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'poder ancestral misterioso e sombrio, presença que inspira respeito e fascínio ao mesmo tempo'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'preto e roxo'} — vestes arcanas que parecem vivas, tecidos que flutuam sem vento, amuletos e símbolos de poder oculto.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'cajado de poder e grimório com runas'}.\n▸ POSE E EXPRESSÃO: postura de bruxa soberana e poderosa, olhar que guarda séculos de segredos proibidos, aura de poder oculto emanando do corpo.\n▸ CENÁRIO: ${e.local_pt || 'floresta mística e densa sob lua cheia gigante, névoa sobrenatural rastejante, árvores retorcidas iluminadas pela luz lunar prateada'}.\n▸ ILUMINAÇÃO: luz azul-prateada e fria de lua cheia, reflexos espectrais de feitiços e magia ativa, sombras longas e misteriosas, fogos-fátuos azuis flutuando ao redor.\n\n${NAME_LABEL_PT.bruxa(e.name)}\nEstilo artístico: ${style}. Pintura digital sombria e arcana de alta fantasia mística, ultra-detalhado, atmosfera de poder oculto ancestral, iluminação espectral de lua cheia, qualidade de arte de fantasia sombria de alto nível. --ar 2:3`,
+
+  egungun: (e, style, comp) => `👘 ${e.name.toUpperCase()} 👘\n\nIlustração sacra do culto Egungun da tradição Yoruba afro-brasileira. ${comp} do Egungun ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'forma completamente coberta por camadas de tecidos sagrados coloridos, máscara ancestral de madeira esculpida, presença que transforma o espaço ao redor em território sagrado dos mortos'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'camadas de tecidos sagrados em diversas cores rituais'} — roupa elaborada de tecidos sobrepostos que esconde completamente a forma humana, bordados rituais riquíssimos, adornos de contas e palhas sagradas.\n▸ ATRIBUTOS SAGRADOS (obrigatório na imagem): ${e.tools_pt || 'roupa de tecidos em camadas, máscara ancestral de madeira e bordão ritual dos mortos'}.\n▸ POSE E EXPRESSÃO: figura coberta em movimento ritual de dança sagrada, tecidos em movimento dramático e fluido, presença que irradia autoridade do além.\n▸ CENÁRIO: terreiro sagrado de culto Egungun com pilares rituais, fumaça de incenso denso, velas e oferendas aos ancestrais, chão marcado com símbolos rituais africanos.\n▸ ILUMINAÇÃO: luz dourada e alaranjada de fogueiras rituais, sombras dramáticas que dançam com os tecidos em movimento, atmosfera de presença ancestral densa e poderosa.\n\n${NAME_LABEL_PT.egungun(e.name)}\nEstilo artístico: ${style}. Pintura digital épica de arte sacra africana Yoruba, ultra-detalhado, texturas riquíssimas de tecidos sagrados em camadas, iluminação dramática de ritual noturno africano, qualidade de arte de alta galeria. --ar 2:3`,
+
+  eguns: (e, style, comp) => `✨ ${e.name.toUpperCase()} ✨\n\nIlustração sacra dos Eguns ancestrais da tradição Yoruba afro-brasileira. ${comp} de ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'presença ancestral espectral entre o mundo dos vivos e dos mortos, forma etérea translúcida, olhar que carrega séculos de sabedoria do além'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'branco e roxo com prata espectral'} — vestes ancestrais etéreas entre dois mundos, tecidos sagrados com a luz passando por eles, adornos espirituais dos antepassados.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'ferramentas rituais ancestrais, oferendas sagradas e presença luminosa entre os mundos'}.\n▸ POSE E EXPRESSÃO: postura ancestral espectral e majestosa, olhar entre os mundos que vê os dois planos simultaneamente, presença que honra a linhagem.\n▸ CENÁRIO: terreiro sagrado à meia-noite com velas e oferendas aos ancestrais, névoa entre os mundos, luz espectral dos antepassados, símbolos africanos sagrados no chão.\n▸ ILUMINAÇÃO: luz espectral suave entre os mundos, tons etéreos de prata e roxo, brilho quente de velas ancestrais, atmosfera de reverência e mistério ancestral sagrado.\n\n${NAME_LABEL_PT.eguns(e.name)}\nEstilo artístico: ${style}. Pintura digital espectral e sacra de arte ancestral Yoruba afro-brasileira, ultra-detalhado, atmosfera etérea entre o mundo dos vivos e dos mortos, iluminação espectral ancestral suave, qualidade de arte sacra de galeria premium. --ar 2:3`,
+
+  demonio: (e, style, comp) => `🔱 ${e.name.toUpperCase()} 🔱\n\nIlustração de arte sacra esotérica e espiritual. ${comp} de ${e.name} — ${e.desc_pt}.\n\n▸ APARÊNCIA OBRIGATÓRIA: ${e.traits_pt || 'forma sobrenatural épica e avassaladora, olhos luminosos e penetrantes, presença que distorce a realidade ao redor'}.\n▸ VESTIMENTAS E CORES: ${e.colors_pt || 'preto e vermelho profundo'} — vestes de entidade superior, adornos de poder absoluto, materiais que não existem no plano terreno.\n▸ ATRIBUTOS (obrigatório na imagem): ${e.tools_pt || 'cetro de poder, asas abertas e símbolos de entidade superior'}.\n▸ POSE E EXPRESSÃO: postura épica e dominante de entidade de poder superior, olhar luminoso que atravessa o mundo visível, presença que apaga tudo ao redor.\n▸ CENÁRIO: ${e.local_pt || 'reino espiritual de poder absoluto com colunatas de pedra negra, névoa etérea colorida, energia sobrenatural visível pulsando no ar'}.\n▸ ILUMINAÇÃO: luz sobrenatural emanando da própria entidade como fonte primária, contrastes extremos dramáticos, energia visível e pulsante ao redor de todo o corpo.\n\n${NAME_LABEL_PT.demonio(e.name)}\nEstilo artístico: ${style}. Pintura digital épica e sobrenatural de arte sacra esotérica de alta fantasia, ultra-detalhado, presença épica e avassaladora de entidade superior, iluminação sobrenatural dramática e impactante, qualidade de galeria de arte fantástica premium. --ar 2:3`,
+};
+
+const PROMPTS_EN = {
+  orixa: (e, style, comp) => `✦ ${e.name.toUpperCase()} ✦\n\nAfro-Brazilian Candomblé and Umbanda sacred art illustration. ${comp} of the orisha ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'majestic divine presence, radiant skin, visible aura of deity power'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'traditional sacred colors'} — noble flowing fabrics, impeccable ritual embroidery, sacred cowrie bead necklaces and divine jewelry.\n▸ SACRED ATTRIBUTES (must appear in image): ${e.tools_en || 'orisha ritual attributes prominently featured'}.\n▸ POSE AND EXPRESSION: majestic and sovereign divine posture, transcendent gaze radiating both celestial love and absolute power.\n▸ SETTING: ${e.local_en || 'sacred spiritual realm with golden light columns, ritual flowers all around, sky between the divine and earthly realms'}.\n▸ LIGHTING: divine golden light emanating from the orisha body itself, rays of celestial clarity surrounding, pulsating sacred presence atmosphere.\n\n${NAME_LABEL_EN.orixa(e.name)}\nArt style: ${style}. Epic digital painting of Afro-Brazilian sacred art, gallery masterpiece level, ultra-detailed, vibrant deep colors, dramatic cinematic deity lighting, high-quality photorealistic rendering. --ar 2:3`,
+
+  exu: (e, style, comp) => `⚡ ${e.name.toUpperCase()} ⚡\n\nAfro-Brazilian Quimbanda sacred art illustration. ${comp} of Exu ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'sovereign crossroads presence, piercing red eyes, aura of power and mystery'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'black and red'} — powerful crossroads garments, black metal and leather details, ritual Exu adornments.\n▸ RITUAL ATTRIBUTES (must appear in image): ${e.tools_en || 'trident and exu cane with ritual details prominently shown'}.\n▸ POSE AND EXPRESSION: sovereign and intimidating posture of crossroads lord, ancestral predator gaze, spiritual pathways energy emanating from the body.\n▸ SETTING: ${e.local_en || 'crossroads at 3am, candles lit at four corners, dense cigar smoke and embers, wet cobblestones reflecting flames'}.\n▸ LIGHTING: dramatic Caravaggio chiaroscuro, red and orange flame light from candles, deep and expressive shadows, smoke as mystery fog.\n\n${NAME_LABEL_EN.exu(e.name)}\nArt style: ${style}. Dark and epic Quimbanda digital painting, ultra-detailed with rich textures, supernatural crossroads atmosphere, dramatic flame and midnight lighting, premium sacred art gallery quality. --ar 2:3`,
+
+  pombo: (e, style, comp) => `🌹 ${e.name.toUpperCase()} 🌹\n\nAfro-Brazilian Quimbanda sacred art illustration. ${comp} of Pombogira ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'devastating supernatural beauty, long adorned hair, seductive and powerful presence'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'red and black'} — sensual high-quality flowing fabrics, exuberant jewelry, sacred feminine power adornments.\n▸ RITUAL ATTRIBUTES (must appear in image): ${e.tools_en || 'red roses, ornate fan and fine cigar'}.\n▸ POSE AND EXPRESSION: seductive and sovereign queen of the spiritual realm pose, smile that dominates and hypnotizes, gaze of one who rules with beauty and absolute power.\n▸ SETTING: ${e.local_en || 'crossroads carpeted in red roses and crimson candles, full moon night, red petals drifting like snow in the wind'}.\n▸ LIGHTING: sensual red and pink light of burning candles, golden reflections on jewelry and details, atmosphere of seduction, mystery and feminine power.\n\n${NAME_LABEL_EN.pombo(e.name)}\nArt style: ${style}. Epic and seductive Quimbanda digital painting, ultra-detailed, supernatural beauty in every detail, sensual red candle and moonlight lighting, highest level sacred art painting quality. --ar 2:3`,
+
+  malandro: (e, style, comp) => `🎩 ${e.name.toUpperCase()} 🎩\n\nAfro-Brazilian Umbanda sacred art illustration. ${comp} of Malandro ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'irresistible carioca swagger, cunning in the eyes, charm and danger in equal measure'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'white and red'} — impeccable classic malandro outfit, charming tilted panama hat, well-polished two-tone shoes.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'silver razor, panama hat and gold-pommel cane'}.\n▸ POSE AND EXPRESSION: born trickster swagger, ironic smile of one who already won before playing, absolute confidence in gaze and posture.\n▸ SETTING: ${e.local_en || 'carioca alley lit by antique iron lantern, rain-wet cobblestones, bohemian night of Rio de Janeiro'}.\n▸ LIGHTING: warm and dramatic iron lantern and moonlight, long alley shadows, bohemian, dangerous and seductive atmosphere.\n\n${NAME_LABEL_EN.malandro(e.name)}\nArt style: ${style}. Urban and stylized digital painting of Afro-Brazilian sacred art, ultra-detailed, authentic stylized carioca culture, cinematic nocturnal lantern lighting, premium gallery art quality. --ar 2:3`,
+
+  baiano: (e, style, comp) => `🌊 ${e.name.toUpperCase()} 🌊\n\nAfro-Brazilian Umbanda sacred art illustration. ${comp} of Baiano ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'genuine Bahian joy and folk wisdom, broad smile, eyes that hold the ocean'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'white and sea blue'} — humble and joyful clothes of deep Bahia, simple fabric with dignity, authentic northeastern folk style.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'clay pipe and straw hat with flowers'}.\n▸ POSE AND EXPRESSION: relaxed and wise posture of a man of the people, genuine smile of one who found happiness, eyes carrying the sea within.\n▸ SETTING: ${e.local_en || 'Bahian beach at golden sunset, leaning coconut trees, turquoise blue sea, warm white sand'}.\n▸ LIGHTING: golden and warm Bahian sunset light, orange and amber tones on the horizon, sea sun reflection, festive and welcoming atmosphere.\n\n${NAME_LABEL_EN.baiano(e.name)}\nArt style: ${style}. Warm and festive Afro-Brazilian sacred art digital painting, ultra-detailed, authentic vibrant Bahian folk culture, cinematic tropical sunset lighting, rich tropical colors. --ar 2:3`,
+
+  preto: (e, style, comp) => `🕯️ ${e.name.toUpperCase()} 🕯️\n\nAfro-Brazilian Umbanda sacred art illustration. ${comp} of Preto Velho ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'bent by the weight of centuries yet luminous with love, deep gaze of infinite African ancestral wisdom'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'aged white and earth brown'} — time-worn simple rustic fabric clothes, wooden rosary at neck, barefoot on earth.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'clay pipe and aged wooden cane'}.\n▸ POSE AND EXPRESSION: bent with ancestral dignity, calloused hands open in blessing, gaze of unconditional love crossing generations.\n▸ SETTING: ${e.local_en || 'humble terreiro hut at dusk, lit white candles, hanging medicinal herbs, beaten earth floor, scent of forest and smoke'}.\n▸ LIGHTING: soft golden white candle light, embracing warm shadows, deep spiritual healing and African ancestral atmosphere.\n\n${NAME_LABEL_EN.preto(e.name)}\nArt style: ${style}. Ancestral and moving Afro-Brazilian sacred art digital painting, ultra-detailed, deep authentic African spirituality, soft ancestral candlelight, photorealistic high-gallery painting quality. --ar 2:3`,
+
+  boiadeiro: (e, style, comp) => `🐂 ${e.name.toUpperCase()} 🐂\n\nAfro-Brazilian Umbanda sacred art illustration. ${comp} of Boiadeiro ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'raw strength and nobility of the backlands man, sun-tanned skin, gaze dominating the horizon'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'tanned leather brown and dust beige'} — hand-worked leather, northeastern cowboy hat with use marks, metal spurs, heavy boots.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'thick leather lasso and cowboy hat'}.\n▸ POSE AND EXPRESSION: strong and proud posture of the backlands master, gaze commanding the infinite horizon, presence that the land respects.\n▸ SETTING: ${e.local_en || 'northeastern backlands at epic sunset, golden dust suspended in air, infinite caatinga horizon, cattle herd in the distance'}.\n▸ LIGHTING: orange and golden backlands sunset light, suspended dust as dramatic golden haze, warm and long shadows on the dry cracked earth.\n\n${NAME_LABEL_EN.boiadeiro(e.name)}\nArt style: ${style}. Epic backlands Afro-Brazilian sacred art digital painting, ultra-detailed, grand authentic northeastern landscape, cinematic epic backlands sunset lighting, incredibly rich leather and dust textures. --ar 2:3`,
+
+  ere: (e, style, comp) => `⭐ ${e.name.toUpperCase()} ⭐\n\nAfro-Brazilian Umbanda sacred art illustration. ${comp} of Erê ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'radiant pure innocence, contagious childlike joy, frenetic and luminous spiritual child energy'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'white and vivid child colors'} — colorful happy child outfit, barefoot and spontaneous, enchanting childlike details.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'colorful toys and ritual sweets'}.\n▸ POSE AND EXPRESSION: child in full joy and play movement, genuine smile that enchants everything around, innocent energy illuminating all.\n▸ SETTING: ${e.local_en || 'enchanted terreiro garden with colorful flowers, golden butterflies, sunlight filtered through trees, soft grassy ground'}.\n▸ LIGHTING: magical and soft Brazilian fairy tale light, golden vibrant pastel tones, magical enchanted garden innocence and joy atmosphere.\n\n${NAME_LABEL_EN.ere(e.name)}\nArt style: ${style}. Enchanted and colorful Afro-Brazilian sacred art digital painting, ultra-detailed, spiritual childhood magic and innocence, magical enchanted garden lighting, vivid joyful high-quality colors. --ar 2:3`,
+
+  caboclo: (e, style, comp) => `🪶 ${e.name.toUpperCase()} 🪶\n\nAfro-Brazilian Umbanda sacred art illustration. ${comp} of Caboclo ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'proud forest warrior nobility, eagle gaze seeing the invisible, presence of legitimate forest son'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'colorful feathers and natural leather'} — authentic elaborate indigenous adornments, natural pigment war paint, sacred animal leather.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'sacred wood bow, arrows and leather maraca'}.\n▸ POSE AND EXPRESSION: proud and warrior posture of noble indigenous in full strength, eagle gaze seeing the unseen, forest ancestral guardian presence.\n▸ SETTING: ${e.local_en || 'primary Amazon forest at dawn, crystal river in background, golden light filtering through giant centennial trees'}.\n▸ LIGHTING: green-gold dramatic tropical forest light, sunrays filtering through high canopy, natural dense forest shadows, forest dawn mist.\n\n${NAME_LABEL_EN.caboclo(e.name)}\nArt style: ${style}. Epic forest Afro-indigenous Brazilian sacred art digital painting, ultra-detailed, authentic indigenous spirituality and nature, cinematic Amazon forest lighting, incredibly rich natural textures. --ar 2:3`,
+
+  bruxa: (e, style, comp) => `🌙 ${e.name.toUpperCase()} 🌙\n\nMystical esoteric folklore art illustration. ${comp} of ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'mysterious and shadowy ancestral power, presence inspiring awe and fascination simultaneously'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'black and purple'} — arcane garments that seem alive, fabrics floating without wind, amulets and occult power symbols.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'power staff and grimoire with runes'}.\n▸ POSE AND EXPRESSION: sovereign and powerful witch posture, gaze holding centuries of forbidden secrets, occult power aura emanating from body.\n▸ SETTING: ${e.local_en || 'dense mystical forest under giant full moon, crawling supernatural mist, twisted trees lit by silver moonlight'}.\n▸ LIGHTING: cold blue-silver full moonlight, spectral reflections of active spells and magic, long mysterious shadows, floating blue will-o-wisps surrounding.\n\n${NAME_LABEL_EN.bruxa(e.name)}\nArt style: ${style}. Dark and arcane high-fantasy mystical digital painting, ultra-detailed, ancestral occult power atmosphere, full moon spectral lighting, high-level dark fantasy art quality. --ar 2:3`,
+
+  demonio: (e, style, comp) => `🔱 ${e.name.toUpperCase()} 🔱\n\nEsoteric and spiritual sacred art illustration. ${comp} of ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'epic and overwhelming supernatural form, luminous piercing eyes, presence distorting reality around it'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'deep black and red'} — superior entity garments, absolute power adornments, materials not existing in the earthly plane.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'power scepter, open wings and superior entity symbols'}.\n▸ POSE AND EXPRESSION: epic and dominant superior entity posture, luminous gaze crossing the visible world, presence that eclipses everything around.\n▸ SETTING: ${e.local_en || 'absolute power spiritual realm with black stone colonnades, colorful ethereal mist, visible supernatural energy pulsating in the air'}.\n▸ LIGHTING: supernatural light emanating from the entity itself as primary source, extreme dramatic contrasts, visible pulsating energy surrounding the entire body.\n\n${NAME_LABEL_EN.demonio(e.name)}\nArt style: ${style}. Epic and supernatural esoteric sacred high-fantasy digital painting, ultra-detailed, epic and overwhelming superior entity presence, dramatic supernatural lighting, premium fantasy art gallery quality. --ar 2:3`,
+
+  egungun: (e, style, comp) => `👘 ${e.name.toUpperCase()} 👘\n\nSacred art illustration of the Egungun cult from Yoruba Afro-Brazilian tradition. ${comp} of Egungun ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'form completely covered by layers of sacred colored fabrics, carved wooden ancestral mask, presence transforming the surrounding space into sacred territory of the dead'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'layers of sacred fabrics in various ritual colors'} — elaborate garment of overlapping fabrics completely hiding human form, incredibly rich ritual embroidery, bead and sacred straw adornments.\n▸ SACRED ATTRIBUTES (must appear in image): ${e.tools_en || 'layered fabric garment, ancestral wooden mask and ritual dead authority staff'}.\n▸ POSE AND EXPRESSION: covered figure in sacred ritual dance movement, fabrics in dramatic and fluid motion, presence radiating authority from the beyond.\n▸ SETTING: sacred Egungun cult terreiro with ritual pillars, dense incense smoke, candles and offerings to ancestors, floor marked with ritual symbols.\n▸ LIGHTING: golden and orange light from ritual bonfires, dramatic shadows dancing with the fabrics, atmosphere of dense and powerful ancestral presence.\n\n${NAME_LABEL_EN.egungun(e.name)}\nArt style: ${style}. Epic Yoruba African sacred art digital painting, ultra-detailed, incredibly rich layered sacred fabric textures, dramatic African nocturnal ritual lighting, premium gallery art quality. --ar 2:3`,
+
+  eguns: (e, style, comp) => `✨ ${e.name.toUpperCase()} ✨\n\nSacred art illustration of the ancestral Eguns from Yoruba Afro-Brazilian tradition. ${comp} of ${e.name} — ${e.desc_en}.\n\n▸ MANDATORY APPEARANCE: ${e.traits_en || 'spectral ancestral presence between the world of the living and the dead, translucent ethereal form, gaze carrying centuries of wisdom from beyond'}.\n▸ COSTUME AND COLORS: ${e.colors_en || 'white and purple with spectral silver'} — ethereal ancestral garments between two worlds, sacred fabrics with light passing through, spiritual adornments of the ancestors.\n▸ ATTRIBUTES (must appear in image): ${e.tools_en || 'ancestral ritual tools, sacred offerings and luminous presence between worlds'}.\n▸ POSE AND EXPRESSION: spectral and majestic ancestral posture, gaze between the worlds that sees both planes simultaneously, presence that honors the lineage.\n▸ SETTING: sacred terreiro at midnight with candles and ancestral offerings, mist between worlds, spectral light of the ancestors, sacred African symbols on the ground.\n▸ LIGHTING: soft spectral light between worlds, silver and purple ethereal tones, warm ancestral candle glow, atmosphere of reverence and sacred ancestral mystery.\n\n${NAME_LABEL_EN.eguns(e.name)}\nArt style: ${style}. Spectral and sacred Yoruba Afro-Brazilian ancestral art digital painting, ultra-detailed, ethereal atmosphere between the worlds of living and dead, soft spectral ancestral lighting, premium sacred gallery art quality. --ar 2:3`,
+};
+
+const WATERMARK_PT = '\n▸ LOGOTIPO OBRIGATÓRIO (canto inferior esquerdo): pequeno emblema discreto com o texto "Artes Espirituais" em caligrafia elegante dourada sobre fundo escuro translúcido arredondado — integrado harmonicamente à composição, sem cobrir elementos principais.';
+const WATERMARK_EN = '\n▸ MANDATORY LOGO (bottom-left corner): small discreet emblem with the text "Artes Espirituais" in elegant golden calligraphy on a dark translucent rounded background — harmoniously integrated into the composition, not covering main elements.';
+
+let currentCat = 'orixa';
+let currentEntity = null;
+let currentLang = 'pt';
+let currentStyle = 'hyperrealistic digital painting, ultra-detailed, 8K';
+let currentComp  = 'full body portrait, powerful stance, symmetrical composition';
+let promptPT = '';
+let promptEN = '';
+
+function renderEntities(cat) {
+  const grid = document.getElementById('entity-grid');
+  const ents = ENTITIES[cat];
+  grid.innerHTML = '';
+  currentEntity = null;
+  ents.forEach(e => {
+    const card = document.createElement('div');
+    card.className = 'entity-card';
+    card.style.setProperty('--entity-accent', e.accent);
+    card.style.setProperty('--entity-glow', e.glow);
+    card.style.setProperty('--glow-color', e.glow);
+    card.innerHTML = `<span class="icon">${e.icon}</span><div class="name">${e.name}</div>`;
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.entity-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      currentEntity = e;
+    });
+    grid.appendChild(card);
+  });
+}
+
+document.querySelectorAll('[data-group="style"]').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('[data-group="style"]').forEach(x => x.classList.remove('sel'));
+    p.classList.add('sel');
+    currentStyle = p.dataset.val;
+  });
+});
+document.querySelectorAll('[data-group="comp"]').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('[data-group="comp"]').forEach(x => x.classList.remove('sel'));
+    p.classList.add('sel');
+    currentComp = p.dataset.val;
+  });
+});
+
+document.getElementById('cat-tabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.cat-tab');
+  if (!tab) return;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentCat = tab.dataset.cat;
+  const col = CAT_COLORS[currentCat];
+  document.documentElement.style.setProperty('--accent', col.accent);
+  document.documentElement.style.setProperty('--glow', col.glow);
+  renderEntities(currentCat);
+  document.getElementById('output-section').classList.remove('visible');
+});
+
+function generatePrompt() {
+  if (!currentEntity) {
+    const cards = document.querySelectorAll('.entity-card');
+    if (cards.length > 0) cards[Math.floor(Math.random() * cards.length)].click();
+    if (!currentEntity) return;
+  }
+  const style = currentStyle;
+  const comp  = currentComp;
+  promptPT = PROMPTS_PT[currentCat](currentEntity, style, comp).replace(' --ar 2:3', WATERMARK_PT + '\n --ar 2:3');
+  promptEN = PROMPTS_EN[currentCat](currentEntity, style, comp).replace(' --ar 2:3', WATERMARK_EN + '\n --ar 2:3');
+  document.getElementById('output-text').textContent = currentLang === 'pt' ? promptPT : promptEN;
+  const section = document.getElementById('output-section');
+  section.classList.remove('visible');
+  void section.offsetWidth;
+  section.classList.add('visible');
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const copyBtn = document.getElementById('btn-copy');
+  copyBtn.textContent = 'Copiar Prompt';
+  copyBtn.classList.remove('copied');
+}
+
+function switchLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-pt').classList.toggle('active', lang === 'pt');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  if (promptPT) document.getElementById('output-text').textContent = lang === 'pt' ? promptPT : promptEN;
+}
+
+function copyPrompt() {
+  const text = currentLang === 'pt' ? promptPT : promptEN;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar Prompt'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+(function() {
+  const canvas = document.getElementById('ritual-bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  function Particle() { this.reset(); }
+  Particle.prototype.reset = function() {
+    this.x = Math.random() * W;
+    this.y = H + 20;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.speed = Math.random() * 0.6 + 0.2;
+    this.drift = (Math.random() - 0.5) * 0.3;
+    this.life = 0;
+    this.maxLife = Math.random() * 200 + 100;
+    const t = Math.random();
+    this.color = t < 0.5 ? 'rgba(200,80,10,' : t < 0.75 ? 'rgba(201,134,10,' : 'rgba(139,12,44,';
+  };
+  Particle.prototype.update = function() {
+    this.y -= this.speed; this.x += this.drift; this.life++;
+    if (this.life > this.maxLife || this.y < -10) this.reset();
+  };
+  Particle.prototype.draw = function() {
+    const alpha = Math.sin((this.life / this.maxLife) * Math.PI) * 0.55;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color + alpha + ')';
+    ctx.fill();
+  };
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < 80; i++) {
+      const p = new Particle();
+      p.y = Math.random() * H;
+      p.life = Math.floor(Math.random() * p.maxLife);
+      particles.push(p);
+    }
+  }
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+  }
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  resize(); initParticles(); animate();
+})();
+
+// ── LOCAIS DE ATUAÇÃO ────────────────────────────────────────────────────
+const LOCAIS = {
+  // ORIXÁS
+  'Exú (Orixá)':  { pt: 'encruzilhadas, portões, ruas e mercados',               en: 'crossroads, gates, streets and markets' },
+  'Ogum':         { pt: 'estradas de ferro, campos de batalha e serralharias',    en: 'iron roads, battlefields and iron workshops' },
+  'Xangô':        { pt: 'pedreiras, tribunais, templos de pedra e montanhas',     en: 'quarries, courthouses, stone temples and mountains' },
+  'Iansã / Oyá':  { pt: 'cemitérios, tempestades, vendavais e encruzilhadas',     en: 'cemeteries, storms, gales and crossroads' },
+  'Oxum':         { pt: 'rios, cachoeiras, lagos e fontes de água doce',          en: 'rivers, waterfalls, lakes and freshwater springs' },
+  'Iemanjá':      { pt: 'mar, praias, oceano e costas marítimas',                 en: 'sea, beaches, ocean and maritime coasts' },
+  'Oxalá':        { pt: 'montanhas, nuvens, templos brancos e céu',               en: 'mountains, clouds, white temples and sky' },
+  'Oxóssi':       { pt: 'matas, florestas, savanas e trilhas de caça',            en: 'forests, jungles, savannas and hunting trails' },
+  'Obaluaiê':     { pt: 'cemitérios, hospitais, encruzilhadas e locais de doença',en: 'cemeteries, hospitals, crossroads and places of disease' },
+  'Nanã':         { pt: 'pântanos, lamaçais, rios de terra e lugares primordiais', en: 'swamps, mudflats, muddy rivers and primordial places' },
+  'Oxumarê':      { pt: 'rios, chuvas, arco-íris e espaços de transição',         en: 'rivers, rain, rainbows and transitional spaces' },
+  'Logunedé':     { pt: 'rios de mata, lagos e florestas próximas à água',        en: 'forest rivers, lakes and forests near water' },
+  'Ossaim':       { pt: 'matas fechadas, jardins de ervas e florestas sagradas',  en: 'dense forests, herb gardens and sacred woodlands' },
+  // EXUS
+  'Exu Caveira':           { pt: 'cemitérios, catacumbas e locais de morte',              en: 'cemeteries, catacombs and places of death' },
+  'Exu Morcego':           { pt: 'cavernas, ruínas e locais escuros abandonados',         en: 'caves, ruins and dark abandoned places' },
+  'Exu das Almas':         { pt: 'cemitérios, hospitais e limiar entre os mundos',        en: 'cemeteries, hospitals and threshold between worlds' },
+  'Exu 7 Galhadas':        { pt: 'sete encruzilhadas, cruzamentos e bifurcações',         en: 'seven crossroads, intersections and forks' },
+  'Exu Tiriri':            { pt: 'encruzilhadas, ruas e becos escuros',                   en: 'crossroads, streets and dark alleys' },
+  'Exu Marabô':            { pt: 'locais de magia negra, cemitérios e matas fechadas',    en: 'dark magic sites, cemeteries and dense forests' },
+  'Exu Pinga Fogo':        { pt: 'encruzilhadas em chamas, fornos e locais de fogo',      en: 'flaming crossroads, furnaces and fire sites' },
+  'Exu Veludo':            { pt: 'cabarés, casas noturnas, bares e encruzilhadas elegantes', en: 'cabarets, nighthouses, bars and elegant crossroads' },
+  'Exu Porteira':          { pt: 'portões de cemitérios, entradas e limiares',            en: 'cemetery gates, entrances and thresholds' },
+  'Exu Capa Preta':        { pt: 'becos escuros, ruas desertas e encruzilhadas noturnas', en: 'dark alleys, deserted streets and nocturnal crossroads' },
+  'Exu Tranca Rua':        { pt: 'ruas, estradas bloqueadas e encruzilhadas fechadas',    en: 'roads, blocked highways and closed crossroads' },
+  'Exu das Encruzilhadas': { pt: 'toda e qualquer encruzilhada do mundo',                 en: 'every crossroads in the world' },
+  'Exu Mirim':             { pt: 'becos, quintais e encruzilhadas de bairro',             en: 'alleys, backyards and neighborhood crossroads' },
+  'Exu do Cemitério':      { pt: 'cemitérios, mausoléus e jazigos',                       en: 'cemeteries, mausoleums and burial vaults' },
+  'Exu da Mata':           { pt: 'matas fechadas, florestas e serras',                    en: 'dense forests, woodlands and mountain ranges' },
+  'Exu dos Rios':          { pt: 'rios, margens de água e correntezas escuras',           en: 'rivers, water banks and dark currents' },
+  'Exu do Lodo':           { pt: 'pântanos, lamaçais e regiões alagadas',                 en: 'swamps, mudflats and flooded regions' },
+  'Exu Pagão':             { pt: 'locais primitivos, ruínas antigas e sítios ancestrais', en: 'primitive sites, ancient ruins and ancestral grounds' },
+  'Exu Ventania':          { pt: 'estradas abertas, planícies e locais de vendaval',      en: 'open roads, plains and gale-swept locations' },
+  'Exu Rei':               { pt: 'reino da quimbanda, trono de ossos e encruzilhadas reais', en: 'quimbanda kingdom, throne of bones and royal crossroads' },
+  'Exu Cigano':            { pt: 'estradas, acampamentos ciganos e feiras',               en: 'roads, gypsy camps and fairs' },
+  'Exu Pemba':             { pt: 'terreiros, salas de ritual e locais de pontos riscados', en: 'temples, ritual rooms and places of ritual drawings' },
+  'Exu Gira Mundo':        { pt: 'todos os pontos do globo, encruzilhadas cósmicas',      en: 'all points of the globe, cosmic crossroads' },
+  'Exu Sete Mares':        { pt: 'mares, oceanos, praias e abismos aquáticos',            en: 'seas, oceans, beaches and aquatic abysses' },
+  'Exu das Pedras':        { pt: 'pedreiras, grutas, cavernas e locais rochosos',         en: 'quarries, grottos, caves and rocky locations' },
+  'Exu Sete Facadas':      { pt: 'ruas perigosas, becos e locais de conflito',            en: 'dangerous streets, alleys and conflict sites' },
+  'Exu Quebra-Galho':      { pt: 'ruas, mercados e locais de resolução de problemas',     en: 'streets, markets and problem-solving locations' },
+  'Exu da Lua':            { pt: 'locais iluminados pela lua, noite aberta e cemitérios', en: 'moonlit places, open night and cemeteries' },
+  'Exu Omulu':             { pt: 'cemitérios, hospitais e locais de epidemia',            en: 'cemeteries, hospitals and epidemic sites' },
+  'Exu Bahiano':           { pt: 'praias da Bahia, pelourinho e ruas de Salvador',        en: 'Bahia beaches, pelourinho and Salvador streets' },
+  'Exu do Oriente':        { pt: 'templos orientais, locais de magia do oriente',         en: 'oriental temples, eastern magic sites' },
+  'Exu Sete Cruzes':       { pt: 'cemitérios com sete cruzes, locais de ritual fúnebre',  en: 'cemeteries with seven crosses, funerary ritual sites' },
+  'Exu Sete Cachoeiras':   { pt: 'cachoeiras, corredeiras e quedas d\'água',              en: 'waterfalls, rapids and water falls' },
+  'Exu Sete Encruzilhadas':{ pt: 'sete encruzilhadas simultâneas, caminhos múltiplos',   en: 'seven simultaneous crossroads, multiple paths' },
+  'Exu Sete Covas':        { pt: 'cemitérios, covas abertas e locais de enterro',         en: 'cemeteries, open graves and burial sites' },
+  'Exu Sete Sombras':      { pt: 'lugares de sombra absoluta, noites sem lua',            en: 'places of absolute shadow, moonless nights' },
+  'Exu da Estrada':        { pt: 'estradas, rodovias e caminhos de longa distância',      en: 'roads, highways and long-distance paths' },
+  'Exu Boca de Ouro':      { pt: 'cassinos, jogos, festas e locais de fortuna',           en: 'casinos, gambling dens, parties and fortune sites' },
+  'Exu Sete Cobras':       { pt: 'matas densas, pedras e locais de serpentes',            en: 'dense forests, stones and serpent habitats' },
+  'Exu Tata Caveira':      { pt: 'cemitérios coloniais, catacumbas e ossários',           en: 'colonial cemeteries, catacombs and ossuaries' },
+  'Exu da Madrugada':      { pt: 'ruas desertas entre 0h e 3h, a hora do demônio',        en: 'deserted streets between midnight and 3am, the devil\'s hour' },
+  'Exu dos Caminhos':      { pt: 'bifurcações, cruzamentos e estradas secundárias',       en: 'forks, junctions and secondary roads' },
+  // POMBOGIRAS
+  'Maria Padilha':                   { pt: 'encruzilhadas, bares noturnos e terreiros',              en: 'crossroads, night bars and temples' },
+  'Maria Padilha das Almas':         { pt: 'cemitérios, velatórios e limiar entre vivos e mortos',   en: 'cemeteries, wakes and threshold between living and dead' },
+  'Pombogira das Almas':             { pt: 'cemitérios, capelas e locais de morte',                  en: 'cemeteries, chapels and places of death' },
+  'Pombogira Cigana':                { pt: 'estradas, feiras, campos abertos e acampamentos',        en: 'roads, fairs, open fields and camps' },
+  'Pombogira Rainha':                { pt: 'encruzilhadas reais, salões e tronos de sombra',         en: 'royal crossroads, halls and shadow thrones' },
+  'Rosa Caveira':                    { pt: 'cemitérios, túmulos e capelas fúnebres',                 en: 'cemeteries, tombs and funerary chapels' },
+  'Pombogira 7 Saias':               { pt: 'encruzilhadas, praças e locais de festa popular',        en: 'crossroads, squares and popular party venues' },
+  'Pombogira das Rosas':             { pt: 'jardins, roseiral e encruzilhadas floridas',             en: 'gardens, rose gardens and flowered crossroads' },
+  'Pombogira Menina':                { pt: 'becos, quintais e encruzilhadas de bairro à noite',      en: 'alleys, backyards and neighborhood crossroads at night' },
+  'Pombogira da Lua':                { pt: 'clareiras, terreiros abertos e locais banhados pela lua', en: 'clearings, open temples and moonlit locations' },
+  'Pombogira Serpente':              { pt: 'matas, pedras e encruzilhadas de serpente',              en: 'forests, stones and serpent crossroads' },
+  'Pombogira do Cemitério':          { pt: 'cemitérios, mausoléus e capelas de ossos',               en: 'cemeteries, mausoleums and bone chapels' },
+  'Pombogira Dama da Noite':         { pt: 'casas noturnas, cabarés e ruas da madrugada',            en: 'nighthouses, cabarets and dawn streets' },
+  'Pombogira Mirongueira':           { pt: 'terreiros, salas de ritual e locais de feitiço',         en: 'temples, ritual rooms and sorcery sites' },
+  'Pombogira das Encruzilhadas':     { pt: 'toda encruzilhada do mundo, a qualquer hora',            en: 'every crossroads in the world, at any time' },
+  'Pombogira da Praia':              { pt: 'praias, orlas marítimas e beira-mar ao anoitecer',       en: 'beaches, seafronts and seaside at dusk' },
+  'Pombogira do Mar':                { pt: 'mar aberto, fundos oceânicos e praias isoladas',         en: 'open sea, ocean depths and isolated beaches' },
+  'Pombogira das Matas':             { pt: 'matas, florestas e bosques ao luar',                     en: 'forests, woodlands and moonlit groves' },
+  'Pombogira Sete Ventanias':        { pt: 'campos abertos, serras e locais de vento forte',         en: 'open fields, mountain ranges and strong wind locations' },
+  'Pombogira Rosa de Ouro':          { pt: 'salões ricos, cassinos e encruzilhadas de prosperidade', en: 'rich halls, casinos and prosperity crossroads' },
+  'Pombogira Baronesa':              { pt: 'mansões, salões aristocráticos e encruzilhadas nobres',  en: 'mansions, aristocratic halls and noble crossroads' },
+  'Pombogira Condessa':              { pt: 'palácios, bailes de máscaras e salões sombrios',         en: 'palaces, masquerade balls and shadowy halls' },
+  'Maria Mulambo':                   { pt: 'ruas pobres, favelas, becos e lixões',                   en: 'poor streets, slums, alleys and dumps' },
+  'Pombogira Sete Encruzilhadas':    { pt: 'sete encruzilhadas simultâneas do mundo feminino',       en: 'seven simultaneous crossroads of the feminine world' },
+  'Pombogira Moça':                  { pt: 'bares, bailes funk, ruas de bairro e festas',            en: 'bars, funk dances, neighborhood streets and parties' },
+  'Pombogira Velha':                 { pt: 'encruzilhadas antigas, quintais e terreiros de raiz',    en: 'ancient crossroads, backyards and root temples' },
+  'Pombogira Sete Cachoeiras':       { pt: 'cachoeiras, rios e locais de água corrente',             en: 'waterfalls, rivers and running water sites' },
+  'Pombogira da Estrada':            { pt: 'estradas, rodovias e caminhos noturnos',                 en: 'roads, highways and nocturnal paths' },
+  'Pombogira Cigana da Lua':         { pt: 'campos abertos ao luar, feiras e caravanas',             en: 'moonlit open fields, fairs and caravans' },
+  'Pombogira das Pedras':            { pt: 'pedreiras, grutas e locais rochosos à noite',            en: 'quarries, grottos and rocky locations at night' },
+  'Pombogira do Oriente':            { pt: 'templos orientais, jardins de lotus e mercados exóticos', en: 'oriental temples, lotus gardens and exotic markets' },
+  'Pombogira Sete Estrelas':         { pt: 'locais abertos ao céu estrelado, mirantes e clareiras',  en: 'open locations under starry sky, viewpoints and clearings' },
+  // BRUXAS
+  'Bruxa da Floresta':     { pt: 'florestas antigas, bosques sagrados e clareiras sombrias',    en: 'ancient forests, sacred groves and shadowy clearings' },
+  'Bruxa do Mar':          { pt: 'costas rochosas, fundos do mar e praias desertas à noite',    en: 'rocky coasts, ocean floors and deserted beaches at night' },
+  'Feiticeira Negra':      { pt: 'torres de pedra, salas secretas e locais de ritual oculto',  en: 'stone towers, secret rooms and occult ritual sites' },
+  'Bruxa Cigana':          { pt: 'estradas, acampamentos, feiras e cruzamentos de caminhos',   en: 'roads, camps, fairs and path crossings' },
+  'Bruxa dos Ossos':       { pt: 'ossuários, catacumbas, cemitérios e criptas antigas',        en: 'ossuaries, catacombs, cemeteries and ancient crypts' },
+  'Feiticeira das Trevas': { pt: 'abismos, masmorras e locais sem luz alguma',                 en: 'abysses, dungeons and places without any light' },
+  'Bruxa da Lua':          { pt: 'clareiras abertas, montes de pedra e altares sob a lua cheia', en: 'open clearings, stone mounds and altars under full moon' },
+  'Feiticeira do Fogo':    { pt: 'crateras vulcânicas, forjas e locais de fogo eterno',        en: 'volcanic craters, forges and eternal fire sites' },
+  'Bruxa da Neve':         { pt: 'montanhas nevadas, tundras e picos gelados',                 en: 'snowy mountains, tundras and frozen peaks' },
+  'Feiticeira da Morte':   { pt: 'portões do além, cemitérios e fronteira da vida com a morte', en: 'gates of beyond, cemeteries and life-death boundary' },
+  'Bruxa Voodoo':          { pt: 'selva tropical, templos de voodoo e encruzilhadas caribenhas', en: 'tropical jungle, voodoo temples and Caribbean crossroads' },
+  'Bruxa dos Pântanos':    { pt: 'pântanos profundos, mangues e locais encharcados',            en: 'deep swamps, mangroves and waterlogged sites' },
+  'Feiticeira Alquimista': { pt: 'laboratórios ocultos, torres de magia e bibliotecas proibidas', en: 'occult laboratories, magic towers and forbidden libraries' },
+  'Bruxa Sombria':         { pt: 'dimensões paralelas, espelhos e espaços entre as sombras',   en: 'parallel dimensions, mirrors and spaces between shadows' },
+  'Feiticeira das Runas':  { pt: 'círculos de pedras nórdicos, montanhas e bosques de abeto',  en: 'nordic stone circles, mountains and fir tree groves' },
+  'Bruxa das Cobras':      { pt: 'matas de serpentes, templos de cobra e locais pantanosos',   en: 'serpent forests, snake temples and swampy sites' },
+  'Feiticeira Vampira':    { pt: 'castelos em ruínas, cripta e vilas antigas da noite',        en: 'ruined castles, crypts and ancient night villages' },
+  'Bruxa da Encruzilhada': { pt: 'encruzilhadas de três caminhos, pontes e limiares noturnos', en: 'three-way crossroads, bridges and nocturnal thresholds' },
+  'Feiticeira Oriental':   { pt: 'pagodas, jardins zen noturnos e templos proibidos do oriente', en: 'pagodas, nocturnal zen gardens and forbidden eastern temples' },
+  'Bruxa Anciã':           { pt: 'cabanas isoladas na floresta, montes e vales escondidos',    en: 'isolated forest cabins, mounds and hidden valleys' },
+  'Feiticeira do Caos':    { pt: 'vórtices dimensionais, encruzilhadas entre mundos e fendas',  en: 'dimensional vortices, crossroads between worlds and rifts' },
+  // DEMÔNIOS
+  'Exu Lucifer':           { pt: 'abismo celestial, reino da luz caída e trono de poder eterno', en: 'celestial abyss, fallen light kingdom and eternal power throne' },
+  'Exu Belzebu':           { pt: 'pântanos, lixões e locais de podridão e decomposição',       en: 'swamps, dumps and places of rot and decomposition' },
+  'Exu das 7 Torres':      { pt: 'sete torres sombrias, castelos místicos e fortalezas espirituais', en: 'seven shadowy towers, mystical castles and spiritual fortresses' },
+  'Exu das Trevas':        { pt: 'vazio absoluto, névoa entre mundos e abismos espirituais',   en: 'absolute void, mist between worlds and spiritual abysses' },
+  'Exu Rei das Sombras':   { pt: 'reino das sombras, trono negro e corte espiritual',          en: 'shadow kingdom, black throne and spiritual court' },
+  'Exu Corvo':             { pt: 'campos de batalha, galerias de pedra e locais de guerra',    en: 'battlefields, stone galleries and war sites' },
+  'Exu Morte Negra':       { pt: 'peste, campos de epidemia e locais de morte em massa',       en: 'plague sites, epidemic fields and mass death locations' },
+  'Exu Serpente Negra':    { pt: 'jardins proibidos, serpentários e locais de tentação',       en: 'forbidden gardens, snake dens and temptation sites' },
+};
+
+// Mescla os locais nas entidades em tempo de execução
+
+
+
+
+// ── PIX QR Code ──────────────────────────────────────────────
+function crc16Pix(str) {
+  let crc = 0xFFFF;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+    }
+  }
+  return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+}
+
+function buildPixPayload(key, name, city, amount) {
+  const f = (id, val) => `${id}${String(val.length).padStart(2,'0')}${val}`;
+  const gui   = f('00', 'br.gov.bcb.pix');
+  const keyFl = f('01', key);
+  const mai   = f('26', gui + keyFl);
+  const addDt = f('62', f('05', '***'));
+  const body  = '000201' + '010212' + mai + '52040000' + '5303986' +
+                f('54', amount) + '5802BR' +
+                f('59', name.substring(0, 25)) +
+                f('60', city.substring(0, 15)) +
+                addDt + '6304';
+  return body + crc16Pix(body);
+}
+
+function drawPixQR() {
+  const url = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=6&color=110A0E&bgcolor=EDE0D4&data=19228408820';
+  document.getElementById('pix-banner-qr').src = url;
+  // Pix Copia e Cola com payload EMV completo
+  const payload = buildPixPayload('19228408820', 'Portal Sombras', 'Sao Paulo', '10.00');
+  document.getElementById('pix-copiacola').value = payload;
+}
+window.addEventListener('DOMContentLoaded', drawPixQR);
+
+function copyColaCode() {
+  const el = document.getElementById('pix-copiacola');
+  navigator.clipboard.writeText(el.value).then(() => {
+    const btn = document.getElementById('btn-cola');
+    const prev = btn.textContent;
+    btn.textContent = '✓ Copiado!';
+    btn.style.borderColor = 'var(--forest)';
+    btn.style.color = 'var(--forest)';
+    setTimeout(() => { btn.textContent = prev; btn.style.borderColor = ''; btn.style.color = ''; }, 2500);
+  });
+}
+
+function copyPixKey() {
+  navigator.clipboard.writeText('19228408820').then(() => {
+    const btn = document.getElementById('btn-copy-pix');
+    btn.textContent = '✓ Chave Copiada!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '◈ Copiar Chave PIX';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+}
+
+
+// ── Async app initialisation ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  // Loading indicator
+  const tabs = document.querySelector('.category-tabs');
+  if (tabs) {
+    tabs.innerHTML = '<span style="color:var(--gold);font-size:.8rem;letter-spacing:.2em">✦ Invocando entidades… ✦</span>';
+  }
+
+  const cats = ["orixa", "exu", "pombo", "bruxa", "demonio", "egungun", "eguns", "malandro", "baiano", "preto", "boiadeiro", "ere", "caboclo"];
+  const base = 'https://raw.githubusercontent.com/aandresoares53-bot/abc-resolve/claude/vercel-list-projects-acsxdg/promptespiritual-data';
+  try {
+    await Promise.all(cats.map(async cat => {
+      const r = await fetch(base + '/ent-' + cat + '.json');
+      ENTITIES[cat] = r.ok ? await r.json() : [];
+    }));
+  } catch(e) { console.error('Entity load error:', e); }
+
+  // Apply LOCAIS overrides
+  Object.values(ENTITIES).forEach(list => {
+  list.forEach(e => {
+    const loc = LOCAIS[e.name];
+    if (loc) { e.local_pt = loc.pt; e.local_en = loc.en; }
+  });
+});
+
+
+
+  // Render
+  renderEntities('orixa');
+});
+</script>
+
+</body>
+</html>
