@@ -1,0 +1,18 @@
+{
+  "name": "Portal das Sombras",
+  "short_name": "Portal Sombras",
+  "description": "Gerador de prompts para imagens de entidades espirituais afro-brasileiras",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E0A06",
+  "theme_color": "#1C0D18",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 56'><circle cx='28' cy='28' r='26' stroke='%23C9860A' stroke-width='1' fill='%231C0D18' opacity='0.9'/><polygon points='28,6 51,42 5,42' fill='none' stroke='%23C8320A' stroke-width='1'/></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

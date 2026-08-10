@@ -2,6 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <link rel="preconnect" href="https://raw.githubusercontent.com">
+  <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1C0D18">
+  <link rel="alternate" hreflang="pt-BR" href="https://promptespiritual.vercel.app/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal das Sombras — Gerador de Imagens Espirituais</title>
   <meta name="description" content="Crie prompts para geração de imagens de entidades da Umbanda, Quimbanda e do mundo espiritual afro-brasileiro.">
@@ -470,6 +475,186 @@
       letter-spacing: 0.1em;
     }
 
+
+    /* ── Dark mode ── */
+    [data-theme="dark"] {
+      --bg-deep:    #0E0A06;
+      --bg-surface: #1A1008;
+      --bg-card:    #1E1208;
+      --bg-card-hover: #261808;
+      --border:     #3A2818;
+      --border-lit: #6A4830;
+      --text:       #E8D8C0;
+      --text-muted: #A08060;
+      --text-dim:   #5A4030;
+    }
+
+    /* ── Dark mode toggle ── */
+    .theme-toggle {
+      position: fixed;
+      top: 14px; right: 14px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-lit);
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      z-index: 999;
+    }
+    .theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Minimum tap size 44px (#8) ── */
+    .cat-tab, .btn-copy, .btn-regen, .btn-share, .btn-dl,
+    .lang-btn, .btn-generate { min-height: 44px; }
+    .cat-tab { display: inline-flex; align-items: center; }
+
+    /* ── Focus visible (#9) ── */
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    /* ── Prompt counter (#10) ── */
+    .prompt-counter {
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    /* ── Search input (#12) ── */
+    .entity-search-wrap {
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .entity-search {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: Georgia, serif;
+      font-size: 0.85rem;
+      padding: 9px 14px 9px 36px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .entity-search:focus { border-color: var(--border-lit); }
+    .entity-search::placeholder { color: var(--text-dim); }
+    .entity-search-icon {
+      position: absolute;
+      left: 11px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    /* ── Favorite star (#3) ── */
+    .fav-btn {
+      position: absolute;
+      top: 5px; right: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      padding: 2px;
+      line-height: 1;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .fav-btn.starred { color: #C9860A; }
+    .fav-btn:hover { transform: scale(1.2); }
+    .entity-card { position: relative; }
+
+    /* ── Share & Download buttons (#1, #4) ── */
+    .btn-share, .btn-dl {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 44px;
+    }
+    .btn-share:hover, .btn-dl:hover { border-color: var(--border-lit); color: var(--text); }
+
+    /* ── History panel (#2) ── */
+    .history-section {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .history-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .history-header h3 {
+      font-family: 'Palatino Linotype', Palatino, Georgia, serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .history-clear {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      padding: 4px 8px;
+    }
+    .history-clear:hover { color: var(--ember); }
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .history-item:hover { border-color: var(--border-lit); }
+    .history-item-icon { font-size: 1.2rem; flex-shrink: 0; line-height: 1.4; }
+    .history-item-body { flex: 1; min-width: 0; }
+    .history-item-name { font-size: 0.82rem; color: var(--text); margin-bottom: 3px; }
+    .history-item-preview {
+      font-size: 0.72rem; color: var(--text-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .history-item-time { font-size: 0.65rem; color: var(--text-dim); flex-shrink: 0; margin-top: 2px; }
+    .history-empty { font-size: 0.8rem; color: var(--text-dim); text-align: center; padding: 20px; }
+
+    /* ── Keyboard shortcut hints ── */
+    .kbd-hints {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      margin-top: 8px; margin-bottom: 4px;
+    }
+    .kbd-hint { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.05em; }
+    .kbd-hint kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      font-size: 0.6rem;
+      font-family: monospace;
+      border-radius: 2px;
+      margin-right: 3px;
+    }
+
+    /* ── Favorites tab in category tabs ── */
+    .cat-tab[data-cat="__favs"] { color: #C9860A; }
+    .cat-tab[data-cat="__favs"].active { --accent: #C9860A; --glow: rgba(201,134,10,0.22); }
+
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg-deep); }
     ::-webkit-scrollbar-thumb { background: var(--border-lit); }
@@ -821,6 +1006,8 @@
   </div>
 </div>
 
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Alternar modo escuro/claro" title="Modo Escuro / Claro">🌙</button>
+
 <canvas id="ritual-bg"></canvas>
 
 <div id="app">
@@ -839,12 +1026,13 @@
       Gerador de Imagens<br>Espirituais
     </h1>
     <p>Crie prompts para geração de imagens de entidades da Umbanda, Quimbanda e do mundo espiritual afro-brasileiro.</p>
+    <div class="prompt-counter" id="prompt-counter"></div>
     <div class="divider"></div>
   </header>
 
   <div class="section-label">I — Escolha a Categoria</div>
   <div class="category-tabs" id="cat-tabs">
-    <button class="cat-tab active" data-cat="orixa">Orixás</button>
+    <button class="cat-tab active" data-cat="orixa" aria-label="Categoria Orixás">Orixás</button>
     <button class="cat-tab" data-cat="exu">Exus</button>
     <button class="cat-tab" data-cat="pombo">Pombogiras</button>
     <button class="cat-tab" data-cat="malandro">Malandros</button>
@@ -857,10 +1045,15 @@
     <button class="cat-tab" data-cat="demonio">Entidades da Quimbanda</button>
     <button class="cat-tab" data-cat="egungun">Egunguns</button>
     <button class="cat-tab" data-cat="eguns">Eguns</button>
+    <button class="cat-tab" data-cat="__favs" aria-label="Entidades favoritas">⭐ Favoritos</button>
   </div>
 
   <div class="section-label">II — Selecione a Entidade</div>
-  <div class="entity-grid" id="entity-grid"></div>
+  <div class="entity-search-wrap">
+    <span class="entity-search-icon">🔍</span>
+    <input class="entity-search" id="entity-search" type="search" placeholder="Buscar entidade…" aria-label="Buscar entidade" oninput="filterEntities(this.value)">
+  </div>
+  <div class="entity-grid" id="entity-grid" role="list"></div>
 
   <div class="section-label">III — Personalize o Visual</div>
   <div class="vc-wrapper">
@@ -979,15 +1172,24 @@
   <div class="output-section" id="output-section">
     <div class="section-label">IV — Prompt Gerado</div>
     <div class="output-lang-toggle">
-      <button class="lang-btn active" id="btn-pt" onclick="switchLang('pt')">Português</button>
-      <button class="lang-btn" id="btn-en" onclick="switchLang('en')">English</button>
+      <button class="lang-btn active" id="btn-pt" onclick="switchLang('pt')" aria-label="Mostrar em Português">Português</button>
+      <button class="lang-btn" id="btn-en" onclick="switchLang('en')" aria-label="Show in English">English</button>
     </div>
     <div class="output-box">
       <p id="output-text"></p>
     </div>
     <div class="copy-row">
-      <button class="btn-copy" id="btn-copy" onclick="copyPrompt()">Copiar Prompt</button>
-      <button class="btn-regen" onclick="generatePrompt()">Gerar Novamente</button>
+      <button class="btn-copy" id="btn-copy" onclick="copyPrompt()" aria-label="Copiar prompt">Copiar Prompt</button>
+      <button class="btn-regen" onclick="generatePrompt()" aria-label="Gerar outro prompt">Gerar Novamente</button>
+      <button class="btn-share" onclick="sharePrompt()" aria-label="Compartilhar prompt">Compartilhar</button>
+      <button class="btn-dl" onclick="downloadPrompt()" aria-label="Baixar prompt como arquivo">Baixar .txt</button>
+    </div>
+    <div class="kbd-hints">
+      <span class="kbd-hint"><kbd>G</kbd> Gerar</span>
+      <span class="kbd-hint"><kbd>C</kbd> Copiar</span>
+      <span class="kbd-hint"><kbd>R</kbd> Regenerar</span>
+      <span class="kbd-hint"><kbd>D</kbd> Baixar</span>
+      <span class="kbd-hint"><kbd>F</kbd> Favoritar entidade</span>
     </div>
   </div>
 
@@ -1015,6 +1217,15 @@
         <p>Excelente para estilos artísticos tradicionais. Funciona bem com as opções de Aquarela e Óleo.</p>
       </div>
     </div>
+  </div>
+
+  <!-- Histórico de prompts -->
+  <div class="history-section" id="history-section" style="display:none">
+    <div class="history-header">
+      <h3>⟳ Histórico</h3>
+      <button class="history-clear" onclick="clearHistory()" aria-label="Limpar histórico">Limpar tudo</button>
+    </div>
+    <div class="history-list" id="history-list"></div>
   </div>
 
   <!-- Seção de Doação PIX -->
@@ -1143,18 +1354,40 @@ let currentComp  = 'full body portrait, powerful stance, symmetrical composition
 let promptPT = '';
 let promptEN = '';
 
-function renderEntities(cat) {
+function renderEntities(cat, filter) {
   const grid = document.getElementById('entity-grid');
-  const ents = ENTITIES[cat];
+  let ents;
+  if (cat === '__favs') {
+    const favs = getFavs();
+    ents = [];
+    Object.values(ENTITIES).forEach(list => {
+      list.forEach(e => { if (favs.includes(e.name)) ents.push(e); });
+    });
+  } else {
+    ents = ENTITIES[cat] || [];
+  }
+  if (filter) {
+    const q = filter.toLowerCase();
+    ents = ents.filter(e => e.name.toLowerCase().includes(q));
+  }
   grid.innerHTML = '';
   currentEntity = null;
+  const favs = getFavs();
   ents.forEach(e => {
     const card = document.createElement('div');
     card.className = 'entity-card';
-    card.style.setProperty('--entity-accent', e.accent);
-    card.style.setProperty('--entity-glow', e.glow);
-    card.style.setProperty('--glow-color', e.glow);
-    card.innerHTML = `<span class="icon">${e.icon}</span><div class="name">${e.name}</div>`;
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('aria-label', e.name);
+    card.style.setProperty('--entity-accent', e.accent || 'var(--ember)');
+    card.style.setProperty('--entity-glow', e.glow || 'var(--glow-ember)');
+    card.style.setProperty('--glow-color', e.glow || 'var(--glow-ember)');
+    const starred = favs.includes(e.name);
+    card.innerHTML = `<span class="icon">${e.icon || '✦'}</span><div class="name">${e.name}</div>`
+      + `<button class="fav-btn${starred ? ' starred' : ''}" data-name="${e.name}" aria-label="${starred ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" title="Favoritar">${starred ? '★' : '☆'}</button>`;
+    card.querySelector('.fav-btn').addEventListener('click', ev => {
+      ev.stopPropagation();
+      toggleFav(e.name, card.querySelector('.fav-btn'));
+    });
     card.addEventListener('click', () => {
       document.querySelectorAll('.entity-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
@@ -1162,6 +1395,29 @@ function renderEntities(cat) {
     });
     grid.appendChild(card);
   });
+  if (ents.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-dim);font-size:.85rem">'
+      + (cat === '__favs' ? '⭐ Nenhum favorito ainda. Clique na estrela de uma entidade para favoritar.' : '🔍 Nenhuma entidade encontrada.')
+      + '</div>';
+  }
+}
+
+// Favorites helpers (#3)
+function getFavs() {
+  try { return JSON.parse(localStorage.getItem('favs') || '[]'); } catch(e) { return []; }
+}
+function toggleFav(name, btn) {
+  const favs = getFavs();
+  const idx = favs.indexOf(name);
+  if (idx >= 0) { favs.splice(idx, 1); btn.textContent = '☆'; btn.classList.remove('starred'); btn.setAttribute('aria-label','Adicionar aos favoritos'); }
+  else          { favs.push(name);     btn.textContent = '★'; btn.classList.add('starred');    btn.setAttribute('aria-label','Remover dos favoritos'); }
+  localStorage.setItem('favs', JSON.stringify(favs));
+  if (currentCat === '__favs') renderEntities('__favs');
+}
+
+// Search/filter entities (#12)
+function filterEntities(q) {
+  renderEntities(currentCat, q);
 }
 
 document.querySelectorAll('[data-group="style"]').forEach(p => {
@@ -1185,9 +1441,10 @@ document.getElementById('cat-tabs').addEventListener('click', (e) => {
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
   currentCat = tab.dataset.cat;
-  const col = CAT_COLORS[currentCat];
+  const col = CAT_COLORS[currentCat] || CAT_COLORS.exu;
   document.documentElement.style.setProperty('--accent', col.accent);
   document.documentElement.style.setProperty('--glow', col.glow);
+  document.getElementById('entity-search').value = '';
   renderEntities(currentCat);
   document.getElementById('output-section').classList.remove('visible');
 });
@@ -1211,6 +1468,8 @@ function generatePrompt() {
   const copyBtn = document.getElementById('btn-copy');
   copyBtn.textContent = 'Copiar Prompt';
   copyBtn.classList.remove('copied');
+  saveHistory(currentEntity, promptPT, promptEN);
+  updateCounter();
 }
 
 function switchLang(lang) {
@@ -1230,6 +1489,139 @@ function copyPrompt() {
     setTimeout(() => { btn.textContent = 'Copiar Prompt'; btn.classList.remove('copied'); }, 2000);
   });
 }
+
+// ── Share prompt (#1) ──────────────────────────────
+async function sharePrompt() {
+  const text = currentLang === 'pt' ? promptPT : promptEN;
+  if (!text) { generatePrompt(); return; }
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Portal das Sombras',
+        text: text.substring(0, 200) + '…',
+        url: 'https://promptespiritual.vercel.app/'
+      });
+    } catch(e) { if (e.name !== 'AbortError') copyPrompt(); }
+  } else {
+    copyPrompt();
+    const btn = document.querySelector('.btn-share');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  }
+}
+
+// ── Download .txt (#4) ──────────────────────────────
+function downloadPrompt() {
+  const text = currentLang === 'pt' ? promptPT : promptEN;
+  if (!text) { generatePrompt(); return; }
+  const name = (currentEntity ? currentEntity.name.replace(/[^a-zA-Z0-9À-ú]/g, '_') : 'prompt');
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${name}_prompt.txt`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── History (#2) ───────────────────────────────────
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('promptHistory') || '[]'); } catch(e) { return []; }
+}
+function saveHistory(entity, pt, en) {
+  if (!entity) return;
+  const h = getHistory();
+  h.unshift({ name: entity.name, icon: entity.icon || '✦', pt, en, ts: Date.now() });
+  if (h.length > 12) h.splice(12);
+  localStorage.setItem('promptHistory', JSON.stringify(h));
+  renderHistory();
+}
+function renderHistory() {
+  const h = getHistory();
+  const sec = document.getElementById('history-section');
+  const list = document.getElementById('history-list');
+  if (h.length === 0) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  const now = Date.now();
+  list.innerHTML = h.map((item, i) => {
+    const ago = Math.round((now - item.ts) / 60000);
+    const timeStr = ago < 1 ? 'agora' : ago < 60 ? ago + 'min' : Math.round(ago/60) + 'h';
+    const preview = (item.pt || '').replace(/\n/g, ' ').substring(0, 80) + '…';
+    return `<div class="history-item" onclick="restoreHistory(${i})" role="button" aria-label="Restaurar prompt de ${item.name}" tabindex="0">
+      <span class="history-item-icon">${item.icon}</span>
+      <div class="history-item-body">
+        <div class="history-item-name">${item.name}</div>
+        <div class="history-item-preview">${preview}</div>
+      </div>
+      <span class="history-item-time">${timeStr}</span>
+    </div>`;
+  }).join('');
+}
+function restoreHistory(i) {
+  const h = getHistory();
+  if (!h[i]) return;
+  promptPT = h[i].pt; promptEN = h[i].en;
+  document.getElementById('output-text').textContent = currentLang === 'pt' ? promptPT : promptEN;
+  const section = document.getElementById('output-section');
+  section.classList.add('visible');
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function clearHistory() {
+  if (!confirm('Apagar todo o histórico?')) return;
+  localStorage.removeItem('promptHistory');
+  renderHistory();
+}
+
+// ── Prompt counter (#10) ────────────────────────────
+function updateCounter() {
+  let n = parseInt(localStorage.getItem('promptCount') || '0') + 1;
+  localStorage.setItem('promptCount', n);
+  const el = document.getElementById('prompt-counter');
+  if (el) el.textContent = n === 1 ? '✦ 1 prompt invocado ✦' : `✦ ${n} prompts invocados ✦`;
+}
+function initCounter() {
+  const n = parseInt(localStorage.getItem('promptCount') || '0');
+  if (n > 0) {
+    const el = document.getElementById('prompt-counter');
+    if (el) el.textContent = `✦ ${n} prompt${n > 1 ? 's' : ''} invocado${n > 1 ? 's' : ''} ✦`;
+  }
+}
+
+// ── Dark mode (#6) ──────────────────────────────────
+function toggleTheme() {
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  document.documentElement.dataset.theme = isDark ? '' : 'dark';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
+}
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'dark' || (!saved && prefersDark)) {
+    document.documentElement.dataset.theme = 'dark';
+    const btn = document.getElementById('theme-toggle');
+    if (btn) btn.textContent = '☀️';
+  }
+}
+
+// ── Keyboard shortcuts (#7) ────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.target.matches('input, textarea, select')) return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  switch(e.key.toLowerCase()) {
+    case 'g': e.preventDefault(); generatePrompt(); break;
+    case 'r': e.preventDefault(); generatePrompt(); break;
+    case 'c': if (promptPT) { e.preventDefault(); copyPrompt(); } break;
+    case 'd': if (promptPT) { e.preventDefault(); downloadPrompt(); } break;
+    case 'f': {
+      const sel = document.querySelector('.entity-card.selected .fav-btn');
+      if (sel) { e.preventDefault(); sel.click(); }
+      break;
+    }
+    case '/': e.preventDefault(); document.getElementById('entity-search')?.focus(); break;
+  }
+});
 
 (function() {
   const canvas = document.getElementById('ritual-bg');
@@ -1498,6 +1890,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Render initial category
   renderEntities('orixa');
+  // Init persistent state
+  renderHistory();
+  initCounter();
+  initTheme();
 });
 </script>
 
