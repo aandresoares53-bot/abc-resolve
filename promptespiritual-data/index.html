@@ -1469,32 +1469,34 @@ function copyPixKey() {
 
 // ── Async app initialisation ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  // Loading indicator
-  const tabs = document.querySelector('.category-tabs');
-  if (tabs) {
-    tabs.innerHTML = '<span style="color:var(--gold);font-size:.8rem;letter-spacing:.2em">✦ Invocando entidades… ✦</span>';
+  // Show loading indicator inside entity-grid (leaves category tabs untouched)
+  const grid = document.getElementById('entity-grid');
+  if (grid) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--gold);font-size:.85rem;letter-spacing:.25em">✦ Invocando entidades… ✦</div>';
   }
 
-  const cats = ["orixa", "exu", "pombo", "bruxa", "demonio", "egungun", "eguns", "malandro", "baiano", "preto", "boiadeiro", "ere", "caboclo"];
+  const cats = ["orixa","exu","pombo","bruxa","demonio","egungun","eguns","malandro","baiano","preto","boiadeiro","ere","caboclo"];
   const base = 'https://raw.githubusercontent.com/aandresoares53-bot/abc-resolve/claude/vercel-list-projects-acsxdg/promptespiritual-data';
   try {
     await Promise.all(cats.map(async cat => {
       const r = await fetch(base + '/ent-' + cat + '.json');
       ENTITIES[cat] = r.ok ? await r.json() : [];
     }));
-  } catch(e) { console.error('Entity load error:', e); }
+  } catch(e) {
+    console.error('Entity load error:', e);
+    if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--ember);font-size:.8rem">Erro ao carregar entidades. Recarregue a página.</div>';
+    return;
+  }
 
   // Apply LOCAIS overrides
   Object.values(ENTITIES).forEach(list => {
-  list.forEach(e => {
-    const loc = LOCAIS[e.name];
-    if (loc) { e.local_pt = loc.pt; e.local_en = loc.en; }
+    list.forEach(e => {
+      const loc = LOCAIS[e.name];
+      if (loc) { e.local_pt = loc.pt; e.local_en = loc.en; }
+    });
   });
-});
 
-
-
-  // Render
+  // Render initial category
   renderEntities('orixa');
 });
 </script>
