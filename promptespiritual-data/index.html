@@ -321,6 +321,43 @@
     .custom-group select:hover,
     .custom-group select:focus { border-color: var(--border-lit); }
 
+    /* ── Custom description field ── */
+    .custom-desc-wrap {
+      margin-bottom: 20px;
+    }
+    .custom-desc-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: .75;
+      margin-bottom: 8px;
+    }
+    .custom-desc-textarea {
+      width: 100%;
+      min-height: 72px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--fg);
+      font-family: inherit;
+      font-size: .88rem;
+      line-height: 1.5;
+      resize: vertical;
+      transition: border-color .2s, box-shadow .2s;
+      box-sizing: border-box;
+    }
+    .custom-desc-textarea::placeholder { color: var(--fg); opacity: .35; }
+    .custom-desc-textarea:focus {
+      outline: none;
+      border-color: var(--accent, var(--ember));
+      box-shadow: 0 0 0 2px var(--glow, var(--glow-ember));
+    }
+
     .btn-generate {
       display: block;
       width: 100%;
@@ -1177,6 +1214,14 @@
     </div>
   </div>
 
+  <div class="custom-desc-wrap">
+    <div class="custom-desc-label">✦ Detalhes adicionais (opcional)</div>
+    <textarea id="custom-desc" class="custom-desc-textarea"
+      placeholder="Descreva detalhes extras que quer no prompt: roupa específica, pose, cenário, estilo de arte, etc."
+      rows="3"
+      aria-label="Descrição adicional para o prompt"></textarea>
+  </div>
+
   <button class="btn-generate" id="btn-gen" onclick="generatePrompt()">
     <span>✦ Gerar Prompt ✦</span>
   </button>
@@ -1474,17 +1519,33 @@ function generatePrompt() {
   }
   const style = currentStyle;
   const comp  = currentComp;
-  promptPT = PROMPTS_PT[currentCat](currentEntity, style, comp).replace(' --ar 9:16', WATERMARK_PT + '\n --ar 9:16');
-  promptEN = PROMPTS_EN[currentCat](currentEntity, style, comp).replace(' --ar 9:16', WATERMARK_EN + '\n --ar 9:16');
-  document.getElementById('output-text').textContent = currentLang === 'pt' ? promptPT : promptEN;
+  // Custom description field
+  const customDescEl = document.getElementById('custom-desc');
+  const customDesc = customDescEl ? customDescEl.value.trim() : '';
+  const customInject = customDesc ? '\n\n▸ DETALHES ADICIONAIS: ' + customDesc + '.' : '';
+  const customInjectEN = customDesc ? '\n\n▸ ADDITIONAL DETAILS: ' + customDesc + '.' : '';
+  promptPT = PROMPTS_PT[currentCat](currentEntity, style, comp).replace(' --ar 9:16', customInject + WATERMARK_PT + '\n --ar 9:16');
+  promptEN = PROMPTS_EN[currentCat](currentEntity, style, comp).replace(' --ar 9:16', customInjectEN + WATERMARK_EN + '\n --ar 9:16');
+  // Force English output
+  currentLang = 'en';
+  document.getElementById('btn-pt').classList.remove('active');
+  document.getElementById('btn-en').classList.add('active');
+  document.getElementById('output-text').textContent = promptEN;
   const section = document.getElementById('output-section');
   section.classList.remove('visible');
   void section.offsetWidth;
   section.classList.add('visible');
   section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Auto-copy to clipboard
   const copyBtn = document.getElementById('btn-copy');
-  copyBtn.textContent = 'Copiar Prompt';
-  copyBtn.classList.remove('copied');
+  navigator.clipboard.writeText(promptEN).then(() => {
+    copyBtn.textContent = '✓ Copiado!';
+    copyBtn.classList.add('copied');
+    setTimeout(() => { copyBtn.textContent = 'Copiar Prompt'; copyBtn.classList.remove('copied'); }, 2500);
+  }).catch(() => {
+    copyBtn.textContent = 'Copiar Prompt';
+    copyBtn.classList.remove('copied');
+  });
   saveHistory(currentEntity, promptPT, promptEN);
   updateCounter();
 }
