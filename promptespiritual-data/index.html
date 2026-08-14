@@ -182,6 +182,7 @@
     .cat-tab[data-cat="egungun"].active  { --accent: #8A6A2A;       --glow: rgba(138,106,42,0.18); }
     .cat-tab[data-cat="eguns"].active    { --accent: #5A3A7A;       --glow: rgba(90,58,122,0.18); }
     .cat-tab[data-cat="cigano"].active   { --accent: #8B1A6B;       --glow: rgba(139,26,107,0.22); }
+    .cat-tab[data-cat="pictografia"].active { --accent: #7A5C2A;       --glow: rgba(122,92,42,0.22); }
 
     /* ── Pill Selector ── */
     .vc-wrapper { margin-bottom: 32px; }
@@ -1090,6 +1091,7 @@
     <button class="cat-tab" data-cat="egungun">Egunguns</button>
     <button class="cat-tab" data-cat="eguns">Eguns</button>
     <button class="cat-tab" data-cat="cigano" aria-label="Categoria Ciganas e Ciganos">🔮 Ciganas &amp; Ciganos</button>
+    <button class="cat-tab" data-cat="pictografia" aria-label="Categoria Pictografia — todas as entidades">🖼️ Pictografia</button>
     <button class="cat-tab" data-cat="__favs" aria-label="Entidades favoritas">⭐ Favoritos</button>
   </div>
 
@@ -1317,6 +1319,7 @@ const CAT_COLORS = {
   demonio:  { accent: '#9EB4C0', glow: 'rgba(158,180,192,0.18)' },
   egungun:  { accent: '#8A6A2A', glow: 'rgba(138,106,42,0.18)' },
   cigano:    { accent: '#8B1A6B', glow: 'rgba(139,26,107,0.22)' },
+  pictografia: { accent: '#7A5C2A', glow: 'rgba(122,92,42,0.22)' },
   eguns:    { accent: '#5A3A7A', glow: 'rgba(90,58,122,0.18)' },
 };
 
@@ -1431,6 +1434,13 @@ function renderEntities(cat, filter) {
     Object.values(ENTITIES).forEach(list => {
       list.forEach(e => { if (favs.includes(e.name)) ents.push(e); });
     });
+  } else if (cat === 'pictografia') {
+    // All entities from all categories, sorted alphabetically
+    ents = [];
+    Object.entries(ENTITIES).forEach(([k, list]) => {
+      if (k !== 'pictografia') list.forEach(e => ents.push({ ...e, _srcCat: k }));
+    });
+    ents.sort((a, b) => a.name.localeCompare(b.name, 'pt'));
   } else {
     ents = ENTITIES[cat] || [];
   }
@@ -1530,8 +1540,10 @@ function generatePrompt() {
   const customDesc = customDescEl ? customDescEl.value.trim() : '';
   const customInject = customDesc ? '\n\n▸ DETALHES ADICIONAIS: ' + customDesc + '.' : '';
   const customInjectEN = customDesc ? '\n\n▸ ADDITIONAL DETAILS: ' + customDesc + '.' : '';
-  promptPT = PROMPTS_PT[currentCat](currentEntity, style, comp).replace(' --ar 9:16', customInject + WATERMARK_PT + '\n --ar 9:16');
-  promptEN = PROMPTS_EN[currentCat](currentEntity, style, comp).replace(' --ar 9:16', customInjectEN + WATERMARK_EN + '\n --ar 9:16');
+  // For pictografia, use the entity's source category or fall back
+  const promptCat = (currentCat === 'pictografia' && currentEntity._srcCat) ? currentEntity._srcCat : currentCat;
+  promptPT = (PROMPTS_PT[promptCat] || PROMPTS_PT.exu)(currentEntity, style, comp).replace(' --ar 9:16', customInject + WATERMARK_PT + '\n --ar 9:16');
+  promptEN = (PROMPTS_EN[promptCat] || PROMPTS_EN.exu)(currentEntity, style, comp).replace(' --ar 9:16', customInjectEN + WATERMARK_EN + '\n --ar 9:16');
   // Force English output
   currentLang = 'en';
   document.getElementById('btn-pt').classList.remove('active');
