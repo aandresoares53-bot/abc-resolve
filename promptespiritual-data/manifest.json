@@ -3,16 +3,54 @@
   "short_name": "Portal Sombras",
   "description": "Gerador de prompts para imagens de entidades espirituais afro-brasileiras",
   "start_url": "/",
+  "id": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
   "background_color": "#0E0A06",
   "theme_color": "#1C0D18",
   "lang": "pt-BR",
+  "categories": ["utilities", "lifestyle"],
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 56'><circle cx='28' cy='28' r='26' stroke='%23C9860A' stroke-width='1' fill='%231C0D18' opacity='0.9'/><polygon points='28,6 51,42 5,42' fill='none' stroke='%23C8320A' stroke-width='1'/></svg>",
-      "sizes": "any",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%231C0D18'/%3E%3Ccircle cx='96' cy='96' r='84' stroke='%23C9860A' stroke-width='2.5' fill='none'/%3E%3Cpolygon points='96,22 174,158 18,158' fill='none' stroke='%23C8320A' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='96' cy='96' r='9' fill='%23C9860A'/%3E%3C/svg%3E",
+      "sizes": "192x192",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%231C0D18'/%3E%3Ccircle cx='256' cy='256' r='224' stroke='%23C9860A' stroke-width='5' fill='none'/%3E%3Cpolygon points='256,56 468,420 44,420' fill='none' stroke='%23C8320A' stroke-width='7' stroke-linejoin='round'/%3E%3Ccircle cx='256' cy='256' r='22' fill='%23C9860A'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%231C0D18'/%3E%3Ccircle cx='256' cy='256' r='224' stroke='%23C9860A' stroke-width='5' fill='none'/%3E%3Cpolygon points='256,56 468,420 44,420' fill='none' stroke='%23C8320A' stroke-width='7' stroke-linejoin='round'/%3E%3Ccircle cx='256' cy='256' r='22' fill='%23C9860A'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Gerar Prompt",
+      "short_name": "Gerar",
+      "description": "Gerar um novo prompt espiritual",
+      "url": "/?shortcut=generate",
+      "icons": [{ "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='20' fill='%231C0D18'/%3E%3Ctext x='48' y='68' text-anchor='middle' font-size='60'%3E✦%3C/text%3E%3C/svg%3E", "sizes": "96x96" }]
+    },
+    {
+      "name": "Favoritos",
+      "short_name": "Favs",
+      "description": "Ver entidades favoritas",
+      "url": "/?shortcut=favorites",
+      "icons": [{ "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='20' fill='%231C0D18'/%3E%3Ctext x='48' y='68' text-anchor='middle' font-size='60'%3E⭐%3C/text%3E%3C/svg%3E", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "label": "Portal das Sombras — Tela principal",
+      "form_factor": "narrow"
     }
   ]
 }

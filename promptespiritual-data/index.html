@@ -6,6 +6,12 @@
   <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#1C0D18">
+  <!-- PWA / iOS -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Portal Sombras">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231C0D18'/%3E%3Ccircle cx='90' cy='90' r='78' stroke='%23C9860A' stroke-width='2' fill='none'/%3E%3Cpolygon points='90,20 162,148 18,148' fill='none' stroke='%23C8320A' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ccircle cx='90' cy='90' r='8' fill='%23C9860A'/%3E%3C/svg%3E">
   <link rel="alternate" hreflang="pt-BR" href="https://promptespiritual.vercel.app/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal das Sombras — Gerador de Imagens Espirituais</title>
@@ -1973,6 +1979,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   initCounter();
   initTheme();
 });
+
+// ── PWA Service Worker ─────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(reg => console.log('[SW] registered, scope:', reg.scope))
+      .catch(err => console.log('[SW] registration failed:', err));
+  });
+}
 </script>
 
 </body>
