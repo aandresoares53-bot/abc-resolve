@@ -9230,10 +9230,10 @@ function buildPrompt(englishText, rawPT){
     _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8), (fully clothed:1.8),`;
     // Plain text prepended to expanded — used by MJ/FLUX/GPT (they don't use SD weight syntax)
     expanded = `wearing ${_outfitStr}, keep outfit on, ` + expanded;
-    _negText = 'nude, naked, topless, bottomless, undressed, no clothing, no underwear, skin exposed, ' + _negText;
+    // Negative prompt left unchanged — user description is 100% accepted
   } else if(_poseHasClothing){
-    // Priority 2: pose definition has clothing in sd_start/sd_end — honour it, don't override
-    _negText = 'nude, naked, topless, bottomless, undressed, no clothing, ' + _negText;
+    // Priority 2: pose definition has clothing — honour it
+    // Negative prompt left unchanged — user description is 100% accepted
   } else if(!_wantsNude){
     // Naturally nude scenes — shower, bath, waterfall topless: skip clothing injection
     const _isNaturallyNude = selectedPoseKey && (
@@ -9251,7 +9251,7 @@ function buildPrompt(englishText, rawPT){
       if(_autoOutfit){
         _sdClothingTerms = `(${_autoOutfit}:2.0), (keep outfit on:1.9), (fully clothed:1.8),`;
         expanded = `${_autoOutfit}, keep outfit on, ` + expanded;
-        _negText = 'nude, naked, topless, bottomless, undressed, no clothing, ' + _negText;
+        // Negative prompt left unchanged — user description is 100% accepted
       }
     }
   }
@@ -9665,9 +9665,8 @@ function showPrompt(prompt){
 function _getUserSceneText(){
   const ta = document.getElementById('user-description');
   const raw = (ta?.value || '').trim();
-  // manualEdit='1' means the user typed their own text (not auto-fill)
-  if(ta && ta.dataset.manualEdit === '1' && raw) return raw;
-  return ''; // auto-fill or empty → treat as no scene text
+  // Always use what user typed — no restriction on manual vs auto-fill
+  return raw;
 }
 
 // ── TRANSLATION CACHE ─────────────────────────────────────────────────────
@@ -9708,11 +9707,8 @@ async function generate(){
   // This keeps outfit and scene coherent (both drawn from the same random outfit pick).
   _cachedPoseOutfit = selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '';
 
-  // The textarea may have been auto-filled with a Portuguese summary of the chip selections.
-  // Auto-fill is NOT scene text — the chip values are already in English via getQuickPreset().
-  // Only include textarea content in rawFull if the user manually typed something.
-  const _isAutoFill = !_taEl || _taEl.dataset.manualEdit !== '1';
-  const _userScene = (!_isAutoFill && raw) ? raw : '';  // only manual text enters rawFull
+  // Always use whatever the user typed — no restrictions on manual vs auto-fill.
+  const _userScene = raw; // 100% aceita sem restrições
 
   // Scene: prefer user's manual text, then default pose scene (autoScene reads _cachedPoseOutfit)
   const sceneText = _userScene || getDefaultSceneForPose(selectedPoseKey || '');
@@ -9732,11 +9728,11 @@ async function generate(){
   try {
     // Skip translation if content is already English (chips are always English)
     let _result;
-    if(!_userScene && !hasPreset){
+    if(!raw && !hasPreset){
       // All content is English (chips + default scene) — no translation needed
       _result = buildPrompt(rawFull, rawFull);
     } else {
-      // User typed Portuguese text or has a PT preset — translate
+      // User typed text or has a preset — translate
       const englishText = await _translateText(rawFull);
       _result = buildPrompt(englishText, rawFull);
     }
