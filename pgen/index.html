@@ -1586,7 +1586,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   <div class="pose-preview-card" id="pose-preview-card" style="display:none;">
     <div class="pose-preview-name" id="pose-preview-name"></div>
     <div class="pose-preview-outfit" id="pose-preview-outfit" style="display:none"></div>
-    <div class="pose-preview-scene" id="pose-preview-scene"></div>
+    <div class="pose-preview-scene" id="pose-preview-scene" style="display:none"></div>
     <!-- Outra roupa button removed: outfit defined in character description -->
   </div>
 
@@ -6825,8 +6825,7 @@ function setPose(key){
       document.getElementById('pose-preview-name').textContent = '🧘 ' + (p.label || key);
       const outfitEl = document.getElementById('pose-preview-outfit');
       outfitEl.textContent = ''; // outfit defined in description
-      const scene = autoScene(key);
-      document.getElementById('pose-preview-scene').textContent = '🎲 Cenário auto: ' + scene;
+      document.getElementById('pose-preview-scene').textContent = ''; // scene defined in description
       previewCard.style.display = 'block';
     } else {
       previewCard.style.display = 'none';
@@ -9150,7 +9149,7 @@ function autoScene(poseKey){
   return _randomFrom(SCENE_POOLS.default);
 }
 
-function getDefaultSceneForPose(key){ return autoScene(key); }
+function getDefaultSceneForPose(key){ return ''; } // Scene removed from auto-inject — defined in description
 
 function getPoseSensualOutfit(key){
   // Outfit removed from categories — defined in character description instead
