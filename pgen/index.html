@@ -1585,11 +1585,9 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   <!-- POSE PREVIEW PANEL -->
   <div class="pose-preview-card" id="pose-preview-card" style="display:none;">
     <div class="pose-preview-name" id="pose-preview-name"></div>
-    <div class="pose-preview-outfit" id="pose-preview-outfit"></div>
+    <div class="pose-preview-outfit" id="pose-preview-outfit" style="display:none"></div>
     <div class="pose-preview-scene" id="pose-preview-scene"></div>
-    <div style="margin-top:8px;">
-      <button onclick="cycleOutfit()" style="padding:4px 12px;border:1.5px solid #86efac;border-radius:16px;font-size:0.72em;font-weight:700;cursor:pointer;background:#fff;color:#166534;transition:all 0.15s;" onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#fff'">👗 Outra roupa</button>
-    </div>
+    <!-- Outra roupa button removed: outfit defined in character description -->
   </div>
 
   <!-- SCENE BUILDER -->
@@ -6825,10 +6823,8 @@ function setPose(key){
     if(key && POSES[key]){
       const p = POSES[key];
       document.getElementById('pose-preview-name').textContent = '🧘 ' + (p.label || key);
-      const outfit = getPoseSensualOutfit(key);
       const outfitEl = document.getElementById('pose-preview-outfit');
-      if(outfit) outfitEl.textContent = '👗 Roupa sugerida: ' + outfit;
-      else outfitEl.textContent = '🚿 Cena naturalmente nua (sem roupa injetada)';
+      outfitEl.textContent = ''; // outfit defined in description
       const scene = autoScene(key);
       document.getElementById('pose-preview-scene').textContent = '🎲 Cenário auto: ' + scene;
       previewCard.style.display = 'block';
@@ -8499,7 +8495,7 @@ function expandScene(t){
   // NOTE: expression and colorGrade were previously computed but never included — fixed here
   const extras = [lighting, environment, expression, colorGrade, _humanReal].filter(Boolean);
   // expose scene outfit as property so clothing enforcement can use it as fallback
-  expandScene._lastSceneOutfit = outfit;
+  expandScene._lastSceneOutfit = ''; // outfit removed from auto-inject
   return t + (extras.length ? ', ' + extras.join(', ') : '');
 }
 
@@ -9157,260 +9153,8 @@ function autoScene(poseKey){
 function getDefaultSceneForPose(key){ return autoScene(key); }
 
 function getPoseSensualOutfit(key){
-  if(!key) return 'wearing a matching lace lingerie set, delicate lace bra and cheeky panties';
-  // Categories that already define their own clothing — skip auto-inject
-  if(key.startsWith('fantasy-') || key.startsWith('outfit-')) return '';
-  // Legging poses — clothing defined in POSES sd_start
-  if(key.startsWith('legging-')) return '';
-  // Jeans and alt-fashion: clothing fully defined in POSES sd_start/sd_end
-  if(key.startsWith('jeans-') || key.startsWith('alt-')) return '';
-
-
-  // ── 🏖️ Beach / Pool → specific bikini variants ──
-  if(key.startsWith('beach-') || key.startsWith('pool-'))
-    return _randomFrom([
-      'wearing a micro string bikini, tiny triangle top and g-string bottom',
-      'wearing a micro brazilian bikini with string ties, barely covering',
-      'wearing a slingshot micro bikini, single strap front and micro bottom',
-      'wearing a sheer wet bikini clinging to skin after coming out of water',
-      'wearing a skimpy crochet bikini, barely covering the essentials'
-    ]);
-
-  // ── 🚿 Shower / Bath → no clothing (naturally nude scene handled in buildPrompt) ──
-  if(key.startsWith('shower-') || key.startsWith('bath-'))
-    return '';
-
-  // ── 🪞 Mirror → lingerie for mirror selfie ──
-  if(key.startsWith('mirror-'))
-    return _randomFrom([
-      'wearing a delicate lace bralette and matching micro panties',
-      'wearing a sheer mesh bralette and tiny micro shorts',
-      'wearing a silk camisole slip with spaghetti straps, no underwear',
-      'wearing a strappy lace lingerie set, plunging bralette and micro thong',
-      'wearing a satin micro slip dress on bare skin, no bra',
-      'wearing a sheer bodysuit with lace trim, thong cut bottom'
-    ]);
-
-  // ── 🚗 Car / Moto → tight club or casual outfit ──
-  if(key.startsWith('car-') || key.startsWith('moto-'))
-    return _randomFrom([
-      'wearing a tight micro mini dress cut very short, no underwear, low cut neckline',
-      'wearing a tight crop top and micro denim shorts, no underwear',
-      'wearing a leather micro mini skirt and fitted crop top',
-      'wearing a skin-tight bodycon micro mini dress, deep plunging neckline and back',
-      'wearing a fitted racing cropped jacket and micro shorts'
-    ]);
-
-  // ── 🌅 Nature / Outdoor (forest, waterfall, silhouette) → boho summer ──
-  if(key === 'nature-forest-back' || key === 'nature-waterfall-back' || key === 'sunset-silhouette')
-    return _randomFrom([
-      'wearing a flowy boho sundress, no bra, thin straps, wind-swept',
-      'wearing a tiny white linen micro dress, see-through in sunlight, no underwear',
-      'wearing a micro bikini top and tiny flowy shorts, boho style',
-      'wearing a tight crop top and tiny denim cut-off shorts, no underwear',
-      'wearing a sheer floral micro dress, no bra, bare back'
-    ]);
-
-  // ── 🌧️ Rain → wet clinging outfit ──
-  if(key === 'rain-standing')
-    return _randomFrom([
-      'wearing a thin white t-shirt soaking wet and see-through, no bra, wet shorts',
-      'wearing a light summer dress soaking wet clinging to every curve of the body',
-      'wearing a sheer wet blouse completely see-through, no bra, wet micro shorts'
-    ]);
-
-  // ── 🕺 Dance / Club / Pole / Twerk → club micro outfit ──
-  if(key.startsWith('dance-') || key.startsWith('pole-') || key.startsWith('twerk-') || key.startsWith('club-'))
-    return _randomFrom([
-      'wearing a micro bandage mini dress, just strips of fabric barely covering',
-      'wearing a tiny backless micro mini dress with deep plunging neckline',
-      'wearing a sheer sequined micro dress over matching micro lingerie',
-      'wearing a micro crop top and matching micro mini skirt, no underwear',
-      'wearing a metallic micro mini dress, deep V cut front and back'
-    ]);
-
-  // ── 🧘 Yoga → sports bra + yoga leggings ──
-  if(key.startsWith('yoga-'))
-    return _randomFrom([
-      'wearing a matching micro sports bra and high-waist seamless yoga leggings',
-      'wearing a tiny strappy sports bra and skin-tight yoga shorts, high waist',
-      'wearing a tight sports bra with criss-cross back strap and seamless compression leggings'
-    ]);
-
-  // ── 📸 Modelo Pro → editorial fashion ──
-  if(key.startsWith('model-'))
-    return _randomFrom([
-      'wearing a sleek high-fashion micro dress, form-fitting editorial look',
-      'wearing a designer backless micro mini dress, sharp and elegant',
-      'wearing a tailored blazer as a dress, nothing underneath, editorial styling',
-      'wearing a high-fashion lace bodysuit and tailored high-waist micro skirt',
-      'wearing a luxury sheer designer dress, sophisticated editorial photography look'
-    ]);
-
-  // ── water-shower-*, water-bathtub-*, water-jacuzzi-* → naturally nude (no outfit) ──
-  if(key.startsWith('water-shower-') || key.startsWith('water-bathtub') || key.startsWith('water-jacuzzi'))
-    return '';
-  // ── All other water poses (pool, ocean, waterfall, floating…) → wet micro bikini ──
-  if(key.startsWith('water-') || key === 'water-rain-front' || key === 'water-beach-waves')
-    return 'wearing a micro string bikini, wet fabric clinging to skin, tiny triangle top and micro string bottom';
-  // ── Gym / athletic ──
-  if(key.startsWith('gym-') || key === 'yoga-lotus-seated' || key === 'yoga-downward-dog' || key === 'ballet-arabesque' || key === 'splits-standing')
-    return 'wearing a matching tight sports bra crop top and high-waist seamless athletic leggings';
-  // ── Selfie → casual lingerie or crop top ──
-  if(key.startsWith('selfie-'))
-    return _randomFrom([
-      'wearing a lace bralette and tiny micro shorts',
-      'wearing a see-through crop top and matching lace panties',
-      'wearing a silk camisole and cheeky shorts',
-      'wearing a sheer mesh bralette and high-waist micro shorts',
-      'wearing a cropped oversized t-shirt with no pants, just matching underwear',
-      'wearing a tiny spaghetti-strap camisole and cheeky shorts, no bra',
-      'wearing a zip-up cropped hoodie open at the front over a micro bralette',
-      'wearing a tight ribbed crop top and matching high-waist micro shorts'
-    ]);
-  // ── Butt close-up → thong / micro g-string ──
-  if(key.startsWith('butt-'))
-    return _randomFrom([
-      'wearing a micro thong and matching lace bralette',
-      'wearing a g-string and sheer open-cup bra',
-      'wearing a crotchless thong and matching open bralette',
-      'wearing a micro string bikini bottom and tiny triangle top'
-    ]);
-  // ── All fours / allfours ──
-  if(key.includes('allfours') || key === 'presenting-back-open' || key === 'kneeling-bowing-front')
-    return _randomFrom([
-      'wearing a micro thong panties and matching sheer lace bralette',
-      'wearing a g-string and sheer open-cup bra',
-      'wearing a crotchless lace panty and matching bralette'
-    ]);
-  // ── Bent over / prone / face down ──
-  if(key.includes('bent') || key.includes('prone') || key.includes('facedown') || key.includes('face-down') || key.includes('lowered-chest'))
-    return _randomFrom([
-      'wearing a micro thong and matching sheer lace bralette',
-      'wearing a g-string and sheer bra',
-      'wearing a micro string bikini, fabric pulled tight'
-    ]);
-  // ── Lying down (all variations) ──
-  if(key.includes('lying') || key.includes('supine') || key === 'reclined-legs-wide' || key === 'side-lying-leg-raised')
-    return _randomFrom([
-      'wearing a sheer lace lingerie set, delicate bra and matching thong panties',
-      'wearing a silk negligee and lace panties',
-      'wearing a transparent babydoll and matching g-string',
-      'wearing a satin slip and micro lace panties',
-      'wearing an open silk robe, nothing underneath, robe barely covering',
-      'wearing a lace teddy one-piece, sheer lace all over',
-      'wearing a tiny lace bralette and matching cheeky panties',
-      'wearing a sheer mesh bodysuit, completely see-through'
-    ]);
-  // ── Close-up shots ──
-  if(key.startsWith('closeup') || key.includes('closeup') || key === 'closeup-thighs-front' || key === 'pov-between-legs')
-    return _randomFrom([
-      'wearing a sheer lace bra with plunging neckline',
-      'wearing a see-through lace bralette',
-      'wearing a micro bikini top'
-    ]);
-  // ── Kneeling (all variations) ──
-  if(key.includes('kneeling') || key === 'kneeling-floor-wide' || key === 'kneeling-bowing-front')
-    return _randomFrom([
-      'wearing a micro thong and open-cup lace bralette',
-      'wearing a g-string and sheer lace bra',
-      'wearing a micro bikini bottom and matching tiny top'
-    ]);
-  // ── Squat (all variations) ──
-  if(key.includes('squat'))
-    return _randomFrom([
-      'wearing a micro thong and matching lace bralette',
-      'wearing a g-string and sheer see-through bra',
-      'wearing a micro bikini with string ties'
-    ]);
-  // ── Spread / pernas abertas ──
-  if(key.includes('spread') || key.includes('eagle') || key === 'reclined-legs-wide' || key === 'kneeling-floor-wide' || key === 'sitting-wide-chair-front' || key === 'standing-wide-legs-open' || key === 'sitting-reverse-open')
-    return _randomFrom([
-      'wearing a micro thong, fabric barely covering, and matching lace bralette',
-      'wearing a g-string and open-cup bra',
-      'wearing a crotchless lace panty set'
-    ]);
-  // ── NSFW positions ──
-  if(key === 'missionary' || key === 'cowgirl' || key === 'reverse-cowgirl' || key === 'doggy-side' || key === 'doggy-elevated-hips' || key === 'cowgirl-arched-back' || key === 'cowgirl-lean-forward-chest' || key === 'doggy-side-view-full' || key === 'reverse-cowgirl-leaned-back' || key.startsWith('position-') || key === 'leapfrog' || key === 'pile-driver' || key === 'spoon' || key === 'anvil' || key === 'mating-press' || key === 'scissors' || key === 'lotus-nsfw' || key === 'prone-bone' || key === 'standing-lift' || key === 'standing-doggy' || key === 'lap-dance')
-    return _randomFrom([
-      'wearing a micro thong and matching lace bralette',
-      'wearing a g-string and sheer bra',
-      'wearing a crotchless lace lingerie set'
-    ]);
-  // ── Twerking ──
-  if(key === 'butt-twerking')
-    return 'wearing a micro thong, g-string barely covering, bottom facing camera';
-  // ── Standing (default, various) ──
-  if(key.includes('standing') || key === 'standing-lean-doorway' || key === 'standing-back-look' || key === 'standing-hand-on-wall' || key === 'standing-chest-forward' || key === 'standing-back-arch' || key === 'standing-pose-model' || key === 'standing-hand-chest' || key === 'standing-stretch-arms' || key === 'standing-twist-look' || key === 'standing-wide-legs-open')
-    return _randomFrom([
-      'wearing a skin-tight micro mini dress with a deep plunging neckline and thigh-high slit',
-      'wearing a tight bodycon dress, micro mini length, no underwear',
-      'wearing a spaghetti-strap micro dress, plunging back, side slit',
-      'wearing a sheer lace mini dress over matching lingerie',
-      'wearing an open-back micro dress, entire back exposed, plunging front',
-      'wearing a transparent mesh mini dress over a micro bikini set',
-      'wearing a corset-style top and micro wrap skirt, side ties visible',
-      'wearing a strappy bandage-style mini dress with cutouts',
-      'wearing a halter micro dress, deep V neckline, no underwear',
-      'wearing a barely-there slip dress in satin, thin straps'
-    ]);
-  // ── Sitting (default) ──
-  if(key.includes('sitting') || key.includes('seated') || key.includes('chair') || key.includes('stool') || key === 'sitting-knees-side' || key === 'sitting-floor-reclined-side' || key === 'sitting-lean-back-arms' || key === 'sitting-crossed-ankles' || key === 'sitting-chair-lean-back' || key === 'sitting-floor-arms-back-side' || key === 'sitting-stool-side' || key === 'sitting-wide-open-floor' || key === 'sitting-wide-chair-front' || key === 'sitting-reverse-open')
-    return _randomFrom([
-      'wearing a skin-tight micro mini dress with a deep plunging neckline',
-      'wearing a tight bodycon mini dress, sitting revealing, no underwear',
-      'wearing a sheer slip dress, sitting gracefully',
-      'wearing a short wrap skirt and lace bralette',
-      'wearing a tiny pleated micro skirt and matching lace bralette',
-      'wearing a satin robe barely closed, falling open at the front',
-      'wearing a tight ribbed crop top and matching micro shorts',
-      'wearing an oversized open shirt as a dress, nothing underneath'
-    ]);
-  // ── Default ──
-  if(key.includes('teddy'))       return 'sexy teddy one-piece lingerie, sheer lace body suit';
-  if(key.includes('harness'))     return 'leather or chain body harness over bare skin';
-  if(key.includes('satin-robe'))  return 'short silk satin robe open at front';
-  if(key.includes('strappy-swimsuit')) return 'strappy high-cut one-piece swimsuit with crisscross straps';
-  if(key.includes('garter-belt')) return 'garter belt with stockings and matching lace lingerie';
-  if(key.includes('sheer-top-only')) return 'only a sheer see-through top, body visible, thong bottom';
-  if(key.includes('latex-catsuit')) return 'skin-tight shiny black latex catsuit full body';
-  if(key.includes('crop-top-no-pants')) return 'tiny crop top and thong only, bare legs';
-  if(key.includes('open-kimono')) return 'silk kimono open falling off shoulders, lingerie underneath';
-  if(key.includes('butt-closeup')) return 'thong or minimal coverage, natural skin close-up';
-  if(key.includes('mermaid'))     return 'iridescent mermaid tail with seashell bra';
-  if(key.includes('vampire'))     return 'dark gothic corset dress with deep neckline';
-  if(key.includes('warrior-queen')) return 'revealing armor bikini with warrior accessories';
-  if(key.includes('witch'))       return 'revealing black dress with dramatic cutouts and pointed hat';
-  if(key.includes('detective-noir')) return 'open trench coat over lingerie, fedora hat';
-  if(key.includes('gym-yoga-tight')) return 'ultra tight yoga pants and sports bra';
-  if(key.includes('standing-hips-thrust')) return 'lingerie or tight bodysuit';
-  if(key.includes('standing-one-shoulder')) return 'dress or top sliding off one shoulder';
-  if(key.includes('standing-wall')) return 'lingerie or minimal outfit';
-  if(key.includes('shower-kneeling') || key.includes('shower-glass')) return '';
-  if(key.includes('bath-overflow')) return '';
-  if(key.includes('pool-underwater')) return 'bikini swimsuit or minimal coverage';
-  if(key.includes('outdoor-rain')) return 'thin white or light fabric wet and clinging to body';
-  if(key.includes('car-backseat')) return 'short mini dress or lingerie';
-  if(key.includes('motorcycle-straddle')) return 'leather outfit or minimal shorts and top';
-  if(key.includes('dance-twerk') || key.includes('dance-grind')) return 'tight bodycon shorts and crop top';
-  if(key.includes('dance-pole-spin')) return 'pole dance outfit: shorts and halter top or bikini';
-  if(key.includes('yoga-camel') || key.includes('yoga-pigeon') || key.includes('yoga-split') || key.includes('yoga-seated-forward')) return 'tight form-fitting yoga pants and sports bra';
-  if(key.includes('kneeling-prayer') || key.includes('kneeling-chest-floor')) return 'lingerie: matching bra and panties';
-  if(key.includes('lying-stomach-feet') || key.includes('lying-arched-back') || key.includes('lying-side-leg') || key.includes('lying-spread-eagle') || key.includes('lying-back-legs')) return 'lingerie or minimal coverage';
-  if(key.includes('selfie-changing')) return 'lingerie being tried on';
-  if(key.includes('selfie-bed-lying')) return 'lingerie or thin pajamas';
-  if(key.includes('selfie-shower-steam')) return 'wrapped in a towel only';
-  if(key.includes('mirror-full-body') || key.includes('mirror-floor-lying') || key.includes('mirror-two-angle')) return 'lingerie or minimal undergarment';
-  return _randomFrom([
-    'wearing a skin-tight micro mini dress with a deep plunging neckline and thigh-high slit',
-    'wearing a matching lace lingerie set, delicate bra and cheeky panties',
-    'wearing a sheer bodycon dress over lingerie',
-    'wearing a micro bikini, string ties and tiny triangles',
-    'wearing a lace bodysuit, plunging neckline, thong cut bottom',
-    'wearing a crotchless lace teddy and matching thigh-high stockings',
-    'wearing a barely-there bandage mini dress, just strips of fabric',
-    'wearing a see-through fishnet body stocking over micro underwear'
-  ]);
+  // Outfit removed from categories — defined in character description instead
+  return \'\';
 }
 
 function _randomFrom(arr){
