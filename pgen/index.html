@@ -2237,6 +2237,27 @@ function translatePT(text){
     [/\barqueada\b/gi,           'arched'],
     [/arco\s*profundo/gi,        'deeply arched'],
     [/\bempinado\b/gi,           'arched prominently'],
+    // ── EXPLICIT SEXUAL ACTS ──
+    [/chupando\s*o\s*pênis/gi,   'giving blowjob, sucking penis, oral sex'],
+    [/\bchupando\b/gi,           'sucking, giving oral sex'],
+    [/fazendo\s*sexo\s*oral/gi,  'performing oral sex, blowjob'],
+    [/\bpênis\b|\bpinto\b/gi,    'penis'],
+    [/\bbuceta\b|\bvagina\b|\bxereca\b|\bxoxota\b/gi, 'vagina, pussy'],
+    [/\bnamorado\b/gi,           'boyfriend'],
+    [/\bnamorada\b/gi,           'girlfriend'],
+    [/\bgozando\b|\bgozada\b/gi, 'cumshot'],
+    [/\banalg\b|\bsexo\s*anal\b/gi, 'anal sex'],
+    [/\bde\s*quatro\s*recebendo/gi, 'on all fours receiving penetration from behind, doggy style'],
+    [/\bpenetrada\b/gi,          'being penetrated'],
+    [/\btransar\b|\btransando\b/gi, 'having sex'],
+    [/\brelação\s*sexual\b|\bfazer\s*sexo\b/gi, 'having sexual intercourse'],
+    [/\bcuzinho\b|\bcú\b/gi,     'anus'],
+    [/\bmasturbando\b|\bse\s*masturbando\b/gi, 'masturbating, touching herself'],
+    [/\bcurvilínea\b/gi,         'curvy woman with full curves'],
+    [/\bcorpão\b/gi,             'voluptuous body'],
+    [/\brosto\s*oval\b/gi,       'oval face'],
+    [/\blábios\s*carnudos\b/gi,  'full pouty lips'],
+    [/\bcabelo\s*longo\b/gi,     'long hair'],
     // ── WEARING ──
     [/\busando\b|\bvestindo\b/gi,'wearing'],
     // ── WOMAN ──
@@ -8391,6 +8412,8 @@ function expandScene(t){
   const isModel     = /model|fashion|editorial|runway|pose|posing/.test(s);
   const isWorkout   = /gym|workout|yoga|fitness|running|sport|exercise/.test(s);
   const isRomantic  = /romantic|love|couple|kiss|embrace/.test(s);
+  // Explicit sexual scene — suppress neutral expression auto-add
+  const isExplicit  = /nude|naked|blowjob|oral sex|sucking|licking|penetrat|explicit|nsfw|sex position|intercourse|fingering|masturbat|cumshot|creampie|squirt|anal|pussy|cock|penis|vagina|nipples|areola|topless.*nude|nua|pelada|chupando|sexo|pênis|buceta|vagina|anal\b/.test(s);
 
   // ── OUTFIT ────────────────────────────────────────────────────────────────
   const hasOutfit = /wearing|dress|shirt|jeans|bikini|top|skirt|blouse|outfit|coat|jacket|suit|shorts|leggings|swimsuit|bodysuit|lingerie|bra|pants|trousers|hoodie|sweater|gown|uniform|costume|corset|crop|naked|nude|naked|topless|bottomless|undressed|no clothes|no clothing|without clothes|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|camisola|blusa|meias|meia-cal[cç]a|body|collant|maio|maiô|roupa|roupinha|fantasia|espartilho|colete|casaco|jaqueta|moletom|pijama|ling[eé]rie|fio dental|tanga|microbiqu[iíi]ni|decote|pelada|sem roupa|sem calcinha|sem suti|nu[ao]\b|peladinha|topless/.test(s);
@@ -8467,7 +8490,8 @@ function expandScene(t){
   // ── EXPRESSION & POSE ─────────────────────────────────────────────────────
   const hasExpression = /smiling|laughing|serious|expression|gazing|posing|confident|happy|looking|glancing|shy/.test(s);
   let expression = '';
-  if(!hasExpression){
+  if(!hasExpression && !isExplicit){
+    // Don't auto-add neutral expression for explicit scenes — it conflicts with the act
     if(isSelfie)       expression = 'natural smile, candid relaxed look, authentic real moment';
     else if(isModel)   expression = 'confident natural expression, direct eye contact, real person look';
     else if(isRomantic) expression = 'soft romantic expression, natural lips, warm eyes';
@@ -9411,11 +9435,13 @@ function buildPrompt(englishText, rawPT){
   const _sceneOnly = englishText.split(',').slice(_presetTermCount).map(t => t.trim()).filter(Boolean);
 
   // Boost ALL user description terms at weight 1.9 — highest priority after nsfw/quality
-  // Clothing & nudity: skipped here (handled by clothing enforcement below to avoid conflict)
-  // Attractiveness terms (sexy, sensual…): skipped here (those degrade realism at high weight)
-  const _descBoostRe = /\b(wearing|dressed|nude|naked|topless|panties|bra|bikini|lingerie|thong|dress|shirt|leggings|shorts|bodysuit|corset|swimsuit|gown|jeans|pants|hoodie|uniform|costume|top|outfit)\b/i;
+  // When NSFW: boost everything including nudity/explicit terms (they're intentional)
+  // When SFW: skip clothing/nudity terms (handled by clothing enforcement) and attractiveness
+  const _descBoostRe = _wantsNSFW
+    ? null  // NSFW: boost all terms including nude/explicit act
+    : /\b(wearing|dressed|nude|naked|topless|panties|bra|bikini|lingerie|thong|dress|shirt|leggings|shorts|bodysuit|corset|swimsuit|gown|jeans|pants|hoodie|uniform|costume|top|outfit)\b/i;
   const descBoost = _sceneOnly
-    .filter(t => !_descBoostRe.test(t) && !_noBoostRe.test(t))
+    .filter(t => (!_descBoostRe || !_descBoostRe.test(t)) && !_noBoostRe.test(t))
     // No slice limit — all user terms get boosted
     .map(t => `(${t}:1.9)`)
     .join(', ');
