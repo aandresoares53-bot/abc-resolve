@@ -10073,6 +10073,142 @@ function lockSeed(){
 // ── QUICK CHIPS (etnia / corpo / cabelo) ────────────────────────────────
 const quickChipState = { etnia:'', idade:'', corpo:'', cabelo:'', cenario:'', estilo_foto:'', iluminacao:'' };
 
+// ── AUTO-PROFILE POR ETNIA ──────────────────────────────────────────────
+// Quando o usuário seleciona uma etnia, preenche automaticamente rosto,
+// olhos, lábios, traços e cabelo com características típicas daquela etnia.
+const ETNIA_AUTO_PROFILE = {
+  // ── LATINAS ──────────────────────────────────────────────────────────
+  'brasileira':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive tan skin, mixed features, natural soft glow', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'colombiana':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden olive complexion, defined brows, expressive features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'argentina':   { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark hazel eyes with amber and green flecks in iris', labios:'perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape', tracos:'light olive European-descended skin, Mediterranean features, refined bone structure', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'venezuelana': { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm medium olive complexion, exotic mixed features, sensual expression', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'peruana':     { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm copper-toned skin, indigenous Andean features, high cheekbones', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'chilena':     { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape', tracos:'light to medium olive skin, refined European and indigenous mixed features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'cubana':      { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden brown mixed skin, Caribbean exotic features, natural radiance', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+  'mexicana':    { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm brown to tan skin, Mestizo features, indigenous and European mix', cabelo:'long straight dark brunette hair, rich dark brown color' },
+
+  // ── EUROPEIAS ─────────────────────────────────────────────────────────
+  'escandinava': { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'deep blue round expressive eyes, vivid blue irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'very fair porcelain skin, Nordic bone structure, natural rosy cheeks', cabelo:'long straight platinum blonde hair, golden highlights' },
+  'irlandesa':   { rosto:'heart-shaped face, wide forehead, narrow pointed chin, delicate jawline', olhos:'green cat-shaped slightly upturned eyes, bright green irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'pale fair freckled skin, Celtic features, natural light freckling', cabelo:'long red hair, auburn natural waves, copper tones' },
+  'alemã':       { rosto:'square strong jawline, defined angular jaw, prominent chin', olhos:'deep blue round expressive eyes, vivid blue irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair light skin, strong Germanic features, defined bone structure', cabelo:'long straight platinum blonde hair, golden highlights' },
+  'britânica':   { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'pale gray eyes, light silvery gray irises, icy gaze', labios:'perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape', tracos:'pale fair English skin, refined aristocratic features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'francesa':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark hazel eyes with amber and green flecks in iris', labios:'pouty lips, naturally protruding lower lip, soft natural pout', tracos:'light olive warm skin, refined Parisian features, effortless chic bone structure', cabelo:'hair in a messy bun, casual updo with loose strands framing face' },
+  'italiana':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm Mediterranean olive skin, Roman features, expressive eyes', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+  'espanhola':   { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive Mediterranean complexion, Iberian features, dramatic dark coloring', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'portuguesa':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive skin, Southern European features, defined brows', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'grega':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive Mediterranean skin, classical Greek features, strong symmetrical face', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+  'russa':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'pale gray eyes, light silvery gray irises, icy gaze', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'very fair Slavic skin, prominent cheekbones, ice-cold beauty', cabelo:'long straight platinum blonde hair, golden highlights' },
+  'ucraniana':   { rosto:'heart-shaped face, wide forehead, narrow pointed chin, delicate jawline', olhos:'deep blue round expressive eyes, vivid blue irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'fair porcelain Slavic skin, delicate Eastern European features', cabelo:'long straight platinum blonde hair, golden highlights' },
+  'turca':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive Middle-Eastern features, Anatolian beauty, defined dark brows', cabelo:'long straight dark brunette hair, rich dark brown color' },
+
+  // ── ASIÁTICAS ────────────────────────────────────────────────────────
+  'coreana':     { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape', tracos:'fair porcelain smooth East Asian skin, monolid or double-lid eyes, glass skin texture', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'japonesa':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair porcelain smooth Japanese skin, delicate refined features, graceful bone structure', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'chinesa':     { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair to medium East Asian skin, classic Chinese features, smooth complexion', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'vietnamita':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm tan Southeast Asian skin, high cheekbones, exotic almond features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'tailandesa':  { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden tan Thai skin, exotic Southeast Asian features, soft round face', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'filipina':    { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm caramel Malay-Pacific skin, mixed Spanish-Asian features, soft exotic look', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'indonésia':   { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm medium brown Malay skin, dark features, tropical island beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'mongol':      { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'medium tan Central Asian skin, prominent wide cheekbones, strong Mongolian features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'indiana':     { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden brown South Asian skin, defined dark eyes, exotic subcontinental beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'paquistanesa':{ rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive South Asian skin, dark defined features, classic South Asian beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'bangladeshi': { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm brown South Asian skin, soft Bengali features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+
+  // ── ORIENTE MÉDIO ───────────────────────────────────────────────────
+  'árabe':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive Middle Eastern skin, dramatic dark eyes, defined arched brows, exotic Arabian beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'libanesa':    { rosto:'heart-shaped face, wide forehead, narrow pointed chin, delicate jawline', olhos:'dark hazel eyes with amber and green flecks in iris', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm light olive Levantine skin, Mediterranean features, exotic mixed beauty', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+  'persa':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm light olive Persian skin, refined classical Iranian features, strong defined nose', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'israelense':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark hazel eyes with amber and green flecks in iris', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive to fair Mediterranean Semitic skin, defined features, expressive eyes', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+
+  // ── AFRICANAS ────────────────────────────────────────────────────────
+  'nigeriana':   { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'wide mouth, wide prominent lips spread broadly across face', tracos:'deep rich ebony West African skin, strong cheekbones, bold striking features', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'etíope':      { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm medium brown East African skin, fine elegant features, refined Horn of Africa look', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'queniana':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm deep brown East African skin, athletic elegant features', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'sul-africana':{ rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm medium brown Southern African skin, mixed Bantu features, vibrant energy', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'angolana':    { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'wide mouth, wide prominent lips spread broadly across face', tracos:'rich deep brown Central African skin, strong traditional features', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'marroquina':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive North African Berber skin, Mediterranean and Arabic features, exotic Moorish beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'egípcia':     { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden brown North African skin, ancient Egyptian features, defined dark eyes', cabelo:'long straight dark brunette hair, rich dark brown color' },
+
+  // ── POLINÉSIA / OCEANIA ──────────────────────────────────────────────
+  'polinésia':   { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm tan brown Pacific Islander skin, exotic island features, natural tropical beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'australiana': { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'deep blue round expressive eyes, vivid blue irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair sun-kissed Australian skin, healthy outdoor glow, relaxed beach beauty', cabelo:'long straight platinum blonde hair, golden highlights' },
+
+  // ── NORTE-AMERICANA / CARIBENHA ──────────────────────────────────────
+  'americana':   { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'deep blue round expressive eyes, vivid blue irises', labios:'perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape', tracos:'fair light American skin, diverse American features, healthy natural look', cabelo:'long straight platinum blonde hair, golden highlights' },
+  'afro-americana':{ rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm rich brown American melanin skin, strong defined features, Black American beauty', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'jamaicana':   { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm deep brown Caribbean island skin, exotic Jamaican features, vibrant tropical energy', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'caribenha':   { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden caramel Caribbean mixed skin, island exotic features, tropical beauty', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+
+  // ── ALIASES / ETNIAS GENÉRICAS ───────────────────────────────────────
+  'latina':      { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden olive Latin skin, mixed features, natural bronzed glow', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'venezolana':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm medium olive complexion, exotic mixed features, sensual expression', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'eslava':      { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'pale gray eyes, light silvery gray irises, icy gaze', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'very fair porcelain Slavic skin, prominent high cheekbones, delicate Eastern European features', cabelo:'long straight platinum blonde hair, golden highlights' },
+  'mediterrânea':{ rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark hazel eyes with amber and green flecks in iris', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive Mediterranean tanned skin, expressive dark eyes, Southern European beauty', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+  'europeia':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'deep blue round expressive eyes, vivid blue irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair light European skin, classic Western European features', cabelo:'long straight platinum blonde hair, golden highlights' },
+  'asiática':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair to medium East Asian skin, high prominent cheekbones, smooth clear complexion', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'africana':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'wide mouth, wide prominent lips spread broadly across face', tracos:'deep rich dark West African skin, strong striking features', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'negra':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'rich deep melanin skin, beautiful dark complexion, strong defined features', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
+  'indígena':    { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm copper bronze Indigenous Native skin, strong cheekbones, earthy natural beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'judaica':     { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark hazel eyes with amber and green flecks in iris', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive to fair Mediterranean Semitic skin, defined features, expressive eyes', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
+  'bangladeshi': { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm brown South Asian skin, soft Bengali features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'bangladeshiana':{ rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm brown South Asian skin, soft Bengali features', cabelo:'long straight dark brunette hair, rich dark brown color' },
+};
+
+// Aplica perfil étnico automático (rosto, olhos, lábios, traços e cabelo)
+function _applyEtniaProfile(etniaVal){
+  // etniaVal = data-val do chip (em inglês, ex: "Brazilian woman, warm golden...")
+  // Primeiro tenta encontrar a chave inglesa em _ETNIA_PT e usa o label PT como chave em ETNIA_AUTO_PROFILE
+  let profileKey = null;
+  if(typeof _ETNIA_PT !== 'undefined'){
+    for(const [engKey, ptLabel] of Object.entries(_ETNIA_PT)){
+      if(engKey && etniaVal && etniaVal.toLowerCase().includes(engKey.toLowerCase())){
+        // ptLabel é o nome em português (ex: 'brasileira'); busca em ETNIA_AUTO_PROFILE
+        if(ptLabel && ETNIA_AUTO_PROFILE[ptLabel]){ profileKey = ptLabel; break; }
+        // Fallback: tenta o engKey em minúsculas direto
+        const engLow = engKey.toLowerCase();
+        if(ETNIA_AUTO_PROFILE[engLow]){ profileKey = engLow; break; }
+      }
+    }
+  }
+  // Fallback: busca direta no ETNIA_AUTO_PROFILE pelas keys (português) no data-val
+  if(!profileKey){
+    for(const key of Object.keys(ETNIA_AUTO_PROFILE)){
+      if(etniaVal && etniaVal.toLowerCase().includes(key.toLowerCase())){
+        profileKey = key; break;
+      }
+    }
+  }
+  if(!profileKey) return;
+  const prof = ETNIA_AUTO_PROFILE[profileKey];
+  if(!prof) return;
+
+  // Aplica faceProfile
+  if(prof.rosto)  faceProfile.rosto  = prof.rosto;
+  if(prof.olhos)  faceProfile.olhos  = prof.olhos;
+  if(prof.labios) faceProfile.labios = prof.labios;
+  if(prof.tracos) faceProfile.tracos = prof.tracos;
+
+  // Atualiza chips visuais de rosto
+  ['rosto','olhos','labios'].forEach(cat => {
+    const val = prof[cat]; if(!val) return;
+    document.querySelectorAll(`.face-chip[data-cat="${cat}"]`).forEach(c => {
+      c.classList.remove('active');
+      if(c.dataset.val === val) c.classList.add('active');
+    });
+  });
+
+  // Aplica cabelo (quickChip)
+  if(prof.cabelo){
+    quickChipState.cabelo = prof.cabelo;
+    document.querySelectorAll(`.quick-chip[data-cat="cabelo"]`).forEach(c => {
+      c.classList.remove('active');
+      if(c.dataset.val === prof.cabelo) c.classList.add('active');
+    });
+  }
+
+  _updateFacePreview();
+}
+
 // ── FACE IDENTITY (mesmo rosto em todos os prompts) ────────────────────────
 const faceProfile = { olhos:'', rosto:'', labios:'', tracos:'' };
 
@@ -10104,8 +10240,14 @@ function toggleQuickChip(el){
   const val = el.dataset.val;
   const already = el.classList.contains('active');
   document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active'));
-  if(!already){ el.classList.add('active'); quickChipState[cat] = val; }
-  else quickChipState[cat] = '';
+  if(!already){
+    el.classList.add('active');
+    quickChipState[cat] = val;
+    // Quando seleciona etnia, preenche automaticamente rosto/olhos/lábios/traços/cabelo
+    if(cat === 'etnia') _applyEtniaProfile(val);
+  } else {
+    quickChipState[cat] = '';
+  }
   _autoSaveCharDraft();
 }
 
