@@ -7432,6 +7432,9 @@ function _clearAllChips(){
   const inp = document.getElementById('face-tracos-input');
   if(inp) inp.value = '';
   _updateFacePreview();
+  // Clear description textarea
+  const _taClr = document.getElementById('user-description');
+  if(_taClr){ _taClr.value = ''; delete _taClr.dataset.manualEdit; }
   // Clear draft
   try { localStorage.removeItem('pgen_char_draft'); } catch(e){}
   document.getElementById('auto-char-preview').style.display='none';
