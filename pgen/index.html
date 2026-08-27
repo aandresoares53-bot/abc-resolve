@@ -6892,6 +6892,8 @@ function setPose(key){
       previewCard.style.display = 'none';
     }
   }
+  // Atualiza auto-descrição para refletir a ordem: etnia → pose
+  try{ _autoFillDescription(); }catch(e){}
 }
 
 function setMode(mode){
@@ -9341,7 +9343,8 @@ function buildPrompt(englishText, rawPT){
     const _poseFlux = pose.mj || (pose.sd_start ? pose.sd_start.replace(/\([^)]+:[0-9.]+\)/g, '').replace(/,\s*,/g,',').trim() : '');
     // Strip SD-weight syntax from expanded — FLUX uses plain language, (term:1.9) is meaningless there
     const _expandedFlux = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    const _coreFlux = [_poseFlux, _expandedFlux].filter(Boolean).join(', ');
+    // Ordem: etnia/user description FIRST, then pose (etnia → pose)
+    const _coreFlux = [_expandedFlux, _poseFlux].filter(Boolean).join(', ');
     const _photoStyle = getQuickEstiloFoto();
     const _cenarioFlux = getQuickCenario(); // scene already in _coreFlux via englishText
     const _fluxCam  = _getCameraSpec(selectedPoseKey || '');
@@ -9384,10 +9387,10 @@ function buildPrompt(englishText, rawPT){
     const _mjRealPrefix = _wantsNSFW
       ? 'analog film photograph of a real human woman, 35mm film grain, Kodak Portra 400, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera, explicit adult content, nsfw,'
       : 'analog film photograph of a real human woman, 35mm film grain, Kodak Portra 400, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,';
-    // MJ: user content first, anatomy + realism anchors after
+    // MJ: etnia/user content FIRST, then pose (ordem: etnia → pose)
     // Strip SD-weight syntax — MJ uses (term::weight) not (term:1.9) — plain text works better
     const _expandedMj = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    const _mjUserContent = pose.mj ? pose.mj + ', ' + _expandedMj : _expandedMj;
+    const _mjUserContent = pose.mj ? _expandedMj + ', ' + pose.mj : _expandedMj;
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes, real eye catchlights, natural lip texture, lip lines visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, eye moisture and wetness, blood vessels in sclera, iris depth and texture, natural skin texture on forehead, natural laugh lines, natural under-eye skin texture, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI';
     const core = _mjRealPrefix + ' ' + _mjUserContent + ', ' + _mjAnatomy;
     const _ar       = document.getElementById('mj-ar')?.value       || '2:3';
@@ -9427,7 +9430,8 @@ function buildPrompt(englishText, rawPT){
     // GPT/DALL-E: user's description is the SUBJECT — put it right after the style prefix
     // Strip SD-weight syntax — GPT uses natural language, not SD weight notation
     const _expandedGpt = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    const _userContent = pose.mj ? pose.mj + ', ' + _expandedGpt : _expandedGpt;
+    // Ordem: etnia/user description FIRST, then pose (etnia → pose)
+    const _userContent = pose.mj ? _expandedGpt + ', ' + pose.mj : _expandedGpt;
     const core = _gptRealPrefix + ' ' + _userContent;
     const _isBackGpt = /back|behind|posterior|from behind|back to camera/i.test((pose.sd_start||'') + ' ' + (pose.mj||''));
     const _bodyGpt = _isBackGpt ? BB_GPT : BF_GPT;
@@ -9582,12 +9586,12 @@ function buildPrompt(englishText, rawPT){
     _nsfwPrefix,        // NSFW flag — brief, ~10 tokens
     _rawStamp,          // RAW/anti-plastic FIRST — establishes film grain baseline before everything else
     _sdClothingTerms,   // OUTFIT at 2.0 — highest CLIP priority for clothing adherence
-    sdStart,            // POSE SECOND at 1.9 — second highest CLIP priority
-    descBoost,          // User's scene description — weighted 1.9, any chunk fine
-    expanded,           // Expanded scene + plain-text clothing reinforcement
+    descBoost,          // ETNIA + USER DESCRIPTION FIRST (ordem: etnia → pose)
+    expanded,           // Expanded scene + plain-text etnia reinforcement
+    _etniaSkinBoost,    // Ethnicity skin — reforça etnia antes da pose
+    sdStart,            // POSE DEPOIS DA ETNIA — ordem correta: etnia → pose
     sdEnd,              // Additional pose terms
     _PHOTO,             // Quality/RAW/film — all weighted, chunk 2 fine
-    _etniaSkinBoost,    // Ethnicity skin — weighted, chunk 2 fine
     _faceAnchor,        // Face consistency — weighted, chunk 2 fine
     charBoost,          // Character physical terms — weighted at 1.8, chunk 2 fine
     _SKIN,              // Anti-plastic skin detail — all at 2.0, effective in chunk 3
@@ -11313,6 +11317,16 @@ function _buildPortugueseDesc(){
     const match = Object.entries(_ETNIA_PT).find(([k])=>e.toLowerCase().includes(k.toLowerCase()));
     if(match && match[1]) parts.push('mulher ' + match[1]);
     else parts.push('mulher');
+  }
+  // Integra pose/posição logo após a etnia, na ordem: etnia → pose
+  if(selectedPoseKey){
+    const poseBtn = document.querySelector(`.pose-btn[data-pose="${selectedPoseKey}"]`);
+    if(poseBtn){
+      // Pega o texto do botão sem o emoji da span
+      const poseLabel = poseBtn.childNodes[poseBtn.childNodes.length - 1]?.textContent?.trim()
+        || poseBtn.textContent.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu,'').trim();
+      if(poseLabel) parts.push(poseLabel.toLowerCase());
+    }
   }
   const id = quickChipState.idade;
   if(id){
