@@ -1678,6 +1678,26 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
             <button class="pose-btn" data-pose="fantasy-siren"         onclick="setPose('fantasy-siren')"><span class="pose-icon">🌊</span>Sereia das pedras — sedução</button>
             <button class="pose-btn" data-pose="fantasy-baker"         onclick="setPose('fantasy-baker')"><span class="pose-icon">🧁</span>Confeiteira sexy — padaria</button>
             <button class="pose-btn" data-pose="fantasy-soccer-player" onclick="setPose('fantasy-soccer-player')"><span class="pose-icon">⚽</span>Jogadora de futebol sexy — campo</button>
+            <button class="pose-btn" data-pose="fantasy-doctor-sensual"   onclick="setPose('fantasy-doctor-sensual')"><span class="pose-icon">👩‍⚕️</span>Doutora sedutora — consultório</button>
+            <button class="pose-btn" data-pose="fantasy-scientist-sexy"   onclick="setPose('fantasy-scientist-sexy')"><span class="pose-icon">🔬</span>Cientista sexy — laboratório</button>
+            <button class="pose-btn" data-pose="fantasy-hula"             onclick="setPose('fantasy-hula')"><span class="pose-icon">🌺</span>Dançarina hula — Havaí sensual</button>
+            <button class="pose-btn" data-pose="fantasy-fox-girl"         onclick="setPose('fantasy-fox-girl')"><span class="pose-icon">🦊</span>Fox girl / Kitsune — raposa sensual</button>
+            <button class="pose-btn" data-pose="fantasy-oktoberfest"      onclick="setPose('fantasy-oktoberfest')"><span class="pose-icon">🍺</span>Garçonete Oktoberfest — dirndl</button>
+            <button class="pose-btn" data-pose="fantasy-jazz-singer"      onclick="setPose('fantasy-jazz-singer')"><span class="pose-icon">🎤</span>Cantora de jazz — palco anos 40</button>
+            <button class="pose-btn" data-pose="fantasy-flamenco"         onclick="setPose('fantasy-flamenco')"><span class="pose-icon">💃</span>Dançarina flamenco — Espanha</button>
+            <button class="pose-btn" data-pose="fantasy-samba-carnival"   onclick="setPose('fantasy-samba-carnival')"><span class="pose-icon">🎭</span>Rainha do carnaval — Rio</button>
+            <button class="pose-btn" data-pose="fantasy-naughty-santa"    onclick="setPose('fantasy-naughty-santa')"><span class="pose-icon">🎅</span>Mamãe Noel sedutora</button>
+            <button class="pose-btn" data-pose="fantasy-lion-tamer"       onclick="setPose('fantasy-lion-tamer')"><span class="pose-icon">🦁</span>Domadora de leões — circo sensual</button>
+            <button class="pose-btn" data-pose="fantasy-snake-charmer"    onclick="setPose('fantasy-snake-charmer')"><span class="pose-icon">🐍</span>Encantadora de serpentes — Egito</button>
+            <button class="pose-btn" data-pose="fantasy-witch-back"       onclick="setPose('fantasy-witch-back')"><span class="pose-icon">🧙</span>Bruxa sedutora — de costas</button>
+            <button class="pose-btn" data-pose="fantasy-kunoichi"         onclick="setPose('fantasy-kunoichi')"><span class="pose-icon">⛩️</span>Kunoichi — ninja feminina de frente</button>
+            <button class="pose-btn" data-pose="fantasy-fallen-angel"     onclick="setPose('fantasy-fallen-angel')"><span class="pose-icon">🖤</span>Anjo caído — asas negras</button>
+            <button class="pose-btn" data-pose="fantasy-mermaid-back"     onclick="setPose('fantasy-mermaid-back')"><span class="pose-icon">🧜</span>Sereia de costas — oceano</button>
+            <button class="pose-btn" data-pose="fantasy-victorian-corset" onclick="setPose('fantasy-victorian-corset')"><span class="pose-icon">👗</span>Dama vitoriana — corset provocante</button>
+            <button class="pose-btn" data-pose="fantasy-masseuse"         onclick="setPose('fantasy-masseuse')"><span class="pose-icon">🧖</span>Massoterapeuta sedutora</button>
+            <button class="pose-btn" data-pose="fantasy-dominatrix-red"   onclick="setPose('fantasy-dominatrix-red')"><span class="pose-icon">❤️</span>Dominatrix vermelha — couro e renda</button>
+            <button class="pose-btn" data-pose="fantasy-fairy-back"       onclick="setPose('fantasy-fairy-back')"><span class="pose-icon">🧚</span>Fada sensual — de costas com asas</button>
+            <button class="pose-btn" data-pose="fantasy-succubus-throne"  onclick="setPose('fantasy-succubus-throne')"><span class="pose-icon">😈</span>Súcubo no trono — demônia sedutora</button>
       <div class="pose-group-label">👙 Roupas Sensuais / Lingerie</div>
       <button class="pose-btn" data-pose="outfit-lingerie-front"      onclick="setPose('outfit-lingerie-front')"><span class="pose-icon">🩱</span>Lingerie — de frente</button>
       <button class="pose-btn" data-pose="outfit-lingerie-back"       onclick="setPose('outfit-lingerie-back')"><span class="pose-icon">🩱</span>Lingerie — de costas</button>
@@ -5900,6 +5920,126 @@ const POSES = {
     sd_end:   'sexy female soccer player in knotted jersey and tight shorts, soccer ball, stadium pitch background, athletic pose, full body',
     mj: 'sexy female soccer player in knotted jersey and short tight shorts, soccer ball, stadium pitch background, athletic pose, full body',
     neg: 'formal clothes, beach, office, casual loose, winter', sup: false, label: 'Jogadora de futebol sexy — campo'
+  },
+  'fantasy-doctor-sensual': {
+    sd_start: 'dressed as a seductive female doctor, short open white lab coat over lingerie or very short dress, stethoscope, medical clinic or hospital office background,',
+    sd_end:   'seductive female doctor in short open lab coat over lingerie, stethoscope, clinic office background, flirty confident pose, full body',
+    mj: 'sexy female doctor in short open white lab coat over lingerie, stethoscope, clinic office background, flirty pose, full body',
+    neg: 'fully covered, casual clothes, beach, dark setting', sup: false, label: 'Doutora sedutora — consultório'
+  },
+  'fantasy-scientist-sexy': {
+    sd_start: 'dressed as a sexy female scientist, short open white lab coat over lingerie or fitted outfit, glasses, laboratory or chemistry lab background with colorful flasks,',
+    sd_end:   'sexy female scientist in short open lab coat over lingerie, glasses, colorful chemistry lab background, seductive pose, full body',
+    mj: 'sexy female scientist in short open lab coat with glasses, lingerie underneath, colorful chemistry lab background, seductive pose, full body',
+    neg: 'fully covered, casual, beach, dark gothic, office', sup: false, label: 'Cientista sexy — laboratório'
+  },
+  'fantasy-hula': {
+    sd_start: 'wearing a sexy hula dancer outfit, coconut shell bikini top and grass skirt or short floral skirt, tropical flower lei and headdress, tropical Hawaiian beach or tiki setting,',
+    sd_end:   'sexy hula dancer in coconut bra and grass skirt, flower lei and headdress, tropical Hawaiian beach tiki setting, hula dance pose, full body',
+    mj: 'sexy hula dancer in coconut bra and short grass skirt, flower lei, tropical Hawaiian beach setting, hula dance pose, full body',
+    neg: 'modern clothes, office, dark gothic, cold setting', sup: false, label: 'Dançarina hula — Havaí sensual'
+  },
+  'fantasy-fox-girl': {
+    sd_start: 'dressed as a fox girl or kitsune, fox ears headband, fluffy fox tail, revealing fitted outfit in warm fox colors orange and white, Japanese shrine or forest setting,',
+    sd_end:   'fox girl kitsune with fox ears and fluffy tail, revealing orange and white fitted outfit, Japanese shrine forest setting, playful sensual pose, full body',
+    mj: 'fox girl kitsune with fox ears and fluffy tail, revealing orange white outfit, Japanese shrine forest setting, playful sensual pose, full body',
+    neg: 'fully covered, modern casual, dark dungeon, wolf', sup: false, label: 'Fox girl / Kitsune — raposa sensual'
+  },
+  'fantasy-oktoberfest': {
+    sd_start: 'wearing a sexy Oktoberfest dirndl dress, low-cut tight bodice with pushed-up cleavage, short frilly skirt, apron, blonde braided hair, Bavarian beer hall or garden setting,',
+    sd_end:   'sexy Oktoberfest dirndl, low-cut tight bodice with cleavage, short frilly skirt, Bavarian beer hall setting, playful flirty pose, full body',
+    mj: 'sexy Oktoberfest dirndl with low-cut bodice and short frilly skirt, Bavarian beer hall setting, playful flirty pose, full body',
+    neg: 'modern street clothes, beach, dark gothic, office', sup: false, label: 'Garçonete Oktoberfest — dirndl'
+  },
+  'fantasy-jazz-singer': {
+    sd_start: 'dressed as a 1940s jazz club singer, elegant slinky floor-length sequin dress or tight satin gown, microphone stand, dim lit jazz club stage with warm spotlights,',
+    sd_end:   'jazz singer in elegant 1940s sequin satin gown, microphone stand, dim jazz club stage with warm spotlight, sultry singing pose, full body',
+    mj: 'elegant 1940s jazz singer in sequin satin gown, microphone stand, dim warm spotlight jazz club stage, sultry pose, full body',
+    neg: 'modern clothes, casual, beach, rock concert, bright lights', sup: false, label: 'Cantora de jazz — palco anos 40'
+  },
+  'fantasy-flamenco': {
+    sd_start: 'wearing a sexy flamenco dancer dress, long ruffled red or black flamenco gown with high slit, castanets, Spanish tablao or stage setting, flamenco dance pose with arms raised,',
+    sd_end:   'flamenco dancer in ruffled red black gown with high slit, castanets, Spanish tablao stage setting, dramatic flamenco dance pose, full body',
+    mj: 'flamenco dancer in ruffled red gown with high slit, castanets, Spanish stage setting, dramatic dance pose arms raised, full body',
+    neg: 'casual clothes, beach, modern street, still standing', sup: false, label: 'Dançarina flamenco — Espanha'
+  },
+  'fantasy-samba-carnival': {
+    sd_start: 'wearing a Rio carnival samba queen costume, tiny sparkly bikini with feathered headdress and back piece, sequins and rhinestones covering body, Sambadrome parade setting,',
+    sd_end:   'Rio carnival samba queen in tiny sparkly sequin bikini, massive feathered headdress and back piece, Sambadrome parade setting, samba dance pose, full body',
+    mj: 'Rio carnival samba queen in tiny sequin bikini with massive feathered headdress, Sambadrome parade setting, samba dance pose, full body',
+    neg: 'fully covered, modern street, office, casual clothes', sup: false, label: 'Rainha do carnaval — Rio'
+  },
+  'fantasy-naughty-santa': {
+    sd_start: 'wearing a sexy Mrs Santa Claus or naughty Santa outfit, very short red velvet dress or bikini with white fur trim, Santa hat, Christmas tree or fireplace background,',
+    sd_end:   'sexy Santa girl in very short red velvet outfit with white fur trim, Santa hat, Christmas tree fireplace background, flirty playful pose, full body',
+    mj: 'sexy Santa girl in tiny red velvet outfit with white fur trim, Santa hat, Christmas tree fireplace background, playful pose, full body',
+    neg: 'fully covered, office, beach, dark gothic', sup: false, label: 'Mamãe Noel sedutora'
+  },
+  'fantasy-lion-tamer': {
+    sd_start: 'wearing a sexy circus lion tamer costume, corset with low neckline, fishnet stockings, tiny top hat, whip in hand, circus ring with lion props or cage background,',
+    sd_end:   'sexy lion tamer in corset and fishnet stockings, tiny top hat, whip, circus ring background, commanding pose, full body',
+    mj: 'sexy circus lion tamer in corset fishnet stockings and tiny top hat, whip, circus ring background, commanding pose, full body',
+    neg: 'casual clothes, beach, modern office, dark gothic', sup: false, label: 'Domadora de leões — circo sensual'
+  },
+  'fantasy-snake-charmer': {
+    sd_start: 'as a seductive Egyptian snake charmer, exotic belly dancer outfit with sheer veils and gold jewelry, large python snake draped over shoulders and body, Egyptian temple or marketplace setting,',
+    sd_end:   'seductive snake charmer in exotic veil and gold jewelry with python snake draped over body, Egyptian temple setting, seductive pose, full body',
+    mj: 'seductive snake charmer with large python snake draped over body, exotic veil gold jewelry, Egyptian temple setting, seductive pose, full body',
+    neg: 'modern clothes, casual, beach, dark dungeon, office', sup: false, label: 'Encantadora de serpentes — Egito'
+  },
+  'fantasy-witch-back': {
+    sd_start: 'seductive witch from behind, tall pointed witch hat, tight revealing black gown or corset with open back, looking over shoulder provocatively, full moon forest or cauldron setting,',
+    sd_end:   'seductive witch from behind in tight black gown, pointed hat, looking over shoulder, moonlit forest cauldron setting, full body back view',
+    mj: 'seductive witch from behind in tight open-back black gown, pointed hat, looking over shoulder, moonlit forest setting, full body',
+    neg: 'facing camera, casual clothes, office, beach', sup: false, label: 'Bruxa sedutora — de costas'
+  },
+  'fantasy-kunoichi': {
+    sd_start: 'dressed as a kunoichi female ninja, form-fitting dark purple or black ninja bodysuit, mesh panels revealing skin, katana or kunai, Japanese temple or sakura garden setting, facing camera,',
+    sd_end:   'kunoichi female ninja in form-fitting dark bodysuit with mesh cutouts, katana, Japanese temple setting, confident seductive pose facing camera, full body',
+    mj: 'kunoichi female ninja in tight dark bodysuit with mesh panels, katana, Japanese temple sakura setting, seductive confident pose, full body',
+    neg: 'casual, beach, modern clothes, dark dungeon, fully covered', sup: false, label: 'Kunoichi — ninja feminina de frente'
+  },
+  'fantasy-fallen-angel': {
+    sd_start: 'dressed as a fallen angel, dark or tattered lingerie with large black feathered wings, smudged dark makeup, dramatic crumbling church or dark gothic setting,',
+    sd_end:   'fallen angel in dark tattered lingerie with large black feathered wings, dark makeup, gothic crumbling church setting, dramatic pose, full body',
+    mj: 'fallen angel in dark tattered lingerie with large black feathered wings, gothic church setting, dramatic pose, full body',
+    neg: 'white wings, casual clothes, beach, bright colors', sup: false, label: 'Anjo caído — asas negras'
+  },
+  'fantasy-mermaid-back': {
+    sd_start: 'as a seductive mermaid from behind, iridescent fish tail, flowing long wet hair, nude or shell bra strap visible, deep ocean or tropical reef rocks setting, looking over shoulder,',
+    sd_end:   'seductive mermaid from behind with iridescent tail, wet flowing hair, shell bra visible, tropical reef ocean rocks, looking over shoulder, full body',
+    mj: 'seductive mermaid from behind with iridescent tail and wet flowing hair, tropical reef ocean setting, looking over shoulder, full body',
+    neg: 'facing camera, dry land, modern, office, dark dungeon', sup: false, label: 'Sereia de costas — oceano'
+  },
+  'fantasy-victorian-corset': {
+    sd_start: 'wearing a Victorian-era tight waist-cinching corset, low-cut with pushed-up cleavage, long garter stockings, Victorian boudoir or ornate bedroom setting,',
+    sd_end:   'Victorian tight waist corset with low neckline and cleavage, garter stockings, Victorian boudoir ornate bedroom, seductive reclining or standing pose, full body',
+    mj: 'Victorian tight corset with pushed-up cleavage, garter stockings, Victorian boudoir bedroom setting, seductive pose, full body',
+    neg: 'modern casual, beach, dark gothic metal, office', sup: false, label: 'Dama vitoriana — corset provocante'
+  },
+  'fantasy-masseuse': {
+    sd_start: 'dressed as a seductive masseuse or spa therapist, minimal white or nude towel or shorts and top, massage oil on hands, luxury spa or massage table setting with candles,',
+    sd_end:   'seductive masseuse in minimal spa outfit with massage oil, luxury candle-lit spa massage table setting, sensual inviting pose, full body',
+    mj: 'seductive masseuse in minimal spa towel outfit, massage oil, luxury candle-lit spa setting, sensual pose, full body',
+    neg: 'fully covered, dark, office, outdoor, casual street', sup: false, label: 'Massoterapeuta sedutora'
+  },
+  'fantasy-dominatrix-red': {
+    sd_start: 'wearing a red leather dominatrix outfit, deep red corset with lace details, red latex gloves, thigh-high red boots, red whip or riding crop, moody dungeon or luxury penthouse setting,',
+    sd_end:   'red leather dominatrix in deep red corset, lace, thigh-high red boots, red whip, moody dungeon penthouse setting, powerful commanding pose, full body',
+    mj: 'red leather dominatrix in red corset and thigh-high boots, red whip, moody dungeon setting, commanding powerful pose, full body',
+    neg: 'casual clothes, beach, bright colors, soft, submissive pose', sup: false, label: 'Dominatrix vermelha — couro e renda'
+  },
+  'fantasy-fairy-back': {
+    sd_start: 'as a seductive fairy from behind, translucent gossamer wings with iridescent glow, barely-there sheer fairy outfit or floral bodice, enchanted forest or flower meadow background, looking over shoulder,',
+    sd_end:   'seductive fairy from behind with glowing translucent wings, sheer fairy outfit, enchanted forest meadow, looking over shoulder, full body back view',
+    mj: 'seductive fairy from behind with glowing iridescent wings, sheer fairy outfit, enchanted glowing forest, looking over shoulder, full body',
+    neg: 'facing camera, dark gothic, modern city, casual', sup: false, label: 'Fada sensual — de costas com asas'
+  },
+  'fantasy-succubus-throne': {
+    sd_start: 'as a succubus demoness seated on a dark ornate throne, seductive revealing outfit with dark wings and tail, glowing red or violet eyes, horns, dark infernal throne room setting,',
+    sd_end:   'succubus demoness on dark ornate throne, revealing dark outfit with wings horns and tail, glowing eyes, infernal throne room, seductive commanding pose, full body',
+    mj: 'succubus on dark throne, revealing outfit with wings horns and tail, glowing eyes, dark infernal throne room, seductive commanding pose, full body',
+    neg: 'casual clothes, beach, bright colors, modern setting', sup: false, label: 'Súcubo no trono — demônia sedutora'
   },
 
   /* ──── Roupas v3 ──── */
