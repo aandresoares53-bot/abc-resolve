@@ -11345,10 +11345,8 @@ function _buildPortugueseDesc(){
     if(match && match[1]) parts.push('mulher ' + match[1]);
     else parts.push('mulher');
   }
-  // Integra pose/posição logo após a etnia, na ordem: etnia → pose
-  if(selectedPoseKey && typeof POSES !== 'undefined' && POSES[selectedPoseKey]?.label){
-    parts.push(POSES[selectedPoseKey].label.toLowerCase());
-  }
+  // NOTA: pose NÃO é incluída na descrição — é injetada diretamente via selectedPose
+  // em buildPrompt (sdStart/pose.mj/poseFlux). Incluir aqui causaria duplicação no prompt.
   const id = quickChipState.idade;
   if(id){
     const m = id.match(/(\d+) to (\d+)/);
