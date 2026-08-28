@@ -10024,11 +10024,36 @@ function showPrompt(prompt){
 // The textarea auto-fill is a Portuguese summary of chip values (for the user to read).
 // Chip values are already in English via getQuickPreset() — we must NOT re-include the
 // PT summary in rawFull or it adds duplicate/untranslated Portuguese terms to the SD prompt.
+
+/**
+ * _extractUserComplement(ta, raw)
+ * Returns ONLY what the user actually typed as a complement, stripping the
+ * auto-fill prefix so it never duplicates chip content already in _quickPre.
+ *
+ * Rules:
+ *  – No manual edit (manualEdit !== '1') → textarea is auto-fill display only → ''
+ *  – Manual edit + text starts with auto-fill → return only the extra part the user added
+ *  – Manual edit + text is different from auto-fill → user rewrote from scratch → return in full
+ *  – autoFillDesc OFF → manualEdit is '1' whenever user typed → full value returned
+ */
+function _extractUserComplement(ta, raw){
+  if(!raw || !ta) return '';
+  // Textarea shows only auto-fill — chips already handle this in English
+  if(ta.dataset.manualEdit !== '1') return '';
+  // Extract just what the user added beyond the auto-fill base
+  const autoText = (typeof _buildPortugueseDesc === 'function') ? _buildPortugueseDesc().trim() : '';
+  if(autoText && raw.toLowerCase().startsWith(autoText.toLowerCase())){
+    // Strip the auto-fill prefix, keep only the user's complement
+    return raw.slice(autoText.length).replace(/^[,;\s]+/, '').trim();
+  }
+  // User rewrote the field from scratch (or autoFillDesc is OFF) — use full value
+  return raw;
+}
+
 function _getUserSceneText(){
   const ta = document.getElementById('user-description');
   const raw = (ta?.value || '').trim();
-  // Always use what user typed — no restriction on manual vs auto-fill
-  return raw;
+  return _extractUserComplement(ta, raw);
 }
 
 // ── TRANSLATION CACHE ─────────────────────────────────────────────────────
@@ -10069,14 +10094,17 @@ async function generate(){
   // This keeps outfit and scene coherent (both drawn from the same random outfit pick).
   _cachedPoseOutfit = selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '';
 
-  // Always use whatever the user typed — no restrictions on manual vs auto-fill.
-  const _userScene = raw; // 100% aceita sem restrições
+  // Extract ONLY what the user actually typed as a complement.
+  // If the textarea shows auto-fill only (manualEdit !== '1'), return ''.
+  // If user added to auto-fill, return only the added part (strips the auto-fill prefix).
+  // If user rewrote from scratch, return full value.
+  const _userScene = _extractUserComplement(_taEl, raw);
 
-  // Scene: prefer user's manual text, then default pose scene (autoScene reads _cachedPoseOutfit)
+  // Scene: prefer user's complement, then default pose scene (autoScene reads _cachedPoseOutfit)
   const sceneText = _userScene || getDefaultSceneForPose(selectedPoseKey || '');
 
-  // Combine: chip values (English) + preset (English or PT) + manual scene text only
-  // Do NOT include auto-filled PT textarea — chip values replace it with real English
+  // Combine: chip values (English) + preset (English or PT) + user complement only
+  // _userScene is already stripped of any auto-fill duplicate content
   const rawFull = [_quickPre, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
 
   const btn = document.querySelector('.btn-generate');
@@ -10088,13 +10116,14 @@ async function generate(){
   if(negEl){ if(typeof negEl.value !== 'undefined') negEl.value = NEGATIVE; else negEl.textContent = NEGATIVE; }
 
   try {
-    // Skip translation if content is already English (chips are always English)
+    // Skip translation if there is no user-typed content needing translation
+    // (chips are already English via _quickPre; only user complement or preset needs translation)
     let _result;
-    if(!raw && !hasPreset){
-      // All content is English (chips + default scene) — no translation needed
+    if(!_userScene && !hasPreset){
+      // All content is English (chips + default pose scene) — no translation needed
       _result = buildPrompt(rawFull, rawFull);
     } else {
-      // User typed text or has a preset — translate
+      // User typed a complement or has a preset — translate rawFull
       const englishText = await _translateText(rawFull);
       _result = buildPrompt(englishText, rawFull);
     }
