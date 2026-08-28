@@ -644,17 +644,17 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 
 <!-- STEP WIZARD -->
   <div class="step-wizard" id="step-wizard">
-    <div class="step-item active" id="step-1" onclick="scrollToStep(1)" title="Escolha o modo de geração">
+    <div class="step-item active" id="step-1" onclick="scrollToStep(1)" title="Escolha o formato do prompt">
       <div class="step-num">1</div>
-      <div class="step-label">Modo</div>
+      <div class="step-label">Formato</div>
     </div>
-    <div class="step-item" id="step-2" onclick="scrollToStep(2)" title="Escolha uma pose">
+    <div class="step-item" id="step-2" onclick="scrollToStep(2)" title="Escolha a etnia">
       <div class="step-num">2</div>
-      <div class="step-label">Pose</div>
+      <div class="step-label">Etnia</div>
     </div>
-    <div class="step-item" id="step-3" onclick="scrollToStep(3)" title="Personalize o personagem">
+    <div class="step-item" id="step-3" onclick="scrollToStep(3)" title="Escolha a pose e descreva">
       <div class="step-num">3</div>
-      <div class="step-label">Personagem</div>
+      <div class="step-label">Pose</div>
     </div>
     <div class="step-item" id="step-4" onclick="scrollToStep(4)" title="Gerar o prompt">
       <div class="step-num">4</div>
@@ -801,6 +801,69 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <button class="inpaint-btn" id="inpb-lighting" onclick="setInpaintTarget('lighting',this)">💡 Luz</button>
     </div>
     <div style="font-size:0.7em;color:#7c3d12;margin-top:8px;font-style:italic;">Gera prompt otimizado para inpainting da área selecionada • use com denoising 0.5-0.75</div>
+  </div>
+
+  <!-- ETHNICITY SELECTOR -->
+  <div class="input-card" id="section-etnia">
+    <div class="input-label-row" style="margin-bottom:10px;">
+      <label class="input-label">🌍 Etnia <span style="font-weight:400;font-size:0.88em;opacity:0.6;">— tom de pele e traços étnicos</span></label>
+    </div>
+    <div class="quick-chips" id="qchips-etnia">
+      <!-- ── AMÉRICAS ── -->
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Brazilian woman, warm golden tan mixed race skin, natural bronzed complexion, warm sun-kissed skin tone">🇧🇷 Brasileira</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Mexican woman, warm golden brown mestizo skin tone, caramel warm complexion, natural Mexican Latina features, warm bronze skin">🇲🇽 Mexicana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Colombian woman, warm caramel mixed heritage skin, natural bronzed complexion, warm olive to brown Colombian Latin features">🇨🇴 Colombiana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Argentine woman, warm fair olive skin, European-Latin mixed heritage features, natural warm light complexion, Argentine beauty">🇦🇷 Argentina</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Venezuelan woman, warm tan caramel skin tone, natural warm mixed Latin features, bronzed warm complexion, Venezuelan beauty">🇻🇪 Venezolana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Peruvian woman, warm copper bronze Andean skin tone, Peruvian Indigenous-Spanish mixed features, natural warm brown complexion">🇵🇪 Peruana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Chilean woman, warm olive fair skin, Chilean European-Latin mixed heritage, natural warm Mediterranean to tan complexion">🇨🇱 Chilena</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Cuban woman, warm caramel Afro-Latin skin tone, mixed African European Caribbean features, natural warm bronzed complexion">🇨🇺 Cubana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Latina woman, warm tan olive skin tone, caramel warm complexion, Latin American features">🌶️ Latina</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Caribbean woman, warm dark brown mixed African Latin skin tone, rich warm complexion, Caribbean features, sun-kissed mixed heritage skin, warm caramel to dark brown complexion">🌺 Caribenha</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Indigenous Native American woman, warm copper bronze skin tone, dark straight black hair, strong bone structure, natural earth-toned complexion, Native American features">🍂 Indígena</span>
+      <!-- ── EUROPA ── -->
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="French woman, warm fair European skin, natural light complexion, French Caucasian features, elegant refined features">🇫🇷 Francesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Italian woman, warm olive Mediterranean skin, Southern European Italian features, natural warm tan complexion, expressive dark eyes">🇮🇹 Italiana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Spanish woman, warm olive tan Mediterranean skin, Spanish European features, natural warm complexion, dark hair and expressive eyes">🇪🇸 Espanhola</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Portuguese woman, warm olive Mediterranean skin, natural warm fair complexion, Southern European Portuguese features">🇵🇹 Portuguesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Greek woman, warm olive Mediterranean skin, natural warm tan complexion, Southern European Greek features, strong expressive dark eyes">🇬🇷 Grega</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Mediterranean woman, warm olive tanned skin tone, Italian or Greek or Spanish features, natural warm brown complexion, Mediterranean dark hair and expressive dark eyes">🏔️ Mediterrânea</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Slavic Eastern European woman, very fair pale skin, high prominent cheekbones, light blue or grey eyes, fine delicate facial features, Slavic bone structure">🇷🇺 Eslava</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="German woman, fair light Northern European skin, natural pale complexion, Germanic Central European features, blue or green eyes">🇩🇪 Alemã</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Scandinavian Nordic woman, very fair pale skin, natural blonde light hair, Nordic pale complexion, high prominent cheekbones, blue or grey eyes">🇸🇪 Escandinava</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="British English woman, fair pale skin, natural light complexion, Northwestern European British features">🇬🇧 Inglesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Irish Celtic woman, very fair freckled pale skin, natural red or auburn hair, Celtic pale complexion, light blue or green eyes">🍀 Irlandesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="European woman, fair pale skin, light natural complexion, Western European features">🇪🇺 Europeia</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Turkish woman, warm olive Mediterranean-Anatolian skin, natural warm tan complexion, Turkish Middle Eastern features, dark expressive eyes">🇹🇷 Turca</span>
+      <!-- ── ÁSIA ── -->
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Korean woman, translucent porcelain smooth fair skin, Korean East Asian features, fine smooth skin texture, natural ivory warm complexion, K-beauty features">🇰🇷 Coreana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Japanese woman, translucent porcelain clear skin, fine delicate features, epicanthic fold, natural ivory warm complexion, soft blush undertone, fine facial features">🌸 Japonesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Chinese woman, light warm ivory smooth skin, East Asian Chinese features, fine smooth complexion, natural warm light skin tone">🇨🇳 Chinesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="East Asian woman, porcelain clear skin, epicanthic fold, high cheekbones, smooth ivory complexion">🏯 Asiática</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Vietnamese woman, warm golden ivory light tan skin, Southeast Asian Vietnamese features, natural warm ivory to light tan complexion">🇻🇳 Vietnamita</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Thai woman, warm golden tan skin, Southeast Asian Thai features, natural golden warm complexion, fine smooth skin">🇹🇭 Tailandesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Filipina woman, warm golden tan skin, Southeast Asian Malay-Spanish mixed heritage, natural warm golden brown complexion">🇵🇭 Filipina</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Malay Indonesian woman, warm golden tan to medium brown skin, Southeast Asian Malay features, natural warm complexion">🇮🇩 Indonésia</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Mongolian woman, warm fair to light tan skin, Central Asian Mongolian features, natural warm complexion, strong cheekbone bone structure">🇲🇳 Mongol</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Indian woman, golden brown warm skin tone, South Asian features, caramel complexion">🇮🇳 Indiana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Pakistani woman, warm golden to medium brown South Asian skin, Pakistani features, natural warm complexion, expressive dark eyes">🇵🇰 Paquistanesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Bangladeshi woman, warm golden brown South Asian skin, Bengali features, natural warm complexion, dark expressive eyes">🇧🇩 Bangladeshiana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Persian Iranian woman, warm golden olive skin tone, Middle Eastern Persian features, dark expressive eyes, rich warm complexion, defined high cheekbones, Persian beauty">🌟 Persa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Arab woman, warm olive Mediterranean skin, Middle Eastern features, dark expressive eyes">🕌 Árabe</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Lebanese woman, warm olive Mediterranean skin, Middle Eastern Lebanese Levantine features, warm tan complexion, almond eyes">🇱🇧 Libanesa</span>
+      <!-- ── ÁFRICA ── -->
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="West African woman, very deep dark ebony skin tone, high melanin rich complexion, strong West African features, deep blue-black skin undertone, rich dark skin sheen">🌿 Africana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Black woman, dark rich melanin skin tone, deep ebony complexion, strong African features">🌍 Negra</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Nigerian woman, warm deep rich dark brown skin tone, West African Yoruba or Igbo features, rich warm melanin complexion">🇳🇬 Nigeriana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Ethiopian woman, warm medium dark smooth brown skin, East African Horn of Africa features, fine bone structure, natural warm brown complexion">🇪🇹 Etíope</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Kenyan woman, warm rich dark brown East African skin tone, natural rich complexion, East African Bantu features, warm skin depth">🇰🇪 Queniana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="South African woman, rich warm dark brown mixed heritage skin, Zulu or Xhosa South African features, natural rich melanin complexion">🇿🇦 Sul-Africana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Angolan woman, warm deep rich dark skin tone, Bantu West Central African features, natural warm dark complexion, rich melanin skin">🇦🇴 Angolana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Moroccan Berber Arab woman, warm olive to light brown North African skin, natural warm complexion, Berber or Arab Moroccan features, dark expressive eyes">🇲🇦 Marroquina</span>
+      <!-- ── OCEANIA / OUTROS ── -->
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Polynesian woman, warm golden tan to brown Pacific Islander skin, Polynesian Maori or Hawaiian or Samoan features, natural warm brown complexion">🌊 Polinésia</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Jewish Ashkenazi woman, warm fair olive to light skin, Jewish Ashkenazi or Sephardic features, natural warm complexion, expressive features">✡️ Judaica</span>
+    </div>
   </div>
 
   <!-- POSE SELECTOR -->
@@ -1653,68 +1716,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <!-- QUICK SELECT — REDESIGNED: numerado, ordenado, simplificado -->
     <div class="quick-chips-wrap" id="quick-chips-wrap">
 
-      <!-- 1 ETNIA -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">1️⃣ Etnia <span style="font-weight:400;font-size:0.85em;opacity:0.6;">— tom de pele e traços étnicos</span></div>
-        <div class="quick-chips" id="qchips-etnia">
-          <!-- ── AMÉRICAS ── -->
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Brazilian woman, warm golden tan mixed race skin, natural bronzed complexion, warm sun-kissed skin tone">🇧🇷 Brasileira</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Mexican woman, warm golden brown mestizo skin tone, caramel warm complexion, natural Mexican Latina features, warm bronze skin">🇲🇽 Mexicana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Colombian woman, warm caramel mixed heritage skin, natural bronzed complexion, warm olive to brown Colombian Latin features">🇨🇴 Colombiana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Argentine woman, warm fair olive skin, European-Latin mixed heritage features, natural warm light complexion, Argentine beauty">🇦🇷 Argentina</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Venezuelan woman, warm tan caramel skin tone, natural warm mixed Latin features, bronzed warm complexion, Venezuelan beauty">🇻🇪 Venezolana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Peruvian woman, warm copper bronze Andean skin tone, Peruvian Indigenous-Spanish mixed features, natural warm brown complexion">🇵🇪 Peruana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Chilean woman, warm olive fair skin, Chilean European-Latin mixed heritage, natural warm Mediterranean to tan complexion">🇨🇱 Chilena</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Cuban woman, warm caramel Afro-Latin skin tone, mixed African European Caribbean features, natural warm bronzed complexion">🇨🇺 Cubana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Latina woman, warm tan olive skin tone, caramel warm complexion, Latin American features">🌶️ Latina</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Caribbean woman, warm dark brown mixed African Latin skin tone, rich warm complexion, Caribbean features, sun-kissed mixed heritage skin, warm caramel to dark brown complexion">🌺 Caribenha</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Indigenous Native American woman, warm copper bronze skin tone, dark straight black hair, strong bone structure, natural earth-toned complexion, Native American features">🍂 Indígena</span>
-          <!-- ── EUROPA ── -->
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="French woman, warm fair European skin, natural light complexion, French Caucasian features, elegant refined features">🇫🇷 Francesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Italian woman, warm olive Mediterranean skin, Southern European Italian features, natural warm tan complexion, expressive dark eyes">🇮🇹 Italiana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Spanish woman, warm olive tan Mediterranean skin, Spanish European features, natural warm complexion, dark hair and expressive eyes">🇪🇸 Espanhola</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Portuguese woman, warm olive Mediterranean skin, natural warm fair complexion, Southern European Portuguese features">🇵🇹 Portuguesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Greek woman, warm olive Mediterranean skin, natural warm tan complexion, Southern European Greek features, strong expressive dark eyes">🇬🇷 Grega</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Mediterranean woman, warm olive tanned skin tone, Italian or Greek or Spanish features, natural warm brown complexion, Mediterranean dark hair and expressive dark eyes">🏔️ Mediterrânea</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Slavic Eastern European woman, very fair pale skin, high prominent cheekbones, light blue or grey eyes, fine delicate facial features, Slavic bone structure">🇷🇺 Eslava</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="German woman, fair light Northern European skin, natural pale complexion, Germanic Central European features, blue or green eyes">🇩🇪 Alemã</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Scandinavian Nordic woman, very fair pale skin, natural blonde light hair, Nordic pale complexion, high prominent cheekbones, blue or grey eyes">🇸🇪 Escandinava</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="British English woman, fair pale skin, natural light complexion, Northwestern European British features">🇬🇧 Inglesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Irish Celtic woman, very fair freckled pale skin, natural red or auburn hair, Celtic pale complexion, light blue or green eyes">🍀 Irlandesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="European woman, fair pale skin, light natural complexion, Western European features">🇪🇺 Europeia</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Turkish woman, warm olive Mediterranean-Anatolian skin, natural warm tan complexion, Turkish Middle Eastern features, dark expressive eyes">🇹🇷 Turca</span>
-          <!-- ── ÁSIA ── -->
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Korean woman, translucent porcelain smooth fair skin, Korean East Asian features, fine smooth skin texture, natural ivory warm complexion, K-beauty features">🇰🇷 Coreana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Japanese woman, translucent porcelain clear skin, fine delicate features, epicanthic fold, natural ivory warm complexion, soft blush undertone, fine facial features">🌸 Japonesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Chinese woman, light warm ivory smooth skin, East Asian Chinese features, fine smooth complexion, natural warm light skin tone">🇨🇳 Chinesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="East Asian woman, porcelain clear skin, epicanthic fold, high cheekbones, smooth ivory complexion">🏯 Asiática</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Vietnamese woman, warm golden ivory light tan skin, Southeast Asian Vietnamese features, natural warm ivory to light tan complexion">🇻🇳 Vietnamita</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Thai woman, warm golden tan skin, Southeast Asian Thai features, natural golden warm complexion, fine smooth skin">🇹🇭 Tailandesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Filipina woman, warm golden tan skin, Southeast Asian Malay-Spanish mixed heritage, natural warm golden brown complexion">🇵🇭 Filipina</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Malay Indonesian woman, warm golden tan to medium brown skin, Southeast Asian Malay features, natural warm complexion">🇮🇩 Indonésia</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Mongolian woman, warm fair to light tan skin, Central Asian Mongolian features, natural warm complexion, strong cheekbone bone structure">🇲🇳 Mongol</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Indian woman, golden brown warm skin tone, South Asian features, caramel complexion">🇮🇳 Indiana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Pakistani woman, warm golden to medium brown South Asian skin, Pakistani features, natural warm complexion, expressive dark eyes">🇵🇰 Paquistanesa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Bangladeshi woman, warm golden brown South Asian skin, Bengali features, natural warm complexion, dark expressive eyes">🇧🇩 Bangladeshiana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Persian Iranian woman, warm golden olive skin tone, Middle Eastern Persian features, dark expressive eyes, rich warm complexion, defined high cheekbones, Persian beauty">🌟 Persa</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Arab woman, warm olive Mediterranean skin, Middle Eastern features, dark expressive eyes">🕌 Árabe</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Lebanese woman, warm olive Mediterranean skin, Middle Eastern Lebanese Levantine features, warm tan complexion, almond eyes">🇱🇧 Libanesa</span>
-          <!-- ── ÁFRICA ── -->
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="West African woman, very deep dark ebony skin tone, high melanin rich complexion, strong West African features, deep blue-black skin undertone, rich dark skin sheen">🌿 Africana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Black woman, dark rich melanin skin tone, deep ebony complexion, strong African features">🌍 Negra</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Nigerian woman, warm deep rich dark brown skin tone, West African Yoruba or Igbo features, rich warm melanin complexion">🇳🇬 Nigeriana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Ethiopian woman, warm medium dark smooth brown skin, East African Horn of Africa features, fine bone structure, natural warm brown complexion">🇪🇹 Etíope</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Kenyan woman, warm rich dark brown East African skin tone, natural rich complexion, East African Bantu features, warm skin depth">🇰🇪 Queniana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="South African woman, rich warm dark brown mixed heritage skin, Zulu or Xhosa South African features, natural rich melanin complexion">🇿🇦 Sul-Africana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Angolan woman, warm deep rich dark skin tone, Bantu West Central African features, natural warm dark complexion, rich melanin skin">🇦🇴 Angolana</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Moroccan Berber Arab woman, warm olive to light brown North African skin, natural warm complexion, Berber or Arab Moroccan features, dark expressive eyes">🇲🇦 Marroquina</span>
-          <!-- ── OCEANIA / OUTROS ── -->
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Polynesian woman, warm golden tan to brown Pacific Islander skin, Polynesian Maori or Hawaiian or Samoan features, natural warm brown complexion">🌊 Polinésia</span>
-          <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Jewish Ashkenazi woman, warm fair olive to light skin, Jewish Ashkenazi or Sephardic features, natural warm complexion, expressive features">✡️ Judaica</span>
-        </div>
-      </div>
-
-      <!-- 2 IDADE -->
+      <!-- 1 IDADE -->
       <div class="quick-chip-section">
         <div class="quick-chip-label">2️⃣ Idade</div>
         <div class="quick-chips" id="qchips-idade">
@@ -10030,14 +10032,22 @@ if(window.innerWidth <= 600){
 // ── WIZARD INIT ────────────────────────────────────────────────────────────
 (function(){
   updateWizardStep(1);
-  // Mark step 2 active when user scrolls past mode toggle
-  const observer = new IntersectionObserver(entries => {
+  // Mark step 2 (Etnia) when etnia section scrolls into view
+  const etniaObserver = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if(e.isIntersecting && !selectedPoseKey) updateWizardStep(2);
+      if(e.isIntersecting) updateWizardStep(2);
+    });
+  }, {threshold: 0.1});
+  const etniaCard = document.getElementById('section-etnia');
+  if(etniaCard) etniaObserver.observe(etniaCard);
+  // Mark step 3 (Pose) when pose section scrolls into view
+  const poseObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting && !selectedPoseKey) updateWizardStep(3);
     });
   }, {threshold: 0.1});
   const poseCard = document.getElementById('section-pose');
-  if(poseCard) observer.observe(poseCard);
+  if(poseCard) poseObserver.observe(poseCard);
   // Automatically activate first category tab
   setTimeout(function(){
     const nav = document.getElementById('cat-nav');
@@ -10764,7 +10774,7 @@ function filterPosesAndNav(q){
 
 // ── STEP WIZARD LOGIC ──────────────────────────────────────────────────────
 function scrollToStep(n){
-  const targets = { 1: '.mode-toggle-wrap', 2: '#section-pose', 3: '#section-char', 4: '#section-gen' };
+  const targets = { 1: '.mode-toggle-wrap', 2: '#section-etnia', 3: '#section-pose', 4: '#section-gen' };
   const el = document.querySelector(targets[n]);
   if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -10777,9 +10787,9 @@ function updateWizardStep(n){
     else if(i === n) el.classList.add('active');
   }
 }
-// Mark step 2 done when pose is selected — call from setPose
+// Mark step 3 done when pose is selected — call from setPose
 function _onPoseSelected(hasKey){
-  if(hasKey) { updateWizardStep(3); } else { updateWizardStep(2); }
+  if(hasKey) { updateWizardStep(4); } else { updateWizardStep(3); }
 }
 // Mark step 4 when prompt is generated — call from showPrompt
 function _onPromptGenerated(){
