@@ -652,9 +652,9 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <div class="step-num">2</div>
       <div class="step-label">Etnia</div>
     </div>
-    <div class="step-item" id="step-3" onclick="scrollToStep(3)" title="Escolha a pose e descreva">
+    <div class="step-item" id="step-3" onclick="scrollToStep(3)" title="Personagem e pose">
       <div class="step-num">3</div>
-      <div class="step-label">Pose</div>
+      <div class="step-label">Personagem</div>
     </div>
     <div class="step-item" id="step-4" onclick="scrollToStep(4)" title="Gerar o prompt">
       <div class="step-num">4</div>
@@ -865,6 +865,243 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Jewish Ashkenazi woman, warm fair olive to light skin, Jewish Ashkenazi or Sephardic features, natural warm complexion, expressive features">✡️ Judaica</span>
     </div>
   </div>
+
+  <!-- SCENE BUILDER -->
+  <!-- INPUT CARD (unified with preset) -->
+  <div class="input-card" id="section-char">
+    <div class="input-label-row">
+      <label class="input-label">👤 Personagem &amp; Cena</label>
+      <button class="btn-pin" id="btn-pin" onclick="togglePin()" title="Salvar como personagem">📌 Fixar personagem</button>
+      <button class="btn-pin" onclick="toggleSavedCharsPanel()" title="Ver personagens salvos" style="background:#f5f3ff;color:#5b21b6;border-color:#c4b5fd;">⭐ Personagens</button>
+    </div>
+    <div class="presets-area" id="presets-area"></div>
+    <!-- PERSONAGENS SALVOS -->
+    <div class="saved-chars-panel" id="saved-chars-panel" style="display:none;">
+      <div class="saved-chars-label">
+        <span>⭐ Personagens Salvos</span>
+        <button class="btn-save-char" onclick="saveCurrentChar()">💾 Salvar Atual</button>
+      </div>
+      <div class="saved-chars-grid" id="saved-chars-grid">
+        <span style="font-size:0.75em;color:#94a3b8;font-style:italic;">Nenhum personagem salvo ainda.</span>
+      </div>
+    </div>
+    <!-- CLOSE-UP / CROP MODE -->
+    <div class="closeup-toggle-wrap" id="closeup-toggle-wrap">
+      <span class="closeup-toggle-label">🔍 Close-up:</span>
+      <button class="btn-closeup" id="btn-closeup" onclick="toggleCloseup()">🔍 Ativar Close-up</button>
+      <div class="closeup-target-wrap" id="closeup-target-wrap">
+        <span class="closeup-target" data-target="face" onclick="setCloseupTarget(this)" title="Foco no rosto">😊 Rosto</span>
+        <span class="closeup-target" data-target="eyes" onclick="setCloseupTarget(this)" title="Foco nos olhos">👁️ Olhos</span>
+        <span class="closeup-target" data-target="lips" onclick="setCloseupTarget(this)" title="Foco nos lábios">💋 Lábios</span>
+        <span class="closeup-target" data-target="body" onclick="setCloseupTarget(this)" title="Foco no corpo">👙 Corpo</span>
+        <span class="closeup-target" data-target="back" onclick="setCloseupTarget(this)" title="Foco nas costas">🔙 Costas</span>
+        <span class="closeup-target" data-target="hands" onclick="setCloseupTarget(this)" title="Foco nas mãos">🤲 Mãos</span>
+        <span class="closeup-target" data-target="legs" onclick="setCloseupTarget(this)" title="Foco nas pernas">🦵 Pernas</span>
+        <span class="closeup-target" data-target="bust" onclick="setCloseupTarget(this)" title="Foco no busto">👙 Busto</span>
+        <span class="closeup-target" data-target="shoulders" onclick="setCloseupTarget(this)" title="Foco nos ombros">🤷 Ombros</span>
+        <span class="closeup-target" data-target="neck" onclick="setCloseupTarget(this)" title="Foco no pescoço">💎 Pescoço</span>
+        <span class="closeup-target" data-target="thighs" onclick="setCloseupTarget(this)" title="Foco nas coxas">🔥 Coxas</span>
+        <span class="closeup-target" data-target="feet" onclick="setCloseupTarget(this)" title="Foco nos pés">🦶 Pés</span>
+        <span class="closeup-target" data-target="waist" onclick="setCloseupTarget(this)" title="Foco na cintura">⏳ Cintura</span>
+      </div>
+    </div>
+    <!-- ⚙️ AUTOMAÇÕES BAR -->
+    <div id="auto-bar" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:8px;align-items:center;">
+      <span style="font-size:0.72em;font-weight:700;color:#475569;margin-right:2px;">⚙️ AUTO</span>
+      <button id="atog-generate"   onclick="_toggleAuto('autoGenerate')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Auto-gerar quando personagem+pose estiverem prontos">⚡ Gerar</button>
+      <button id="atog-copy"       onclick="_toggleAuto('autoCopy')"       style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Copiar prompt automaticamente após gerar">📋 Copiar</button>
+      <button id="atog-desc"       onclick="_toggleAuto('autoFillDesc')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Preencher caixa de texto com resumo das seleções">📝 Descrição</button>
+      <button id="atog-lighting"   onclick="_toggleAuto('autoLighting')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Sugerir iluminação ao escolher cenário">💡 Luz</button>
+      <button id="atog-variations" onclick="_toggleAuto('autoVariations')" style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Gerar 3 variações Light/Mid/Bold automaticamente">🎨 Variações</button>
+      <button id="atog-history"    onclick="_toggleAuto('autoHistory')"    style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Salvar cada prompt gerado no histórico com notificação">🕑 Histórico</button>
+      <button id="atog-tplchips"   onclick="_toggleAuto('autoTplChips')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Marcar chips visuais ao aplicar templates">🎯 Templates</button>
+      <button id="atog-charlock"   onclick="_toggleAuto('autoCharLock')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Mostrar indicador de personagem travado nas variações">🔒 Travar</button>
+    </div>
+    <div id="auto-lighting-suggest" style="display:none;padding:7px 12px;background:#fef9c3;border:1.5px solid #fbbf24;border-radius:9px;font-size:0.75em;color:#92400e;margin-bottom:8px;display:none;">
+      <span id="auto-lighting-text"></span>
+      <span style="float:right;display:flex;gap:6px;">
+        <button onclick="_acceptLightingSuggest()" style="padding:2px 9px;background:#f59e0b;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.9em;">✓ Aceitar</button>
+        <button onclick="document.getElementById('auto-lighting-suggest').style.display='none'" style="padding:2px 9px;background:transparent;color:#92400e;border:1.5px solid #fbbf24;border-radius:6px;cursor:pointer;font-size:0.9em;">✕</button>
+      </span>
+    </div>
+    <div id="auto-charlock-badge" style="display:none;padding:5px 10px;background:#dcfce7;border:1.5px solid #86efac;border-radius:9px;font-size:0.72em;color:#166534;font-weight:600;margin-bottom:8px;">🔒 Personagem travado — mantido em todas as variações e sequências</div>
+
+    <!-- QUICK SELECT — REDESIGNED: numerado, ordenado, simplificado -->
+    <div class="quick-chips-wrap" id="quick-chips-wrap">
+
+      <!-- 1 IDADE -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">2️⃣ Idade</div>
+        <div class="quick-chips" id="qchips-idade">
+          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="18 to 22 years old, very young adult woman, youthful face and skin, early twenties">🌸 18-22</span>
+          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="23 to 28 years old, young adult woman, mid-twenties, fresh-faced mature look">💫 23-28</span>
+          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="29 to 35 years old, woman in her early thirties, confident mature beauty">🌺 29-35</span>
+          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="36 to 45 years old, mature woman, refined sophisticated beauty, forties">💎 36-45</span>
+          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="46 to 55 years old, elegant mature woman, graceful aging, distinguished features">🌹 46-55</span>
+          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="over 55 years old, distinguished mature woman, silver elegance, timeless beauty">👑 55+</span>
+        </div>
+      </div>
+
+      <!-- 3 CORPO -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">3️⃣ Corpo</div>
+        <div class="quick-chips" id="qchips-corpo">
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="natural average body, real woman body proportions, soft belly, natural waist, moderate curves, realistic weight, authentic body">🍃 Natural</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="hourglass figure, narrow defined waist, full bust, wide hips, perfect feminine proportions">⏳ Ampulheta</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="voluptuous curvy body, large natural breasts, wide hips, soft full curves, plush figure">🍑 Curvilínea</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="athletic toned body, lean muscle definition, strong core, fit physique, defined arms and legs">💪 Atlética</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="petite slim body, small delicate frame, slender arms and legs, light build">🪶 Petite</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="plus size body, full figured, large soft belly, generous curves, thick thighs, large natural breasts, soft arms, natural full body weight, real body">🌸 Plus Size</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="muscular defined body, visible muscle definition without CGI perfection, strong toned physique, defined abs, powerful strong arms and legs, real muscle texture, athletic muscle mass">🏋️ Musculosa</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="tall slender elegant body, long lean limbs, graceful slender figure, natural thin waist, elegant long legs, model-like slender proportions, light elegant frame">🌾 Esbelta</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="pear shaped body, narrow shoulders, wide full hips, full thick thighs, smaller upper body with wider lower body, rounded full buttocks, natural pear body proportions">🎀 Periforme</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="rectangular straight body shape, similar shoulder and hip width, minimal waist definition, straight body proportions, natural straight feminine body, slight curves, natural rectangular figure">💎 Retangular</span>
+          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="apple shaped body, fuller midsection, broader waist and belly, slimmer legs and arms, natural fuller torso, real apple body proportions, fuller bust and abdomen">🍎 Maçã</span>
+        </div>
+      </div>
+
+      <!-- 4 CABELO -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">4️⃣ Cabelo</div>
+        <div class="quick-chips" id="qchips-cabelo">
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="long straight dark brunette hair, rich dark brown color">🌑 Longo escuro</span>
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="long straight platinum blonde hair, golden highlights">🌸 Longo loiro</span>
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="natural curly hair, defined curls, voluminous bouncy curls">🌀 Cacheado</span>
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="long red hair, auburn natural waves, copper tones">🔴 Ruivo</span>
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="hair in a messy bun, casual updo with loose strands framing face">🎀 Coque</span>
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="big natural afro hair, voluminous full afro, natural coil texture">✊ Afro</span>
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="wet soaking hair, water dripping from hair, slicked back wet appearance">💧 Molhado</span>
+          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="very short pixie cut hair, close-cropped, bold short haircut">✂️ Curto</span>
+        </div>
+      </div>
+
+      <!-- 5 OLHOS -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">5️⃣ Olhos</div>
+        <div class="quick-chips face-chips-row" id="qchips-olhos">
+          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="dark brown deep almond eyes, dark brown irises">Castanhos</span>
+          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="deep blue round expressive eyes, vivid blue irises">Azuis</span>
+          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="green cat-shaped slightly upturned eyes, bright green irises">Verdes</span>
+          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="dark hazel eyes with amber and green flecks in iris">Mel</span>
+          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="pale gray eyes, light silvery gray irises, icy gaze">Cinza</span>
+          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="near-black deep dark eyes, dark almost black irises">Negros</span>
+        </div>
+      </div>
+
+      <!-- 6 ROSTO -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">6️⃣ Formato do Rosto</div>
+        <div class="quick-chips face-chips-row" id="qchips-rosto">
+          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="oval face shape, high prominent cheekbones, balanced proportions">Oval</span>
+          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="heart-shaped face, wide forehead, narrow pointed chin, delicate jawline">Coração</span>
+          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="round face shape, soft full cheeks, rounded soft jawline">Redondo</span>
+          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="square strong jawline, defined angular jaw, prominent chin">Quadrado</span>
+          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="diamond face shape, sharp pronounced cheekbones, narrow forehead and chin">Diamante</span>
+          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="long narrow face, elongated features, narrow chin and jaw">Longo</span>
+        </div>
+      </div>
+
+      <!-- 7 LÁBIOS -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">7️⃣ Lábios</div>
+        <div class="quick-chips face-chips-row" id="qchips-labios">
+          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="full plump naturally voluminous lips, prominent defined cupid's bow">Carnudos</span>
+          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="thin delicate lips, subtle defined mouth, narrow lips">Finos</span>
+          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="wide mouth, wide prominent lips spread broadly across face">Largos</span>
+          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="pouty lips, naturally protruding lower lip, soft natural pout">Pouty</span>
+          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape">Arco</span>
+        </div>
+      </div>
+
+      <!-- 8 TRAÇOS ÚNICOS -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">8️⃣ Traços Únicos <span style="font-weight:400;opacity:0.6;">(opcional)</span></div>
+        <input type="text" id="face-tracos-input"
+          placeholder="Ex: pinta acima do lábio, sardas, sobrancelhas grossas, nariz arrebitado…"
+          style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:0.8em;color:#1e293b;background:#f8fafc;outline:none;transition:border-color 0.2s;"
+          onfocus="this.style.borderColor='#3b82f6'"
+          onblur="this.style.borderColor='#bfdbfe'"
+          oninput="faceProfile.tracos=this.value;_updateFacePreview();_autoSaveCharDraft();" />
+        <div id="face-id-preview" style="display:none;margin-top:6px;padding:6px 10px;background:#dbeafe;border-radius:8px;font-size:0.73em;color:#1e40af;font-style:italic;line-height:1.5;"></div>
+      </div>
+
+      <!-- 9 ILUMINAÇÃO -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">9️⃣ Iluminação</div>
+        <div class="quick-chips" id="qchips-iluminacao">
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes">☀️ Natural</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="late afternoon golden hour light, warm amber sunlight at 15 degrees above horizon, long soft shadows, sun-kissed skin glow, natural lens flare, warm orange and gold tones">🌅 Golden Hour</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="large softbox studio light, diffused key light from camera left, gentle fill from right, soft catchlights, controlled studio environment, editorial photography lighting">💡 Estúdio</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="low-key intimate ambient light, deep natural shadows, dim room glow, minimal single light source, moody dramatic atmosphere, shadow detail preserved">🌙 Low-Key</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="warm flickering candlelight, multiple candles, soft amber flame glow, intimate candlelit atmosphere, warm skin tones from candle warmth">🕯️ Velas</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="soft overcast diffused light, even cloud-filtered daylight, no harsh shadows, soft even illumination, flat natural light from overcast sky">🌫️ Nublado</span>
+        </div>
+      </div>
+
+      <!-- 🔟 CENÁRIO -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">🔟 Cenário</div>
+        <div class="scene-picker-wrap">
+          <button class="scene-picker-toggle" id="scene-picker-toggle" onclick="toggleScenePicker()">
+            <span class="spk-label" id="scene-picker-label">🎲 Automático — combinado com pose</span>
+            <span class="spk-arrow" id="scene-picker-arrow">▼</span>
+          </button>
+          <div class="scene-picker-panel" id="scene-picker-panel">
+            <div class="scene-cat-tabs" id="scene-cat-tabs"></div>
+            <div class="scene-grid" id="scene-grid"></div>
+            <div class="scene-picker-footer">
+              <button class="scene-footer-btn random" onclick="pickRandomSceneCat()">🎲 Aleatório</button>
+              <button class="scene-footer-btn clear" onclick="clearSceneChoice()">✕ Automático</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1️⃣1️⃣ ESTILO FOTO -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">1️⃣1️⃣ Estilo Fotográfico</div>
+        <div class="quick-chips" id="qchips-estilo-foto">
+          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="black and white photography, monochrome, high contrast B&W, classic black and white film, silver gelatin print">⬛ P&B</span>
+          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="polaroid style, instant photo aesthetic, white border, slightly faded colors, vintage instant camera feel, overexposed edges">📸 Polaroid</span>
+          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="1970s vintage photography, warm faded tones, soft color cast, vintage 35mm film look, retro aesthetic, faded yellows and browns">📿 Vintage 70s</span>
+          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="heavy film grain, coarse grain texture, ISO 3200 grain, grainy film aesthetic, high grain photographic texture">🌫️ Grain Pesado</span>
+          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="film noir style, dramatic shadows, high contrast, moody dark atmosphere, chiaroscuro lighting, classic noir aesthetic">🎭 Noir</span>
+          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="paparazzi style, candid street photo, telephoto lens, caught off guard, natural candid moment, unposed street photography">📡 Paparazzi</span>
+        </div>
+      </div>
+
+    </div>
+    <!-- ── face-id-wrap mantido vazio para compatibilidade com JS ────────── -->
+    <div class="face-id-wrap" id="face-id-wrap" style="display:none;"></div>
+
+    <!-- ── AUTO PROFILE PREVIEW ───────────────────────────────────────────── -->
+    <div id="auto-char-preview" style="display:none;margin:10px 0 4px;padding:10px 12px;background:linear-gradient(135deg,#ede9fe,#dbeafe);border:1.5px solid #c4b5fd;border-radius:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:0.75em;font-weight:700;color:#5b21b6;letter-spacing:0.03em;">✅ PERSONAGEM FIXADO</span>
+        <span id="auto-char-name-badge" style="font-size:0.68em;color:#7c3aed;font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" onclick="_renameAutoChar()" title="Clique para renomear"></span>
+      </div>
+      <div id="auto-char-pills" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="_renameAutoChar()" style="flex:1;padding:5px 0;font-size:0.72em;font-weight:600;background:#7c3aed;color:#fff;border:none;border-radius:7px;cursor:pointer;">✏️ Renomear</button>
+        <button onclick="_clearAllChips()" style="flex:1;padding:5px 0;font-size:0.72em;font-weight:600;background:#fff;color:#64748b;border:1.5px solid #cbd5e1;border-radius:7px;cursor:pointer;">🗑️ Limpar tudo</button>
+      </div>
+    </div>
+    <!-- ── END SELECTIONS ─────────────────────────────────────────────────── -->
+
+    <!-- DESCRIÇÃO — vem após a pose e os chips de personagem -->
+    <div class="input-label-row" style="margin-top:14px;margin-bottom:6px;">
+      <label class="input-label" for="user-description">✏️ Descrição adicional <span style="font-weight:400;font-size:0.88em;opacity:0.6;">— opcional</span></label>
+    </div>
+    <textarea
+      id="user-description"
+      class="user-input-textarea"
+      placeholder="Opcional — Ex: mulher brasileira, loira, 25 anos, praia ao pôr do sol… (se vazio, a pose define a cena automaticamente)"
+      rows="4"
+    ></textarea>
+    <p class="input-hint">💡 Opcional — selecione uma pose e clique em Gerar. A cena é definida automaticamente pela pose escolhida.</p>
+    <div class="auto-notice" id="auto-detect-notice"></div>
+  </div>
+
 
   <!-- POSE SELECTOR -->
   <div class="pose-card" id="section-pose">
@@ -1653,241 +1890,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <!-- Outra roupa button removed: outfit defined in character description -->
   </div>
 
-  <!-- SCENE BUILDER -->
-  <!-- INPUT CARD (unified with preset) -->
-  <div class="input-card" id="section-char">
-    <div class="input-label-row">
-      <label class="input-label">👤 Personagem &amp; Cena</label>
-      <button class="btn-pin" id="btn-pin" onclick="togglePin()" title="Salvar como personagem">📌 Fixar personagem</button>
-      <button class="btn-pin" onclick="toggleSavedCharsPanel()" title="Ver personagens salvos" style="background:#f5f3ff;color:#5b21b6;border-color:#c4b5fd;">⭐ Personagens</button>
-    </div>
-    <div class="presets-area" id="presets-area"></div>
-    <!-- PERSONAGENS SALVOS -->
-    <div class="saved-chars-panel" id="saved-chars-panel" style="display:none;">
-      <div class="saved-chars-label">
-        <span>⭐ Personagens Salvos</span>
-        <button class="btn-save-char" onclick="saveCurrentChar()">💾 Salvar Atual</button>
-      </div>
-      <div class="saved-chars-grid" id="saved-chars-grid">
-        <span style="font-size:0.75em;color:#94a3b8;font-style:italic;">Nenhum personagem salvo ainda.</span>
-      </div>
-    </div>
-    <!-- CLOSE-UP / CROP MODE -->
-    <div class="closeup-toggle-wrap" id="closeup-toggle-wrap">
-      <span class="closeup-toggle-label">🔍 Close-up:</span>
-      <button class="btn-closeup" id="btn-closeup" onclick="toggleCloseup()">🔍 Ativar Close-up</button>
-      <div class="closeup-target-wrap" id="closeup-target-wrap">
-        <span class="closeup-target" data-target="face" onclick="setCloseupTarget(this)" title="Foco no rosto">😊 Rosto</span>
-        <span class="closeup-target" data-target="eyes" onclick="setCloseupTarget(this)" title="Foco nos olhos">👁️ Olhos</span>
-        <span class="closeup-target" data-target="lips" onclick="setCloseupTarget(this)" title="Foco nos lábios">💋 Lábios</span>
-        <span class="closeup-target" data-target="body" onclick="setCloseupTarget(this)" title="Foco no corpo">👙 Corpo</span>
-        <span class="closeup-target" data-target="back" onclick="setCloseupTarget(this)" title="Foco nas costas">🔙 Costas</span>
-        <span class="closeup-target" data-target="hands" onclick="setCloseupTarget(this)" title="Foco nas mãos">🤲 Mãos</span>
-        <span class="closeup-target" data-target="legs" onclick="setCloseupTarget(this)" title="Foco nas pernas">🦵 Pernas</span>
-        <span class="closeup-target" data-target="bust" onclick="setCloseupTarget(this)" title="Foco no busto">👙 Busto</span>
-        <span class="closeup-target" data-target="shoulders" onclick="setCloseupTarget(this)" title="Foco nos ombros">🤷 Ombros</span>
-        <span class="closeup-target" data-target="neck" onclick="setCloseupTarget(this)" title="Foco no pescoço">💎 Pescoço</span>
-        <span class="closeup-target" data-target="thighs" onclick="setCloseupTarget(this)" title="Foco nas coxas">🔥 Coxas</span>
-        <span class="closeup-target" data-target="feet" onclick="setCloseupTarget(this)" title="Foco nos pés">🦶 Pés</span>
-        <span class="closeup-target" data-target="waist" onclick="setCloseupTarget(this)" title="Foco na cintura">⏳ Cintura</span>
-      </div>
-    </div>
-    <!-- ⚙️ AUTOMAÇÕES BAR -->
-    <div id="auto-bar" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:8px;align-items:center;">
-      <span style="font-size:0.72em;font-weight:700;color:#475569;margin-right:2px;">⚙️ AUTO</span>
-      <button id="atog-generate"   onclick="_toggleAuto('autoGenerate')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Auto-gerar quando personagem+pose estiverem prontos">⚡ Gerar</button>
-      <button id="atog-copy"       onclick="_toggleAuto('autoCopy')"       style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Copiar prompt automaticamente após gerar">📋 Copiar</button>
-      <button id="atog-desc"       onclick="_toggleAuto('autoFillDesc')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Preencher caixa de texto com resumo das seleções">📝 Descrição</button>
-      <button id="atog-lighting"   onclick="_toggleAuto('autoLighting')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Sugerir iluminação ao escolher cenário">💡 Luz</button>
-      <button id="atog-variations" onclick="_toggleAuto('autoVariations')" style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Gerar 3 variações Light/Mid/Bold automaticamente">🎨 Variações</button>
-      <button id="atog-history"    onclick="_toggleAuto('autoHistory')"    style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Salvar cada prompt gerado no histórico com notificação">🕑 Histórico</button>
-      <button id="atog-tplchips"   onclick="_toggleAuto('autoTplChips')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Marcar chips visuais ao aplicar templates">🎯 Templates</button>
-      <button id="atog-charlock"   onclick="_toggleAuto('autoCharLock')"   style="font-size:0.68em;padding:3px 9px;border-radius:20px;border:1.5px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#475569;" title="Mostrar indicador de personagem travado nas variações">🔒 Travar</button>
-    </div>
-    <div id="auto-lighting-suggest" style="display:none;padding:7px 12px;background:#fef9c3;border:1.5px solid #fbbf24;border-radius:9px;font-size:0.75em;color:#92400e;margin-bottom:8px;display:none;">
-      <span id="auto-lighting-text"></span>
-      <span style="float:right;display:flex;gap:6px;">
-        <button onclick="_acceptLightingSuggest()" style="padding:2px 9px;background:#f59e0b;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.9em;">✓ Aceitar</button>
-        <button onclick="document.getElementById('auto-lighting-suggest').style.display='none'" style="padding:2px 9px;background:transparent;color:#92400e;border:1.5px solid #fbbf24;border-radius:6px;cursor:pointer;font-size:0.9em;">✕</button>
-      </span>
-    </div>
-    <div id="auto-charlock-badge" style="display:none;padding:5px 10px;background:#dcfce7;border:1.5px solid #86efac;border-radius:9px;font-size:0.72em;color:#166534;font-weight:600;margin-bottom:8px;">🔒 Personagem travado — mantido em todas as variações e sequências</div>
 
-    <!-- QUICK SELECT — REDESIGNED: numerado, ordenado, simplificado -->
-    <div class="quick-chips-wrap" id="quick-chips-wrap">
-
-      <!-- 1 IDADE -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">2️⃣ Idade</div>
-        <div class="quick-chips" id="qchips-idade">
-          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="18 to 22 years old, very young adult woman, youthful face and skin, early twenties">🌸 18-22</span>
-          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="23 to 28 years old, young adult woman, mid-twenties, fresh-faced mature look">💫 23-28</span>
-          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="29 to 35 years old, woman in her early thirties, confident mature beauty">🌺 29-35</span>
-          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="36 to 45 years old, mature woman, refined sophisticated beauty, forties">💎 36-45</span>
-          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="46 to 55 years old, elegant mature woman, graceful aging, distinguished features">🌹 46-55</span>
-          <span class="quick-chip" data-cat="idade" onclick="toggleQuickChip(this)" data-val="over 55 years old, distinguished mature woman, silver elegance, timeless beauty">👑 55+</span>
-        </div>
-      </div>
-
-      <!-- 3 CORPO -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">3️⃣ Corpo</div>
-        <div class="quick-chips" id="qchips-corpo">
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="natural average body, real woman body proportions, soft belly, natural waist, moderate curves, realistic weight, authentic body">🍃 Natural</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="hourglass figure, narrow defined waist, full bust, wide hips, perfect feminine proportions">⏳ Ampulheta</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="voluptuous curvy body, large natural breasts, wide hips, soft full curves, plush figure">🍑 Curvilínea</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="athletic toned body, lean muscle definition, strong core, fit physique, defined arms and legs">💪 Atlética</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="petite slim body, small delicate frame, slender arms and legs, light build">🪶 Petite</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="plus size body, full figured, large soft belly, generous curves, thick thighs, large natural breasts, soft arms, natural full body weight, real body">🌸 Plus Size</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="muscular defined body, visible muscle definition without CGI perfection, strong toned physique, defined abs, powerful strong arms and legs, real muscle texture, athletic muscle mass">🏋️ Musculosa</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="tall slender elegant body, long lean limbs, graceful slender figure, natural thin waist, elegant long legs, model-like slender proportions, light elegant frame">🌾 Esbelta</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="pear shaped body, narrow shoulders, wide full hips, full thick thighs, smaller upper body with wider lower body, rounded full buttocks, natural pear body proportions">🎀 Periforme</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="rectangular straight body shape, similar shoulder and hip width, minimal waist definition, straight body proportions, natural straight feminine body, slight curves, natural rectangular figure">💎 Retangular</span>
-          <span class="quick-chip" data-cat="corpo" onclick="toggleQuickChip(this)" data-val="apple shaped body, fuller midsection, broader waist and belly, slimmer legs and arms, natural fuller torso, real apple body proportions, fuller bust and abdomen">🍎 Maçã</span>
-        </div>
-      </div>
-
-      <!-- 4 CABELO -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">4️⃣ Cabelo</div>
-        <div class="quick-chips" id="qchips-cabelo">
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="long straight dark brunette hair, rich dark brown color">🌑 Longo escuro</span>
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="long straight platinum blonde hair, golden highlights">🌸 Longo loiro</span>
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="natural curly hair, defined curls, voluminous bouncy curls">🌀 Cacheado</span>
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="long red hair, auburn natural waves, copper tones">🔴 Ruivo</span>
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="hair in a messy bun, casual updo with loose strands framing face">🎀 Coque</span>
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="big natural afro hair, voluminous full afro, natural coil texture">✊ Afro</span>
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="wet soaking hair, water dripping from hair, slicked back wet appearance">💧 Molhado</span>
-          <span class="quick-chip" data-cat="cabelo" onclick="toggleQuickChip(this)" data-val="very short pixie cut hair, close-cropped, bold short haircut">✂️ Curto</span>
-        </div>
-      </div>
-
-      <!-- 5 OLHOS -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">5️⃣ Olhos</div>
-        <div class="quick-chips face-chips-row" id="qchips-olhos">
-          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="dark brown deep almond eyes, dark brown irises">Castanhos</span>
-          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="deep blue round expressive eyes, vivid blue irises">Azuis</span>
-          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="green cat-shaped slightly upturned eyes, bright green irises">Verdes</span>
-          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="dark hazel eyes with amber and green flecks in iris">Mel</span>
-          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="pale gray eyes, light silvery gray irises, icy gaze">Cinza</span>
-          <span class="face-chip" data-cat="olhos" onclick="toggleFaceChip(this)" data-val="near-black deep dark eyes, dark almost black irises">Negros</span>
-        </div>
-      </div>
-
-      <!-- 6 ROSTO -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">6️⃣ Formato do Rosto</div>
-        <div class="quick-chips face-chips-row" id="qchips-rosto">
-          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="oval face shape, high prominent cheekbones, balanced proportions">Oval</span>
-          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="heart-shaped face, wide forehead, narrow pointed chin, delicate jawline">Coração</span>
-          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="round face shape, soft full cheeks, rounded soft jawline">Redondo</span>
-          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="square strong jawline, defined angular jaw, prominent chin">Quadrado</span>
-          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="diamond face shape, sharp pronounced cheekbones, narrow forehead and chin">Diamante</span>
-          <span class="face-chip" data-cat="rosto" onclick="toggleFaceChip(this)" data-val="long narrow face, elongated features, narrow chin and jaw">Longo</span>
-        </div>
-      </div>
-
-      <!-- 7 LÁBIOS -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">7️⃣ Lábios</div>
-        <div class="quick-chips face-chips-row" id="qchips-labios">
-          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="full plump naturally voluminous lips, prominent defined cupid's bow">Carnudos</span>
-          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="thin delicate lips, subtle defined mouth, narrow lips">Finos</span>
-          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="wide mouth, wide prominent lips spread broadly across face">Largos</span>
-          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="pouty lips, naturally protruding lower lip, soft natural pout">Pouty</span>
-          <span class="face-chip" data-cat="labios" onclick="toggleFaceChip(this)" data-val="perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape">Arco</span>
-        </div>
-      </div>
-
-      <!-- 8 TRAÇOS ÚNICOS -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">8️⃣ Traços Únicos <span style="font-weight:400;opacity:0.6;">(opcional)</span></div>
-        <input type="text" id="face-tracos-input"
-          placeholder="Ex: pinta acima do lábio, sardas, sobrancelhas grossas, nariz arrebitado…"
-          style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:0.8em;color:#1e293b;background:#f8fafc;outline:none;transition:border-color 0.2s;"
-          onfocus="this.style.borderColor='#3b82f6'"
-          onblur="this.style.borderColor='#bfdbfe'"
-          oninput="faceProfile.tracos=this.value;_updateFacePreview();_autoSaveCharDraft();" />
-        <div id="face-id-preview" style="display:none;margin-top:6px;padding:6px 10px;background:#dbeafe;border-radius:8px;font-size:0.73em;color:#1e40af;font-style:italic;line-height:1.5;"></div>
-      </div>
-
-      <!-- 9 ILUMINAÇÃO -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">9️⃣ Iluminação</div>
-        <div class="quick-chips" id="qchips-iluminacao">
-          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes">☀️ Natural</span>
-          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="late afternoon golden hour light, warm amber sunlight at 15 degrees above horizon, long soft shadows, sun-kissed skin glow, natural lens flare, warm orange and gold tones">🌅 Golden Hour</span>
-          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="large softbox studio light, diffused key light from camera left, gentle fill from right, soft catchlights, controlled studio environment, editorial photography lighting">💡 Estúdio</span>
-          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="low-key intimate ambient light, deep natural shadows, dim room glow, minimal single light source, moody dramatic atmosphere, shadow detail preserved">🌙 Low-Key</span>
-          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="warm flickering candlelight, multiple candles, soft amber flame glow, intimate candlelit atmosphere, warm skin tones from candle warmth">🕯️ Velas</span>
-          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="soft overcast diffused light, even cloud-filtered daylight, no harsh shadows, soft even illumination, flat natural light from overcast sky">🌫️ Nublado</span>
-        </div>
-      </div>
-
-      <!-- 🔟 CENÁRIO -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">🔟 Cenário</div>
-        <div class="scene-picker-wrap">
-          <button class="scene-picker-toggle" id="scene-picker-toggle" onclick="toggleScenePicker()">
-            <span class="spk-label" id="scene-picker-label">🎲 Automático — combinado com pose</span>
-            <span class="spk-arrow" id="scene-picker-arrow">▼</span>
-          </button>
-          <div class="scene-picker-panel" id="scene-picker-panel">
-            <div class="scene-cat-tabs" id="scene-cat-tabs"></div>
-            <div class="scene-grid" id="scene-grid"></div>
-            <div class="scene-picker-footer">
-              <button class="scene-footer-btn random" onclick="pickRandomSceneCat()">🎲 Aleatório</button>
-              <button class="scene-footer-btn clear" onclick="clearSceneChoice()">✕ Automático</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 1️⃣1️⃣ ESTILO FOTO -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">1️⃣1️⃣ Estilo Fotográfico</div>
-        <div class="quick-chips" id="qchips-estilo-foto">
-          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="black and white photography, monochrome, high contrast B&W, classic black and white film, silver gelatin print">⬛ P&B</span>
-          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="polaroid style, instant photo aesthetic, white border, slightly faded colors, vintage instant camera feel, overexposed edges">📸 Polaroid</span>
-          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="1970s vintage photography, warm faded tones, soft color cast, vintage 35mm film look, retro aesthetic, faded yellows and browns">📿 Vintage 70s</span>
-          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="heavy film grain, coarse grain texture, ISO 3200 grain, grainy film aesthetic, high grain photographic texture">🌫️ Grain Pesado</span>
-          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="film noir style, dramatic shadows, high contrast, moody dark atmosphere, chiaroscuro lighting, classic noir aesthetic">🎭 Noir</span>
-          <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="paparazzi style, candid street photo, telephoto lens, caught off guard, natural candid moment, unposed street photography">📡 Paparazzi</span>
-        </div>
-      </div>
-
-    </div>
-    <!-- ── face-id-wrap mantido vazio para compatibilidade com JS ────────── -->
-    <div class="face-id-wrap" id="face-id-wrap" style="display:none;"></div>
-
-    <!-- ── AUTO PROFILE PREVIEW ───────────────────────────────────────────── -->
-    <div id="auto-char-preview" style="display:none;margin:10px 0 4px;padding:10px 12px;background:linear-gradient(135deg,#ede9fe,#dbeafe);border:1.5px solid #c4b5fd;border-radius:12px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-        <span style="font-size:0.75em;font-weight:700;color:#5b21b6;letter-spacing:0.03em;">✅ PERSONAGEM FIXADO</span>
-        <span id="auto-char-name-badge" style="font-size:0.68em;color:#7c3aed;font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" onclick="_renameAutoChar()" title="Clique para renomear"></span>
-      </div>
-      <div id="auto-char-pills" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;"></div>
-      <div style="display:flex;gap:6px;">
-        <button onclick="_renameAutoChar()" style="flex:1;padding:5px 0;font-size:0.72em;font-weight:600;background:#7c3aed;color:#fff;border:none;border-radius:7px;cursor:pointer;">✏️ Renomear</button>
-        <button onclick="_clearAllChips()" style="flex:1;padding:5px 0;font-size:0.72em;font-weight:600;background:#fff;color:#64748b;border:1.5px solid #cbd5e1;border-radius:7px;cursor:pointer;">🗑️ Limpar tudo</button>
-      </div>
-    </div>
-    <!-- ── END SELECTIONS ─────────────────────────────────────────────────── -->
-
-    <!-- DESCRIÇÃO — vem após a pose e os chips de personagem -->
-    <div class="input-label-row" style="margin-top:14px;margin-bottom:6px;">
-      <label class="input-label" for="user-description">✏️ Descrição adicional <span style="font-weight:400;font-size:0.88em;opacity:0.6;">— opcional</span></label>
-    </div>
-    <textarea
-      id="user-description"
-      class="user-input-textarea"
-      placeholder="Opcional — Ex: mulher brasileira, loira, 25 anos, praia ao pôr do sol… (se vazio, a pose define a cena automaticamente)"
-      rows="4"
-    ></textarea>
-    <p class="input-hint">💡 Opcional — selecione uma pose e clique em Gerar. A cena é definida automaticamente pela pose escolhida.</p>
-    <div class="auto-notice" id="auto-detect-notice"></div>
-  </div>
 
   <!-- SMART TEMPLATES -->
   <div class="templates-panel" id="templates-panel">
@@ -10044,14 +10047,14 @@ if(window.innerWidth <= 600){
   }, {threshold: 0.1});
   const etniaCard = document.getElementById('section-etnia');
   if(etniaCard) etniaObserver.observe(etniaCard);
-  // Mark step 3 (Pose) when pose section scrolls into view
-  const poseObserver = new IntersectionObserver(entries => {
+  // Mark step 3 (Personagem) when section-char scrolls into view
+  const charObserver = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if(e.isIntersecting && !selectedPoseKey) updateWizardStep(3);
+      if(e.isIntersecting) updateWizardStep(3);
     });
   }, {threshold: 0.1});
-  const poseCard = document.getElementById('section-pose');
-  if(poseCard) poseObserver.observe(poseCard);
+  const charCard = document.getElementById('section-char');
+  if(charCard) charObserver.observe(charCard);
   // Automatically activate first category tab
   setTimeout(function(){
     const nav = document.getElementById('cat-nav');
@@ -10778,7 +10781,7 @@ function filterPosesAndNav(q){
 
 // ── STEP WIZARD LOGIC ──────────────────────────────────────────────────────
 function scrollToStep(n){
-  const targets = { 1: '.mode-toggle-wrap', 2: '#section-etnia', 3: '#section-pose', 4: '#section-gen' };
+  const targets = { 1: '.mode-toggle-wrap', 2: '#section-etnia', 3: '#section-char', 4: '#section-gen' };
   const el = document.querySelector(targets[n]);
   if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -10791,7 +10794,7 @@ function updateWizardStep(n){
     else if(i === n) el.classList.add('active');
   }
 }
-// Mark step 3 done when pose is selected — call from setPose
+// Mark step 3 (Personagem) done + advance to step 4 when pose is selected
 function _onPoseSelected(hasKey){
   if(hasKey) { updateWizardStep(4); } else { updateWizardStep(3); }
 }
