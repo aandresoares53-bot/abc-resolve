@@ -8464,7 +8464,7 @@ function expandScene(t){
   const hasOutfit = /wearing|dress|shirt|jeans|bikini|top|skirt|blouse|outfit|coat|jacket|suit|shorts|leggings|swimsuit|bodysuit|lingerie|bra|pants|trousers|hoodie|sweater|gown|uniform|costume|corset|crop|naked|nude|naked|topless|bottomless|undressed|no clothes|no clothing|without clothes|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|camisola|blusa|meias|meia-cal[cç]a|body|collant|maio|maiô|roupa|roupinha|fantasia|espartilho|colete|casaco|jaqueta|moletom|pijama|ling[eé]rie|fio dental|tanga|microbiqu[iíi]ni|decote|pelada|sem roupa|sem calcinha|sem suti|nu[ao]\b|peladinha|topless/.test(s);
   let outfit = '';
   if(!hasOutfit){
-    if(isShower || isMirror && false) outfit = ''; // nude — no outfit for shower/bath
+    if(isShower) outfit = ''; // nude — no outfit for shower/bath
     else if(isBeach)   outfit = 'wearing a micro string bikini, tiny triangle top and micro string bottom, sun-kissed skin';
     else if(isPool)    outfit = 'wearing a micro string bikini or a sexy cut-out one-piece swimsuit with deep plunging neckline';
     else if(isRain)    outfit = 'wearing a thin white t-shirt soaking wet and see-through, no bra, wet micro shorts';
@@ -9496,7 +9496,7 @@ function buildPrompt(englishText, rawPT){
   if(_sceneOnly.length){
     let inputScene = _sceneOnly.join(', ');
     if(typeof chipState !== 'undefined'){
-      if(chipState.outfit && !_descBoostRe.test(inputScene.toLowerCase()))
+      if(chipState.outfit && (!_descBoostRe || !_descBoostRe.test(inputScene.toLowerCase())))
         inputScene = chipState.outfit + ', ' + inputScene;
       if(chipState.expression && !pose.sup)
         inputScene = inputScene + ', ' + chipState.expression;
@@ -10195,7 +10195,7 @@ function _applyEtniaProfile(etniaVal){
   if(prof.labios) faceProfile.labios = prof.labios;
   if(prof.tracos) faceProfile.tracos = prof.tracos;
 
-  // Atualiza chips visuais de rosto
+  // Atualiza chips visuais de rosto (rosto, olhos, lábios)
   ['rosto','olhos','labios'].forEach(cat => {
     const val = prof[cat]; if(!val) return;
     document.querySelectorAll(`.face-chip[data-cat="${cat}"]`).forEach(c => {
@@ -10203,6 +10203,12 @@ function _applyEtniaProfile(etniaVal){
       if(c.dataset.val === val) c.classList.add('active');
     });
   });
+
+  // Atualiza o campo de texto de traços (não é chip, é input)
+  if(prof.tracos){
+    const tracosInp = document.getElementById('face-tracos-input');
+    if(tracosInp) tracosInp.value = prof.tracos;
+  }
 
   // Aplica cabelo (quickChip)
   if(prof.cabelo){
@@ -10254,6 +10260,14 @@ function toggleQuickChip(el){
     if(cat === 'etnia') _applyEtniaProfile(val);
   } else {
     quickChipState[cat] = '';
+    // Ao desativar etnia, limpa os chips de rosto e traços que foram preenchidos automaticamente
+    if(cat === 'etnia'){
+      Object.keys(faceProfile).forEach(k => faceProfile[k] = '');
+      document.querySelectorAll('.face-chip.active').forEach(c => c.classList.remove('active'));
+      const tracosInp = document.getElementById('face-tracos-input');
+      if(tracosInp) tracosInp.value = '';
+      _updateFacePreview();
+    }
   }
   _autoSaveCharDraft();
 }
@@ -11322,14 +11336,8 @@ function _buildPortugueseDesc(){
     else parts.push('mulher');
   }
   // Integra pose/posição logo após a etnia, na ordem: etnia → pose
-  if(selectedPoseKey){
-    const poseBtn = document.querySelector(`.pose-btn[data-pose="${selectedPoseKey}"]`);
-    if(poseBtn){
-      // Pega o texto do botão sem o emoji da span
-      const poseLabel = poseBtn.childNodes[poseBtn.childNodes.length - 1]?.textContent?.trim()
-        || poseBtn.textContent.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu,'').trim();
-      if(poseLabel) parts.push(poseLabel.toLowerCase());
-    }
+  if(selectedPoseKey && typeof POSES !== 'undefined' && POSES[selectedPoseKey]?.label){
+    parts.push(POSES[selectedPoseKey].label.toLowerCase());
   }
   const id = quickChipState.idade;
   if(id){
