@@ -1658,6 +1658,26 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
             <button class="pose-btn" data-pose="fantasy-cyberpunk-back" onclick="setPose('fantasy-cyberpunk-back')"><span class="pose-icon">🤖</span>Cyberpunk de costas — neon city</button>
             <button class="pose-btn" data-pose="fantasy-dark-elf" onclick="setPose('fantasy-dark-elf')"><span class="pose-icon">🌑</span>Elfa das trevas — floresta sombria</button>
             <button class="pose-btn" data-pose="fantasy-pirate-back" onclick="setPose('fantasy-pirate-back')"><span class="pose-icon">🏴‍☠️</span>Pirata sedutora — de costas no navio</button>
+            <button class="pose-btn" data-pose="fantasy-biker"         onclick="setPose('fantasy-biker')"><span class="pose-icon">🏍️</span>Motoqueira sexy — garagem</button>
+            <button class="pose-btn" data-pose="fantasy-bride"         onclick="setPose('fantasy-bride')"><span class="pose-icon">👰</span>Noiva sedutora — vestido de noiva</button>
+            <button class="pose-btn" data-pose="fantasy-boxer"         onclick="setPose('fantasy-boxer')"><span class="pose-icon">🥊</span>Boxeadora sexy — ringue</button>
+            <button class="pose-btn" data-pose="fantasy-mechanic"      onclick="setPose('fantasy-mechanic')"><span class="pose-icon">🔧</span>Mecânica sexy — garagem</button>
+            <button class="pose-btn" data-pose="fantasy-femme-fatale"  onclick="setPose('fantasy-femme-fatale')"><span class="pose-icon">🌹</span>Femme fatale — noir sedutora</button>
+            <button class="pose-btn" data-pose="fantasy-gothic-lolita" onclick="setPose('fantasy-gothic-lolita')"><span class="pose-icon">🎀</span>Lolita gótica — Victorian dark</button>
+            <button class="pose-btn" data-pose="fantasy-medieval-princess" onclick="setPose('fantasy-medieval-princess')"><span class="pose-icon">👸</span>Princesa medieval — castelo</button>
+            <button class="pose-btn" data-pose="fantasy-superhero"     onclick="setPose('fantasy-superhero')"><span class="pose-icon">🦸</span>Super-heroína — pose de poder</button>
+            <button class="pose-btn" data-pose="fantasy-pinup"         onclick="setPose('fantasy-pinup')"><span class="pose-icon">🍒</span>Pin-up clássica — anos 50</button>
+            <button class="pose-btn" data-pose="fantasy-tango-dancer"  onclick="setPose('fantasy-tango-dancer')"><span class="pose-icon">💃</span>Dançarina de tango — milonga</button>
+            <button class="pose-btn" data-pose="fantasy-tennis"        onclick="setPose('fantasy-tennis')"><span class="pose-icon">🎾</span>Tenista sexy — quadra</button>
+            <button class="pose-btn" data-pose="fantasy-karate"        onclick="setPose('fantasy-karate')"><span class="pose-icon">🥋</span>Lutadora — dojo artes marciais</button>
+            <button class="pose-btn" data-pose="fantasy-circus"        onclick="setPose('fantasy-circus')"><span class="pose-icon">🎪</span>Trapezista de circo — sensual</button>
+            <button class="pose-btn" data-pose="fantasy-rockabilly"    onclick="setPose('fantasy-rockabilly')"><span class="pose-icon">🎸</span>Rockabilly pin-up — anos 50</button>
+            <button class="pose-btn" data-pose="fantasy-space-captain" onclick="setPose('fantasy-space-captain')"><span class="pose-icon">🚀</span>Capitã espacial — sci-fi</button>
+            <button class="pose-btn" data-pose="fantasy-flapper"       onclick="setPose('fantasy-flapper')"><span class="pose-icon">🪗</span>Flapper dos anos 20 — art deco</button>
+            <button class="pose-btn" data-pose="fantasy-gangster-girl" onclick="setPose('fantasy-gangster-girl')"><span class="pose-icon">🔫</span>Gangster girl — prohibition era</button>
+            <button class="pose-btn" data-pose="fantasy-siren"         onclick="setPose('fantasy-siren')"><span class="pose-icon">🌊</span>Sereia das pedras — sedução</button>
+            <button class="pose-btn" data-pose="fantasy-baker"         onclick="setPose('fantasy-baker')"><span class="pose-icon">🧁</span>Confeiteira sexy — padaria</button>
+            <button class="pose-btn" data-pose="fantasy-soccer-player" onclick="setPose('fantasy-soccer-player')"><span class="pose-icon">⚽</span>Jogadora de futebol sexy — campo</button>
       <div class="pose-group-label">👙 Roupas Sensuais / Lingerie</div>
       <button class="pose-btn" data-pose="outfit-lingerie-front"      onclick="setPose('outfit-lingerie-front')"><span class="pose-icon">🩱</span>Lingerie — de frente</button>
       <button class="pose-btn" data-pose="outfit-lingerie-back"       onclick="setPose('outfit-lingerie-back')"><span class="pose-icon">🩱</span>Lingerie — de costas</button>
@@ -5760,6 +5780,126 @@ const POSES = {
     sd_end:   'pirate costume from behind, corset and short skirt, thigh-high boots, ship deck, looking over shoulder, full body',
     mj: 'pirate costume from behind, corset and short skirt, thigh-high boots, ship deck, looking over shoulder, full body',
     neg: 'facing camera, indoor office, modern clothes, beach', sup: false, label: 'Pirata sedutora — de costas no navio'
+  },
+  'fantasy-biker': {
+    sd_start: 'wearing a sexy biker outfit, tight leather jacket open over lingerie or crop top, leather pants or very short shorts, motorcycle or garage workshop background,',
+    sd_end:   'sexy biker in tight leather jacket with lingerie or crop top, leather pants or shorts, motorcycle garage background, standing confident pose, full body',
+    mj: 'sexy biker in tight leather jacket open with lingerie underneath, leather shorts, motorcycle garage background, confident pose, full body',
+    neg: 'office, beach, formal gown, casual loose clothes', sup: false, label: 'Motoqueira sexy — garagem'
+  },
+  'fantasy-bride': {
+    sd_start: 'wearing a sexy form-fitting wedding dress, white or ivory tight bridal gown with low neckline, lace details, bridal veil, chapel or luxury venue background,',
+    sd_end:   'sexy form-fitting wedding dress, white lace gown with low neckline, bridal veil, chapel luxury venue background, full body',
+    mj: 'sexy form-fitting white lace wedding dress with bridal veil, chapel luxury venue background, full body',
+    neg: 'casual clothes, modern street, dark setting, bikini', sup: false, label: 'Noiva sedutora — vestido de noiva'
+  },
+  'fantasy-boxer': {
+    sd_start: 'wearing boxing gloves, sports bra and very short boxing shorts or bikini-style boxing outfit, boxing ring or gym background, athletic fighting stance or hands raised,',
+    sd_end:   'sexy female boxer with boxing gloves, sports bra and short boxing shorts, boxing ring gym background, athletic fighting stance, full body',
+    mj: 'sexy female boxer with boxing gloves, sports bra and tiny boxing shorts, boxing ring gym background, athletic stance, full body',
+    neg: 'casual clothes, beach, formal, office, fully covered', sup: false, label: 'Boxeadora sexy — ringue'
+  },
+  'fantasy-mechanic': {
+    sd_start: 'wearing a sexy mechanic outfit, open coveralls revealing lingerie or bikini underneath, grease or oil smudges on skin, car workshop or garage background,',
+    sd_end:   'sexy mechanic in open coveralls showing lingerie or bikini, oil smudges on skin, garage workshop background, flirty pose, full body',
+    mj: 'sexy mechanic in open coveralls with lingerie showing underneath, oil smudges, garage workshop background, full body',
+    neg: 'formal clothes, beach, office, fully covered, clean environment', sup: false, label: 'Mecânica sexy — garagem'
+  },
+  'fantasy-femme-fatale': {
+    sd_start: 'dressed as a femme fatale, elegant black cocktail or evening dress with slit, red lips, smoky eyes, film noir moody bar or rain-soaked alley setting,',
+    sd_end:   'femme fatale in elegant black slit dress, red lips smoky eyes, film noir dark moody bar or alley, mysterious seductive pose, full body',
+    mj: 'femme fatale in elegant black cocktail dress with slit, red lips smoky eyes, film noir dark moody setting, mysterious pose, full body',
+    neg: 'casual clothes, beach, bright colors, playful, daytime', sup: false, label: 'Femme fatale — noir sedutora'
+  },
+  'fantasy-gothic-lolita': {
+    sd_start: 'wearing gothic lolita fashion, black and white layered petticoat dress with lace trim, platform shoes, Victorian lace accessories, dark elegant mansion or garden setting,',
+    sd_end:   'gothic lolita in black white layered lace petticoat dress, platform shoes, Victorian dark garden setting, full body',
+    mj: 'gothic lolita fashion, black white layered lace petticoat dress, platform shoes, dark Victorian garden setting, full body',
+    neg: 'modern casual, beach, swimsuit, bright pastel, natural', sup: false, label: 'Lolita gótica — Victorian dark'
+  },
+  'fantasy-medieval-princess': {
+    sd_start: 'dressed as a medieval princess, flowing ballgown with fitted bodice, gold crown or tiara, long sleeves with embroidery, stone castle great hall background,',
+    sd_end:   'medieval princess in flowing embroidered ballgown, gold crown, stone castle great hall background, elegant regal pose, full body',
+    mj: 'medieval princess in flowing embroidered ballgown with gold crown, stone castle hall background, elegant regal pose, full body',
+    neg: 'modern clothes, beach, casual, short dress, dark gothic', sup: false, label: 'Princesa medieval — castelo'
+  },
+  'fantasy-superhero': {
+    sd_start: 'dressed as a female superhero, form-fitting spandex suit with logo, superhero cape or mask, rooftop or city skyline background, heroic confident pose,',
+    sd_end:   'female superhero in form-fitting spandex suit with cape, rooftop city skyline background, heroic confident stance, full body',
+    mj: 'female superhero in form-fitting suit with cape, rooftop city skyline background, heroic confident pose, full body',
+    neg: 'casual clothes, beach, office, sitting relaxed, medieval', sup: false, label: 'Super-heroína — pose de poder'
+  },
+  'fantasy-pinup': {
+    sd_start: 'classic American pin-up style, retro 1950s polka dot or striped outfit, victory rolls hairstyle, playful winking or blowing kiss pose, retro American diner or studio backdrop,',
+    sd_end:   'classic 1950s American pin-up girl, polka dot retro outfit, victory rolls hair, playful pinup pose, vintage American setting, full body',
+    mj: 'classic 1950s American pin-up girl, retro polka dot outfit, victory rolls hairstyle, playful pose, vintage setting, full body',
+    neg: 'modern clothes, dark gothic, serious formal, casual contemporary', sup: false, label: 'Pin-up clássica — anos 50'
+  },
+  'fantasy-tango-dancer': {
+    sd_start: 'wearing a tango dancer dress, long red or black dress with high leg slit, Argentine tango dancing pose, elegant milonga ballroom with moody lighting,',
+    sd_end:   'tango dancer in long red slit dress, Argentine tango dance pose, elegant milonga ballroom setting, full body',
+    mj: 'tango dancer in long red slit dress, Argentine tango dancing pose, elegant moody ballroom, full body',
+    neg: 'casual clothes, beach, modern street, static standing still', sup: false, label: 'Dançarina de tango — milonga'
+  },
+  'fantasy-tennis': {
+    sd_start: 'wearing a sexy tennis outfit, very short white pleated tennis skirt, tight fitted sports top or polo, tennis racket in hand, tennis court background,',
+    sd_end:   'sexy tennis player in short white pleated skirt and fitted sports top, tennis racket, tennis court background, full body',
+    mj: 'sexy tennis player in short white pleated skirt and fitted sports top, tennis racket, court background, full body',
+    neg: 'casual clothes, beach, office, heavy winter clothing', sup: false, label: 'Tenista sexy — quadra'
+  },
+  'fantasy-karate': {
+    sd_start: 'wearing a martial arts gi or sexy fitted dojo outfit, barefoot, karate or judo dojo setting with tatami mats, fighting stance or kick pose,',
+    sd_end:   'female martial artist in gi or dojo outfit, barefoot, tatami dojo setting, kick or fighting stance, full body',
+    mj: 'female martial artist in gi or fitted dojo outfit, barefoot, dojo tatami setting, fighting stance or kick, full body',
+    neg: 'formal clothes, beach, casual, office, fully covered', sup: false, label: 'Lutadora — dojo artes marciais'
+  },
+  'fantasy-circus': {
+    sd_start: 'wearing a circus performer or trapeze artist costume, rhinestone embellished bodysuit, stockings, high heels, circus tent or aerial silks background,',
+    sd_end:   'circus trapeze artist in rhinestone bodysuit with stockings, circus tent aerial silks background, acrobatic pose, full body',
+    mj: 'circus trapeze performer in sparkling rhinestone bodysuit, circus tent aerial silks background, acrobatic pose, full body',
+    neg: 'casual clothes, office, beach, dark gothic', sup: false, label: 'Trapezista de circo — sensual'
+  },
+  'fantasy-rockabilly': {
+    sd_start: 'rockabilly pin-up style, red bandana tied in hair, tied-up crop top and high-waist denim shorts or jeans, visible tattoos, retro American diner or vintage hot rod car background,',
+    sd_end:   'rockabilly pin-up in tied crop top and high-waist denim shorts, bandana in hair, retro diner or vintage car background, full body',
+    mj: 'rockabilly pin-up, bandana, tied crop top, high-waist denim shorts, retro diner or hot rod car background, full body',
+    neg: 'modern office, beach formal dress, gothic dark, contemporary', sup: false, label: 'Rockabilly pin-up — anos 50'
+  },
+  'fantasy-space-captain': {
+    sd_start: 'wearing a sexy space captain or sci-fi starfleet officer uniform, form-fitting futuristic suit with rank insignia, spaceship bridge or space station cockpit background,',
+    sd_end:   'sexy space captain in form-fitting sci-fi uniform, spaceship bridge or space station background, commanding confident pose, full body',
+    mj: 'sexy space captain in form-fitting sci-fi uniform with rank insignia, spaceship bridge background, commanding pose, full body',
+    neg: 'medieval, casual street, beach, office', sup: false, label: 'Capitã espacial — sci-fi'
+  },
+  'fantasy-flapper': {
+    sd_start: 'wearing a 1920s flapper dress, beaded fringe dress with low waist, feather headband or cloche hat, long pearl necklace, art deco jazz club or ballroom setting,',
+    sd_end:   'flapper girl in 1920s beaded fringe dress, feather headband, art deco jazz club setting, Charleston dance pose, full body',
+    mj: '1920s flapper girl in beaded fringe dress, feather headband, art deco jazz club setting, dance pose, full body',
+    neg: 'modern clothes, beach, casual, formal ball gown, dark gothic', sup: false, label: 'Flapper dos anos 20 — art deco'
+  },
+  'fantasy-gangster-girl': {
+    sd_start: 'dressed as a sexy 1920s gangster or mob girl, pinstripe fitted suit or short pencil skirt with suspenders, fedora hat, tommy gun prop or briefcase, speakeasy or city alley setting,',
+    sd_end:   'sexy gangster girl in pinstripe suit or pencil skirt with fedora, speakeasy or city alley setting, full body',
+    mj: 'sexy 1920s gangster girl in pinstripe suit or pencil skirt with fedora, speakeasy city setting, full body',
+    neg: 'casual clothes, beach, medieval, modern contemporary', sup: false, label: 'Gangster girl — prohibition era'
+  },
+  'fantasy-siren': {
+    sd_start: 'as a mythological ocean siren, draped on coastal sea rocks, long flowing hair with ocean flowers, shell bra or sheer wet fabric, crashing ocean waves behind, arms stretched seductively,',
+    sd_end:   'mythological ocean siren draped on sea rocks, flowing hair, shell bra sheer wet fabric, crashing ocean waves background, seductive arms extended, full body',
+    mj: 'mythological ocean siren on sea rocks, flowing hair, shell bra, crashing ocean waves background, seductive stretched arms, full body',
+    neg: 'dry land, modern city, dark dungeon, clothed', sup: false, label: 'Sereia das pedras — sedução'
+  },
+  'fantasy-baker': {
+    sd_start: 'wearing a sexy baker or pastry chef outfit, ruffled apron over lingerie or short fitted dress, flour or sugar dusted on skin, cozy bakery or upscale kitchen background,',
+    sd_end:   'sexy baker in ruffled apron over lingerie, flour dusted skin, bakery kitchen background, flirty playful pose, full body',
+    mj: 'sexy baker in ruffled apron over lingerie, flour dusted, bakery kitchen background, flirty pose, full body',
+    neg: 'formal clothes, beach, outdoor dark, heavy clothing', sup: false, label: 'Confeiteira sexy — padaria'
+  },
+  'fantasy-soccer-player': {
+    sd_start: 'wearing a sexy female soccer player outfit, very short tight sport shorts, tight jersey knotted at waist, soccer ball at feet, stadium or pitch background,',
+    sd_end:   'sexy female soccer player in knotted jersey and tight shorts, soccer ball, stadium pitch background, athletic pose, full body',
+    mj: 'sexy female soccer player in knotted jersey and short tight shorts, soccer ball, stadium pitch background, athletic pose, full body',
+    neg: 'formal clothes, beach, office, casual loose, winter', sup: false, label: 'Jogadora de futebol sexy — campo'
   },
 
   /* ──── Roupas v3 ──── */
