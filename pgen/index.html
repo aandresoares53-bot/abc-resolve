@@ -9564,6 +9564,14 @@ function buildPrompt(englishText, rawPT){
 
   let _negText = NEGATIVE;
   if(pose.neg) _negText += ', ' + pose.neg;
+  // Move "NOT ..." terms from pose sd_start/sd_end into the negative prompt
+  // (they are direction guards that SD interprets better as negative terms)
+  {
+    const _poseNotTerms = ((pose.sd_start || '') + ',' + (pose.sd_end || '')).split(',')
+      .map(t => t.trim()).filter(t => /^NOT\s+/i.test(t))
+      .map(t => t.replace(/^NOT\s+/i,'').trim()).filter(Boolean).join(', ');
+    if(_poseNotTerms) _negText += ', ' + _poseNotTerms;
+  }
 
   // Check if the pose definition itself already includes clothing (e.g. fantasy-gym-trainer has sports bra)
   const _poseText = ((pose.sd_start || '') + ' ' + (pose.sd_end || '')).toLowerCase();
@@ -9635,8 +9643,8 @@ function buildPrompt(englishText, rawPT){
     const _poseFlux = pose.mj || (pose.sd_start ? pose.sd_start.replace(/\([^)]+:[0-9.]+\)/g, '').replace(/,\s*,/g,',').trim() : '');
     // Strip SD-weight syntax from expanded — FLUX uses plain language, (term:1.9) is meaningless there
     const _expandedFlux = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    // Ordem: etnia/user description FIRST, then pose (etnia → pose)
-    const _coreFlux = [_expandedFlux, _poseFlux].filter(Boolean).join(', ');
+    // POSE FIRST — puts direction/body-position at the start for maximum FLUX attention
+    const _coreFlux = [_poseFlux, _expandedFlux].filter(Boolean).join(', ');
     const _photoStyle = getQuickEstiloFoto();
     const _cenarioFlux = getQuickCenario(); // scene already in _coreFlux via englishText
     const _fluxCam  = _getCameraSpec(selectedPoseKey || '');
@@ -9679,10 +9687,10 @@ function buildPrompt(englishText, rawPT){
     const _mjRealPrefix = _wantsNSFW
       ? 'analog film photograph of a real human woman, 35mm film grain, Kodak Portra 400, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera, explicit adult content, nsfw,'
       : 'analog film photograph of a real human woman, 35mm film grain, Kodak Portra 400, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,';
-    // MJ: etnia/user content FIRST, then pose (ordem: etnia → pose)
+    // MJ: POSE FIRST — put direction terms at the start for maximum MJ attention
     // Strip SD-weight syntax — MJ uses (term::weight) not (term:1.9) — plain text works better
     const _expandedMj = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    const _mjUserContent = pose.mj ? _expandedMj + ', ' + pose.mj : _expandedMj;
+    const _mjUserContent = pose.mj ? pose.mj + ', ' + _expandedMj : _expandedMj;
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes, real eye catchlights, natural lip texture, lip lines visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, eye moisture and wetness, blood vessels in sclera, iris depth and texture, natural skin texture on forehead, natural laugh lines, natural under-eye skin texture, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI';
     const core = _mjRealPrefix + ' ' + _mjUserContent + ', ' + _mjAnatomy;
     const _ar       = document.getElementById('mj-ar')?.value       || '2:3';
@@ -9719,11 +9727,11 @@ function buildPrompt(englishText, rawPT){
     const _gptRealPrefix = _wantsNSFW
       ? 'Generate a 100% photorealistic explicit adult photograph of a real human woman shot on analog 35mm film. Kodak Portra 400, Canon EOS R5 85mm f/1.8, ISO 800. SOOC STRAIGHT OUT OF CAMERA MANDATE: This photograph must look completely unedited — no color grading, no Lightroom editing, no Photoshop, no frequency separation, no dodge and burn, no AI enhancement, no digital manipulation, no color correction, no LUTs applied, no professional retouching, no studio portrait aesthetic. The image must look like it was taken straight from the camera with zero post-processing — imperfect, authentic, raw documentary style. ANTI-PLASTIC SKIN MANDATE: The skin MUST look like real analog film photography — visible pores, skin pore detail, skin micro-texture, organic skin texture, natural blemishes, skin redness, skin color variation by body zone, natural skin undertones, skin translucency, subsurface light scattering on skin, film grain on skin, photographic grain visible on skin. FACE REALISM MANDATE: Natural slight facial asymmetry, natural lip texture with lip lines, natural lip moisture, vellus facial hair (peach fuzz) on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs, natural T-zone slight oiliness, tear duct visible, eye moisture and wetness, blood vessels in sclera, iris depth and texture, natural skin texture on forehead, natural laugh lines, natural under-eye skin texture. HAIR REALISM MANDATE: Individual hair strands visible, natural flyaways, natural root-to-tip color gradient, natural hair density variation, natural hair parting, real hair roots. BODY REALISM MANDATE: Natural collarbone definition, hand veins visible, natural nail texture, natural navel depth, natural skin folds and creases, natural cellulite texture, natural stretch marks, natural breast weight and gravity, real feminine body proportions, skin drape over body naturally. LIFE SIGNS MANDATE: Skin must have natural warmth and living glow, subtle nostril definition, natural jaw muscle, natural neck muscle, natural forearm vein visibility, hand vein definition, natural cuticle detail. Film grain must be clearly visible. Five fingers on each hand, correct hand anatomy, symmetrical eyes with realistic iris detail. Not retouched, not CGI, nsfw, uncensored.'
       : 'Generate a 100% photorealistic documentary photograph of a real human woman shot on analog 35mm film. Kodak Portra 400, Canon EOS R5 85mm f/1.8, ISO 800. SOOC STRAIGHT OUT OF CAMERA MANDATE: This photograph must look completely unedited — no color grading, no Lightroom editing, no Photoshop, no frequency separation, no dodge and burn, no AI enhancement, no digital manipulation, no color correction, no LUTs applied, no professional retouching, no studio portrait aesthetic. The image must look like it was taken straight from the camera with zero post-processing — imperfect, authentic, raw documentary style. ANTI-PLASTIC SKIN MANDATE: The skin MUST look like real analog film photography — visible pores, skin pore detail, skin micro-texture, organic skin texture, natural blemishes, skin redness, skin color variation by body zone, natural skin undertones, skin translucency, subsurface light scattering on skin, film grain on skin, photographic grain visible on skin. FACE REALISM MANDATE: Natural slight facial asymmetry, natural lip texture with lip lines, natural lip moisture, vellus facial hair (peach fuzz) on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs, natural T-zone slight oiliness, tear duct visible, eye moisture and wetness, blood vessels in sclera, iris depth and texture, natural skin texture on forehead, natural laugh lines, natural under-eye skin texture. HAIR REALISM MANDATE: Individual hair strands visible, natural flyaways, natural root-to-tip color gradient, natural hair density variation, natural hair parting, real hair roots. BODY REALISM MANDATE: Natural collarbone definition, hand veins visible, natural nail texture, natural navel depth, natural skin folds and creases, natural cellulite texture, natural stretch marks, natural breast weight and gravity, real feminine body proportions, skin drape over body naturally. LIFE SIGNS MANDATE: Skin must have natural warmth and living glow, subtle nostril definition, natural jaw muscle, natural neck muscle, natural forearm vein visibility, hand vein definition, natural cuticle detail. Film grain must be clearly visible. Five fingers on each hand, correct hand anatomy, symmetrical eyes with realistic iris detail and detailed iris texture. Not retouched, not CGI, not AI generated.';
-    // GPT/DALL-E: user's description is the SUBJECT — put it right after the style prefix
+    // GPT/DALL-E: POSE FIRST — direction/position as the leading instruction
     // Strip SD-weight syntax — GPT uses natural language, not SD weight notation
     const _expandedGpt = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    // Ordem: etnia/user description FIRST, then pose (etnia → pose)
-    const _userContent = pose.mj ? _expandedGpt + ', ' + pose.mj : _expandedGpt;
+    // POSE FIRST — model interprets leading terms as primary instruction
+    const _userContent = pose.mj ? pose.mj + ', ' + _expandedGpt : _expandedGpt;
     const core = _gptRealPrefix + ' ' + _userContent;
     const _isBackGpt = /back|behind|posterior|from behind|back to camera/i.test((pose.sd_start||'') + ' ' + (pose.mj||''));
     const _bodyGpt = _isBackGpt ? BB_GPT : BF_GPT;
@@ -9732,14 +9740,16 @@ function buildPrompt(englishText, rawPT){
     // Order: subject (what to draw) → body realism → anatomy mandate → photo style
     return [core, _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
   }
-  // ── Pose boost: only camera/direction terms get :1.9 ────────────────────
-  const _POSE_RE = /\b(standing|sitting|kneeling|lying|facing|front view|back view|rear view|from behind|from the front|side profile|full body|close.?up|camera|angle|pov|overhead|low angle|top.?down|spread|legs|arms|arch|arched|bent|squat|prone|supine|lateral|upright|torso|spine|hips|knees|floor|ground|behind|posterior|frontal|facing viewer|facing camera|back to camera|body turned|looking over|three.quarter|full.?body|half.?body|waist.?up|head.?to.?toe|portrait|full.?length)\b/i;
+  // ── Pose boost: camera/direction terms get :1.9; NOT-prefixed terms stripped ─
+  const _POSE_RE = /\b(standing|sitting|kneeling|lying|facing|front view|back view|rear view|from behind|from the front|side profile|full body|close.?up|camera|angle|pov|overhead|low angle|top.?down|spread|spreading|legs|arms|arch|arched|arching|bent|bending|squat|squatting|prone|supine|lateral|upright|torso|spine|hips|knees|floor|ground|behind|posterior|frontal|facing viewer|facing camera|back to camera|back to viewer|face visible|face hidden|body turned|looking over|three.quarter|full.?body|half.?body|waist.?up|head.?to.?toe|portrait|full.?length|all fours|crawling|doggy|leaning|on all fours|hands and knees|looking back|from above|from below|camera above|camera below)\b/i;
+  // _boost: applies :1.9 to key direction terms; strips "NOT ..." terms (they belong in neg)
   const _boost = t => {
     if(!t) return '';
     if(t.includes(':1.')) return t;
     return t.split(',').map(s => {
       const tr = s.trim().replace(/,$/,'');
       if(!tr) return '';
+      if(/^NOT\s+/i.test(tr)) return ''; // NOT terms go to negative prompt — stripped here
       return _POSE_RE.test(tr) ? `(${tr}:1.9)` : tr;
     }).filter(Boolean).join(', ');
   };
@@ -9869,20 +9879,22 @@ function buildPrompt(englishText, rawPT){
   // Film grain is physically incompatible with smooth poreless skin — the strongest anti-plastic lever in SD
   const _rawStamp = '(RAW analog photograph:2.0), (35mm film grain:2.0), (not plastic skin:2.0), (visible skin pores:2.0), (skin micro-texture:2.0), (no beauty filter:2.0), (subsurface light scattering on skin:1.8), (Kodak Portra analog color science:1.6), (natural skin translucency:1.7),';
   // TOKEN-BUDGET ORDER (CLIP chunks = 75 tokens each):
-  // Chunk 1 (1–75):   RAW stamp → CLOTHING → POSE → SUBJECT → brief scene
-  //   All critical terms are weighted (2.0/1.9) so they enforce regardless of CLIP chunk position,
-  //   but appearing in chunk 1 also gives them maximum attention weight.
-  // Chunk 2 (76–150): Quality/film markers (all weighted)
-  // Chunk 3+ (151+):  Skin realism + anatomy (all weighted at 1.8–2.0)
+  // POSE MUST BE FIRST — it is the single most critical instruction.
+  // Chunk 1 (1–75):   NSFW → POSE (sdStart+sdEnd) → RAW stamp → CLOTHING
+  //   Pose direction at token position 1-40 gets maximum CLIP attention.
+  //   All terms are weighted (1.9-2.0) so they stay effective in any chunk,
+  //   but chunk 1 position multiplies their effectiveness significantly.
+  // Chunk 2 (76–150): Description + scene (weighted where important)
+  // Chunk 3+ (151+):  Skin realism + anatomy (weighted at 1.8–2.0)
   const parts = [
-    _nsfwPrefix,        // NSFW flag — brief, ~10 tokens
-    _rawStamp,          // RAW/anti-plastic FIRST — establishes film grain baseline before everything else
-    _sdClothingTerms,   // OUTFIT at 2.0 — highest CLIP priority for clothing adherence
-    descBoost,          // ETNIA + USER DESCRIPTION FIRST (ordem: etnia → pose)
+    _nsfwPrefix,        // NSFW flag — must come first for generation policy
+    sdStart,            // POSE FIRST — direction/camera terms at chunk 1 max attention
+    sdEnd,              // Pose continuation — keep close to sdStart for combined effect
+    _rawStamp,          // RAW/anti-plastic — weighted at 2.0, effective anywhere
+    _sdClothingTerms,   // OUTFIT at 2.0 — weighted, chunk 1 fine after pose
+    descBoost,          // ETNIA + USER DESCRIPTION — character physical terms
     expanded,           // Expanded scene + plain-text etnia reinforcement
-    _etniaSkinBoost,    // Ethnicity skin — reforça etnia antes da pose
-    sdStart,            // POSE DEPOIS DA ETNIA — ordem correta: etnia → pose
-    sdEnd,              // Additional pose terms
+    _etniaSkinBoost,    // Ethnicity skin — weighted, chunk 2 fine
     _PHOTO,             // Quality/RAW/film — all weighted, chunk 2 fine
     _faceAnchor,        // Face consistency — weighted, chunk 2 fine
     charBoost,          // Character physical terms — weighted at 1.8, chunk 2 fine
