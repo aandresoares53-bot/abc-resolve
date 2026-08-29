@@ -1371,7 +1371,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <button class="pose-btn" data-pose="standing-arms-crossed"   onclick="setPose('standing-arms-crossed')"><span class="pose-icon">🤐</span>Braços cruzados</button>
       <button class="pose-btn" data-pose="standing-hips-thrust"         onclick="setPose('standing-hips-thrust')"><span class="pose-icon">💋</span>Quadril projetado — pose sedutora</button>
       <button class="pose-btn" data-pose="standing-one-shoulder-drop"   onclick="setPose('standing-one-shoulder-drop')"><span class="pose-icon">👗</span>Ombro descoberto (roupa caindo)</button>
-      <button class="pose-btn" data-pose="standing-wall-press-front"    onclick="setPose('standing-wall-press-front')"><span class="pose-icon">🧱</span>Contra a parede — de frente</button>
+      <button class="pose-btn" data-pose="standing-wall-facing-front"    onclick="setPose('standing-wall-facing-front')"><span class="pose-icon">🧱</span>Contra a parede — de frente</button>
       <button class="pose-btn" data-pose="standing-wall-press-back"     onclick="setPose('standing-wall-press-back')"><span class="pose-icon">🧱</span>Contra a parede — de costas</button>
       <button class="pose-btn" data-pose="standing-legs-apart-provocative" onclick="setPose('standing-legs-apart-provocative')"><span class="pose-icon">🔥</span>Pernas abertas — postura provocante</button>
       <button class="pose-btn" data-pose="standing-back-arch-extreme"   onclick="setPose('standing-back-arch-extreme')"><span class="pose-icon">🌊</span>Arco extremo — curvando todo o corpo</button>
@@ -6431,29 +6431,11 @@ const POSES = {
   },
 
   // ── 🧘  YOGA / ALONGAMENTO ──────────────────────────────────────────────────
-  'yoga-downward-dog': {
-    sd_start: 'in downward dog yoga pose, hips raised high, head down, legs straight, yoga studio or outdoor, leggings, full body side view,',
-    sd_end:   'downward dog pose, hips high, head down, leggings, yoga mat, full body side profile',
-    mj: 'woman in downward dog yoga pose, hips high, head down, leggings, yoga mat, full body side profile',
-    neg: 'standing, sitting, lying flat, facing camera', sup: false, label: 'Yoga — downward dog (bunda no ar)'
-  },
-  'yoga-warrior': {
-    sd_start: 'warrior yoga pose, one leg lunged forward, arms extended wide, strong confident stance, yoga outfit, facing camera, full body,',
-    sd_end:   'warrior yoga pose, lunge, arms wide, strong stance, yoga outfit, facing camera, full body',
-    mj: 'woman in warrior yoga pose, deep lunge, arms wide extended, strong stance, yoga outfit, full body',
-    neg: 'back view, lying, sitting, bending', sup: false, label: 'Yoga — guerreira, pose de poder'
-  },
   'yoga-full-split': {
     sd_start: 'in full front split on floor, legs completely flat on ground, arms above or on hips, yoga leggings, facing camera,',
     sd_end:   'full front split on floor, legs flat, yoga leggings, arms raised, full body portrait',
     mj: 'woman in full front split on floor, legs completely flat, yoga leggings, arms raised, full body',
     neg: 'standing, lying, crouching, partial split', sup: false, label: 'Yoga — espagate completo'
-  },
-  'yoga-bridge': {
-    sd_start: 'in bridge pose lying on back, hips raised high, feet flat on mat, arms at sides, leggings, full body side view,',
-    sd_end:   'bridge pose, hips raised, feet flat, leggings, yoga mat, full body side profile',
-    mj: 'woman in bridge yoga pose, hips raised high, feet flat on mat, leggings, full body side profile',
-    neg: 'standing, sitting, front view, downward dog', sup: false, label: 'Yoga — ponte (hips levantados)'
   },
   'yoga-child-pose': {
     sd_start: 'in childs pose, face down, arms extended forward, hips raised back toward heels, yoga mat, from behind or side,',
@@ -6543,7 +6525,7 @@ const POSES = {
     mj: 'woman standing, one shoulder bare garment slipping down, full body, seductive direct gaze at camera, intimate lighting',
     neg: 'back view, sitting, fully dressed both shoulders', sup: false, label: 'Em pé — ombro descoberto (caindo)'
   },
-  'standing-wall-press-front': {
+  'standing-wall-facing-front': {
     sd_start: 'standing pressed against wall, facing camera, palms on wall, arching body slightly, seductive pose, full body,',
     sd_end:   'pressed against wall facing camera, hands flat on wall, body arched slightly, seductive sensual stance, soft lighting from side',
     mj: 'woman pressed against wall facing camera, palms on wall, body slightly arched, seductive pose, side lighting',
@@ -6574,12 +6556,6 @@ const POSES = {
     neg: 'back view, looking away, sitting', sup: false, label: 'Em pé — dedo no lábio, olhar sedutor'
   },
   // ── SENTADA — novos ───────────────────────────────────────────────────────
-  'sitting-straddle-chair-front': {
-    sd_start: 'sitting straddling a chair facing camera, legs wide apart around chair, arms resting on chair back, seductive playful pose, full body,',
-    sd_end:   'straddling chair facing camera, legs spread around chair, arms draped over back of chair, seductive playful pose, direct gaze, intimate lighting',
-    mj: 'woman straddling chair facing camera, legs apart, arms on chair back, seductive playful pose, direct gaze',
-    neg: 'back to camera, side view, standing, lying', sup: false, label: 'Sentada — cavalgando cadeira de frente'
-  },
   'sitting-spread-open-legs-couch': {
     sd_start: 'sitting on couch with legs spread open, leaning back slightly, hands on knees or thighs, provocative seated pose, facing camera,',
     sd_end:   'sitting on sofa with legs open, leaning back with confidence, hands on thighs, facing camera, provocative relaxed yet seductive pose, warm intimate lighting',
