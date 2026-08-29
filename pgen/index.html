@@ -2147,6 +2147,10 @@ function translatePT(text){
     [/deitada de lado/gi,                 'lying on her side'],
     [/de quatro de costas/gi,             'on all fours from behind'],
     [/de quatro de frente/gi,             'on all fours facing the camera'],
+    [/de\s*4\s*de\s*costas/gi,            'on all fours from behind'],
+    [/de\s*4\s*de\s*frente/gi,            'on all fours facing the camera'],
+    [/de\s*4\s*de\s*lado/gi,              'on all fours side view'],
+    [/de\s*4\b/gi,                        'on all fours'],
     [/de joelhos de costas/gi,            'kneeling from behind'],
     [/de joelhos de frente/gi,            'kneeling facing the camera'],
     [/sentada de costas/gi,               'sitting from behind'],
@@ -2436,10 +2440,10 @@ const POSES = {
     sup: true, label: 'De joelhos de costas'
   },
   'allfours-back': {
-    sd_start: 'on all fours, from behind, back to viewer, doggy position,',
-    sd_end:   'on all fours position, hands and knees on surface, torso horizontal, spine parallel to ground, buttocks toward camera, back of thighs visible, face hidden, NOT kneeling upright, NOT sitting',
-    mj:  'on all fours from behind, doggy position, torso horizontal parallel to surface, hands and knees on bed, buttocks toward camera, rear view',
-    neg: 'kneeling upright, sitting upright, torso vertical, front view, facing camera, face visible, standing, side view',
+    sd_start: 'on all fours from behind, back to camera, rear view, hands and knees on surface, torso horizontal,',
+    sd_end:   'woman on hands and knees from directly behind, camera positioned behind her, buttocks prominently facing camera, torso completely horizontal parallel to floor, spine level with ground, back of thighs and calves visible, face completely hidden from camera view, full body rear view on all fours, legs apart slightly, arms straight supporting weight',
+    mj:  'woman on all fours viewed from directly behind, hands and knees on surface, camera positioned behind her body, buttocks facing camera, torso horizontal parallel to floor, face hidden, back of legs visible, full body rear view doggy position',
+    neg: 'facing camera, front view, face visible, looking at camera, kneeling upright with torso vertical, sitting, standing, side view profile, three-quarter view, torso raised upright',
     sup: true, label: 'De quatro de costas'
   },
   'bent-back': {
@@ -2552,10 +2556,10 @@ const POSES = {
 
   // ── Poses NSFW ────────────────────────────────────────────────────────────
   'allfours-front': {
-    sd_start: 'on all fours, facing viewer, front view,',
-    sd_end:   'on hands and knees facing camera, torso horizontal, head raised looking at camera, face visible, arms forward, breasts hanging',
-    mj:  'on all fours facing camera, front view, head raised, face visible, torso horizontal, hands and knees',
-    neg: 'back view, from behind, kneeling upright, standing, side profile, torso vertical',
+    sd_start: 'on all fours facing camera, front view, hands and knees on surface, torso horizontal,',
+    sd_end:   'woman on hands and knees facing directly toward camera, camera positioned in front of her face, head raised looking up at camera, face fully visible and looking at lens, arms extended forward with palms flat on floor, torso horizontal parallel to floor, chest and breasts hanging naturally toward floor, full body front view on all fours, knees on surface',
+    mj:  'woman on all fours facing camera, front view, camera in front of her face, head raised looking at lens, face clearly visible, torso horizontal, palms on floor, chest toward camera, full body from front on all fours position',
+    neg: 'from behind, back to camera, back view, rear view, face hidden, side profile, kneeling upright torso vertical, standing, sitting',
     sup: false, label: 'De quatro de frente'
   },
   'legs-up': {
@@ -2742,10 +2746,10 @@ const POSES = {
 
   // ── De quatro adicionais ──────────────────────────────────────────────────
   'allfours-side': {
-    sd_start: 'on all fours, side view, profile view,',
-    sd_end:   'on hands and knees in side profile, body horizontal, torso parallel to ground, face in profile, 90 degree side angle view',
-    mj:  'on all fours in side profile, 90 degree angle, body horizontal, face in profile',
-    neg: 'front view, back view, facing camera directly, from behind directly',
+    sd_start: 'on all fours, side view, side profile, 90 degree lateral angle, hands and knees on surface,',
+    sd_end:   'woman on hands and knees viewed from the side at exactly 90 degrees, lateral profile angle, torso completely horizontal parallel to floor, both arms straight visible in profile, both legs visible in profile, face turned sideways in profile, spine horizontal, full body side view on all fours, camera positioned at side perpendicular to body',
+    mj:  'woman on all fours in side profile, camera at 90 degree lateral angle, torso horizontal, face in profile, full body side view, hands and knees visible in profile, all fours side angle',
+    neg: 'front view facing camera, back view from behind, three-quarter angle, kneeling upright, standing, sitting, facing camera directly, back to camera',
     sup: false, label: 'De quatro de lado'
   },
   'kneeling-hands-down': {
@@ -7140,7 +7144,29 @@ function setPose(key){
   document.querySelectorAll('.pose-btn').forEach(b => b.classList.remove('selected'));
   if(key) {
     const btn = document.querySelector(`.pose-btn[data-pose="${key}"]`);
-    if(btn) btn.classList.add('selected');
+    if(btn){
+      btn.classList.add('selected');
+      // Auto-expand the group containing this button so it stays visible
+      if(btn.classList.contains('hidden-by-collapse')){
+        btn.classList.remove('hidden-by-collapse');
+        // Open the parent group label
+        let prev = btn.previousElementSibling;
+        while(prev){
+          if(prev.classList.contains('pose-group-label')){
+            prev.classList.add('open');
+            // Reveal all siblings in this group
+            let sib = prev.nextElementSibling;
+            while(sib && !sib.classList.contains('pose-group-label')){
+              if(sib.classList.contains('pose-btn')) sib.classList.remove('hidden-by-collapse');
+              sib = sib.nextElementSibling;
+            }
+            break;
+          }
+          prev = prev.previousElementSibling;
+        }
+      }
+      btn.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
   }
   // ── Pose Preview Panel ────────────────────────────────────────
   const previewCard = document.getElementById('pose-preview-card');
@@ -8839,7 +8865,7 @@ function buildPoseBlock(rawPT){
   const t = rawPT.toLowerCase();
 
   const isBehind       = /de costas|costas para|de tr[\u00e1\u00e0s]|from behind|facing away/.test(t);
-  const isAllFours     = /de quatro|de gatas|quatro apoios|all fours|hands and knees/.test(t);
+  const isAllFours     = /de quatro|de\s*4\b|de gatas|quatro apoios|all fours|hands and knees/.test(t);
   const isKneeling     = /de joelhos|ajoelhada|kneeling/.test(t);
   const isBentOver     = /dobrada|curvada|inclinada|bent over|leaning forward/.test(t);
   const isSquatting    = /agachada|squatting/.test(t);
