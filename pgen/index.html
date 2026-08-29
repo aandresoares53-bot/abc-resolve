@@ -2394,45 +2394,45 @@ let currentMode = 'sd';
 // neg:      pose-specific negative terms
 const POSES = {
   'standing-front': {
-    sd_start: 'standing, facing viewer, front view, full body,',
-    sd_end:   'standing pose, face visible, looking at camera',
-    mj:  'standing facing camera, front view, full body',
-    neg: 'back view, from behind, side profile, sitting, kneeling',
+    sd_start: 'standing upright, facing viewer, front view, full body, face visible,',
+    sd_end:   'standing fully upright, legs together or slightly apart, arms relaxed at sides or on hips, torso straight, face clearly visible and looking at camera, full body front view from head to toe',
+    mj:  'standing fully upright facing camera, front view, full body head to toe, face visible, relaxed confident stance',
+    neg: 'back view, from behind, side profile, sitting, kneeling, lying, face hidden',
     sup: false, label: 'Em pé de frente'
   },
   'standing-back': {
-    sd_start: 'standing, from behind, back to viewer, rear view,',
-    sd_end:   'standing pose from behind, back fully visible, face hidden, posterior view',
-    mj:  'standing from behind, back to camera, full body rear view',
-    neg: 'front view, facing camera, face visible, side profile, sitting, kneeling',
+    sd_start: 'standing, from behind, back to viewer, rear view, full body,',
+    sd_end:   'standing fully upright from behind, back fully facing camera, back and buttocks visible, face completely hidden, posterior view from head to toe, legs together or slightly apart, spine straight',
+    mj:  'standing from behind, back to camera, full body rear view head to toe, back and buttocks visible, face hidden',
+    neg: 'front view, facing camera, face visible, side profile, sitting, kneeling, lying',
     sup: true, label: 'Em pé de costas'
   },
   'sitting-front': {
-    sd_start: 'sitting, facing viewer, front view,',
-    sd_end:   'seated position, face visible, looking at camera',
-    mj:  'sitting facing camera, front view, seated',
-    neg: 'back view, from behind, standing, kneeling, lying down',
+    sd_start: 'sitting, facing viewer, front view, upright seated posture,',
+    sd_end:   'seated upright, legs bent in front or to sides, upper body facing camera, torso straight or slightly leaning, face clearly visible and looking at camera, front view seated pose',
+    mj:  'sitting facing camera, front view, upright seated posture, face visible, full body or waist-up',
+    neg: 'back view, from behind, standing, kneeling, lying down, face hidden',
     sup: false, label: 'Sentada de frente'
   },
   'sitting-back': {
-    sd_start: 'sitting, from behind, back to viewer, rear view,',
-    sd_end:   'seated from behind, back visible, face hidden',
-    mj:  'sitting from behind, back to camera, rear view',
-    neg: 'front view, facing camera, face visible, side profile, standing',
+    sd_start: 'sitting, from behind, back to viewer, rear view, back fully visible,',
+    sd_end:   'seated from behind, back fully facing camera, back and upper body visible from behind, face completely hidden or turned away, rear view, spine visible, sitting posture from behind',
+    mj:  'sitting from behind, back to camera, rear view, back fully visible, face hidden',
+    neg: 'front view, facing camera, face visible, side profile, standing, lying',
     sup: true, label: 'Sentada de costas'
   },
   'kneeling-front': {
-    sd_start: 'kneeling, facing viewer, front view,',
-    sd_end:   'kneeling pose, knees on ground, upright torso, face visible',
-    mj:  'kneeling facing camera, front view, upright',
-    neg: 'back view, from behind, standing, lying down, side profile',
+    sd_start: 'kneeling, facing viewer, front view, both knees on ground, upright torso,',
+    sd_end:   'kneeling upright on both knees on the ground, torso straight and upright, thighs vertical, face clearly visible and looking at camera, front view kneeling pose, hands at sides or on thighs',
+    mj:  'kneeling on both knees facing camera, upright torso, front view, face visible, thighs vertical, hands on thighs or at sides',
+    neg: 'back view, from behind, standing, lying down, side profile, on all fours, torso horizontal',
     sup: false, label: 'De joelhos de frente'
   },
   'kneeling-back': {
-    sd_start: 'kneeling, from behind, back to viewer, rear view,',
-    sd_end:   'kneeling from behind, knees on surface, upright torso, spine straight, face hidden, back fully visible',
-    mj:  'kneeling from behind, back to camera, upright torso, rear view',
-    neg: 'front view, facing camera, face visible, standing, on all fours, torso horizontal, lying down',
+    sd_start: 'kneeling, from behind, back to viewer, rear view, both knees on ground, upright torso, spine straight,',
+    sd_end:   'kneeling upright on both knees from behind, spine straight and vertical, torso upright, back fully visible toward camera, face completely hidden, back of thighs visible, posterior kneeling view',
+    mj:  'kneeling from behind on both knees, upright spine, back to camera, rear view, back fully visible, face hidden',
+    neg: 'front view, facing camera, face visible, standing, on all fours with torso horizontal, lying down, torso leaning forward',
     sup: true, label: 'De joelhos de costas'
   },
   'allfours-back': {
@@ -3061,194 +3061,194 @@ const POSES = {
 
   // ── Em pé — adicional 2 ──────────────────────────────────────────────────
   'walking-front': {
-    sd_start: 'walking towards camera, mid-stride, full body, slight motion,',
-    sd_end:   'natural walking pose, one foot forward, arms in motion, full body visible',
-    mj: 'walking towards camera, dynamic stride, full body, natural movement',
-    neg: 'static pose, standing still, back view', sup: false, label: 'Caminhando de frente'
+    sd_start: 'walking towards camera, mid-stride, facing viewer, front view, full body, motion,',
+    sd_end:   'natural mid-stride walking pose, one leg stepped forward and other behind, opposite arm swung forward, weight shifting, hair and clothes in slight motion, face visible, full body frontal, natural gait captured',
+    mj: 'walking toward camera mid-stride, one foot forward, natural walking gait, arms in motion, face visible, full body front view, slight movement blur',
+    neg: 'static standing still, frozen rigid pose, lying down, sitting, back view, from behind', sup: false, label: 'Caminhando de frente'
   },
   'arm-over-head': {
-    sd_start: 'standing, one arm raised above head, graceful pose, full body,',
-    sd_end:   'arm raised overhead, elegant elongated pose, body stretched upward',
-    mj: 'standing with arm raised above head, graceful elongated pose, full body',
-    neg: 'both arms down, sitting', sup: false, label: 'Braço sobre a cabeça'
+    sd_start: 'standing, one arm raised fully above head, arm extended overhead, facing viewer, full body, graceful pose,',
+    sd_end:   'one arm raised and extended fully overhead with elbow straight and fingers extended, body elongated and stretched vertically upward on that side, hip slightly shifted opposite, weight balanced, other arm at side or hip, face visible, elegant elongated silhouette, full body',
+    mj: 'standing facing camera with one arm raised fully overhead, body elongated and stretched, elegant graceful pose, full body, face visible, hip slightly shifted',
+    neg: 'both arms down, both arms raised, from behind, sitting, lying, arm half-raised', sup: false, label: 'Braço sobre a cabeça'
   },
   'pulling-hair': {
-    sd_start: 'standing, hands in hair, tousling hair, sensual pose, three-quarter view,',
-    sd_end:   'fingers running through hair, head tilted slightly, alluring hair pose',
-    mj: 'standing, hands in hair, tousling, sensual glamour pose, three-quarter view',
-    neg: 'from behind, sitting', sup: false, label: 'Puxando o cabelo'
+    sd_start: 'standing, hands in hair, fingers running through and grasping hair, head tilted back or sideways, sensual alluring pose, three-quarter view,',
+    sd_end:   'both hands or one hand running through and grasping hair, fingers spread in hair, head tilted back slightly or to side, hair tousled and disheveled, lips slightly parted, eyes half-closed or intense, sensual glamour expression, face partially visible three-quarter view, body language open and alluring',
+    mj: 'standing with hands tousling hair, head tilted back or sideways, hair in motion, sensual alluring expression, three-quarter view, glamour fashion pose, face partially visible',
+    neg: 'from behind fully, sitting, lying, hands at sides, neat smooth hair, expressionless, front view fully facing', sup: false, label: 'Puxando o cabelo'
   },
   'leaning-forward-stand': {
-    sd_start: 'standing, leaning forward at the waist, hands on thighs, three-quarter view,',
-    sd_end:   'leaning forward pose, upper body angled toward camera, seductive lean',
-    mj: 'standing leaning forward at waist, hands on thighs, seductive pose, three-quarter view',
-    neg: 'standing straight, sitting', sup: false, label: 'Inclinada para frente'
+    sd_start: 'standing, leaning forward at the waist toward camera, torso inclined forward, hands on upper thighs, three-quarter view,',
+    sd_end:   'upper body bent forward at the waist toward the camera, hands resting on upper thighs for support, back relatively straight, face visible and looking directly at camera, cleavage visible due to forward lean, slightly bent knees, seductive forward lean pose, three-quarter angle',
+    mj: 'standing leaning forward at waist toward camera, hands on thighs for support, cleavage forward, face looking at camera, seductive forward lean, three-quarter view, full body',
+    neg: 'standing straight upright, from behind, sitting, lying, no forward lean, back straight with no tilt', sup: false, label: 'Inclinada para frente'
   },
   'hands-on-knees-stand': {
-    sd_start: 'standing bent forward, hands resting on knees, back arched, rear view,',
-    sd_end:   'bent over stance, hands on knees, back arched, looking back at camera',
-    mj: 'bent forward standing, hands on knees, arched back, looking back over shoulder',
-    neg: 'standing straight, sitting', sup: true, label: 'Mãos nos joelhos inclinada'
+    sd_start: 'standing bent forward at hips, both hands resting on knees, back arched, from behind, rear view,',
+    sd_end:   'standing with legs straight and slightly apart, torso bent forward at hips, both palms resting on knees for support, back arched slightly concave, buttocks pushed back and raised toward camera, from behind rear view, head turned looking back at camera over shoulder, face partially visible',
+    mj: 'standing bent forward with both hands on knees, back arched, buttocks raised back, from behind rear view, looking back over shoulder seductively',
+    neg: 'standing straight upright, front view facing camera, sitting, on all fours kneeling, back not arched, arms not on knees', sup: true, label: 'Mãos nos joelhos inclinada'
   },
   'tippy-toes': {
-    sd_start: 'standing on tiptoe, heels raised, full body, elegant elongated stance,',
-    sd_end:   'on tiptoes, calves flexed, body stretched tall, graceful balance',
-    mj: 'standing on tiptoes, heels raised, elegant elongated pose, full body',
-    neg: 'flat feet, sitting', sup: false, label: 'Na ponta dos pés'
+    sd_start: 'standing on tiptoes, heels raised high off floor, facing viewer, full body, elegant elongated stance,',
+    sd_end:   'standing on the balls of both feet with heels raised fully off the floor, calves tensed and defined, body stretched tall and elongated vertically, legs together or slightly apart, arms slightly extended or at sides for balance, face visible and looking at camera, graceful and elegant full-body posture, full body shot',
+    mj: 'standing on tiptoes with heels raised high, calves engaged and defined, body elegantly elongated and stretched, full body, face visible, graceful balance pose, elegant stance',
+    neg: 'flat feet heels on ground, sitting, lying, crouching, squatting', sup: false, label: 'Na ponta dos pés'
   },
   'torso-twist': {
-    sd_start: 'standing, torso twisted to the side, looking over shoulder, three-quarter body,',
-    sd_end:   'torso rotation pose, waist twist, shoulders angled, dynamic side view',
-    mj: 'standing with torso twisted sideways, looking over shoulder, dynamic three-quarter view',
-    neg: 'frontal view, sitting', sup: false, label: 'Tronco torcido de lado'
+    sd_start: 'standing, torso twisted sideways at the waist, hips facing one direction, shoulders rotated opposite, looking over shoulder, three-quarter body view,',
+    sd_end:   'standing with hips pointing one direction and torso twisted to opposite side, shoulders rotated and angled, head turned looking over shoulder toward camera, three-quarter view showing partial back and partial front simultaneously, dynamic rotation twist pose, face partially visible',
+    mj: 'standing with torso twisted sideways at waist, hips one direction, shoulders rotated opposite, looking over shoulder, dynamic three-quarter view, face partially visible, body rotation pose',
+    neg: 'pure front view, pure back view, sitting, lying, no rotation, spine not twisted', sup: false, label: 'Tronco torcido de lado'
   },
 
   // ── Sentada — adicional 2 ────────────────────────────────────────────────
   'sitting-knees-chest': {
-    sd_start: 'sitting, knees drawn up to chest, arms hugging knees, front view,',
-    sd_end:   'knees-to-chest seated pose, compact curled sitting position, face visible',
-    mj: 'sitting with knees drawn to chest, arms hugging legs, compact intimate pose',
-    neg: 'legs extended, standing, lying down', sup: false, label: 'Joelhos ao peito'
+    sd_start: 'sitting, both knees drawn tightly up to chest, arms hugging around shins, compact curled seated pose, facing viewer, front view,',
+    sd_end:   'both knees pulled up and pressed to chest, arms wrapped tightly around shins below knees, body curled and compact in ball-like pose, chin resting near knees, face visible above knees looking at camera, intimate vulnerable compact seated pose, full body front view',
+    mj: 'sitting with both knees drawn tightly to chest, arms hugging around legs, face peeking above knees, compact curled sitting pose, intimate front view, full body visible',
+    neg: 'legs extended straight out, one leg only raised, standing, lying flat, from behind, legs not drawn up to chest', sup: false, label: 'Joelhos ao peito'
   },
   'mermaid-sit': {
-    sd_start: 'sitting on floor, legs swept to one side, mermaid sit, three-quarter view,',
-    sd_end:   'mermaid sitting position, legs folded to one side, elegant floor sit',
-    mj: 'mermaid sit on floor, legs swept gracefully to one side, elegant seated pose',
-    neg: 'legs straight, standing', sup: false, label: 'Pernas de lado (sereia)'
+    sd_start: 'sitting on floor, both legs swept and folded to one side, mermaid sit, weight on one hip, three-quarter view,',
+    sd_end:   'sitting with both legs swept and folded gracefully to the same side, both knees pointing sideways, weight shifted onto the hip on that side, torso upright, one hand on floor for support, elegant mermaid-inspired floor sitting pose, face visible in three-quarter view',
+    mj: 'mermaid sitting position on floor, both legs folded gracefully to one side, weight on hip, torso upright, elegant poised pose, three-quarter view, face visible',
+    neg: 'legs straight in front, legs symmetrically on both sides, standing, lying, from behind, cross-legged, kneeling', sup: false, label: 'Pernas de lado (sereia)'
   },
   'hugging-knees': {
-    sd_start: 'sitting on floor, hugging knees tightly to chest, curled sitting pose,',
-    sd_end:   'arms wrapped around knees, curled seated position, cozy intimate pose',
-    mj: 'sitting on floor hugging knees to chest, arms wrapped around legs, intimate pose',
-    neg: 'legs extended, standing', sup: false, label: 'Abraçando os joelhos'
+    sd_start: 'sitting on floor, knees bent up, arms wrapped tightly around shins hugging knees to chest, curled compact sitting pose,',
+    sd_end:   'seated on floor with knees bent up, both arms embracing and wrapped around the knees and shins, body curled in on itself, shoulders hunched slightly forward, cozy intimate wrapped pose, face may be tucked against knees or peeking over them, full body visible',
+    mj: 'sitting on floor hugging both knees tightly to chest, arms wrapped around legs, body curled inward, cozy intimate wrapped pose, face peeking or tucked',
+    neg: 'legs extended outward, arms not wrapped around knees, standing, lying flat, from behind, arms at sides', sup: false, label: 'Abraçando os joelhos'
   },
   'sitting-legs-hanging': {
-    sd_start: 'sitting on edge of surface, legs dangling freely, upright seated, front view,',
-    sd_end:   'seated on edge, legs hanging loose, feet off ground, relaxed sitting',
-    mj: 'sitting on edge with legs hanging freely, casual relaxed seated pose, full body',
-    neg: 'feet on ground, standing', sup: false, label: 'Pernas penduradas (borda)'
+    sd_start: 'sitting on edge of elevated surface, both legs dangling freely over edge, feet off the ground, upright seated, facing viewer, front view,',
+    sd_end:   'perched on edge of elevated surface such as bed, counter, ledge or table, both legs hanging freely and not touching the ground, feet dangling in air, upper body upright, hands resting on edge beside hips or on thighs, casual relaxed elevated seated pose, face visible, full body visible',
+    mj: 'sitting on edge of elevated surface with both legs hanging freely, feet off the ground, relaxed casual seated pose, face visible, front view, full body',
+    neg: 'feet touching floor, standing, lying, from behind, legs touching ground or surface, sitting on floor', sup: false, label: 'Pernas penduradas (borda)'
   },
 
   // ── De joelhos — adicional 2 ────────────────────────────────────────────
   'kneeling-arch': {
-    sd_start: 'kneeling upright, back arched deeply, chest pushed forward, three-quarter view,',
-    sd_end:   'kneeling backbend arch, spine curved, head tilted back, dramatic kneeling pose',
-    mj: 'kneeling with deep back arch, chest forward, head tilted back, dramatic pose',
-    neg: 'standing, sitting, forward lean', sup: false, label: 'De joelhos com arco'
+    sd_start: 'kneeling upright, back arched deeply backward, chest pushed forward and upward, three-quarter view,',
+    sd_end:   'kneeling upright on both knees, spine curved dramatically backward in deep arch, chest and breasts thrust forward and up, head tilted back, arms swept back at sides or behind, thighs vertical, dramatic backbend kneeling pose, three-quarter view, face visible or tilted back',
+    mj: 'kneeling upright with dramatic deep back arch, chest pushed dramatically forward, head tilted back, spine deeply curved, arms swept back, dramatic three-quarter kneeling pose',
+    neg: 'standing, sitting, leaning forward, flat spine upright, no arch, lying down', sup: false, label: 'De joelhos com arco'
   },
   'kneeling-sit-heels': {
-    sd_start: 'sitting back on heels, knees together, torso leaning slightly forward, front view,',
-    sd_end:   'seiza-style seated on heels, upright torso, graceful kneeling sit',
-    mj: 'sitting back on heels, knees together, slight forward lean, elegant kneeling seated pose',
-    neg: 'standing, legs extended', sup: false, label: 'Sentada nos calcanhares inclinada'
+    sd_start: 'sitting back on heels, knees together on ground, torso slightly forward lean, seiza-like pose, facing viewer, front view,',
+    sd_end:   'sitting with buttocks resting back on heels, knees together and on the ground, spine slightly inclined forward or upright, hands resting on thighs or clasped in lap, graceful seiza-variant kneeling seated pose, face visible and looking at camera, full body front view',
+    mj: 'sitting back on heels in seiza style, knees together on ground, slight forward lean, graceful kneeling seated pose, face visible, front view, full body',
+    neg: 'upright kneeling not seated on heels, standing, lying flat on floor, from behind, legs extended forward, cross-legged', sup: false, label: 'Sentada nos calcanhares inclinada'
   },
 
   // ── Deitada — adicional 2 ────────────────────────────────────────────────
   'one-leg-raised-lying': {
-    sd_start: 'lying on back, one leg raised straight up, other leg flat, front view,',
-    sd_end:   'supine pose, one leg raised vertically, dynamic lying position',
-    mj: 'lying on back with one leg raised straight up, dynamic supine pose',
-    neg: 'both legs flat, standing, sitting', sup: false, label: 'Uma perna levantada deitada'
+    sd_start: 'lying on back, one leg raised straight up vertically, other leg extended flat on surface, supine position, facing viewer, front view,',
+    sd_end:   'lying supine on back, one leg raised vertically and extended straight up toward ceiling while other leg lies flat and extended on the surface, asymmetric dynamic lying pose, inner thigh visible on raised leg, face visible, camera from front or slight above angle, full body',
+    mj: 'lying on back with one leg raised straight up vertically toward ceiling, other leg flat on surface, asymmetric dynamic supine pose, face visible, camera from above angle',
+    neg: 'both legs flat, both legs raised, standing, sitting, from behind, both legs same position', sup: false, label: 'Uma perna levantada deitada'
   },
   'lying-stretching': {
-    sd_start: 'lying on back, arms stretched overhead, full body stretch, arching slightly,',
-    sd_end:   'stretching pose lying down, arms above head, body elongated, relaxed arch',
-    mj: 'lying down stretching, arms overhead, full body elongated stretch, relaxed pose',
-    neg: 'arms at sides, sitting, standing', sup: false, label: 'Espreguiçando deitada'
+    sd_start: 'lying on back, both arms stretched and extended fully overhead on surface, full body stretch, spine slightly arching upward, facing viewer,',
+    sd_end:   'lying supine on back with both arms stretched and extended fully overhead resting on the surface, body elongated in full head-to-toe stretch, spine slightly arching upward, legs extended and together, toes pointed, face looking up or eyes closed in relaxation, full body elongation stretch pose',
+    mj: 'lying on back stretching with both arms fully extended overhead on surface, body completely elongated, legs together, spine slightly arched, relaxed full body stretch, face visible or eyes closed',
+    neg: 'arms at sides, arms above not on surface, sitting, standing, from behind, lying face down, knees bent', sup: false, label: 'Espreguiçando deitada'
   },
   'lying-side-knee-up': {
-    sd_start: 'lying on side, top knee bent and raised, bottom leg straight, side view,',
-    sd_end:   'side-lying with knee raised, top leg bent upward, sensual side pose',
-    mj: 'lying on side with top knee raised and bent, lower leg straight, intimate side pose',
-    neg: 'lying face down, lying on back, standing', sup: false, label: 'De lado com joelho dobrado'
+    sd_start: 'lying on side, top knee bent and raised upward, bottom leg straight and extended, lateral side view,',
+    sd_end:   'lying on side with bottom leg extended straight, top knee bent upward and raised high showing inner thigh, top foot resting on lower calf or raised freely, body in side profile creating an S-curve shape, one arm under head or extended forward, sensual side pose showing curves',
+    mj: 'lying on side with top knee raised and bent, bottom leg straight, inner thigh visible, sensual S-curve side profile pose, intimate side view',
+    neg: 'lying face down, lying on back, both legs together or straight, standing, from directly behind, kneeling', sup: false, label: 'De lado com joelho dobrado'
   },
   'mermaid-lying': {
-    sd_start: 'lying on side, legs together and slightly bent, arms gracefully posed, elegant side view,',
-    sd_end:   'mermaid-inspired lying pose, legs together, graceful fluid body line, side view',
-    mj: 'mermaid pose lying on side, legs together, graceful body curve, elegant side view',
-    neg: 'legs apart, lying on back, standing', sup: false, label: 'Pose sereia deitada'
+    sd_start: 'lying on side, legs together and slightly bent, arms gracefully positioned, elegant mermaid-inspired side view,',
+    sd_end:   'lying on side with legs together and slightly bent at knees, body creating a graceful continuous fluid curve from shoulders to feet, arms elegantly extended or draped, hair spread or flowing, mermaid-like fluid body line and silhouette, side profile view, face visible in profile looking forward',
+    mj: 'lying on side in mermaid pose, legs together and slightly bent, arms elegant and graceful, fluid mermaid-inspired side profile, graceful continuous body curve, face in profile',
+    neg: 'legs spread apart, lying on back directly, lying face down, standing, kneeling, from directly behind, legs straight without curve', sup: false, label: 'Pose sereia deitada'
   },
 
   // ── NSFW — adicional 2 ────────────────────────────────────────────────────
   'standing-doggy': {
-    sd_start: 'standing bent over a surface, hands on surface, back arched, from behind,',
-    sd_end:   'standing doggy position, bent over flat surface, back arched, rear view',
-    mj: 'standing bent over surface doggy style, back arched, rear view, explicit',
-    neg: 'kneeling, on all fours on floor, front view', sup: true, label: 'Doggy em pé (standing)'
+    sd_start: 'standing bent forward over flat surface, both hands flat on surface for support, legs straight, back arched, from behind, rear view,',
+    sd_end:   'standing with legs straight and slightly apart, torso bent forward and down, both palms flat on table, desk or bed surface for support, back arched concave, buttocks raised and pushed back toward camera, from behind rear view, face hidden or lowered, legs vertical and straight',
+    mj: 'standing doggy style, bent over flat surface with both hands flat on table for support, legs straight, back arched, buttocks raised back toward camera, rear view, explicit',
+    neg: 'kneeling on floor, on hands and knees on floor not standing, front view facing camera, standing upright with no forward bend, sitting', sup: true, label: 'Doggy em pé (standing)'
   },
   'lap-dance': {
-    sd_start: 'straddling lap, facing forward seated on lap, sensual seated position, three-quarter view,',
-    sd_end:   'lap dance seated straddle pose, facing forward, intimate close seated position',
-    mj: 'lap dance pose, straddling seated, facing forward, sensual intimate pose',
-    neg: 'standing alone, lying down', sup: false, label: 'Lap dance'
+    sd_start: 'straddling and seated on a lap, facing forward, three-quarter or front view, sensual seated position, hips moving,',
+    sd_end:   'sitting straddling a lap with body facing forward toward camera, hips rocking or tilted forward, hands on own thighs or on partner shoulders, back arched slightly, seductive intimate seated straddle lap dance pose, three-quarter or direct front view, face visible or in profile',
+    mj: 'lap dance pose, sitting straddling facing forward, hips rocking, intimate close seated position, seductive body language, three-quarter front view, face visible',
+    neg: 'standing alone, lying down, from directly behind, seated side-by-side, no one to sit on', sup: false, label: 'Lap dance'
   },
   'prone-bone': {
-    sd_start: 'lying face down, hips slightly raised, legs together, rear view,',
-    sd_end:   'prone bone position, face down lying, hips raised slightly, rear explicit view',
-    mj: 'prone bone position, lying face down with hips slightly raised, rear view, explicit',
-    neg: 'lying on back, on all fours, front view', sup: true, label: 'Prone bone'
+    sd_start: 'lying face down, hips slightly raised off surface, legs together, from behind, rear view,',
+    sd_end:   'lying prone face down, legs together or slightly apart, hips raised just slightly off the surface from behind, buttocks raised upward toward camera, back visible, face pressed downward or turned to side, from behind rear view, full body horizontal',
+    mj: 'prone bone position, lying face down with hips slightly raised above surface, legs together, buttocks elevated, rear view, explicit',
+    neg: 'lying on back, on all fours kneeling, front view facing camera, hips completely flat to surface, standing, sitting', sup: true, label: 'Prone bone'
   },
   'anvil': {
-    sd_start: 'lying on back, legs raised and pushed back toward shoulders, extreme fold, front view,',
-    sd_end:   'anvil position, legs pushed back toward head, deeply folded, explicit missionary variant',
-    mj: 'anvil position, legs raised and pushed back toward shoulders, explicit pose, front view',
-    neg: 'legs down, standing, sitting', sup: false, label: 'Posição bigorna (anvil)'
+    sd_start: 'lying on back, both legs raised high and pushed back toward shoulders and head, hips elevated high, deeply folded, facing viewer, front view,',
+    sd_end:   'lying on back in anvil position, both legs folded all the way back and pushed toward the head and shoulders, hips and pelvis elevated high off the surface, lower back curved upward, face visible or turned, full frontal exposed view from above or front angle',
+    mj: 'anvil position lying on back, both legs raised and pushed back toward head, hips elevated very high off surface, deeply folded pose, front view, explicit',
+    neg: 'legs extended forward and downward, standing, sitting, hips flat on surface, legs not pushed back', sup: false, label: 'Posição bigorna (anvil)'
   },
   'mating-press': {
-    sd_start: 'lying on back, legs raised and pressed back, intimate close position, front view,',
-    sd_end:   'mating press position, legs held back, pinned intimate pose, front view explicit',
-    mj: 'mating press position, lying with legs pressed back, close intimate pose, explicit',
-    neg: 'legs down, sitting, standing', sup: false, label: 'Mating press'
+    sd_start: 'lying on back, both legs raised and pressed back toward chest by partner above, pinned compact position, facing viewer, front view,',
+    sd_end:   'lying on back in mating press position, both legs raised and pressed back toward chest and shoulders by partner above, hips elevated, body pinned in compact position, thighs pressed back, face visible looking up, full frontal exposed view from above',
+    mj: 'mating press position, lying on back with both legs pressed back toward chest, body pinned, hips elevated, partner above, front view, explicit',
+    neg: 'legs extended downward, standing, sitting, from behind, face hidden, legs not raised', sup: false, label: 'Mating press'
   },
   'scissors': {
-    sd_start: 'lying on side, legs intertwined, scissor position, side view,',
-    sd_end:   'scissors position, side-lying with legs intertwined, side explicit view',
-    mj: 'scissors sex position, side lying with legs intertwined, side view, explicit',
-    neg: 'lying on back, standing, sitting', sup: true, label: 'Tesoura (scissors)'
+    sd_start: 'lying on side, legs intertwined with partner, scissor position, side profile lateral view,',
+    sd_end:   'two bodies lying on their sides with legs intertwined and interlocked in scissor position, bodies perpendicular or at angle, intimate connection between legs, side profile lateral view, explicit side lying position',
+    mj: 'scissors intimate position, two people lying on sides with legs intertwined and interlocked, side profile lateral view, explicit',
+    neg: 'lying on back upright view, standing, sitting, from behind directly, legs not intertwined, single person only', sup: true, label: 'Tesoura (scissors)'
   },
   'lotus-nsfw': {
-    sd_start: 'seated lotus position, face to face intimate seated pose, front three-quarter view,',
-    sd_end:   'lotus sex position, seated intimate face-to-face, wrapped legs, intimate close pose',
-    mj: 'lotus intimate position, seated face to face, legs wrapped, intimate close embrace, explicit',
-    neg: 'lying down, standing', sup: false, label: 'Lótus íntima'
+    sd_start: 'seated lotus intimate position, both partners face to face seated upright, legs wrapped around each other, three-quarter front view,',
+    sd_end:   'seated lotus intimate position, two people facing each other in a seated straddle, legs wrapped around partner body, bodies close and upright together, intimate face-to-face seated embrace, three-quarter front view or direct front view, explicit',
+    mj: 'lotus intimate position, seated face to face, both upright, legs wrapped around each other, intimate close seated embrace, three-quarter front view, explicit',
+    neg: 'lying down, standing, from behind, bodies facing away, separated apart, single person sitting alone', sup: false, label: 'Lótus íntima'
   },
   'standing-lift': {
-    sd_start: 'standing, lifted off ground, legs wrapped around waist, face to face, front view,',
-    sd_end:   'standing lift position, suspended in air, legs wrapped around partner, intimate embrace',
-    mj: 'standing lift position, woman lifted with legs wrapped around waist, intimate standing embrace, explicit',
-    neg: 'feet on ground, lying down', sup: false, label: 'Em pé suspensa (lifting)'
+    sd_start: 'standing, woman lifted completely off ground, legs wrapped tightly around partner waist, face to face embrace, front view,',
+    sd_end:   'woman lifted completely off the ground and supported by partner, both legs wrapped tightly around partner waist, face-to-face close intimate embrace, both upright standing, woman elevated and suspended in air, front or three-quarter front view',
+    mj: 'standing lift position, woman lifted completely off ground, both legs wrapped around partner waist, intimate face-to-face embrace, elevated suspended, front view, explicit',
+    neg: 'woman feet on ground, lying down, separated bodies not touching, from behind, side view only', sup: false, label: 'Em pé suspensa (lifting)'
   },
 
   // ── Artísticas — adicional ───────────────────────────────────────────────
   'yoga-warrior': {
-    sd_start: 'warrior yoga pose, lunge stance, arms extended, strong athletic pose, full body,',
-    sd_end:   'yoga warrior pose, deep lunge, arms spread wide, powerful balanced stance',
-    mj: 'yoga warrior pose, deep lunge stance, arms extended, strong athletic full body pose',
-    neg: 'sitting, lying down', sup: false, label: 'Yoga guerreiro'
+    sd_start: 'warrior yoga pose, deep lunge stance, front knee bent at 90 degrees, back leg straight, arms extended wide open, facing viewer, full body,',
+    sd_end:   'yoga warrior II pose, front knee bent deeply at 90 degrees over ankle, back leg straight and extended, both arms stretched out wide horizontally to sides, torso upright, face visible and turned toward front arm, powerful grounded athletic stance, full body visible',
+    mj: 'yoga warrior II pose, deep lunge stance, front knee bent, back leg straight, arms spread wide open horizontally, face turned forward, powerful athletic full body pose',
+    neg: 'sitting, lying down, standing still, arms not extended, both feet together, kneeling', sup: false, label: 'Yoga guerreiro'
   },
   'backbend-floor': {
-    sd_start: 'bridge pose on floor, back arched, hands and feet on ground, hips lifted high,',
-    sd_end:   'full bridge backbend on floor, spine deeply arched, hips elevated, gymnastics pose',
-    mj: 'bridge backbend on floor, full spine arch, hands and feet grounded, hips high, gymnastics pose',
-    neg: 'standing, sitting, lying flat', sup: true, label: 'Ponte (backbend no chão)'
+    sd_start: 'bridge pose on floor, both hands and both feet on ground, hips lifted very high, back arched, from side view,',
+    sd_end:   'full wheel bridge backbend on floor, both hands flat on floor above shoulders, both feet flat on floor, hips and pelvis raised very high, spine deeply arched in full bridge, side profile view showing full bridge arch, gymnastics or yoga bridge pose',
+    mj: 'full bridge backbend on floor, hands and feet on ground, hips raised very high, spine deeply arched, side profile showing full bridge arch, gymnastics pose',
+    neg: 'standing, sitting, lying flat on back, partial arch only, arms not on floor, feet not on floor', sup: true, label: 'Ponte (backbend no chão)'
   },
   'jumping': {
-    sd_start: 'jumping mid-air, both feet off ground, dynamic leap, full body, front view,',
-    sd_end:   'mid-air jump pose, body airborne, dynamic energetic leap, hair floating',
-    mj: 'jumping mid-air, both feet off ground, dynamic energetic leap, full body, motion blur',
-    neg: 'feet on ground, sitting, lying', sup: false, label: 'No ar / pulando'
+    sd_start: 'jumping mid-air, both feet completely off ground, dynamic leap upward, full body, facing viewer, front view,',
+    sd_end:   'mid-air jump pose with both feet off the ground, body fully airborne, knees bent or legs extended, arms raised or open, hair and clothes floating upward, face visible, dynamic energetic leap captured at peak height, full body front view',
+    mj: 'jumping mid-air with both feet off ground, body fully airborne at peak, hair floating upward, energetic dynamic leap, face visible, full body front view, captured at jump peak',
+    neg: 'feet on ground, sitting, lying, static pose, no height, one foot on ground', sup: false, label: 'No ar / pulando'
   },
   'inversion-pose': {
-    sd_start: 'handstand or headstand, body inverted upside down, legs in air, full body,',
-    sd_end:   'inversion pose, body upside down, legs raised vertically, balance pose',
-    mj: 'handstand inversion, body completely upside down, legs raised, balance pose, full body',
-    neg: 'right side up, sitting, lying', sup: true, label: 'Inversão / de cabeça para baixo'
+    sd_start: 'handstand or headstand, body fully inverted upside down, legs in air above head, full body, from side or front,',
+    sd_end:   'full inversion pose, body completely upside down, legs raised fully vertically in the air above, either balancing on hands in handstand or on top of head, body aligned vertically inverted, side profile or front view showing full inversion, balance and strength',
+    mj: 'handstand inversion, body completely inverted upside down, legs raised straight up in air, balancing on hands, full body visible, side or front view showing full vertical inversion',
+    neg: 'right side up, sitting, lying on ground, feet on floor, body not inverted, partial inversion only', sup: true, label: 'Inversão / de cabeça para baixo'
   },
   'splits-floor': {
-    sd_start: 'doing full splits on the floor, legs extended flat in opposite directions, front view,',
-    sd_end:   'full floor splits, legs 180 degrees apart flat on ground, flexible pose',
-    mj: 'full splits on floor, legs completely flat in opposite directions, flexible gymnast pose',
-    neg: 'standing, sitting, lying', sup: false, label: 'Espagates no chão'
+    sd_start: 'doing full splits on the floor, both legs extended flat in opposite directions to 180 degrees, facing viewer, front view,',
+    sd_end:   'full floor splits with both legs extended flat in completely opposite directions at 180 degrees, pelvis touching the floor, legs fully extended sideways in line, torso upright, arms at sides or raised gracefully, front view, full flexibility gymnast or dancer pose',
+    mj: 'full floor splits, both legs completely flat on floor extended in opposite directions, 180 degrees apart, torso upright, flexible gymnast or dancer pose, front view',
+    neg: 'standing, sitting, lying, partial split only, legs not fully extended, legs not 180 degrees apart', sup: false, label: 'Espagates no chão'
   },
 
   // ── Dentro da Água / Piscina ─────────────────────────────────────────────
@@ -4116,170 +4116,170 @@ const POSES = {
 
   // ── Em pé — novas poses ────────────────────────────────────────────────────
   'standing-legs-crossed-front': {
-    sd_start: 'standing, legs crossed at ankles, facing camera, full body shot, front view, weight on one hip,',
-    sd_end: 'legs crossed standing pose, face visible, full body frontal',
-    mj: 'standing facing camera full body, legs crossed at ankles, casual sexy stance',
-    neg: 'back view, sitting, legs uncrossed, kneeling', sup: false, label: 'Em pé pernas cruzadas — frente'
+    sd_start: 'standing, legs crossed at ankles, one leg crossed in front of other, facing camera, full body, front view, weight shifted to one hip,',
+    sd_end: 'standing with legs crossed at the ankles, one leg crossed in front of the other, weight shifted and resting on one hip, hip slightly jutted, casual relaxed crossed-leg stance, face visible, full body frontal view, face looking at camera',
+    mj: 'standing facing camera full body, legs crossed at ankles, weight on one hip, relaxed casual sexy crossed-leg stance, face visible',
+    neg: 'back view, sitting, legs uncrossed and parallel, kneeling, lying, legs wide apart', sup: false, label: 'Em pé pernas cruzadas — frente'
   },
   'standing-hip-side': {
-    sd_start: 'standing, side profile, hip jutted to side, one hand on hip, full body side view, 90 degree angle,',
-    sd_end: 'standing side profile, hip thrust pose, face in profile, full body lateral view',
-    mj: 'standing side profile view, hip thrust pose, sexy silhouette, full body',
-    neg: 'front view, back view, facing camera, sitting', sup: false, label: 'Em pé quadril de lado — perfil'
+    sd_start: 'standing, side profile, hip jutted prominently out to side, one hand on jutted hip, full body 90 degree side view, profile,',
+    sd_end: 'standing in perfect side profile at 90 degree angle, one hip jutted out prominently creating S-curve silhouette, one hand resting on jutted hip, face in profile, body in full side silhouette, full body lateral view showing curves from side',
+    mj: 'standing in 90 degree side profile, hip jutted dramatically to side, one hand on hip, S-curve silhouette, face in profile, full body lateral view',
+    neg: 'front view, back view, facing camera directly, sitting, lying, no hip thrust', sup: false, label: 'Em pé quadril de lado — perfil'
   },
   'standing-window-back': {
-    sd_start: 'standing at window, back to camera, looking out window, rear view, full body, natural window light,',
-    sd_end: 'standing at window back view, gazing outside, back fully visible, window frame in scene',
-    mj: 'standing at window from behind, back to camera, looking outside, natural light, full body rear',
-    neg: 'front view, facing camera, no window, sitting', sup: true, label: 'Em pé na janela — de costas'
+    sd_start: 'standing at window, back to camera, from behind, rear view, looking out window, full body, natural window light,',
+    sd_end: 'standing at window with back fully facing camera, rear view, gazing out through window glass, back and buttocks fully visible toward camera, face hidden, natural light from window illuminating back silhouette, window frame visible in scene, full body rear view',
+    mj: 'standing at window from behind, back to camera, looking out window, natural window light, back fully visible, face hidden, full body rear view, atmospheric',
+    neg: 'front view, facing camera, face clearly visible, no window, sitting, side profile', sup: true, label: 'Em pé na janela — de costas'
   },
   'standing-tiptoe-arch': {
-    sd_start: 'standing on tiptoes, arched back, from behind, rear view, heels raised, spine curved, full body,',
-    sd_end: 'tiptoe standing rear view, arched spine, elevated heels, back visible, graceful arch',
-    mj: 'standing on tiptoes from behind, spine arched, heels raised, full body rear view, elegant',
-    neg: 'flat feet, front view, facing camera, sitting', sup: true, label: 'Ponta dos pés — arco de costas'
+    sd_start: 'standing on tiptoes, heels raised, back arched, from behind, rear view, spine curved, full body,',
+    sd_end: 'standing on tiptoes from behind, heels raised off ground, back arched and spine curved gracefully, buttocks pushed back slightly, back fully visible toward camera, calves defined from heel raise, face hidden, elegant rear view with graceful arch, full body',
+    mj: 'standing on tiptoes from behind, spine arched gracefully, heels raised, back and buttocks visible, face hidden, full body rear view, elegant and graceful',
+    neg: 'flat feet heels on ground, front view, facing camera, face visible, sitting, lying, no arch in back', sup: true, label: 'Ponta dos pés — arco de costas'
   },
   'standing-arms-raised-front': {
-    sd_start: 'standing, both arms raised above head, facing camera, full body, front view, arms stretched upward,',
-    sd_end: 'arms raised overhead standing pose, full body frontal, face visible, elongated silhouette',
-    mj: 'standing facing camera full body, both arms raised above head, sexy stretched pose',
-    neg: 'arms at sides, back view, sitting, kneeling', sup: false, label: 'Em pé braços levantados — frente'
+    sd_start: 'standing, both arms raised above head, arms fully extended upward, facing camera, full body, front view,',
+    sd_end: 'standing with both arms raised fully above head and extended upward, palms forward or facing each other, body elongated and stretched, ribcage visible, face visible looking at camera or upward, elegant elongated full body silhouette, front view',
+    mj: 'standing facing camera full body, both arms raised fully above head, body elongated and stretched, face visible, elegant elongated stance',
+    neg: 'arms at sides, arms only partially raised, back view, sitting, kneeling, lying, one arm only', sup: false, label: 'Em pé braços levantados — frente'
   },
 
   // ── Sentada — novas poses ──────────────────────────────────────────────────
   'sitting-straddle-chair-front': {
-    sd_start: 'sitting straddling chair facing backwards, chest pressed to chair back, legs wide open, facing camera, front view,',
-    sd_end: 'straddle chair pose facing camera, legs spread wide on either side, chest on chair back, eye contact',
-    mj: 'straddling chair backwards facing camera, legs wide open, chest pressed to chair back, front view',
-    neg: 'sitting normally, back view, standing, lying', sup: false, label: 'Montada na cadeira virada — frente'
+    sd_start: 'sitting straddling a chair backwards, legs wide open on either side of chair, chest pressed against chair back, facing camera, front view,',
+    sd_end: 'straddling chair backwards with chair back facing camera, legs spread wide on either side of chair seat, chest pressed against top of chair back, arms resting on chair back, face visible looking over chair directly at camera, front view, intimate seductive seated pose',
+    mj: 'straddling chair backwards facing camera, legs spread wide either side, chest against chair back, arms on top of chair, face visible looking at camera over chair, seductive front view',
+    neg: 'sitting normally facing same direction as chair, back view, standing, lying, legs not straddling', sup: false, label: 'Montada na cadeira virada — frente'
   },
   'sitting-table-spread': {
-    sd_start: 'sitting on table edge, legs hanging spread apart, facing camera, front view, hands on table behind, leaning back slightly,',
-    sd_end: 'sitting on table top legs spread, facing camera, full body frontal seated on table',
-    mj: 'sitting on table edge facing camera, legs spread apart, leaning back slightly, full body',
-    neg: 'standing, lying, back view, floor', sup: false, label: 'Sentada na mesa — pernas abertas'
+    sd_start: 'sitting on table edge, both legs spread apart and hanging over edge, facing camera, front view, hands on table behind body, leaning back slightly,',
+    sd_end: 'sitting on table top or edge with legs spread apart and hanging over, facing camera, hands flat on table behind hips leaning back slightly, face visible, full body frontal seated on table, seductive elevated seated spread pose',
+    mj: 'sitting on table edge facing camera, both legs spread apart hanging over edge, hands on table behind, leaning back slightly, face visible, seductive full body frontal',
+    neg: 'standing, lying, back view, sitting on floor, legs closed together, legs not hanging', sup: false, label: 'Sentada na mesa — pernas abertas'
   },
   'sitting-butterfly-floor': {
-    sd_start: 'sitting on floor, butterfly position, soles of feet touching together, knees spread wide to sides, facing camera, upright posture,',
-    sd_end: 'butterfly sit floor pose, knees wide open, feet together, front view, upright spine',
-    mj: 'sitting on floor butterfly pose facing camera, knees spread wide, feet touching, front view',
-    neg: 'standing, lying, back view, legs straight', sup: false, label: 'Sentada borboleta no chão — frente'
+    sd_start: 'sitting on floor, butterfly position, soles of both feet pressed together, knees spread wide and fallen out to both sides, facing camera, upright posture, front view,',
+    sd_end: 'sitting on floor in butterfly pose, soles of feet pressed together in front, both knees fallen open wide to the sides like butterfly wings, upright spine, hands on feet or ankles or resting on knees, face visible, full body front view, inner thighs visible and open',
+    mj: 'sitting on floor in butterfly pose facing camera, soles of feet touching together, knees spread wide open to sides, upright torso, inner thighs visible, face visible, front view',
+    neg: 'standing, lying, back view, legs straight, knees not spread open, cross-legged', sup: false, label: 'Sentada borboleta no chão — frente'
   },
   'sitting-reverse-chair-back': {
-    sd_start: 'sitting reversed on chair, back to camera, rear view, legs straddling chair, spine arched slightly, head turned or looking away,',
-    sd_end: 'sitting reversed on chair back view, straddling seat, spine arched, back fully visible',
-    mj: 'sitting reversed on chair from behind, back to camera, straddling seat, rear view, arched spine',
-    neg: 'front view, facing camera, standing, lying', sup: true, label: 'Montada cadeira virada — de costas'
+    sd_start: 'sitting reversed on chair, back to camera, rear view, legs straddling chair seat, spine arched slightly, back fully toward camera,',
+    sd_end: 'sitting on a chair facing the back of it, from behind, back fully visible toward camera, legs straddling the chair seat on either side, spine slightly arched, head turned away or looking down, back and buttocks facing camera, rear view, face hidden or turned',
+    mj: 'sitting reversed on chair from behind, back to camera, straddling seat, back fully visible toward camera, spine arched, rear view, face hidden',
+    neg: 'front view, facing camera directly, standing, lying, face visible, back not to camera', sup: true, label: 'Montada cadeira virada — de costas'
   },
   'sitting-reclined-floor-front': {
-    sd_start: 'sitting on floor, leaning back on hands, legs slightly apart, facing camera, relaxed reclined seated pose, front view,',
-    sd_end: 'reclined floor sitting pose front view, arms behind propping body, legs spread slightly, face visible',
-    mj: 'sitting on floor leaning back on hands, legs apart, facing camera, relaxed boudoir sitting pose',
-    neg: 'back view, standing, kneeling, lying flat', sup: false, label: 'Sentada reclinada no chão — frente'
+    sd_start: 'sitting on floor, leaning back on both hands placed behind hips, legs slightly apart, facing camera, relaxed semi-reclined seated pose, front view,',
+    sd_end: 'sitting on floor with both arms extended behind and hands flat on floor supporting the body, torso leaning back at angle, legs slightly spread or extended forward, chest open toward camera, face visible and looking at camera, relaxed reclined boudoir seated pose, front view',
+    mj: 'sitting on floor leaning back on both hands behind hips, torso reclined at angle, legs slightly apart, chest open, face visible, relaxed boudoir seated pose, facing camera front view',
+    neg: 'back view, standing, kneeling upright, lying completely flat, arms in front, sitting fully upright', sup: false, label: 'Sentada reclinada no chão — frente'
   },
 
   // ── De joelhos / De quatro — novas ────────────────────────────────────────
   'kneeling-arch-back-back': {
-    sd_start: 'kneeling, arching back intensely, from behind, rear view, spine dramatically curved, head tilted back, arms at sides,',
-    sd_end: 'kneeling arched back rear view, dramatic spine curve, head thrown back, knees on ground',
-    mj: 'kneeling from behind with dramatic back arch, head tilted back, spine curved intensely, rear view',
-    neg: 'front view, upright spine, standing, lying', sup: true, label: 'De joelhos arco intenso — costas'
+    sd_start: 'kneeling upright, back arched intensely backward, from behind, rear view, spine dramatically curved, head tilted back, knees on ground,',
+    sd_end: 'kneeling upright on both knees from behind, back arched intensely and dramatically backward, spine curved deeply concave, chest pushed forward, head thrown back, back and buttocks fully visible toward camera, face hidden or tilted back, dramatic arch from rear view',
+    mj: 'kneeling from behind with extremely dramatic back arch, spine curved intensely backward, head tilted back, back and buttocks toward camera, rear view, face hidden',
+    neg: 'front view, facing camera, upright flat spine, standing, lying, forward lean, face visible clearly', sup: true, label: 'De joelhos arco intenso — costas'
   },
   'allfours-low-cam-back': {
-    sd_start: 'on all fours, camera at ground level from behind, ultra-low angle rear view, buttocks prominent, spine arched, legs apart,',
-    sd_end: 'all fours ultra low angle rear, camera at floor looking up at buttocks, wide legs, arched back',
-    mj: 'on all fours from behind, camera at ground level shooting up, buttocks very prominent, legs spread, arched spine',
-    neg: 'front view, high angle, standing, sitting', sup: true, label: 'De quatro câmera baixa — traseiro'
+    sd_start: 'on all fours, ultra-low camera angle from behind at floor level, looking upward at buttocks, rear view, legs spread, spine arched,',
+    sd_end: 'on hands and knees from behind, camera positioned at ground level looking upward at body from behind, ultra-low angle dramatic shot, buttocks very prominent and filling frame from low below, legs spread apart, spine arched, face hidden, rear extreme low angle view',
+    mj: 'on all fours from behind, camera at ground level shooting upward, buttocks very prominent, legs spread, spine arched, dramatic ultra-low angle rear view',
+    neg: 'front view facing camera, high camera angle from above, standing, sitting, normal eye level shot, face visible', sup: true, label: 'De quatro câmera baixa — traseiro'
   },
   'kneeling-wide-spread-front': {
-    sd_start: 'kneeling, knees spread very wide apart, facing camera, full body front view, upright torso, hands on thighs,',
-    sd_end: 'wide-kneed kneeling front view, knees far apart, upright spine, face visible, frontal kneeling pose',
-    mj: 'kneeling facing camera, knees spread very wide apart, upright torso, front view, sexy kneeling pose',
-    neg: 'back view, knees together, standing, lying', sup: false, label: 'De joelhos bem abertas — frente'
+    sd_start: 'kneeling, both knees spread very wide apart on ground, facing camera, full body front view, upright torso, hands on thighs,',
+    sd_end: 'kneeling with both knees spread very wide apart on the ground, thighs open wide, upright torso, hands resting on thighs, face visible and looking at camera, wide open kneeling stance, inner thighs and groin area visible, frontal kneeling pose, full body',
+    mj: 'kneeling facing camera with knees spread very wide apart, thighs open, upright torso, hands on thighs, face visible, wide open kneeling pose, front view full body',
+    neg: 'back view, knees together or close, standing, lying, side view only, torso leaning forward', sup: false, label: 'De joelhos bem abertas — frente'
   },
   'presenting-bent-front': {
-    sd_start: 'bending forward at waist, torso leaning down, arms hanging or on thighs, facing camera, front view, looking at camera,',
-    sd_end: 'bent forward front view, torso angled down, face visible looking up at camera, cleavage visible',
-    mj: 'bending forward toward camera, front view, torso tilted down, eye contact, seductive bent over pose',
-    neg: 'back view, standing upright, lying, sitting', sup: false, label: 'Curvada para frente — de frente'
+    sd_start: 'bending forward at waist, torso leaning down toward camera, facing viewer, front view, hands on thighs or hanging, looking up at camera,',
+    sd_end: 'bending forward at the waist, torso inclined downward toward camera, spine bent forward, face visible and looking upward at camera, cleavage visible due to forward bend, hands resting on thighs or hanging, legs straight, facing camera front view, seductive bent forward pose',
+    mj: 'bending forward toward camera, torso tilted down, face visible looking up at camera, cleavage forward, seductive bent-forward front view pose, hands on thighs or hanging',
+    neg: 'back view, from behind, standing upright straight, lying, sitting, face hidden, back to camera', sup: false, label: 'Curvada para frente — de frente'
   },
 
   // ── Deitada — novas poses ──────────────────────────────────────────────────
   'lying-legs-raised-spread': {
-    sd_start: 'lying on back, both legs raised in air and spread apart wide, facing camera upward, full front body view from above,',
-    sd_end: 'lying back legs raised and spread wide, camera looking down at front body, legs in air spread open',
-    mj: 'lying on back with legs raised and spread wide in air, camera above looking down, front body fully visible',
-    neg: 'legs together, standing, sitting, from behind', sup: false, label: 'Deitada pernas levantadas abertas'
+    sd_start: 'lying on back, both legs raised up in air and spread apart wide simultaneously, facing viewer upward, full front body view, camera from above or front,',
+    sd_end: 'lying on back with both legs raised up into the air and simultaneously spread wide apart, thighs open and legs in a V-shape in the air, front body fully exposed, face visible looking up, camera positioned from above looking down or from front angle, full body',
+    mj: 'lying on back with both legs raised in air and spread wide apart, camera above looking down, front body fully visible, legs V-shape in air, face visible',
+    neg: 'legs together, legs not raised, standing, sitting, from behind, lying face down, legs spread but flat on surface', sup: false, label: 'Deitada pernas levantadas abertas'
   },
   'lying-side-showing-back': {
-    sd_start: 'lying on side, back to camera, side-lying rear view, spine visible, buttocks facing camera, one arm under head,',
-    sd_end: 'lying side-facing back, rear view from side angle, spine and buttocks visible, side-lying back pose',
-    mj: 'lying on side with back to camera, spine and buttocks visible, one arm under head, side-lying rear view',
-    neg: 'front view, lying on back, standing, sitting', sup: true, label: 'Deitada de lado — costas visíveis'
+    sd_start: 'lying on side, back to camera, spine and buttocks facing camera, side-lying rear view, one arm under head,',
+    sd_end: 'lying on side with back and spine toward camera, buttocks visible facing camera, side-lying rear view from slight angle, spine visible along back, one arm tucked under head, face hidden away from camera, sensual side-lying rear pose',
+    mj: 'lying on side with back facing camera, spine and buttocks visible, one arm under head, side-lying rear view, face hidden, intimate rear pose',
+    neg: 'front view, face visible toward camera, lying on back flat, standing, sitting, lying face down', sup: true, label: 'Deitada de lado — costas visíveis'
   },
   'lying-arched-side-view': {
-    sd_start: 'lying on back arching dramatically, side profile view, spine lifted off surface, bridge-like arch, head and feet on surface, lateral view,',
-    sd_end: 'lying arched bridge side view, spine dramatically lifted, body arched high, lateral profile angle',
-    mj: 'lying on back in dramatic arch, side profile view, spine lifted high off surface, bridge pose lateral',
-    neg: 'front view, flat lying, standing, kneeling', sup: true, label: 'Deitada arco — perfil lateral'
+    sd_start: 'lying on back arching dramatically, bridge-like arch, spine lifted high off surface, only head and feet on surface, lateral side profile view,',
+    sd_end: 'lying on back in dramatic bridge-like arch, spine lifted very high off surface with only head and heels touching, body arched in high upward curve, hips elevated, dramatic gymnastics backbend arch, side profile lateral view showing the full arch',
+    mj: 'lying on back in dramatic bridge arch, spine lifted high off surface, only head and feet on ground, body arched dramatically, side profile lateral view showing full arch curve',
+    neg: 'front view, back view, flat lying on back, standing, kneeling, spine not arched off surface', sup: true, label: 'Deitada arco — perfil lateral'
   },
   'lying-knees-chest-spread': {
-    sd_start: 'lying on back, knees pulled to chest, legs spread open, facing camera, camera above looking down, vulnerable spread pose,',
-    sd_end: 'lying back knees to chest spread wide, camera above, front body visible, legs open wide to camera',
-    mj: 'lying on back with knees pulled to chest and legs spread wide, camera looking down from above',
-    neg: 'legs straight, standing, sitting, back view', sup: false, label: 'Deitada joelhos ao peito abertas'
+    sd_start: 'lying on back, both knees pulled up to chest, legs spread wide open apart, facing viewer, camera above looking down, vulnerable open pose,',
+    sd_end: 'lying supine on back, both knees pulled up toward chest while simultaneously spread wide open apart, thighs open wide, inner thighs and groin area fully exposed toward camera above, face visible, camera positioned from above looking directly down, vulnerable spread pose',
+    mj: 'lying on back with knees pulled to chest and legs spread wide open apart, camera looking down from above, inner thighs exposed, face visible, vulnerable open pose',
+    neg: 'legs straight extended, knees not pulled to chest, legs closed together, standing, sitting, from behind', sup: false, label: 'Deitada joelhos ao peito abertas'
   },
   'lying-prone-extreme-arch': {
-    sd_start: 'lying face down, extreme back arch, hips lifted dramatically high off surface, spine curved intensely, rear view, from above,',
-    sd_end: 'prone extreme back arch, hips raised very high, deep spine curve, face down rear view, intense arch',
-    mj: 'lying face down with extreme back arch, hips raised dramatically high, deep spine curve, rear view',
-    neg: 'flat lying, front view, standing, sitting, hips on surface', sup: true, label: 'De bruços arco extremo'
+    sd_start: 'lying face down, extreme back arch, hips raised dramatically high off surface, spine curved intensely upward, from behind, rear view,',
+    sd_end: 'lying prone face down with an extreme dramatic back arch, hips raised very high off the surface, spine curved intensely upward forming a deep arch, buttocks elevated high, upper body and face pressed down, from behind rear view showing back arch and elevation',
+    mj: 'lying face down with extreme dramatic back arch, hips raised very high off surface, spine curved intensely, buttocks elevated dramatically, rear view showing full arch',
+    neg: 'flat lying hips on surface, front view, standing, sitting, hips touching surface, moderate arch only', sup: true, label: 'De bruços arco extremo'
   },
 
   // ── NSFW — novas poses ─────────────────────────────────────────────────────
   'spread-eagle-pov': {
-    sd_start: 'lying on back spread eagle, legs spread wide, arms spread, facing camera directly from above, POV below camera looking up between legs, front view,',
-    sd_end: 'spread eagle POV shot, camera between legs looking up at body, legs wide open, front body exposed',
-    mj: 'lying spread eagle, POV camera between legs looking up at body, legs spread wide, intimate frontal POV',
-    neg: 'legs together, standing, back view, from behind', sup: false, label: 'Spread eagle POV — câmera entre pernas'
+    sd_start: 'lying on back spread eagle, legs spread wide apart, arms spread to sides, facing camera from above, POV camera between legs looking up at body, front view,',
+    sd_end: 'lying on back in full spread eagle, both arms extended wide to sides, both legs spread very wide apart, camera positioned between legs and below looking up at full front body, intimate frontal POV view showing full body from between spread legs upward, face visible at top',
+    mj: 'lying spread eagle on back, POV camera between legs looking upward at body, legs spread wide, arms wide, front body exposed, intimate upward POV angle, face visible',
+    neg: 'legs together, arms at sides, standing, from behind, high angle from above overhead, side view', sup: false, label: 'Spread eagle POV — câmera entre pernas'
   },
   'doggy-closeup-rear': {
-    sd_start: 'on all fours doggy position, ultra close-up camera from directly behind, tight crop on buttocks and between legs from rear, camera very close,',
-    sd_end: 'doggy style extreme close-up from behind, camera pressed close to rear, tight posterior framing between legs',
-    mj: 'doggy style position extremely close-up camera from behind, tight crop between legs and buttocks from rear',
-    neg: 'front view, far away, full body, standing', sup: true, label: 'Doggy close-up traseiro — câmera proxima'
+    sd_start: 'on all fours doggy position, ultra close-up camera from directly behind very close, tight crop on buttocks and between legs from rear, camera very close,',
+    sd_end: 'on hands and knees doggy position from behind, camera pressed very close from directly behind, extremely tight crop focusing on buttocks and area between legs from rear, intimate extreme close-up of posterior from behind, no face visible',
+    mj: 'doggy style position with extremely close camera from directly behind, tight crop between legs and buttocks from rear, intimate extreme close-up rear view',
+    neg: 'front view, camera far away, full body distant shot, standing, side view, face visible', sup: true, label: 'Doggy close-up traseiro — câmera proxima'
   },
   'seated-wide-open-front': {
-    sd_start: 'sitting on bed or floor, legs spread completely wide open, facing camera directly, front view, knees bent and wide, pelvis exposed to camera,',
-    sd_end: 'seated with legs fully spread wide open front view, camera facing directly, thighs spread, explicit frontal seated',
-    mj: 'sitting facing camera with legs spread completely wide open, front view, thighs apart, explicit frontal seated pose',
-    neg: 'legs together, back view, standing, lying, from behind', sup: false, label: 'Sentada pernas completamente abertas'
+    sd_start: 'sitting on bed or floor, both legs spread completely wide open, facing camera directly, front view, thighs wide apart, pelvis fully exposed to camera,',
+    sd_end: 'seated on bed or floor with both legs spread completely wide open, thighs maximally spread apart, knees bent or legs straight, pelvis and inner thighs fully exposed toward camera, facing camera directly front view, face visible, explicit frontal seated spread pose',
+    mj: 'sitting facing camera with both legs spread completely wide open, thighs maximally apart, pelvis exposed, front view, face visible, explicit frontal seated pose',
+    neg: 'legs together or partially closed, back view, standing, lying, from behind, side view only', sup: false, label: 'Sentada pernas completamente abertas'
   },
   'kneeling-thighs-spread-low': {
-    sd_start: 'kneeling with thighs spread very wide, camera angle from below looking up at groin area, low angle between legs, front view,',
-    sd_end: 'kneeling wide thighs low angle shot, camera below shooting up between thighs, explicit low angle kneeling',
-    mj: 'kneeling with thighs spread wide, low angle camera from below looking up between thighs, explicit kneeling spread',
-    neg: 'thighs together, high angle, back view, standing', sup: false, label: 'De joelhos coxas abertas — ângulo baixo'
+    sd_start: 'kneeling upright, thighs spread very wide apart, ultra-low camera angle from below looking upward between thighs, low angle front view,',
+    sd_end: 'kneeling with thighs and knees spread very wide apart, camera positioned very low at ground level looking upward between the thighs, ultra-low angle dramatic shot between legs looking up, groin area exposed to camera below, explicit low-angle kneeling spread',
+    mj: 'kneeling with thighs spread wide, ultra-low camera from below looking up between thighs, dramatic low angle upward view between legs, explicit kneeling spread pose',
+    neg: 'thighs together or close, high camera angle from above, back view, standing, normal eye level camera', sup: false, label: 'De joelhos coxas abertas — ângulo baixo'
   },
 
   // ── Close-up — novas poses ─────────────────────────────────────────────────
   'closeup-breasts-front': {
-    sd_start: 'extreme close-up of breasts and chest, camera tightly framed on chest, front view, no face, tight crop on cleavage and breasts,',
-    sd_end: 'chest and breast close-up front view, camera tightly framing breasts, detailed breast close-up shot',
-    mj: 'extreme close-up of breasts and chest from front, camera tightly framed on chest, cleavage prominent, no face visible',
-    neg: 'full body, face visible, back view, far away', sup: true, label: 'Close-up seios — de frente'
+    sd_start: 'extreme close-up of breasts and chest, camera tightly framed on chest and cleavage, front view, no face visible in frame,',
+    sd_end: 'tight close-up crop on chest and breasts, front view, camera framed from collarbone to just below breasts, cleavage prominent, skin texture detail visible, breasts filling the frame, no face, no lower body, breast close-up shot',
+    mj: 'extreme close-up of breasts and chest from front, camera tightly framed from collarbone to below breasts, cleavage prominent, skin texture detail, no face visible, intimate chest crop',
+    neg: 'full body visible, face clearly visible in frame, back view, far away, wide shot, lower body visible', sup: true, label: 'Close-up seios — de frente'
   },
   'closeup-hips-belly': {
-    sd_start: 'close-up of hips, belly and lower torso, camera framed from navel to upper thighs, front view, tight waist and hip crop,',
-    sd_end: 'belly and hip close-up front view, navel visible, tight hip crop, no face, torso midsection shot',
-    mj: 'close-up of belly and hips from front, camera framing from navel to upper thighs, tight midsection crop',
-    neg: 'full body, face visible, back view, breasts visible', sup: true, label: 'Close-up quadril e barriga — frente'
+    sd_start: 'close-up of hips, belly and lower torso, camera tightly framed from navel to upper thighs, front view, no face, no breasts,',
+    sd_end: 'tight close-up crop on midsection, belly button and navel visible, hip bones, lower belly, top of thighs in frame, front view, camera framed from just below ribs to upper thighs, intimate belly and hip crop shot, no face, no chest',
+    mj: 'close-up of belly and hips from front, camera framing from just below ribs to upper thighs, navel visible, hip detail, intimate midsection crop, no face, no breasts',
+    neg: 'full body shot, face visible in frame, back view, breasts visible, far wide shot, upper chest', sup: true, label: 'Close-up quadril e barriga — frente'
   },
   'closeup-between-legs-front': {
-    sd_start: 'close-up between legs from front, camera very close and low, tight crop on upper inner thighs and groin area, front view from below,',
-    sd_end: 'between legs close-up front low angle, camera framed tightly on inner thighs and groin, explicit tight front crop',
-    mj: 'close-up shot between legs from front low angle, camera tightly framed on inner thighs, explicit front between-legs crop',
-    neg: 'full body, face visible, back view, far away', sup: true, label: 'Close-up entre as pernas — frente'
+    sd_start: 'close-up between legs from front, camera very close and at low angle, tight crop on upper inner thighs and groin area, front view low angle,',
+    sd_end: 'intimate close-up shot between legs from front low angle, camera framed tightly on upper inner thighs and groin area, camera positioned low looking slightly upward between thighs, explicit tight front between-legs crop, no face visible, no upper body',
+    mj: 'close-up shot between legs from front at low angle, camera tightly framed on inner thighs and groin, explicit front between-legs intimate crop, no face, no upper body visible',
+    neg: 'full body, face visible, back view, from behind, far away, high angle looking down', sup: true, label: 'Close-up entre as pernas — frente'
   },
 
   // ── Selfie — novas poses ───────────────────────────────────────────────────
