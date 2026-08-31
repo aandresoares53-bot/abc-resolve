@@ -8852,14 +8852,17 @@ async function generateSmartVariations(){
   const btn = document.querySelector('[onclick="generateSmartVariations()"]');
   if(btn){ btn.disabled = true; btn.textContent = '⏳…'; }
   try {
-    let eng = rawFull;
+    // Translate ONLY non-chip parts — chips (_qp) are already English, sending them through pt→en garbles them
+    const _toTranslateSV = [hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+    let eng = [_qp, _toTranslateSV].filter(Boolean).join(', ');
     try {
       const _ac = new AbortController();
       setTimeout(() => _ac.abort(), 5000);
-      const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=${encodeURIComponent(rawFull)}`, { signal: _ac.signal });
+      const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=${encodeURIComponent(_toTranslateSV)}`, { signal: _ac.signal });
       const data = await res.json();
-      eng = (data?.[0]||[]).map(s=>s?.[0]||'').join('').trim() || translatePT(rawFull);
-    } catch(e){ eng = translatePT(rawFull); }
+      const _translatedSV = (data?.[0]||[]).map(s=>s?.[0]||'').join('').trim() || translatePT(_toTranslateSV);
+      eng = [_qp, _translatedSV].filter(Boolean).join(', ');
+    } catch(e){ eng = [_qp, translatePT(_toTranslateSV)].filter(Boolean).join(', '); }
 
     const profiles = ['light', 'medium', 'bold'];
     const variations = profiles.map(pk => {
@@ -10400,7 +10403,9 @@ function buildPrompt(englishText, rawPT){
     const _expandedMj = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
     const _mjUserContent = pose.mj ? pose.mj + ', ' + _expandedMj : _expandedMj;
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes, real eye catchlights, natural lip texture, lip lines visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, eye moisture and wetness, blood vessels in sclera, iris depth and texture, natural skin texture on forehead, natural laugh lines, natural under-eye skin texture, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI';
-    const core = _mjRealPrefix + ' ' + _mjUserContent + ', ' + _mjAnatomy;
+    // MJ: add ethnicity skin texture terms (strip SD weight syntax — MJ uses plain text)
+    const _mjEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
+    const core = _mjRealPrefix + ' ' + _mjUserContent + ', ' + _mjAnatomy + (_mjEtnia ? ', ' + _mjEtnia : '');
     const _ar       = document.getElementById('mj-ar')?.value       || '2:3';
     const _v        = document.getElementById('mj-v')?.value        || '6.1';
     const _stylize  = document.getElementById('mj-stylize')?.value  || '100';
@@ -10445,8 +10450,10 @@ function buildPrompt(englishText, rawPT){
     const _bodyGpt = _isBackGpt ? BB_GPT : BF_GPT;
     const _gptAnatomy = 'Ensure correct human anatomy throughout: exactly five fingers on each hand, no extra or missing fingers, correct finger count, symmetrical eyes correctly positioned, both eyes same size, no cross-eyed look, correct body proportions, no extra limbs, natural spine curvature, correct shoulder anatomy, natural elbow anatomy, correct knee anatomy, natural wrist anatomy, realistic joint definition. The final image must be indistinguishable from a real analog film documentary photograph.';
     const _gptFaceDesc = _getFaceID() ? ` Face: ${_getFaceID()}, same consistent character in every image.` : '';
-    // Order: subject (what to draw) → body realism → anatomy mandate → photo style
-    return [core, _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
+    // GPT: add ethnicity skin tone as plain text (strip SD weight syntax)
+    const _gptEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
+    // Order: subject (what to draw) → ethnicity skin → body realism → anatomy mandate → photo style
+    return [core, _gptEtnia ? 'Ethnicity skin tone: ' + _gptEtnia + '.' : '', _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
   }
   // ── Pose boost: camera/direction terms get :1.9; NOT-prefixed terms stripped ─
   const _POSE_RE = /\b(standing|sitting|kneeling|lying|facing|front view|back view|rear view|from behind|from the front|side profile|full body|close.?up|camera|angle|pov|overhead|low angle|top.?down|spread|spreading|legs|arms|arch|arched|arching|bent|bending|squat|squatting|prone|supine|lateral|upright|torso|spine|hips|knees|floor|ground|behind|posterior|frontal|facing viewer|facing camera|back to camera|back to viewer|face visible|face hidden|body turned|looking over|three.quarter|full.?body|half.?body|waist.?up|head.?to.?toe|portrait|full.?length|all fours|crawling|doggy|leaning|on all fours|hands and knees|looking back|from above|from below|camera above|camera below)\b/i;
@@ -10604,13 +10611,13 @@ function buildPrompt(englishText, rawPT){
   const parts = [
     _nsfwPrefix,        // NSFW flag — must come first for generation policy
     _EXPLICIT_REALISM,  // Anti-anime/photorealism — ALL poses get _REALISM_CORE; sup:true also adds explicit terms
+    _etniaSkinBoost,    // ETHNICITY skin — moved to chunk 1 so CLIP encodes skin tone at max attention
     sdStart,            // POSE FIRST — direction/camera terms at chunk 1 max attention
     sdEnd,              // Pose continuation — keep close to sdStart for combined effect
     _rawStamp,          // RAW/anti-plastic — weighted at 2.0, effective anywhere
     _sdClothingTerms,   // OUTFIT at 2.0 — weighted, chunk 1 fine after pose
     descBoost,          // ETNIA + USER DESCRIPTION — character physical terms
     expanded,           // Expanded scene + plain-text etnia reinforcement
-    _etniaSkinBoost,    // Ethnicity skin — weighted, chunk 2 fine
     _PHOTO,             // Quality/RAW/film — all weighted, chunk 2 fine
     _faceAnchor,        // Face consistency — weighted, chunk 2 fine
     charBoost,          // Character physical terms — weighted at 1.8, chunk 2 fine
@@ -10851,8 +10858,12 @@ async function generate(){
       // All content is English (chips + default pose scene) — no translation needed
       _result = buildPrompt(rawFull, rawFull);
     } else {
-      // User typed a complement or has a preset — translate rawFull
-      const englishText = await _translateText(rawFull);
+      // User typed a complement or has a preset — translate ONLY non-chip parts
+      // Chips (_quickPre) are already in English — sending them through pt→en translator garbles them
+      const _toTranslate = [hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+      const _translated = _toTranslate ? await _translateText(_toTranslate) : '';
+      // Re-prepend the (unchanged) English chip values to the translated text
+      const englishText = [_quickPre, _translated].filter(Boolean).join(', ');
       _result = buildPrompt(englishText, rawFull);
     }
     // Handle object returns from video/inpainting modes
@@ -12250,12 +12261,15 @@ async function generateVariations(){
   const btn = document.querySelector('.btn-variations');
   btn.disabled = true; btn.textContent = '⏳…';
   try {
+    // Translate ONLY non-chip parts — chips (_quickPre2) are already English, sending them through pt→en garbles them
+    const _toTranslate2 = [hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
     const _ac = new AbortController();
     const _tid = setTimeout(() => _ac.abort(), 5000);
-    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=${encodeURIComponent(rawFull)}`, { signal: _ac.signal });
+    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=${encodeURIComponent(_toTranslate2)}`, { signal: _ac.signal });
     clearTimeout(_tid);
     const data = await res.json();
-    const eng = (data?.[0]||[]).map(s=>s?.[0]||'').join('').trim() || translatePT(rawFull);
+    const _translated2 = (data?.[0]||[]).map(s=>s?.[0]||'').join('').trim() || translatePT(_toTranslate2);
+    const eng = [_quickPre2, _translated2].filter(Boolean).join(', ');
 
     const variationSeeds = [
       { lighting: 'golden hour warm light', style: 'boudoir photography style, intimate elegant' },
