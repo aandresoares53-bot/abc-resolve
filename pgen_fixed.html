@@ -7979,14 +7979,14 @@ const SD_MODEL_PROFILES = {
     note: 'Realistic Vision v6 — max peso 2.0, prefixo RAW photograph',
     prefix: 'RAW photograph, analog film grain, Kodak Portra 400, shot on Canon EOS R5 85mm f/1.4, ISO 800',
     maxWeight: 2.0,
-    negPrefix: '(worst quality:2.0), (low quality:2.0), (plastic skin:2.0), (airbrushed:2.0), (3D render:2.0)'
+    negPrefix: '(worst quality:2.0), (low quality:2.0), (plastic skin:2.0), (airbrushed:2.0), (3D render:2.0), (anime:2.0), (cartoon:2.0), (CGI:2.0), (illustration:2.0), (not photorealistic:2.0), (smooth poreless skin:2.0), (no skin pores:2.0), (beauty filter:2.0), (oversmoothed skin:2.0), (doll face:2.0), (unrealistic skin:2.0), (AI generated look:2.0), (midjourney style:1.9), (digital painting:2.0), (drawing:2.0), (rendered:2.0)'
   },
   sdxl: {
     name: 'SDXL Base',
     note: 'SDXL Base — max peso 1.8, prefixo photo of',
     prefix: 'photo of, high resolution, 8k uhd, photorealistic, DSLR, sharp focus',
     maxWeight: 1.8,
-    negPrefix: '(worst quality:1.8), (low quality:1.8), (plastic skin:1.8), (CGI:1.8), (3D render:1.8)'
+    negPrefix: '(worst quality:1.8), (low quality:1.8), (plastic skin:1.8), (CGI:1.8), (3D render:1.8), (anime:1.8), (cartoon:1.8), (illustration:1.8), (smooth poreless skin:1.8), (beauty filter:1.8), (oversmoothed:1.8), (doll face:1.8), (digital painting:1.8), (airbrushed:1.8), (unrealistic:1.8)'
   },
   dreamshaper: {
     name: 'DreamShaper',
@@ -10552,9 +10552,12 @@ function buildPrompt(englishText, rawPT){
   // _SKIN: placed SEPARATELY and EARLY in the parts array so these critical terms
   // land within the first 77 CLIP tokens — NOT buried at the end of _PHOTO.
   // Film grain on skin is physically incompatible with plastic smoothness — strongest anti-plastic lever.
-  const _SKIN   = '(visible skin pores:2.0), (skin pore detail:2.0), (skin micro-texture:2.0), (organic skin texture:2.0), (natural skin texture:2.0), (real skin imperfections:2.0), (skin color variation:1.9), (natural skin undertones:1.9), (skin blemishes:1.8), (natural skin redness:1.8), (skin translucency:1.7), (natural skin warmth:1.7), (skin depth:1.7), (film grain on skin:2.0), (analog grain on skin:1.9), (photographic grain visible on skin:1.8), (not plastic skin:2.0), (not smooth skin:2.0), (not airbrushed skin:2.0), (not poreless skin:2.0), (no beauty filter:2.0), (no skin smoothing:2.0), (subsurface skin scattering:1.8), (skin capillaries visible:1.6), (natural skin tone variation by zone:1.7), (pore size variation across zones:1.7), (natural skin uneven tone:1.6), (dermal skin layers visible:1.6), (natural skin oiliness:1.5), (subcutaneous fat visible:1.6), (natural skin rosiness:1.6), (skin texture under tension:1.5),';
+  const _SKIN   = '(visible skin pores:2.0), (skin pore detail:2.0), (skin micro-texture:2.0), (organic skin texture:2.0), (natural skin texture:2.0), (real skin imperfections:2.0), (skin color variation:1.9), (natural skin undertones:1.9), (skin blemishes:1.8), (natural skin redness:1.8), (skin translucency:1.7), (natural skin warmth:1.7), (skin depth:1.7), (film grain on skin:2.0), (analog grain on skin:1.9), (photographic grain visible on skin:1.8), (not plastic skin:2.0), (not smooth skin:2.0), (not airbrushed skin:2.0), (not poreless skin:2.0), (no beauty filter:2.0), (no skin smoothing:2.0), (subsurface skin scattering:1.8), (skin capillaries visible:1.6), (natural skin tone variation by zone:1.7), (pore size variation across zones:1.7), (natural skin uneven tone:1.6), (dermal skin layers visible:1.6), (natural skin oiliness:1.5), (subcutaneous fat visible:1.6), (natural skin rosiness:1.6), (skin texture under tension:1.5), (natural skin compression under weight:1.7), (skin fold physics:1.7), (natural skin gravity:1.7), (skin tension lines:1.6), (natural skin contact deformation:1.6), (skin weight and drape:1.6), (natural skin pressure marks:1.5), (subcutaneous tissue depth:1.6), (natural skin bounce elasticity:1.5), (skin thickness variation by zone:1.6),';
   // _PHOTO: quality/RAW/film markers — _SKIN is now a separate early element, NOT appended here
   const _PHOTO  = '(RAW photo:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (analog film:2.0), (35mm film:2.0), (film grain:2.0), (photographic grain:1.9), (Kodak Portra 400:1.9), (shot on DSLR:1.9), (analog photography:1.9), (no post-processing:2.0), (no retouching:2.0), (no color grading:2.0), (no Lightroom editing:2.0), (no Photoshop:2.0), (no digital manipulation:2.0), (no color correction:1.9), (no LUTs:1.9), (no frequency separation:1.9), (no dodge and burn:1.9), (no professional retouch:2.0), (not studio portrait:1.9), (unaltered natural photograph:2.0), (best quality:1.4), (ultra highres:1.4), (8k uhd:1.2), (natural lens chromatic aberration:1.4), (natural vignette:1.3), (natural depth-of-field bokeh:1.5), (shallow focus portrait lens:1.4), (natural light exposure:1.5),';
+  // _FACE_REAL: ultra-detailed face realism — iris, catchlights, lips, pores, eyebrows, skin creases
+  // Encodes every visible face surface at high weight; placed after _faceAnchor in parts[] for chunk 2-3
+  const _FACE_REAL = '(realistic eye iris texture:2.0), (eye catchlights:2.0), (real eye moisture:1.9), (natural eye whites:1.8), (real eyelashes individual strands:1.9), (natural eyelash density:1.8), (realistic lip texture:1.9), (lip skin pores:1.8), (natural lip moisture:1.8), (real teeth enamel:1.7), (natural gum line:1.6), (facial pores visible:2.0), (pores on nose:1.9), (forehead skin texture:1.8), (cheek skin pore detail:1.9), (natural eyebrow hair strands:1.8), (natural nose skin texture:1.8), (under-eye natural skin:1.8), (natural facial skin creases:1.7), (chin skin texture:1.7), (realistic ear skin detail:1.6), (natural nasolabial folds:1.7), (natural expression lines:1.6),';
   // _ANCH: anatomy correction — hands/fingers get the highest weights (most common SD error)
   const _ANCH   = '(correct anatomy:1.8), (five fingers per hand:2.0), (correct hand anatomy:2.0), (correct finger count:2.0), (natural hand position:1.8), (correct body proportions:1.7), (realistic proportions:1.6), (correct foot anatomy:1.7), (natural spine curvature:1.6), (correct shoulder anatomy:1.7), (natural elbow anatomy:1.6), (correct knee anatomy:1.6), (natural wrist anatomy:1.6), (realistic joint definition:1.5),';
   const _camSpec  = _getCameraSpec(selectedPoseKey || '');
@@ -10567,9 +10570,10 @@ function buildPrompt(englishText, rawPT){
   // _FACE_EXPLICIT: for sup:true poses — face realism kept but expression chips suppressed
   const _FACE_EXPLICIT = ', (real human face:2.0), (skin pores on face:2.0), (skin micro-texture on face:2.0), (not AI face:2.0), (natural face imperfections:2.0), (real person face:2.0), (natural iris texture:1.8), (detailed iris:1.8), (natural eyelashes:1.7), (real eye catchlights:1.8), (correct eye anatomy:1.9), (both eyes same size:1.8), (no cross-eyed:1.9), (natural lip texture:1.7), (lip lines visible:1.6), (natural lip moisture:1.6), (nose pores visible:1.7), (natural slight facial asymmetry:1.8)' + _faceIDBoost;
   const _FACE   = pose.sup ? _FACE_EXPLICIT : ', (real human face:2.0), (skin pores on face:2.0), (skin micro-texture on face:2.0), (natural slight facial asymmetry:1.8), (natural lips:1.7), (not AI face:2.0), (natural face imperfections:2.0), (real person face:2.0), (candid expression:1.6), (natural iris texture:1.8), (detailed iris:1.8), (visible sclera detail:1.7), (natural eyelashes:1.7), (real eye catchlights:1.8), (asymmetric natural eyes:1.6), (correct eye anatomy:1.9), (both eyes same size:1.8), (no cross-eyed:1.9), (natural lip texture:1.7), (lip lines visible:1.6), (natural lip moisture:1.6), (vellus facial hair:1.5), (peach fuzz on cheeks:1.5), (nose pores visible:1.7), (natural eyelash thickness variation:1.6), (individual eyebrow hairs visible:1.6), (natural T-zone slight oiliness:1.5), (natural tear duct visible:1.6), (eye moisture and wetness:1.6), (blood vessels in sclera:1.5), (iris depth and texture:1.7), (natural skin texture on forehead:1.6), (natural laugh lines:1.5), (natural under-eye skin texture:1.6)' + _faceIDBoost;
-  // _REALISM_CORE: anti-anime photorealism for ALL poses — injected at chunk-1 for max CLIP attention
-  // These terms weighted at 2.0 outrank any downstream style bleed (anime, CGI, cartoon, illustration)
-  const _REALISM_CORE = '(photorealistic:2.0), (hyperrealistic:2.0), (real person:2.0), (not anime:2.0), (not cartoon:2.0), (not CGI:2.0), (not 3D render:2.0), (not illustrated:2.0), (not drawn:2.0), (real human anatomy:2.0), (real flesh:1.9), (human skin texture:2.0), (anatomically correct:2.0), (shot on camera:2.0),';
+  // _REALISM_CORE: RAW film + anti-anime + face essentials — ALL weighted 2.0, injected at chunk-1 max CLIP
+  // Integrates RAW photo foundation directly here so even long poses don't push these out of chunk 1.
+  // "film grain" is physically incompatible with smooth plastic skin — the strongest anti-AI lever in SD.
+  const _REALISM_CORE = '(RAW analog photograph:2.0), (35mm film grain:2.0), (photorealistic:2.0), (hyperrealistic:2.0), (real person:2.0), (not anime:2.0), (not cartoon:2.0), (not CGI:2.0), (not 3D render:2.0), (not illustrated:2.0), (not drawn:2.0), (not AI art:2.0), (not digital painting:2.0), (not midjourney:2.0), (real human anatomy:2.0), (real flesh:1.9), (human skin texture:2.0), (anatomically correct:2.0), (shot on camera:2.0), (visible skin pores:2.0), (not plastic skin:2.0), (no beauty filter:2.0), (real human face:2.0), (realistic eyes:1.9), (pores on face:1.9), (natural facial skin:1.9), (real individual hair strands:1.8),';
   // _EXPLICIT_REALISM: _REALISM_CORE for all poses + explicit-only terms for sup:true (genitals, adult film style)
   const _EXPLICIT_REALISM = pose.sup ? _REALISM_CORE + '(not hentai:2.0), (realistic genitals:1.9), (photographic explicit:1.9), (adult film photography style:1.8),' : _REALISM_CORE;
   const _HAIR   = ', (individual hair strands visible:1.7), (natural hair flyaways:1.6), (realistic hair texture:1.8), (natural hair parting:1.6), (genuine hair shine without HDR:1.5), (no hair smoothing filter:1.6), (real hair roots:1.5), (natural root-to-tip color gradient:1.6), (natural slight scalp oiliness at roots:1.4), (natural hair density variation:1.5), (natural split ends:1.4), (individual hair strand thickness variation:1.5), (natural hair static:1.4), (natural hair volume variation:1.5), (hair reflecting ambient light naturally:1.4)';
@@ -10599,7 +10603,9 @@ function buildPrompt(englishText, rawPT){
   const _nsfwPrefix = _wantsNSFW ? '(nsfw:1.5), (explicit:1.5), (adult content:1.4),' : '';
   // Anti-plastic RAW stamp — placed FIRST so CLIP's very first tokens establish "film grain, not plastic"
   // Film grain is physically incompatible with smooth poreless skin — the strongest anti-plastic lever in SD
-  const _rawStamp = '(RAW analog photograph:2.0), (35mm film grain:2.0), (not plastic skin:2.0), (visible skin pores:2.0), (skin micro-texture:2.0), (no beauty filter:2.0), (subsurface light scattering on skin:1.8), (Kodak Portra analog color science:1.6), (natural skin translucency:1.7),';
+  // _rawStamp: RAW file + no post-processing + Kodak analog science — redundancy reinforces chunk-1 REALISM_CORE
+  // Unique terms here: unedited RAW, SOOC, no Photoshop/retouching, subsurface scattering, bokeh, chromatic aberration
+  const _rawStamp = '(Kodak Portra 400 analog film:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (no post-processing:2.0), (no Photoshop:2.0), (no retouching:2.0), (no professional retouch:2.0), (not digital manipulation:2.0), (subsurface light scattering on skin:1.9), (Kodak Portra analog color science:1.8), (natural skin translucency:1.8), (natural bokeh depth of field:1.7), (natural lens chromatic aberration:1.5), (natural vignette:1.4),';
   // TOKEN-BUDGET ORDER (CLIP chunks = 75 tokens each):
   // POSE MUST BE FIRST — it is the single most critical instruction.
   // Chunk 1 (1–75):   NSFW → POSE (sdStart+sdEnd) → RAW stamp → CLOTHING
@@ -10620,6 +10626,7 @@ function buildPrompt(englishText, rawPT){
     expanded,           // Expanded scene + plain-text etnia reinforcement
     _PHOTO,             // Quality/RAW/film — all weighted, chunk 2 fine
     _faceAnchor,        // Face consistency — weighted, chunk 2 fine
+    _FACE_REAL,         // Face/eye/lip/pore ultra-realism — all weighted 1.6–2.0, chunk 2-3 fine
     charBoost,          // Character physical terms — weighted at 1.8, chunk 2 fine
     _SKIN,              // Anti-plastic skin detail — all at 2.0, effective in chunk 3
     _ANCH,              // Anatomy (fingers/hands) — all at 1.8–2.0, chunk 3 fine
