@@ -1918,6 +1918,33 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <button class="pose-btn" data-pose="model-runway-power"           onclick="setPose('model-runway-power')"><span class="pose-icon">👠</span>Modelo — passarela poderosa (walking shot)</button>
       <button class="pose-btn" data-pose="model-editorial-arched-back"  onclick="setPose('model-editorial-arched-back')"><span class="pose-icon">📸</span>Modelo — pose editorial com arco dramático</button>
       <button class="pose-btn" data-pose="model-fashion-side-profile"   onclick="setPose('model-fashion-side-profile')"><span class="pose-icon">📸</span>Modelo — perfil editorial forte (lateral)</button>
+
+      <div class="pose-group-label">Sexo com Parceiro</div>
+      <button class="pose-btn" data-pose="sex-missionary"          onclick="setPose('sex-missionary')"><span class="pose-icon">🔥</span>Missio — face a face</button>
+      <button class="pose-btn" data-pose="sex-missionary-pov"      onclick="setPose('sex-missionary-pov')"><span class="pose-icon">👁️</span>Missio POV — câmera do parceiro</button>
+      <button class="pose-btn" data-pose="sex-doggy-partner"       onclick="setPose('sex-doggy-partner')"><span class="pose-icon">🐾</span>Doggy com parceiro — lado</button>
+      <button class="pose-btn" data-pose="sex-cowgirl"             onclick="setPose('sex-cowgirl')"><span class="pose-icon">🔥</span>Cowgirl — montada de frente</button>
+      <button class="pose-btn" data-pose="sex-reverse-cowgirl"     onclick="setPose('sex-reverse-cowgirl')"><span class="pose-icon">🔥</span>Reverse cowgirl — montada de costas</button>
+      <button class="pose-btn" data-pose="sex-standing-behind"     onclick="setPose('sex-standing-behind')"><span class="pose-icon">💃</span>Em pé por trás — standing</button>
+      <button class="pose-btn" data-pose="sex-spoon"               onclick="setPose('sex-spoon')"><span class="pose-icon">🥄</span>Colher — deitados de lado</button>
+      <button class="pose-btn" data-pose="sex-legs-up"             onclick="setPose('sex-legs-up')"><span class="pose-icon">🦵</span>Pernas levantadas — profundo</button>
+      <button class="pose-btn" data-pose="sex-prone-bone"          onclick="setPose('sex-prone-bone')"><span class="pose-icon">🔥</span>Prone bone — deitada de bruços</button>
+      <button class="pose-btn" data-pose="sex-sitting-lap"         onclick="setPose('sex-sitting-lap')"><span class="pose-icon">💕</span>Sentada no colo — face a face</button>
+
+      <div class="pose-group-label">Sexo Oral</div>
+      <button class="pose-btn" data-pose="oral-blowjob-kneeling"   onclick="setPose('oral-blowjob-kneeling')"><span class="pose-icon">💋</span>Boquete — ajoelhada de frente</button>
+      <button class="pose-btn" data-pose="oral-blowjob-side"       onclick="setPose('oral-blowjob-side')"><span class="pose-icon">💋</span>Boquete — perfil lateral</button>
+      <button class="pose-btn" data-pose="oral-blowjob-pov"        onclick="setPose('oral-blowjob-pov')"><span class="pose-icon">👁️</span>Boquete POV — olhando câmera</button>
+      <button class="pose-btn" data-pose="oral-cunnilingus"        onclick="setPose('oral-cunnilingus')"><span class="pose-icon">💋</span>Cunnilingus — oral nela</button>
+
+      <div class="pose-group-label">Ejaculação / Cumshot</div>
+      <button class="pose-btn" data-pose="cumshot-face"            onclick="setPose('cumshot-face')"><span class="pose-icon">💦</span>Facial — ejaculação no rosto</button>
+      <button class="pose-btn" data-pose="cumshot-breasts"         onclick="setPose('cumshot-breasts')"><span class="pose-icon">💦</span>Ejaculação nos seios</button>
+      <button class="pose-btn" data-pose="cumshot-ass"             onclick="setPose('cumshot-ass')"><span class="pose-icon">💦</span>Ejaculação na bunda</button>
+      <button class="pose-btn" data-pose="cumshot-pussy"           onclick="setPose('cumshot-pussy')"><span class="pose-icon">💦</span>Ejaculação na vagina</button>
+      <button class="pose-btn" data-pose="cumshot-body"            onclick="setPose('cumshot-body')"><span class="pose-icon">💦</span>Ejaculação no corpo</button>
+      <button class="pose-btn" data-pose="cumshot-mouth"           onclick="setPose('cumshot-mouth')"><span class="pose-icon">💦</span>Ejaculação na boca</button>
+      <button class="pose-btn" data-pose="creampie"                onclick="setPose('creampie')"><span class="pose-icon">💦</span>Cremepie — ejaculação interna</button>
     </div>
     <span class="pose-none" onclick="setPose(null)">✕ Sem pose específica</span>
   </div>
@@ -7130,6 +7157,159 @@ const POSES = {
     sd_end:   'from behind: gothic corset with elaborate back lacing, asymmetric black lace skirt, fishnet, thigh-high boots, dark candlelit room or cemetery, rear view full body',
     mj: 'from behind: gothic corset back lacing, asymmetric dark lace skirt, fishnet, thigh-high boots, dark moody setting, rear view full body',
     neg: 'from front, casual clothes, no lacing, bright setting', sup: false, label: 'Gótica — de costas (laçamento do corset)'
+  },
+
+  // ── SEXO COM PARCEIRO ──────────────────────────────────────────────────────
+  'sex-missionary': {
+    sd_start: 'missionary position, explicit, woman lying on back, man on top, face to face, camera from side,',
+    sd_end:   'woman lying on her back with legs spread, man positioned on top of her facing her, bodies pressed together, camera at side angle capturing both bodies, woman face visible and expressive, man above her, heterosexual missionary sex position, explicit sexual intercourse, bed setting, full body side view',
+    mj:       'missionary sex position, woman on back man on top face to face, side view camera, both bodies visible, heterosexual couple, explicit intercourse, bed',
+    neg:      'from above top-down, from below, from behind, clothed, solo, separated bodies, non-contact',
+    sup: true, label: 'Missio — face a face'
+  },
+  'sex-missionary-pov': {
+    sd_start: 'missionary position POV, explicit, from male perspective looking down, woman on back below, eye contact,',
+    sd_end:   'point of view from man looking down at woman lying on her back below him, woman face looking directly up at camera making eye contact, woman legs spread apart framing the shot, POV missionary perspective, explicit sexual position, male gaze downward, woman lying beneath on bed, direct eye contact expression, seductive face looking at lens',
+    mj:       'POV missionary looking down at woman lying on her back, woman making direct eye contact with camera, legs apart, explicit perspective, bed',
+    neg:      'side view, from behind, third person view, clothed, standing, sitting',
+    sup: true, label: 'Missio POV — câmera do parceiro'
+  },
+  'sex-doggy-partner': {
+    sd_start: 'doggy style sex position, explicit, woman on hands and knees, man behind her, side view camera,',
+    sd_end:   'woman on all fours with man positioned behind her performing sex, camera at side profile showing both bodies in doggy style position, woman torso horizontal on hands and knees, man kneeling behind her hips, both bodies visible in profile, explicit heterosexual doggy position, woman looking forward or slightly sideways, full body side view profile',
+    mj:       'doggy style sex, woman on hands and knees man behind her, side profile view showing both bodies, explicit position, bed or floor',
+    neg:      'from directly behind back view only, from front, solo, clothed, standing upright, top-down',
+    sup: true, label: 'Doggy com parceiro — lado'
+  },
+  'sex-cowgirl': {
+    sd_start: 'cowgirl position, explicit, woman on top riding man, facing forward toward camera, full body front view,',
+    sd_end:   'woman straddling man from above in cowgirl position, woman facing camera while riding him, woman upright torso visible from front, man lying beneath her, camera positioned in front capturing woman facing forward, woman on top with hips over man, explicit riding cowgirl sex position, woman face and breasts visible from front, man below her',
+    mj:       'cowgirl sex position, woman on top riding man facing camera, front view of woman straddling him, explicit intercourse, man beneath her',
+    neg:      'from behind reverse cowgirl, side view, clothed, solo, standing, man on top',
+    sup: true, label: 'Cowgirl — montada de frente'
+  },
+  'sex-reverse-cowgirl': {
+    sd_start: 'reverse cowgirl position, explicit, woman on top facing away from camera, back to camera, rear view riding,',
+    sd_end:   'woman straddling man from above in reverse cowgirl position with her back to the camera, woman facing away showing her back and buttocks while riding, man lying beneath her visible below, camera behind the woman capturing her back and buttocks prominently, reverse cowgirl explicit sex position, woman back visible, buttocks moving over man, full body rear view',
+    mj:       'reverse cowgirl sex position, woman on top back to camera, rear view of woman riding man, buttocks prominent, man beneath her, explicit intercourse',
+    neg:      'facing camera cowgirl, front view of woman, side view, clothed, solo, standing, woman face visible from front',
+    sup: true, label: 'Reverse cowgirl — montada de costas'
+  },
+  'sex-standing-behind': {
+    sd_start: 'standing sex from behind, explicit, woman bent forward, man behind her standing, rear penetration,',
+    sd_end:   'woman bent forward at hips with upper body leaning forward, man standing directly behind her performing sex, both standing, camera at side profile angle capturing both bodies, woman back arched, hands possibly on surface or wall for support, man holding her hips from behind, explicit standing sex from behind position, full body side view of both partners standing',
+    mj:       'standing sex from behind, woman bent forward man behind her, both standing, side profile of both bodies, explicit position, back arched',
+    neg:      'sitting, lying down, on knees, missionary, cowgirl, front view only, top-down',
+    sup: true, label: 'Em pé por trás — standing'
+  },
+  'sex-spoon': {
+    sd_start: 'spooning sex position, explicit, both lying on side, man behind woman, side view,',
+    sd_end:   'both partners lying on their sides in spooning position with man behind woman, camera at side profile view showing both bodies curved together, woman in front with her back to the man, man curled behind her performing sex, bodies curved together horizontally on bed, woman face slightly visible in profile, explicit spooning sex position, full body side view both lying down',
+    mj:       'spooning sex position, both lying on side man behind woman, side profile view of both bodies, explicit intercourse lying down, bed',
+    neg:      'standing, sitting, from above, from below, front view only, face to face front, clothed',
+    sup: true, label: 'Colher — deitados de lado'
+  },
+  'sex-legs-up': {
+    sd_start: 'legs up missionary sex position, explicit, woman on back legs raised high, man on top, side view,',
+    sd_end:   'woman lying on her back with both legs raised high up toward her shoulders or ceiling, man on top performing sex while holding or pressing her legs up, legs up missionary variation, camera at side view capturing extended position, woman legs pointing upward creating deep penetration angle, explicit sex with legs raised, both bodies visible in profile, bed setting',
+    mj:       'legs up sex position, woman on back legs raised high man on top, side view both bodies, explicit deep penetration angle, bed',
+    neg:      'legs flat, legs spread to sides, standing, sitting, cowgirl, from front only, top-down view',
+    sup: true, label: 'Pernas levantadas — profundo'
+  },
+  'sex-prone-bone': {
+    sd_start: 'prone bone sex position, explicit, woman lying face down flat, man on top from behind, top view or side view,',
+    sd_end:   'woman lying completely flat on her stomach face-down with legs slightly together, man lying on top of her from behind performing sex, prone bone position, camera at slight side or top-down angle showing both bodies, woman face turned sideways on pillow, man atop her body from behind, both bodies horizontal and flat, explicit prone position sex, buttocks visible, full body view from above or side',
+    mj:       'prone bone sex position, woman flat on stomach man on top from behind, both bodies horizontal, side or top-down view, explicit, bed',
+    neg:      'woman upright kneeling, doggy style on hands and knees, standing, sitting, cowgirl, from front',
+    sup: true, label: 'Prone bone — deitada de bruços'
+  },
+  'sex-sitting-lap': {
+    sd_start: 'sitting lap sex position, explicit, woman sitting on mans lap face to face, both seated, front view,',
+    sd_end:   'woman sitting on mans lap facing him in an intimate sitting sex position, both seated upright facing each other, man seated with woman straddling his lap facing toward him, camera at front or slight side angle, woman arms possibly around his neck or on his shoulders, man hands on her hips or back, face to face explicit sitting position, both upright torsos visible, chair or edge of bed',
+    mj:       'sitting lap sex position face to face, woman straddling seated man facing him, both upright, explicit, front three-quarter view, intimate',
+    neg:      'lying down, standing, from behind, reverse position back to man, side view only, clothed',
+    sup: true, label: 'Sentada no colo — face a face'
+  },
+
+  // ── SEXO ORAL ─────────────────────────────────────────────────────────────
+  'oral-blowjob-kneeling': {
+    sd_start: 'woman kneeling performing oral sex, explicit blowjob, front view, looking up at camera,',
+    sd_end:   'woman kneeling on floor in front of standing man performing oral sex, camera positioned at front capturing woman face looking up, woman on knees at floor level, man standing with woman at waist height, explicit blowjob oral sex position, woman eye contact looking up toward camera or man, front view of woman kneeling with man in frame, woman expressive face while performing oral',
+    mj:       'woman kneeling performing blowjob oral sex, front view woman looking up, man standing, explicit oral sex position, woman on knees',
+    neg:      'from behind, from above top-down only, from side only, standing woman, lying down, clothed, solo',
+    sup: true, label: 'Boquete — ajoelhada de frente'
+  },
+  'oral-blowjob-side': {
+    sd_start: 'blowjob oral sex side profile view, explicit, woman performing oral on man, lateral profile angle,',
+    sd_end:   'camera at 90 degree side profile angle showing woman performing oral sex on man, side view clearly showing face position and body angle, woman mouth on man in explicit oral sex, lateral profile captures both persons in clear silhouette, explicit blowjob side profile, woman seated or kneeling at side view, man standing or seated beside her, full side profile of oral sex position',
+    mj:       'blowjob oral sex in side profile view, woman performing oral on man, lateral 90 degree angle, both bodies visible in profile, explicit oral',
+    neg:      'from front facing camera, from behind, top-down view, clothed, solo, three-quarter angle',
+    sup: true, label: 'Boquete — perfil lateral'
+  },
+  'oral-blowjob-pov': {
+    sd_start: 'blowjob POV, explicit, point of view looking down at woman performing oral, direct eye contact,',
+    sd_end:   'point of view perspective looking straight down at woman performing oral sex, woman face looking directly up at camera while performing blowjob, POV angle from above showing woman face and eyes making intense eye contact with camera, explicit POV blowjob perspective, woman expression looking up seductively at lens, camera directly above looking down at her performing oral, woman face center frame looking at viewer',
+    mj:       'blowjob POV looking down at woman performing oral, woman making direct eye contact with camera, explicit POV oral sex perspective, her face center frame',
+    neg:      'side view, third person view, woman standing, from behind, clothed, eyes closed avoiding camera, looking away',
+    sup: true, label: 'Boquete POV — olhando câmera'
+  },
+  'oral-cunnilingus': {
+    sd_start: 'cunnilingus oral sex, explicit, woman lying receiving oral sex, man between her legs, side or front view,',
+    sd_end:   'woman lying on her back with legs spread and man positioned between her thighs performing cunnilingus oral sex on her, camera at front or side angle capturing the position, woman face visible from above expressing pleasure, man head between her legs, explicit oral sex on woman position, woman legs spread open with man between them, full body view of receiving cunnilingus, woman hands possibly on mans head or bed',
+    mj:       'cunnilingus oral sex position, woman on back man between her legs performing oral, side or front view, explicit, woman expressive face, heterosexual oral',
+    neg:      'blowjob, woman performing oral, clothed, standing, solo, from behind, top-down aerial view',
+    sup: true, label: 'Cunnilingus — oral nela'
+  },
+
+  // ── EJACULAÇÃO / CUMSHOT ──────────────────────────────────────────────────
+  'cumshot-face': {
+    sd_start: 'facial cumshot, explicit, semen on face, woman face covered, looking at camera,',
+    sd_end:   'woman face covered with semen facial cumshot, explicit facial finish, woman expression after receiving facial, semen on face cheeks forehead and chin, woman looking directly at camera with facial cumshot result, close-up of woman face with explicit facial finish, woman expression can be pleased or surprised, dripping semen on face, post-cumshot facial portrait',
+    mj:       'facial cumshot, woman face covered with semen, explicit facial finish, woman looking at camera, close-up portrait, post-cumshot expression',
+    neg:      'clean face, no semen, dry face, clothed neck up only, from behind, body shot without face',
+    sup: true, label: 'Facial — ejaculação no rosto'
+  },
+  'cumshot-breasts': {
+    sd_start: 'cumshot on breasts, explicit, semen on chest and breasts, woman looking down or at camera,',
+    sd_end:   'woman with semen ejaculated onto her breasts and chest, explicit cumshot on breasts finish, semen dripping or splattered across bare breasts, woman torso visible from front showing explicit breast cumshot, woman expression looking down at her chest or looking at camera, bare breasts with semen cumshot result, chest and breast area center frame, explicit finish on breasts',
+    mj:       'cumshot on breasts, woman bare chest covered with semen, explicit breast cumshot, woman looking down or at camera, torso shot',
+    neg:      'on face, on buttocks, clothed breasts, clean dry chest, no semen, from behind',
+    sup: true, label: 'Ejaculação nos seios'
+  },
+  'cumshot-ass': {
+    sd_start: 'cumshot on ass, explicit, semen on buttocks, rear view, woman from behind,',
+    sd_end:   'woman from behind with semen ejaculated onto her buttocks and ass, explicit cumshot on ass finish, rear view showing buttocks with semen dripping or splattered across them, camera positioned behind capturing ass cumshot, woman standing or kneeling from behind, buttocks prominently visible from rear with explicit semen cumshot result, back and buttocks center frame rear view',
+    mj:       'cumshot on ass, woman from behind with semen on buttocks, rear view explicit ass cumshot, buttocks center frame, dripping semen',
+    neg:      'front view, on face, on breasts, clothed buttocks, clean dry buttocks, facing camera',
+    sup: true, label: 'Ejaculação na bunda'
+  },
+  'cumshot-pussy': {
+    sd_start: 'cumshot on pussy, explicit, semen on vagina and inner thighs, close-up or full body view,',
+    sd_end:   'explicit cumshot ejaculation onto womans vagina and surrounding area, semen on pussy and inner thighs, close-up or full body view showing cumshot on vagina, woman legs spread showing explicit pussy cumshot result, semen on genitals and inner thighs, explicit external cumshot on pussy, woman lower body visible showing the cumshot finish, front view between legs or close-up angle',
+    mj:       'cumshot on pussy, semen on vagina area explicit, legs spread showing result, external cumshot on genitals, front or close-up view',
+    neg:      'internal creampie, on face, on breasts, on buttocks, clean dry genitals, clothed, from behind',
+    sup: true, label: 'Ejaculação na vagina'
+  },
+  'cumshot-body': {
+    sd_start: 'cumshot on body, explicit, semen covering body torso and stomach, woman lying or standing,',
+    sd_end:   'woman with semen ejaculated across her body including torso stomach and chest, explicit body cumshot covering large area, semen splattered across her entire torso from navel to breasts, woman lying on back or standing with body cumshot visible, front view showing torso with explicit semen coverage across body, woman expression after receiving body cumshot, bare torso center frame covered with semen',
+    mj:       'body cumshot, semen covering womans torso and stomach, explicit full body cumshot result, woman lying or standing front view, bare torso with semen',
+    neg:      'on face only, on buttocks only, clothed body, clean dry body, from behind, genitals only',
+    sup: true, label: 'Ejaculação no corpo'
+  },
+  'cumshot-mouth': {
+    sd_start: 'cumshot in mouth, explicit, semen in open mouth, woman mouth open receiving, close-up face,',
+    sd_end:   'woman with mouth open wide receiving cumshot ejaculation into her mouth, explicit oral finish cumshot in mouth, semen visible in open mouth or dripping from lips and chin, close-up of woman face with mouth open and semen, woman looking at camera with mouth open receiving cumshot or showing the result, explicit mouth cumshot finish, woman expression seductive or surprised with mouth full or dripping, close-up face portrait',
+    mj:       'cumshot in mouth, woman mouth open receiving semen, explicit oral finish, close-up of face with mouth open and semen, looking at camera',
+    neg:      'mouth closed, on face only, on body, clothed, from behind, full body shot without face',
+    sup: true, label: 'Ejaculação na boca'
+  },
+  'creampie': {
+    sd_start: 'creampie, explicit, internal ejaculation visible, semen dripping from vagina, close-up or rear view,',
+    sd_end:   'explicit creampie showing semen dripping from vagina after internal ejaculation, close-up or rear view showing creampie result, semen visibly leaking from vagina, woman in position showing explicit creampie finish, camera close-up or rear angle capturing creampie, woman spread showing internal ejaculation result dripping out, explicit creampie close-up between legs or from behind, semen dripping down inner thighs',
+    mj:       'creampie, semen dripping from vagina after internal ejaculation, explicit creampie result, close-up or rear view showing dripping finish, between legs view',
+    neg:      'external cumshot, on face, on body, dry clean genitals, no semen, clothed, front standing view',
+    sup: true, label: 'Cremepie — ejaculação interna'
   },
 
 };let selectedPose = null;
