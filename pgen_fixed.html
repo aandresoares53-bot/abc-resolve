@@ -12045,10 +12045,10 @@ function buildPrompt(englishText, rawPT){
     _params += ' --no ' + _mjNeg;
     const _mjFaceDesc = _getFaceID() ? `, ${_getFaceID()}, same consistent woman, same face` : '';
     // MJ mode: dynamic QF — use chip-selected film stock and lens
-    const _mjFilm = getFilmStock() || 'Kodak Portra 400';
-    const _mjLensRaw = getLensCam();
-    const _mjLens = _mjLensRaw ? _mjLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.4';
-    const _mjQF = QF.replace('Kodak Portra 400', _mjFilm).replace('Canon EOS R5 85mm f/1.4', _mjLens);
+    const _mjQFFilm = getFilmStock() || 'Kodak Portra 400';
+    const _mjQFLensRaw = getLensCam();
+    const _mjQFLens = _mjQFLensRaw ? _mjQFLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.4';
+    const _mjQF = QF.replace('Kodak Portra 400', _mjQFFilm).replace('Canon EOS R5 85mm f/1.4', _mjQFLens);
     return core + _mjFaceDesc + ', ' + _mjQF + _params;
   }
   if(currentMode === 'gpt'){
