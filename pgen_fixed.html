@@ -9106,8 +9106,10 @@ function setPose(key){
   }
   // Atualiza auto-descrição para refletir a ordem: etnia → pose
   try{ _autoFillDescription(); }catch(e){}
-  // ── Auto-suggest iluminação, película, lente e marcas naturais ───────────
+  // ── Auto-suggest iluminação, película, lente, marcas, cenário, estilo_foto ─
   try{ _applyPoseDefaults(key || null); }catch(e){}
+  // ── Trigger auto-generate if character is already filled ─────────────────
+  try{ _checkAutoGenerate(); }catch(e){}
 }
 
 function setMode(mode){
@@ -12401,6 +12403,50 @@ async function _translateText(text){
   }
 }
 
+// ── AUTO-COMPLETE CHARACTER: preenche etnia, corpo, cabelo com valores aleatórios ─
+// Chamado no generate() quando nenhum chip de personagem está ativo.
+// Activa os chips na UI para dar feedback visual ao usuário.
+function _autoCompleteCharacter(){
+  const R = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  // ── Etnia — sample from Latin/European/diverse mix ─────────────────────
+  const _ETNIA_PREFIXES = [
+    'Brazilian woman','Mexican woman, warm','Colombian woman','Argentine woman',
+    'Italian woman','Spanish woman','French woman, warm fair','Latina woman',
+    'Brazilian woman','Colombian woman', // weighted toward Latina
+  ];
+  // ── Corpo (match actual chip data-val prefixes) ───────────────────────────
+  const _CORPO_PREFIXES = [
+    'natural average body','hourglass figure','athletic toned body',
+    'petite slim body','pear shaped body','voluptuous curvy body',
+  ];
+  // ── Cabelo (match actual chip data-val prefixes) ──────────────────────────
+  const _CABELO_PREFIXES = [
+    'long straight dark brunette','long straight platinum blonde',
+    'natural curly hair','long red hair, auburn',
+  ];
+
+  // Activate etnia chip
+  if(!quickChipState.etnia){
+    const _ep = R(_ETNIA_PREFIXES);
+    const _eEl = document.querySelector(`.quick-chip[data-cat="etnia"][data-val^="${_ep}"]`);
+    if(_eEl){ document.querySelectorAll('.quick-chip[data-cat="etnia"]').forEach(c=>c.classList.remove('active','auto-set')); _eEl.classList.add('active','auto-set'); quickChipState.etnia = _eEl.dataset.val; try{_applyEtniaProfile(_eEl.dataset.val);}catch(e){} }
+  }
+  // Activate corpo chip
+  if(!quickChipState.corpo){
+    const _cp = R(_CORPO_PREFIXES);
+    const _cEl = document.querySelector(`.quick-chip[data-cat="corpo"][data-val^="${_cp}"]`);
+    if(_cEl){ document.querySelectorAll('.quick-chip[data-cat="corpo"]').forEach(c=>c.classList.remove('active','auto-set')); _cEl.classList.add('active','auto-set'); quickChipState.corpo = _cEl.dataset.val; }
+  }
+  // Activate cabelo chip
+  if(!quickChipState.cabelo){
+    const _hp = R(_CABELO_PREFIXES);
+    const _hEl = document.querySelector(`.quick-chip[data-cat="cabelo"][data-val^="${_hp}"]`);
+    if(_hEl){ document.querySelectorAll('.quick-chip[data-cat="cabelo"]').forEach(c=>c.classList.remove('active','auto-set')); _hEl.classList.add('active','auto-set'); quickChipState.cabelo = _hEl.dataset.val; }
+  }
+  try{ _autoFillDescription(); }catch(e){}
+}
+
 async function generate(){
   const _taEl = document.getElementById('user-description');
   const raw = (_taEl?.value || '').trim();
@@ -12412,6 +12458,12 @@ async function generate(){
   if(!raw && !selectedPoseKey && !hasPreset && !_quickPre){
     toast('⚠️ Selecione uma pose ou personagem');
     return;
+  }
+
+  // ── Auto-complete: se nenhum chip de personagem está ativo, escolhe aleatoriamente ─
+  // Isso garante que qualquer geração tenha pelo menos etnia + corpo + cabelo básicos.
+  if(!quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo && !_quickPre && !hasPreset){
+    try{ _autoCompleteCharacter(); }catch(e){}
   }
 
   // Compute pose outfit ONCE here so autoScene + buildPrompt use the same random result.
@@ -13191,15 +13243,84 @@ function _applyPoseDefaults(key){
                ['natural soft belly']]);
   }
 
-  // Apply chips
+  // ── Cenário: map pose prefix → SCENE_CAT_META key ───────────────────────
+  const _POSE_TO_SCENE_CAT = {
+    'beach-':'beach', 'water-':'water', 'pool-':'pool',
+    'yoga-':'yoga', 'gym-':'gym', 'legging-':'gym',
+    'dance-':'party', 'pole-dance':'party', 'alt-':'alt_dark',
+    'shower-':'shower', 'bath-':'shower',
+    'nature-':'nature', 'outdoor-':'nature',
+    'car-':'car', 'moto-':'car', 'motorcycle-':'car',
+    'mirror-':'mirror', 'model-':'default',
+    'selfie-gym':'gym', 'selfie-beach':'beach', 'selfie-pool':'pool',
+    'selfie-bathroom':'shower', 'selfie-shower':'shower',
+    'selfie-':'boudoir',
+    'fantasy-':'fantasy',
+    'sex-':'boudoir', 'anal-':'boudoir', 'oral-':'boudoir',
+    'multi-':'boudoir', 'cumshot-':'boudoir',
+    'shemale-':'boudoir', 'doggy-':'boudoir',
+    'butt-':'boudoir', 'closeup-':'closeup',
+    'standing-':'standing', 'sitting-':'sitting_intimate',
+    'kneeling-':'kneeling', 'lying-':'lying', 'allfours-':'lying',
+    'squat-':'boudoir', 'jeans-':'jeans',
+  };
+  let _sceneCat = null;
+  for(const [pfx, cat] of Object.entries(_POSE_TO_SCENE_CAT)){
+    if(key.startsWith(pfx)){ _sceneCat = cat; break; }
+  }
+  if(!_sceneCat) _sceneCat = 'boudoir'; // ultimate fallback
+
+  // Auto-set cenário from SCENE_POOLS if available
+  try{
+    if(typeof SCENE_POOLS !== 'undefined' && SCENE_POOLS[_sceneCat] && SCENE_POOLS[_sceneCat].length){
+      const _pool = SCENE_POOLS[_sceneCat];
+      const _sceneIdx = Math.floor(Math.random() * _pool.length);
+      const _sceneVal = _pool[_sceneIdx];
+      quickChipState.cenario = _sceneVal;
+      // Update scene picker label
+      const _lbl = document.getElementById('scene-picker-label');
+      const _catMeta = (typeof SCENE_CAT_META !== 'undefined') && SCENE_CAT_META.find(m=>m.key===_sceneCat);
+      if(_lbl){
+        const _emoji = _catMeta ? _catMeta.label.split(' ')[0] : '🎬';
+        const _short  = _sceneVal.length > 38 ? _sceneVal.substring(0,36)+'…' : _sceneVal;
+        _lbl.textContent = _emoji + ' ' + _short + ' ✦';
+      }
+      const _toggle = document.getElementById('scene-picker-toggle');
+      if(_toggle) _toggle.classList.add('has-scene');
+    }
+  }catch(e){}
+
+  // ── Estilo foto: pose-contextual ─────────────────────────────────────────
+  let _estilo = null;
+  if(key.startsWith('dance-') || key.startsWith('pole-dance') || key === 'dance-pole-leg-wrap' || key === 'dance-pole-spin')
+    _estilo = 'paparazzi style, candid street photo, telephoto lens, caught off guard, motion blur, authentic spontaneous moment';
+  else if(key.startsWith('selfie-'))
+    _estilo = 'heavy film grain, coarse grain texture, ISO 3200 grain, grainy high-ISO film feel, pronounced visible grain on skin, raw unprocessed feel';
+  else if(key.startsWith('alt-'))
+    _estilo = 'film noir style, dramatic shadows, high contrast, moody dark atmosphere, chiaroscuro lighting, classic noir aesthetic';
+  else
+    _estilo = null; // leave estilo_foto untouched for most poses
+
+  if(_estilo){
+    document.querySelectorAll('.quick-chip[data-cat="estilo_foto"]').forEach(c => c.classList.remove('active','auto-set'));
+    const _estiloEl = document.querySelector(`.quick-chip[data-cat="estilo_foto"][data-val^="${_estilo.substring(0,18)}"]`);
+    if(_estiloEl){ _estiloEl.classList.add('active','auto-set'); quickChipState.estilo_foto = _estiloEl.dataset.val; }
+  } else {
+    // Clear any previous auto-set estilo (but keep manual ones)
+    document.querySelectorAll('.quick-chip[data-cat="estilo_foto"].auto-set').forEach(c => {
+      c.classList.remove('active','auto-set'); quickChipState.estilo_foto = '';
+    });
+  }
+
+  // Apply iluminação + película + lente + marcas
   _activateChipByPrefix('iluminacao', ill);
   _activateChipByPrefix('film_stock', film);
   _activateChipByPrefix('lens_cam',   lens);
   _activateSkinMarksByPrefixes(marks);
 
-  // Subtle toast so user knows chips were auto-filled
+  // Single comprehensive toast
   if(typeof toast === 'function')
-    toast('✦ Iluminação, película, lente e marcas auto-sugeridas pela pose', 2800);
+    toast('✦ Cenário, iluminação, película, lente e marcas ajustados pela pose', 2600);
 }
 
 // ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
@@ -14382,39 +14503,39 @@ function _autoFillDescription(){
   }, 400);
 })();
 
-// ── 4. AUTO-SUGESTÃO DE ILUMINAÇÃO por cenário ───────────────────────────────
-let _pendingLightSuggest = null;
+// ── 4. AUTO-ILUMINAÇÃO por cenário (instantânea — sem banner de confirmação) ──
+let _pendingLightSuggest = null; // kept for compat — banner is hidden
 const _CENARIO_LIGHT_SUGGEST = [
-  { re:/praia|beach|areia|mar\b/i,       chip:'iluminacao', chipVal:'late afternoon golden hour light, warm amber sunlight at 15 degrees above horizon, long soft shadows, sun-kissed skin glow, natural lens flare, warm orange and gold tones', label:'🌅 Golden Hour para praia' },
-  { re:/piscina|pool|spa/i,              chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Luz Natural para piscina' },
+  { re:/praia|beach|areia|mar\b/i,       chip:'iluminacao', chipVal:'late afternoon golden hour light, warm amber sunlight at 15 degrees above horizon, long soft shadows, sun-kissed skin glow, natural lens flare, warm orange and gold tones', label:'🌅 Golden Hour' },
+  { re:/piscina|pool|spa/i,              chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Natural' },
   { re:/estúdio|studio|sessão/i,         chip:'iluminacao', chipVal:'large softbox studio light, diffused key light from camera left, gentle fill from right, soft catchlights, controlled studio environment, editorial photography lighting', label:'💡 Estúdio' },
-  { re:/noite|night|noturno/i,           chip:'iluminacao', chipVal:'low-key intimate ambient light, deep natural shadows, dim room glow, minimal single light source, moody dramatic atmosphere, shadow detail preserved', label:'🌙 Low-Key para noite' },
-  { re:/quarto|cama|bedroom|íntimo/i,    chip:'iluminacao', chipVal:'warm flickering candlelight, multiple candles, soft amber flame glow, intimate candlelit atmosphere, warm skin tones from candle warmth', label:'🕯️ Velas para ambiente íntimo' },
-  { re:/floresta|natureza|campo|jardim/i,chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Luz Natural para ao ar livre' },
+  { re:/noite|night|noturno|clube|club|neon/i, chip:'iluminacao', chipVal:'neon nightclub lighting, purple and pink neon strips, harsh colored neon reflections on skin, club strobe atmosphere, neon light casting colored glow on face and body', label:'🌈 Neon Clube' },
+  { re:/quarto|cama|bedroom|íntimo|boudoir/i,  chip:'iluminacao', chipVal:'low-key intimate ambient light, deep natural shadows, dim room glow, minimal single light source, moody dramatic atmosphere, shadow detail preserved', label:'🌙 Low-Key' },
+  { re:/floresta|natureza|campo|jardim|naturez/i, chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Natural' },
+  { re:/academia|gym|fitness/i,          chip:'iluminacao', chipVal:'harsh overhead fluorescent gym lighting, cool white fluorescent tubes, flat overhead gym light, unforgiving gymnasium lighting, neutral cool athletic facility light', label:'🏋️ Fluorescente' },
+  { re:/ducha|banho|shower|bath/i,       chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Natural' },
 ];
 
 function _suggestLightingForCenario(cenarioVal){
   if(!_AUTO_SETTINGS.autoLighting) return;
-  if(quickChipState.iluminacao) return; // already set
+  if(quickChipState.iluminacao) return; // already set — pose or manual selection takes precedence
   const match = _CENARIO_LIGHT_SUGGEST.find(r=>r.re.test(cenarioVal));
   if(!match) return;
-  _pendingLightSuggest = match;
+  // ── INSTANT auto-apply — no banner needed ────────────────────────────────
+  document.querySelectorAll(`.quick-chip[data-cat="${match.chip}"]`).forEach(c => c.classList.remove('active','auto-set'));
+  const chipEl = document.querySelector(`.quick-chip[data-cat="${match.chip}"][data-val="${match.chipVal}"]`);
+  if(chipEl){ chipEl.classList.add('active','auto-set'); quickChipState[match.chip] = match.chipVal; }
+  // Hide banner if open (legacy)
   const banner = document.getElementById('auto-lighting-suggest');
-  const text   = document.getElementById('auto-lighting-text');
-  if(!banner || !text) return;
-  text.textContent = '💡 Sugestão automática de iluminação: ' + match.label;
-  banner.style.display = 'block';
+  if(banner) banner.style.display = 'none';
+  _pendingLightSuggest = null;
+  toast('💡 Iluminação: ' + match.label + ' ✦', 1800);
 }
 
 function _acceptLightingSuggest(){
-  if(!_pendingLightSuggest) return;
-  const m = _pendingLightSuggest;
-  // Activate the lighting chip visually
-  document.querySelectorAll(`.quick-chip[data-cat="${m.chip}"]`).forEach(c=>{
-    if(c.dataset.val === m.chipVal){ c.classList.add('active'); quickChipState[m.chip] = m.chipVal; }
-    else c.classList.remove('active');
-  });
-  document.getElementById('auto-lighting-suggest').style.display = 'none';
+  // No-op — lighting now applied instantly; kept for backward compat
+  const banner = document.getElementById('auto-lighting-suggest');
+  if(banner) banner.style.display = 'none';
   _pendingLightSuggest = null;
   _autoSaveCharDraft();
   toast('💡 Iluminação aplicada!');
