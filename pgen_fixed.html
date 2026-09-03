@@ -351,6 +351,9 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 .quick-chip{padding:4px 10px;border:1.5px solid #e2e8f0;border-radius:16px;font-size:0.69em;font-weight:600;cursor:pointer;background:#fff;color:#475569;transition:all 0.15s;user-select:none;}
 .quick-chip:hover{border-color:#93c5fd;background:#eff6ff;color:#1d4ed8;}
 .quick-chip.active{border-color:#1d4ed8;background:#1d4ed8;color:#fff;}
+/* auto-set by pose selection — dashed border + ✦ badge; override with manual click */
+.quick-chip.auto-set{border-style:dashed!important;opacity:0.92;}
+.quick-chip.auto-set::after{content:' ✦';font-size:0.65em;vertical-align:super;opacity:0.7;}
 [data-theme="dark"] .quick-chips-wrap{background:#0f172a;border-color:#334155;}
 [data-theme="dark"] .quick-chip{background:#0f172a;border-color:#334155;color:#94a3b8;}
 [data-theme="dark"] .quick-chip:hover{background:#1e3a5f;border-color:#60a5fa;color:#93c5fd;}
@@ -9103,6 +9106,8 @@ function setPose(key){
   }
   // Atualiza auto-descrição para refletir a ordem: etnia → pose
   try{ _autoFillDescription(); }catch(e){}
+  // ── Auto-suggest iluminação, película, lente e marcas naturais ───────────
+  try{ _applyPoseDefaults(key || null); }catch(e){}
 }
 
 function setMode(mode){
@@ -12733,6 +12738,7 @@ const quickChipState = { etnia:'', idade:'', corpo:'', cabelo:'', cenario:'', es
 const skinMarksActive = new Set();
 function toggleSkinMark(el){
   const val = el.dataset.val;
+  el.classList.remove('auto-set'); // manual click clears auto-set badge
   if(skinMarksActive.has(val)){
     skinMarksActive.delete(val);
     el.classList.remove('active');
@@ -12915,7 +12921,8 @@ function toggleQuickChip(el){
   const cat = el.dataset.cat;
   const val = el.dataset.val;
   const already = el.classList.contains('active');
-  document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active'));
+  // Remove active + auto-set from all chips in this category (manual click overrides pose default)
+  document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active','auto-set'));
   if(!already){
     el.classList.add('active');
     quickChipState[cat] = val;
@@ -12942,6 +12949,258 @@ function getQuickCenario(){ return quickChipState.cenario || ''; }
 function getQuickIluminacao(){ return quickChipState.iluminacao || ''; }
 function getFilmStock(){ return quickChipState.film_stock || ''; }
 function getLensCam(){ return quickChipState.lens_cam || ''; }
+
+// ── POSE AUTO-DEFAULTS: Iluminação + Película + Lente + Marcas Naturais ───
+// Called from setPose(). Activates contextually appropriate chips for the
+// selected pose category. Chips show a ✦ badge (dashed border) to signal
+// auto-selection; manual clicks remove the badge and take full precedence.
+// ──────────────────────────────────────────────────────────────────────────
+
+function _chipValByPrefix(cat, prefix){
+  const el = document.querySelector(`.quick-chip[data-cat="${cat}"][data-val^="${prefix}"]`);
+  return el ? el.dataset.val : null;
+}
+
+function _activateChipByPrefix(cat, prefix){
+  if(!prefix) return;
+  const val = _chipValByPrefix(cat, prefix);
+  if(!val) return;
+  // Deactivate all others in category (keep chip state clean)
+  document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active','auto-set'));
+  const el = document.querySelector(`.quick-chip[data-cat="${cat}"][data-val="${val}"]`);
+  if(el){ el.classList.add('active','auto-set'); quickChipState[cat] = val; }
+}
+
+function _activateSkinMarksByPrefixes(prefixes){
+  if(!Array.isArray(prefixes)) return;
+  // Clear current auto marks (but keep any manually set ones)
+  document.querySelectorAll('.quick-chip[data-cat="skin_mark"].auto-set').forEach(c => {
+    c.classList.remove('active','auto-set');
+    skinMarksActive.delete(c.dataset.val);
+  });
+  // Activate suggested marks
+  prefixes.forEach(pfx => {
+    const el = document.querySelector(`.quick-chip[data-cat="skin_mark"][data-val^="${pfx}"]`);
+    if(el && !skinMarksActive.has(el.dataset.val)){
+      el.classList.add('active','auto-set');
+      skinMarksActive.add(el.dataset.val);
+    }
+  });
+}
+
+function _clearAllAutoChips(){
+  document.querySelectorAll('.quick-chip.auto-set').forEach(c => {
+    c.classList.remove('active','auto-set');
+    const cat = c.dataset.cat;
+    if(cat && cat !== 'skin_mark') quickChipState[cat] = '';
+    if(cat === 'skin_mark') skinMarksActive.delete(c.dataset.val);
+  });
+}
+
+function _applyPoseDefaults(key){
+  _clearAllAutoChips();
+  if(!key) return;
+
+  const R = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  // Shorthand prefixes that match the first unique chars of each chip's data-val:
+  // Iluminação: 'soft diffused natural'|'late afternoon golden'|'large softbox studio'|
+  //             'low-key intimate'|'warm flickering candlelight'|'soft overcast diffused'|
+  //             'neon nightclub lighting'|'harsh direct midday'|'backlight rim lighting'|
+  //             'harsh overhead fluorescent'|'moonlight, soft cool'|'window light only'
+  // Film stock: 'Kodak Portra 400'|'Cinestill 800T'|'Fuji 400H'|'Kodak Gold 200'|
+  //             'Ilford HP5'|'Fujifilm Velvia'|'Lomography'
+  // Lens:       'shot on 24mm'|'shot on 35mm'|'shot on 50mm'|'shot on 85mm'|
+  //             'shot on 105mm'|'shot on 135mm'
+  // Marks:      'visible bikini tan'|'natural stretch marks'|'natural freckles'|
+  //             'natural subtle cellulite'|'natural hip dips'|'prominent hand and forearm'|
+  //             'natural beauty mole'|'natural skin redness'|'natural soft belly'|
+  //             'natural breast asymmetry'|'light body hair'|'natural acne'
+
+  let ill, film, lens, marks;
+
+  // ── Beach / Water / Pool ─────────────────────────────────────────────────
+  if(key.startsWith('beach-') || key.startsWith('water-') || key.startsWith('pool-')){
+    ill   = R(['late afternoon golden','soft diffused natural','harsh direct midday']);
+    film  = R(['Kodak Gold 200','Fuji 400H','Fujifilm Velvia']);
+    lens  = R(['shot on 35mm','shot on 50mm','shot on 24mm']);
+    marks = R([['visible bikini tan','natural stretch marks'],
+               ['visible bikini tan','natural hip dips'],
+               ['visible bikini tan','natural subtle cellulite']]);
+
+  // ── Yoga ─────────────────────────────────────────────────────────────────
+  } else if(key.startsWith('yoga-')){
+    ill   = R(['soft diffused natural','window light only','soft overcast diffused']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 50mm','shot on 35mm']);
+    marks = R([['natural hip dips','light body hair'],
+               ['natural stretch marks','natural hip dips'],
+               ['natural soft belly','natural hip dips']]);
+
+  // ── Gym ───────────────────────────────────────────────────────────────────
+  } else if(key.startsWith('gym-')){
+    ill   = 'harsh overhead fluorescent';
+    film  = R(['Kodak Portra 400','Fuji 400H']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['prominent hand and forearm','natural hip dips'],
+               ['natural stretch marks','prominent hand and forearm'],
+               ['prominent hand and forearm','natural subtle cellulite']]);
+
+  // ── Legging ──────────────────────────────────────────────────────────────
+  } else if(key.startsWith('legging-')){
+    ill   = R(['harsh overhead fluorescent','soft diffused natural']);
+    film  = 'Kodak Portra 400';
+    lens  = R(['shot on 50mm','shot on 35mm']);
+    marks = R([['natural subtle cellulite','natural hip dips'],
+               ['natural stretch marks','natural hip dips']]);
+
+  // ── Dance / Club ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('dance-')){
+    ill   = R(['neon nightclub lighting','backlight rim lighting']);
+    film  = R(['Cinestill 800T','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Jeans ────────────────────────────────────────────────────────────────
+  } else if(key.startsWith('jeans-')){
+    ill   = R(['late afternoon golden','soft diffused natural','backlight rim lighting']);
+    film  = R(['Kodak Gold 200','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['prominent hand and forearm'],['natural beauty mole'],[]]);
+
+  // ── Shower / Bath ────────────────────────────────────────────────────────
+  } else if(key.startsWith('shower-') || key.startsWith('bath-')){
+    ill   = R(['soft diffused natural','window light only']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural soft belly','natural stretch marks'],
+               ['natural soft belly','natural breast asymmetry'],
+               ['natural stretch marks','natural breast asymmetry']]);
+
+  // ── Nature / Outdoor ─────────────────────────────────────────────────────
+  } else if(key.startsWith('nature-') || key.startsWith('outdoor-')){
+    ill   = R(['late afternoon golden','soft diffused natural','backlight rim lighting','soft overcast diffused']);
+    film  = R(['Kodak Gold 200','Fujifilm Velvia','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 24mm','shot on 50mm']);
+    marks = R([['natural freckles'],['natural freckles','natural beauty mole'],[]]);
+
+  // ── Car / Moto ───────────────────────────────────────────────────────────
+  } else if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-')){
+    ill   = R(['late afternoon golden','backlight rim lighting','soft diffused natural']);
+    film  = R(['Kodak Gold 200','Cinestill 800T']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Mirror ───────────────────────────────────────────────────────────────
+  } else if(key.startsWith('mirror-')){
+    ill   = R(['window light only','soft diffused natural']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural stretch marks','natural soft belly'],
+               ['natural breast asymmetry','natural soft belly'],
+               ['natural hip dips','natural stretch marks']]);
+
+  // ── Model / Editorial ────────────────────────────────────────────────────
+  } else if(key.startsWith('model-')){
+    ill   = R(['large softbox studio','soft diffused natural']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 85mm','shot on 50mm']);
+    marks = [];
+
+  // ── Selfie (gym) ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('selfie-gym')){
+    ill   = 'harsh overhead fluorescent';
+    film  = 'Kodak Portra 400';
+    lens  = 'shot on 35mm';
+    marks = R([['natural hip dips'],['prominent hand and forearm']]);
+
+  // ── Selfie (beach/pool) ──────────────────────────────────────────────────
+  } else if(key.startsWith('selfie-beach') || key.startsWith('selfie-pool')){
+    ill   = R(['late afternoon golden','soft diffused natural']);
+    film  = R(['Kodak Gold 200','Fuji 400H']);
+    lens  = 'shot on 35mm';
+    marks = ['visible bikini tan'];
+
+  // ── Selfie (bathroom/shower) ─────────────────────────────────────────────
+  } else if(key.startsWith('selfie-bathroom') || key === 'selfie-shower-steam-close'){
+    ill   = 'soft diffused natural';
+    film  = 'Fuji 400H';
+    lens  = 'shot on 35mm';
+    marks = R([['natural soft belly'],['natural stretch marks']]);
+
+  // ── Selfie (generic) ─────────────────────────────────────────────────────
+  } else if(key.startsWith('selfie-')){
+    ill   = R(['window light only','soft diffused natural']);
+    film  = R(['Kodak Portra 400','Fuji 400H']);
+    lens  = 'shot on 35mm';
+    marks = R([['natural freckles'],['natural beauty mole'],[]]);
+
+  // ── Butt closeup ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('butt-')){
+    ill   = R(['soft diffused natural','window light only','backlight rim lighting']);
+    film  = 'Kodak Portra 400';
+    lens  = R(['shot on 85mm','shot on 105mm']);
+    marks = R([['natural subtle cellulite','natural stretch marks'],
+               ['natural subtle cellulite','natural hip dips'],
+               ['natural stretch marks','natural hip dips']]);
+
+  // ── Closeup ──────────────────────────────────────────────────────────────
+  } else if(key.startsWith('closeup-')){
+    ill   = R(['window light only','soft diffused natural']);
+    film  = 'Kodak Portra 400';
+    lens  = R(['shot on 105mm','shot on 85mm']);
+    marks = R([['natural skin redness'],['natural freckles'],['natural beauty mole']]);
+
+  // ── Pole dance ───────────────────────────────────────────────────────────
+  } else if(key.startsWith('pole-dance') || key === 'dance-pole-leg-wrap' || key === 'dance-pole-spin'){
+    ill   = R(['neon nightclub lighting','backlight rim lighting']);
+    film  = R(['Cinestill 800T','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Fantasy / Roleplay ───────────────────────────────────────────────────
+  } else if(key.startsWith('fantasy-')){
+    ill   = R(['large softbox studio','low-key intimate','backlight rim lighting']);
+    film  = R(['Kodak Portra 400','Fuji 400H']);
+    lens  = R(['shot on 85mm','shot on 50mm']);
+    marks = [];
+
+  // ── Alt / Gothic ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('alt-')){
+    ill   = R(['low-key intimate','neon nightclub lighting','backlight rim lighting']);
+    film  = R(['Cinestill 800T','Kodak Portra 400','Lomography']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Explicit / Sex / NSFW ────────────────────────────────────────────────
+  } else if(/^(sex-|anal-|oral-|multi-|cumshot-|shemale-|doggy-|prone-bone|cowgirl|reverse-cowgirl|missionary|lap-dance|leapfrog|anvil|mating-press|pile-driver|spoon$|scissors$)/.test(key)){
+    ill   = R(['low-key intimate','soft diffused natural','window light only','warm flickering candlelight']);
+    film  = R(['Kodak Portra 400','Cinestill 800T']);
+    lens  = R(['shot on 50mm','shot on 85mm','shot on 35mm']);
+    marks = R([['natural stretch marks','natural soft belly'],
+               ['natural breast asymmetry','natural soft belly'],
+               []]);
+
+  // ── Generic neutral poses (standing, sitting, kneeling, lying, squat) ────
+  } else {
+    ill   = R(['window light only','soft diffused natural','low-key intimate']);
+    film  = R(['Kodak Portra 400','Fuji 400H']);
+    lens  = R(['shot on 85mm','shot on 50mm']);
+    marks = R([['natural stretch marks','natural soft belly'],
+               ['natural hip dips','natural breast asymmetry'],
+               ['natural soft belly']]);
+  }
+
+  // Apply chips
+  _activateChipByPrefix('iluminacao', ill);
+  _activateChipByPrefix('film_stock', film);
+  _activateChipByPrefix('lens_cam',   lens);
+  _activateSkinMarksByPrefixes(marks);
+
+  // Subtle toast so user knows chips were auto-filled
+  if(typeof toast === 'function')
+    toast('✦ Iluminação, película, lente e marcas auto-sugeridas pela pose', 2800);
+}
 
 // ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
 function copyAsMJ(){
