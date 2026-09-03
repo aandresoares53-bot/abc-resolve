@@ -14622,6 +14622,12 @@ const _AUTO_DEFAULTS = {
 };
 let _AUTO_SETTINGS = Object.assign({}, _AUTO_DEFAULTS,
   JSON.parse(localStorage.getItem('pgen_auto_settings') || '{}'));
+// ── Migração v3.1: forçar autoGenerate=true para usuários existentes que tinham false ──
+if(!localStorage.getItem('pgen_auto_v31')){
+  _AUTO_SETTINGS.autoGenerate = true;
+  localStorage.setItem('pgen_auto_v31', '1');
+  localStorage.setItem('pgen_auto_settings', JSON.stringify(_AUTO_SETTINGS));
+}
 
 function _saveAutoSettings(){
   localStorage.setItem('pgen_auto_settings', JSON.stringify(_AUTO_SETTINGS));
@@ -14666,8 +14672,12 @@ setTimeout(()=>{ try{ _renderAutoBar(); }catch(e){} }, 100);
 let _autoGenDebounce = null;
 function _checkAutoGenerate(){
   if(!_AUTO_SETTINGS.autoGenerate) return;
-  const hasChar = !!(quickChipState.etnia && quickChipState.corpo && quickChipState.cabelo);
-  if(!hasChar || !selectedPoseKey) return;
+  if(!selectedPoseKey) return;
+  // Dispara se: personagem completa OU nenhum chip de personagem (generate() chama _autoCompleteCharacter)
+  const hasAllChar = !!(quickChipState.etnia && quickChipState.corpo && quickChipState.cabelo);
+  const hasNoChar  = !quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo;
+  // Não dispara se personagem está parcialmente preenchida (evita gerar com dados incompletos)
+  if(!hasAllChar && !hasNoChar) return;
   clearTimeout(_autoGenDebounce);
   _autoGenDebounce = setTimeout(()=>{
     toast('⚡ Auto-gerando prompt...');
