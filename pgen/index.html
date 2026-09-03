@@ -1035,6 +1035,12 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
           <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="low-key intimate ambient light, deep natural shadows, dim room glow, minimal single light source, moody dramatic atmosphere, shadow detail preserved">🌙 Low-Key</span>
           <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="warm flickering candlelight, multiple candles, soft amber flame glow, intimate candlelit atmosphere, warm skin tones from candle warmth">🕯️ Velas</span>
           <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="soft overcast diffused light, even cloud-filtered daylight, no harsh shadows, soft even illumination, flat natural light from overcast sky">🌫️ Nublado</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="neon nightclub lighting, purple and pink neon strips, harsh colored neon reflections on skin, club strobe atmosphere, neon light casting colored glow on face and body">🌈 Neon Clube</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="harsh direct midday sun, hard shadows, strong overhead sunlight at noon, high contrast direct sunlight, sun casting hard shadows on face and body, intense solar overhead light">☀️ Sol a Pino</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="backlight rim lighting, light source behind subject, strong rim light separating subject from background, halo of backlight around hair and shoulders, silhouette edges lit, contre-jour backlit photograph">🌟 Contraluz</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="harsh overhead fluorescent gym lighting, cool white fluorescent tubes, flat overhead gym light, unforgiving gymnasium lighting, neutral cool athletic facility light">🏋️ Academia Fluoresc.</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="moonlight, soft cool blue-white moonlight, night outdoors lunar light, silver cool moonlight casting soft shadows, nocturnal blue light tones, night photography moonlit">🌕 Luar Noturno</span>
+          <span class="quick-chip" data-cat="iluminacao" onclick="toggleQuickChip(this)" data-val="window light only, natural window light from one side, soft directional natural light through window, window light creating natural Rembrandt lighting, indoor natural side light">🪟 Luz Janela</span>
         </div>
       </div>
 
@@ -1067,6 +1073,52 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
           <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="heavy film grain, coarse grain texture, ISO 3200 grain, grainy film aesthetic, high grain photographic texture">🌫️ Grain Pesado</span>
           <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="film noir style, dramatic shadows, high contrast, moody dark atmosphere, chiaroscuro lighting, classic noir aesthetic">🎭 Noir</span>
           <span class="quick-chip" data-cat="estilo_foto" onclick="toggleQuickChip(this)" data-val="paparazzi style, candid street photo, telephoto lens, caught off guard, natural candid moment, unposed street photography">📡 Paparazzi</span>
+        </div>
+      </div>
+
+      <!-- 1️⃣2️⃣ PELÍCULA / FILM STOCK -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">1️⃣2️⃣ Película <span style="font-size:0.7em;font-weight:400;opacity:0.6;">— grain e cores do filme</span></div>
+        <div class="quick-chips" id="qchips-film-stock">
+          <span class="quick-chip" data-cat="film_stock" onclick="toggleQuickChip(this)" data-val="Kodak Portra 400, warm neutral analog film colors, natural skin warmth, fine grain, smooth tonal gradation">🟡 Kodak Portra 400</span>
+          <span class="quick-chip" data-cat="film_stock" onclick="toggleQuickChip(this)" data-val="Cinestill 800T, tungsten balanced film, halation glow around highlights and neon lights, strong orange-blue tungsten color shift, heavy cinematic grain, neon light blooming and ghosting">🔴 Cinestill 800T</span>
+          <span class="quick-chip" data-cat="film_stock" onclick="toggleQuickChip(this)" data-val="Fuji 400H, cool pastel skin tones, subtle cyan cast, slight desaturated lift in shadows, fine grain, cool editorial film look, soft cool tones on skin">💚 Fuji 400H</span>
+          <span class="quick-chip" data-cat="film_stock" onclick="toggleQuickChip(this)" data-val="Kodak Gold 200, warm saturated colors, contrasty shadows, rich warm yellows and reds, golden warm skin tones, sunny warm color rendering, fine grain, holiday snapshot feel">🟠 Kodak Gold 200</span>
+          <span class="quick-chip" data-cat="film_stock" onclick="toggleQuickChip(this)" data-val="Ilford HP5 black and white, monochrome silver gelatin, medium grain B&W, high tonal range, classic photojournalism B&W, strong contrast black and white, no color information, grayscale tones">⬜ Ilford HP5 (P&B)</span>
+          <span class="quick-chip" data-cat="film_stock" onclick="toggleQuickChip(this)" data-val="Fujifilm Velvia 50, hyper-saturated vivid colors, vivid greens and deep blues, high contrast richly saturated slide film, very fine grain, punchy saturated colors, nature slide photography look">🌈 Fuji Velvia 50</span>
+          <span class="quick-chip" data-cat="film_stock" onclick="toggleQuickChip(this)" data-val="Lomography film, light leaks, cross-processed colors, experimental film aesthetic, unpredictable color shifts, vignetting, expired film effect, experimental analog photography">🎨 Lomography</span>
+        </div>
+      </div>
+
+      <!-- 1️⃣3️⃣ LENTE / CÂMERA -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">1️⃣3️⃣ Lente <span style="font-size:0.7em;font-weight:400;opacity:0.6;">— distância focal e abertura</span></div>
+        <div class="quick-chips" id="qchips-lens-cam">
+          <span class="quick-chip" data-cat="lens_cam" onclick="toggleQuickChip(this)" data-val="shot on 24mm f/2.8 ultra-wide angle lens, dramatic environmental perspective, slight barrel distortion, wide environmental context">🔭 24mm f/2.8 Ultra-Wide</span>
+          <span class="quick-chip" data-cat="lens_cam" onclick="toggleQuickChip(this)" data-val="shot on 35mm f/1.8 lens, natural human perspective, slight wide environmental view, gentle bokeh, environmental portrait lens, natural FOV">📷 35mm f/1.8</span>
+          <span class="quick-chip" data-cat="lens_cam" onclick="toggleQuickChip(this)" data-val="shot on 50mm f/1.4 lens, classic standard perspective, neutral natural lens compression, gentle background bokeh, most natural human eye perspective">🎯 50mm f/1.4</span>
+          <span class="quick-chip" data-cat="lens_cam" onclick="toggleQuickChip(this)" data-val="shot on 85mm f/1.4 portrait lens, shallow depth of field, creamy background bokeh, slight subject compression, flattering portrait telephoto perspective, bokeh balls in background">🌸 85mm f/1.4</span>
+          <span class="quick-chip" data-cat="lens_cam" onclick="toggleQuickChip(this)" data-val="shot on 105mm f/2.8 macro lens, extreme close-up detail, skin pore detail visible, extreme shallow depth of field, razor thin focus plane, macro detail photography">🔬 105mm Macro</span>
+          <span class="quick-chip" data-cat="lens_cam" onclick="toggleQuickChip(this)" data-val="shot on 135mm f/2.0 telephoto portrait lens, heavy background compression, very shallow depth of field, subject isolation, strong telephoto compression flattening features">🏔️ 135mm f/2.0</span>
+        </div>
+      </div>
+
+      <!-- 1️⃣4️⃣ MARCAS DA PELE (multi-select) -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">1️⃣4️⃣ Marcas Naturais <span style="font-size:0.7em;font-weight:400;opacity:0.6;">— imperfei­ções humanas (multi)</span></div>
+        <div class="quick-chips" id="qchips-skin-marks">
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="visible bikini tan lines on hips and buttocks, swimsuit tan marks, two-tone skin from sun exposure, clear tan line boundaries on skin">👙 Marca Biquíni</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural stretch marks visible on hips thighs and belly, authentic silvery stretch marks on skin, real body stretch marks">〰️ Estrias</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural freckles scattered across face nose and shoulders, light sun freckles, authentic freckling on fair skin">✨ Sardas/Efélides</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural subtle cellulite texture on outer thighs and buttocks, skin dimpling, orange peel texture on thighs">🍊 Celulite Sutil</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural hip dips, violin hips shape, soft concave indentation at outer hip, natural lateral hip depression">🎻 Hip Dips</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="prominent hand and forearm veins visible, subcutaneous vein definition, vascular forearm veins showing through skin">💉 Veias Visíveis</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural beauty mole or birthmark on face or body, natural skin mole, small natural beauty mark">⚫ Pinta/Sinal</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural skin redness and flush, mild rosacea on cheeks, natural skin rosiness, capillary redness under fair skin">🌹 Rosácea/Rubor</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural soft belly, slight belly pouch, natural soft lower abdomen, realistic feminine belly, real belly softness and natural fold">🫃 Barriga Natural</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural breast asymmetry, one breast slightly larger than the other, realistic natural breast size difference">👙 Assimetria Seios</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="light body hair visible on arms and legs, natural vellus arm hair, fine leg hair, natural light body hair not waxed">🪒 Pelos Naturais</span>
+          <span class="quick-chip" data-cat="skin_mark" data-multi="1" onclick="toggleSkinMark(this)" data-val="natural acne or skin blemishes, minor pimples or blemish marks, natural skin imperfections from acne, real skin texture with minor breakouts">🔴 Acne/Manchas</span>
         </div>
       </div>
 
@@ -2251,6 +2303,8 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <button class="btn-copy" onclick="copyPrompt()">📋 Copiar Prompt</button>
       <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" onclick="useAsBase()" title="Copia o prompt editado para a caixa de descrição">♻️ Usar como base</button>
       <button class="btn-copy" style="background:#0284c7;border-color:#0284c7;" onclick="sharePrompt()" title="Compartilhar prompt via link">🔗 Compartilhar</button>
+      <button class="btn-copy" style="background:#059669;border-color:#059669;" onclick="copyAsMJ()" title="Copia o prompt limpo (sem pesos SD) com parâmetros Midjourney">🎨 Copiar MJ</button>
+      <button class="btn-copy" style="background:#b45309;border-color:#b45309;" onclick="copyAsFlux()" title="Copia o prompt em linguagem natural para FLUX">⚡ Copiar FLUX</button>
       <button class="btn-clear-out" onclick="clearOutput()">✕ Limpar</button>
     </div>
 
@@ -11793,7 +11847,7 @@ function buildPrompt(englishText, rawPT){
       _wantsNSFW ? 'explicit adult content, nsfw,' : '',
       _coreFlux,           // ← user description + pose FIRST
       // RAW anti-plastic + anti-digital-edit block EARLY (position 3) — FLUX pays most attention to early terms
-      'RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, Kodak Portra 400, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,',
+      `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}`,
       _faceFlux ? `same woman — ${_faceFlux},` : '',
       _cenarioFlux,
       _fluxIllum,
@@ -11819,9 +11873,11 @@ function buildPrompt(englishText, rawPT){
   }
   if(currentMode === 'mj'){
     // MJ realism core — style raw + high stylize brings it closest to real photography
+    const _mjFilm = getFilmStock() || 'Kodak Portra 400';
+    const _mjSkinMarks = getSkinMarks();
     const _mjRealPrefix = _wantsNSFW
-      ? 'analog film photograph of a real human woman, 35mm film grain, Kodak Portra 400, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera, explicit adult content, nsfw,'
-      : 'analog film photograph of a real human woman, 35mm film grain, Kodak Portra 400, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,';
+      ? `analog film photograph of a real human woman, 35mm film grain, ${_mjFilm}, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,${_mjSkinMarks ? ' ' + _mjSkinMarks + ',' : ''} explicit adult content, nsfw,`
+      : `analog film photograph of a real human woman, 35mm film grain, ${_mjFilm}, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,${_mjSkinMarks ? ' ' + _mjSkinMarks + ',' : ''}`;
     // MJ: POSE FIRST — put direction terms at the start for maximum MJ attention
     // Strip SD-weight syntax — MJ uses (term::weight) not (term:1.9) — plain text works better
     const _expandedMj = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
@@ -11869,7 +11925,15 @@ function buildPrompt(englishText, rawPT){
     const _expandedGpt = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
     // POSE FIRST — model interprets leading terms as primary instruction
     const _userContent = pose.mj ? pose.mj + ', ' + _expandedGpt : _expandedGpt;
-    const core = _gptRealPrefix + ' ' + _userContent;
+    const _gptFilm = getFilmStock() || 'Kodak Portra 400';
+    const _gptLensRaw = getLensCam();
+    const _gptLensSpec = _gptLensRaw ? _gptLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.8';
+    const _gptSkinMarks = getSkinMarks();
+    const _gptPrefixDyn = _gptRealPrefix
+      .replace('Kodak Portra 400', _gptFilm)
+      .replace('Canon EOS R5 85mm f/1.8', _gptLensSpec)
+      + (_gptSkinMarks ? ` Natural body marks visible on skin: ${_gptSkinMarks}.` : '');
+    const core = _gptPrefixDyn + ' ' + _userContent;
     const _isBackGpt = /back|behind|posterior|from behind|back to camera/i.test((pose.sd_start||'') + ' ' + (pose.mj||''));
     const _bodyGpt = _isBackGpt ? BB_GPT : BF_GPT;
     const _gptAnatomy = 'Ensure correct human anatomy throughout: exactly five fingers on each hand, no extra or missing fingers, correct finger count, symmetrical eyes correctly positioned, both eyes same size, no cross-eyed look, correct body proportions, no extra limbs, natural spine curvature, correct shoulder anatomy, natural elbow anatomy, correct knee anatomy, natural wrist anatomy, realistic joint definition. The final image must be indistinguishable from a real analog film documentary photograph.';
@@ -12029,7 +12093,13 @@ function buildPrompt(englishText, rawPT){
   // Film grain is physically incompatible with smooth poreless skin — the strongest anti-plastic lever in SD
   // _rawStamp: RAW file + no post-processing + Kodak analog science — redundancy reinforces chunk-1 REALISM_CORE
   // Unique terms here: unedited RAW, SOOC, no Photoshop/retouching, subsurface scattering, bokeh, chromatic aberration
-  const _rawStamp = '(Kodak Portra 400 analog film:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (no post-processing:2.0), (no Photoshop:2.0), (no retouching:2.0), (no professional retouch:2.0), (not digital manipulation:2.0), (subsurface light scattering on skin:1.9), (Kodak Portra analog color science:1.8), (natural skin translucency:1.8), (natural bokeh depth of field:1.7), (natural lens chromatic aberration:1.5), (natural vignette:1.4),';
+  // ── Film Stock injection (selected via chip or default Kodak Portra 400) ─
+  const _selFilmStock = getFilmStock();
+  const _filmStockTerm = _selFilmStock || 'Kodak Portra 400 analog film';
+  const _rawStamp = `(${_filmStockTerm}:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (no post-processing:2.0), (no Photoshop:2.0), (no retouching:2.0), (no professional retouch:2.0), (not digital manipulation:2.0), (subsurface light scattering on skin:1.9), (${_selFilmStock ? _filmStockTerm : 'Kodak Portra analog color science'}:1.8), (natural skin translucency:1.8), (natural bokeh depth of field:1.7), (natural lens chromatic aberration:1.5), (natural vignette:1.4),`;
+  // ── Skin Marks injection (multi-select) ────────────────────────────────
+  const _skinMarksStr = getSkinMarks();
+  const _skinMarksBoost = _skinMarksStr ? ', ' + _skinMarksStr.split(', ').filter(Boolean).map(t => `(${t}:1.8)`).join(', ') : '';
   // TOKEN-BUDGET ORDER (CLIP chunks = 75 tokens each):
   // POSE MUST BE FIRST — it is the single most critical instruction.
   // Chunk 1 (1–75):   NSFW → POSE (sdStart+sdEnd) → RAW stamp → CLOTHING
@@ -12057,7 +12127,7 @@ function buildPrompt(englishText, rawPT){
     charPlain,          // Attractiveness terms — lowest priority, end
     _QF_S               // Final quality flags
   ].filter(Boolean);
-  let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _illumBoost;
+  let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _illumBoost + _skinMarksBoost;
 
   if(typeof chipState !== 'undefined'){
     if(chipState.scene)    result += ', ' + chipState.scene;
@@ -12574,7 +12644,21 @@ function lockSeed(){
 }
 
 // ── QUICK CHIPS (etnia / corpo / cabelo) ────────────────────────────────
-const quickChipState = { etnia:'', idade:'', corpo:'', cabelo:'', cenario:'', estilo_foto:'', iluminacao:'' };
+const quickChipState = { etnia:'', idade:'', corpo:'', cabelo:'', cenario:'', estilo_foto:'', iluminacao:'', film_stock:'', lens_cam:'' };
+
+// ── SKIN MARKS multi-select state ─────────────────────────────────────────
+const skinMarksActive = new Set();
+function toggleSkinMark(el){
+  const val = el.dataset.val;
+  if(skinMarksActive.has(val)){
+    skinMarksActive.delete(val);
+    el.classList.remove('active');
+  } else {
+    skinMarksActive.add(val);
+    el.classList.add('active');
+  }
+}
+function getSkinMarks(){ return [...skinMarksActive].join(', '); }
 
 // ── AUTO-PROFILE POR ETNIA ──────────────────────────────────────────────
 // Quando o usuário seleciona uma etnia, preenche automaticamente rosto,
@@ -12773,9 +12857,44 @@ function getQuickPreset(){
 }
 function getQuickCenario(){ return quickChipState.cenario || ''; }
 function getQuickIluminacao(){ return quickChipState.iluminacao || ''; }
+function getFilmStock(){ return quickChipState.film_stock || ''; }
+function getLensCam(){ return quickChipState.lens_cam || ''; }
+
+// ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
+function copyAsMJ(){
+  let txt = document.getElementById('prompt').value;
+  if(!txt){ toast('⚠️ Gere um prompt primeiro'); return; }
+  // Strip SD weight syntax (term:1.9) → term
+  txt = txt.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
+  // Strip [seed: ...] annotation
+  txt = txt.replace(/\s*\[seed:\s*\d+\]/g, '').trim();
+  // Add MJ params
+  const _ar = document.getElementById('mj-ar')?.value || '2:3';
+  const _v  = document.getElementById('mj-v')?.value  || '6.1';
+  txt += ` --ar ${_ar} --v ${_v} --style raw --stylize 100`;
+  navigator.clipboard.writeText(txt);
+  toast('🎨 Copiado para MJ! (sem pesos SD)');
+}
+
+// ── COPY AS FLUX (natural language, no weights, no MJ params) ────────────
+function copyAsFlux(){
+  let txt = document.getElementById('prompt').value;
+  if(!txt){ toast('⚠️ Gere um prompt primeiro'); return; }
+  // Strip SD weight syntax (term:1.9) → term
+  txt = txt.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
+  // Strip MJ params block (--ar ...) if present
+  txt = txt.replace(/\s*--\w+\s+\S+/g, '').trim();
+  // Strip [seed: ...] annotation
+  txt = txt.replace(/\s*\[seed:\s*\d+\]/g, '').trim();
+  navigator.clipboard.writeText(txt);
+  toast('⚡ Copiado para FLUX! (linguagem natural)');
+}
 
 // ── CAMERA SPEC per pose ─────────────────────────────────────────────────────
 function _getCameraSpec(poseKey){
+  // User-selected lens overrides all auto-detection
+  const _userLens = getLensCam();
+  if(_userLens) return _userLens;
   const k = (poseKey || '').toLowerCase();
   if(k.startsWith('butt-') || k.includes('closeup') || k.includes('close-up'))
     return 'Canon EOS R5 105mm f/2.8 macro, ISO 400, extreme shallow depth of field';
