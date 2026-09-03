@@ -290,7 +290,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 [data-theme="dark"] .btn-pin:hover{background:#1d4ed8;color:#fff;}
 
 /* ── TOKEN COUNTER ──────────────────────────────────────────────────────── */
-.token-count{font-size:0.7em;color:#94a3b8;margin-top:6px;text-align:right;}
+.token-count{font-size:0.7em;color:#94a3b8;margin-top:6px;text-align:right;transition:color 0.3s;cursor:help;}
 
 /* ── HISTORY ────────────────────────────────────────────────────────────── */
 .history-card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:16px 18px;margin-top:14px;}
@@ -2276,10 +2276,14 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     </div>
     <!-- PROMPT SCORE + ACTIONS -->
     <div class="prompt-score-row" id="prompt-score-row" style="display:none;">
-      <span id="prompt-score-badge" class="prompt-score-badge">⭐ Score: —</span>
+      <span id="prompt-score-badge" class="prompt-score-badge" style="cursor:pointer;" onclick="document.getElementById('score-tips-row').style.display=document.getElementById('score-tips-row').style.display==='none'?'flex':'none'" title="Clique para ver dicas de melhoria">⭐ Score: —</span>
       <button class="btn-optimize" onclick="runTokenOptimize()" title="Reordena os termos para maximizar o efeito CLIP (primeiros 75 tokens)">🔀 Otimizar Tokens</button>
       <button class="btn-autofix" onclick="runAutoFix()" title="Detecta e corrige automaticamente conflitos no prompt" id="btn-autofix-main">🔧 Auto-Fix</button>
       <button class="btn-optimize" style="background:#f5f3ff;border-color:#c4b5fd;color:#5b21b6;" onclick="runSmartNegative()" title="Gera negative prompt inteligente baseado no conteúdo">🚫 Smart Negative</button>
+    </div>
+    <!-- SCORE TIPS (expandable) -->
+    <div id="score-tips-row" style="display:none;flex-wrap:wrap;gap:5px;margin-top:4px;padding:6px 10px;background:#fef9c3;border:1px solid #fbbf24;border-radius:8px;font-size:0.72em;color:#92400e;">
+      <div id="score-tips-list" style="display:flex;flex-direction:column;gap:3px;width:100%;"></div>
     </div>
     <!-- KEYWORD SUGGESTIONS -->
     <div class="suggest-row" id="suggest-row" style="display:none;">
@@ -2333,13 +2337,22 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <div class="history-label">
       <span>🕓 Histórico (últimos 15 prompts)</span>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="btn-hist-clear" onclick="exportSession()" style="background:#059669;border-color:#059669;color:#fff;">💾 Exportar</button>
+        <button class="btn-hist-clear" onclick="exportSession()" style="background:#059669;border-color:#059669;color:#fff;" title="Exportar sessão completa (histórico + presets + seeds)">💾 Sessão</button>
+        <button class="btn-hist-clear" onclick="exportHistoryJSON()" style="background:#0891b2;border-color:#0891b2;color:#fff;" title="Exportar somente o histórico como JSON limpo">📥 Histórico</button>
         <button class="btn-hist-clear" onclick="document.getElementById('import-file-input').click()" style="background:#0284c7;border-color:#0284c7;color:#fff;">📂 Importar</button>
         <button class="btn-hist-clear" onclick="exportComfyUI()" style="background:#7c3aed;border-color:#7c3aed;color:#fff;" title="Exportar como workflow ComfyUI JSON">🔧 ComfyUI</button>
         <button class="btn-hist-clear" onclick="clearHistory()">🗑️ Limpar</button>
       </div>
     </div>
     <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importSession(this)">
+    <!-- SEED MEMORY PANEL -->
+    <div id="seed-memory-panel" style="display:none;margin:8px 0;padding:8px 10px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-size:0.72em;font-weight:700;color:#7c3aed;">⭐ Seeds Favoritas</span>
+        <span style="font-size:0.7em;color:#94a3b8;">(clique na seed para copiar)</span>
+      </div>
+      <div id="seed-memory-list"></div>
+    </div>
     <div class="history-list" id="history-list"></div>
   </div>
 
@@ -2398,6 +2411,8 @@ function rebuildNegPrompt(){
   Object.keys(NEG_CATS).forEach(cat => {
     if(negCatState[cat]) parts.push(NEG_CATS[cat]);
   });
+  // Pose-adaptive extra negatives (set by _applyPoseDefaults)
+  if(typeof _poseNegExtra !== 'undefined' && _poseNegExtra) parts.push(_poseNegExtra);
   const negEl = document.getElementById('neg-text');
   if(negEl) negEl.value = parts.join(', ');
 }
@@ -9297,8 +9312,11 @@ function buildVideoPrompt(base, englishText){
   const motionDesc = VIDEO_MOTION_MAP[motion] || motion;
   const styleDesc  = VIDEO_STYLE_MAP[vstyle]  || vstyle;
   const subject    = base || englishText || 'a beautiful woman';
-  // RAW realism anchor for video — 100% human realism, plain text for all video AI platforms
-  const rawVideoAnchor = 'RAW footage, SOOC straight out of camera, no color grading, no color correction, no LUT applied, no post-color grading, no AI video enhancement, no digital editing, not color graded, unaltered footage, real human movement, visible skin texture, skin pore detail, skin micro-texture, natural skin imperfections, natural skin color variation, natural skin blemishes, film grain on skin, no beauty filter, no skin smoothing, no retouching, authentic human motion, film grain, analog look, not CGI, not 3D render, real person, natural body physics, realistic skin deformation with movement, natural breathing visible, natural eye blinking, living skin appearance, natural skin warmth, natural facial micro-expressions, realistic hair movement, individual hair strands visible, natural skin subsurface scattering';
+  // RAW realism anchor for video — uses chip-selected film stock and lens when available
+  const _vidFilm    = (typeof getFilmStock === 'function' && getFilmStock()) || 'Kodak Portra 400';
+  const _vidLensRaw = (typeof getLensCam  === 'function' && getLensCam())  || '';
+  const _vidLensTag = _vidLensRaw ? ', ' + _vidLensRaw.split(',')[0].trim() : '';
+  const rawVideoAnchor = `RAW footage, ${_vidFilm}${_vidLensTag}, SOOC straight out of camera, no color grading, no color correction, no LUT applied, no post-color grading, no AI video enhancement, no digital editing, not color graded, unaltered footage, real human movement, visible skin texture, skin pore detail, skin micro-texture, natural skin imperfections, natural skin color variation, natural skin blemishes, film grain on skin, no beauty filter, no skin smoothing, no retouching, authentic human motion, film grain, analog look, not CGI, not 3D render, real person, natural body physics, realistic skin deformation with movement, natural breathing visible, natural eye blinking, living skin appearance, natural skin warmth, natural facial micro-expressions, realistic hair movement, individual hair strands visible, natural skin subsurface scattering`;
   const rawVideoBody = 'natural collarbone movement, natural body weight and gravity, realistic joint anatomy, natural skin folds and creases during movement, natural breast physics, natural skin compression and tension during pose changes, real human proportions, not perfect body, not fitness model, not airbrushed, not plastic skin';
   let prompt = '';
   if(platform === 'kling' || platform === 'hailuo'){
@@ -9904,8 +9922,30 @@ function liveAnalyze(){
   const sc = scorePrompt(prompt);
   const badge = document.getElementById('prompt-score-badge');
   const scoreRow = document.getElementById('prompt-score-row');
-  if(badge){ badge.textContent = sc.label; badge.className = 'prompt-score-badge ' + sc.cls; }
+  if(badge){
+    badge.textContent = sc.label + (sc.tips.length ? ` 💡${sc.tips.length}` : '');
+    badge.className = 'prompt-score-badge ' + sc.cls;
+    badge.title = sc.tips.length ? 'Clique para ver ' + sc.tips.length + ' dica(s) de melhoria' : 'Prompt excelente!';
+  }
   if(scoreRow) scoreRow.style.display = 'flex';
+  // Score tips list
+  const tipsList = document.getElementById('score-tips-list');
+  const tipsRow  = document.getElementById('score-tips-row');
+  if(tipsList){
+    if(sc.tips.length){
+      tipsList.innerHTML = sc.tips.map(t => `<span>• ${t}</span>`).join('');
+      if(tipsRow && tipsRow.style.display !== 'none') tipsRow.style.display = 'flex'; // keep visible if already open
+    } else {
+      tipsList.innerHTML = '<span>✅ Prompt completo — nenhuma melhoria crítica detectada!</span>';
+      if(tipsRow) tipsRow.style.display = 'none';
+    }
+    // Color tips panel based on score
+    if(tipsRow){
+      tipsRow.style.background = sc.cls === 'score-high' ? '#dcfce7' : sc.cls === 'score-mid' ? '#fef9c3' : '#fee2e2';
+      tipsRow.style.borderColor = sc.cls === 'score-high' ? '#86efac' : sc.cls === 'score-mid' ? '#fbbf24' : '#fca5a5';
+      tipsRow.style.color       = sc.cls === 'score-high' ? '#166534' : sc.cls === 'score-mid' ? '#92400e' : '#991b1b';
+    }
+  }
   // CLIP bar
   const terms = prompt.split(',').map(t=>t.trim()).filter(Boolean);
   const tokensPerTerm = 3; // rough estimate
@@ -12004,7 +12044,12 @@ function buildPrompt(englishText, rawPT){
       : _mjNegBase;
     _params += ' --no ' + _mjNeg;
     const _mjFaceDesc = _getFaceID() ? `, ${_getFaceID()}, same consistent woman, same face` : '';
-    return core + _mjFaceDesc + ', ' + QF + _params;
+    // MJ mode: dynamic QF — use chip-selected film stock and lens
+    const _mjFilm = getFilmStock() || 'Kodak Portra 400';
+    const _mjLensRaw = getLensCam();
+    const _mjLens = _mjLensRaw ? _mjLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.4';
+    const _mjQF = QF.replace('Kodak Portra 400', _mjFilm).replace('Canon EOS R5 85mm f/1.4', _mjLens);
+    return core + _mjFaceDesc + ', ' + _mjQF + _params;
   }
   if(currentMode === 'gpt'){
     const _gptRealPrefix = _wantsNSFW
@@ -12337,10 +12382,10 @@ function showPrompt(prompt){
   card.classList.add('visible');
   card.scrollIntoView({behavior:'smooth',block:'start'});
   document.getElementById('fab').classList.add('visible');
-  // token counter
-  const words = prompt.trim() ? prompt.trim().split(/[\s,]+/).filter(Boolean).length : 0;
-  const tcEl = document.getElementById('token-count');
-  if(tcEl) tcEl.textContent = '~' + words + ' tokens · ' + prompt.length + ' caracteres';
+  // token counter (CLIP budget tracker)
+  updateTokenCount(prompt);
+  // Live score + CLIP bar update
+  try{ liveAnalyze(); }catch(e){}
   // history
   const poseKey = selectedPose ? Object.keys(POSES).find(k=>POSES[k]===selectedPose) : null;
   addToHistory(prompt, currentMode, poseKey || 'livre');
@@ -12587,17 +12632,24 @@ function sharePrompt(){
 
 // ── EXPORTAR / IMPORTAR SESSÃO ────────────────────────────────────────────
 function exportSession(){
-  const _history = JSON.parse(localStorage.getItem('pgen_history') || '[]');
-  const _favs    = JSON.parse(localStorage.getItem('pgen_favs')    || '[]');
-  const _presets = JSON.parse(localStorage.getItem('pgen_presets') || '[]');
+  const _history      = JSON.parse(localStorage.getItem('pgen_history')     || '[]');
+  const _promptHist   = JSON.parse(localStorage.getItem('prompt-history')   || '[]'); // prompt history (UI list)
+  const _favs         = JSON.parse(localStorage.getItem('pgen_favs')        || '[]');
+  const _presets      = JSON.parse(localStorage.getItem('pgen_presets')     || '[]');
+  const _savedPresets = JSON.parse(localStorage.getItem('saved-presets')    || '[]');
+  const _seedMem      = JSON.parse(localStorage.getItem('pgen_seed_memory') || '[]');
   const _session = {
-    version: '3.0',
+    version: '3.1',
     exported: new Date().toISOString(),
     mode: currentMode,
     history: _history,
+    promptHistory: _promptHist,
     favs: _favs,
     presets: _presets,
+    savedPresets: _savedPresets,
+    seedMemory: _seedMem,
     quickState: quickChipState,
+    skinMarks: typeof skinMarksActive !== 'undefined' ? [...skinMarksActive] : [],
     currentPrompt: document.getElementById('prompt')?.value || ''
   };
   const blob = new Blob([JSON.stringify(_session, null, 2)], {type:'application/json'});
@@ -12607,7 +12659,32 @@ function exportSession(){
   a.download = 'pgen-session-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(url);
-  toast('💾 Sessão exportada!');
+  toast('💾 Sessão completa exportada (histórico + presets + seeds)!');
+}
+
+// ── EXPORTAR HISTÓRICO COMO JSON LIMPO ─────────────────────────────────────
+function exportHistoryJSON(){
+  if(!promptHistory.length){ toast('⚠️ Histórico vazio — gere alguns prompts primeiro'); return; }
+  const data = {
+    exported: new Date().toISOString(),
+    count: promptHistory.length,
+    prompts: promptHistory.map((e,i) => ({
+      index: i + 1,
+      mode: e.mode,
+      pose: e.pose,
+      timestamp: new Date(e.ts).toLocaleString('pt-BR'),
+      prompt: e.prompt,
+      seed: (e.prompt.match(/\[seed:\s*(\d+)\]/) || [])[1] || null
+    }))
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'pgen-historico-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`📥 ${promptHistory.length} prompts exportados como JSON!`);
 }
 function importSession(input){
   const file = input.files[0];
@@ -13002,6 +13079,36 @@ function getQuickIluminacao(){ return quickChipState.iluminacao || ''; }
 function getFilmStock(){ return quickChipState.film_stock || ''; }
 function getLensCam(){ return quickChipState.lens_cam || ''; }
 
+// ── POSE-ADAPTIVE NEGATIVE PROMPT ─────────────────────────────────────────
+// Extra negative terms injected automatically when a pose is selected.
+// Stored separately so they can be cleanly removed/replaced on next pose change.
+let _poseNegExtra = '';
+
+function _getPoseNegExtra(key){
+  if(!key) return '';
+  // Yoga / stretch — wrong anatomy is the main risk
+  if(key.startsWith('yoga-')) return 'wrong yoga pose, impossible stretch, broken limbs, extreme flexibility error, wrong joint angles, anatomical impossibility';
+  // Gym — clothes and equipment mismatch
+  if(key.startsWith('gym-') || key.startsWith('legging-')) return 'formal wear in gym, street clothes in gym, no gym equipment visible, wrong exercise form';
+  // Beach / water / pool — fake environments
+  if(key.startsWith('beach-') || key.startsWith('water-') || key.startsWith('pool-')) return 'fake beach backdrop, pixelated waves, indoor pool background error, bad water reflection, dry skin in wet setting';
+  // Shower / bath
+  if(key.startsWith('shower-') || key.startsWith('bath-')) return 'dry hair in shower, dry skin in wet environment, no water drops, fully clothed in shower';
+  // Dance / club
+  if(key.startsWith('dance-') || key.startsWith('pole-dance')) return 'static pose, no movement energy, wrong club lighting, daylight in club, awkward stiff posture';
+  // Selfie
+  if(key.startsWith('selfie-')) return 'professional camera setup in selfie, tripod visible as if selfie, wrong arm angle for selfie, photographer visible in mirror';
+  // Closeup / face
+  if(key.startsWith('closeup-')) return 'full body visible in closeup, wide angle distortion, background in focus, subject out of focus';
+  // Butt poses
+  if(key.startsWith('butt-')) return 'front view in butt pose, face obscuring buttocks, wrong camera angle';
+  // Outdoor / nature
+  if(key.startsWith('nature-') || key.startsWith('outdoor-')) return 'concrete background, city skyline, indoor setting, artificial lighting in outdoor scene';
+  // Explicit — age-related always blocked
+  if(/^(sex-|anal-|oral-|cowgirl|missionary|doggy-|cumshot-)/.test(key)) return 'teenager, minor, underage, young teen, child, childlike features, immature appearance';
+  return '';
+}
+
 // ── POSE AUTO-DEFAULTS: Iluminação + Película + Lente + Marcas Naturais ───
 // Called from setPose(). Activates contextually appropriate chips for the
 // selected pose category. Chips show a ✦ badge (dashed border) to signal
@@ -13318,9 +13425,33 @@ function _applyPoseDefaults(key){
   _activateChipByPrefix('lens_cam',   lens);
   _activateSkinMarksByPrefixes(marks);
 
+  // ── Auto-suggest idade based on pose category ──────────────────────────
+  // Only auto-set if no manual idade chip is active (non-auto-set)
+  const _hasManualIdade = !!document.querySelector('.quick-chip[data-cat="idade"].active:not(.auto-set)');
+  if(!_hasManualIdade){
+    let _idadePfx = null;
+    if(key.startsWith('dance-') || key.startsWith('pole-dance') || key.startsWith('selfie-') || key.startsWith('beach-') || key.startsWith('water-') || key.startsWith('pool-'))
+      _idadePfx = '18 to 22'; // young adult — dynamic/outdoor/selfie
+    else if(key.startsWith('yoga-') || key.startsWith('gym-') || key.startsWith('legging-') || key.startsWith('jeans-'))
+      _idadePfx = '23 to 28'; // athletic prime
+    else if(key.startsWith('model-') || key.startsWith('alt-') || key.startsWith('fantasy-'))
+      _idadePfx = '23 to 28'; // editorial/alt
+    else if(key.startsWith('mirror-') || key.startsWith('butt-') || key.startsWith('closeup-'))
+      _idadePfx = '23 to 28'; // intimate/detail
+    else if(/^(sex-|anal-|oral-|cowgirl|missionary|doggy-|cumshot-)/.test(key))
+      _idadePfx = '23 to 28'; // explicit — ensure mature
+    if(_idadePfx) _activateChipByPrefix('idade', _idadePfx);
+  }
+
+  // ── Pose-adaptive negative prompt ─────────────────────────────────────
+  try{
+    _poseNegExtra = _getPoseNegExtra(key);
+    rebuildNegPrompt();
+  }catch(e){}
+
   // Single comprehensive toast
   if(typeof toast === 'function')
-    toast('✦ Cenário, iluminação, película, lente e marcas ajustados pela pose', 2600);
+    toast('✦ Cenário, iluminação, película, lente, idade e marcas ajustados pela pose', 2800);
 }
 
 // ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
@@ -14072,6 +14203,12 @@ let savedPresets = JSON.parse(localStorage.getItem('saved-presets') || '[]');
 
 function savePresetsStorage(){ localStorage.setItem('saved-presets', JSON.stringify(savedPresets)); }
 
+// ── Preset helpers: support both legacy string presets and new {text,chips,pose} objects ──
+function _presetText(p)  { return typeof p === 'object' ? (p.text  || '') : p; }
+function _presetChips(p) { return typeof p === 'object' ? (p.chips || null) : null; }
+function _presetPose(p)  { return typeof p === 'object' ? (p.pose  || '')  : ''; }
+function _presetHasChips(p){ return typeof p === 'object' && p.chips && Object.values(p.chips).some(Boolean); }
+
 function renderPin(){
   const area = document.getElementById('presets-area');
   if(!area) return;
@@ -14079,11 +14216,15 @@ function renderPin(){
   if(savedPresets.length === 0){ area.classList.remove('has-items'); return; }
   area.classList.add('has-items');
   savedPresets.forEach((preset, idx) => {
+    const text = _presetText(preset);
+    const hasChips = _presetHasChips(preset);
+    const poseLbl = _presetPose(preset) ? ` · ${_presetPose(preset)}` : '';
+    const isActive = (activePreset === preset || activePreset === text);
     const chip = document.createElement('div');
-    chip.className = 'preset-chip' + (preset === activePreset ? ' active-preset' : '');
-    chip.title = preset;
-    chip.innerHTML = `<span class="preset-chip-icon">📌</span>
-      <span class="preset-chip-text">${preset}</span>
+    chip.className = 'preset-chip' + (isActive ? ' active-preset' : '');
+    chip.title = text + (hasChips ? '\n🎛️ Chips salvos' : '') + poseLbl;
+    chip.innerHTML = `<span class="preset-chip-icon">${hasChips ? '🎛️' : '📌'}</span>
+      <span class="preset-chip-text">${text.substring(0,60)}${text.length>60?'…':''}</span>
       <div class="preset-chip-actions">
         <button class="edit-btn" title="Editar" onclick="event.stopPropagation();editPreset(${idx})">✏️</button>
         <button title="Remover" onclick="event.stopPropagation();removePreset(${idx})">✕</button>
@@ -14096,35 +14237,75 @@ function renderPin(){
 function togglePin(){
   const desc = document.getElementById('user-description').value.trim();
   if(!desc){ toast('⚠️ Digite a descrição da personagem primeiro'); return; }
-  savedPresets.unshift(desc);
+  // Save full chip state + current pose alongside the text description
+  const _savedChips = Object.assign({}, quickChipState);
+  const _savedPoseKey = (typeof selectedPoseKey !== 'undefined') ? selectedPoseKey : '';
+  const _savedSkinMarks = (typeof skinMarksActive !== 'undefined') ? [...skinMarksActive] : [];
+  const presetObj = { text: desc, chips: _savedChips, pose: _savedPoseKey, skinMarks: _savedSkinMarks };
+  savedPresets.unshift(presetObj);
   savePresetsStorage();
-  activePreset = desc;
+  activePreset = presetObj;
   document.getElementById('user-description').value = '';
   renderPin();
-  toast('📌 Personagem salva e selecionada!');
+  const chipCount = Object.values(_savedChips).filter(Boolean).length;
+  toast(`📌 Personagem salva! ${chipCount > 0 ? `(${chipCount} chips + vestimenta preservados)` : ''}`);
 }
 
 function selectPreset(idx){
   const p = savedPresets[idx];
-  activePreset = (activePreset === p) ? '' : p;
+  const text = _presetText(p);
+  const isActive = (activePreset === p || activePreset === text);
+  if(isActive){
+    activePreset = '';
+    renderPin();
+    toast('⬜ Personagem desmarcada');
+    return;
+  }
+  activePreset = p;
+  // Restore chip state if saved
+  const chips = _presetChips(p);
+  if(chips){
+    Object.assign(quickChipState, chips);
+    document.querySelectorAll('.quick-chip').forEach(el => {
+      const cat = el.dataset.cat;
+      if(!cat || cat === 'skin_mark') return;
+      if(quickChipState[cat] === el.dataset.val) el.classList.add('active');
+      else el.classList.remove('active','auto-set');
+    });
+    // Restore skin marks
+    const sm = (typeof p === 'object' && p.skinMarks) ? p.skinMarks : [];
+    if(typeof skinMarksActive !== 'undefined'){
+      skinMarksActive.clear();
+      document.querySelectorAll('.quick-chip[data-cat="skin_mark"]').forEach(el => el.classList.remove('active','auto-set'));
+      sm.forEach(v => {
+        skinMarksActive.add(v);
+        const el = document.querySelector(`.quick-chip[data-cat="skin_mark"][data-val="${v}"]`);
+        if(el) el.classList.add('active');
+      });
+    }
+    toast('✅ Personagem + chips restaurados!');
+  } else {
+    toast('✅ Personagem selecionada');
+  }
   renderPin();
-  toast(activePreset ? '✅ Personagem selecionada' : '⬜ Personagem desmarcada');
 }
 
 function editPreset(idx){
   const ta = document.getElementById('user-description');
-  ta.value = savedPresets[idx];
-  if(activePreset === savedPresets[idx]) activePreset = '';
+  const p = savedPresets[idx];
+  ta.value = _presetText(p);
+  if(activePreset === p || activePreset === _presetText(p)) activePreset = '';
   savedPresets.splice(idx, 1);
   savePresetsStorage();
   renderPin();
   ta.focus();
   ta.setSelectionRange(ta.value.length, ta.value.length);
-  toast('✏️ Edite e clique em Fixar para salvar');
+  toast('✏️ Edite e clique em Fixar para salvar (chips serão re-capturados)');
 }
 
 function removePreset(idx){
-  if(activePreset === savedPresets[idx]) activePreset = '';
+  const p = savedPresets[idx];
+  if(activePreset === p || activePreset === _presetText(p)) activePreset = '';
   savedPresets.splice(idx, 1);
   savePresetsStorage();
   renderPin();
@@ -14135,6 +14316,64 @@ function removePreset(idx){
 function clearPin(){ activePreset = ''; renderPin(); }
 
 renderPin();
+
+// ── SEED MEMORY ──────────────────────────────────────────────────────────
+let seedMemory = JSON.parse(localStorage.getItem('pgen_seed_memory') || '[]');
+
+function saveSeedMemory(){
+  localStorage.setItem('pgen_seed_memory', JSON.stringify(seedMemory.slice(0,30)));
+}
+
+function extractSeedFromPrompt(promptText){
+  const m = promptText.match(/\[seed:\s*(\d+)\]/);
+  return m ? parseInt(m[1],10) : null;
+}
+
+function addToSeedMemory(histEntry){
+  const seed = extractSeedFromPrompt(histEntry.prompt);
+  if(!seed){ toast('⚠️ Nenhuma seed neste prompt (gere com SD para obter seed)'); return; }
+  // Check for duplicate
+  if(seedMemory.some(s => s.seed === seed)){ toast('⚠️ Seed já salva!'); return; }
+  seedMemory.unshift({
+    seed,
+    mode: histEntry.mode,
+    pose: histEntry.pose,
+    ts: histEntry.ts,
+    preview: histEntry.prompt.substring(0, 80)
+  });
+  saveSeedMemory();
+  renderSeedMemory();
+  toast(`⭐ Seed ${seed} salva na memória!`);
+}
+
+function removeSeed(idx){
+  seedMemory.splice(idx, 1);
+  saveSeedMemory();
+  renderSeedMemory();
+}
+
+function copySeed(seed){
+  navigator.clipboard.writeText(String(seed));
+  toast(`📋 Seed ${seed} copiada!`);
+}
+
+function renderSeedMemory(){
+  const panel = document.getElementById('seed-memory-panel');
+  if(!panel) return;
+  if(!seedMemory.length){
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = 'block';
+  const list = document.getElementById('seed-memory-list');
+  if(!list) return;
+  list.innerHTML = seedMemory.map((s,i) => `
+    <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #e2e8f0;font-size:0.72em;">
+      <span style="font-family:monospace;font-weight:700;color:#7c3aed;cursor:pointer;flex-shrink:0;" onclick="copySeed(${s.seed})" title="Copiar seed">⭐ ${s.seed}</span>
+      <span style="color:#94a3b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${s.preview}">${s.pose} · ${s.preview.substring(0,40)}…</span>
+      <span style="cursor:pointer;color:#dc2626;flex-shrink:0;" onclick="removeSeed(${i})">✕</span>
+    </div>`).join('');
+}
 
 // ── HISTORY ───────────────────────────────────────────────────────────────
 let promptHistory = JSON.parse(localStorage.getItem('prompt-history') || '[]');
@@ -14158,17 +14397,26 @@ function renderHistory(){
     item.className = 'history-item';
     const d = new Date(e.ts);
     const ts = d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + ' ' + d.toLocaleDateString('pt-BR');
-    item.innerHTML = `<div class="history-item-meta"><span>${ts} · ${e.mode.toUpperCase()} · ${e.pose}</span><span style="cursor:pointer;color:#dc2626" onclick="removeHistory(${i})">✕</span></div><div class="history-item-text">${e.prompt.substring(0,120)}…</div>`;
+    const hasSeed = /\[seed:\s*\d+\]/.test(e.prompt);
+    item.innerHTML = `<div class="history-item-meta">
+      <span>${ts} · ${e.mode.toUpperCase()} · ${e.pose}</span>
+      <div style="display:flex;gap:4px;align-items:center;">
+        ${hasSeed ? `<span style="cursor:pointer;color:#7c3aed;font-size:0.85em;" title="Salvar seed na memória" onclick="event.stopPropagation();addToSeedMemory(promptHistory[${i}])">⭐</span>` : ''}
+        <span style="cursor:pointer;color:#dc2626" onclick="event.stopPropagation();removeHistory(${i})">✕</span>
+      </div>
+    </div><div class="history-item-text">${e.prompt.substring(0,120)}…</div>`;
     item.addEventListener('click', e2 => {
-      if(e2.target.tagName === 'SPAN' && e2.target.style.color) return;
+      if(e2.target.tagName === 'SPAN' && (e2.target.style.color || e2.target.title)) return;
       document.getElementById('prompt').value = e.prompt;
       document.getElementById('output-card').classList.add('visible');
       updateTokenCount(e.prompt);
+      liveAnalyze();
       window.scrollTo({top: document.getElementById('output-card').offsetTop - 20, behavior:'smooth'});
       toast('📋 Prompt restaurado do histórico!');
     });
     list.appendChild(item);
   });
+  renderSeedMemory();
 }
 
 function removeHistory(i){
@@ -14184,13 +14432,29 @@ function clearHistory(){
 }
 
 renderHistory();
+renderSeedMemory();
 
-// ── TOKEN / CHAR COUNTER ──────────────────────────────────────────────────
+// ── TOKEN / CHAR COUNTER (CLIP budget tracker) ───────────────────────────
 function updateTokenCount(text){
   const words = text.trim() ? text.trim().split(/[\s,]+/).filter(Boolean).length : 0;
   const chars = text.length;
   const el = document.getElementById('token-count');
-  if(el) el.textContent = `~${words} tokens · ${chars} caracteres`;
+  if(!el) return;
+  // CLIP token estimate: each comma-separated term averages ~1.3–1.5 subword tokens
+  // We count terms to estimate chunk-1 fill (75 tokens ≈ ~50-55 average terms)
+  const terms = text.trim() ? text.split(',').map(t=>t.trim()).filter(Boolean).length : 0;
+  const clipEst = Math.round(terms * 1.35); // rough estimate per term
+  const overLimit = clipEst > 75;
+  const nearLimit = clipEst >= 55 && clipEst <= 75;
+  const icon  = overLimit ? '🔴' : nearLimit ? '🟡' : '🟢';
+  const color = overLimit ? '#dc2626' : nearLimit ? '#d97706' : '#16a34a';
+  el.innerHTML = `~${words} palavras &nbsp;|&nbsp; ${icon} CLIP: ~${clipEst}/75 tokens`;
+  el.style.color = color;
+  el.title = overLimit
+    ? `⚠️ Prompt tem ~${clipEst} tokens — excede o chunk 1 CLIP (75). Termos além do limite recebem atenção MUITO menor. Use 🔀 Otimizar Tokens.`
+    : nearLimit
+      ? `⚡ ~${clipEst}/75 tokens — próximo do limite do chunk 1 CLIP. Termos adicionais entram no chunk 2 (atenção reduzida).`
+      : `✅ ~${clipEst}/75 tokens — dentro da faixa ideal para máximo efeito CLIP.`;
 }
 
 // ── RANDOM TOTAL ─────────────────────────────────────────────────────────────
@@ -14347,7 +14611,7 @@ async function generateVariations(){
 // ══════════════════════════════════════════════════════════════════════════════
 
 const _AUTO_DEFAULTS = {
-  autoGenerate:  false,
+  autoGenerate:  true,
   autoCopy:      true,
   autoFillDesc:  true,
   autoLighting:  true,
