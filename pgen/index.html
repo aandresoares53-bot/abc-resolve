@@ -9091,6 +9091,8 @@ const POSES = {
 let selectedPoseKey = null;
 // Cached pose outfit — computed once per generate so scene + outfit are coherent
 let _cachedPoseOutfit = '';
+// Per-pose outfit map — consistent outfit per pose key within a session (🔀 cycles/updates it)
+const _POSE_OUTFIT_MAP = {};
 
 function setPose(key){
   selectedPose = key ? POSES[key] : null;
@@ -12408,15 +12410,22 @@ function buildPrompt(englishText, rawPT){
   let _sdClothingTerms = '';
 
   if(_wantsClothing){
-    // Priority 1: user explicitly described clothing — reinforce with FULL context (keep adjectives/colors)
-    // Use up to 80 chars of expanded that contain clothing terms to preserve "red tight dress", "ripped jeans" etc.
-    const _clothingCtx = _clothingMatches.slice(0, 4).map(m => {
-      // Find the phrase containing this garment word (up to 5 words around it)
-      const re = new RegExp(`(?:\\w+\\s+){0,3}${m}(?:\\s+\\w+){0,3}`, 'i');
-      const match = re.exec(expanded);
-      return match ? match[0].trim() : m;
-    });
-    const _outfitStr = [...new Set(_clothingCtx.map(s => s.toLowerCase()))].join(', ');
+    // Priority 1: clothing is in the expanded prompt — reinforce it
+    // If auto-outfit was set by pose selection, use the FULL chipState.outfit string (preserves "garter belt",
+    // "stockings", "suspender belt" etc. that _clothingRe regex would miss or truncate).
+    // If user typed clothing manually, extract with context (preserves "red tight dress", "ripped jeans" etc.)
+    let _outfitStr;
+    if(_autoOutfitActive && chipState.outfit){
+      _outfitStr = chipState.outfit; // full string — don't lose detail via regex extraction
+    } else {
+      const _clothingCtx = _clothingMatches.slice(0, 4).map(m => {
+        // Find the phrase containing this garment word (up to 5 words around it)
+        const re = new RegExp(`(?:\\w+\\s+){0,3}${m}(?:\\s+\\w+){0,3}`, 'i');
+        const match = re.exec(expanded);
+        return match ? match[0].trim() : m;
+      });
+      _outfitStr = [...new Set(_clothingCtx.map(s => s.toLowerCase()))].join(', ');
+    }
     // SD-weight version for parts[] — maximum weight for clothing adherence
     _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8), (fully clothed:1.8),`;
     // Plain text prepended to expanded — used by MJ/FLUX/GPT (they don't use SD weight syntax)
@@ -12434,8 +12443,8 @@ function buildPrompt(englishText, rawPT){
       selectedPoseKey === 'nature-waterfall-back'
     );
     if(!_isNaturallyNude){
-      // Priority 3: pose-key based outfit — use cached value (set at generate-start) for scene/outfit coherence
-      const _poseOutfit = _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+      // Priority 3: pose-key based outfit — prefer _POSE_OUTFIT_MAP (session-consistent), then cached, then fresh
+      const _poseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
       // Priority 4: scene-based outfit fallback (beach→bikini, indoor→lingerie, etc.)
       const _sceneOutfit = expandScene._lastSceneOutfit || '';
       const _autoOutfit = _poseOutfit || _sceneOutfit;
@@ -14043,8 +14052,12 @@ let _autoOutfitKey = null; // pose key this outfit was computed for
 function _showAutoOutfit(poseKey){
   if(!poseKey){ _clearAutoOutfit(); return; }
 
-  // Compute the outfit for this pose
-  const outfit = typeof getPoseSensualOutfit === 'function' ? getPoseSensualOutfit(poseKey) : '';
+  // Use cached outfit for this pose key (session-consistent clothing), or compute fresh and cache
+  let outfit = _POSE_OUTFIT_MAP[poseKey];
+  if(!outfit){
+    outfit = typeof getPoseSensualOutfit === 'function' ? getPoseSensualOutfit(poseKey) : '';
+    if(outfit) _POSE_OUTFIT_MAP[poseKey] = outfit;
+  }
   const outfitRow = document.getElementById('outfit-auto-row');
   const outfitText = document.getElementById('outfit-auto-text');
 
@@ -14077,6 +14090,8 @@ function _cycleAutoOutfit(){
   if(!selectedPoseKey) return;
   const outfit = typeof getPoseSensualOutfit === 'function' ? getPoseSensualOutfit(selectedPoseKey) : '';
   if(!outfit) return;
+  // Update map so next time this pose is selected it shows the same outfit (consistent until next 🔀)
+  _POSE_OUTFIT_MAP[selectedPoseKey] = outfit;
   const outfitText = document.getElementById('outfit-auto-text');
   if(outfitText) outfitText.textContent = outfit;
   chipState.outfit = outfit;
