@@ -341,6 +341,19 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 [data-theme="dark"] .pose-preview-name{color:#86efac;}
 [data-theme="dark"] .pose-preview-outfit{color:#4ade80;}
 [data-theme="dark"] .pose-preview-scene{color:#a3e635;}
+/* ── Outfit auto-badge row ─────────────────────────────────────── */
+.outfit-auto-row{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;}
+.outfit-auto-badge{display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border:1.5px solid #86efac;border-radius:20px;padding:4px 10px;font-size:0.72em;font-weight:700;color:#166534;cursor:default;user-select:none;max-width:100%;flex:1;}
+.outfit-auto-badge span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.outfit-auto-btn{flex-shrink:0;background:none;border:1.5px solid #86efac;border-radius:20px;padding:3px 8px;font-size:0.7em;font-weight:700;color:#166534;cursor:pointer;transition:background 0.15s,color 0.15s;white-space:nowrap;}
+.outfit-auto-btn:hover{background:#bbf7d0;color:#14532d;}
+.outfit-clear-btn{flex-shrink:0;background:none;border:1.5px solid #fca5a5;border-radius:20px;padding:3px 8px;font-size:0.7em;font-weight:700;color:#dc2626;cursor:pointer;transition:background 0.15s;}
+.outfit-clear-btn:hover{background:#fee2e2;}
+[data-theme="dark"] .outfit-auto-badge{background:#052e16;border-color:#166534;color:#4ade80;}
+[data-theme="dark"] .outfit-auto-btn{border-color:#166534;color:#4ade80;}
+[data-theme="dark"] .outfit-auto-btn:hover{background:#14532d;color:#86efac;}
+[data-theme="dark"] .outfit-clear-btn{border-color:#7f1d1d;color:#f87171;}
+[data-theme="dark"] .outfit-clear-btn:hover{background:#450a0a;}
 
 /* ── QUICK CHIPS (etnia / corpo / cabelo) ─────────────────────── */
 .quick-chips-wrap{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:12px 14px;margin-bottom:10px;}
@@ -2221,9 +2234,15 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   <!-- POSE PREVIEW PANEL -->
   <div class="pose-preview-card" id="pose-preview-card" style="display:none;">
     <div class="pose-preview-name" id="pose-preview-name"></div>
+    <div class="outfit-auto-row" id="outfit-auto-row" style="display:none;">
+      <div class="outfit-auto-badge" id="outfit-auto-badge" title="Vestimenta auto-sugerida pela pose">
+        <span>👗</span><span id="outfit-auto-text"></span>
+      </div>
+      <button class="outfit-auto-btn" onclick="_cycleAutoOutfit()" title="Nova sugestão de roupa">🔀 Outra</button>
+      <button class="outfit-clear-btn" onclick="_clearAutoOutfit()" title="Remover sugestão de roupa">✕</button>
+    </div>
     <div class="pose-preview-outfit" id="pose-preview-outfit" style="display:none"></div>
     <div class="pose-preview-scene" id="pose-preview-scene" style="display:none"></div>
-    <!-- Outra roupa button removed: outfit defined in character description -->
   </div>
 
 
@@ -9111,12 +9130,14 @@ function setPose(key){
     if(key && POSES[key]){
       const p = POSES[key];
       document.getElementById('pose-preview-name').textContent = '🧘 ' + (p.label || key);
-      const outfitEl = document.getElementById('pose-preview-outfit');
-      outfitEl.textContent = ''; // outfit defined in description
-      document.getElementById('pose-preview-scene').textContent = ''; // scene defined in description
+      document.getElementById('pose-preview-outfit').textContent = '';
+      document.getElementById('pose-preview-scene').textContent = '';
       previewCard.style.display = 'block';
+      // ── Auto-outfit: compute and show immediately ──────────────
+      _showAutoOutfit(key);
     } else {
       previewCard.style.display = 'none';
+      _clearAutoOutfit();
     }
   }
   // Atualiza auto-descrição para refletir a ordem: etnia → pose
@@ -11749,88 +11770,573 @@ function getPoseSensualOutfit(key){
   if(!key) return '';
 
   // ── Explicitly sexual / naturally nude poses — no outfit injection ────────
-  // buildPrompt already skips outfit when _wantsNude=true, but defence-in-depth:
   const _explicitPfx = /^(shower-|bath-|sex-|anal-|oral-|multi-|cumshot-|doggy-|prone-bone|spoon$|scissors$|anvil$|leapfrog$|mating-press$|pile-driver$|reverse-missionary$|lap-dance$|lotus-nsfw$|position-69$|cowgirl$|cowgirl-|reverse-cowgirl$|reverse-cowgirl-|missionary$|missionary-)/;
   if(_explicitPfx.test(key)) return '';
 
-  // ── Pose definitions already embed clothing — let them speak ─────────────
-  // fantasy-*, alt-*, outfit-*, shemale-bulge-* all have garments in sd_start/sd_end
+  // ── Pose definitions already embed clothing ───────────────────────────────
   if(/^(fantasy-|alt-|outfit-|shemale-)/.test(key)) return '';
 
-  // ── Helper ────────────────────────────────────────────────────────────────
   const R = arr => arr[Math.floor(Math.random() * arr.length)];
 
-  // ── WATER / POOL ──────────────────────────────────────────────────────────
-  if(key.startsWith('water-') || key.startsWith('pool-'))
-    return R(['white bikini wet clinging to skin', 'black string bikini, wet swimwear', 'colorful two-piece bikini, wet']);
+  // ══════════════════════════════════════════════════════════════════════════
+  // WATER / AQUÁTICO
+  // ══════════════════════════════════════════════════════════════════════════
 
   // ── BEACH ─────────────────────────────────────────────────────────────────
+  if(key === 'beach-topless-back')
+    return R(['tiny G-string bikini bottom, bare back', 'micro thong bikini bottom, topless back', 'string bikini bottom pulled up high, topless from behind']);
   if(key.startsWith('beach-'))
-    return R(['string bikini', 'white bikini', 'colorful triangle bikini top and bottoms', 'tiny bikini bottoms, bikini top']);
+    return R([
+      'tiny string bikini, sun-kissed skin, tan lines',
+      'white triangle bikini top and matching bottoms, tan lines visible',
+      'colorful high-cut Brazilian bikini, side-tie bottoms',
+      'barely-there micro bikini, string ties',
+      'strapless bandeau bikini top and low-rise bikini bottoms',
+      'skimpy bikini, sheer beach cover-up open and flowing',
+      'neon Brazilian string bikini, bold colors',
+      'floral print bandeau bikini, high-cut bottoms',
+      'white string bikini, wet and clinging, semi-transparent',
+      'crocheted bikini, boho beach style',
+    ]);
+
+  // ── POOL / WATER ──────────────────────────────────────────────────────────
+  if(key.startsWith('water-beach') || key.startsWith('water-pool') || key.startsWith('water-ocean') || key.startsWith('water-bikini'))
+    return R([
+      'string bikini, soaking wet, clinging to skin',
+      'white bikini, wet and transparent, tan body',
+      'colorful two-piece bikini, dripping wet',
+      'Brazilian-cut bikini, wet swimwear showing curves',
+      'metallic silver bikini, glistening wet skin',
+    ]);
+  if(key.startsWith('water-') || key.startsWith('pool-'))
+    return R([
+      'white bikini clinging to wet skin, see-through wet fabric',
+      'black string bikini, soaking wet',
+      'colorful two-piece bikini, dripping wet',
+      'Brazilian cut high-leg bikini, wet swimwear',
+      'metallic silver one-piece swimsuit, wet shimmering skin',
+      'sheer white one-piece swimsuit, wet and clinging',
+      'tiny red bikini, water beading on skin',
+    ]);
+
+  // ── RAIN ──────────────────────────────────────────────────────────────────
+  if(key === 'rain' || key.startsWith('rain-') || key.includes('rain'))
+    return R([
+      'white summer dress soaked in rain, see-through wet fabric clinging to body',
+      'white fitted shirt soaked wet and transparent, clinging to curves',
+      'wet light sundress clinging to skin, fabric translucent from rain',
+      'soaked white blouse and tiny shorts, drenched, sheer fabric',
+      'wet white t-shirt clinging to body, shorts, bare legs',
+    ]);
+
+  // ── MERMAID ───────────────────────────────────────────────────────────────
+  if(key === 'mermaid' || key.startsWith('mermaid-'))
+    return R([
+      'iridescent metallic shell bra and mermaid-scale sequin bottoms',
+      'holographic bikini top with shimmering mermaid tail fabric',
+      'shell bra and jeweled sequin mermaid-scale skirt',
+      'ocean-blue metallic bra top and flowing tail-like skirt',
+    ]);
+
+  // ── SUNSET ────────────────────────────────────────────────────────────────
+  if(key === 'sunset' || key === 'sunset-silhouette' || key.startsWith('sunset-'))
+    return R([
+      'flowy maxi dress in warm sunset tones, backlit silhouette',
+      'floral sundress, thin fabric backlit by golden hour',
+      'string bikini at golden hour, warm light on skin',
+      'white sheer maxi dress lit by orange sunset',
+      'boho linen dress, open back, warm lighting',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // FITNESS / SPORT
+  // ══════════════════════════════════════════════════════════════════════════
 
   // ── YOGA ──────────────────────────────────────────────────────────────────
   if(key.startsWith('yoga-'))
-    return R(['black yoga pants and sports bra', 'tight yoga leggings and strappy crop sports bra', 'form-fitting yoga pants and sports bra', 'high-waist yoga leggings and athletic bralette']);
+    return R([
+      'black high-waist yoga pants and matching strappy sports bra',
+      'seamless form-fitting yoga set, second-skin fit, pastel colors',
+      'pastel lavender yoga leggings and strappy athletic bralette',
+      'high-compression yoga leggings and racerback sports bra',
+      'yoga shorts and crop sports bra, barefoot on yoga mat',
+      'floral printed yoga pants and matching sports bra',
+      'white yoga leggings and white sports bra, translucent when stretched',
+      'dark green yoga set: high-waist pants and crop bra, second skin',
+      'sheer mesh-panel yoga leggings and sports bra',
+    ]);
 
   // ── GYM / FITNESS ─────────────────────────────────────────────────────────
   if(key.startsWith('gym-'))
-    return R(['sports bra and tight leggings', 'gym shorts and crop sports bra', 'athletic leggings and fitted crop top', 'gym wear: sports bra and high-waist leggings']);
+    return R([
+      'sports bra and high-waist compression leggings, gym shoes',
+      'gym micro-shorts and fitted crop sports bra, bare midriff',
+      'athletic high-waist leggings and fitted crop top, gym sneakers',
+      'compression shorts and sports bra, training sneakers',
+      'gym tank top tied up exposing midriff, high-waist leggings',
+      'seamless workout set: sports bra and flare leggings',
+      'mesh-insert gym leggings and sports bra, athletic build',
+      'neon-colored sports bra and matching leggings',
+    ]);
 
   // ── LEGGING ───────────────────────────────────────────────────────────────
   if(key.startsWith('legging-'))
-    return R(['tight yoga leggings and sports bra', 'high-waist leggings and crop top', 'black leggings and athletic bra']);
+    return R([
+      'tight black compression leggings and sports bra, bare midriff',
+      'high-waist shaping leggings and crop athletic top',
+      'sheer mesh-panel leggings and sports bra, see-through panels',
+      'colorful printed leggings and white sports bra',
+      'seamless second-skin leggings and strappy bralette',
+      'snakeskin-print high-waist leggings and sports bra',
+      'wet-look vinyl leggings and crop sports bra',
+    ]);
 
-  // ── DANCE / CLUB ──────────────────────────────────────────────────────────
-  if(key.startsWith('dance-'))
-    return R(['tight bodycon dress', 'short mini dress and heels', 'crop top and micro mini skirt', 'sequin tight dress']);
+  // ── TWERK ─────────────────────────────────────────────────────────────────
+  if(key.startsWith('twerk-'))
+    return R([
+      'micro booty shorts and matching crop sports bra',
+      'high-cut cheeky shorts and tight crop top',
+      'Brazilian cheeky shorts and sports bra, bare midriff',
+      'tiny denim micro shorts and crop top',
+      'neon booty shorts and matching crop sports bra',
+      'thong leotard, high-cut sides',
+    ]);
 
-  // ── JEANS ─────────────────────────────────────────────────────────────────
-  if(key.startsWith('jeans-'))
-    return R(['tight ripped jeans and crop top', 'low-rise jeans and fitted top, heels', 'skinny jeans and off-shoulder top']);
+  // ── BALLET / DANCE ────────────────────────────────────────────────────────
+  if(key.startsWith('ballet-'))
+    return R([
+      'white ballet leotard and flowing tutu skirt, ballet pointe shoes',
+      'pink ballet bodysuit and sheer ballet skirt, hair in bun',
+      'black dance leotard and sheer tights, ballet flats',
+      'ballet wrap skirt and form-fitting leotard, ballet shoes',
+      'sheer chiffon ballet skirt and fitted leotard, ribbon ties',
+    ]);
 
-  // ── SELFIE — specific contexts ────────────────────────────────────────────
-  if(key.startsWith('selfie-gym'))    return R(['sports bra and leggings', 'tight gym shorts and sports bra']);
-  if(key.startsWith('selfie-beach') || key.startsWith('selfie-pool'))  return 'bikini';
-  if(key === 'selfie-bathroom')       return R(['towel wrapped around body', 'lingerie']);
-  if(key === 'selfie-shower-steam-close') return 'towel or bare shoulders';
-  if(key === 'selfie-changing-room-lingerie') return 'lingerie set';
-  if(key.startsWith('selfie-mirror') || key.startsWith('selfie-'))
-    return R(['lingerie', 'lace bralette and panties', 'casual crop top and shorts', 'silk slip dress']);
+  // ── AERIAL / ACROBATIC ────────────────────────────────────────────────────
+  if(key === 'aerial-silk' || key.startsWith('aerial-'))
+    return R([
+      'fitted sparkle acrobatic unitard, second-skin fit',
+      'performance bodysuit with rhinestone detail, acrobatic',
+      'athletic leotard with silk wrap detail',
+      'fitted dance bodysuit, metallic fabric, acrobatic style',
+    ]);
 
-  // ── CAR / MOTO ────────────────────────────────────────────────────────────
-  if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-'))
-    return R(['tight mini dress', 'crop top and denim shorts, heels', 'bodycon dress']);
+  // ── SPLITS / CONTORTIONIST ────────────────────────────────────────────────
+  if(key === 'splits' || key.startsWith('splits-') || key.includes('split') || key === 'contortionist-split-back' || key.startsWith('contortionist-'))
+    return R([
+      'gymnastics bodysuit, high-cut sides, bare legs',
+      'dance leotard and sheer tights, ballet-inspired',
+      'yoga shorts and sports bra, flexibility pose',
+      'dance shorts and fitted crop top, gymnast outfit',
+    ]);
 
-  // ── OUTDOOR / NATURE ──────────────────────────────────────────────────────
-  if(key.startsWith('nature-') || key.startsWith('outdoor-'))
-    return R(['flowy summer dress', 'floral sundress', 'casual crop top and denim shorts', 'light linen outfit']);
+  // ── ATHLETIC / BACKBEND ───────────────────────────────────────────────────
+  if(key === 'athletic-pose' || key.startsWith('backbend-') || key === 'backbend-extreme' || key === 'backbend-floor')
+    return R([
+      'black sports bra and high-waist leggings, athletic pose',
+      'gymnastics bodysuit, form-fitting, high-cut',
+      'crop sports bra and yoga shorts',
+      'athletic crop top and workout leggings',
+    ]);
 
-  // ── MIRROR ────────────────────────────────────────────────────────────────
-  if(key.startsWith('mirror-'))
-    return R(['lace lingerie set', 'silk robe barely open over lingerie', 'bodysuit', 'sheer lingerie and garter belt']);
-
-  // ── MODEL / EDITORIAL ────────────────────────────────────────────────────
-  if(key.startsWith('model-'))
-    return R(['editorial fashion dress', 'high-fashion bodycon dress and heels', 'elegant fashion outfit', 'sleek one-shoulder dress, fashion model']);
+  // ══════════════════════════════════════════════════════════════════════════
+  // DANCE / ENTERTAINMENT
+  // ══════════════════════════════════════════════════════════════════════════
 
   // ── POLE DANCE ───────────────────────────────────────────────────────────
   if(key.startsWith('pole-dance') || key === 'dance-pole-leg-wrap' || key === 'dance-pole-spin')
-    return R(['pole dance shorts and sports bra', 'tiny shorts and crop bra top', 'bikini bottoms and sports bra']);
+    return R([
+      'tiny pole dance shorts and matching sports bra top',
+      'shimmer booty shorts and sequined crop bra',
+      'high-cut bikini bottoms and sports bra, pole dance style',
+      'sequin micro shorts and glitter crop bra',
+      'glitter pole dance set: cheeky shorts and bra top',
+    ]);
+
+  // ── JAZZ / CONTEMPORARY DANCE ────────────────────────────────────────────
+  if(key.startsWith('jazz-dance') || key === 'jazz-dance')
+    return R([
+      'jazz dance leotard and sheer dance tights',
+      'dance shorts and fitted crop top, jazz style',
+      'jazz pants and strappy crop top, dance heels',
+      'dance bodysuit with fishnets and dance sneakers',
+    ]);
+
+  // ── DANCE FLOOR / CLUB ────────────────────────────────────────────────────
+  if(key.startsWith('dance-') || key === 'club-wall' || key === 'club-wall-pose' || key === 'dance-bartop-standing')
+    return R([
+      'tight sequin mini dress and stiletto heels',
+      'crop top and micro mini skirt, high heels, club style',
+      'bodycon party dress, form-fitting, thigh-high',
+      'sparkle bandage dress and strappy heels',
+      'satin slip mini dress, barely there',
+      'off-shoulder bodycon mini dress and ankle-strap heels',
+      'metallic crop top and micro skirt, club night',
+      'sheer black mini dress over lingerie, heels',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // OUTDOOR / STREET
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── NATURE / OUTDOOR ──────────────────────────────────────────────────────
+  if(key.startsWith('nature-') || key.startsWith('outdoor-'))
+    return R([
+      'flowy white summer dress, sheer in natural light',
+      'floral sundress, light thin fabric, barefoot',
+      'casual denim shorts and fitted crop top',
+      'boho maxi dress, low-cut back',
+      'linen shorts and flowy open blouse',
+      'white linen dress, backlit by natural light',
+      'tie-dye mini dress, carefree outdoor style',
+      'crochet crop top and high-waist shorts, boho',
+    ]);
+
+  // ── ROOFTOP / URBAN ───────────────────────────────────────────────────────
+  if(key === 'rooftop' || key === 'urban' || key.startsWith('rooftop-') || key.startsWith('urban-'))
+    return R([
+      'tight mini dress and stiletto heels, city skyline backdrop',
+      'crop top and high-waist mini skirt, stiletto heels',
+      'sleek bodycon dress, urban night style',
+      'tight jeans and blazer open with no top underneath, heels',
+      'sleek short cocktail dress and pumps',
+      'leather mini skirt and fitted crop top, edgy urban',
+    ]);
+
+  // ── WALKING ───────────────────────────────────────────────────────────────
+  if(key === 'walking' || key.startsWith('walking-'))
+    return R([
+      'tight mini dress and heels, city street',
+      'crop top and high-waist shorts, heels, summer look',
+      'fitted skinny jeans and form-fitting blouse',
+      'bodycon mini skirt and fitted blouse',
+      'flowy summer dress, fabric moving while walking',
+      'wide-leg pants and fitted top, fashionable street style',
+    ]);
+
+  // ── JEANS ─────────────────────────────────────────────────────────────────
+  if(key.startsWith('jeans-'))
+    return R([
+      'tight ripped jeans and fitted crop top',
+      'low-rise jeans showing hip bones and small crop top, midriff',
+      'high-waist skinny jeans and off-shoulder fitted top',
+      'distressed jeans and fitted tank top',
+      'low-cut jeans and sheer blouse, bra visible',
+      'wide-leg jeans and cropped fitted top',
+      'mom jeans half-rolled and fitted white crop top',
+    ]);
+
+  // ── CAR / MOTO ────────────────────────────────────────────────────────────
+  if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-'))
+    return R([
+      'tight mini dress and heels, leaning on luxury car',
+      'leather jacket open over sports bra and tight micro shorts',
+      'crop top and denim micro shorts, heels, car pose',
+      'racing-inspired bodysuit, tight-fitting, zipper detail',
+      'bodycon mini dress, automotive backdrop',
+      'tight jeans and small crop top, leather boots',
+      'race queen outfit: bodycon mini dress and thigh boots',
+    ]);
+
+  // ── PINUP ─────────────────────────────────────────────────────────────────
+  if(key === 'pinup' || key.startsWith('pinup-'))
+    return R([
+      'vintage pin-up high-waist shorts and halter top, retro style',
+      'retro polka-dot bikini, classic pin-up pose',
+      'classic red halter pin-up dress with full skirt',
+      'rockabilly pin-up outfit: high-waist skirt and tied blouse',
+      'retro one-piece swimsuit in red, pin-up styling',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // BOUDOIR / INTIMATE
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── MIRROR ────────────────────────────────────────────────────────────────
+  if(key.startsWith('mirror-'))
+    return R([
+      'black lace lingerie set: push-up bra and matching thong',
+      'silk robe barely open revealing lace lingerie underneath',
+      'sheer lace bodysuit with thong back',
+      'corset and garter belt with sheer stockings',
+      'satin slip lingerie, thin spaghetti straps',
+      'strappy black bra and high-waist lace panties',
+      'sheer negligee with lace trim and garter belt',
+      'white lace lingerie set: balconette bra and bikini panties',
+    ]);
+
+  // ── BED / EDGE OF BED ─────────────────────────────────────────────────────
+  if(key.startsWith('edge-of-bed-') || key === 'sitting-edge' || key.startsWith('sitting-bed') || key === 'sitting-open-legs-bed')
+    return R([
+      'satin slip camisole and matching shorts, boudoir style',
+      'white lace lingerie on silky sheets',
+      'oversized white shirt barely covering body, no pants',
+      'silk negligee, thin straps, boudoir mood',
+      'lace bodysuit, thong back, kneeling on bed',
+      'sheer babydoll lingerie with matching panties',
+      'black lace bra and matching briefs, boudoir',
+    ]);
+
+  // ── SOFA / COUCH ─────────────────────────────────────────────────────────
+  if(key.includes('sofa') || key.includes('couch') || key.includes('counter') || key.includes('windowsill') || key.includes('stairs'))
+    return R([
+      'silk lingerie set, lounging boudoir style',
+      'satin robe half-open over lace lingerie',
+      'lace bodysuit, bare legs, draped on surface',
+      'elegant sheer negligee, soft lighting',
+      'fitted slip dress, barely covering, casual sensual',
+    ]);
+
+  // ── LOTUS-LAP (intimate lap sitting) ──────────────────────────────────────
+  if(key === 'lotus-lap')
+    return R([
+      'sheer lace lingerie set, intimate close pose',
+      'silk slip camisole and panties',
+      'strappy lingerie bodysuit, intimate',
+      'lace bra and matching high-waist panties',
+    ]);
+
+  // ── CHAIR POSES ───────────────────────────────────────────────────────────
+  if(key.startsWith('chair-') || key.includes('straddle-chair') || key.includes('kneel-reverse-chair') || key.includes('reverse-chair'))
+    return R([
+      'tight mini dress riding up, straddling chair',
+      'lingerie set, straddling chair provocatively',
+      'tight crop top and micro shorts, sitting astride chair',
+      'satin bra and high-waist panties, draped on chair',
+      'bodycon dress, sitting backwards on chair',
+      'sheer lace bodysuit, posing on chair',
+    ]);
+
+  // ── TABLE POSES ───────────────────────────────────────────────────────────
+  if(key.includes('table') || key.includes('counter'))
+    return R([
+      'tight mini dress hiked up while seated on table edge',
+      'lingerie set, sitting provocatively on table',
+      'crop top and micro shorts, legs dangling from surface',
+      'sheer bodysuit, draped on table edge',
+    ]);
+
+  // ── SELFIE — specific contexts ────────────────────────────────────────────
+  if(key.startsWith('selfie-gym') || key === 'selfie-gym-mirror' || key === 'selfie-gym-squat')
+    return R(['sports bra and tight leggings, gym mirror selfie', 'gym shorts and crop sports bra, post-workout selfie', 'athletic set: high-waist leggings and sports bra']);
+  if(key.startsWith('selfie-beach') || key.startsWith('selfie-pool') || key === 'selfie-poolside')
+    return R(['string bikini, beach selfie', 'colorful two-piece bikini, poolside', 'tiny bikini, sun-kissed skin, outdoor selfie']);
+  if(key === 'selfie-bathroom-full' || key === 'selfie-bathroom')
+    return R(['white bath towel barely covering body, bathroom mirror', 'lingerie set, bathroom selfie', 'sheer robe loosely tied, bathroom glow']);
+  if(key === 'selfie-shower-steam-close' || key === 'selfie-shower-steam')
+    return R(['bare shoulders above steam, towel edge visible', 'wet bare shoulders, steam rising, nothing below frame']);
+  if(key.startsWith('selfie-changing-room') || key.startsWith('selfie-dressing'))
+    return R(['lingerie set, changing room selfie', 'bra and panties, fitting room mirror', 'lace bralette and matching panties, dressing room']);
+  if(key === 'selfie-bed-arch' || key === 'selfie-bed-lying' || key.startsWith('selfie-bed') || key === 'selfie-lying')
+    return R(['silk slip camisole and shorts, bed selfie', 'white lace lingerie on bed, intimate', 'oversized T-shirt, no pants, morning selfie', 'satin sleep set, thin straps, bed pose']);
+  if(key === 'selfie-night' || key === 'selfie-hotel')
+    return R(['sheer silk robe barely covering, night mode', 'lingerie, dimly lit hotel mirror selfie', 'sheer negligee, candlelit atmosphere']);
+  if(key.startsWith('selfie-outdoor') || key.startsWith('selfie-sunset'))
+    return R(['summer dress, outdoor golden hour selfie', 'crop top and shorts, outdoor casual', 'casual chic outfit, golden hour glow']);
+  if(key.startsWith('selfie-mirror') || key.startsWith('selfie-'))
+    return R([
+      'lingerie set, mirror selfie: push-up bra and thong',
+      'lace bralette and matching panties, mirror angle',
+      'silk slip dress, alluring selfie',
+      'crop top and shorts, casual selfie',
+      'satin bra and high-waist panties, seductive mirror pose',
+      'sheer bodysuit, form-fitting, full mirror selfie',
+    ]);
+
+  // ── MODEL / EDITORIAL ────────────────────────────────────────────────────
+  if(key.startsWith('model-'))
+    return R([
+      'high-fashion editorial gown, runway-ready',
+      'sleek designer bodycon dress, fashion week style',
+      'elegant one-shoulder column gown, fashion editorial',
+      'luxury fashion ensemble: couture dress and statement accessories',
+      'designer structured mini dress and stiletto heels',
+      'fashion-forward couture outfit, avant-garde editorial',
+    ]);
 
   // ── BUTT CLOSEUP ─────────────────────────────────────────────────────────
   if(key.startsWith('butt-'))
-    return R(['thong', 'string bikini bottom', 'lace panties', 'G-string thong']);
+    return R([
+      'barely-there thong, high-cut sides',
+      'micro G-string, minimal coverage',
+      'string bikini bottom pulled up high',
+      'lace cheeky panties, barely covering',
+      'Brazilian bikini bottom, minimal fabric',
+      'seamless micro thong with lace waistband',
+      'sheer lace panties, see-through back',
+    ]);
 
-  // ── CLOSEUP ──────────────────────────────────────────────────────────────
+  // ── CLOSEUP / DETAIL ──────────────────────────────────────────────────────
   if(key.startsWith('closeup-'))
-    return R(['lingerie', 'lace bra', 'bikini top', 'sheer bralette']);
+    return R([
+      'lace push-up bra, cleavage detail',
+      'sheer lace bralette, see-through',
+      'bikini top, colorful and fitted',
+      'sheer crop top showing lingerie underneath',
+      'satin bra with lace trim',
+    ]);
 
-  // ── GENERIC NEUTRAL POSES — lingerie default ──────────────────────────────
-  if(/^(standing-|sitting-|kneeling-|lying-|squat-|allfours-)/.test(key))
-    return R(['silk lingerie set', 'lace bra and panties', 'sheer bodysuit', 'elegant lingerie', 'satin lingerie set']);
+  // ── PRESENTING ────────────────────────────────────────────────────────────
+  if(key.startsWith('presenting-') || key === 'presenting')
+    return R([
+      'thong and matching lace bra, presenting',
+      'micro string bikini, G-string presenting pose',
+      'sheer panties and sheer bralette, revealing',
+      'G-string and matching bralette, provocative angle',
+    ]);
 
-  // ── Everything else ───────────────────────────────────────────────────────
-  return R(['lingerie', 'lace lingerie set', 'bodysuit']);
+  // ── SPREAD-EAGLE ─────────────────────────────────────────────────────────
+  if(key.startsWith('spread-eagle'))
+    return R([
+      'lace lingerie set: bra and matching panties, spread pose',
+      'sheer bodysuit, high-cut sides, spread-eagle',
+      'strappy lingerie: bralette and thong',
+      'satin bra and high-waist panties, lying back',
+    ]);
+
+  // ── SPHINX / BACKBEND FLOOR ───────────────────────────────────────────────
+  if(key === 'sphinx' || key === 'backbend-floor' || key === 'backbend-extreme')
+    return R([
+      'black lace lingerie set, sphinx floor pose',
+      'silk bodysuit, form-fitting, floor pose',
+      'yoga shorts and crop sports bra, backbend',
+      'sheer bodysuit, lingerie-inspired, floor pose',
+    ]);
+
+  // ── WALL POSES ────────────────────────────────────────────────────────────
+  if(key.startsWith('wall-') || key === 'wall-pin-front')
+    return R([
+      'tight bodycon mini dress, pressed against wall',
+      'lace lingerie set: bra and panties, against wall',
+      'sheer bodysuit, back pressed to wall',
+      'crop top and micro shorts, wall pose',
+      'satin slip dress, cinched waist, wall lean',
+    ]);
+
+  // ── TIPPY TOES / STANDING SPLIT ───────────────────────────────────────────
+  if(key === 'tippy-toes' || key === 'standing-split' || key === 'splits-standing')
+    return R([
+      'ballet-inspired leotard and tights, on pointe',
+      'tiny dance shorts and sports bra, standing split',
+      'sleek bodycon dress and heels, tippy-toe pose',
+      'gymnastics bodysuit, high-cut, standing split',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GENERIC POSES — rich variety by body position
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── STANDING (specific sub-types) ─────────────────────────────────────────
+  if(key === 'standing-front' || key === 'standing-back' || key === 'standing-wide-legs-open' || key === 'standing-spread-front' || key === 'standing-spread-back')
+    return R([
+      'black lace lingerie: push-up bra and high-waist panties',
+      'white bodycon mini dress, second-skin fit',
+      'sheer lace bodysuit with thong back',
+      'satin slip dress, barely there',
+      'silk camisole and matching high-cut panties',
+      'strappy lace set: bralette and matching thong',
+    ]);
+
+  if(key.startsWith('standing-'))
+    return R([
+      'black lace lingerie set: bra and matching panties',
+      'silk satin lingerie, thin spaghetti straps',
+      'sheer lace bodysuit, second-skin fit',
+      'strappy white lingerie: bralette and high-waist panties',
+      'elegant corset with matching high-waist panties',
+      'satin bra and lace high-waist briefs',
+      'sheer mesh bralette and matching panties',
+      'lace garter belt and matching thong',
+      'soft pink lingerie set, satin and lace',
+      'bodycon mini dress, no underwear visible',
+      'fitted crop top and micro shorts, standing pose',
+    ]);
+
+  // ── SITTING ───────────────────────────────────────────────────────────────
+  if(key.startsWith('sitting-'))
+    return R([
+      'black lace bra and matching panties, seated sensual',
+      'silk slip camisole, barely covering, seated',
+      'sheer bodysuit with thong back, seated pose',
+      'satin lingerie set, boudoir seated',
+      'white lace balconette bra and matching briefs',
+      'strappy lingerie: bralette and hipster panties, seated',
+      'silk robe loosely draped, lingerie visible',
+      'lace garter belt and stockings, seated elegantly',
+    ]);
+
+  // ── KNEELING ─────────────────────────────────────────────────────────────
+  if(key.startsWith('kneeling-'))
+    return R([
+      'black lace lingerie set, kneeling boudoir',
+      'sheer bodysuit, kneeling pose',
+      'strappy satin bralette and matching thong',
+      'elegant corset and thigh-high stockings',
+      'white lace lingerie: balconette bra and panties',
+      'silk camisole and high-cut panties, kneeling',
+    ]);
+
+  // ── LYING / LYING DOWN ────────────────────────────────────────────────────
+  if(key.startsWith('lying-') || key === 'sphinx' || key === 'spread-eagle-lying')
+    return R([
+      'black lace lingerie: demi-cup bra and thong, lying sensual',
+      'silk satin lingerie, thin straps, draped on surface',
+      'sheer lace bodysuit, lying on satin sheets',
+      'strappy white lingerie set on white bedding',
+      'silk babydoll negligee, barely covering',
+      'lace bralette and matching lace panties, intimate',
+      'satin bra and high-waist briefs, soft bedding',
+      'sheer robe open over lingerie, lying gracefully',
+    ]);
+
+  // ── ALL FOURS ─────────────────────────────────────────────────────────────
+  if(key.startsWith('allfours-'))
+    return R([
+      'black lace lingerie: bra and thong, all-fours pose',
+      'sheer bodysuit with thong cut, on all fours',
+      'strappy satin bralette and G-string',
+      'white lace lingerie set, on all fours',
+      'silk camisole loosely hanging, no pants',
+      'lace garter belt with thong, provocative all-fours',
+    ]);
+
+  // ── SQUAT ─────────────────────────────────────────────────────────────────
+  if(key.startsWith('squat-'))
+    return R([
+      'high-cut sports bra and micro booty shorts, squat pose',
+      'black lace lingerie: bra and thong, deep squat',
+      'yoga shorts and crop sports bra, squat position',
+      'sheer bodysuit, high-cut sides, squat',
+      'seamless thong and matching bralette, squat',
+      'gym micro shorts and sports bra, deep squat',
+    ]);
+
+  // ── GENERIC POSES (catch-all for all pose prefixes) ───────────────────────
+  if(/^(bent-|arched-|arms-|legs-|pov-|side-|one-|reclined-|arm-|shoulder-|torso-|butterfly|tippy-|double-|wide-)/.test(key))
+    return R([
+      'black lace lingerie set: bra and panties',
+      'silk satin lingerie, thin straps, elegant',
+      'sheer lace bodysuit, second-skin',
+      'strappy white lingerie: bralette and thong',
+      'elegant corset and matching panties',
+      'satin bra and high-waist panties',
+      'sheer mesh bralette and minimal panties',
+      'lace garter belt and matching thong',
+      'soft pink satin lingerie set',
+      'white silk camisole and matching shorts',
+    ]);
+
+  // ── EVERYTHING ELSE — rich lingerie pool ──────────────────────────────────
+  return R([
+    'black lace lingerie set: push-up bra and thong',
+    'silk satin lingerie, spaghetti straps',
+    'sheer lace bodysuit, barely there',
+    'strappy lingerie set: bralette and matching panties',
+    'satin bra and lace high-waist panties',
+    'white silk lingerie, soft and elegant',
+    'elegant corset and garter belt with stockings',
+    'lace babydoll negligee and matching panties',
+  ]);
 }
 
 function _randomFrom(arr){
@@ -13104,6 +13610,16 @@ function _getPoseNegExtra(key){
   if(key.startsWith('butt-')) return 'front view in butt pose, face obscuring buttocks, wrong camera angle';
   // Outdoor / nature
   if(key.startsWith('nature-') || key.startsWith('outdoor-')) return 'concrete background, city skyline, indoor setting, artificial lighting in outdoor scene';
+  // Ballet / aerial / contortionist
+  if(key.startsWith('ballet-') || key.startsWith('aerial-') || key.startsWith('contortionist-')) return 'wrong dance pose, impossible anatomy, broken joints, unrealistic flexibility, street clothes in dance setting';
+  // Car / moto
+  if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-')) return 'wrong car model, unrealistic vehicle, fake CGI car, badly integrated subject into car scene';
+  // Fantasy / roleplay
+  if(key.startsWith('fantasy-')) return 'modern clothing in fantasy setting, anachronistic elements, wrong costume for role, generic unthemed outfit';
+  // Alt / gothic
+  if(key.startsWith('alt-')) return 'bright cheerful colors, preppy style, mainstream fashion, wrong gothic aesthetic';
+  // Twerk
+  if(key.startsWith('twerk-')) return 'static pose, no movement energy, stiff posture, standing straight';
   // Explicit — age-related always blocked
   if(/^(sex-|anal-|oral-|cowgirl|missionary|doggy-|cumshot-)/.test(key)) return 'teenager, minor, underage, young teen, child, childlike features, immature appearance';
   return '';
@@ -13340,14 +13856,68 @@ function _applyPoseDefaults(key){
                ['natural breast asymmetry','natural soft belly'],
                []]);
 
-  // ── Generic neutral poses (standing, sitting, kneeling, lying, squat) ────
-  } else {
-    ill   = R(['window light only','soft diffused natural','low-key intimate']);
-    film  = R(['Kodak Portra 400','Fuji 400H']);
+  // ── Aerial / Ballet / Contortionist ─────────────────────────────────────
+  } else if(key.startsWith('aerial-') || key.startsWith('ballet-') || key.startsWith('contortionist-') || key.startsWith('splits-') || key === 'splits' || key === 'aerial-silk'){
+    ill   = R(['large softbox studio','backlight rim lighting','soft diffused natural']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural stretch marks'],['light body hair'],[]]);
+
+  // ── Sunset / Rooftop / Urban ─────────────────────────────────────────────
+  } else if(key === 'sunset-silhouette' || key.startsWith('sunset-') || key.startsWith('rooftop-') || key.startsWith('urban-')){
+    ill   = R(['late afternoon golden','backlight rim lighting','soft overcast diffused']);
+    film  = R(['Kodak Gold 200','Cinestill 800T','Fujifilm Velvia']);
+    lens  = R(['shot on 35mm','shot on 50mm','shot on 85mm']);
+    marks = R([['natural beauty mole'],['natural freckles'],[]]);
+
+  // ── Twerk / Booty ────────────────────────────────────────────────────────
+  } else if(key.startsWith('twerk-')){
+    ill   = R(['neon nightclub lighting','backlight rim lighting','harsh overhead fluorescent']);
+    film  = R(['Cinestill 800T','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural subtle cellulite','natural hip dips'],
+               ['natural stretch marks','natural hip dips']]);
+
+  // ── Mermaid ──────────────────────────────────────────────────────────────
+  } else if(key === 'mermaid' || key.startsWith('mermaid-')){
+    ill   = R(['backlight rim lighting','soft diffused natural','window light only']);
+    film  = R(['Fujifilm Velvia','Fuji 400H']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Pinup ────────────────────────────────────────────────────────────────
+  } else if(key === 'pinup' || key.startsWith('pinup-')){
+    ill   = R(['large softbox studio','soft diffused natural','warm flickering candlelight']);
+    film  = R(['Kodak Gold 200','Fuji 400H']);
+    lens  = R(['shot on 50mm','shot on 85mm']);
+    marks = R([['natural beauty mole'],['natural freckles'],[]]);
+
+  // ── Boudoir / Bed / Mirror intimate ──────────────────────────────────────
+  } else if(key.startsWith('edge-of-bed') || key === 'sitting-edge' || key.startsWith('sitting-bed') || key === 'sitting-open-legs-bed' || key === 'lotus-lap'){
+    ill   = R(['window light only','low-key intimate','warm flickering candlelight']);
+    film  = R(['Fuji 400H','Kodak Portra 400','Cinestill 800T']);
     lens  = R(['shot on 85mm','shot on 50mm']);
+    marks = R([['natural soft belly','natural breast asymmetry'],
+               ['natural stretch marks','natural soft belly'],
+               ['natural hip dips','natural breast asymmetry']]);
+
+  // ── Car / Moto (walking/walking) ─────────────────────────────────────────
+  } else if(key === 'walking' || key.startsWith('walking-')){
+    ill   = R(['late afternoon golden','soft diffused natural','backlight rim lighting']);
+    film  = R(['Kodak Portra 400','Kodak Gold 200']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural beauty mole'],['natural freckles'],[]]);
+
+  // ── Generic neutral poses (standing, sitting, kneeling, lying, squat, etc.) ──
+  } else {
+    ill   = R(['window light only','soft diffused natural','low-key intimate','backlight rim lighting']);
+    film  = R(['Kodak Portra 400','Fuji 400H','Kodak Gold 200']);
+    lens  = R(['shot on 85mm','shot on 50mm','shot on 35mm']);
     marks = R([['natural stretch marks','natural soft belly'],
                ['natural hip dips','natural breast asymmetry'],
-               ['natural soft belly']]);
+               ['natural soft belly'],
+               ['natural stretch marks','natural hip dips'],
+               []]);
   }
 
   // ── Cenário: map pose prefix → SCENE_CAT_META key ───────────────────────
@@ -13370,6 +13940,13 @@ function _applyPoseDefaults(key){
     'standing-':'standing', 'sitting-':'sitting_intimate',
     'kneeling-':'kneeling', 'lying-':'lying', 'allfours-':'lying',
     'squat-':'boudoir', 'jeans-':'jeans',
+    'twerk-':'party', 'ballet-':'boudoir', 'aerial-':'boudoir',
+    'contortionist-':'boudoir', 'splits-':'boudoir',
+    'chair-':'boudoir', 'edge-of-bed':'boudoir',
+    'mirror-':'mirror', 'pinup-':'boudoir',
+    'mermaid-':'water', 'sunset-':'nature',
+    'rooftop-':'standing', 'urban-':'standing',
+    'walking-':'standing', 'model-':'default',
   };
   let _sceneCat = null;
   for(const [pfx, cat] of Object.entries(_POSE_TO_SCENE_CAT)){
@@ -13452,6 +14029,70 @@ function _applyPoseDefaults(key){
   // Single comprehensive toast
   if(typeof toast === 'function')
     toast('✦ Cenário, iluminação, película, lente, idade e marcas ajustados pela pose', 2800);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AUTO-OUTFIT: show pose-contextual clothing suggestion in preview panel
+// and keep chipState.outfit in sync so it flows into prompts automatically
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Tracks whether current outfit in chipState was auto-set by pose selection
+let _autoOutfitActive = false;
+let _autoOutfitKey = null; // pose key this outfit was computed for
+
+function _showAutoOutfit(poseKey){
+  if(!poseKey){ _clearAutoOutfit(); return; }
+
+  // Compute the outfit for this pose
+  const outfit = typeof getPoseSensualOutfit === 'function' ? getPoseSensualOutfit(poseKey) : '';
+  const outfitRow = document.getElementById('outfit-auto-row');
+  const outfitText = document.getElementById('outfit-auto-text');
+
+  if(!outfit || outfit === ''){
+    // Naturally nude pose — no outfit to show
+    if(outfitRow) outfitRow.style.display = 'none';
+    // Don't override chipState if user has manual outfit
+    if(_autoOutfitActive){ chipState.outfit = ''; _autoOutfitActive = false; }
+    return;
+  }
+
+  // Display in pose preview panel
+  if(outfitRow){ outfitRow.style.display = 'flex'; }
+  if(outfitText){ outfitText.textContent = outfit; }
+
+  // Inject into chipState.outfit (auto-set — can be overridden by user)
+  // Only set if user hasn't manually set a different outfit (or we're replacing a previous auto-set)
+  const hasManualOutfit = chipState.outfit && !_autoOutfitActive;
+  if(!hasManualOutfit){
+    chipState.outfit = outfit;
+    _autoOutfitActive = true;
+    _autoOutfitKey = poseKey;
+  }
+  // Also update _cachedPoseOutfit immediately so it's ready for generate
+  if(typeof selectedPoseKey !== 'undefined') _cachedPoseOutfit = outfit;
+}
+
+function _cycleAutoOutfit(){
+  // Generate a fresh (different) outfit suggestion for the current pose
+  if(!selectedPoseKey) return;
+  const outfit = typeof getPoseSensualOutfit === 'function' ? getPoseSensualOutfit(selectedPoseKey) : '';
+  if(!outfit) return;
+  const outfitText = document.getElementById('outfit-auto-text');
+  if(outfitText) outfitText.textContent = outfit;
+  chipState.outfit = outfit;
+  _autoOutfitActive = true;
+  _cachedPoseOutfit = outfit;
+  toast('👗 ' + outfit.substring(0, 50) + (outfit.length > 50 ? '…' : ''), 2000);
+}
+
+function _clearAutoOutfit(){
+  const outfitRow = document.getElementById('outfit-auto-row');
+  if(outfitRow) outfitRow.style.display = 'none';
+  if(_autoOutfitActive){
+    chipState.outfit = '';
+    _autoOutfitActive = false;
+  }
+  _autoOutfitKey = null;
 }
 
 // ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
