@@ -290,7 +290,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 [data-theme="dark"] .btn-pin:hover{background:#1d4ed8;color:#fff;}
 
 /* ── TOKEN COUNTER ──────────────────────────────────────────────────────── */
-.token-count{font-size:0.7em;color:#94a3b8;margin-top:6px;text-align:right;}
+.token-count{font-size:0.7em;color:#94a3b8;margin-top:6px;text-align:right;transition:color 0.3s;cursor:help;}
 
 /* ── HISTORY ────────────────────────────────────────────────────────────── */
 .history-card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:16px 18px;margin-top:14px;}
@@ -351,6 +351,9 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 .quick-chip{padding:4px 10px;border:1.5px solid #e2e8f0;border-radius:16px;font-size:0.69em;font-weight:600;cursor:pointer;background:#fff;color:#475569;transition:all 0.15s;user-select:none;}
 .quick-chip:hover{border-color:#93c5fd;background:#eff6ff;color:#1d4ed8;}
 .quick-chip.active{border-color:#1d4ed8;background:#1d4ed8;color:#fff;}
+/* auto-set by pose selection — dashed border + ✦ badge; override with manual click */
+.quick-chip.auto-set{border-style:dashed!important;opacity:0.92;}
+.quick-chip.auto-set::after{content:' ✦';font-size:0.65em;vertical-align:super;opacity:0.7;}
 [data-theme="dark"] .quick-chips-wrap{background:#0f172a;border-color:#334155;}
 [data-theme="dark"] .quick-chip{background:#0f172a;border-color:#334155;color:#94a3b8;}
 [data-theme="dark"] .quick-chip:hover{background:#1e3a5f;border-color:#60a5fa;color:#93c5fd;}
@@ -2273,10 +2276,14 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     </div>
     <!-- PROMPT SCORE + ACTIONS -->
     <div class="prompt-score-row" id="prompt-score-row" style="display:none;">
-      <span id="prompt-score-badge" class="prompt-score-badge">⭐ Score: —</span>
+      <span id="prompt-score-badge" class="prompt-score-badge" style="cursor:pointer;" onclick="document.getElementById('score-tips-row').style.display=document.getElementById('score-tips-row').style.display==='none'?'flex':'none'" title="Clique para ver dicas de melhoria">⭐ Score: —</span>
       <button class="btn-optimize" onclick="runTokenOptimize()" title="Reordena os termos para maximizar o efeito CLIP (primeiros 75 tokens)">🔀 Otimizar Tokens</button>
       <button class="btn-autofix" onclick="runAutoFix()" title="Detecta e corrige automaticamente conflitos no prompt" id="btn-autofix-main">🔧 Auto-Fix</button>
       <button class="btn-optimize" style="background:#f5f3ff;border-color:#c4b5fd;color:#5b21b6;" onclick="runSmartNegative()" title="Gera negative prompt inteligente baseado no conteúdo">🚫 Smart Negative</button>
+    </div>
+    <!-- SCORE TIPS (expandable) -->
+    <div id="score-tips-row" style="display:none;flex-wrap:wrap;gap:5px;margin-top:4px;padding:6px 10px;background:#fef9c3;border:1px solid #fbbf24;border-radius:8px;font-size:0.72em;color:#92400e;">
+      <div id="score-tips-list" style="display:flex;flex-direction:column;gap:3px;width:100%;"></div>
     </div>
     <!-- KEYWORD SUGGESTIONS -->
     <div class="suggest-row" id="suggest-row" style="display:none;">
@@ -2330,13 +2337,22 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <div class="history-label">
       <span>🕓 Histórico (últimos 15 prompts)</span>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="btn-hist-clear" onclick="exportSession()" style="background:#059669;border-color:#059669;color:#fff;">💾 Exportar</button>
+        <button class="btn-hist-clear" onclick="exportSession()" style="background:#059669;border-color:#059669;color:#fff;" title="Exportar sessão completa (histórico + presets + seeds)">💾 Sessão</button>
+        <button class="btn-hist-clear" onclick="exportHistoryJSON()" style="background:#0891b2;border-color:#0891b2;color:#fff;" title="Exportar somente o histórico como JSON limpo">📥 Histórico</button>
         <button class="btn-hist-clear" onclick="document.getElementById('import-file-input').click()" style="background:#0284c7;border-color:#0284c7;color:#fff;">📂 Importar</button>
         <button class="btn-hist-clear" onclick="exportComfyUI()" style="background:#7c3aed;border-color:#7c3aed;color:#fff;" title="Exportar como workflow ComfyUI JSON">🔧 ComfyUI</button>
         <button class="btn-hist-clear" onclick="clearHistory()">🗑️ Limpar</button>
       </div>
     </div>
     <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importSession(this)">
+    <!-- SEED MEMORY PANEL -->
+    <div id="seed-memory-panel" style="display:none;margin:8px 0;padding:8px 10px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-size:0.72em;font-weight:700;color:#7c3aed;">⭐ Seeds Favoritas</span>
+        <span style="font-size:0.7em;color:#94a3b8;">(clique na seed para copiar)</span>
+      </div>
+      <div id="seed-memory-list"></div>
+    </div>
     <div class="history-list" id="history-list"></div>
   </div>
 
@@ -2395,6 +2411,8 @@ function rebuildNegPrompt(){
   Object.keys(NEG_CATS).forEach(cat => {
     if(negCatState[cat]) parts.push(NEG_CATS[cat]);
   });
+  // Pose-adaptive extra negatives (set by _applyPoseDefaults)
+  if(typeof _poseNegExtra !== 'undefined' && _poseNegExtra) parts.push(_poseNegExtra);
   const negEl = document.getElementById('neg-text');
   if(negEl) negEl.value = parts.join(', ');
 }
@@ -9103,6 +9121,10 @@ function setPose(key){
   }
   // Atualiza auto-descrição para refletir a ordem: etnia → pose
   try{ _autoFillDescription(); }catch(e){}
+  // ── Auto-suggest iluminação, película, lente, marcas, cenário, estilo_foto ─
+  try{ _applyPoseDefaults(key || null); }catch(e){}
+  // ── Trigger auto-generate if character is already filled ─────────────────
+  try{ _checkAutoGenerate(); }catch(e){}
 }
 
 function setMode(mode){
@@ -9290,8 +9312,11 @@ function buildVideoPrompt(base, englishText){
   const motionDesc = VIDEO_MOTION_MAP[motion] || motion;
   const styleDesc  = VIDEO_STYLE_MAP[vstyle]  || vstyle;
   const subject    = base || englishText || 'a beautiful woman';
-  // RAW realism anchor for video — 100% human realism, plain text for all video AI platforms
-  const rawVideoAnchor = 'RAW footage, SOOC straight out of camera, no color grading, no color correction, no LUT applied, no post-color grading, no AI video enhancement, no digital editing, not color graded, unaltered footage, real human movement, visible skin texture, skin pore detail, skin micro-texture, natural skin imperfections, natural skin color variation, natural skin blemishes, film grain on skin, no beauty filter, no skin smoothing, no retouching, authentic human motion, film grain, analog look, not CGI, not 3D render, real person, natural body physics, realistic skin deformation with movement, natural breathing visible, natural eye blinking, living skin appearance, natural skin warmth, natural facial micro-expressions, realistic hair movement, individual hair strands visible, natural skin subsurface scattering';
+  // RAW realism anchor for video — uses chip-selected film stock and lens when available
+  const _vidFilm    = (typeof getFilmStock === 'function' && getFilmStock()) || 'Kodak Portra 400';
+  const _vidLensRaw = (typeof getLensCam  === 'function' && getLensCam())  || '';
+  const _vidLensTag = _vidLensRaw ? ', ' + _vidLensRaw.split(',')[0].trim() : '';
+  const rawVideoAnchor = `RAW footage, ${_vidFilm}${_vidLensTag}, SOOC straight out of camera, no color grading, no color correction, no LUT applied, no post-color grading, no AI video enhancement, no digital editing, not color graded, unaltered footage, real human movement, visible skin texture, skin pore detail, skin micro-texture, natural skin imperfections, natural skin color variation, natural skin blemishes, film grain on skin, no beauty filter, no skin smoothing, no retouching, authentic human motion, film grain, analog look, not CGI, not 3D render, real person, natural body physics, realistic skin deformation with movement, natural breathing visible, natural eye blinking, living skin appearance, natural skin warmth, natural facial micro-expressions, realistic hair movement, individual hair strands visible, natural skin subsurface scattering`;
   const rawVideoBody = 'natural collarbone movement, natural body weight and gravity, realistic joint anatomy, natural skin folds and creases during movement, natural breast physics, natural skin compression and tension during pose changes, real human proportions, not perfect body, not fitness model, not airbrushed, not plastic skin';
   let prompt = '';
   if(platform === 'kling' || platform === 'hailuo'){
@@ -9897,8 +9922,30 @@ function liveAnalyze(){
   const sc = scorePrompt(prompt);
   const badge = document.getElementById('prompt-score-badge');
   const scoreRow = document.getElementById('prompt-score-row');
-  if(badge){ badge.textContent = sc.label; badge.className = 'prompt-score-badge ' + sc.cls; }
+  if(badge){
+    badge.textContent = sc.label + (sc.tips.length ? ` 💡${sc.tips.length}` : '');
+    badge.className = 'prompt-score-badge ' + sc.cls;
+    badge.title = sc.tips.length ? 'Clique para ver ' + sc.tips.length + ' dica(s) de melhoria' : 'Prompt excelente!';
+  }
   if(scoreRow) scoreRow.style.display = 'flex';
+  // Score tips list
+  const tipsList = document.getElementById('score-tips-list');
+  const tipsRow  = document.getElementById('score-tips-row');
+  if(tipsList){
+    if(sc.tips.length){
+      tipsList.innerHTML = sc.tips.map(t => `<span>• ${t}</span>`).join('');
+      if(tipsRow && tipsRow.style.display !== 'none') tipsRow.style.display = 'flex'; // keep visible if already open
+    } else {
+      tipsList.innerHTML = '<span>✅ Prompt completo — nenhuma melhoria crítica detectada!</span>';
+      if(tipsRow) tipsRow.style.display = 'none';
+    }
+    // Color tips panel based on score
+    if(tipsRow){
+      tipsRow.style.background = sc.cls === 'score-high' ? '#dcfce7' : sc.cls === 'score-mid' ? '#fef9c3' : '#fee2e2';
+      tipsRow.style.borderColor = sc.cls === 'score-high' ? '#86efac' : sc.cls === 'score-mid' ? '#fbbf24' : '#fca5a5';
+      tipsRow.style.color       = sc.cls === 'score-high' ? '#166534' : sc.cls === 'score-mid' ? '#92400e' : '#991b1b';
+    }
+  }
   // CLIP bar
   const terms = prompt.split(',').map(t=>t.trim()).filter(Boolean);
   const tokensPerTerm = 3; // rough estimate
@@ -11699,8 +11746,576 @@ function autoScene(poseKey){
 function getDefaultSceneForPose(key){ return ''; } // Scene removed from auto-inject — defined in description
 
 function getPoseSensualOutfit(key){
-  // Outfit removed from categories — defined in character description instead
-  return '';
+  if(!key) return '';
+
+  // ── Explicitly sexual / naturally nude poses — no outfit injection ────────
+  const _explicitPfx = /^(shower-|bath-|sex-|anal-|oral-|multi-|cumshot-|doggy-|prone-bone|spoon$|scissors$|anvil$|leapfrog$|mating-press$|pile-driver$|reverse-missionary$|lap-dance$|lotus-nsfw$|position-69$|cowgirl$|cowgirl-|reverse-cowgirl$|reverse-cowgirl-|missionary$|missionary-)/;
+  if(_explicitPfx.test(key)) return '';
+
+  // ── Pose definitions already embed clothing ───────────────────────────────
+  if(/^(fantasy-|alt-|outfit-|shemale-)/.test(key)) return '';
+
+  const R = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // WATER / AQUÁTICO
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── BEACH ─────────────────────────────────────────────────────────────────
+  if(key === 'beach-topless-back')
+    return R(['tiny G-string bikini bottom, bare back', 'micro thong bikini bottom, topless back', 'string bikini bottom pulled up high, topless from behind']);
+  if(key.startsWith('beach-'))
+    return R([
+      'tiny string bikini, sun-kissed skin, tan lines',
+      'white triangle bikini top and matching bottoms, tan lines visible',
+      'colorful high-cut Brazilian bikini, side-tie bottoms',
+      'barely-there micro bikini, string ties',
+      'strapless bandeau bikini top and low-rise bikini bottoms',
+      'skimpy bikini, sheer beach cover-up open and flowing',
+      'neon Brazilian string bikini, bold colors',
+      'floral print bandeau bikini, high-cut bottoms',
+      'white string bikini, wet and clinging, semi-transparent',
+      'crocheted bikini, boho beach style',
+    ]);
+
+  // ── POOL / WATER ──────────────────────────────────────────────────────────
+  if(key.startsWith('water-beach') || key.startsWith('water-pool') || key.startsWith('water-ocean') || key.startsWith('water-bikini'))
+    return R([
+      'string bikini, soaking wet, clinging to skin',
+      'white bikini, wet and transparent, tan body',
+      'colorful two-piece bikini, dripping wet',
+      'Brazilian-cut bikini, wet swimwear showing curves',
+      'metallic silver bikini, glistening wet skin',
+    ]);
+  if(key.startsWith('water-') || key.startsWith('pool-'))
+    return R([
+      'white bikini clinging to wet skin, see-through wet fabric',
+      'black string bikini, soaking wet',
+      'colorful two-piece bikini, dripping wet',
+      'Brazilian cut high-leg bikini, wet swimwear',
+      'metallic silver one-piece swimsuit, wet shimmering skin',
+      'sheer white one-piece swimsuit, wet and clinging',
+      'tiny red bikini, water beading on skin',
+    ]);
+
+  // ── RAIN ──────────────────────────────────────────────────────────────────
+  if(key === 'rain' || key.startsWith('rain-') || key.includes('rain'))
+    return R([
+      'white summer dress soaked in rain, see-through wet fabric clinging to body',
+      'white fitted shirt soaked wet and transparent, clinging to curves',
+      'wet light sundress clinging to skin, fabric translucent from rain',
+      'soaked white blouse and tiny shorts, drenched, sheer fabric',
+      'wet white t-shirt clinging to body, shorts, bare legs',
+    ]);
+
+  // ── MERMAID ───────────────────────────────────────────────────────────────
+  if(key === 'mermaid' || key.startsWith('mermaid-'))
+    return R([
+      'iridescent metallic shell bra and mermaid-scale sequin bottoms',
+      'holographic bikini top with shimmering mermaid tail fabric',
+      'shell bra and jeweled sequin mermaid-scale skirt',
+      'ocean-blue metallic bra top and flowing tail-like skirt',
+    ]);
+
+  // ── SUNSET ────────────────────────────────────────────────────────────────
+  if(key === 'sunset' || key === 'sunset-silhouette' || key.startsWith('sunset-'))
+    return R([
+      'flowy maxi dress in warm sunset tones, backlit silhouette',
+      'floral sundress, thin fabric backlit by golden hour',
+      'string bikini at golden hour, warm light on skin',
+      'white sheer maxi dress lit by orange sunset',
+      'boho linen dress, open back, warm lighting',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // FITNESS / SPORT
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── YOGA ──────────────────────────────────────────────────────────────────
+  if(key.startsWith('yoga-'))
+    return R([
+      'black high-waist yoga pants and matching strappy sports bra',
+      'seamless form-fitting yoga set, second-skin fit, pastel colors',
+      'pastel lavender yoga leggings and strappy athletic bralette',
+      'high-compression yoga leggings and racerback sports bra',
+      'yoga shorts and crop sports bra, barefoot on yoga mat',
+      'floral printed yoga pants and matching sports bra',
+      'white yoga leggings and white sports bra, translucent when stretched',
+      'dark green yoga set: high-waist pants and crop bra, second skin',
+      'sheer mesh-panel yoga leggings and sports bra',
+    ]);
+
+  // ── GYM / FITNESS ─────────────────────────────────────────────────────────
+  if(key.startsWith('gym-'))
+    return R([
+      'sports bra and high-waist compression leggings, gym shoes',
+      'gym micro-shorts and fitted crop sports bra, bare midriff',
+      'athletic high-waist leggings and fitted crop top, gym sneakers',
+      'compression shorts and sports bra, training sneakers',
+      'gym tank top tied up exposing midriff, high-waist leggings',
+      'seamless workout set: sports bra and flare leggings',
+      'mesh-insert gym leggings and sports bra, athletic build',
+      'neon-colored sports bra and matching leggings',
+    ]);
+
+  // ── LEGGING ───────────────────────────────────────────────────────────────
+  if(key.startsWith('legging-'))
+    return R([
+      'tight black compression leggings and sports bra, bare midriff',
+      'high-waist shaping leggings and crop athletic top',
+      'sheer mesh-panel leggings and sports bra, see-through panels',
+      'colorful printed leggings and white sports bra',
+      'seamless second-skin leggings and strappy bralette',
+      'snakeskin-print high-waist leggings and sports bra',
+      'wet-look vinyl leggings and crop sports bra',
+    ]);
+
+  // ── TWERK ─────────────────────────────────────────────────────────────────
+  if(key.startsWith('twerk-'))
+    return R([
+      'micro booty shorts and matching crop sports bra',
+      'high-cut cheeky shorts and tight crop top',
+      'Brazilian cheeky shorts and sports bra, bare midriff',
+      'tiny denim micro shorts and crop top',
+      'neon booty shorts and matching crop sports bra',
+      'thong leotard, high-cut sides',
+    ]);
+
+  // ── BALLET / DANCE ────────────────────────────────────────────────────────
+  if(key.startsWith('ballet-'))
+    return R([
+      'white ballet leotard and flowing tutu skirt, ballet pointe shoes',
+      'pink ballet bodysuit and sheer ballet skirt, hair in bun',
+      'black dance leotard and sheer tights, ballet flats',
+      'ballet wrap skirt and form-fitting leotard, ballet shoes',
+      'sheer chiffon ballet skirt and fitted leotard, ribbon ties',
+    ]);
+
+  // ── AERIAL / ACROBATIC ────────────────────────────────────────────────────
+  if(key === 'aerial-silk' || key.startsWith('aerial-'))
+    return R([
+      'fitted sparkle acrobatic unitard, second-skin fit',
+      'performance bodysuit with rhinestone detail, acrobatic',
+      'athletic leotard with silk wrap detail',
+      'fitted dance bodysuit, metallic fabric, acrobatic style',
+    ]);
+
+  // ── SPLITS / CONTORTIONIST ────────────────────────────────────────────────
+  if(key === 'splits' || key.startsWith('splits-') || key.includes('split') || key === 'contortionist-split-back' || key.startsWith('contortionist-'))
+    return R([
+      'gymnastics bodysuit, high-cut sides, bare legs',
+      'dance leotard and sheer tights, ballet-inspired',
+      'yoga shorts and sports bra, flexibility pose',
+      'dance shorts and fitted crop top, gymnast outfit',
+    ]);
+
+  // ── ATHLETIC / BACKBEND ───────────────────────────────────────────────────
+  if(key === 'athletic-pose' || key.startsWith('backbend-') || key === 'backbend-extreme' || key === 'backbend-floor')
+    return R([
+      'black sports bra and high-waist leggings, athletic pose',
+      'gymnastics bodysuit, form-fitting, high-cut',
+      'crop sports bra and yoga shorts',
+      'athletic crop top and workout leggings',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DANCE / ENTERTAINMENT
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── POLE DANCE ───────────────────────────────────────────────────────────
+  if(key.startsWith('pole-dance') || key === 'dance-pole-leg-wrap' || key === 'dance-pole-spin')
+    return R([
+      'tiny pole dance shorts and matching sports bra top',
+      'shimmer booty shorts and sequined crop bra',
+      'high-cut bikini bottoms and sports bra, pole dance style',
+      'sequin micro shorts and glitter crop bra',
+      'glitter pole dance set: cheeky shorts and bra top',
+    ]);
+
+  // ── JAZZ / CONTEMPORARY DANCE ────────────────────────────────────────────
+  if(key.startsWith('jazz-dance') || key === 'jazz-dance')
+    return R([
+      'jazz dance leotard and sheer dance tights',
+      'dance shorts and fitted crop top, jazz style',
+      'jazz pants and strappy crop top, dance heels',
+      'dance bodysuit with fishnets and dance sneakers',
+    ]);
+
+  // ── DANCE FLOOR / CLUB ────────────────────────────────────────────────────
+  if(key.startsWith('dance-') || key === 'club-wall' || key === 'club-wall-pose' || key === 'dance-bartop-standing')
+    return R([
+      'tight sequin mini dress and stiletto heels',
+      'crop top and micro mini skirt, high heels, club style',
+      'bodycon party dress, form-fitting, thigh-high',
+      'sparkle bandage dress and strappy heels',
+      'satin slip mini dress, barely there',
+      'off-shoulder bodycon mini dress and ankle-strap heels',
+      'metallic crop top and micro skirt, club night',
+      'sheer black mini dress over lingerie, heels',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // OUTDOOR / STREET
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── NATURE / OUTDOOR ──────────────────────────────────────────────────────
+  if(key.startsWith('nature-') || key.startsWith('outdoor-'))
+    return R([
+      'flowy white summer dress, sheer in natural light',
+      'floral sundress, light thin fabric, barefoot',
+      'casual denim shorts and fitted crop top',
+      'boho maxi dress, low-cut back',
+      'linen shorts and flowy open blouse',
+      'white linen dress, backlit by natural light',
+      'tie-dye mini dress, carefree outdoor style',
+      'crochet crop top and high-waist shorts, boho',
+    ]);
+
+  // ── ROOFTOP / URBAN ───────────────────────────────────────────────────────
+  if(key === 'rooftop' || key === 'urban' || key.startsWith('rooftop-') || key.startsWith('urban-'))
+    return R([
+      'tight mini dress and stiletto heels, city skyline backdrop',
+      'crop top and high-waist mini skirt, stiletto heels',
+      'sleek bodycon dress, urban night style',
+      'tight jeans and blazer open with no top underneath, heels',
+      'sleek short cocktail dress and pumps',
+      'leather mini skirt and fitted crop top, edgy urban',
+    ]);
+
+  // ── WALKING ───────────────────────────────────────────────────────────────
+  if(key === 'walking' || key.startsWith('walking-'))
+    return R([
+      'tight mini dress and heels, city street',
+      'crop top and high-waist shorts, heels, summer look',
+      'fitted skinny jeans and form-fitting blouse',
+      'bodycon mini skirt and fitted blouse',
+      'flowy summer dress, fabric moving while walking',
+      'wide-leg pants and fitted top, fashionable street style',
+    ]);
+
+  // ── JEANS ─────────────────────────────────────────────────────────────────
+  if(key.startsWith('jeans-'))
+    return R([
+      'tight ripped jeans and fitted crop top',
+      'low-rise jeans showing hip bones and small crop top, midriff',
+      'high-waist skinny jeans and off-shoulder fitted top',
+      'distressed jeans and fitted tank top',
+      'low-cut jeans and sheer blouse, bra visible',
+      'wide-leg jeans and cropped fitted top',
+      'mom jeans half-rolled and fitted white crop top',
+    ]);
+
+  // ── CAR / MOTO ────────────────────────────────────────────────────────────
+  if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-'))
+    return R([
+      'tight mini dress and heels, leaning on luxury car',
+      'leather jacket open over sports bra and tight micro shorts',
+      'crop top and denim micro shorts, heels, car pose',
+      'racing-inspired bodysuit, tight-fitting, zipper detail',
+      'bodycon mini dress, automotive backdrop',
+      'tight jeans and small crop top, leather boots',
+      'race queen outfit: bodycon mini dress and thigh boots',
+    ]);
+
+  // ── PINUP ─────────────────────────────────────────────────────────────────
+  if(key === 'pinup' || key.startsWith('pinup-'))
+    return R([
+      'vintage pin-up high-waist shorts and halter top, retro style',
+      'retro polka-dot bikini, classic pin-up pose',
+      'classic red halter pin-up dress with full skirt',
+      'rockabilly pin-up outfit: high-waist skirt and tied blouse',
+      'retro one-piece swimsuit in red, pin-up styling',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // BOUDOIR / INTIMATE
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── MIRROR ────────────────────────────────────────────────────────────────
+  if(key.startsWith('mirror-'))
+    return R([
+      'black lace lingerie set: push-up bra and matching thong',
+      'silk robe barely open revealing lace lingerie underneath',
+      'sheer lace bodysuit with thong back',
+      'corset and garter belt with sheer stockings',
+      'satin slip lingerie, thin spaghetti straps',
+      'strappy black bra and high-waist lace panties',
+      'sheer negligee with lace trim and garter belt',
+      'white lace lingerie set: balconette bra and bikini panties',
+    ]);
+
+  // ── BED / EDGE OF BED ─────────────────────────────────────────────────────
+  if(key.startsWith('edge-of-bed-') || key === 'sitting-edge' || key.startsWith('sitting-bed') || key === 'sitting-open-legs-bed')
+    return R([
+      'satin slip camisole and matching shorts, boudoir style',
+      'white lace lingerie on silky sheets',
+      'oversized white shirt barely covering body, no pants',
+      'silk negligee, thin straps, boudoir mood',
+      'lace bodysuit, thong back, kneeling on bed',
+      'sheer babydoll lingerie with matching panties',
+      'black lace bra and matching briefs, boudoir',
+    ]);
+
+  // ── SOFA / COUCH ─────────────────────────────────────────────────────────
+  if(key.includes('sofa') || key.includes('couch') || key.includes('counter') || key.includes('windowsill') || key.includes('stairs'))
+    return R([
+      'silk lingerie set, lounging boudoir style',
+      'satin robe half-open over lace lingerie',
+      'lace bodysuit, bare legs, draped on surface',
+      'elegant sheer negligee, soft lighting',
+      'fitted slip dress, barely covering, casual sensual',
+    ]);
+
+  // ── LOTUS-LAP (intimate lap sitting) ──────────────────────────────────────
+  if(key === 'lotus-lap')
+    return R([
+      'sheer lace lingerie set, intimate close pose',
+      'silk slip camisole and panties',
+      'strappy lingerie bodysuit, intimate',
+      'lace bra and matching high-waist panties',
+    ]);
+
+  // ── CHAIR POSES ───────────────────────────────────────────────────────────
+  if(key.startsWith('chair-') || key.includes('straddle-chair') || key.includes('kneel-reverse-chair') || key.includes('reverse-chair'))
+    return R([
+      'tight mini dress riding up, straddling chair',
+      'lingerie set, straddling chair provocatively',
+      'tight crop top and micro shorts, sitting astride chair',
+      'satin bra and high-waist panties, draped on chair',
+      'bodycon dress, sitting backwards on chair',
+      'sheer lace bodysuit, posing on chair',
+    ]);
+
+  // ── TABLE POSES ───────────────────────────────────────────────────────────
+  if(key.includes('table') || key.includes('counter'))
+    return R([
+      'tight mini dress hiked up while seated on table edge',
+      'lingerie set, sitting provocatively on table',
+      'crop top and micro shorts, legs dangling from surface',
+      'sheer bodysuit, draped on table edge',
+    ]);
+
+  // ── SELFIE — specific contexts ────────────────────────────────────────────
+  if(key.startsWith('selfie-gym') || key === 'selfie-gym-mirror' || key === 'selfie-gym-squat')
+    return R(['sports bra and tight leggings, gym mirror selfie', 'gym shorts and crop sports bra, post-workout selfie', 'athletic set: high-waist leggings and sports bra']);
+  if(key.startsWith('selfie-beach') || key.startsWith('selfie-pool') || key === 'selfie-poolside')
+    return R(['string bikini, beach selfie', 'colorful two-piece bikini, poolside', 'tiny bikini, sun-kissed skin, outdoor selfie']);
+  if(key === 'selfie-bathroom-full' || key === 'selfie-bathroom')
+    return R(['white bath towel barely covering body, bathroom mirror', 'lingerie set, bathroom selfie', 'sheer robe loosely tied, bathroom glow']);
+  if(key === 'selfie-shower-steam-close' || key === 'selfie-shower-steam')
+    return R(['bare shoulders above steam, towel edge visible', 'wet bare shoulders, steam rising, nothing below frame']);
+  if(key.startsWith('selfie-changing-room') || key.startsWith('selfie-dressing'))
+    return R(['lingerie set, changing room selfie', 'bra and panties, fitting room mirror', 'lace bralette and matching panties, dressing room']);
+  if(key === 'selfie-bed-arch' || key === 'selfie-bed-lying' || key.startsWith('selfie-bed') || key === 'selfie-lying')
+    return R(['silk slip camisole and shorts, bed selfie', 'white lace lingerie on bed, intimate', 'oversized T-shirt, no pants, morning selfie', 'satin sleep set, thin straps, bed pose']);
+  if(key === 'selfie-night' || key === 'selfie-hotel')
+    return R(['sheer silk robe barely covering, night mode', 'lingerie, dimly lit hotel mirror selfie', 'sheer negligee, candlelit atmosphere']);
+  if(key.startsWith('selfie-outdoor') || key.startsWith('selfie-sunset'))
+    return R(['summer dress, outdoor golden hour selfie', 'crop top and shorts, outdoor casual', 'casual chic outfit, golden hour glow']);
+  if(key.startsWith('selfie-mirror') || key.startsWith('selfie-'))
+    return R([
+      'lingerie set, mirror selfie: push-up bra and thong',
+      'lace bralette and matching panties, mirror angle',
+      'silk slip dress, alluring selfie',
+      'crop top and shorts, casual selfie',
+      'satin bra and high-waist panties, seductive mirror pose',
+      'sheer bodysuit, form-fitting, full mirror selfie',
+    ]);
+
+  // ── MODEL / EDITORIAL ────────────────────────────────────────────────────
+  if(key.startsWith('model-'))
+    return R([
+      'high-fashion editorial gown, runway-ready',
+      'sleek designer bodycon dress, fashion week style',
+      'elegant one-shoulder column gown, fashion editorial',
+      'luxury fashion ensemble: couture dress and statement accessories',
+      'designer structured mini dress and stiletto heels',
+      'fashion-forward couture outfit, avant-garde editorial',
+    ]);
+
+  // ── BUTT CLOSEUP ─────────────────────────────────────────────────────────
+  if(key.startsWith('butt-'))
+    return R([
+      'barely-there thong, high-cut sides',
+      'micro G-string, minimal coverage',
+      'string bikini bottom pulled up high',
+      'lace cheeky panties, barely covering',
+      'Brazilian bikini bottom, minimal fabric',
+      'seamless micro thong with lace waistband',
+      'sheer lace panties, see-through back',
+    ]);
+
+  // ── CLOSEUP / DETAIL ──────────────────────────────────────────────────────
+  if(key.startsWith('closeup-'))
+    return R([
+      'lace push-up bra, cleavage detail',
+      'sheer lace bralette, see-through',
+      'bikini top, colorful and fitted',
+      'sheer crop top showing lingerie underneath',
+      'satin bra with lace trim',
+    ]);
+
+  // ── PRESENTING ────────────────────────────────────────────────────────────
+  if(key.startsWith('presenting-') || key === 'presenting')
+    return R([
+      'thong and matching lace bra, presenting',
+      'micro string bikini, G-string presenting pose',
+      'sheer panties and sheer bralette, revealing',
+      'G-string and matching bralette, provocative angle',
+    ]);
+
+  // ── SPREAD-EAGLE ─────────────────────────────────────────────────────────
+  if(key.startsWith('spread-eagle'))
+    return R([
+      'lace lingerie set: bra and matching panties, spread pose',
+      'sheer bodysuit, high-cut sides, spread-eagle',
+      'strappy lingerie: bralette and thong',
+      'satin bra and high-waist panties, lying back',
+    ]);
+
+  // ── SPHINX / BACKBEND FLOOR ───────────────────────────────────────────────
+  if(key === 'sphinx' || key === 'backbend-floor' || key === 'backbend-extreme')
+    return R([
+      'black lace lingerie set, sphinx floor pose',
+      'silk bodysuit, form-fitting, floor pose',
+      'yoga shorts and crop sports bra, backbend',
+      'sheer bodysuit, lingerie-inspired, floor pose',
+    ]);
+
+  // ── WALL POSES ────────────────────────────────────────────────────────────
+  if(key.startsWith('wall-') || key === 'wall-pin-front')
+    return R([
+      'tight bodycon mini dress, pressed against wall',
+      'lace lingerie set: bra and panties, against wall',
+      'sheer bodysuit, back pressed to wall',
+      'crop top and micro shorts, wall pose',
+      'satin slip dress, cinched waist, wall lean',
+    ]);
+
+  // ── TIPPY TOES / STANDING SPLIT ───────────────────────────────────────────
+  if(key === 'tippy-toes' || key === 'standing-split' || key === 'splits-standing')
+    return R([
+      'ballet-inspired leotard and tights, on pointe',
+      'tiny dance shorts and sports bra, standing split',
+      'sleek bodycon dress and heels, tippy-toe pose',
+      'gymnastics bodysuit, high-cut, standing split',
+    ]);
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GENERIC POSES — rich variety by body position
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── STANDING (specific sub-types) ─────────────────────────────────────────
+  if(key === 'standing-front' || key === 'standing-back' || key === 'standing-wide-legs-open' || key === 'standing-spread-front' || key === 'standing-spread-back')
+    return R([
+      'black lace lingerie: push-up bra and high-waist panties',
+      'white bodycon mini dress, second-skin fit',
+      'sheer lace bodysuit with thong back',
+      'satin slip dress, barely there',
+      'silk camisole and matching high-cut panties',
+      'strappy lace set: bralette and matching thong',
+    ]);
+
+  if(key.startsWith('standing-'))
+    return R([
+      'black lace lingerie set: bra and matching panties',
+      'silk satin lingerie, thin spaghetti straps',
+      'sheer lace bodysuit, second-skin fit',
+      'strappy white lingerie: bralette and high-waist panties',
+      'elegant corset with matching high-waist panties',
+      'satin bra and lace high-waist briefs',
+      'sheer mesh bralette and matching panties',
+      'lace garter belt and matching thong',
+      'soft pink lingerie set, satin and lace',
+      'bodycon mini dress, no underwear visible',
+      'fitted crop top and micro shorts, standing pose',
+    ]);
+
+  // ── SITTING ───────────────────────────────────────────────────────────────
+  if(key.startsWith('sitting-'))
+    return R([
+      'black lace bra and matching panties, seated sensual',
+      'silk slip camisole, barely covering, seated',
+      'sheer bodysuit with thong back, seated pose',
+      'satin lingerie set, boudoir seated',
+      'white lace balconette bra and matching briefs',
+      'strappy lingerie: bralette and hipster panties, seated',
+      'silk robe loosely draped, lingerie visible',
+      'lace garter belt and stockings, seated elegantly',
+    ]);
+
+  // ── KNEELING ─────────────────────────────────────────────────────────────
+  if(key.startsWith('kneeling-'))
+    return R([
+      'black lace lingerie set, kneeling boudoir',
+      'sheer bodysuit, kneeling pose',
+      'strappy satin bralette and matching thong',
+      'elegant corset and thigh-high stockings',
+      'white lace lingerie: balconette bra and panties',
+      'silk camisole and high-cut panties, kneeling',
+    ]);
+
+  // ── LYING / LYING DOWN ────────────────────────────────────────────────────
+  if(key.startsWith('lying-') || key === 'sphinx' || key === 'spread-eagle-lying')
+    return R([
+      'black lace lingerie: demi-cup bra and thong, lying sensual',
+      'silk satin lingerie, thin straps, draped on surface',
+      'sheer lace bodysuit, lying on satin sheets',
+      'strappy white lingerie set on white bedding',
+      'silk babydoll negligee, barely covering',
+      'lace bralette and matching lace panties, intimate',
+      'satin bra and high-waist briefs, soft bedding',
+      'sheer robe open over lingerie, lying gracefully',
+    ]);
+
+  // ── ALL FOURS ─────────────────────────────────────────────────────────────
+  if(key.startsWith('allfours-'))
+    return R([
+      'black lace lingerie: bra and thong, all-fours pose',
+      'sheer bodysuit with thong cut, on all fours',
+      'strappy satin bralette and G-string',
+      'white lace lingerie set, on all fours',
+      'silk camisole loosely hanging, no pants',
+      'lace garter belt with thong, provocative all-fours',
+    ]);
+
+  // ── SQUAT ─────────────────────────────────────────────────────────────────
+  if(key.startsWith('squat-'))
+    return R([
+      'high-cut sports bra and micro booty shorts, squat pose',
+      'black lace lingerie: bra and thong, deep squat',
+      'yoga shorts and crop sports bra, squat position',
+      'sheer bodysuit, high-cut sides, squat',
+      'seamless thong and matching bralette, squat',
+      'gym micro shorts and sports bra, deep squat',
+    ]);
+
+  // ── GENERIC POSES (catch-all for all pose prefixes) ───────────────────────
+  if(/^(bent-|arched-|arms-|legs-|pov-|side-|one-|reclined-|arm-|shoulder-|torso-|butterfly|tippy-|double-|wide-)/.test(key))
+    return R([
+      'black lace lingerie set: bra and panties',
+      'silk satin lingerie, thin straps, elegant',
+      'sheer lace bodysuit, second-skin',
+      'strappy white lingerie: bralette and thong',
+      'elegant corset and matching panties',
+      'satin bra and high-waist panties',
+      'sheer mesh bralette and minimal panties',
+      'lace garter belt and matching thong',
+      'soft pink satin lingerie set',
+      'white silk camisole and matching shorts',
+    ]);
+
+  // ── EVERYTHING ELSE — rich lingerie pool ──────────────────────────────────
+  return R([
+    'black lace lingerie set: push-up bra and thong',
+    'silk satin lingerie, spaghetti straps',
+    'sheer lace bodysuit, barely there',
+    'strappy lingerie set: bralette and matching panties',
+    'satin bra and lace high-waist panties',
+    'white silk lingerie, soft and elegant',
+    'elegant corset and garter belt with stockings',
+    'lace babydoll negligee and matching panties',
+  ]);
 }
 
 function _randomFrom(arr){
@@ -11914,7 +12529,12 @@ function buildPrompt(englishText, rawPT){
       : _mjNegBase;
     _params += ' --no ' + _mjNeg;
     const _mjFaceDesc = _getFaceID() ? `, ${_getFaceID()}, same consistent woman, same face` : '';
-    return core + _mjFaceDesc + ', ' + QF + _params;
+    // MJ mode: dynamic QF — use chip-selected film stock and lens
+    const _mjQFFilm = getFilmStock() || 'Kodak Portra 400';
+    const _mjQFLensRaw = getLensCam();
+    const _mjQFLens = _mjQFLensRaw ? _mjQFLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.4';
+    const _mjQF = QF.replace('Kodak Portra 400', _mjQFFilm).replace('Canon EOS R5 85mm f/1.4', _mjQFLens);
+    return core + _mjFaceDesc + ', ' + _mjQF + _params;
   }
   if(currentMode === 'gpt'){
     const _gptRealPrefix = _wantsNSFW
@@ -12247,10 +12867,10 @@ function showPrompt(prompt){
   card.classList.add('visible');
   card.scrollIntoView({behavior:'smooth',block:'start'});
   document.getElementById('fab').classList.add('visible');
-  // token counter
-  const words = prompt.trim() ? prompt.trim().split(/[\s,]+/).filter(Boolean).length : 0;
-  const tcEl = document.getElementById('token-count');
-  if(tcEl) tcEl.textContent = '~' + words + ' tokens · ' + prompt.length + ' caracteres';
+  // token counter (CLIP budget tracker)
+  updateTokenCount(prompt);
+  // Live score + CLIP bar update
+  try{ liveAnalyze(); }catch(e){}
   // history
   const poseKey = selectedPose ? Object.keys(POSES).find(k=>POSES[k]===selectedPose) : null;
   addToHistory(prompt, currentMode, poseKey || 'livre');
@@ -12313,6 +12933,50 @@ async function _translateText(text){
   }
 }
 
+// ── AUTO-COMPLETE CHARACTER: preenche etnia, corpo, cabelo com valores aleatórios ─
+// Chamado no generate() quando nenhum chip de personagem está ativo.
+// Activa os chips na UI para dar feedback visual ao usuário.
+function _autoCompleteCharacter(){
+  const R = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  // ── Etnia — sample from Latin/European/diverse mix ─────────────────────
+  const _ETNIA_PREFIXES = [
+    'Brazilian woman','Mexican woman, warm','Colombian woman','Argentine woman',
+    'Italian woman','Spanish woman','French woman, warm fair','Latina woman',
+    'Brazilian woman','Colombian woman', // weighted toward Latina
+  ];
+  // ── Corpo (match actual chip data-val prefixes) ───────────────────────────
+  const _CORPO_PREFIXES = [
+    'natural average body','hourglass figure','athletic toned body',
+    'petite slim body','pear shaped body','voluptuous curvy body',
+  ];
+  // ── Cabelo (match actual chip data-val prefixes) ──────────────────────────
+  const _CABELO_PREFIXES = [
+    'long straight dark brunette','long straight platinum blonde',
+    'natural curly hair','long red hair, auburn',
+  ];
+
+  // Activate etnia chip
+  if(!quickChipState.etnia){
+    const _ep = R(_ETNIA_PREFIXES);
+    const _eEl = document.querySelector(`.quick-chip[data-cat="etnia"][data-val^="${_ep}"]`);
+    if(_eEl){ document.querySelectorAll('.quick-chip[data-cat="etnia"]').forEach(c=>c.classList.remove('active','auto-set')); _eEl.classList.add('active','auto-set'); quickChipState.etnia = _eEl.dataset.val; try{_applyEtniaProfile(_eEl.dataset.val);}catch(e){} }
+  }
+  // Activate corpo chip
+  if(!quickChipState.corpo){
+    const _cp = R(_CORPO_PREFIXES);
+    const _cEl = document.querySelector(`.quick-chip[data-cat="corpo"][data-val^="${_cp}"]`);
+    if(_cEl){ document.querySelectorAll('.quick-chip[data-cat="corpo"]').forEach(c=>c.classList.remove('active','auto-set')); _cEl.classList.add('active','auto-set'); quickChipState.corpo = _cEl.dataset.val; }
+  }
+  // Activate cabelo chip
+  if(!quickChipState.cabelo){
+    const _hp = R(_CABELO_PREFIXES);
+    const _hEl = document.querySelector(`.quick-chip[data-cat="cabelo"][data-val^="${_hp}"]`);
+    if(_hEl){ document.querySelectorAll('.quick-chip[data-cat="cabelo"]').forEach(c=>c.classList.remove('active','auto-set')); _hEl.classList.add('active','auto-set'); quickChipState.cabelo = _hEl.dataset.val; }
+  }
+  try{ _autoFillDescription(); }catch(e){}
+}
+
 async function generate(){
   const _taEl = document.getElementById('user-description');
   const raw = (_taEl?.value || '').trim();
@@ -12324,6 +12988,12 @@ async function generate(){
   if(!raw && !selectedPoseKey && !hasPreset && !_quickPre){
     toast('⚠️ Selecione uma pose ou personagem');
     return;
+  }
+
+  // ── Auto-complete: se nenhum chip de personagem está ativo, escolhe aleatoriamente ─
+  // Isso garante que qualquer geração tenha pelo menos etnia + corpo + cabelo básicos.
+  if(!quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo && !_quickPre && !hasPreset){
+    try{ _autoCompleteCharacter(); }catch(e){}
   }
 
   // Compute pose outfit ONCE here so autoScene + buildPrompt use the same random result.
@@ -12447,17 +13117,24 @@ function sharePrompt(){
 
 // ── EXPORTAR / IMPORTAR SESSÃO ────────────────────────────────────────────
 function exportSession(){
-  const _history = JSON.parse(localStorage.getItem('pgen_history') || '[]');
-  const _favs    = JSON.parse(localStorage.getItem('pgen_favs')    || '[]');
-  const _presets = JSON.parse(localStorage.getItem('pgen_presets') || '[]');
+  const _history      = JSON.parse(localStorage.getItem('pgen_history')     || '[]');
+  const _promptHist   = JSON.parse(localStorage.getItem('prompt-history')   || '[]'); // prompt history (UI list)
+  const _favs         = JSON.parse(localStorage.getItem('pgen_favs')        || '[]');
+  const _presets      = JSON.parse(localStorage.getItem('pgen_presets')     || '[]');
+  const _savedPresets = JSON.parse(localStorage.getItem('saved-presets')    || '[]');
+  const _seedMem      = JSON.parse(localStorage.getItem('pgen_seed_memory') || '[]');
   const _session = {
-    version: '3.0',
+    version: '3.1',
     exported: new Date().toISOString(),
     mode: currentMode,
     history: _history,
+    promptHistory: _promptHist,
     favs: _favs,
     presets: _presets,
+    savedPresets: _savedPresets,
+    seedMemory: _seedMem,
     quickState: quickChipState,
+    skinMarks: typeof skinMarksActive !== 'undefined' ? [...skinMarksActive] : [],
     currentPrompt: document.getElementById('prompt')?.value || ''
   };
   const blob = new Blob([JSON.stringify(_session, null, 2)], {type:'application/json'});
@@ -12467,7 +13144,32 @@ function exportSession(){
   a.download = 'pgen-session-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(url);
-  toast('💾 Sessão exportada!');
+  toast('💾 Sessão completa exportada (histórico + presets + seeds)!');
+}
+
+// ── EXPORTAR HISTÓRICO COMO JSON LIMPO ─────────────────────────────────────
+function exportHistoryJSON(){
+  if(!promptHistory.length){ toast('⚠️ Histórico vazio — gere alguns prompts primeiro'); return; }
+  const data = {
+    exported: new Date().toISOString(),
+    count: promptHistory.length,
+    prompts: promptHistory.map((e,i) => ({
+      index: i + 1,
+      mode: e.mode,
+      pose: e.pose,
+      timestamp: new Date(e.ts).toLocaleString('pt-BR'),
+      prompt: e.prompt,
+      seed: (e.prompt.match(/\[seed:\s*(\d+)\]/) || [])[1] || null
+    }))
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'pgen-historico-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`📥 ${promptHistory.length} prompts exportados como JSON!`);
 }
 function importSession(input){
   const file = input.files[0];
@@ -12650,6 +13352,7 @@ const quickChipState = { etnia:'', idade:'', corpo:'', cabelo:'', cenario:'', es
 const skinMarksActive = new Set();
 function toggleSkinMark(el){
   const val = el.dataset.val;
+  el.classList.remove('auto-set'); // manual click clears auto-set badge
   if(skinMarksActive.has(val)){
     skinMarksActive.delete(val);
     el.classList.remove('active');
@@ -12832,7 +13535,8 @@ function toggleQuickChip(el){
   const cat = el.dataset.cat;
   const val = el.dataset.val;
   const already = el.classList.contains('active');
-  document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active'));
+  // Remove active + auto-set from all chips in this category (manual click overrides pose default)
+  document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active','auto-set'));
   if(!already){
     el.classList.add('active');
     quickChipState[cat] = val;
@@ -12859,6 +13563,452 @@ function getQuickCenario(){ return quickChipState.cenario || ''; }
 function getQuickIluminacao(){ return quickChipState.iluminacao || ''; }
 function getFilmStock(){ return quickChipState.film_stock || ''; }
 function getLensCam(){ return quickChipState.lens_cam || ''; }
+
+// ── POSE-ADAPTIVE NEGATIVE PROMPT ─────────────────────────────────────────
+// Extra negative terms injected automatically when a pose is selected.
+// Stored separately so they can be cleanly removed/replaced on next pose change.
+let _poseNegExtra = '';
+
+function _getPoseNegExtra(key){
+  if(!key) return '';
+  // Yoga / stretch — wrong anatomy is the main risk
+  if(key.startsWith('yoga-')) return 'wrong yoga pose, impossible stretch, broken limbs, extreme flexibility error, wrong joint angles, anatomical impossibility';
+  // Gym — clothes and equipment mismatch
+  if(key.startsWith('gym-') || key.startsWith('legging-')) return 'formal wear in gym, street clothes in gym, no gym equipment visible, wrong exercise form';
+  // Beach / water / pool — fake environments
+  if(key.startsWith('beach-') || key.startsWith('water-') || key.startsWith('pool-')) return 'fake beach backdrop, pixelated waves, indoor pool background error, bad water reflection, dry skin in wet setting';
+  // Shower / bath
+  if(key.startsWith('shower-') || key.startsWith('bath-')) return 'dry hair in shower, dry skin in wet environment, no water drops, fully clothed in shower';
+  // Dance / club
+  if(key.startsWith('dance-') || key.startsWith('pole-dance')) return 'static pose, no movement energy, wrong club lighting, daylight in club, awkward stiff posture';
+  // Selfie
+  if(key.startsWith('selfie-')) return 'professional camera setup in selfie, tripod visible as if selfie, wrong arm angle for selfie, photographer visible in mirror';
+  // Closeup / face
+  if(key.startsWith('closeup-')) return 'full body visible in closeup, wide angle distortion, background in focus, subject out of focus';
+  // Butt poses
+  if(key.startsWith('butt-')) return 'front view in butt pose, face obscuring buttocks, wrong camera angle';
+  // Outdoor / nature
+  if(key.startsWith('nature-') || key.startsWith('outdoor-')) return 'concrete background, city skyline, indoor setting, artificial lighting in outdoor scene';
+  // Ballet / aerial / contortionist
+  if(key.startsWith('ballet-') || key.startsWith('aerial-') || key.startsWith('contortionist-')) return 'wrong dance pose, impossible anatomy, broken joints, unrealistic flexibility, street clothes in dance setting';
+  // Car / moto
+  if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-')) return 'wrong car model, unrealistic vehicle, fake CGI car, badly integrated subject into car scene';
+  // Fantasy / roleplay
+  if(key.startsWith('fantasy-')) return 'modern clothing in fantasy setting, anachronistic elements, wrong costume for role, generic unthemed outfit';
+  // Alt / gothic
+  if(key.startsWith('alt-')) return 'bright cheerful colors, preppy style, mainstream fashion, wrong gothic aesthetic';
+  // Twerk
+  if(key.startsWith('twerk-')) return 'static pose, no movement energy, stiff posture, standing straight';
+  // Explicit — age-related always blocked
+  if(/^(sex-|anal-|oral-|cowgirl|missionary|doggy-|cumshot-)/.test(key)) return 'teenager, minor, underage, young teen, child, childlike features, immature appearance';
+  return '';
+}
+
+// ── POSE AUTO-DEFAULTS: Iluminação + Película + Lente + Marcas Naturais ───
+// Called from setPose(). Activates contextually appropriate chips for the
+// selected pose category. Chips show a ✦ badge (dashed border) to signal
+// auto-selection; manual clicks remove the badge and take full precedence.
+// ──────────────────────────────────────────────────────────────────────────
+
+function _chipValByPrefix(cat, prefix){
+  const el = document.querySelector(`.quick-chip[data-cat="${cat}"][data-val^="${prefix}"]`);
+  return el ? el.dataset.val : null;
+}
+
+function _activateChipByPrefix(cat, prefix){
+  if(!prefix) return;
+  const val = _chipValByPrefix(cat, prefix);
+  if(!val) return;
+  // Deactivate all others in category (keep chip state clean)
+  document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active','auto-set'));
+  const el = document.querySelector(`.quick-chip[data-cat="${cat}"][data-val="${val}"]`);
+  if(el){ el.classList.add('active','auto-set'); quickChipState[cat] = val; }
+}
+
+function _activateSkinMarksByPrefixes(prefixes){
+  if(!Array.isArray(prefixes)) return;
+  // Clear current auto marks (but keep any manually set ones)
+  document.querySelectorAll('.quick-chip[data-cat="skin_mark"].auto-set').forEach(c => {
+    c.classList.remove('active','auto-set');
+    skinMarksActive.delete(c.dataset.val);
+  });
+  // Activate suggested marks
+  prefixes.forEach(pfx => {
+    const el = document.querySelector(`.quick-chip[data-cat="skin_mark"][data-val^="${pfx}"]`);
+    if(el && !skinMarksActive.has(el.dataset.val)){
+      el.classList.add('active','auto-set');
+      skinMarksActive.add(el.dataset.val);
+    }
+  });
+}
+
+function _clearAllAutoChips(){
+  document.querySelectorAll('.quick-chip.auto-set').forEach(c => {
+    c.classList.remove('active','auto-set');
+    const cat = c.dataset.cat;
+    if(cat && cat !== 'skin_mark') quickChipState[cat] = '';
+    if(cat === 'skin_mark') skinMarksActive.delete(c.dataset.val);
+  });
+}
+
+function _applyPoseDefaults(key){
+  _clearAllAutoChips();
+  if(!key) return;
+
+  const R = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  // Shorthand prefixes that match the first unique chars of each chip's data-val:
+  // Iluminação: 'soft diffused natural'|'late afternoon golden'|'large softbox studio'|
+  //             'low-key intimate'|'warm flickering candlelight'|'soft overcast diffused'|
+  //             'neon nightclub lighting'|'harsh direct midday'|'backlight rim lighting'|
+  //             'harsh overhead fluorescent'|'moonlight, soft cool'|'window light only'
+  // Film stock: 'Kodak Portra 400'|'Cinestill 800T'|'Fuji 400H'|'Kodak Gold 200'|
+  //             'Ilford HP5'|'Fujifilm Velvia'|'Lomography'
+  // Lens:       'shot on 24mm'|'shot on 35mm'|'shot on 50mm'|'shot on 85mm'|
+  //             'shot on 105mm'|'shot on 135mm'
+  // Marks:      'visible bikini tan'|'natural stretch marks'|'natural freckles'|
+  //             'natural subtle cellulite'|'natural hip dips'|'prominent hand and forearm'|
+  //             'natural beauty mole'|'natural skin redness'|'natural soft belly'|
+  //             'natural breast asymmetry'|'light body hair'|'natural acne'
+
+  let ill, film, lens, marks;
+
+  // ── Beach / Water / Pool ─────────────────────────────────────────────────
+  if(key.startsWith('beach-') || key.startsWith('water-') || key.startsWith('pool-')){
+    ill   = R(['late afternoon golden','soft diffused natural','harsh direct midday']);
+    film  = R(['Kodak Gold 200','Fuji 400H','Fujifilm Velvia']);
+    lens  = R(['shot on 35mm','shot on 50mm','shot on 24mm']);
+    marks = R([['visible bikini tan','natural stretch marks'],
+               ['visible bikini tan','natural hip dips'],
+               ['visible bikini tan','natural subtle cellulite']]);
+
+  // ── Yoga ─────────────────────────────────────────────────────────────────
+  } else if(key.startsWith('yoga-')){
+    ill   = R(['soft diffused natural','window light only','soft overcast diffused']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 50mm','shot on 35mm']);
+    marks = R([['natural hip dips','light body hair'],
+               ['natural stretch marks','natural hip dips'],
+               ['natural soft belly','natural hip dips']]);
+
+  // ── Gym ───────────────────────────────────────────────────────────────────
+  } else if(key.startsWith('gym-')){
+    ill   = 'harsh overhead fluorescent';
+    film  = R(['Kodak Portra 400','Fuji 400H']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['prominent hand and forearm','natural hip dips'],
+               ['natural stretch marks','prominent hand and forearm'],
+               ['prominent hand and forearm','natural subtle cellulite']]);
+
+  // ── Legging ──────────────────────────────────────────────────────────────
+  } else if(key.startsWith('legging-')){
+    ill   = R(['harsh overhead fluorescent','soft diffused natural']);
+    film  = 'Kodak Portra 400';
+    lens  = R(['shot on 50mm','shot on 35mm']);
+    marks = R([['natural subtle cellulite','natural hip dips'],
+               ['natural stretch marks','natural hip dips']]);
+
+  // ── Dance / Club ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('dance-')){
+    ill   = R(['neon nightclub lighting','backlight rim lighting']);
+    film  = R(['Cinestill 800T','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Jeans ────────────────────────────────────────────────────────────────
+  } else if(key.startsWith('jeans-')){
+    ill   = R(['late afternoon golden','soft diffused natural','backlight rim lighting']);
+    film  = R(['Kodak Gold 200','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['prominent hand and forearm'],['natural beauty mole'],[]]);
+
+  // ── Shower / Bath ────────────────────────────────────────────────────────
+  } else if(key.startsWith('shower-') || key.startsWith('bath-')){
+    ill   = R(['soft diffused natural','window light only']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural soft belly','natural stretch marks'],
+               ['natural soft belly','natural breast asymmetry'],
+               ['natural stretch marks','natural breast asymmetry']]);
+
+  // ── Nature / Outdoor ─────────────────────────────────────────────────────
+  } else if(key.startsWith('nature-') || key.startsWith('outdoor-')){
+    ill   = R(['late afternoon golden','soft diffused natural','backlight rim lighting','soft overcast diffused']);
+    film  = R(['Kodak Gold 200','Fujifilm Velvia','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 24mm','shot on 50mm']);
+    marks = R([['natural freckles'],['natural freckles','natural beauty mole'],[]]);
+
+  // ── Car / Moto ───────────────────────────────────────────────────────────
+  } else if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-')){
+    ill   = R(['late afternoon golden','backlight rim lighting','soft diffused natural']);
+    film  = R(['Kodak Gold 200','Cinestill 800T']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Mirror ───────────────────────────────────────────────────────────────
+  } else if(key.startsWith('mirror-')){
+    ill   = R(['window light only','soft diffused natural']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural stretch marks','natural soft belly'],
+               ['natural breast asymmetry','natural soft belly'],
+               ['natural hip dips','natural stretch marks']]);
+
+  // ── Model / Editorial ────────────────────────────────────────────────────
+  } else if(key.startsWith('model-')){
+    ill   = R(['large softbox studio','soft diffused natural']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 85mm','shot on 50mm']);
+    marks = [];
+
+  // ── Selfie (gym) ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('selfie-gym')){
+    ill   = 'harsh overhead fluorescent';
+    film  = 'Kodak Portra 400';
+    lens  = 'shot on 35mm';
+    marks = R([['natural hip dips'],['prominent hand and forearm']]);
+
+  // ── Selfie (beach/pool) ──────────────────────────────────────────────────
+  } else if(key.startsWith('selfie-beach') || key.startsWith('selfie-pool')){
+    ill   = R(['late afternoon golden','soft diffused natural']);
+    film  = R(['Kodak Gold 200','Fuji 400H']);
+    lens  = 'shot on 35mm';
+    marks = ['visible bikini tan'];
+
+  // ── Selfie (bathroom/shower) ─────────────────────────────────────────────
+  } else if(key.startsWith('selfie-bathroom') || key === 'selfie-shower-steam-close'){
+    ill   = 'soft diffused natural';
+    film  = 'Fuji 400H';
+    lens  = 'shot on 35mm';
+    marks = R([['natural soft belly'],['natural stretch marks']]);
+
+  // ── Selfie (generic) ─────────────────────────────────────────────────────
+  } else if(key.startsWith('selfie-')){
+    ill   = R(['window light only','soft diffused natural']);
+    film  = R(['Kodak Portra 400','Fuji 400H']);
+    lens  = 'shot on 35mm';
+    marks = R([['natural freckles'],['natural beauty mole'],[]]);
+
+  // ── Butt closeup ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('butt-')){
+    ill   = R(['soft diffused natural','window light only','backlight rim lighting']);
+    film  = 'Kodak Portra 400';
+    lens  = R(['shot on 85mm','shot on 105mm']);
+    marks = R([['natural subtle cellulite','natural stretch marks'],
+               ['natural subtle cellulite','natural hip dips'],
+               ['natural stretch marks','natural hip dips']]);
+
+  // ── Closeup ──────────────────────────────────────────────────────────────
+  } else if(key.startsWith('closeup-')){
+    ill   = R(['window light only','soft diffused natural']);
+    film  = 'Kodak Portra 400';
+    lens  = R(['shot on 105mm','shot on 85mm']);
+    marks = R([['natural skin redness'],['natural freckles'],['natural beauty mole']]);
+
+  // ── Pole dance ───────────────────────────────────────────────────────────
+  } else if(key.startsWith('pole-dance') || key === 'dance-pole-leg-wrap' || key === 'dance-pole-spin'){
+    ill   = R(['neon nightclub lighting','backlight rim lighting']);
+    film  = R(['Cinestill 800T','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Fantasy / Roleplay ───────────────────────────────────────────────────
+  } else if(key.startsWith('fantasy-')){
+    ill   = R(['large softbox studio','low-key intimate','backlight rim lighting']);
+    film  = R(['Kodak Portra 400','Fuji 400H']);
+    lens  = R(['shot on 85mm','shot on 50mm']);
+    marks = [];
+
+  // ── Alt / Gothic ─────────────────────────────────────────────────────────
+  } else if(key.startsWith('alt-')){
+    ill   = R(['low-key intimate','neon nightclub lighting','backlight rim lighting']);
+    film  = R(['Cinestill 800T','Kodak Portra 400','Lomography']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Explicit / Sex / NSFW ────────────────────────────────────────────────
+  } else if(/^(sex-|anal-|oral-|multi-|cumshot-|shemale-|doggy-|prone-bone|cowgirl|reverse-cowgirl|missionary|lap-dance|leapfrog|anvil|mating-press|pile-driver|spoon$|scissors$)/.test(key)){
+    ill   = R(['low-key intimate','soft diffused natural','window light only','warm flickering candlelight']);
+    film  = R(['Kodak Portra 400','Cinestill 800T']);
+    lens  = R(['shot on 50mm','shot on 85mm','shot on 35mm']);
+    marks = R([['natural stretch marks','natural soft belly'],
+               ['natural breast asymmetry','natural soft belly'],
+               []]);
+
+  // ── Aerial / Ballet / Contortionist ─────────────────────────────────────
+  } else if(key.startsWith('aerial-') || key.startsWith('ballet-') || key.startsWith('contortionist-') || key.startsWith('splits-') || key === 'splits' || key === 'aerial-silk'){
+    ill   = R(['large softbox studio','backlight rim lighting','soft diffused natural']);
+    film  = R(['Fuji 400H','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural stretch marks'],['light body hair'],[]]);
+
+  // ── Sunset / Rooftop / Urban ─────────────────────────────────────────────
+  } else if(key === 'sunset-silhouette' || key.startsWith('sunset-') || key.startsWith('rooftop-') || key.startsWith('urban-')){
+    ill   = R(['late afternoon golden','backlight rim lighting','soft overcast diffused']);
+    film  = R(['Kodak Gold 200','Cinestill 800T','Fujifilm Velvia']);
+    lens  = R(['shot on 35mm','shot on 50mm','shot on 85mm']);
+    marks = R([['natural beauty mole'],['natural freckles'],[]]);
+
+  // ── Twerk / Booty ────────────────────────────────────────────────────────
+  } else if(key.startsWith('twerk-')){
+    ill   = R(['neon nightclub lighting','backlight rim lighting','harsh overhead fluorescent']);
+    film  = R(['Cinestill 800T','Kodak Portra 400']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural subtle cellulite','natural hip dips'],
+               ['natural stretch marks','natural hip dips']]);
+
+  // ── Mermaid ──────────────────────────────────────────────────────────────
+  } else if(key === 'mermaid' || key.startsWith('mermaid-')){
+    ill   = R(['backlight rim lighting','soft diffused natural','window light only']);
+    film  = R(['Fujifilm Velvia','Fuji 400H']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = [];
+
+  // ── Pinup ────────────────────────────────────────────────────────────────
+  } else if(key === 'pinup' || key.startsWith('pinup-')){
+    ill   = R(['large softbox studio','soft diffused natural','warm flickering candlelight']);
+    film  = R(['Kodak Gold 200','Fuji 400H']);
+    lens  = R(['shot on 50mm','shot on 85mm']);
+    marks = R([['natural beauty mole'],['natural freckles'],[]]);
+
+  // ── Boudoir / Bed / Mirror intimate ──────────────────────────────────────
+  } else if(key.startsWith('edge-of-bed') || key === 'sitting-edge' || key.startsWith('sitting-bed') || key === 'sitting-open-legs-bed' || key === 'lotus-lap'){
+    ill   = R(['window light only','low-key intimate','warm flickering candlelight']);
+    film  = R(['Fuji 400H','Kodak Portra 400','Cinestill 800T']);
+    lens  = R(['shot on 85mm','shot on 50mm']);
+    marks = R([['natural soft belly','natural breast asymmetry'],
+               ['natural stretch marks','natural soft belly'],
+               ['natural hip dips','natural breast asymmetry']]);
+
+  // ── Car / Moto (walking/walking) ─────────────────────────────────────────
+  } else if(key === 'walking' || key.startsWith('walking-')){
+    ill   = R(['late afternoon golden','soft diffused natural','backlight rim lighting']);
+    film  = R(['Kodak Portra 400','Kodak Gold 200']);
+    lens  = R(['shot on 35mm','shot on 50mm']);
+    marks = R([['natural beauty mole'],['natural freckles'],[]]);
+
+  // ── Generic neutral poses (standing, sitting, kneeling, lying, squat, etc.) ──
+  } else {
+    ill   = R(['window light only','soft diffused natural','low-key intimate','backlight rim lighting']);
+    film  = R(['Kodak Portra 400','Fuji 400H','Kodak Gold 200']);
+    lens  = R(['shot on 85mm','shot on 50mm','shot on 35mm']);
+    marks = R([['natural stretch marks','natural soft belly'],
+               ['natural hip dips','natural breast asymmetry'],
+               ['natural soft belly'],
+               ['natural stretch marks','natural hip dips'],
+               []]);
+  }
+
+  // ── Cenário: map pose prefix → SCENE_CAT_META key ───────────────────────
+  const _POSE_TO_SCENE_CAT = {
+    'beach-':'beach', 'water-':'water', 'pool-':'pool',
+    'yoga-':'yoga', 'gym-':'gym', 'legging-':'gym',
+    'dance-':'party', 'pole-dance':'party', 'alt-':'alt_dark',
+    'shower-':'shower', 'bath-':'shower',
+    'nature-':'nature', 'outdoor-':'nature',
+    'car-':'car', 'moto-':'car', 'motorcycle-':'car',
+    'mirror-':'mirror', 'model-':'default',
+    'selfie-gym':'gym', 'selfie-beach':'beach', 'selfie-pool':'pool',
+    'selfie-bathroom':'shower', 'selfie-shower':'shower',
+    'selfie-':'boudoir',
+    'fantasy-':'fantasy',
+    'sex-':'boudoir', 'anal-':'boudoir', 'oral-':'boudoir',
+    'multi-':'boudoir', 'cumshot-':'boudoir',
+    'shemale-':'boudoir', 'doggy-':'boudoir',
+    'butt-':'boudoir', 'closeup-':'closeup',
+    'standing-':'standing', 'sitting-':'sitting_intimate',
+    'kneeling-':'kneeling', 'lying-':'lying', 'allfours-':'lying',
+    'squat-':'boudoir', 'jeans-':'jeans',
+    'twerk-':'party', 'ballet-':'boudoir', 'aerial-':'boudoir',
+    'contortionist-':'boudoir', 'splits-':'boudoir',
+    'chair-':'boudoir', 'edge-of-bed':'boudoir',
+    'mirror-':'mirror', 'pinup-':'boudoir',
+    'mermaid-':'water', 'sunset-':'nature',
+    'rooftop-':'standing', 'urban-':'standing',
+    'walking-':'standing', 'model-':'default',
+  };
+  let _sceneCat = null;
+  for(const [pfx, cat] of Object.entries(_POSE_TO_SCENE_CAT)){
+    if(key.startsWith(pfx)){ _sceneCat = cat; break; }
+  }
+  if(!_sceneCat) _sceneCat = 'boudoir'; // ultimate fallback
+
+  // Auto-set cenário from SCENE_POOLS if available
+  try{
+    if(typeof SCENE_POOLS !== 'undefined' && SCENE_POOLS[_sceneCat] && SCENE_POOLS[_sceneCat].length){
+      const _pool = SCENE_POOLS[_sceneCat];
+      const _sceneIdx = Math.floor(Math.random() * _pool.length);
+      const _sceneVal = _pool[_sceneIdx];
+      quickChipState.cenario = _sceneVal;
+      // Update scene picker label
+      const _lbl = document.getElementById('scene-picker-label');
+      const _catMeta = (typeof SCENE_CAT_META !== 'undefined') && SCENE_CAT_META.find(m=>m.key===_sceneCat);
+      if(_lbl){
+        const _emoji = _catMeta ? _catMeta.label.split(' ')[0] : '🎬';
+        const _short  = _sceneVal.length > 38 ? _sceneVal.substring(0,36)+'…' : _sceneVal;
+        _lbl.textContent = _emoji + ' ' + _short + ' ✦';
+      }
+      const _toggle = document.getElementById('scene-picker-toggle');
+      if(_toggle) _toggle.classList.add('has-scene');
+    }
+  }catch(e){}
+
+  // ── Estilo foto: pose-contextual ─────────────────────────────────────────
+  let _estilo = null;
+  if(key.startsWith('dance-') || key.startsWith('pole-dance') || key === 'dance-pole-leg-wrap' || key === 'dance-pole-spin')
+    _estilo = 'paparazzi style, candid street photo, telephoto lens, caught off guard, motion blur, authentic spontaneous moment';
+  else if(key.startsWith('selfie-'))
+    _estilo = 'heavy film grain, coarse grain texture, ISO 3200 grain, grainy high-ISO film feel, pronounced visible grain on skin, raw unprocessed feel';
+  else if(key.startsWith('alt-'))
+    _estilo = 'film noir style, dramatic shadows, high contrast, moody dark atmosphere, chiaroscuro lighting, classic noir aesthetic';
+  else
+    _estilo = null; // leave estilo_foto untouched for most poses
+
+  if(_estilo){
+    document.querySelectorAll('.quick-chip[data-cat="estilo_foto"]').forEach(c => c.classList.remove('active','auto-set'));
+    const _estiloEl = document.querySelector(`.quick-chip[data-cat="estilo_foto"][data-val^="${_estilo.substring(0,18)}"]`);
+    if(_estiloEl){ _estiloEl.classList.add('active','auto-set'); quickChipState.estilo_foto = _estiloEl.dataset.val; }
+  } else {
+    // Clear any previous auto-set estilo (but keep manual ones)
+    document.querySelectorAll('.quick-chip[data-cat="estilo_foto"].auto-set').forEach(c => {
+      c.classList.remove('active','auto-set'); quickChipState.estilo_foto = '';
+    });
+  }
+
+  // Apply iluminação + película + lente + marcas
+  _activateChipByPrefix('iluminacao', ill);
+  _activateChipByPrefix('film_stock', film);
+  _activateChipByPrefix('lens_cam',   lens);
+  _activateSkinMarksByPrefixes(marks);
+
+  // ── Auto-suggest idade based on pose category ──────────────────────────
+  // Only auto-set if no manual idade chip is active (non-auto-set)
+  const _hasManualIdade = !!document.querySelector('.quick-chip[data-cat="idade"].active:not(.auto-set)');
+  if(!_hasManualIdade){
+    let _idadePfx = null;
+    if(key.startsWith('dance-') || key.startsWith('pole-dance') || key.startsWith('selfie-') || key.startsWith('beach-') || key.startsWith('water-') || key.startsWith('pool-'))
+      _idadePfx = '18 to 22'; // young adult — dynamic/outdoor/selfie
+    else if(key.startsWith('yoga-') || key.startsWith('gym-') || key.startsWith('legging-') || key.startsWith('jeans-'))
+      _idadePfx = '23 to 28'; // athletic prime
+    else if(key.startsWith('model-') || key.startsWith('alt-') || key.startsWith('fantasy-'))
+      _idadePfx = '23 to 28'; // editorial/alt
+    else if(key.startsWith('mirror-') || key.startsWith('butt-') || key.startsWith('closeup-'))
+      _idadePfx = '23 to 28'; // intimate/detail
+    else if(/^(sex-|anal-|oral-|cowgirl|missionary|doggy-|cumshot-)/.test(key))
+      _idadePfx = '23 to 28'; // explicit — ensure mature
+    if(_idadePfx) _activateChipByPrefix('idade', _idadePfx);
+  }
+
+  // ── Pose-adaptive negative prompt ─────────────────────────────────────
+  try{
+    _poseNegExtra = _getPoseNegExtra(key);
+    rebuildNegPrompt();
+  }catch(e){}
+
+  // Single comprehensive toast
+  if(typeof toast === 'function')
+    toast('✦ Cenário, iluminação, película, lente, idade e marcas ajustados pela pose', 2800);
+}
 
 // ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
 function copyAsMJ(){
@@ -13609,6 +14759,12 @@ let savedPresets = JSON.parse(localStorage.getItem('saved-presets') || '[]');
 
 function savePresetsStorage(){ localStorage.setItem('saved-presets', JSON.stringify(savedPresets)); }
 
+// ── Preset helpers: support both legacy string presets and new {text,chips,pose} objects ──
+function _presetText(p)  { return typeof p === 'object' ? (p.text  || '') : p; }
+function _presetChips(p) { return typeof p === 'object' ? (p.chips || null) : null; }
+function _presetPose(p)  { return typeof p === 'object' ? (p.pose  || '')  : ''; }
+function _presetHasChips(p){ return typeof p === 'object' && p.chips && Object.values(p.chips).some(Boolean); }
+
 function renderPin(){
   const area = document.getElementById('presets-area');
   if(!area) return;
@@ -13616,11 +14772,15 @@ function renderPin(){
   if(savedPresets.length === 0){ area.classList.remove('has-items'); return; }
   area.classList.add('has-items');
   savedPresets.forEach((preset, idx) => {
+    const text = _presetText(preset);
+    const hasChips = _presetHasChips(preset);
+    const poseLbl = _presetPose(preset) ? ` · ${_presetPose(preset)}` : '';
+    const isActive = (activePreset === preset || activePreset === text);
     const chip = document.createElement('div');
-    chip.className = 'preset-chip' + (preset === activePreset ? ' active-preset' : '');
-    chip.title = preset;
-    chip.innerHTML = `<span class="preset-chip-icon">📌</span>
-      <span class="preset-chip-text">${preset}</span>
+    chip.className = 'preset-chip' + (isActive ? ' active-preset' : '');
+    chip.title = text + (hasChips ? '\n🎛️ Chips salvos' : '') + poseLbl;
+    chip.innerHTML = `<span class="preset-chip-icon">${hasChips ? '🎛️' : '📌'}</span>
+      <span class="preset-chip-text">${text.substring(0,60)}${text.length>60?'…':''}</span>
       <div class="preset-chip-actions">
         <button class="edit-btn" title="Editar" onclick="event.stopPropagation();editPreset(${idx})">✏️</button>
         <button title="Remover" onclick="event.stopPropagation();removePreset(${idx})">✕</button>
@@ -13633,35 +14793,75 @@ function renderPin(){
 function togglePin(){
   const desc = document.getElementById('user-description').value.trim();
   if(!desc){ toast('⚠️ Digite a descrição da personagem primeiro'); return; }
-  savedPresets.unshift(desc);
+  // Save full chip state + current pose alongside the text description
+  const _savedChips = Object.assign({}, quickChipState);
+  const _savedPoseKey = (typeof selectedPoseKey !== 'undefined') ? selectedPoseKey : '';
+  const _savedSkinMarks = (typeof skinMarksActive !== 'undefined') ? [...skinMarksActive] : [];
+  const presetObj = { text: desc, chips: _savedChips, pose: _savedPoseKey, skinMarks: _savedSkinMarks };
+  savedPresets.unshift(presetObj);
   savePresetsStorage();
-  activePreset = desc;
+  activePreset = presetObj;
   document.getElementById('user-description').value = '';
   renderPin();
-  toast('📌 Personagem salva e selecionada!');
+  const chipCount = Object.values(_savedChips).filter(Boolean).length;
+  toast(`📌 Personagem salva! ${chipCount > 0 ? `(${chipCount} chips + vestimenta preservados)` : ''}`);
 }
 
 function selectPreset(idx){
   const p = savedPresets[idx];
-  activePreset = (activePreset === p) ? '' : p;
+  const text = _presetText(p);
+  const isActive = (activePreset === p || activePreset === text);
+  if(isActive){
+    activePreset = '';
+    renderPin();
+    toast('⬜ Personagem desmarcada');
+    return;
+  }
+  activePreset = p;
+  // Restore chip state if saved
+  const chips = _presetChips(p);
+  if(chips){
+    Object.assign(quickChipState, chips);
+    document.querySelectorAll('.quick-chip').forEach(el => {
+      const cat = el.dataset.cat;
+      if(!cat || cat === 'skin_mark') return;
+      if(quickChipState[cat] === el.dataset.val) el.classList.add('active');
+      else el.classList.remove('active','auto-set');
+    });
+    // Restore skin marks
+    const sm = (typeof p === 'object' && p.skinMarks) ? p.skinMarks : [];
+    if(typeof skinMarksActive !== 'undefined'){
+      skinMarksActive.clear();
+      document.querySelectorAll('.quick-chip[data-cat="skin_mark"]').forEach(el => el.classList.remove('active','auto-set'));
+      sm.forEach(v => {
+        skinMarksActive.add(v);
+        const el = document.querySelector(`.quick-chip[data-cat="skin_mark"][data-val="${v}"]`);
+        if(el) el.classList.add('active');
+      });
+    }
+    toast('✅ Personagem + chips restaurados!');
+  } else {
+    toast('✅ Personagem selecionada');
+  }
   renderPin();
-  toast(activePreset ? '✅ Personagem selecionada' : '⬜ Personagem desmarcada');
 }
 
 function editPreset(idx){
   const ta = document.getElementById('user-description');
-  ta.value = savedPresets[idx];
-  if(activePreset === savedPresets[idx]) activePreset = '';
+  const p = savedPresets[idx];
+  ta.value = _presetText(p);
+  if(activePreset === p || activePreset === _presetText(p)) activePreset = '';
   savedPresets.splice(idx, 1);
   savePresetsStorage();
   renderPin();
   ta.focus();
   ta.setSelectionRange(ta.value.length, ta.value.length);
-  toast('✏️ Edite e clique em Fixar para salvar');
+  toast('✏️ Edite e clique em Fixar para salvar (chips serão re-capturados)');
 }
 
 function removePreset(idx){
-  if(activePreset === savedPresets[idx]) activePreset = '';
+  const p = savedPresets[idx];
+  if(activePreset === p || activePreset === _presetText(p)) activePreset = '';
   savedPresets.splice(idx, 1);
   savePresetsStorage();
   renderPin();
@@ -13672,6 +14872,64 @@ function removePreset(idx){
 function clearPin(){ activePreset = ''; renderPin(); }
 
 renderPin();
+
+// ── SEED MEMORY ──────────────────────────────────────────────────────────
+let seedMemory = JSON.parse(localStorage.getItem('pgen_seed_memory') || '[]');
+
+function saveSeedMemory(){
+  localStorage.setItem('pgen_seed_memory', JSON.stringify(seedMemory.slice(0,30)));
+}
+
+function extractSeedFromPrompt(promptText){
+  const m = promptText.match(/\[seed:\s*(\d+)\]/);
+  return m ? parseInt(m[1],10) : null;
+}
+
+function addToSeedMemory(histEntry){
+  const seed = extractSeedFromPrompt(histEntry.prompt);
+  if(!seed){ toast('⚠️ Nenhuma seed neste prompt (gere com SD para obter seed)'); return; }
+  // Check for duplicate
+  if(seedMemory.some(s => s.seed === seed)){ toast('⚠️ Seed já salva!'); return; }
+  seedMemory.unshift({
+    seed,
+    mode: histEntry.mode,
+    pose: histEntry.pose,
+    ts: histEntry.ts,
+    preview: histEntry.prompt.substring(0, 80)
+  });
+  saveSeedMemory();
+  renderSeedMemory();
+  toast(`⭐ Seed ${seed} salva na memória!`);
+}
+
+function removeSeed(idx){
+  seedMemory.splice(idx, 1);
+  saveSeedMemory();
+  renderSeedMemory();
+}
+
+function copySeed(seed){
+  navigator.clipboard.writeText(String(seed));
+  toast(`📋 Seed ${seed} copiada!`);
+}
+
+function renderSeedMemory(){
+  const panel = document.getElementById('seed-memory-panel');
+  if(!panel) return;
+  if(!seedMemory.length){
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = 'block';
+  const list = document.getElementById('seed-memory-list');
+  if(!list) return;
+  list.innerHTML = seedMemory.map((s,i) => `
+    <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #e2e8f0;font-size:0.72em;">
+      <span style="font-family:monospace;font-weight:700;color:#7c3aed;cursor:pointer;flex-shrink:0;" onclick="copySeed(${s.seed})" title="Copiar seed">⭐ ${s.seed}</span>
+      <span style="color:#94a3b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${s.preview}">${s.pose} · ${s.preview.substring(0,40)}…</span>
+      <span style="cursor:pointer;color:#dc2626;flex-shrink:0;" onclick="removeSeed(${i})">✕</span>
+    </div>`).join('');
+}
 
 // ── HISTORY ───────────────────────────────────────────────────────────────
 let promptHistory = JSON.parse(localStorage.getItem('prompt-history') || '[]');
@@ -13695,17 +14953,26 @@ function renderHistory(){
     item.className = 'history-item';
     const d = new Date(e.ts);
     const ts = d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + ' ' + d.toLocaleDateString('pt-BR');
-    item.innerHTML = `<div class="history-item-meta"><span>${ts} · ${e.mode.toUpperCase()} · ${e.pose}</span><span style="cursor:pointer;color:#dc2626" onclick="removeHistory(${i})">✕</span></div><div class="history-item-text">${e.prompt.substring(0,120)}…</div>`;
+    const hasSeed = /\[seed:\s*\d+\]/.test(e.prompt);
+    item.innerHTML = `<div class="history-item-meta">
+      <span>${ts} · ${e.mode.toUpperCase()} · ${e.pose}</span>
+      <div style="display:flex;gap:4px;align-items:center;">
+        ${hasSeed ? `<span style="cursor:pointer;color:#7c3aed;font-size:0.85em;" title="Salvar seed na memória" onclick="event.stopPropagation();addToSeedMemory(promptHistory[${i}])">⭐</span>` : ''}
+        <span style="cursor:pointer;color:#dc2626" onclick="event.stopPropagation();removeHistory(${i})">✕</span>
+      </div>
+    </div><div class="history-item-text">${e.prompt.substring(0,120)}…</div>`;
     item.addEventListener('click', e2 => {
-      if(e2.target.tagName === 'SPAN' && e2.target.style.color) return;
+      if(e2.target.tagName === 'SPAN' && (e2.target.style.color || e2.target.title)) return;
       document.getElementById('prompt').value = e.prompt;
       document.getElementById('output-card').classList.add('visible');
       updateTokenCount(e.prompt);
+      liveAnalyze();
       window.scrollTo({top: document.getElementById('output-card').offsetTop - 20, behavior:'smooth'});
       toast('📋 Prompt restaurado do histórico!');
     });
     list.appendChild(item);
   });
+  renderSeedMemory();
 }
 
 function removeHistory(i){
@@ -13721,13 +14988,29 @@ function clearHistory(){
 }
 
 renderHistory();
+renderSeedMemory();
 
-// ── TOKEN / CHAR COUNTER ──────────────────────────────────────────────────
+// ── TOKEN / CHAR COUNTER (CLIP budget tracker) ───────────────────────────
 function updateTokenCount(text){
   const words = text.trim() ? text.trim().split(/[\s,]+/).filter(Boolean).length : 0;
   const chars = text.length;
   const el = document.getElementById('token-count');
-  if(el) el.textContent = `~${words} tokens · ${chars} caracteres`;
+  if(!el) return;
+  // CLIP token estimate: each comma-separated term averages ~1.3–1.5 subword tokens
+  // We count terms to estimate chunk-1 fill (75 tokens ≈ ~50-55 average terms)
+  const terms = text.trim() ? text.split(',').map(t=>t.trim()).filter(Boolean).length : 0;
+  const clipEst = Math.round(terms * 1.35); // rough estimate per term
+  const overLimit = clipEst > 75;
+  const nearLimit = clipEst >= 55 && clipEst <= 75;
+  const icon  = overLimit ? '🔴' : nearLimit ? '🟡' : '🟢';
+  const color = overLimit ? '#dc2626' : nearLimit ? '#d97706' : '#16a34a';
+  el.innerHTML = `~${words} palavras &nbsp;|&nbsp; ${icon} CLIP: ~${clipEst}/75 tokens`;
+  el.style.color = color;
+  el.title = overLimit
+    ? `⚠️ Prompt tem ~${clipEst} tokens — excede o chunk 1 CLIP (75). Termos além do limite recebem atenção MUITO menor. Use 🔀 Otimizar Tokens.`
+    : nearLimit
+      ? `⚡ ~${clipEst}/75 tokens — próximo do limite do chunk 1 CLIP. Termos adicionais entram no chunk 2 (atenção reduzida).`
+      : `✅ ~${clipEst}/75 tokens — dentro da faixa ideal para máximo efeito CLIP.`;
 }
 
 // ── RANDOM TOTAL ─────────────────────────────────────────────────────────────
@@ -13884,7 +15167,7 @@ async function generateVariations(){
 // ══════════════════════════════════════════════════════════════════════════════
 
 const _AUTO_DEFAULTS = {
-  autoGenerate:  false,
+  autoGenerate:  true,
   autoCopy:      true,
   autoFillDesc:  true,
   autoLighting:  true,
@@ -13895,6 +15178,12 @@ const _AUTO_DEFAULTS = {
 };
 let _AUTO_SETTINGS = Object.assign({}, _AUTO_DEFAULTS,
   JSON.parse(localStorage.getItem('pgen_auto_settings') || '{}'));
+// ── Migração v3.1: forçar autoGenerate=true para usuários existentes que tinham false ──
+if(!localStorage.getItem('pgen_auto_v31')){
+  _AUTO_SETTINGS.autoGenerate = true;
+  localStorage.setItem('pgen_auto_v31', '1');
+  localStorage.setItem('pgen_auto_settings', JSON.stringify(_AUTO_SETTINGS));
+}
 
 function _saveAutoSettings(){
   localStorage.setItem('pgen_auto_settings', JSON.stringify(_AUTO_SETTINGS));
@@ -13939,8 +15228,12 @@ setTimeout(()=>{ try{ _renderAutoBar(); }catch(e){} }, 100);
 let _autoGenDebounce = null;
 function _checkAutoGenerate(){
   if(!_AUTO_SETTINGS.autoGenerate) return;
-  const hasChar = !!(quickChipState.etnia && quickChipState.corpo && quickChipState.cabelo);
-  if(!hasChar || !selectedPoseKey) return;
+  if(!selectedPoseKey) return;
+  // Dispara se: personagem completa OU nenhum chip de personagem (generate() chama _autoCompleteCharacter)
+  const hasAllChar = !!(quickChipState.etnia && quickChipState.corpo && quickChipState.cabelo);
+  const hasNoChar  = !quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo;
+  // Não dispara se personagem está parcialmente preenchida (evita gerar com dados incompletos)
+  if(!hasAllChar && !hasNoChar) return;
   clearTimeout(_autoGenDebounce);
   _autoGenDebounce = setTimeout(()=>{
     toast('⚡ Auto-gerando prompt...');
@@ -14040,39 +15333,39 @@ function _autoFillDescription(){
   }, 400);
 })();
 
-// ── 4. AUTO-SUGESTÃO DE ILUMINAÇÃO por cenário ───────────────────────────────
-let _pendingLightSuggest = null;
+// ── 4. AUTO-ILUMINAÇÃO por cenário (instantânea — sem banner de confirmação) ──
+let _pendingLightSuggest = null; // kept for compat — banner is hidden
 const _CENARIO_LIGHT_SUGGEST = [
-  { re:/praia|beach|areia|mar\b/i,       chip:'iluminacao', chipVal:'late afternoon golden hour light, warm amber sunlight at 15 degrees above horizon, long soft shadows, sun-kissed skin glow, natural lens flare, warm orange and gold tones', label:'🌅 Golden Hour para praia' },
-  { re:/piscina|pool|spa/i,              chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Luz Natural para piscina' },
+  { re:/praia|beach|areia|mar\b/i,       chip:'iluminacao', chipVal:'late afternoon golden hour light, warm amber sunlight at 15 degrees above horizon, long soft shadows, sun-kissed skin glow, natural lens flare, warm orange and gold tones', label:'🌅 Golden Hour' },
+  { re:/piscina|pool|spa/i,              chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Natural' },
   { re:/estúdio|studio|sessão/i,         chip:'iluminacao', chipVal:'large softbox studio light, diffused key light from camera left, gentle fill from right, soft catchlights, controlled studio environment, editorial photography lighting', label:'💡 Estúdio' },
-  { re:/noite|night|noturno/i,           chip:'iluminacao', chipVal:'low-key intimate ambient light, deep natural shadows, dim room glow, minimal single light source, moody dramatic atmosphere, shadow detail preserved', label:'🌙 Low-Key para noite' },
-  { re:/quarto|cama|bedroom|íntimo/i,    chip:'iluminacao', chipVal:'warm flickering candlelight, multiple candles, soft amber flame glow, intimate candlelit atmosphere, warm skin tones from candle warmth', label:'🕯️ Velas para ambiente íntimo' },
-  { re:/floresta|natureza|campo|jardim/i,chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Luz Natural para ao ar livre' },
+  { re:/noite|night|noturno|clube|club|neon/i, chip:'iluminacao', chipVal:'neon nightclub lighting, purple and pink neon strips, harsh colored neon reflections on skin, club strobe atmosphere, neon light casting colored glow on face and body', label:'🌈 Neon Clube' },
+  { re:/quarto|cama|bedroom|íntimo|boudoir/i,  chip:'iluminacao', chipVal:'low-key intimate ambient light, deep natural shadows, dim room glow, minimal single light source, moody dramatic atmosphere, shadow detail preserved', label:'🌙 Low-Key' },
+  { re:/floresta|natureza|campo|jardim|naturez/i, chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Natural' },
+  { re:/academia|gym|fitness/i,          chip:'iluminacao', chipVal:'harsh overhead fluorescent gym lighting, cool white fluorescent tubes, flat overhead gym light, unforgiving gymnasium lighting, neutral cool athletic facility light', label:'🏋️ Fluorescente' },
+  { re:/ducha|banho|shower|bath/i,       chip:'iluminacao', chipVal:'soft diffused natural daylight, large window light, soft natural shadows, realistic ambient daylight, no artificial lighting, gentle catchlights in eyes', label:'☀️ Natural' },
 ];
 
 function _suggestLightingForCenario(cenarioVal){
   if(!_AUTO_SETTINGS.autoLighting) return;
-  if(quickChipState.iluminacao) return; // already set
+  if(quickChipState.iluminacao) return; // already set — pose or manual selection takes precedence
   const match = _CENARIO_LIGHT_SUGGEST.find(r=>r.re.test(cenarioVal));
   if(!match) return;
-  _pendingLightSuggest = match;
+  // ── INSTANT auto-apply — no banner needed ────────────────────────────────
+  document.querySelectorAll(`.quick-chip[data-cat="${match.chip}"]`).forEach(c => c.classList.remove('active','auto-set'));
+  const chipEl = document.querySelector(`.quick-chip[data-cat="${match.chip}"][data-val="${match.chipVal}"]`);
+  if(chipEl){ chipEl.classList.add('active','auto-set'); quickChipState[match.chip] = match.chipVal; }
+  // Hide banner if open (legacy)
   const banner = document.getElementById('auto-lighting-suggest');
-  const text   = document.getElementById('auto-lighting-text');
-  if(!banner || !text) return;
-  text.textContent = '💡 Sugestão automática de iluminação: ' + match.label;
-  banner.style.display = 'block';
+  if(banner) banner.style.display = 'none';
+  _pendingLightSuggest = null;
+  toast('💡 Iluminação: ' + match.label + ' ✦', 1800);
 }
 
 function _acceptLightingSuggest(){
-  if(!_pendingLightSuggest) return;
-  const m = _pendingLightSuggest;
-  // Activate the lighting chip visually
-  document.querySelectorAll(`.quick-chip[data-cat="${m.chip}"]`).forEach(c=>{
-    if(c.dataset.val === m.chipVal){ c.classList.add('active'); quickChipState[m.chip] = m.chipVal; }
-    else c.classList.remove('active');
-  });
-  document.getElementById('auto-lighting-suggest').style.display = 'none';
+  // No-op — lighting now applied instantly; kept for backward compat
+  const banner = document.getElementById('auto-lighting-suggest');
+  if(banner) banner.style.display = 'none';
   _pendingLightSuggest = null;
   _autoSaveCharDraft();
   toast('💡 Iluminação aplicada!');
