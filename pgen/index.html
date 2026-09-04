@@ -12365,7 +12365,9 @@ function buildPrompt(englishText, rawPT){
   // inject outfit/expression chips into the description before expansion
   let inputText = englishText;
   if(typeof chipState !== 'undefined'){
-    if(chipState.outfit && !/wearing|dressed|nude|naked|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|blusa|body|collant|maio|maiô|lingerie|fio dental|tanga|pelada|sem roupa|nua\b/.test(inputText.toLowerCase()))
+    // Auto-outfit (set by pose selection) bypasses this prepend — goes through Priority 3 with full SD weights
+    // Manual chip outfit (user clicked a chip, _autoOutfitActive=false) still prepends here via Priority 1
+    if(chipState.outfit && !_autoOutfitActive && !/wearing|dressed|nude|naked|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|blusa|body|collant|maio|maiô|lingerie|fio dental|tanga|pelada|sem roupa|nua\b/.test(inputText.toLowerCase()))
       inputText = chipState.outfit + ', ' + inputText;
     if(chipState.expression && !pose.sup)
       inputText = inputText + ', ' + chipState.expression;
@@ -12410,22 +12412,16 @@ function buildPrompt(englishText, rawPT){
   let _sdClothingTerms = '';
 
   if(_wantsClothing){
-    // Priority 1: clothing is in the expanded prompt — reinforce it
-    // If auto-outfit was set by pose selection, use the FULL chipState.outfit string (preserves "garter belt",
-    // "stockings", "suspender belt" etc. that _clothingRe regex would miss or truncate).
-    // If user typed clothing manually, extract with context (preserves "red tight dress", "ripped jeans" etc.)
-    let _outfitStr;
-    if(_autoOutfitActive && chipState.outfit){
-      _outfitStr = chipState.outfit; // full string — don't lose detail via regex extraction
-    } else {
-      const _clothingCtx = _clothingMatches.slice(0, 4).map(m => {
-        // Find the phrase containing this garment word (up to 5 words around it)
-        const re = new RegExp(`(?:\\w+\\s+){0,3}${m}(?:\\s+\\w+){0,3}`, 'i');
-        const match = re.exec(expanded);
-        return match ? match[0].trim() : m;
-      });
-      _outfitStr = [...new Set(_clothingCtx.map(s => s.toLowerCase()))].join(', ');
-    }
+    // Priority 1: user explicitly described clothing (typed or manual chip) — reinforce with FULL context
+    // Auto-outfit bypasses this block entirely (guard at inputText prepend), so this only runs for
+    // user-typed clothing words or manual chip outfits (_autoOutfitActive=false).
+    const _clothingCtx = _clothingMatches.slice(0, 4).map(m => {
+      // Find the phrase containing this garment word (up to 5 words around it)
+      const re = new RegExp(`(?:\\w+\\s+){0,3}${m}(?:\\s+\\w+){0,3}`, 'i');
+      const match = re.exec(expanded);
+      return match ? match[0].trim() : m;
+    });
+    const _outfitStr = [...new Set(_clothingCtx.map(s => s.toLowerCase()))].join(', ');
     // SD-weight version for parts[] — maximum weight for clothing adherence
     _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8), (fully clothed:1.8),`;
     // Plain text prepended to expanded — used by MJ/FLUX/GPT (they don't use SD weight syntax)
@@ -12648,7 +12644,8 @@ function buildPrompt(englishText, rawPT){
   if(_sceneOnly.length){
     let inputScene = _sceneOnly.join(', ');
     if(typeof chipState !== 'undefined'){
-      if(chipState.outfit && (!_descBoostRe || !_descBoostRe.test(inputScene.toLowerCase())))
+      // Auto-outfit bypasses this prepend (goes through scene Priority 3 below with full string + SD weights)
+      if(chipState.outfit && !_autoOutfitActive && (!_descBoostRe || !_descBoostRe.test(inputScene.toLowerCase())))
         inputScene = chipState.outfit + ', ' + inputScene;
       if(chipState.expression && !pose.sup)
         inputScene = inputScene + ', ' + chipState.expression;
@@ -12676,7 +12673,7 @@ function buildPrompt(englishText, rawPT){
       // IMPORTANT: use the cached outfit (same random draw used for scene selection)
       // NOT a fresh getPoseSensualOutfit() call — that would give a different random
       // outfit than what autoScene() used, breaking outfit↔scene coherence.
-      const _poseOut = _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+      const _poseOut = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
       const _sceneOut = expandScene._lastSceneOutfit || '';
       const _out = _poseOut || _sceneOut;
       if(_out){
