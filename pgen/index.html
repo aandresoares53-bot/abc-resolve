@@ -9137,6 +9137,15 @@ function setPose(key){
       previewCard.style.display = 'block';
       // ── Auto-outfit: compute and show immediately ──────────────
       _showAutoOutfit(key);
+      // ── Auto-scene: show matching scenario in preview ──────────
+      const _scenePreviewEl = document.getElementById('pose-preview-scene');
+      if(_scenePreviewEl && typeof autoScene === 'function'){
+        const _autoScenePreview = autoScene(key);
+        if(_autoScenePreview){
+          _scenePreviewEl.textContent = '🌍 ' + (_autoScenePreview.length > 90 ? _autoScenePreview.substring(0,90)+'…' : _autoScenePreview);
+          _scenePreviewEl.style.display = 'block';
+        }
+      }
     } else {
       previewCard.style.display = 'none';
       _clearAutoOutfit();
@@ -11773,7 +11782,7 @@ function autoScene(poseKey){
   return _randomFrom(SCENE_POOLS.default);
 }
 
-function getDefaultSceneForPose(key){ return ''; } // Scene removed from auto-inject — defined in description
+function getDefaultSceneForPose(key){ return key ? autoScene(key) : ''; }
 
 function getPoseSensualOutfit(key){
   if(!key) return '';
