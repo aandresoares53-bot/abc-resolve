@@ -10746,46 +10746,47 @@ function expandScene(t){
   const hasOutfit = /wearing|dress|shirt|jeans|bikini|top|skirt|blouse|outfit|coat|jacket|suit|shorts|leggings|swimsuit|bodysuit|lingerie|bra|pants|trousers|hoodie|sweater|gown|uniform|costume|corset|crop|naked|nude|naked|topless|bottomless|undressed|no clothes|no clothing|without clothes|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|camisola|blusa|meias|meia-cal[cç]a|body|collant|maio|maiô|roupa|roupinha|fantasia|espartilho|colete|casaco|jaqueta|moletom|pijama|ling[eé]rie|fio dental|tanga|microbiqu[iíi]ni|decote|pelada|sem roupa|sem calcinha|sem suti|nu[ao]\b|peladinha|topless/.test(s);
   let outfit = '';
   if(!hasOutfit){
-    if(isShower) outfit = ''; // nude — no outfit for shower/bath
-    else if(isBeach)   outfit = 'wearing a micro string bikini, tiny triangle top and micro string bottom, sun-kissed skin';
-    else if(isPool)    outfit = 'wearing a micro string bikini or a sexy cut-out one-piece swimsuit with deep plunging neckline';
-    else if(isRain)    outfit = 'wearing a thin white t-shirt soaking wet and see-through, no bra, wet micro shorts';
-    else if(isYoga)    outfit = 'wearing a matching micro sports bra and high-waist seamless yoga leggings';
-    else if(isMirror)  outfit = 'wearing a delicate lace bralette and matching micro panties, mirror selfie';
-    else if(isCar)     outfit = 'wearing a tight micro mini dress, short and low cut, no underwear';
-    else if(isNature)  outfit = 'wearing a tiny flowy sundress, no bra, boho style';
-    else if(isWorkout) outfit = 'wearing a tight sports bra crop top and high-waist skin-tight leggings';
-    else if(isClub)    outfit = 'wearing a skin-tight satin micro mini dress with a deep plunging neckline and thigh-high slit';
-    else if(isRestaurant) outfit = 'wearing a form-fitting wrap mini dress with a low neckline and strappy heels';
-    else if(isWedding) outfit = 'wearing a sheer lace wedding gown with a deep open back and thigh-high slit';
-    else if(isRunway)  outfit = 'wearing a sheer barely-there designer gown with strategic cutouts and thigh-high slit';
-    else if(isCafe)    outfit = 'wearing a fitted crop top and a micro mini skirt with thigh-high boots';
-    else if(isPark || isForest) outfit = 'wearing a tiny denim cut-off shorts and a tied crop top baring the midriff';
-    else if(isCity)    outfit = 'wearing a skin-tight bodycon micro mini dress with a plunging neckline';
-    else if(isIndoor)  outfit = 'wearing a matching lace lingerie set, delicate bra and cheeky panties';
-    else if(isNight)   outfit = 'wearing a backless satin micro mini dress with a deep plunging neckline and thigh-high slit';
-    else               outfit = 'wearing a matching lace lingerie set, delicate lace bra and cheeky panties';
+    if(isShower) outfit = ''; // naturally nude — no outfit for shower/bath
+    else if(isBeach)   outfit = 'wearing a tiny string triangle bikini, white or neon colored, micro coverage, side-tie bottom, tan lines visible, sun-kissed skin';
+    else if(isPool)    outfit = 'wearing a high-cut Brazilian bikini or deep-plunge cut-out one-piece swimsuit, colorful, wet fabric clinging to curves';
+    else if(isRain)    outfit = 'wearing a thin white fitted shirt soaking wet and fully see-through, no bra, white wet fabric completely transparent, wet micro shorts or skirt';
+    else if(isYoga)    outfit = 'wearing a seamless second-skin yoga set: high-waist compression leggings and matching strappy sports bra, pastel or black, barefoot';
+    else if(isMirror)  outfit = 'wearing a delicate black lace bralette and matching high-waist lace panties, garter belt visible, mirror selfie framing';
+    else if(isCar)     outfit = 'wearing a skin-tight bodycon micro mini dress, no underwear visible, very short hemline, provocative automotive pose';
+    else if(isNature)  outfit = 'wearing a sheer flowy white sundress, thin fabric backlit by natural light, no bra visible through sheer fabric, boho barefoot style';
+    else if(isWorkout) outfit = 'wearing a high-impact sports bra crop top and high-waist compression leggings, form-fitting athletic set, gym shoes';
+    else if(isClub)    outfit = 'wearing a skin-tight satin or sequin micro mini dress, deep plunging neckline, backless or cut-out sides, thigh-high slit, stiletto heels';
+    else if(isRestaurant) outfit = 'wearing a form-fitting wrap mini dress with a low-cut neckline, cinched waist, strappy heeled sandals, elegant dinner style';
+    else if(isWedding) outfit = 'wearing a sheer ivory lace bridal gown with deep open back, thigh-high front slit, fitted bodice with lace detail, bridal elegance';
+    else if(isRunway)  outfit = 'wearing a sheer barely-there haute couture designer gown with strategic cutouts, thigh-high slit, avant-garde high-fashion editorial look';
+    else if(isCafe)    outfit = 'wearing a fitted ribbed crop top and a micro plaid mini skirt with thigh-high boots, casual chic city style';
+    else if(isPark || isForest) outfit = 'wearing tiny high-waist denim cut-off shorts with frayed hem and a tied white crop top baring the midriff, casual outdoors';
+    else if(isCity)    outfit = 'wearing a skin-tight bodycon micro mini dress with a deep plunging neckline, stiletto heels, city night style';
+    else if(isIndoor)  outfit = 'wearing a matching black lace lingerie set: push-up bra with lace trim and high-cut cheeky panties, delicate and sensual';
+    else if(isNight)   outfit = 'wearing a backless satin micro mini dress with deep plunging neckline, thigh-high front slit, strappy stiletto heels, night-out elegance';
+    else               outfit = 'wearing a matching black lace lingerie set: delicate push-up bra and high-waist lace panties with garter belt detail';
   }
 
   // ── LIGHTING ──────────────────────────────────────────────────────────────
   let lighting = '';
   if(!hasLight){
-    if(isShower)      lighting = 'warm steamy bathroom light, soft diffused steam glow, natural catchlights in eyes, moist warm atmosphere, condensation on glass';
-    else if(isRain)   lighting = 'dramatic overcast rain light, moody wet reflections, rain-soaked ambient, grey sky diffused light';
-    else if(isSunset) lighting = 'cinematic warm golden hour light, long soft shadows, warm catchlights in eyes, natural golden sun flare, orange and pink sky tones, sun-kissed skin warmth';
-    else if(isSunrise) lighting = 'delicate soft golden sunrise light, pastel sky, gentle morning mist, fresh warm glow';
-    else if(isNight && isClub) lighting = 'dramatic neon-lit night atmosphere, colorful light streaks, cinematic glow, lens flare';
-    else if(isNight)  lighting = 'moody blue-hour ambient light, soft city glow, gentle moonlight, cinematic shadows';
-    else if(isMorning) lighting = 'gentle soft morning light, diffused warm window light, fresh clean daylight';
-    else if(isBeach)  lighting = 'bright tropical sunlight, sparkling ocean light reflections, warm sun-kissed glow';
-    else if(isPark || isForest) lighting = 'dappled natural sunlight filtering through leaves, soft organic shadows, golden afternoon glow';
-    else if(isCafe || isRestaurant) lighting = 'warm cozy ambient light, soft window diffused light, golden interior tones';
-    else if(isCar)    lighting = 'outdoor natural sunlight, golden hour car exterior light, realistic ambient';
-    else if(isYoga)   lighting = 'clean natural window light or soft outdoor daylight, calm yoga studio atmosphere';
-    else if(isMirror) lighting = 'warm bedroom ambient light, soft room lighting, natural indoor light';
-    else if(isLuxury)  lighting = 'warm intimate ambient light, soft directional lamp glow, natural catchlights in eyes, golden room atmosphere, subtle rim separation from background, intimate and sophisticated';
-    else if(isIndoor)  lighting = 'natural window light creating soft catchlights, realistic ambient fill, gentle rim light, soft shadow gradients, no studio strobe artifacts, indoor atmospheric light';
-    else               lighting = 'soft natural light with gentle catchlights, realistic ambient, natural rim separation from background, honest documentary photography light';
+    if(isShower)      lighting = 'warm 3000K steamy bathroom tungsten light, soft diffused steam glow, natural catchlights in eyes, condensation moisture in air, warm halation on wet skin, intimate low-light atmosphere';
+    else if(isRain)   lighting = 'flat 6500K overcast rain light, moody wet reflections on ground, rain-diffused grey-sky ambient, wet skin specular highlights, no harsh shadows, rain haze softening depth';
+    else if(isSunset) lighting = 'cinematic 2800K golden hour sun at 15° horizon angle, long raking shadows, warm specular catchlights in eyes, natural golden lens flare, orange-pink sky glow, sun-kissed warm skin tone, backlight halo around silhouette';
+    else if(isSunrise) lighting = 'delicate 3200K golden sunrise light at low angle, soft pastel pink-purple sky, gentle morning mist diffusion, fresh dewy glow on skin, cool shadows with warm highlights';
+    else if(isNight && isClub) lighting = 'dramatic mixed neon LED stage lighting, colorful cyan-magenta-red light streaks, cinematic motivated glow, subtle lens flare, high-contrast shadow play, club atmosphere depth';
+    else if(isNight)  lighting = 'moody 4000K blue-hour ambient, soft warm city sodium light glow, gentle cool moonlight rim, cinematic shadow gradients, natural dark-adapted eye exposure';
+    else if(isMorning) lighting = 'gentle 5500K soft morning window light from left, diffused clean fill, fresh cool shadow on right side, crisp natural daylight, authentic early-day atmosphere';
+    else if(isBeach)  lighting = 'bright 5800K tropical overhead sunlight, sparkling ocean-reflected specular highlights, sun-warmed skin catchlights, slight beach haze, natural shadow from above, bleached warm sand light bounce';
+    else if(isPool)   lighting = 'bright outdoor 6000K pool-reflected wavering light, caustic water light patterns on skin, warm midday sunlight, shimmer from pool surface, bright tropical resort ambiance';
+    else if(isPark || isForest) lighting = '5000K dappled natural sunlight filtering through leaf canopy, soft organic shadow patches, golden late-afternoon glow, atmospheric scattered light, green-tinted leaf-filtered fill light';
+    else if(isCafe || isRestaurant) lighting = 'warm 2900K cozy amber interior ambient, soft diffused window light from side, warm tungsten overhead glow, intimate golden-toned shadows, authentic café or restaurant atmosphere';
+    else if(isCar)    lighting = 'natural 5000K outdoor sun at 45° angle, golden hour automotive light if applicable, warm side highlight on car and body, crisp outdoor shadows, environmental clear sky ambient';
+    else if(isYoga)   lighting = 'clean 5500K natural window light or soft studio daylight, calm diffused fill, minimal shadow, clean background separation, athletic documentary atmosphere';
+    else if(isMirror) lighting = 'warm 3000K bedroom ambient lamp glow, soft diffused room light, natural slight warm cast, gentle catchlights in mirror reflection, intimate interior atmosphere';
+    else if(isLuxury)  lighting = 'warm 2800K intimate ambient — directional table-lamp glow as motivated key, natural soft window fill, subtle warm rim separation from background, golden shadow gradients, sophisticated interior depth and atmosphere';
+    else if(isIndoor)  lighting = 'natural 5200K window light creating soft split catchlights, realistic ambient fill from walls, gentle warm-side rim separation, authentic soft shadow gradients, no studio strobe artifacts, documentary indoor light';
+    else               lighting = '5200K soft natural diffused light, gentle directional catchlights, realistic ambient fill, natural rim separation from background, honest documentary photography light quality';
   }
 
   // ── ENVIRONMENT ───────────────────────────────────────────────────────────
@@ -10819,12 +10820,17 @@ function expandScene(t){
   let expression = '';
   if(!hasExpression && !isExplicit){
     // Don't auto-add neutral expression for explicit scenes — it conflicts with the act
-    if(isSelfie)       expression = 'natural smile, candid relaxed look, authentic real moment';
-    else if(isModel)   expression = 'confident natural expression, direct eye contact, real person look';
-    else if(isRomantic) expression = 'soft romantic expression, natural lips, warm eyes';
-    else if(isWorkout) expression = 'focused athletic expression, natural body language';
-    else if(isClub)    expression = 'natural flirtatious expression, real person energy';
-    else               expression = 'natural relaxed expression, genuine smile, real candid look';
+    if(isSelfie)       expression = 'natural playful smile, genuine candid selfie expression, relaxed casual look, authentic real-person energy';
+    else if(isModel)   expression = 'confident direct gaze, fierce editorial expression, natural powerful presence, real model energy not forced';
+    else if(isRomantic) expression = 'soft tender expression, natural parted lips, warm luminous eyes, intimate vulnerable look';
+    else if(isWorkout) expression = 'focused determined athletic look, natural exertion expression, strong body language, real effort visible in face';
+    else if(isClub)    expression = 'confident carefree social expression, natural flirtatious smile, real nightlife energy, genuine fun atmosphere';
+    else if(isBeach || isPool) expression = 'natural sun-happy relaxed smile, carefree vacation expression, candid outdoor joy, real summer energy';
+    else if(isYoga)    expression = 'serene focused inward expression, calm natural breath, peaceful body awareness, yoga meditation energy';
+    else if(isMirror)  expression = 'natural introspective self-aware gaze, subtle confident smile, candid mirror moment, genuine private look';
+    else if(isNature)  expression = 'serene organic outdoor expression, content peaceful natural look, candid nature connection, genuine unposed energy';
+    else if(isRunway)  expression = 'fierce editorial runway expression, powerful directional gaze, high-fashion presence, commanding catwalk energy';
+    else               expression = 'natural relaxed genuine expression, authentic real-person look, candid unposed moment, not forced not performed';
   }
 
   // ── COLOR MOOD / GRADE ────────────────────────────────────────────────────
@@ -10844,8 +10850,9 @@ function expandScene(t){
   // ── ASSEMBLE — lighting + environment + expression + colorGrade + realism ──
   // NOTE: expression and colorGrade were previously computed but never included — fixed here
   const extras = [lighting, environment, expression, colorGrade, _humanReal].filter(Boolean);
-  // expose scene outfit as property so clothing enforcement can use it as fallback
-  expandScene._lastSceneOutfit = ''; // outfit removed from auto-inject
+  // expose scene outfit as Priority 4 fallback for clothing enforcement
+  // only used when pose has no specific outfit (_POSE_OUTFIT_MAP, _cachedPoseOutfit, getPoseSensualOutfit all empty)
+  expandScene._lastSceneOutfit = outfit;
   return t + (extras.length ? ', ' + extras.join(', ') : '');
 }
 
@@ -12381,7 +12388,7 @@ function buildPrompt(englishText, rawPT){
   }
 
   // ── Dynamic clothing/nudity enforcement ─────────────────────────────────
-  const _clothingRe = /\b(panties|bra|bikini|underwear|lingerie|thong|dress|skirt|shirt|blouse|sports bra|crop top|bodysuit|corset|swimsuit|one-piece|gown|jeans|shorts|leggings|pants|trousers|hoodie|sweater|uniform|costume|top|outfit|clothed|dressed)\b/gi;
+  const _clothingRe = /\b(panties|bra|bikini|underwear|lingerie|thong|dress|skirt|shirt|blouse|sports\s+bra|crop\s+top|bodysuit|corset|swimsuit|one-piece|gown|jeans|shorts|leggings|pants|trousers|hoodie|sweater|uniform|costume|top|outfit|clothed|dressed|stockings?|garter|leotard|suspender|thigh-high|tights|bodystocking|robe|camisole|negligee|bustier|bralette|tankini|jumpsuit|playsuit|fishnet|chemise|teddy|monokini|slip|nightgown|sleepwear|swimwear|beachwear|unitard|catsuit|bodycon|miniskirt|minidress|maxi\s*dress|sundress|wrap\s*dress|tube\s*top|halter|sarong|loincloth|bikini\s*bottom|bikini\s*top)\b/gi;
   // Expanded NSFW detection — nudity + explicit sexual content
   const _nudeRe = /\b(nude|naked|topless|bottomless|undressed|no clothes|no clothing|explicit|nsfw|nipples?|areola|genital|vagina|vulva|penis|cock|pussy|pubic|intercourse|penetration|orgasm|erotic[a-z]*|pornograph[a-z]*|xxx|blowjob|oral\s*sex|cunnilingus|anal\s*sex|masturbat[a-z]*|fingering|squirting|creampie|cumshot|sex\s*position|sex\s*act|adult\s*content|sexually\s*explicit|genitalia)\b/i;
   const _clothingMatches = [...expanded.matchAll(_clothingRe)].map(m => m[0]);
@@ -12428,8 +12435,14 @@ function buildPrompt(englishText, rawPT){
     expanded = `wearing ${_outfitStr}, keep outfit on, ` + expanded;
     // Negative prompt left unchanged — user description is 100% accepted
   } else if(_poseHasClothing){
-    // Priority 2: pose definition has clothing — honour it
-    // Negative prompt left unchanged — user description is 100% accepted
+    // Priority 2: pose definition already embeds clothing — extract and reinforce with SD weights
+    // The pose sd_start/sd_end has specific garments; apply the same weighted reinforcement
+    const _p2Matches = [..._poseText.matchAll(_clothingRe)].map(m => m[0]);
+    _clothingRe.lastIndex = 0;
+    if(_p2Matches.length > 0){
+      const _p2Str = [...new Set(_p2Matches.slice(0, 4).map(s => s.toLowerCase()))].join(', ');
+      _sdClothingTerms = `(${_p2Str}:2.0), (wearing ${_p2Str}:1.9), (keep outfit on:1.9), (${_p2Str} visible:1.8), (fully clothed:1.8),`;
+    }
   } else if(!_wantsNude){
     // Naturally nude scenes — shower, bath, waterfall topless: skip clothing injection
     const _isNaturallyNude = selectedPoseKey && (
@@ -12668,7 +12681,13 @@ function buildPrompt(englishText, rawPT){
       // Plain text prepend to expanded — still useful for MJ/FLUX/GPT context
       expanded = `wearing ${_os2}, keep outfit on, ` + expanded;
     } else if(_poseHasClothing){
-      // pose sd_start already defines clothing — don't inject anything
+      // pose sd_start already defines clothing — reinforce with SD weights (scene block version)
+      const _p2bMatches = [..._poseText.matchAll(_clothingRe)].map(m => m[0]);
+      _clothingRe.lastIndex = 0;
+      if(_p2bMatches.length > 0){
+        const _p2bStr = [...new Set(_p2bMatches.slice(0, 4).map(s => s.toLowerCase()))].join(', ');
+        _sdClothingTerms = `(${_p2bStr}:2.0), (wearing ${_p2bStr}:1.9), (keep outfit on:1.9), (${_p2bStr} visible:1.8), (fully clothed:1.8),`;
+      }
     } else if(!_wn2){
       // IMPORTANT: use the cached outfit (same random draw used for scene selection)
       // NOT a fresh getPoseSensualOutfit() call — that would give a different random
@@ -14139,25 +14158,123 @@ function copyAsFlux(){
 
 // ── CAMERA SPEC per pose ─────────────────────────────────────────────────────
 function _getCameraSpec(poseKey){
-  // User-selected lens overrides all auto-detection
+  // User-selected lens chip overrides all auto-detection
   const _userLens = getLensCam();
   if(_userLens) return _userLens;
   const k = (poseKey || '').toLowerCase();
-  if(k.startsWith('butt-') || k.includes('closeup') || k.includes('close-up'))
-    return 'Canon EOS R5 105mm f/2.8 macro, ISO 400, extreme shallow depth of field';
-  if(k.startsWith('beach-') || k.startsWith('pool-') || k.includes('full body') || k.startsWith('standing-'))
-    return 'Canon EOS R5 35mm f/1.8, ISO 800, slight wide natural perspective';
-  if(k.startsWith('gym-') || k.startsWith('legging-') || k.startsWith('yoga-'))
-    return 'Canon EOS R5 50mm f/1.4, ISO 640, natural perspective lens';
-  if(k.includes('lying') || k.includes('supine') || k.includes('prone') || k.includes('deitada'))
-    return 'Canon EOS R5 50mm f/1.2, ISO 800, overhead or low angle perspective';
-  if(k.startsWith('kneeling-') || k.startsWith('sitting-') || k.includes('sitting'))
-    return 'Canon EOS R5 85mm f/1.4, ISO 800, medium telephoto portrait perspective';
-  if(k.startsWith('car-') || k.startsWith('moto-'))
-    return 'Canon EOS R5 35mm f/2.0, ISO 800, environmental portrait perspective';
+
+  // ── MACRO / EXTREME CLOSEUP ───────────────────────────────────────────────
+  if(k.startsWith('butt-') || k.startsWith('closeup-'))
+    return 'Canon EOS R5 100mm f/2.8L macro, ISO 400, 1/200s, extreme shallow depth of field, tight telephoto compression, subject fills frame';
+  if(k.includes('close-up') || k.includes('closeup'))
+    return 'Sony A7R V 90mm f/2.8 macro, ISO 400, 1/125s, ultra-shallow depth of field, sharp central focus, smooth bokeh surround';
+
+  // ── SHOWER / BATH — low light intimate ────────────────────────────────────
   if(k.startsWith('shower-') || k.startsWith('bath-'))
-    return 'Canon EOS R5 35mm f/1.8, ISO 1600, low light bathroom setting';
-  return 'Canon EOS R5 85mm f/1.4, ISO 800, portrait perspective';
+    return 'Canon EOS R5 35mm f/1.4, ISO 3200, 1/60s, warm low light steamy atmosphere, wide intimate framing, slight halation on wet skin';
+
+  // ── BEACH / OCEAN ─────────────────────────────────────────────────────────
+  if(k.startsWith('beach-') || k.startsWith('water-beach') || k.startsWith('water-ocean'))
+    return 'Canon EOS R5 50mm f/2.0, ISO 200, 1/1000s, bright tropical sunlight, natural outdoor documentary, vacation candid style';
+
+  // ── POOL / WATER ──────────────────────────────────────────────────────────
+  if(k.startsWith('pool-') || k.startsWith('water-pool') || k.startsWith('water-'))
+    return 'Canon EOS R5 35mm f/1.8, ISO 400, 1/500s, outdoor pool light, reflective water light, slight warm summer cast';
+
+  // ── RAIN ──────────────────────────────────────────────────────────────────
+  if(k === 'rain' || k.startsWith('rain-') || k.includes('rain'))
+    return 'Sony A7 IV 35mm f/1.8, ISO 1600, 1/250s, overcast rain light, grey diffused ambient, moody wet atmosphere, rain drops in air';
+
+  // ── YOGA ──────────────────────────────────────────────────────────────────
+  if(k.startsWith('yoga-'))
+    return 'Canon EOS R5 50mm f/1.4, ISO 400, 1/250s, clean studio or outdoor daylight, natural calm atmosphere, low angle to show full pose';
+
+  // ── GYM / FITNESS ─────────────────────────────────────────────────────────
+  if(k.startsWith('gym-') || k.startsWith('legging-'))
+    return 'Sony A7 IV 50mm f/1.8, ISO 640, 1/320s, gym tungsten and LED mix light, slight warm cast, mirrored wall environment';
+
+  // ── POLE DANCE / TWERK ────────────────────────────────────────────────────
+  if(k.startsWith('twerk-') || k.startsWith('pole-dance') || k.startsWith('dance-pole'))
+    return 'Canon EOS R5 24mm f/2.8, ISO 1600, 1/500s, dynamic wide-angle perspective, stage or club LED lighting, motion-freeze shutter, low dramatic angle';
+
+  // ── BALLET / AERIAL / JAZZ DANCE ──────────────────────────────────────────
+  if(k.startsWith('ballet-') || k.startsWith('aerial-') || k.startsWith('jazz-dance'))
+    return 'Canon EOS R5 70-200mm f/2.8, ISO 1250, 1/500s, performance stage lighting, telephoto compression from mid-range, dynamic action-freeze';
+
+  // ── DANCE FLOOR / CLUB ────────────────────────────────────────────────────
+  if(k.startsWith('dance-') || k.startsWith('club-'))
+    return 'Sony A7S III 35mm f/1.4, ISO 6400, 1/200s, neon club lighting, motion-capable fast lens, dramatic colored light streaks';
+
+  // ── SPLITS / BACKBEND / CONTORTIONIST ─────────────────────────────────────
+  if(k.startsWith('splits-') || k === 'splits' || k.startsWith('contortionist-') || k.startsWith('backbend-') || k.startsWith('athletic-'))
+    return 'Canon EOS R5 35mm f/2.0, ISO 640, 1/250s, clean studio or outdoor light, full-body wide frame to capture entire flexibility pose';
+
+  // ── NATURE / OUTDOOR ──────────────────────────────────────────────────────
+  if(k.startsWith('nature-') || k.startsWith('outdoor-') || k.startsWith('sunset-') || k === 'sunset' || k === 'sunset-silhouette')
+    return 'Nikon Z9 35mm f/1.8, ISO 400, 1/500s, golden hour warm natural light, outdoor environmental documentary, natural bokeh background';
+
+  // ── ROOFTOP / URBAN / CITY ────────────────────────────────────────────────
+  if(k.startsWith('rooftop-') || k === 'rooftop' || k.startsWith('urban-') || k === 'urban')
+    return 'Leica Q3 28mm f/1.7, ISO 800, 1/320s, city natural or golden hour light, urban street documentary style, environmental wide framing';
+
+  // ── WALKING ───────────────────────────────────────────────────────────────
+  if(k.startsWith('walking-') || k === 'walking')
+    return 'Sony A7 IV 50mm f/1.8, ISO 640, 1/500s, natural outdoor daylight, candid street documentary, motion-freeze shutter';
+
+  // ── CAR / MOTORCYCLE ──────────────────────────────────────────────────────
+  if(k.startsWith('car-') || k.startsWith('moto-') || k.startsWith('motorcycle-'))
+    return 'Canon EOS R5 35mm f/2.0, ISO 800, 1/500s, outdoor natural light, automotive environmental portrait, wide angle to include vehicle context';
+
+  // ── SELFIE ────────────────────────────────────────────────────────────────
+  if(k.startsWith('selfie-'))
+    return 'iPhone 15 Pro Portrait mode, 24mm equivalent f/1.78, ISO 800, handheld arm-length selfie distance, natural near-camera wide perspective';
+
+  // ── MIRROR ────────────────────────────────────────────────────────────────
+  if(k.startsWith('mirror-'))
+    return 'Canon EOS R5 35mm f/1.8, ISO 800, 1/125s, warm bedroom ambient, wide mirror reflection environmental framing, full-body composition';
+
+  // ── PINUP ─────────────────────────────────────────────────────────────────
+  if(k.startsWith('pinup-') || k === 'pinup')
+    return 'Rolleiflex 75mm f/3.5, ISO 100 (Kodak Ektar 100), classic soft studio strobe setup, pin-up era lighting with soft fill, timeless editorial style';
+
+  // ── MODEL / EDITORIAL ─────────────────────────────────────────────────────
+  if(k.startsWith('model-'))
+    return 'Canon EOS R5 50mm f/1.4, ISO 400, 1/250s, editorial fashion light, natural window or soft studio ambient, clean background separation';
+
+  // ── STANDING ──────────────────────────────────────────────────────────────
+  if(k.startsWith('standing-'))
+    return 'Canon EOS R5 35mm f/1.8, ISO 400, 1/250s, full-body environmental wide perspective, natural ambient light, head-to-toe composition';
+
+  // ── KNEELING / CHAIR ──────────────────────────────────────────────────────
+  if(k.startsWith('kneeling-') || k.startsWith('chair-'))
+    return 'Canon EOS R5 85mm f/1.4, ISO 800, 1/250s, medium telephoto portrait compression, soft ambient light';
+
+  // ── SITTING / SOFA ────────────────────────────────────────────────────────
+  if(k.startsWith('sitting-') || k.includes('sofa') || k.includes('couch'))
+    return 'Sony A7R V 85mm f/1.8, ISO 640, 1/160s, intimate portrait telephoto compression, warm indoor ambient, 3/4 body frame';
+
+  // ── LYING DOWN / SPREAD-EAGLE / SPHINX ────────────────────────────────────
+  if(k.startsWith('lying-') || k.includes('lying') || k.includes('supine') || k.includes('prone') || k.startsWith('spread-eagle') || k === 'sphinx')
+    return 'Canon EOS R5 50mm f/1.2, ISO 800, 1/160s, overhead straight-down or 30° low angle, soft ambient bed or floor light, full-body composition from above';
+
+  // ── ALL FOURS / PRESENTING ────────────────────────────────────────────────
+  if(k.startsWith('allfours-') || k.startsWith('presenting-') || k === 'presenting')
+    return 'Canon EOS R5 50mm f/1.4, ISO 800, 1/250s, low rear or 3/4 rear perspective, intimate soft ambient, deliberate angle matching body position';
+
+  // ── SQUAT ─────────────────────────────────────────────────────────────────
+  if(k.startsWith('squat-'))
+    return 'Canon EOS R5 35mm f/1.8, ISO 800, 1/250s, slightly low camera angle at knee-height, full-body squat composition, natural depth of field';
+
+  // ── WALL ──────────────────────────────────────────────────────────────────
+  if(k.startsWith('wall-'))
+    return 'Canon EOS R5 50mm f/1.4, ISO 800, 1/200s, environmental portrait, slight rim light from wall side, dramatic directional lighting';
+
+  // ── JEANS ─────────────────────────────────────────────────────────────────
+  if(k.startsWith('jeans-'))
+    return 'Canon EOS R5 50mm f/1.8, ISO 640, 1/320s, street or indoor natural light, waist-to-head composition or full body';
+
+  // ── DEFAULT: portrait telephoto ────────────────────────────────────────────
+  return 'Canon EOS R5 85mm f/1.4, ISO 800, 1/250s, medium telephoto portrait perspective, soft natural ambient light';
 }
 
 // ── SKIN REALISM per ethnicity ───────────────────────────────────────────────
