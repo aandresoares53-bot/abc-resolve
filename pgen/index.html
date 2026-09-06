@@ -9625,11 +9625,16 @@ let selectedPoseKey = null;
 let _cachedPoseOutfit = '';
 // Per-pose outfit map — consistent outfit per pose key within a session (🔀 cycles/updates it)
 const _POSE_OUTFIT_MAP = {};
+// Cached pose scene — set when pose is selected; flows into prompt at generate time
+let _cachedPoseScene = '';
+// Per-pose scene map — consistent scene per pose key within a session
+const _POSE_SCENE_MAP = {};
 
 function setPose(key){
   selectedPose = key ? POSES[key] : null;
   selectedPoseKey = key || null;
-  _cachedPoseOutfit = ''; // reset cache; will be computed fresh on next generate
+  _cachedPoseOutfit = ''; // reset cache; will be computed fresh by _showAutoOutfit
+  _cachedPoseScene  = ''; // reset scene cache; will be set after outfit is known
   document.querySelectorAll('.pose-btn').forEach(b => b.classList.remove('selected'));
   if(key) {
     const btn = document.querySelector(`.pose-btn[data-pose="${key}"]`);
@@ -9669,13 +9674,19 @@ function setPose(key){
       previewCard.style.display = 'block';
       // ── Auto-outfit: compute and show immediately ──────────────
       _showAutoOutfit(key);
-      // ── Auto-scene: show matching scenario in preview ──────────
+      // ── Auto-scene: compute, cache, and show matching scenario in preview ──
       const _scenePreviewEl = document.getElementById('pose-preview-scene');
-      if(_scenePreviewEl && typeof autoScene === 'function'){
-        const _autoScenePreview = autoScene(key);
+      if(typeof autoScene === 'function'){
+        // Reuse scene computed for this pose earlier in the session (consistency)
+        const _autoScenePreview = _POSE_SCENE_MAP[key] || autoScene(key);
         if(_autoScenePreview){
-          _scenePreviewEl.textContent = '🌍 ' + (_autoScenePreview.length > 90 ? _autoScenePreview.substring(0,90)+'…' : _autoScenePreview);
-          _scenePreviewEl.style.display = 'block';
+          // Cache it so generate functions use the SAME scene that's shown in preview
+          _cachedPoseScene = _autoScenePreview;
+          if(!_POSE_SCENE_MAP[key]) _POSE_SCENE_MAP[key] = _autoScenePreview;
+          if(_scenePreviewEl){
+            _scenePreviewEl.textContent = '🌍 ' + (_autoScenePreview.length > 90 ? _autoScenePreview.substring(0,90)+'…' : _autoScenePreview);
+            _scenePreviewEl.style.display = 'block';
+          }
         }
       }
     } else {
@@ -10670,7 +10681,7 @@ async function generateSmartVariations(){
   const _userSceneVar = _getUserSceneText();
   if(!_userSceneVar && !selectedPoseKey && !hasPreset && !_qp){ toast('⚠️ Selecione uma pose ou personagem'); return; }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
-  const sceneText = _userSceneVar || getDefaultSceneForPose(selectedPoseKey || '');
+  const sceneText = _userSceneVar || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_qp, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
   const btn = document.querySelector('[onclick="generateSmartVariations()"]');
   if(btn){ btn.disabled = true; btn.textContent = '⏳…'; }
@@ -13845,8 +13856,8 @@ async function generate(){
   // If user rewrote from scratch, return full value.
   const _userScene = _extractUserComplement(_taEl, raw);
 
-  // Scene: prefer user's complement, then default pose scene (autoScene reads _cachedPoseOutfit)
-  const sceneText = _userScene || getDefaultSceneForPose(selectedPoseKey || '');
+  // Scene: user-typed → cached auto-scene (matches preview card) → short keyword fallback
+  const sceneText = _userScene || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
 
   // Combine: chip values (English) + preset (English or PT) + user complement only
   // _userScene is already stripped of any auto-fill duplicate content
@@ -14073,7 +14084,7 @@ async function generateSequence(){
   const _userSceneSeq = _getUserSceneText();
   if(!_userSceneSeq && !selectedPoseKey && !hasPreset && !_quickPre){ toast('⚠️ Selecione uma pose ou personagem'); return; }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
-  const sceneText = _userSceneSeq || getDefaultSceneForPose(selectedPoseKey || '');
+  const sceneText = _userSceneSeq || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_quickPre, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
   const progression = SEQUENCE_PROGRESSIONS[Math.floor(Math.random() * SEQUENCE_PROGRESSIONS.length)];
   const btn = document.querySelector('[onclick="generateSequence()"]');
@@ -14950,9 +14961,12 @@ function _clearAutoOutfit(){
     _autoOutfitActive = false;
   }
   _autoOutfitKey = null;
-  // ── Clear pose-preview-outfit text ────────────────────────────────────────
+  // ── Clear pose-preview-outfit and scene text ──────────────────────────────
   const _prevOutfit = document.getElementById('pose-preview-outfit');
   if(_prevOutfit){ _prevOutfit.textContent = ''; _prevOutfit.style.display = 'none'; }
+  _cachedPoseScene = '';
+  const _prevScene = document.getElementById('pose-preview-scene');
+  if(_prevScene){ _prevScene.textContent = ''; _prevScene.style.display = 'none'; }
 }
 
 // ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
@@ -16157,7 +16171,7 @@ async function generateVariations(){
     return;
   }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
-  const sceneText = _userSceneV2 || getDefaultSceneForPose(selectedPoseKey || '');
+  const sceneText = _userSceneV2 || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_quickPre2, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
   const btn = document.querySelector('.btn-variations');
   btn.disabled = true; btn.textContent = '⏳…';
