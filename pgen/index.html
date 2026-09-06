@@ -14499,6 +14499,8 @@ function _clearAllAutoChips(){
     if(cat && cat !== 'skin_mark') quickChipState[cat] = '';
     if(cat === 'skin_mark') skinMarksActive.delete(c.dataset.val);
   });
+  // Clear auto-expression
+  if(_autoExpressionActive){ chipState.expression = ''; _autoExpressionActive = false; }
 }
 
 function _applyPoseDefaults(key){
@@ -14849,6 +14851,83 @@ function _applyPoseDefaults(key){
     if(_idadePfx) _activateChipByPrefix('idade', _idadePfx);
   }
 
+  // ── Auto-hair (cabelo): only set when pose strongly implies a hairstyle ─────
+  // Only 2 cases are forced; all other poses leave the user's hair choice untouched.
+  const _hasManualCabelo = !!document.querySelector('.quick-chip[data-cat="cabelo"].active:not(.auto-set)');
+  if(!_hasManualCabelo){
+    let _cabeloPfx = null;
+    if(key.startsWith('shower-') || key.startsWith('bath-') ||
+       (key.startsWith('water-') && !key.startsWith('water-') === false) ||
+       key.startsWith('water-') || key.startsWith('pool-'))
+      _cabeloPfx = 'wet soaking'; // wet-hair for all water/shower/pool
+    else if(key.startsWith('gym-') || key.startsWith('yoga-') || key.startsWith('legging-') ||
+            key.startsWith('splits-') || key.startsWith('aerial-') || key.startsWith('ballet-') ||
+            key.startsWith('contortionist-') || key.startsWith('twerk-'))
+      _cabeloPfx = 'hair in a messy'; // practical updo for athletic/dance poses
+    if(_cabeloPfx) _activateChipByPrefix('cabelo', _cabeloPfx);
+  }
+
+  // ── Auto-expression: assign a context-coherent expression per pose category ──
+  // Only applied when user hasn't manually set an expression in chipState.
+  if(!_autoExpressionActive && !chipState.expression){
+    // Auto-expressions used here:
+    const _EXP = {
+      happy:     'natural happy smile, carefree joyful expression, bright playful look',
+      sultry:    'sultry half-lidded seductive gaze, lips slightly parted, smoldering expression',
+      fierce:    'fierce editorial high-fashion gaze, intense direct eye contact, strong model expression',
+      focused:   'focused determined athletic expression, concentrated intense gaze',
+      playful:   'playful flirtatious expression, cheeky seductive smile, teasing gaze',
+      alluring:  'alluring confident expression, soft approachable look, gentle inviting gaze',
+      mystic:    'mysterious brooding expression, dark intense gaze, otherworldly look',
+      serene:    'serene peaceful expression, soft calm face, relaxed natural look',
+      sensual:   'sensual ecstatic expression, head slightly tilted, lips parted, dreamy gaze',
+    };
+    let _expr = null;
+    if(key.startsWith('beach-') || key.startsWith('pool-') || key.startsWith('water-'))
+      _expr = _EXP.happy;
+    else if(key.startsWith('selfie-'))
+      _expr = _EXP.playful;
+    else if(key.startsWith('dance-') || key.startsWith('twerk-') || key.startsWith('pole-dance') ||
+            key === 'dance-pole-leg-wrap' || key === 'dance-pole-spin')
+      _expr = _EXP.sensual;
+    else if(key.startsWith('gym-') || key.startsWith('yoga-') || key.startsWith('legging-') ||
+            key.startsWith('splits-') || key.startsWith('aerial-') || key.startsWith('ballet-') ||
+            key.startsWith('contortionist-'))
+      _expr = _EXP.focused;
+    else if(key.startsWith('model-'))
+      _expr = _EXP.fierce;
+    else if(key.startsWith('fantasy-'))
+      _expr = _EXP.mystic;
+    else if(key.startsWith('alt-'))
+      _expr = _EXP.mystic;
+    else if(key.startsWith('butt-') || key.startsWith('closeup-') || key.startsWith('presenting-'))
+      _expr = _EXP.playful;
+    else if(key.startsWith('mirror-') || key.startsWith('boudoir-') || key === 'boudoir')
+      _expr = _EXP.sultry;
+    else if(key.startsWith('nature-') || key.startsWith('outdoor-') || key.startsWith('sunset-'))
+      _expr = _EXP.happy;
+    else if(key.startsWith('jeans-') || key.startsWith('walking-') || key === 'walking')
+      _expr = _EXP.alluring;
+    else if(key.startsWith('car-') || key.startsWith('moto-') || key.startsWith('motorcycle-'))
+      _expr = _EXP.alluring;
+    else if(key.startsWith('pinup-') || key === 'pinup')
+      _expr = _EXP.playful;
+    else if(key.startsWith('mermaid-') || key === 'mermaid')
+      _expr = _EXP.serene;
+    else if(key.startsWith('lying-') || key.startsWith('kneeling-') || key.startsWith('allfours-') ||
+            key.startsWith('sitting-') || key.startsWith('squat-'))
+      _expr = _EXP.sultry;
+    else if(key.startsWith('standing-'))
+      _expr = _EXP.alluring;
+    else
+      _expr = _EXP.alluring; // universal fallback
+    // Don't set expression for explicit/sup poses (suppressed in buildPrompt anyway)
+    if(_expr && !/^(sex-|anal-|oral-|multi-|cumshot-|doggy-|prone-bone|cowgirl|reverse-cowgirl|missionary|lap-dance|leapfrog|anvil|mating-press|pile-driver|spoon$|scissors$)/.test(key)){
+      chipState.expression = _expr;
+      _autoExpressionActive = true;
+    }
+  }
+
   // ── Pose-adaptive negative prompt ─────────────────────────────────────
   try{
     _poseNegExtra = _getPoseNegExtra(key);
@@ -14857,7 +14936,7 @@ function _applyPoseDefaults(key){
 
   // Single comprehensive toast
   if(typeof toast === 'function')
-    toast('✦ Cenário, iluminação, película, lente, idade e marcas ajustados pela pose', 2800);
+    toast('✦ Cenário, iluminação, película, lente, cabelo, expressão e marcas ajustados pela pose', 2800);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -14868,6 +14947,8 @@ function _applyPoseDefaults(key){
 // Tracks whether current outfit in chipState was auto-set by pose selection
 let _autoOutfitActive = false;
 let _autoOutfitKey = null; // pose key this outfit was computed for
+// Tracks whether chipState.expression was auto-set by pose selection
+let _autoExpressionActive = false;
 
 // ── Select an outfit chip (called from chip onclick) ──────────────────────
 function _selectOutfit(btn, outfit){
