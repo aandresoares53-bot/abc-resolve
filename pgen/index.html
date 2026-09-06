@@ -14868,6 +14868,9 @@ function _selectOutfit(btn, outfit){
   if(selectedPoseKey) _POSE_OUTFIT_MAP[selectedPoseKey] = outfit;
   const outfitText = document.getElementById('outfit-auto-text'); // legacy compat
   if(outfitText) outfitText.textContent = outfit;
+  // ── Update pose-preview-outfit text ──────────────────────────────────────
+  const _prevOutfit = document.getElementById('pose-preview-outfit');
+  if(_prevOutfit){ _prevOutfit.textContent = '👗 ' + outfit; _prevOutfit.style.display = 'block'; }
   toast('👗 ' + outfit.substring(0, 48) + (outfit.length > 48 ? '…' : ''), 1800);
 }
 
@@ -14920,6 +14923,10 @@ function _showAutoOutfit(poseKey){
   // legacy compat — keep outfit-auto-text in sync
   const outfitText = document.getElementById('outfit-auto-text');
   if(outfitText) outfitText.textContent = currentOutfit;
+
+  // ── Show outfit as text in pose preview card ──────────────────────────────
+  const _prevOutfit = document.getElementById('pose-preview-outfit');
+  if(_prevOutfit){ _prevOutfit.textContent = '👗 ' + currentOutfit; _prevOutfit.style.display = 'block'; }
 }
 
 function _cycleAutoOutfit(){
@@ -14943,6 +14950,9 @@ function _clearAutoOutfit(){
     _autoOutfitActive = false;
   }
   _autoOutfitKey = null;
+  // ── Clear pose-preview-outfit text ────────────────────────────────────────
+  const _prevOutfit = document.getElementById('pose-preview-outfit');
+  if(_prevOutfit){ _prevOutfit.textContent = ''; _prevOutfit.style.display = 'none'; }
 }
 
 // ── COPY AS MJ (strips SD weight syntax, adds MJ params) ──────────────────
