@@ -11836,13 +11836,68 @@ function getPoseSensualOutfit(key, returnAll){
 
   const R = returnAll ? arr => arr : arr => arr[Math.floor(Math.random() * arr.length)];
 
+  // ── Shared wardrobe pools — reused across multiple pose categories ─────────
+  const _LINGERIE_FULL = [
+    'black lace push-up bra and matching micro thong',
+    'white sheer lace lingerie set: balconette bra and bikini panties',
+    'silk satin plunge bra and cheeky panties, sensual boudoir',
+    'strappy lace bralette and seamless micro thong',
+    'elegant black corset with built-in garter and sheer black stockings',
+    'sheer lace bodysuit, thong back, barely-there',
+    'satin demi-cup bra and lace high-waist panties',
+    'strappy lace harness bralette and micro G-string',
+    'silk babydoll negligee and matching micro panties',
+    'sheer mesh bralette and seamless G-string, barely-there',
+    'lace garter belt with matching thong and sheer stockings',
+    'velvet bralette and matching velvet high-waist panties, luxe',
+    'strappy satin cami and matching lace thong, thin spaghetti straps',
+    'white cotton bralette and lace-trim cheeky panties, soft intimate',
+    'embroidered lace unlined bralette and matching bikini briefs',
+  ];
+  const _MINIDRESS_POOL = [
+    'white bodycon mini dress, second-skin fit, no bra visible',
+    'black plunge-neck mini dress, barely covering thighs',
+    'strappy satin slip mini dress, barely covering',
+    'sequin bodycon mini dress, party glam',
+    'tight knit rib mini dress, form-hugging every curve',
+    'sheer mesh mini dress over matching lingerie underneath',
+    'off-shoulder bodycon mini dress, exposed collarbone',
+    'asymmetric one-shoulder micro mini dress',
+    'velvet bodycon mini dress, rich texture',
+    'cut-out mini dress with strategic body reveals',
+    'satin bias-cut mini slip dress, fluid and sensual',
+    'deep-plunge wrap mini dress, tied at waist',
+    'bandage mini dress with lattice side details',
+    'backless halter mini dress, no back straps visible',
+  ];
+  const _CASUAL_SEXY = [
+    'micro denim shorts and tiny white crop top, midriff bare',
+    'skin-tight low-rise jeans and strapless bandeau crop top',
+    'oversized white shirt unbuttoned to navel, no pants, barely covering',
+    'tiny pleated micro skirt and fitted crop top, bare midriff',
+    'high-waist micro shorts and sheer bralette crop top',
+    'sports bra and high-waist leggings, athleisure',
+    'crop tank top and tiny knit shorts, casual sensual',
+    'fitted tank top and high-waist denim micro skirt',
+    'sheer blouse tied at waist over bra and mini skirt',
+    'bodycon top and high-waist wide-leg pants, stylish curves',
+  ];
+  const _ROBE_POOL = [
+    'silk kimono robe loosely open revealing lingerie underneath',
+    'sheer lace robe barely covering body, lingerie visible through',
+    'satin dressing gown open at chest, intimate bedroom style',
+    'soft velvet robe loosely tied, no underwear visible',
+    'oversized white shirt as robe, barely covering thighs',
+    'sheer chiffon robe, flowing, barely-there coverage',
+  ];
+
   // ══════════════════════════════════════════════════════════════════════════
   // WATER / AQUÁTICO
   // ══════════════════════════════════════════════════════════════════════════
 
   // ── BEACH ─────────────────────────────────────────────────────────────────
   if(key === 'beach-topless-back')
-    return R(['tiny G-string bikini bottom, bare back', 'micro thong bikini bottom, topless back', 'string bikini bottom pulled up high, topless from behind']);
+    return R(['tiny G-string bikini bottom, bare back', 'micro thong bikini bottom, topless back', 'string bikini bottom pulled up high, topless from behind', 'micro Brazilian string bottom, no top, rear view']);
   if(key.startsWith('beach-'))
     return R([
       'tiny string bikini, sun-kissed skin, tan lines',
@@ -11855,6 +11910,11 @@ function getPoseSensualOutfit(key, returnAll){
       'floral print bandeau bikini, high-cut bottoms',
       'white string bikini, wet and clinging, semi-transparent',
       'crocheted bikini, boho beach style',
+      'metallic gold micro bikini, high-cut sides',
+      'strapless one-piece swimsuit, high-leg cut',
+      'sheer sarong tied low on hips and matching bikini top',
+      'tiny monokini with strategic cutouts, one-piece illusion',
+      'black micro tankini, barely covering',
     ]);
 
   // ── POOL / WATER ──────────────────────────────────────────────────────────
@@ -11865,6 +11925,11 @@ function getPoseSensualOutfit(key, returnAll){
       'colorful two-piece bikini, dripping wet',
       'Brazilian-cut bikini, wet swimwear showing curves',
       'metallic silver bikini, glistening wet skin',
+      'black micro string bikini, dripping wet body',
+      'tiny floral bikini, soaking wet, clinging',
+      'white sheer one-piece swimsuit, wet and see-through',
+      'neon yellow micro bikini, poolside wet',
+      'holographic bikini, wet skin glistening',
     ]);
   if(key.startsWith('water-') || key.startsWith('pool-'))
     return R([
@@ -11875,6 +11940,9 @@ function getPoseSensualOutfit(key, returnAll){
       'metallic silver one-piece swimsuit, wet shimmering skin',
       'sheer white one-piece swimsuit, wet and clinging',
       'tiny red bikini, water beading on skin',
+      'strapless bandeau bikini, pool wet',
+      'micro crocheted bikini, soaking wet',
+      'sporty high-neck bikini top and micro bottoms, wet',
     ]);
 
   // ── RAIN ──────────────────────────────────────────────────────────────────
@@ -11885,6 +11953,11 @@ function getPoseSensualOutfit(key, returnAll){
       'wet light sundress clinging to skin, fabric translucent from rain',
       'soaked white blouse and tiny shorts, drenched, sheer fabric',
       'wet white t-shirt clinging to body, shorts, bare legs',
+      'soaked silk slip dress, completely transparent when wet, clinging to curves',
+      'white cotton dress drenched in rain, sheer fabric showing everything',
+      'wet floral mini dress, translucent and clinging',
+      'rain-soaked bodysuit, sheer when wet, form-revealing',
+      'wet white crop top and micro shorts, both see-through',
     ]);
 
   // ── MERMAID ───────────────────────────────────────────────────────────────
@@ -11905,6 +11978,12 @@ function getPoseSensualOutfit(key, returnAll){
       'barely-there bandeau bikini top and matching micro skirt, sunset glow',
       'sheer linen slip dress, transparent in backlight, bare underneath',
       'white sheer bodysuit and micro shorts, sunset backlit',
+      'flowing boho maxi skirt and strappy bralette, sunset bohemian',
+      'sheer kimono wrap over string bikini, golden hour',
+      'off-shoulder sundress with deep plunge, sunset romance',
+      'white strapless tube dress, backlit golden glow',
+      'crop top and loose linen high-waist pants, sunset casual',
+      'sheer crochet cover-up over tiny bikini, warm beach glow',
     ]);
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -11922,6 +12001,13 @@ function getPoseSensualOutfit(key, returnAll){
       'sheer nude-panel yoga leggings and matching sports bra, artistic yoga',
       'tiny yoga shorts exposing lower cheeks and strappy crop sports bra',
       'high-compression transparent yoga leggings and micro sports bra',
+      'form-fitting yoga unitard, deep-scoop neck, no bra line, stretch fabric',
+      'high-waist bike shorts and longline sports bra, yoga studio',
+      'seamless full-length leggings with side mesh and matching bra, flowy yoga',
+      'cutout yoga bodysuit, strategic panels, deep back opening',
+      'wrap-front crop top and high-waist yoga leggings, practice ready',
+      'sports bra and flowy wide-leg yoga pants, soft and free',
+      'thin-strap yoga bralette and matching mid-thigh shorts',
     ]);
 
   // ── GYM / FITNESS ─────────────────────────────────────────────────────────
@@ -11935,6 +12021,13 @@ function getPoseSensualOutfit(key, returnAll){
       'strappy sports bra with crisscross back and tight micro booty shorts',
       'wet-look vinyl booty shorts and strappy sports bra, gym shine',
       'Brazilian-cut workout shorts and push-up sports bra, barely covering',
+      'tie-front sports bra and high-waist gym leggings, gym girl',
+      'racerback sports bra and seamless high-waist shorts, athletic',
+      'bold color-block sports bra and matching leggings, fitness look',
+      'compression sports top and micro booty shorts, post-workout',
+      'sports bralette and wide-waistband gym shorts, modern athletic',
+      'sports crop top and seamless cycling shorts, gym ready',
+      'halter sports bra and flare yoga pants, gym aesthetic',
     ]);
 
   // ── LEGGING ───────────────────────────────────────────────────────────────
@@ -12048,6 +12141,13 @@ function getPoseSensualOutfit(key, returnAll){
       'floral micro mini dress, strapless, thin fabric, carefree outdoor style',
       'tiny string bikini, outdoor nature setting, golden light',
       'sheer off-shoulder crop top and high-waist micro shorts',
+      'flowing boho maxi skirt and tiny crochet top, barefoot',
+      'white smocked mini dress, sun-kissed outdoors',
+      'linen shorts and lace bralette crop top, golden light',
+      'tie-dye micro shorts and matching crop top, outdoor festival',
+      'sheer floral kimono over bikini, nature walk',
+      'white cotton micro skirt and strappy bralette, barefoot outdoors',
+      'peasant mini dress, off-shoulder, boho outdoor',
     ]);
 
   // ── ROOFTOP / URBAN ───────────────────────────────────────────────────────
@@ -12071,6 +12171,14 @@ function getPoseSensualOutfit(key, returnAll){
       'plunging bodycon dress, barely covering, street style',
       'leather micro skirt and fitted crop top, edgy, heels',
       'tight satin mini slip dress and strappy heels, walking',
+      'oversized blazer as dress, no pants, heels, power walk',
+      'midi wrap dress with deep V neckline, strappy sandals',
+      'sheer printed mini dress, colorful, flowing while walking',
+      'white linen wide-leg trousers and barely-there crop bralette top',
+      'tight turtleneck bodysuit and micro leather skirt',
+      'strappy sandals and tiny sundress, summer walk',
+      'elegant trench coat open over lingerie, editorial street style',
+      'silk bias-cut midi dress, slit to thigh, strappy mules',
     ]);
 
   // ── JEANS ─────────────────────────────────────────────────────────────────
@@ -12083,6 +12191,14 @@ function getPoseSensualOutfit(key, returnAll){
       'skin-tight ripped jeans and micro tied crop top, bare midriff',
       'hip-bone-showing low-rise jeans and strappy bralette top, street sexy',
       'very tight body-hugging jeans and fitted deep-plunge crop top',
+      'wide-leg flare jeans and strapless bustier crop top',
+      'mom jeans half-down showing lace underwear waistband and fitted crop tee',
+      'white skinny jeans and semi-sheer blouse, bra visible',
+      'denim cutoffs and knotted plaid shirt, no bra, casual sexy',
+      'high-waist straight-leg jeans and strappy lace bralette, street style',
+      'distressed denim shorts (mid-thigh) and mesh crop top',
+      'dark wash skinny jeans and deep-plunge bodysuit',
+      'painted-on high-rise jeans and barely-there tube top',
     ]);
 
   // ── CAR / MOTO ────────────────────────────────────────────────────────────
@@ -12213,6 +12329,13 @@ function getPoseSensualOutfit(key, returnAll){
       'structured corset-style mini dress with exposed boning, high heels',
       'barely-there satin slip dress with side slit to hip, runway style',
       'sheer lace-panel bodycon gown, fashion editorial, heels',
+      'avant-garde black leather mini dress and over-the-knee boots',
+      'asymmetric one-shoulder draped gown, couture editorial',
+      'sculptural body harness over sheer bodysuit, high fashion',
+      'monochrome all-white power suit, single-button, no top underneath',
+      'micro bandage dress in metallics, architectural editorial',
+      'feather-trim micro dress, designer couture look',
+      'tailored blazer over bra and micro skirt, fashion week',
     ]);
 
   // ── BUTT CLOSEUP ─────────────────────────────────────────────────────────
@@ -12288,141 +12411,164 @@ function getPoseSensualOutfit(key, returnAll){
   // ══════════════════════════════════════════════════════════════════════════
 
   // ── STANDING (specific sub-types) ─────────────────────────────────────────
-  if(key === 'standing-front' || key === 'standing-back' || key === 'standing-wide-legs-open' || key === 'standing-spread-front' || key === 'standing-spread-back')
+  if(key === 'standing-front' || key === 'standing-back')
     return R([
-      'black lace lingerie: push-up bra and high-waist panties',
-      'white bodycon mini dress, second-skin fit',
-      'sheer lace bodysuit with thong back',
-      'satin slip dress, barely there',
-      'silk camisole and matching high-cut panties',
-      'strappy lace set: bralette and matching thong',
+      ..._LINGERIE_FULL,
+      ..._MINIDRESS_POOL,
+      'fitted crop top and micro shorts, standing full body',
+      'silk slip camisole and matching high-cut panties',
+      'sheer lace bodysuit, second-skin, full standing',
+      'elegant corset, garter belt and sheer stockings',
+      'strappy velvet bralette and matching high-waist briefs',
+      'white plunge bodysuit and mini skirt, standing editorial',
+    ]);
+
+  if(key === 'standing-spread-back' || key === 'standing-spread-front' || key === 'spread-eagle-standing' || key === 'hands-up-front' || key === 'hands-up-back')
+    return R([
+      ..._LINGERIE_FULL,
+      'sheer stretch bodysuit, high-cut, spread-eagle pose',
+      'strappy harness bralette and micro thong, open pose',
+      'metallic bodysuit, form-fitting, arms-up pose',
+      'lace-up lingerie set, bra and panties, wide stance',
+      'silk two-piece set, bralette and bikini panties',
+      ..._MINIDRESS_POOL.slice(0, 6),
+      'crop top and micro shorts, hands above head',
+      'fitted tank top and high-waist mini skirt, dynamic standing',
+    ]);
+
+  if(key === 'standing-dynamic' || key === 'standing-one-leg' || key === 'standing-hands-hips' || key === 'standing-arms-crossed' || key === 'standing-supported-back')
+    return R([
+      ..._LINGERIE_FULL.slice(0, 10),
+      ..._MINIDRESS_POOL,
+      'crop top and high-waist micro skirt, dynamic pose',
+      'fitted blazer as dress with no pants, power pose',
+      'form-fitting bodysuit and mini skirt, confident stance',
+      'strappy lace bodysuit and micro skirt',
+      ..._CASUAL_SEXY.slice(0, 5),
     ]);
 
   if(key.startsWith('standing-'))
     return R([
-      'black lace lingerie set: bra and matching panties',
-      'silk satin lingerie, thin spaghetti straps',
-      'sheer lace bodysuit, second-skin fit',
-      'strappy white lingerie: bralette and high-waist panties',
-      'elegant corset with matching high-waist panties',
-      'satin bra and lace high-waist briefs',
-      'sheer mesh bralette and matching panties',
-      'lace garter belt and matching thong',
-      'soft pink lingerie set, satin and lace',
-      'bodycon mini dress, no underwear visible',
-      'fitted crop top and micro shorts, standing pose',
+      ..._LINGERIE_FULL,
+      ..._MINIDRESS_POOL.slice(0, 8),
+      ..._CASUAL_SEXY.slice(0, 5),
+      ..._ROBE_POOL.slice(0, 3),
     ]);
 
   // ── SITTING ───────────────────────────────────────────────────────────────
   if(key.startsWith('sitting-'))
     return R([
-      'black lace bra and matching panties, seated sensual',
-      'silk slip camisole, barely covering, seated',
-      'sheer bodysuit with thong back, seated pose',
-      'satin lingerie set, boudoir seated',
-      'white lace balconette bra and matching briefs',
-      'strappy lingerie: bralette and hipster panties, seated',
-      'silk robe loosely draped, lingerie visible',
-      'lace garter belt and stockings, seated elegantly',
+      ..._LINGERIE_FULL,
+      ..._ROBE_POOL,
+      'tight mini dress riding up while seated, thighs exposed',
+      'satin cami slip dress, barely covering thighs, seated',
+      'bodycon mini dress, hiked up, seated provocatively',
+      'sheer mesh mini skirt and matching bralette, seated',
+      'knit mini dress, form-hugging, seated elegant',
+      'lace garter belt and sheer stockings, seated elegantly',
+      'white babydoll nightgown and matching lace shorts, bed sitting',
+      'one-shoulder satin mini dress, seated editorial',
+      'tiny pleated micro skirt and matching bralette crop top',
     ]);
 
   // ── KNEELING ─────────────────────────────────────────────────────────────
   if(key.startsWith('kneeling-'))
     return R([
-      'black lace lingerie set, kneeling boudoir',
-      'sheer bodysuit, kneeling pose',
-      'strappy satin bralette and matching thong',
-      'elegant corset and thigh-high stockings',
-      'white lace lingerie: balconette bra and panties',
-      'silk camisole and high-cut panties, kneeling',
+      ..._LINGERIE_FULL,
+      'elegant black corset with garter and sheer stockings, kneeling boudoir',
+      'sheer stretch bodysuit, high-cut, kneeling pose',
+      'strappy harness bralette and micro G-string, dominant kneeling',
+      'velvet bralette and matching high-waist briefs, kneeling',
+      'silk babydoll negligee loosely draped, kneeling on bed',
+      'lace garter belt with thong and stockings, kneeling elegantly',
+      'white lace lingerie set, kneeling on soft surface',
+      'sheer lace robe loosely open, lingerie underneath, kneeling',
     ]);
 
   // ── LYING / LYING DOWN ────────────────────────────────────────────────────
   if(key.startsWith('lying-') || key === 'sphinx' || key === 'spread-eagle-lying')
     return R([
-      'black lace lingerie: demi-cup bra and thong, lying sensual',
-      'silk satin lingerie, thin straps, draped on surface',
-      'sheer lace bodysuit, lying on satin sheets',
-      'strappy white lingerie set on white bedding',
-      'silk babydoll negligee, barely covering',
-      'lace bralette and matching lace panties, intimate',
-      'satin bra and high-waist briefs, soft bedding',
-      'sheer robe open over lingerie, lying gracefully',
+      ..._LINGERIE_FULL,
+      ..._ROBE_POOL.slice(0, 4),
+      'silk babydoll negligee barely covering body, lying on satin sheets',
+      'sheer mesh babydoll and matching G-string, lying boudoir',
+      'lace garter belt with stockings, lying back elegantly',
+      'white cotton oversized shirt, no bottoms, morning lying pose',
+      'velvet bralette and matching briefs on soft bedding',
+      'strappy black full-body harness, lying provocative',
+      'embroidered silk camisole and lace shorts, lying intimate',
     ]);
 
   // ── ALL FOURS ─────────────────────────────────────────────────────────────
   if(key.startsWith('allfours-'))
     return R([
-      'black lace lingerie: bra and thong, all-fours pose',
-      'sheer bodysuit with thong cut, on all fours',
-      'strappy satin bralette and G-string',
-      'white lace lingerie set, on all fours',
-      'silk camisole loosely hanging, no pants',
-      'lace garter belt with thong, provocative all-fours',
+      ..._LINGERIE_FULL,
+      'lace garter belt with matching thong and sheer stockings, all-fours',
+      'sheer stretch bodysuit with thong cut, on all fours',
+      'strappy harness bralette and micro G-string, all-fours provocative',
+      'silk babydoll negligee hanging loosely, all-fours pose',
+      'velvet crop bra and matching micro shorts, on all fours',
+      'white bodycon mini dress riding up, all-fours editorial',
+      'sports bra and micro booty shorts, all-fours athletic',
+      'embroidered lace bodysuit, thong back, on all fours',
     ]);
 
   // ── SQUAT ─────────────────────────────────────────────────────────────────
   if(key.startsWith('squat-'))
     return R([
-      'high-cut sports bra and micro booty shorts, squat pose',
-      'black lace lingerie: bra and thong, deep squat',
-      'yoga shorts and crop sports bra, squat position',
-      'sheer bodysuit, high-cut sides, squat',
-      'seamless thong and matching bralette, squat',
-      'gym micro shorts and sports bra, deep squat',
+      ..._LINGERIE_FULL.slice(0, 10),
+      'high-cut sports bra and micro booty shorts, deep squat',
+      'seamless sports set: micro bralette and booty shorts, squat',
+      'yoga micro shorts and strappy sports bra, squat position',
+      'sheer mesh booty shorts and matching bralette, squat',
+      'gym micro shorts and push-up sports bra, deep squat pose',
+      'neon micro workout set: bralette and booty shorts, squat',
+      'bodycon mini dress riding up during squat, editorial',
+      'Brazilian-cut lingerie bottoms and matching bra, deep squat',
     ]);
 
   // ── BOUDOIR ───────────────────────────────────────────────────────────────
   if(key.startsWith('boudoir-') || key === 'boudoir')
     return R([
-      'black lace lingerie set: push-up bra and matching thong, boudoir',
-      'silk negligee with lace trim, barely covering, boudoir photography',
-      'sheer lace bodysuit, thong back, boudoir studio',
-      'strappy satin bralette and high-waist lace panties, boudoir',
-      'corset and garter belt with sheer black stockings, boudoir',
+      ..._LINGERIE_FULL,
+      ..._ROBE_POOL,
       'sheer babydoll negligee and matching panties, soft boudoir lighting',
-      'white lace lingerie set: balconette bra and bikini panties, boudoir',
-      'silk robe barely open over strappy lingerie, boudoir',
+      'vintage-style black lace corset and matching garter, boudoir',
+      'white silk slip nightgown, thin straps, boudoir light',
+      'lace bodysuit with built-in garter straps, boudoir photographer',
+      'strappy silk cami and lace high-waist briefs, romantic boudoir',
     ]);
 
   // ── CROSS-LEGGED / FETAL / OVER-SHOULDER ─────────────────────────────────
   if(key === 'cross-legged' || key === 'fetal' || key.startsWith('over-shoulder') || key.startsWith('hand-'))
     return R([
-      'black lace lingerie set: bra and matching panties',
-      'sheer bodysuit, intimate pose',
-      'silk satin lingerie, thin straps',
-      'strappy lace bralette and matching thong',
-      'satin bra and high-waist lace panties',
-      'soft pink lingerie set, feminine and sensual',
+      ..._LINGERIE_FULL,
+      ..._ROBE_POOL.slice(0, 4),
+      'soft pink satin lingerie set, feminine and sensual',
+      'oversized cable-knit sweater, no bottoms, intimate cozy',
+      'white sheer bodysuit, barely covering, curled pose',
+      'velvet bralette and matching lace briefs, soft intimate',
     ]);
 
   // ── GENERIC POSES (catch-all for all pose prefixes) ───────────────────────
-  if(/^(bent-|arched-|arms-|legs-|pov-|side-|one-|reclined-|arm-|shoulder-|torso-|butterfly|tippy-|double-|wide-)/.test(key))
+  if(/^(bent-|arched-|legs-|pov-|side-|one-|reclined-|arm-|shoulder-|torso-|butterfly|tippy-|double-|wide-|leaning-)/.test(key))
     return R([
-      'black lace lingerie set: push-up bra and thong',
-      'sheer lace bodysuit, second-skin, barely covering',
-      'strappy white lingerie: bralette and micro thong',
-      'elegant corset and matching garter-belt panties',
-      'satin demi-cup bra and lace high-waist panties',
-      'sheer mesh bralette and G-string, barely-there',
+      ..._LINGERIE_FULL,
+      ..._MINIDRESS_POOL.slice(0, 6),
+      ..._CASUAL_SEXY.slice(0, 5),
       'lace garter belt with thong and stockings',
+      'sheer stretch bodysuit, second-skin, barely covering',
+      'elegant corset and matching garter-belt panties',
       'silk satin bra and matching cheeky panties',
       'strappy black bralette and seamless thong',
-      'white silk camisole with no panties, sensual',
     ]);
 
-  // ── EVERYTHING ELSE — rich sexy lingerie pool ─────────────────────────────
+  // ── EVERYTHING ELSE — rich sexy lingerie + outfit pool ────────────────────
   return R([
-    'black lace push-up bra and matching micro thong, sexy lingerie',
-    'silk satin lingerie: plunge bra and cheeky panties, sensual',
-    'sheer lace bodysuit with thong cut, barely there, sexy',
-    'strappy bralette and seamless G-string, barely covering',
-    'satin demi-cup bra and lace high-waist panties, sensual boudoir',
-    'white sheer lace lingerie set, push-up bra and bikini panties',
-    'elegant black corset and garter belt with sheer stockings, seductive',
-    'silk babydoll negligee and matching micro panties, sensual',
-    'strappy lace harness bralette and micro thong, daring lingerie',
-    'sheer lace camisole with no panties underneath, sensual and barely covered',
+    ..._LINGERIE_FULL,
+    ..._MINIDRESS_POOL,
+    ..._CASUAL_SEXY,
+    ..._ROBE_POOL,
   ]);
 }
 
