@@ -11782,7 +11782,33 @@ function autoScene(poseKey){
   return _randomFrom(SCENE_POOLS.default);
 }
 
-function getDefaultSceneForPose(key){ return key ? autoScene(key) : ''; }
+function getDefaultSceneForPose(key){
+  if(!key) return '';
+  const k = key.toLowerCase();
+  // Return SHORT keyword hints (2-4 words) that expandScene() can detect
+  // WITHOUT overwhelming buildPrompt's CLIP token budget.
+  if(k.startsWith('beach-') || k.includes('beach'))            return 'at the beach';
+  if(k.startsWith('pool-')  || k.includes('-pool'))             return 'by the pool';
+  if(k.startsWith('water-shower') || k.startsWith('water-bathtub') ||
+     k.startsWith('shower-') || k.startsWith('bath-'))          return 'in the shower';
+  if(k.startsWith('water-') || k.includes('-water'))            return 'by the water';
+  if(k.startsWith('gym-')   || k.startsWith('legging-'))        return 'at the gym';
+  if(k.includes('yoga') || k.includes('pilates') || k.includes('ballet')) return 'yoga studio';
+  if(k.startsWith('mirror-') || k.startsWith('selfie-'))        return 'bedroom mirror selfie';
+  if(k.startsWith('car-') || k.startsWith('moto-') || k.startsWith('motorcycle-')) return 'by the car';
+  if(k.startsWith('fantasy-'))                                   return 'fantasy setting';
+  if(k.startsWith('jeans-'))                                     return 'city street';
+  if(k.startsWith('nature-') || k.startsWith('outdoor-') ||
+     k === 'sunset' || k.startsWith('sunset-'))                  return 'outdoors in nature';
+  if(k.startsWith('dance-') || k.startsWith('twerk-') || k.startsWith('club-')) return 'nightclub';
+  if(k.includes('lying') || k.includes('supine') || k.includes('prone') ||
+     k.startsWith('sitting-edge'))                               return 'bedroom';
+  if(k.startsWith('sitting-') || k.includes('sitting'))         return 'luxury hotel suite';
+  if(k.startsWith('kneeling-') || k.includes('kneeling'))       return 'luxury boudoir';
+  if(k.startsWith('butt-') || k.includes('closeup'))            return 'bedroom close-up';
+  // Default for standing and unmatched poses
+  return 'luxury hotel room';
+}
 
 function getPoseSensualOutfit(key){
   if(!key) return '';
