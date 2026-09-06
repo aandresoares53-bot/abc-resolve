@@ -341,17 +341,23 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 [data-theme="dark"] .pose-preview-name{color:#86efac;}
 [data-theme="dark"] .pose-preview-outfit{color:#4ade80;}
 [data-theme="dark"] .pose-preview-scene{color:#a3e635;}
-/* ── Outfit auto-badge row ─────────────────────────────────────── */
-.outfit-auto-row{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap;}
-.outfit-auto-badge{display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border:1.5px solid #86efac;border-radius:20px;padding:4px 10px;font-size:0.72em;font-weight:700;color:#166534;cursor:default;user-select:none;max-width:100%;flex:1;}
-.outfit-auto-badge span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.outfit-auto-btn{flex-shrink:0;background:none;border:1.5px solid #86efac;border-radius:20px;padding:3px 8px;font-size:0.7em;font-weight:700;color:#166534;cursor:pointer;transition:background 0.15s,color 0.15s;white-space:nowrap;}
-.outfit-auto-btn:hover{background:#bbf7d0;color:#14532d;}
-.outfit-clear-btn{flex-shrink:0;background:none;border:1.5px solid #fca5a5;border-radius:20px;padding:3px 8px;font-size:0.7em;font-weight:700;color:#dc2626;cursor:pointer;transition:background 0.15s;}
+/* ── Outfit picker panel ────────────────────────────────────────── */
+.outfit-picker-panel{margin-top:6px;}
+.outfit-picker-label{font-size:0.68em;font-weight:700;color:#166534;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;}
+.outfit-chips-wrap{display:flex;flex-wrap:wrap;gap:5px;max-height:130px;overflow-y:auto;padding-right:2px;}
+.outfit-chips-wrap::-webkit-scrollbar{width:4px;}
+.outfit-chips-wrap::-webkit-scrollbar-thumb{background:#86efac;border-radius:4px;}
+.outfit-chip{background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:4px 10px;font-size:0.63em;cursor:pointer;text-align:left;color:#166534;word-break:break-word;white-space:normal;line-height:1.35;transition:background 0.13s,border-color 0.13s,color 0.13s;}
+.outfit-chip:hover{background:#dcfce7;border-color:#4ade80;}
+.outfit-chip.active{background:#16a34a;color:#fff;border-color:#15803d;font-weight:700;}
+.outfit-clear-btn{margin-top:5px;background:none;border:1.5px solid #fca5a5;border-radius:14px;padding:3px 10px;font-size:0.67em;font-weight:700;color:#dc2626;cursor:pointer;transition:background 0.15s;}
 .outfit-clear-btn:hover{background:#fee2e2;}
-[data-theme="dark"] .outfit-auto-badge{background:#052e16;border-color:#166534;color:#4ade80;}
-[data-theme="dark"] .outfit-auto-btn{border-color:#166534;color:#4ade80;}
-[data-theme="dark"] .outfit-auto-btn:hover{background:#14532d;color:#86efac;}
+/* ── legacy compat — keep these so old references don't break ── */
+.outfit-auto-row{display:none!important;}
+[data-theme="dark"] .outfit-picker-label{color:#4ade80;}
+[data-theme="dark"] .outfit-chip{background:#052e16;border-color:#166534;color:#4ade80;}
+[data-theme="dark"] .outfit-chip:hover{background:#14532d;border-color:#4ade80;}
+[data-theme="dark"] .outfit-chip.active{background:#16a34a;color:#fff;border-color:#4ade80;}
 [data-theme="dark"] .outfit-clear-btn{border-color:#7f1d1d;color:#f87171;}
 [data-theme="dark"] .outfit-clear-btn:hover{background:#450a0a;}
 
@@ -2234,12 +2240,17 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   <!-- POSE PREVIEW PANEL -->
   <div class="pose-preview-card" id="pose-preview-card" style="display:none;">
     <div class="pose-preview-name" id="pose-preview-name"></div>
+    <!-- legacy compat element (kept hidden, CSS hides it) -->
     <div class="outfit-auto-row" id="outfit-auto-row" style="display:none;">
-      <div class="outfit-auto-badge" id="outfit-auto-badge" title="Vestimenta auto-sugerida pela pose">
-        <span>👗</span><span id="outfit-auto-text"></span>
+      <span id="outfit-auto-text"></span>
+    </div>
+    <!-- NEW outfit picker -->
+    <div class="outfit-picker-panel" id="outfit-picker-panel" style="display:none;">
+      <div class="outfit-picker-label">
+        <span>👗 Escolha a vestimenta para esta pose:</span>
+        <button class="outfit-clear-btn" style="margin:0;" onclick="_clearAutoOutfit()" title="Remover vestimenta">✕ Remover</button>
       </div>
-      <button class="outfit-auto-btn" onclick="_cycleAutoOutfit()" title="Nova sugestão de roupa">🔀 Outra</button>
-      <button class="outfit-clear-btn" onclick="_clearAutoOutfit()" title="Remover sugestão de roupa">✕</button>
+      <div class="outfit-chips-wrap" id="outfit-chips-container"></div>
     </div>
     <div class="pose-preview-outfit" id="pose-preview-outfit" style="display:none"></div>
     <div class="pose-preview-scene" id="pose-preview-scene" style="display:none"></div>
@@ -11810,17 +11821,20 @@ function getDefaultSceneForPose(key){
   return 'luxury hotel room';
 }
 
-function getPoseSensualOutfit(key){
-  if(!key) return '';
+// Returns all outfit options for a pose (used by the outfit picker UI)
+function _getPoseOutfitOptions(key){ return getPoseSensualOutfit(key, true) || []; }
+
+function getPoseSensualOutfit(key, returnAll){
+  if(!key) return returnAll ? [] : '';
 
   // ── Explicitly sexual / naturally nude poses — no outfit injection ────────
   const _explicitPfx = /^(shower-|bath-|sex-|anal-|oral-|multi-|cumshot-|doggy-|prone-bone|spoon$|scissors$|anvil$|leapfrog$|mating-press$|pile-driver$|reverse-missionary$|lap-dance$|lotus-nsfw$|position-69$|cowgirl$|cowgirl-|reverse-cowgirl$|reverse-cowgirl-|missionary$|missionary-)/;
-  if(_explicitPfx.test(key)) return '';
+  if(_explicitPfx.test(key)) return returnAll ? [] : '';
 
   // ── Pose definitions already embed clothing ───────────────────────────────
-  if(/^(fantasy-|alt-|outfit-|shemale-)/.test(key)) return '';
+  if(/^(fantasy-|alt-|outfit-|shemale-)/.test(key)) return returnAll ? [] : '';
 
-  const R = arr => arr[Math.floor(Math.random() * arr.length)];
+  const R = returnAll ? arr => arr : arr => arr[Math.floor(Math.random() * arr.length)];
 
   // ══════════════════════════════════════════════════════════════════════════
   // WATER / AQUÁTICO
@@ -14140,58 +14154,84 @@ function _applyPoseDefaults(key){
 let _autoOutfitActive = false;
 let _autoOutfitKey = null; // pose key this outfit was computed for
 
+// ── Select an outfit chip (called from chip onclick) ──────────────────────
+function _selectOutfit(btn, outfit){
+  document.querySelectorAll('#outfit-chips-container .outfit-chip').forEach(c => c.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  chipState.outfit = outfit;
+  _autoOutfitActive = true;
+  _cachedPoseOutfit = outfit;
+  if(selectedPoseKey) _POSE_OUTFIT_MAP[selectedPoseKey] = outfit;
+  const outfitText = document.getElementById('outfit-auto-text'); // legacy compat
+  if(outfitText) outfitText.textContent = outfit;
+  toast('👗 ' + outfit.substring(0, 48) + (outfit.length > 48 ? '…' : ''), 1800);
+}
+
 function _showAutoOutfit(poseKey){
   if(!poseKey){ _clearAutoOutfit(); return; }
 
-  // Use cached outfit for this pose key (session-consistent clothing), or compute fresh and cache
-  let outfit = _POSE_OUTFIT_MAP[poseKey];
-  if(!outfit){
-    outfit = typeof getPoseSensualOutfit === 'function' ? getPoseSensualOutfit(poseKey) : '';
-    if(outfit) _POSE_OUTFIT_MAP[poseKey] = outfit;
-  }
-  const outfitRow = document.getElementById('outfit-auto-row');
-  const outfitText = document.getElementById('outfit-auto-text');
+  // Get all options for this pose (uses the returnAll path of getPoseSensualOutfit)
+  const options = typeof _getPoseOutfitOptions === 'function' ? _getPoseOutfitOptions(poseKey) : [];
+  const panel     = document.getElementById('outfit-picker-panel');
+  const container = document.getElementById('outfit-chips-container');
 
-  if(!outfit || outfit === ''){
-    // Naturally nude pose — no outfit to show
-    if(outfitRow) outfitRow.style.display = 'none';
-    // Don't override chipState if user has manual outfit
+  if(!options || options.length === 0){
+    // Naturally nude pose — no picker to show
+    if(panel) panel.style.display = 'none';
     if(_autoOutfitActive){ chipState.outfit = ''; _autoOutfitActive = false; }
     return;
   }
 
-  // Display in pose preview panel
-  if(outfitRow){ outfitRow.style.display = 'flex'; }
-  if(outfitText){ outfitText.textContent = outfit; }
+  // Determine current outfit (cached for this pose, or first option as default)
+  let currentOutfit = _POSE_OUTFIT_MAP[poseKey];
+  if(!currentOutfit || !options.includes(currentOutfit)){
+    currentOutfit = options[0];
+    _POSE_OUTFIT_MAP[poseKey] = currentOutfit;
+  }
 
-  // Inject into chipState.outfit (auto-set — can be overridden by user)
-  // Only set if user hasn't manually set a different outfit (or we're replacing a previous auto-set)
+  // Render outfit chips
+  if(container){
+    container.innerHTML = '';
+    options.forEach(function(outfit){
+      const btn = document.createElement('button');
+      btn.className = 'outfit-chip' + (outfit === currentOutfit ? ' active' : '');
+      btn.textContent = outfit;
+      btn.title = outfit;
+      btn.addEventListener('click', function(){ _selectOutfit(this, outfit); });
+      container.appendChild(btn);
+    });
+  }
+
+  if(panel) panel.style.display = 'block';
+
+  // Inject into chipState (only if user hasn't manually set a different outfit)
   const hasManualOutfit = chipState.outfit && !_autoOutfitActive;
   if(!hasManualOutfit){
-    chipState.outfit = outfit;
+    chipState.outfit = currentOutfit;
     _autoOutfitActive = true;
     _autoOutfitKey = poseKey;
   }
-  // Also update _cachedPoseOutfit immediately so it's ready for generate
-  if(typeof selectedPoseKey !== 'undefined') _cachedPoseOutfit = outfit;
+  if(typeof selectedPoseKey !== 'undefined') _cachedPoseOutfit = currentOutfit;
+
+  // legacy compat — keep outfit-auto-text in sync
+  const outfitText = document.getElementById('outfit-auto-text');
+  if(outfitText) outfitText.textContent = currentOutfit;
 }
 
 function _cycleAutoOutfit(){
-  // Generate a fresh (different) outfit suggestion for the current pose
+  // Pick a random chip from the picker (kept for any external callers)
   if(!selectedPoseKey) return;
-  const outfit = typeof getPoseSensualOutfit === 'function' ? getPoseSensualOutfit(selectedPoseKey) : '';
-  if(!outfit) return;
-  // Update map so next time this pose is selected it shows the same outfit (consistent until next 🔀)
-  _POSE_OUTFIT_MAP[selectedPoseKey] = outfit;
-  const outfitText = document.getElementById('outfit-auto-text');
-  if(outfitText) outfitText.textContent = outfit;
-  chipState.outfit = outfit;
-  _autoOutfitActive = true;
-  _cachedPoseOutfit = outfit;
-  toast('👗 ' + outfit.substring(0, 50) + (outfit.length > 50 ? '…' : ''), 2000);
+  const options = typeof _getPoseOutfitOptions === 'function' ? _getPoseOutfitOptions(selectedPoseKey) : [];
+  if(!options || options.length === 0) return;
+  const outfit = options[Math.floor(Math.random() * options.length)];
+  const chips = document.querySelectorAll('#outfit-chips-container .outfit-chip');
+  chips.forEach(function(c){ if(c.textContent === outfit) _selectOutfit(c, outfit); });
 }
 
 function _clearAutoOutfit(){
+  const panel = document.getElementById('outfit-picker-panel');
+  if(panel) panel.style.display = 'none';
+  // also hide legacy compat row (already hidden by CSS but be safe)
   const outfitRow = document.getElementById('outfit-auto-row');
   if(outfitRow) outfitRow.style.display = 'none';
   if(_autoOutfitActive){
