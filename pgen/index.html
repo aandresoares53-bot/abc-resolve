@@ -12675,18 +12675,17 @@ function buildPrompt(englishText, rawPT){
   }
 
   // ── Description: non-character part of englishText (user's optional input) ─
-  const _sceneOnly = englishText.split(',').slice(_presetTermCount).map(t => t.trim()).filter(Boolean);
+  // _quickPreCount: number of chip-value terms (etnia, age, body, hair) in englishText
+  // When there is no activePreset the chip values are prepended via _quickPre (see buildPrompt top),
+  // so _presetTermCount=0 but _quickPre still contributes terms. Count them separately.
+  const _quickPreCount = (typeof getQuickPreset === 'function') ? (getQuickPreset()||'').split(',').filter(t=>t.trim()).length : 0;
+  const _totalCharCount = _presetTermCount || _quickPreCount;
+  const _sceneOnly = englishText.split(',').slice(_totalCharCount).map(t => t.trim()).filter(Boolean);
 
-  // Boost ALL user description terms at weight 1.9 — highest priority after nsfw/quality
-  // When NSFW: boost everything including nudity/explicit terms (they're intentional)
-  // When SFW: skip clothing/nudity terms (handled by clothing enforcement) and attractiveness
-  const _descBoostRe = _wantsNSFW
-    ? null  // NSFW: boost all terms including nude/explicit act
-    : /\b(wearing|dressed|nude|naked|topless|panties|bra|bikini|lingerie|thong|dress|shirt|leggings|shorts|bodysuit|corset|swimsuit|gown|jeans|pants|hoodie|uniform|costume|top|outfit)\b/i;
+  // MANDATORY: boost ALL user description terms at :2.0 — no filtering — description is law
+  // User's words override any heuristic; highest CLIP weight keeps them in chunk 1
   const descBoost = _sceneOnly
-    .filter(t => (!_descBoostRe || !_descBoostRe.test(t)) && !_noBoostRe.test(t))
-    // No slice limit — all user terms get boosted
-    .map(t => `(${t}:1.9)`)
+    .map(t => `(${t}:2.0)`)
     .join(', ');
 
   if(_sceneOnly.length){
@@ -12803,37 +12802,37 @@ function buildPrompt(englishText, rawPT){
   const _skinMarksBoost = _skinMarksStr ? ', ' + _skinMarksStr.split(', ').filter(Boolean).map(t => `(${t}:1.8)`).join(', ') : '';
   // TOKEN-BUDGET ORDER (CLIP chunks = 75 tokens each):
   //
-  // KEY INSIGHT: _EXPLICIT_REALISM (~90 tokens) was at position 1, pushing sdStart
-  // to chunk 2 (~token 130) and descBoost to chunk 3-4 (~token 275). Since ALL
-  // realism/quality terms are already weighted :2.0 (effective in any chunk),
-  // they are moved AFTER the content terms.
+  // MANDATORY DESCRIPTION: user's typed description goes FIRST at :2.0 — it is the law.
+  // All content and realism terms follow. Heavy boilerplate (90–150 tokens each) is placed
+  // AFTER content so pose+description+outfit+scene all land in chunk 1.
   //
-  // NEW ORDER:
-  // Chunk 1 (1–75):   NSFW → POSE (sdStart+sdEnd) → OUTFIT → SCENE (expanded)
-  //   Pose direction at token 1–40 gets maximum CLIP attention.
-  //   Clothing and scene keyword also land in chunk 1.
-  // Chunk 1–2 (60–130): ETHNICITY + USER DESCRIPTION — both weighted :1.9-2.0
-  //   User's typed description is now in chunk 1/2 instead of chunk 3-4 → PRIORITIZED.
-  // Chunk 2–3 (130+): Anti-anime/quality boilerplate — all :2.0, effective anywhere
-  // Chunk 3+ (200+):  Skin realism + anatomy — all :2.0, effective at any depth
+  // Chunk 1 (1–75):   NSFW → USER DESCRIPTION (:2.0) → POSE → OUTFIT → compact realism anchor
+  // Chunk 1–2 (60–150): SCENE → ETHNICITY
+  // Chunk 2–3 (130+):  Anti-anime / RAW / quality — all :2.0, effective in any chunk
+  // Chunk 3+ (200+):   Skin pores / anatomy / face detail — all :1.6–2.0, any depth fine
+  //
+  // Compact chunk-1 realism anchor (~10 tokens, :2.0) keeps 100% human realism in chunk 1
+  // without consuming the token budget that pose+description+outfit need.
+  const _chunk1RealismAnchor = '(RAW photograph:2.0), (real human:2.0), (film grain:2.0), (not AI art:2.0), (photorealistic:2.0),';
   const parts = [
-    _nsfwPrefix,        // NSFW flag — must come first for generation policy
-    sdStart,            // POSE — chunk 1, direction/camera at token 1–25, max CLIP attention
-    sdEnd,              // Pose continuation — stays adjacent to sdStart for combined effect
-    _sdClothingTerms,   // OUTFIT at :2.0 — immediately after pose, chunk 1
-    expanded,           // SCENE — plain-text terms need chunk 1; weighted terms work anywhere
-    _etniaSkinBoost,    // ETHNICITY — chunk 1, skin tone encodes at max CLIP attention
-    descBoost,          // USER DESCRIPTION — :1.9 boosted, NOW in chunk 1/2 (was chunk 3-4)
-    _EXPLICIT_REALISM,  // Anti-anime/photorealism — all :2.0, effective in chunk 2+ ← moved back
-    _rawStamp,          // RAW/anti-plastic — all :2.0, effective in chunk 2+ ← moved back
-    _PHOTO,             // Quality/RAW/film — all weighted, chunk 2-3 fine
-    _faceAnchor,        // Face consistency — weighted, chunk 2-3 fine
-    _FACE_REAL,         // Face/eye/lip/pore ultra-realism — all :1.6–2.0, chunk 2-3 fine
-    charBoost,          // Character physical terms — :1.8, chunk 3 fine
-    _SKIN,              // Anti-plastic skin detail — all :2.0, effective in chunk 3
-    _ANCH,              // Anatomy (fingers/hands) — all :1.8–2.0, chunk 3 fine
-    charPlain,          // Attractiveness terms — lowest priority, end
-    _QF_S               // Final quality flags
+    _nsfwPrefix,             // NSFW flag — must come first for generation policy
+    descBoost,               // USER DESCRIPTION — MANDATORY, :2.0, chunk 1 → highest CLIP priority
+    sdStart,                 // POSE — chunk 1, direction/camera immediately after description
+    sdEnd,                   // Pose continuation — stays adjacent to sdStart
+    _sdClothingTerms,        // OUTFIT at :2.0 — immediately after pose, chunk 1
+    _chunk1RealismAnchor,    // Compact 100% realism anchor — 10 tokens, locks chunk 1 as RAW human
+    expanded,                // SCENE — plain-text terms benefit from chunk 1; weighted terms work anywhere
+    _etniaSkinBoost,         // ETHNICITY — skin tone encodes well in chunk 1/2
+    _EXPLICIT_REALISM,       // Anti-anime/photorealism — all :2.0, effective in chunk 2+
+    _rawStamp,               // RAW/anti-plastic — all :2.0, effective in chunk 2+
+    _PHOTO,                  // Quality/RAW/film — all weighted, chunk 2-3 fine
+    _faceAnchor,             // Face consistency — weighted, chunk 2-3 fine
+    _FACE_REAL,              // Face/eye/lip/pore ultra-realism — all :1.6–2.0, chunk 2-3 fine
+    charBoost,               // Character physical terms — :1.8, chunk 3 fine
+    _SKIN,                   // Anti-plastic skin detail — all :2.0, effective in chunk 3
+    _ANCH,                   // Anatomy (fingers/hands) — all :1.8–2.0, chunk 3 fine
+    charPlain,               // Attractiveness terms — lowest priority, end
+    _QF_S                    // Final quality flags
   ].filter(Boolean);
   let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _illumBoost + _skinMarksBoost;
 
