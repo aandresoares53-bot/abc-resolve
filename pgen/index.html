@@ -12446,6 +12446,12 @@ function buildPrompt(englishText, rawPT){
   }
   // Selected pose from UI takes full priority over text detection
   const pose = selectedPose || buildPoseBlock(rawPT || englishText);
+  // Pre-compute pose direction flags — used for neg strengthening and pose anchor below
+  const _poseStartRaw = (pose.sd_start || pose.sd || '').toLowerCase();
+  const _poseIsOverShoulder = /(looking over shoulder|looking back over|face partially visible)/.test(_poseStartRaw);
+  const _poseIsBack  = !_poseIsOverShoulder && /(from behind|back to camera|back to viewer|back facing camera)/.test(_poseStartRaw);
+  const _poseIsSide  = /(side profile|side view|\bprofile\b|lateral)/.test(_poseStartRaw);
+  const _poseIsFront = !_poseIsBack && !_poseIsOverShoulder && /(facing viewer|facing camera|front view)/.test(_poseStartRaw);
 
   // inject outfit/expression chips into the description before expansion
   let inputText = englishText;
@@ -12485,6 +12491,18 @@ function buildPrompt(englishText, rawPT){
       .map(t => t.trim()).filter(t => /^NOT\s+/i.test(t))
       .map(t => t.replace(/^NOT\s+/i,'').trim()).filter(Boolean).join(', ');
     if(_poseNotTerms) _negText += ', ' + _poseNotTerms;
+  }
+  // ── Directional negative strengthening ────────────────────────────────────
+  // SD-weighted blocks prevent the model from reverting to CLIP's front-facing prior.
+  // :2.0 weight on directional neg terms is as strong as the positive direction anchor.
+  if(_poseIsBack){
+    _negText += ', (front view:2.0), (facing camera:2.0), (face visible:2.0), (face looking at camera:2.0), (looking at viewer:1.9), (eye contact:1.9), (face toward camera:2.0)';
+  } else if(_poseIsOverShoulder){
+    _negText += ', (fully facing camera:1.8), (pure front view:1.8), (back completely hidden:1.8)';
+  } else if(_poseIsFront && !_poseIsSide){
+    _negText += ', (back view:1.8), (rear view:1.8), (from behind:1.8), (face hidden:1.8)';
+  } else if(_poseIsSide){
+    _negText += ', (front view:1.7), (back view:1.7), (facing camera directly:1.7)';
   }
 
   // Check if the pose definition itself already includes clothing (e.g. fantasy-gym-trainer has sports bra)
@@ -12680,21 +12698,40 @@ function buildPrompt(englishText, rawPT){
     // Order: subject (what to draw) → ethnicity skin → body realism → anatomy mandate → photo style
     return [core, _gptEtnia ? 'Ethnicity skin tone: ' + _gptEtnia + '.' : '', _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
   }
-  // ── Pose boost: camera/direction terms get :1.9; NOT-prefixed terms stripped ─
-  const _POSE_RE = /\b(standing|sitting|kneeling|lying|facing|front view|back view|rear view|from behind|from the front|side profile|full body|close.?up|camera|angle|pov|overhead|low angle|top.?down|spread|spreading|legs|arms|arch|arched|arching|bent|bending|squat|squatting|prone|supine|lateral|upright|torso|spine|hips|knees|floor|ground|behind|posterior|frontal|facing viewer|facing camera|back to camera|back to viewer|face visible|face hidden|body turned|looking over|three.quarter|full.?body|half.?body|waist.?up|head.?to.?toe|portrait|full.?length|all fours|crawling|doggy|leaning|on all fours|hands and knees|looking back|from above|from below|camera above|camera below)\b/i;
-  // _boost: applies :1.9 to key direction terms; strips "NOT ..." terms (they belong in neg)
+  // ── Pose boost: ALL pose terms get :1.9; critical direction terms get :2.0 ─
+  // Critical direction terms — the primary camera/orientation signal — :2.0 so they
+  // compete equally with outfit/description :2.0 terms for CLIP guidance weight.
+  const _critDirRe = /\b(from behind|rear view|back to camera|back to viewer|back facing camera|facing camera|facing viewer|front view|side profile|side view|face visible|face hidden|face partially visible|back to viewer)\b/i;
+  // _boost: boosts ALL pose terms to :1.9 (effective in any CLIP chunk), critical direction to :2.0.
+  //         Strips NOT-prefixed terms (they belong in the negative prompt).
+  //         Checks per-term — avoids the early-exit bug on partially-weighted strings.
   const _boost = t => {
     if(!t) return '';
-    if(t.includes(':1.')) return t;
     return t.split(',').map(s => {
       const tr = s.trim().replace(/,$/,'');
       if(!tr) return '';
-      if(/^NOT\s+/i.test(tr)) return ''; // NOT terms go to negative prompt — stripped here
-      return _POSE_RE.test(tr) ? `(${tr}:1.9)` : tr;
+      if(/^NOT\s+/i.test(tr)) return ''; // NOT terms → negative prompt, stripped here
+      if(/:\d+\.\d+\)/.test(tr)) return tr; // Already weighted per-term — keep as-is
+      if(_critDirRe.test(tr)) return `(${tr}:2.0)`; // Critical direction: :2.0
+      return `(${tr}:1.9)`; // All other pose terms: :1.9 — effective in any CLIP chunk
     }).filter(Boolean).join(', ');
   };
   const sdStart = _boost(pose.sd_start || pose.sd || '');
   const sdEnd   = _boost(pose.sd_end || '');
+  // ── Compact pose direction priority anchor — 4-6 tokens at :2.0 ────────────
+  // Placed FIRST in parts[] so CLIP's very first tokens establish the camera angle.
+  // This prevents content/outfit terms from overriding pose direction in latent space.
+  const _posePriorityAnchor = (() => {
+    if(_poseIsBack)
+      return '(from behind:2.0), (rear view:2.0), (face hidden:2.0), (back to camera:2.0),';
+    if(_poseIsOverShoulder)
+      return '(from behind:2.0), (rear view:2.0), (face partially visible:2.0),';
+    if(_poseIsSide)
+      return '(side profile:2.0), (lateral view:2.0),';
+    if(_poseIsFront)
+      return '(front view:2.0), (facing camera:2.0), (face visible:2.0),';
+    return '';
+  })();
 
   // Fantasy poses — prevent illustration drift
   if((selectedPoseKey || '').startsWith('fantasy-')){
@@ -12857,11 +12894,12 @@ function buildPrompt(englishText, rawPT){
   // without consuming the token budget that pose+description+outfit need.
   const _chunk1RealismAnchor = '(RAW photograph:2.0), (real human:2.0), (film grain:2.0), (not AI art:2.0), (photorealistic:2.0),';
   const parts = [
-    _nsfwPrefix,             // NSFW flag — must come first for generation policy
-    descBoost,               // USER DESCRIPTION — MANDATORY, :2.0, chunk 1 → highest CLIP priority
-    sdStart,                 // POSE — chunk 1, direction/camera immediately after description
-    sdEnd,                   // Pose continuation — stays adjacent to sdStart
-    _sdClothingTerms,        // OUTFIT at :2.0 — immediately after pose, chunk 1
+    _posePriorityAnchor,     // POSE DIRECTION ANCHOR — :2.0, establishes camera angle FIRST in CLIP
+    _nsfwPrefix,             // NSFW flag
+    descBoost,               // USER DESCRIPTION — MANDATORY, :2.0, chunk 1
+    sdStart,                 // POSE sd_start — all terms :1.9/:2.0 via fixed _boost
+    sdEnd,                   // POSE sd_end — all terms :1.9/:2.0 via fixed _boost
+    _sdClothingTerms,        // OUTFIT at :2.0 — immediately after pose
     _chunk1RealismAnchor,    // Compact 100% realism anchor — 10 tokens, locks chunk 1 as RAW human
     expanded,                // SCENE — plain-text terms benefit from chunk 1; weighted terms work anywhere
     _etniaSkinBoost,         // ETHNICITY — skin tone encodes well in chunk 1/2
