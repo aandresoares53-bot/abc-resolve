@@ -10148,7 +10148,7 @@ async function generateSmartVariations(){
   const _qp = getQuickPreset();
   const _userSceneVar = _getUserSceneText();
   if(!_userSceneVar && !selectedPoseKey && !hasPreset && !_qp){ toast('⚠️ Selecione uma pose ou personagem'); return; }
-  _cachedPoseOutfit = selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '';
+  _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneVar || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_qp, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
   const btn = document.querySelector('[onclick="generateSmartVariations()"]');
@@ -12530,8 +12530,8 @@ function buildPrompt(englishText, rawPT){
       selectedPoseKey === 'nature-waterfall-back'
     );
     if(!_isNaturallyNude){
-      // Priority 3: pose-key based outfit — prefer _POSE_OUTFIT_MAP (session-consistent), then cached, then fresh
-      const _poseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+      // Priority 3: picker selection (chipState.outfit when _autoOutfitActive=true) → _POSE_OUTFIT_MAP → cached → fresh random
+      const _poseOutfit = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
       // Priority 4: scene-based outfit fallback (beach→bikini, indoor→lingerie, etc.)
       const _sceneOutfit = expandScene._lastSceneOutfit || '';
       const _autoOutfit = _poseOutfit || _sceneOutfit;
@@ -12766,10 +12766,9 @@ function buildPrompt(englishText, rawPT){
         _sdClothingTerms = `(${_p2bStr}:2.0), (wearing ${_p2bStr}:1.9), (keep outfit on:1.9), (${_p2bStr} visible:1.8), (fully clothed:1.8),`;
       }
     } else if(!_wn2){
-      // IMPORTANT: use the cached outfit (same random draw used for scene selection)
-      // NOT a fresh getPoseSensualOutfit() call — that would give a different random
-      // outfit than what autoScene() used, breaking outfit↔scene coherence.
-      const _poseOut = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+      // Priority: picker selection → _POSE_OUTFIT_MAP → _cachedPoseOutfit → fresh random
+      // _autoOutfitActive=true means user chose (or accepted default) from the outfit picker
+      const _poseOut = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
       const _sceneOut = expandScene._lastSceneOutfit || '';
       const _out = _poseOut || _sceneOut;
       if(_out){
@@ -13133,7 +13132,7 @@ async function generate(){
 
   // Compute pose outfit ONCE here so autoScene + buildPrompt use the same random result.
   // This keeps outfit and scene coherent (both drawn from the same random outfit pick).
-  _cachedPoseOutfit = selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '';
+  _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
 
   // Extract ONLY what the user actually typed as a complement.
   // If the textarea shows auto-fill only (manualEdit !== '1'), return ''.
@@ -13368,7 +13367,7 @@ async function generateSequence(){
   const _quickPre = getQuickPreset();
   const _userSceneSeq = _getUserSceneText();
   if(!_userSceneSeq && !selectedPoseKey && !hasPreset && !_quickPre){ toast('⚠️ Selecione uma pose ou personagem'); return; }
-  _cachedPoseOutfit = selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '';
+  _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneSeq || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_quickPre, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
   const progression = SEQUENCE_PROGRESSIONS[Math.floor(Math.random() * SEQUENCE_PROGRESSIONS.length)];
@@ -15442,7 +15441,7 @@ async function generateVariations(){
     toast('⚠️ Selecione uma pose ou personagem');
     return;
   }
-  _cachedPoseOutfit = selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '';
+  _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneV2 || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_quickPre2, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
   const btn = document.querySelector('.btn-variations');
