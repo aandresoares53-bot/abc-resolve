@@ -12202,6 +12202,8 @@ function autoScene(poseKey){
   if(k.startsWith('beach-')  || k.includes('praia'))   return _randomFrom(SCENE_POOLS.beach);
   if(k.startsWith('pool-')   || k.includes('piscina')) return _randomFrom(SCENE_POOLS.pool);
   if(k.startsWith('shower-') || k.startsWith('bath-')) return _randomFrom(SCENE_POOLS.shower);
+  // selfie-bed-* poses are bedroom/wakeup-in-bed scenes — must be checked BEFORE the generic selfie-→mirror rule
+  if(k === 'selfie-bed-wakeup' || k.startsWith('selfie-bed-')) return _randomFrom(SCENE_POOLS.lying);
   if(k.startsWith('mirror-') || k.startsWith('selfie-')) return _randomFrom(SCENE_POOLS.mirror);
   if(k.startsWith('car-')    || k.startsWith('moto-')) return _randomFrom(SCENE_POOLS.car);
   if(k.startsWith('fantasy-'))                          return _randomFrom(SCENE_POOLS.fantasy);
@@ -12216,7 +12218,8 @@ function autoScene(poseKey){
 
   // ── Pose key hints at a specific surface/environment — honour those first ──
   // Poses explicitly on a bed → bedroom/lying scene regardless of outfit
-  if(k.includes('-on-bed') || k.includes('-bed-') || k.includes('-cama-') || k.includes('-on-cama')){
+  // Also catches poses whose name ENDS with -bed (e.g. sitting-open-legs-bed)
+  if(k.includes('-on-bed') || k.includes('-bed-') || k.endsWith('-bed') || k.includes('-cama-') || k.includes('-on-cama') || k.endsWith('-cama')){
     if(k.includes('lying') || k.includes('prone') || k.includes('supine')) return _randomFrom(SCENE_POOLS.lying);
     return _randomFrom(SCENE_POOLS.boudoir);
   }
@@ -12337,6 +12340,8 @@ function getDefaultSceneForPose(key){
   if(k.startsWith('water-') || k.includes('-water'))            return 'by the water';
   if(k.startsWith('gym-')   || k.startsWith('legging-'))        return 'at the gym';
   if(k.includes('yoga') || k.includes('pilates') || k.includes('ballet')) return 'yoga studio';
+  // selfie-bed-* is a bedroom wakeup pose — must precede the generic selfie-→mirror rule
+  if(k.startsWith('selfie-bed-'))                                return 'bedroom';
   if(k.startsWith('mirror-') || k.startsWith('selfie-'))        return 'bedroom mirror selfie';
   if(k.startsWith('car-') || k.startsWith('moto-') || k.startsWith('motorcycle-')) return 'by the car';
   if(k.startsWith('fantasy-'))                                   return 'fantasy setting';
@@ -12345,7 +12350,8 @@ function getDefaultSceneForPose(key){
      k === 'sunset' || k.startsWith('sunset-'))                  return 'outdoors in nature';
   if(k.startsWith('dance-') || k.startsWith('twerk-') || k.startsWith('club-')) return 'nightclub';
   if(k.includes('lying') || k.includes('supine') || k.includes('prone') ||
-     k.startsWith('sitting-edge'))                               return 'bedroom';
+     k.startsWith('sitting-edge') || k.startsWith('edge-of-bed') ||
+     k.includes('-on-bed') || k.endsWith('-bed'))                return 'bedroom';
   if(k.startsWith('sitting-') || k.includes('sitting'))         return 'luxury hotel suite';
   if(k.startsWith('kneeling-') || k.includes('kneeling'))       return 'luxury boudoir';
   if(k.startsWith('butt-') || k.includes('closeup'))            return 'bedroom close-up';
@@ -13384,9 +13390,10 @@ function buildPrompt(englishText, rawPT){
   }
 
   let expanded = expandScene(inputText);
-  if(pose.sup){
+  if(pose.sup || _poseIsBack){
+    // sup: suppress expression for explicit poses; _poseIsBack: face is hidden — expression is irrelevant
     expanded = expanded
-      .replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact)[^,]*/gi, '')
+      .replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
       .replace(/,\s*,/g, ',').replace(/^,\s*/,'').trim();
   }
 
@@ -13712,8 +13719,9 @@ function buildPrompt(englishText, rawPT){
     }
     // expandScene returns: input text + lighting + environment (no outfit — handled below)
     expanded = expandScene(inputScene);
-    if(pose.sup){
-      expanded = expanded.replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact)[^,]*/gi, '')
+    if(pose.sup || _poseIsBack){
+      // sup: expression irrelevant for explicit; _poseIsBack: face hidden — expression terms confuse the model
+      expanded = expanded.replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
         .replace(/,\s*,/g, ',').replace(/^,\s*/,'').trim();
     }
     // Clothing enforcement on the re-expanded scene
@@ -13757,7 +13765,10 @@ function buildPrompt(englishText, rawPT){
   const _PHOTO  = '(RAW photo:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (analog film:2.0), (35mm film:2.0), (film grain:2.0), (photographic grain:1.9), (Kodak Portra 400:1.9), (shot on DSLR:1.9), (analog photography:1.9), (no post-processing:2.0), (no retouching:2.0), (no color grading:2.0), (no Lightroom editing:2.0), (no Photoshop:2.0), (no digital manipulation:2.0), (no color correction:1.9), (no LUTs:1.9), (no frequency separation:1.9), (no dodge and burn:1.9), (no professional retouch:2.0), (not studio portrait:1.9), (unaltered natural photograph:2.0), (best quality:1.4), (ultra highres:1.4), (8k uhd:1.2), (natural lens chromatic aberration:1.4), (natural vignette:1.3), (natural depth-of-field bokeh:1.5), (shallow focus portrait lens:1.4), (natural light exposure:1.5),';
   // _FACE_REAL: ultra-detailed face realism — iris, catchlights, lips, pores, eyebrows, skin creases
   // Encodes every visible face surface at high weight; placed after _faceAnchor in parts[] for chunk 2-3
-  const _FACE_REAL = '(realistic eye iris texture:2.0), (eye catchlights:2.0), (real eye moisture:1.9), (natural eye whites:1.8), (real eyelashes individual strands:1.9), (natural eyelash density:1.8), (realistic lip texture:1.9), (lip skin pores:1.8), (natural lip moisture:1.8), (real teeth enamel:1.7), (natural gum line:1.6), (facial pores visible:2.0), (pores on nose:1.9), (forehead skin texture:1.8), (cheek skin pore detail:1.9), (natural eyebrow hair strands:1.8), (natural nose skin texture:1.8), (under-eye natural skin:1.8), (natural facial skin creases:1.7), (chin skin texture:1.7), (realistic ear skin detail:1.6), (natural nasolabial folds:1.7), (natural expression lines:1.6),';
+  // For back poses the face is hidden — use back-skin detail instead to avoid confusing the model
+  const _FACE_REAL = _poseIsBack
+    ? '(natural back skin texture:1.9), (skin pores on back:1.8), (shoulder blade skin detail:1.7), (spine skin texture:1.7), (natural nape of neck skin:1.8), (natural back skin tone variation:1.7), (realistic back skin pores:1.8), (natural back skin sheen:1.6), (shoulder skin detail:1.8), (upper back skin micro-texture:1.7),'
+    : '(realistic eye iris texture:2.0), (eye catchlights:2.0), (real eye moisture:1.9), (natural eye whites:1.8), (real eyelashes individual strands:1.9), (natural eyelash density:1.8), (realistic lip texture:1.9), (lip skin pores:1.8), (natural lip moisture:1.8), (real teeth enamel:1.7), (natural gum line:1.6), (facial pores visible:2.0), (pores on nose:1.9), (forehead skin texture:1.8), (cheek skin pore detail:1.9), (natural eyebrow hair strands:1.8), (natural nose skin texture:1.8), (under-eye natural skin:1.8), (natural facial skin creases:1.7), (chin skin texture:1.7), (realistic ear skin detail:1.6), (natural nasolabial folds:1.7), (natural expression lines:1.6),';
   // _ANCH: anatomy correction — hands/fingers get the highest weights (most common SD error)
   const _ANCH   = '(correct anatomy:1.8), (five fingers per hand:2.0), (correct hand anatomy:2.0), (correct finger count:2.0), (natural hand position:1.8), (correct body proportions:1.7), (realistic proportions:1.6), (correct foot anatomy:1.7), (natural spine curvature:1.6), (correct shoulder anatomy:1.7), (natural elbow anatomy:1.6), (correct knee anatomy:1.6), (natural wrist anatomy:1.6), (realistic joint definition:1.5),';
   const _camSpec  = _getCameraSpec(selectedPoseKey || '');
@@ -13769,7 +13780,11 @@ function buildPrompt(englishText, rawPT){
   const _faceIDBoost = _faceID ? ', ' + _faceID.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`(${t}:1.8)`).join(', ') : '';
   // _FACE_EXPLICIT: for sup:true poses — face realism kept but expression chips suppressed
   const _FACE_EXPLICIT = ', (real human face:2.0), (skin pores on face:2.0), (skin micro-texture on face:2.0), (not AI face:2.0), (natural face imperfections:2.0), (real person face:2.0), (natural iris texture:1.8), (detailed iris:1.8), (natural eyelashes:1.7), (real eye catchlights:1.8), (correct eye anatomy:1.9), (both eyes same size:1.8), (no cross-eyed:1.9), (natural lip texture:1.7), (lip lines visible:1.6), (natural lip moisture:1.6), (nose pores visible:1.7), (natural slight facial asymmetry:1.8)' + _faceIDBoost;
-  const _FACE   = pose.sup ? _FACE_EXPLICIT : ', (real human face:2.0), (skin pores on face:2.0), (skin micro-texture on face:2.0), (natural slight facial asymmetry:1.8), (natural lips:1.7), (not AI face:2.0), (natural face imperfections:2.0), (real person face:2.0), (candid expression:1.6), (natural iris texture:1.8), (detailed iris:1.8), (visible sclera detail:1.7), (natural eyelashes:1.7), (real eye catchlights:1.8), (asymmetric natural eyes:1.6), (correct eye anatomy:1.9), (both eyes same size:1.8), (no cross-eyed:1.9), (natural lip texture:1.7), (lip lines visible:1.6), (natural lip moisture:1.6), (vellus facial hair:1.5), (peach fuzz on cheeks:1.5), (nose pores visible:1.7), (natural eyelash thickness variation:1.6), (individual eyebrow hairs visible:1.6), (natural T-zone slight oiliness:1.5), (natural tear duct visible:1.6), (eye moisture and wetness:1.6), (blood vessels in sclera:1.5), (iris depth and texture:1.7), (natural skin texture on forehead:1.6), (natural laugh lines:1.5), (natural under-eye skin texture:1.6)' + _faceIDBoost;
+  // For back poses the face is hidden — replace face-specific terms with back/body skin detail
+  // to avoid the model fighting the back-pose anchor with strong face-feature guidance
+  const _FACE   = _poseIsBack
+    ? ', (no face visible:2.0), (face completely hidden:1.9), (back of head visible:1.8), (natural hair visible from behind:1.7), (real back skin texture:1.8), (natural back skin pores:1.7), (nape of neck detail:1.7), (natural shoulder skin detail:1.7)'
+    : pose.sup ? _FACE_EXPLICIT : ', (real human face:2.0), (skin pores on face:2.0), (skin micro-texture on face:2.0), (natural slight facial asymmetry:1.8), (natural lips:1.7), (not AI face:2.0), (natural face imperfections:2.0), (real person face:2.0), (candid expression:1.6), (natural iris texture:1.8), (detailed iris:1.8), (visible sclera detail:1.7), (natural eyelashes:1.7), (real eye catchlights:1.8), (asymmetric natural eyes:1.6), (correct eye anatomy:1.9), (both eyes same size:1.8), (no cross-eyed:1.9), (natural lip texture:1.7), (lip lines visible:1.6), (natural lip moisture:1.6), (vellus facial hair:1.5), (peach fuzz on cheeks:1.5), (nose pores visible:1.7), (natural eyelash thickness variation:1.6), (individual eyebrow hairs visible:1.6), (natural T-zone slight oiliness:1.5), (natural tear duct visible:1.6), (eye moisture and wetness:1.6), (blood vessels in sclera:1.5), (iris depth and texture:1.7), (natural skin texture on forehead:1.6), (natural laugh lines:1.5), (natural under-eye skin texture:1.6)' + _faceIDBoost;
   // _REALISM_CORE: RAW film + anti-anime + face essentials — ALL weighted 2.0, injected at chunk-1 max CLIP
   // Integrates RAW photo foundation directly here so even long poses don't push these out of chunk 1.
   // "film grain" is physically incompatible with smooth plastic skin — the strongest anti-AI lever in SD.
