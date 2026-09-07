@@ -15496,7 +15496,7 @@ function getEtniaSkinBoost(){
   if(/mongol/.test(e))
     return '(warm fair to light tan Mongolian skin:1.8), (Central Asian skin texture:1.8), (natural warm ivory to light tan complexion:1.7), (high cheekbone skin structure:1.8), (warm subsurface light:1.6), (natural fine skin pore texture:1.7), (natural warm undertone:1.6)';
   // ── East Asian (generic) ──
-  if(/korean|east asian|epicanthic|asian/.test(e))
+  if(/east asian|epicanthic/.test(e))
     return '(translucent porcelain skin tone:1.8), (fine delicate pore texture:1.8), (natural blush undertone:1.7), (smooth ivory warm complexion:1.7), (natural Asian skin micro-texture:1.8), (light subsurface scattering on pale Asian skin:1.6), (natural subtle skin redness on cheeks:1.5), (fine vellus hair on face:1.4)';
   // ── Ethiopian / East African ──
   if(/ethiopian|etíope|etiope|horn of africa/.test(e))
@@ -15517,7 +15517,7 @@ function getEtniaSkinBoost(){
   if(/west african|africana/.test(e))
     return '(very deep ebony skin tone:2.0), (rich blue-black melanin skin:1.9), (natural deep dark skin texture:1.9), (deep dark skin pores:1.9), (natural dark skin oil sheen:1.8), (rich blue-black undertone:1.8), (deep melanin subsurface depth:1.7), (natural West African skin richness:1.7), (deep dark collarbone and joint definition:1.5)';
   // ── Black / African (generic) ──
-  if(/black woman|dark rich melanin|melanin|african|ebony/.test(e))
+  if(/black woman|dark rich melanin|melanin|ebony/.test(e))
     return '(melanin-rich deep skin:1.9), (natural dark skin texture:1.9), (rich chocolate complexion:1.8), (natural skin pores on dark skin:1.9), (deep ebony skin tone:1.8), (natural dark skin sheen:1.7), (natural blue-black undertone:1.6), (rich melanin subsurface depth:1.7), (natural skin oil sheen on dark skin:1.6)';
   // ── Moroccan / North African ──
   if(/moroccan|marroquina|berber|north african/.test(e))
@@ -15555,11 +15555,17 @@ function getEtniaSkinBoost(){
   // ── Turkish ──
   if(/turkish|turca/.test(e))
     return '(warm olive Anatolian Turkish skin:1.8), (natural warm tan to olive complexion:1.8), (Turkish Middle Eastern skin texture:1.8), (warm olive subsurface light:1.7), (natural warm Turkish skin tone:1.6), (warm olive capillaries:1.5)';
+  // ── Cuban (before Caribbean — Cuban chip data-val contains "Caribbean") ──
+  if(/cuban|cubana/.test(e))
+    return '(warm caramel Afro-Latin Cuban skin:1.9), (natural warm mixed African European skin:1.8), (Cuban warm skin texture:1.8), (warm caramel to medium brown skin pores:1.7), (warm Caribbean subsurface glow:1.7), (mixed heritage warm skin depth:1.6)';
   // ── Caribbean ──
   if(/caribbean|caribenha/.test(e))
     return '(warm dark brown Caribbean mixed complexion:1.9), (rich warm caramel to dark brown skin:1.8), (natural Caribbean skin texture:1.8), (warm mixed heritage skin warmth:1.7), (natural warm dark subsurface glow:1.7), (Caribbean sun-kissed warm skin:1.6), (natural warm dark skin pores:1.7), (warm melanin-rich undertone:1.6)';
+  // ── Peruvian (before Indigenous — Peruvian chip data-val contains "Indigenous") ──
+  if(/peruvian|peruana/.test(e))
+    return '(warm copper bronze Peruvian Andean skin:1.9), (natural warm earth-toned complexion:1.8), (Peruvian Indigenous-Latin skin texture:1.8), (warm bronze brown skin pores:1.7), (natural warm copper subsurface depth:1.7), (Andean warm skin tone:1.6)';
   // ── Indigenous / Native American ──
-  if(/indigenous|native american|indígena|indigena|copper bronze/.test(e))
+  if(/indigenous|native american|indígena|indigena/.test(e))
     return '(warm copper bronze Indigenous skin tone:1.9), (natural earth-toned complexion:1.8), (Native American warm skin texture:1.8), (warm bronze skin pores:1.7), (natural copper subsurface warmth:1.7), (strong bone structure skin tension:1.5), (natural warm reddish undertone in skin:1.6), (natural Indigenous skin depth:1.6)';
   // ── Polynesian ──
   if(/polynesian|polinésia|polinesia|maori|hawaiian|samoan|pacific islander/.test(e))
@@ -15577,7 +15583,7 @@ function getEtniaSkinBoost(){
   if(/arab|middle eastern|olive warm|arab woman/.test(e))
     return '(warm olive Mediterranean complexion:1.8), (golden warm undertone skin:1.7), (natural olive skin texture:1.8), (Middle Eastern skin tone:1.7), (warm subsurface glow in olive skin:1.6), (natural slight skin hair visible:1.4), (natural warm skin capillaries:1.5)';
   // ── Indian / South Asian ──
-  if(/indian|south asian|golden brown/.test(e))
+  if(/indian|south asian/.test(e))
     return '(golden brown warm complexion:1.8), (natural caramel skin tone:1.7), (South Asian skin texture:1.8), (warm brown skin pores:1.7), (warm subsurface scattering in brown skin:1.6), (natural rich skin depth:1.6), (natural warm undertone capillaries:1.5)';
   // ── Pakistani ──
   if(/pakistani|paquistanesa/.test(e))
@@ -15585,6 +15591,9 @@ function getEtniaSkinBoost(){
   // ── Bangladeshi ──
   if(/bangladeshi|bangladeshiana/.test(e))
     return '(warm golden brown Bengali skin:1.8), (natural warm South Asian complexion:1.8), (Bengali skin texture:1.7), (warm brown skin pores:1.7), (warm subsurface scattering:1.6), (natural rich warm skin depth:1.6)';
+  // ── Chilean (before Mediterranean — Chilean chip data-val contains "Mediterranean") ──
+  if(/chilean|chilena/.test(e))
+    return '(warm olive to fair Chilean skin:1.8), (natural warm light to olive complexion:1.8), (Chilean warm skin texture:1.7), (warm olive fair skin pores:1.7), (natural warm subsurface scattering:1.6), (warm Latin-European skin depth:1.5)';
   // ── Mediterranean ──
   if(/mediterranean|mediterrânea|mediterranea/.test(e))
     return '(warm olive Mediterranean complexion:1.8), (natural warm tan skin texture:1.8), (Mediterranean warm skin pores:1.7), (warm olive subsurface light:1.7), (natural sun-kissed Mediterranean tone:1.6), (warm olive skin capillaries:1.5), (natural warm brown skin depth:1.6), (Mediterranean dark hair contrast on warm skin:1.4)';
@@ -15600,15 +15609,6 @@ function getEtniaSkinBoost(){
   // ── Venezuelan ──
   if(/venezuelan|venezolan|venezolana/.test(e))
     return '(warm tan caramel Venezuelan skin:1.8), (natural warm bronzed Latin complexion:1.8), (Venezuelan warm skin texture:1.7), (warm caramel skin pores:1.7), (natural warm golden subsurface glow:1.6), (warm Latin mixed heritage skin:1.6)';
-  // ── Peruvian ──
-  if(/peruvian|peruana/.test(e))
-    return '(warm copper bronze Peruvian Andean skin:1.9), (natural warm earth-toned complexion:1.8), (Peruvian Indigenous-Latin skin texture:1.8), (warm bronze brown skin pores:1.7), (natural warm copper subsurface depth:1.7), (Andean warm skin tone:1.6)';
-  // ── Chilean ──
-  if(/chilean|chilena/.test(e))
-    return '(warm olive to fair Chilean skin:1.8), (natural warm light to olive complexion:1.8), (Chilean warm skin texture:1.7), (warm olive fair skin pores:1.7), (natural warm subsurface scattering:1.6), (warm Latin-European skin depth:1.5)';
-  // ── Cuban ──
-  if(/cuban|cubana/.test(e))
-    return '(warm caramel Afro-Latin Cuban skin:1.9), (natural warm mixed African European skin:1.8), (Cuban warm skin texture:1.8), (warm caramel to medium brown skin pores:1.7), (warm Caribbean subsurface glow:1.7), (mixed heritage warm skin depth:1.6)';
   // ── Brazilian ──
   if(/brazilian|mixed race|golden tan/.test(e))
     return '(warm golden tan mixed complexion:1.8), (natural bronze sun-kissed skin:1.8), (Brazilian warm skin tone:1.7), (natural golden brown skin texture:1.8), (mixed heritage skin warmth:1.6), (natural warm subsurface glow:1.6), (natural caramel-to-bronze skin variation:1.5)';
