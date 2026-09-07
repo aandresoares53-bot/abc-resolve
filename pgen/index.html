@@ -13531,6 +13531,8 @@ function buildPrompt(englishText, rawPT){
     let fluxPrompt = [
       _wantsNSFW ? 'explicit adult content, nsfw,' : '',
       _coreFlux,           // ← user description + pose + cenário + scene chips FIRST
+      // Ethnicity skin texture IMMEDIATELY after content — FLUX is attention-based; earlier = more influence
+      _fluxEtnia,          // ← ETNIA EARLY: skin tone, micro-texture, subsurface scattering per ethnicity
       // Lighting + style immediately after content — FLUX pays attention to early terms
       _fluxIllumCombined,
       _fluxStyleCombined,
@@ -13560,7 +13562,6 @@ function buildPrompt(englishText, rawPT){
       _poseIsBack
         ? 'natural human skin warmth, natural breathing presence, natural neck muscle visibility, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin, natural back skin warmth and living glow,'
         : 'natural human skin warmth, natural breathing presence, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, natural lip dryness texture, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin,',
-      _fluxEtnia,
       _fluxBody
     ].filter(Boolean).join(', ');
     if(closeupMode && CLOSEUP_MAP[closeupTarget]){
@@ -13583,9 +13584,10 @@ function buildPrompt(englishText, rawPT){
     const _mjChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull, _lensCamFull, _lensChipFull].filter(Boolean).join(', ');
     const _mjUserContent = [pose.mj, _mjChipContent, _expandedMj].filter(Boolean).join(', ');
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI';
-    // MJ: add ethnicity skin texture terms (strip SD weight syntax — MJ uses plain text)
+    // MJ: add ethnicity skin texture terms BEFORE anatomy — MJ is attention-based, earlier = more influence
     const _mjEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
-    const core = _mjRealPrefix + ' ' + _mjUserContent + ', ' + _mjAnatomy + (_mjEtnia ? ', ' + _mjEtnia : '');
+    const _mjUserWithEtnia = [_mjUserContent, _mjEtnia ? 'Ethnicity: ' + _mjEtnia : ''].filter(Boolean).join(', ');
+    const core = _mjRealPrefix + ' ' + _mjUserWithEtnia + ', ' + _mjAnatomy;
     const _ar       = document.getElementById('mj-ar')?.value       || '2:3';
     const _v        = document.getElementById('mj-v')?.value        || '6.1';
     const _stylize  = document.getElementById('mj-stylize')?.value  || '100';
@@ -13707,6 +13709,19 @@ function buildPrompt(englishText, rawPT){
     const plain   = _charTerms.filter(t =>  _noBoostRe.test(t));
     charBoost = boosted.join(', ');
     charPlain = plain.join(', '); // appended later without weight
+  } else if(!_presetRaw) {
+    // No preset active — boost quick-chip character terms (etnia, corpo, cabelo, idade) to :1.8
+    // so they carry proper CLIP weight alongside the weighted realism boilerplate.
+    // Chip terms are already in `expanded` (plain text); adding them here weighted
+    // reinforces their presence without removing them from their original position.
+    const _qpForBoost = (typeof getQuickPreset === 'function') ? getQuickPreset() : '';
+    if(_qpForBoost){
+      const _chipTerms = _qpForBoost.split(',').map(t => t.trim()).filter(Boolean);
+      const boosted = _chipTerms.filter(t => !_noBoostRe.test(t)).map(t => `(${t}:1.8)`);
+      const plain   = _chipTerms.filter(t =>  _noBoostRe.test(t));
+      charBoost = boosted.join(', ');
+      charPlain = plain.join(', ');
+    }
   }
 
   // ── Description: non-character part of englishText (user's optional input) ─
