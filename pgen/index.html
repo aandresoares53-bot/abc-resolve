@@ -13131,8 +13131,26 @@ function buildPrompt(englishText, rawPT){
   const _poseIsSide  = /(side profile|side view|\bprofile\b|lateral)/.test(_poseStartRaw);
   const _poseIsFront = !_poseIsBack && !_poseIsOverShoulder && /(facing viewer|facing camera|front view)/.test(_poseStartRaw);
 
+  // ── Collect all quick-chip values that affect scene/content ────────────
+  // These are fetched once here so they apply consistently across all modes.
+  const _cenarioChipFull  = (typeof getQuickCenario    === 'function' ? getQuickCenario()    : '') || '';
+  const _estiloFotoFull   = (typeof getQuickEstiloFoto === 'function' ? getQuickEstiloFoto() : '') || '';
+  const _lensCamFull      = (typeof getLensCam         === 'function' ? getLensCam()         : '') || '';
+  const _illumChipFull    = (typeof getQuickIluminacao === 'function' ? getQuickIluminacao() : '') || '';
+  const _sceneChipFull    = (typeof chipState !== 'undefined' && chipState.scene)   ? chipState.scene   : '';
+  const _lightingChipFull = (typeof chipState !== 'undefined' && chipState.lighting)? chipState.lighting: '';
+  const _styleChipFull    = (typeof chipState !== 'undefined' && chipState.style)   ? chipState.style   : '';
+  const _lensChipFull     = (typeof chipState !== 'undefined' && chipState.lens)    ? chipState.lens    : '';
+
   // inject outfit/expression chips into the description before expansion
   let inputText = englishText;
+  // ── CRITICAL: inject cenário chip FIRST so expandScene() detects the correct location ──
+  // Without this, the scene expander uses the auto-scene's location keywords and generates
+  // incompatible lighting/environment even when the user selected a different location chip.
+  if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()))
+    inputText = _cenarioChipFull + ', ' + inputText;
+  if(_sceneChipFull && !inputText.includes(_sceneChipFull.substring(0,15)))
+    inputText = inputText + ', ' + _sceneChipFull;
   if(typeof chipState !== 'undefined'){
     // Auto-outfit (set by pose selection) bypasses this prepend — goes through Priority 3 with full SD weights
     // Manual chip outfit (user clicked a chip, _autoOutfitActive=false) still prepends here via Priority 1
@@ -13261,25 +13279,30 @@ function buildPrompt(englishText, rawPT){
     // Strip SD-weight syntax from expanded — FLUX uses plain language, (term:1.9) is meaningless there
     const _expandedFlux = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
     // POSE FIRST — puts direction/body-position at the start for maximum FLUX attention
-    const _coreFlux = [_poseFlux, _expandedFlux].filter(Boolean).join(', ');
-    const _photoStyle = getQuickEstiloFoto();
-    const _cenarioFlux = getQuickCenario(); // scene already in _coreFlux via englishText
+    // Include cenário + scene chips directly in coreFlux so FLUX sees them as primary content
+    const _coreFlux = [_poseFlux, _cenarioChipFull, _sceneChipFull, _expandedFlux].filter(Boolean).join(', ');
+    const _photoStyle = _estiloFotoFull;  // already collected above
+    const _cenarioFlux = '';             // already merged into _coreFlux
     const _fluxCam  = _getCameraSpec(selectedPoseKey || '');
     const _fluxEtnia = getEtniaSkinBoost();
     const _fluxBody  = (quickChipState.corpo || '');
-    const _fluxIllum = getQuickIluminacao();
+    // Use already-collected chip values (_illumChipFull, _lightingChipFull, _lensChipFull, _lensCamFull)
+    const _fluxIllumCombined = [_illumChipFull, _lightingChipFull].filter(Boolean).join(', ');
+    const _fluxLensCombined  = [_lensCamFull, _lensChipFull].filter(Boolean).join(', ');
+    const _fluxStyleCombined = [_estiloFotoFull, _styleChipFull].filter(Boolean).join(', ');
     const _faceFlux = _getFaceID();
     // FLUX: user's specific content (_coreFlux) goes FIRST — it's the subject/action
     // Technical realism terms follow as style/quality anchors
     let fluxPrompt = [
       _wantsNSFW ? 'explicit adult content, nsfw,' : '',
-      _coreFlux,           // ← user description + pose FIRST
+      _coreFlux,           // ← user description + pose + cenário + scene chips FIRST
+      // Lighting + style immediately after content — FLUX pays attention to early terms
+      _fluxIllumCombined,
+      _fluxStyleCombined,
+      _fluxLensCombined,
       // RAW anti-plastic + anti-digital-edit block EARLY (position 3) — FLUX pays most attention to early terms
       `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}`,
       _faceFlux ? `same woman — ${_faceFlux},` : '',
-      _cenarioFlux,
-      _fluxIllum,
-      _photoStyle,
       'ultra-detailed documentary photograph of a real human woman,',
       _fluxCam + ', ISO 800, f/1.8, sharp focus, 8k,',
       'analog 35mm film, Kodak Portra 400, film grain, photorealistic RAW,',
@@ -13309,7 +13332,9 @@ function buildPrompt(englishText, rawPT){
     // MJ: POSE FIRST — put direction terms at the start for maximum MJ attention
     // Strip SD-weight syntax — MJ uses (term::weight) not (term:1.9) — plain text works better
     const _expandedMj = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    const _mjUserContent = pose.mj ? pose.mj + ', ' + _expandedMj : _expandedMj;
+    // Include cenário + scene + lighting + style chips in MJ content (plain text, no SD weights)
+    const _mjChipContent = [_cenarioChipFull, _sceneChipFull, _illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull, _lensCamFull, _lensChipFull].filter(Boolean).join(', ');
+    const _mjUserContent = [pose.mj, _mjChipContent, _expandedMj].filter(Boolean).join(', ');
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI';
     // MJ: add ethnicity skin texture terms (strip SD weight syntax — MJ uses plain text)
     const _mjEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
@@ -13356,10 +13381,12 @@ function buildPrompt(englishText, rawPT){
     // GPT/DALL-E: POSE FIRST — direction/position as the leading instruction
     // Strip SD-weight syntax — GPT uses natural language, not SD weight notation
     const _expandedGpt = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
+    // Include cenário + scene + lighting + style chips for GPT (plain natural language — no SD weights)
+    const _gptChipContent = [_cenarioChipFull, _sceneChipFull, _illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull].filter(Boolean).join(', ');
     // POSE FIRST — model interprets leading terms as primary instruction
-    const _userContent = pose.mj ? pose.mj + ', ' + _expandedGpt : _expandedGpt;
+    const _userContent = [pose.mj, _gptChipContent, _expandedGpt].filter(Boolean).join(', ');
     const _gptFilm = getFilmStock() || 'Kodak Portra 400';
-    const _gptLensRaw = getLensCam();
+    const _gptLensRaw = _lensCamFull || getLensCam();
     const _gptLensSpec = _gptLensRaw ? _gptLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.8';
     const _gptSkinMarks = getSkinMarks();
     const _gptPrefixDyn = _gptRealPrefix
@@ -13448,6 +13475,11 @@ function buildPrompt(englishText, rawPT){
 
   if(_sceneOnly.length){
     let inputScene = _sceneOnly.join(', ');
+    // ── CRITICAL: prepend cenário + scene chips so expandScene() uses the correct location ──
+    if(_cenarioChipFull && !inputScene.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()))
+      inputScene = _cenarioChipFull + ', ' + inputScene;
+    if(_sceneChipFull && !inputScene.includes(_sceneChipFull.substring(0,15)))
+      inputScene = inputScene + ', ' + _sceneChipFull;
     if(typeof chipState !== 'undefined'){
       // Auto-outfit bypasses this prepend (goes through scene Priority 3 below with full string + SD weights)
       if(chipState.outfit && !_autoOutfitActive && (!_descBoostRe || !_descBoostRe.test(inputScene.toLowerCase())))
@@ -13506,7 +13538,7 @@ function buildPrompt(englishText, rawPT){
   // _ANCH: anatomy correction — hands/fingers get the highest weights (most common SD error)
   const _ANCH   = '(correct anatomy:1.8), (five fingers per hand:2.0), (correct hand anatomy:2.0), (correct finger count:2.0), (natural hand position:1.8), (correct body proportions:1.7), (realistic proportions:1.6), (correct foot anatomy:1.7), (natural spine curvature:1.6), (correct shoulder anatomy:1.7), (natural elbow anatomy:1.6), (correct knee anatomy:1.6), (natural wrist anatomy:1.6), (realistic joint definition:1.5),';
   const _camSpec  = _getCameraSpec(selectedPoseKey || '');
-  const _illumChip = getQuickIluminacao();
+  // _illumChip removed — lighting is now collected in _illumChipFull above and placed in parts[] early
   const _QF_S   = ['natural light', 'candid', 'authentic', 'imperfect', 'genuine', 'unretouched', 'no beauty filter', 'no skin smoothing', 'no retouching', 'no airbrushing', 'no color grading', 'no Lightroom editing', 'no Photoshop', 'no digital manipulation', 'no frequency separation', 'no dodge and burn', 'no AI enhancement', 'no color correction', 'no LUTs applied', 'no professional retouch', 'no studio portrait look', 'no composite', 'SOOC straight out of camera', 'unaltered natural photograph', 'visible skin pores', 'natural skin texture', 'real human skin', 'not plastic skin', 'skin imperfections', 'natural blemishes', _camSpec, 'handheld camera', 'real person', 'not AI generated', 'not CGI', 'not rendered', 'not digital art', 'not airbrushed skin', 'not poreless', 'not doll face', 'not synthetic', 'not hyperrealistic render', 'not studio gloss', 'film photography aesthetic', 'imperfect natural skin', 'natural pore visibility', 'real human proportions', 'analog photograph feel', 'documentary style candid', 'no HDR overprocessing', 'natural human presence'].filter(Boolean).join(', ');
   // _faceID must be declared BEFORE _faceIDBoost (temporal dead zone fix)
   const _faceID     = _getFaceID();
@@ -13542,7 +13574,7 @@ function buildPrompt(englishText, rawPT){
   //   expanded (clothing + scene) into chunk 3+ where they had no effect.
   //   Fixed by moving sdStart + expanded to chunk 1, _SKIN to chunk 3.
   const _etniaSkinBoost = getEtniaSkinBoost();
-  const _illumBoost = _illumChip ? ', ' + _illumChip : '';
+  // _illumBoost removed — lighting is now _illumBoostSD in parts[] above for SD, and _fluxIllumCombined for FLUX
   // Split face traits individually so SD weight syntax stays valid (no commas inside parentheses)
   const _faceAnchor = _faceID ? _faceID.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`(${t}:1.9)`).join(', ') + ', (same woman:1.8), (consistent character:1.7),' : '';
   const _nsfwPrefix = _wantsNSFW ? '(nsfw:1.5), (explicit:1.5), (adult content:1.4),' : '';
@@ -13571,9 +13603,26 @@ function buildPrompt(englishText, rawPT){
   // Compact chunk-1 realism anchor (~10 tokens, :2.0) keeps 100% human realism in chunk 1
   // without consuming the token budget that pose+description+outfit need.
   const _chunk1RealismAnchor = '(RAW photograph:2.0), (real human:2.0), (film grain:2.0), (not AI art:2.0), (photorealistic:2.0),';
+  // ── Boost cenário chip and content chips for SD weight priority ──────────
+  // Each chip value can have commas inside; we must wrap each term individually
+  // so SD weight syntax (term:1.X) is valid — commas inside (term1, term2:1.8) break parsing.
+  const _boostChipTerms = (val, w) => val
+    ? val.split(',').map(t => t.trim()).filter(Boolean).map(t => `(${t}:${w})`).join(', ') + ','
+    : '';
+  const _cenarioBoost  = _boostChipTerms(_cenarioChipFull,  '2.0'); // cenário is KEY content — :2.0
+  const _sceneChipBoost= _boostChipTerms(_sceneChipFull,    '1.9'); // freeform scene chip — :1.9
+  const _illumBoostSD  = _boostChipTerms(_illumChipFull,    '1.9'); // lighting chip — :1.9
+  const _lightBoostSD  = _boostChipTerms(_lightingChipFull, '1.8'); // freeform lighting — :1.8
+  const _estiloBoostSD = _boostChipTerms(_estiloFotoFull,   '1.8'); // photo style — :1.8
+  const _styleBoostSD  = _boostChipTerms(_styleChipFull,    '1.7'); // freeform style — :1.7
+  const _lensBoostSD   = _boostChipTerms(_lensCamFull,      '1.7'); // lens/camera chip — :1.7
+  const _lensChipBoostSD = _boostChipTerms(_lensChipFull,   '1.6'); // freeform lens — :1.6
+
   const parts = [
     _posePriorityAnchor,     // POSE DIRECTION ANCHOR — :2.0, establishes camera angle FIRST in CLIP
     _nsfwPrefix,             // NSFW flag
+    _cenarioBoost,           // ← CENÁRIO CHIP at :2.0 — key scene/location content, must be EARLY
+    _sceneChipBoost,         // ← SCENE CHIP (freeform) at :1.9 — user explicit scene override
     descBoost,               // USER DESCRIPTION — MANDATORY, :2.0, chunk 1
     sdStart,                 // POSE sd_start — all terms :1.9/:2.0 via fixed _boost
     sdEnd,                   // POSE sd_end — all terms :1.9/:2.0 via fixed _boost
@@ -13581,6 +13630,12 @@ function buildPrompt(englishText, rawPT){
     _chunk1RealismAnchor,    // Compact 100% realism anchor — 10 tokens, locks chunk 1 as RAW human
     expanded,                // SCENE — plain-text terms benefit from chunk 1; weighted terms work anywhere
     _etniaSkinBoost,         // ETHNICITY — skin tone encodes well in chunk 1/2
+    _illumBoostSD,           // ← LIGHTING CHIP at :1.9 — right after scene, before realism boilerplate
+    _lightBoostSD,           // ← FREEFORM LIGHTING CHIP at :1.8
+    _estiloBoostSD,          // ← PHOTO STYLE CHIP at :1.8 — before generic quality flags
+    _styleBoostSD,           // ← FREEFORM STYLE CHIP at :1.7
+    _lensBoostSD,            // ← CAMERA/LENS CHIP at :1.7
+    _lensChipBoostSD,        // ← FREEFORM LENS CHIP at :1.6
     _EXPLICIT_REALISM,       // Anti-anime/photorealism — all :2.0, effective in chunk 2+
     _rawStamp,               // RAW/anti-plastic — all :2.0, effective in chunk 2+
     _PHOTO,                  // Quality/RAW/film — all weighted, chunk 2-3 fine
@@ -13592,24 +13647,12 @@ function buildPrompt(englishText, rawPT){
     charPlain,               // Attractiveness terms — lowest priority, end
     _QF_S                    // Final quality flags
   ].filter(Boolean);
-  let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _illumBoost + _skinMarksBoost;
-
-  if(typeof chipState !== 'undefined'){
-    if(chipState.scene)    result += ', ' + chipState.scene;
-    if(chipState.lighting) result += ', ' + chipState.lighting;
-    if(chipState.style)    result += ', ' + chipState.style;
-    if(chipState.lens)     result += ', ' + chipState.lens;
-  }
+  let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _skinMarksBoost;
   // ── Close-up mode injection ────────────────────────────────────
   if(closeupMode && CLOSEUP_MAP[closeupTarget]){
     result = CLOSEUP_MAP[closeupTarget] + ', ' + result;
   }
-  // ── Cenário override from quick chip ──────────────────────────
-  const _cenarioChip = getQuickCenario();
-  if(_cenarioChip) result += ', ' + _cenarioChip;
-  // ── Photo style injection ──────────────────────────────────────
-  const _estiloFotoChip = getQuickEstiloFoto();
-  if(_estiloFotoChip) result += ', ' + _estiloFotoChip;
+  // NOTE: cenário, scene, lighting, style, lens chips are now in parts[] above — removed late-appends
   // ── Contextual negative prompt enhancement ─────────────────────
   const _ctxNeg = getContextualNegative();
   if(_ctxNeg){
