@@ -9634,6 +9634,30 @@ function setPose(key){
       document.getElementById('pose-preview-outfit').textContent = '';
       document.getElementById('pose-preview-scene').textContent = '';
       previewCard.style.display = 'block';
+      // ── Auto-outfit: silently apply outfit for this pose (no picker shown) ───
+      const _autoOutfitOptions = typeof _getPoseOutfitOptions === 'function' ? _getPoseOutfitOptions(key) : [];
+      if(_autoOutfitOptions && _autoOutfitOptions.length > 0){
+        let _autoOutfitPick = _POSE_OUTFIT_MAP[key];
+        if(!_autoOutfitPick || !_autoOutfitOptions.includes(_autoOutfitPick)){
+          _autoOutfitPick = _autoOutfitOptions[0];
+          _POSE_OUTFIT_MAP[key] = _autoOutfitPick;
+        }
+        // Apply to chipState so it flows into all generate functions
+        if(!chipState.outfit || _autoOutfitActive){
+          chipState.outfit = _autoOutfitPick;
+          _autoOutfitActive = true;
+          _autoOutfitKey = key;
+          _cachedPoseOutfit = _autoOutfitPick;
+        }
+        // Show in preview card
+        const _prevOutfitEl = document.getElementById('pose-preview-outfit');
+        if(_prevOutfitEl){ _prevOutfitEl.textContent = '👗 ' + _autoOutfitPick; _prevOutfitEl.style.display = 'block'; }
+      } else {
+        // Naturally nude pose — clear outfit
+        if(_autoOutfitActive){ chipState.outfit = ''; _autoOutfitActive = false; _cachedPoseOutfit = ''; }
+        const _prevOutfitEl = document.getElementById('pose-preview-outfit');
+        if(_prevOutfitEl){ _prevOutfitEl.textContent = ''; _prevOutfitEl.style.display = 'none'; }
+      }
       // ── Auto-scene: compute, cache, and show matching scenario in preview ──
       const _scenePreviewEl = document.getElementById('pose-preview-scene');
       if(typeof autoScene === 'function'){
