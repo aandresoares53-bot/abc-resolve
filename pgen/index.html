@@ -14100,7 +14100,7 @@ async function generate(){
   const hasPreset = typeof activePreset !== 'undefined' && activePreset;
 
   // Require at least a pose OR description OR preset OR chips
-  const _quickPre = getQuickPreset();
+  let _quickPre = getQuickPreset();
   if(!raw && !selectedPoseKey && !hasPreset && !_quickPre){
     toast('⚠️ Selecione uma pose ou personagem');
     return;
@@ -14110,6 +14110,10 @@ async function generate(){
   // Isso garante que qualquer geração tenha pelo menos etnia + corpo + cabelo básicos.
   if(!quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo && !_quickPre && !hasPreset){
     try{ _autoCompleteCharacter(); }catch(e){}
+    // Re-capture after auto-complete — chip state changed, so _quickPre must match
+    // what buildPrompt() will see via getQuickPreset(), otherwise _sceneOnly is computed
+    // with a higher _quickPreCount than englishText has terms, silently dropping the user scene.
+    _quickPre = getQuickPreset() || _quickPre;
   }
 
   // Compute pose outfit ONCE here so autoScene + buildPrompt use the same random result.
@@ -16716,20 +16720,56 @@ function _buildPortugueseDesc(){
   return parts.join(', ');
 }
 
+// Tracks the last auto-fill text written to the textarea so _autoFillDescription()
+// can identify the user's appended suffix even when chips change (and autoText shifts).
+let _lastAutoFill = '';
+
 function _autoFillDescription(){
   if(!_AUTO_SETTINGS.autoFillDesc) return;
   const ta = document.getElementById('user-description');
   if(!ta) return;
-  // Do NOT overwrite if user has typed a custom description (value differs from auto-fill)
   let autoText = '';
   try { autoText = (typeof _buildPortugueseDesc === 'function') ? _buildPortugueseDesc().trim() : ''; } catch(e) {}
   const cur = (ta.value || '').trim();
-  // Skip update when textarea contains user-added content beyond the auto-fill
-  if(cur && autoText && cur !== autoText && !cur.toLowerCase().startsWith(autoText.toLowerCase())) return;
-  // Skip update when user has custom text and autoFill is the same (no change needed)
-  if(cur === autoText) return;
-  const txt = autoText;
-  if(txt) ta.value = txt;
+  const curL = cur.toLowerCase();
+  const autoL = autoText.toLowerCase();
+  const prevL = _lastAutoFill.toLowerCase();
+
+  // ── Empty textarea: fill with current auto-fill ────────────────────────────
+  if(!cur){
+    if(autoText){ ta.value = autoText; _lastAutoFill = autoText; }
+    return;
+  }
+
+  // ── Already showing correct auto-fill ─────────────────────────────────────
+  if(curL === autoL){
+    _lastAutoFill = autoText;
+    return;
+  }
+
+  // ── cur is based on the previously applied auto-fill ──────────────────────
+  if(prevL && curL.startsWith(prevL)){
+    if(curL === prevL){
+      // Textarea shows exactly the old auto-fill — chip changed → update to new
+      ta.value = autoText;
+    } else {
+      // User appended something after the old auto-fill prefix → preserve suffix,
+      // update only the prefix to the new auto-fill (handles etnia/corpo chip swaps
+      // while keeping the user's typed scenario intact).
+      const userSuffix = cur.slice(_lastAutoFill.length);
+      ta.value = autoText + userSuffix;
+    }
+    _lastAutoFill = autoText;
+    return;
+  }
+
+  // ── cur starts with the NEW auto-fill already (e.g. user updated manually) ─
+  if(autoL && curL.startsWith(autoL)){
+    _lastAutoFill = autoText;
+    return;
+  }
+
+  // ── User typed something entirely custom — never overwrite ─────────────────
 }
 
 // Hook textarea to detect manual edits (kept for backward compat; _extractUserComplement
