@@ -858,12 +858,12 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="European woman, fair pale skin, light natural complexion, Western European features">🇪🇺 Europeia</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Turkish woman, warm olive Mediterranean-Anatolian skin, natural warm tan complexion, Turkish Middle Eastern features, dark expressive eyes">🇹🇷 Turca</span>
       <!-- ── ÁSIA ── -->
-      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Korean woman, translucent porcelain smooth fair skin, Korean East Asian features, fine smooth skin texture, natural ivory warm complexion, K-beauty features">🇰🇷 Coreana</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Korean woman, translucent porcelain clear fair skin, Korean East Asian features, fine delicate skin texture, natural ivory warm complexion, K-beauty features">🇰🇷 Coreana</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Japanese woman, translucent porcelain clear skin, fine delicate features, epicanthic fold, natural ivory warm complexion, soft blush undertone, fine facial features">🌸 Japonesa</span>
-      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Chinese woman, light warm ivory smooth skin, East Asian Chinese features, fine smooth complexion, natural warm light skin tone">🇨🇳 Chinesa</span>
-      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="East Asian woman, porcelain clear skin, epicanthic fold, high cheekbones, smooth ivory complexion">🏯 Asiática</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Chinese woman, light warm ivory clear skin, East Asian Chinese features, fine natural complexion, natural warm light skin tone">🇨🇳 Chinesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="East Asian woman, porcelain clear skin, epicanthic fold, high cheekbones, natural ivory complexion">🏯 Asiática</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Vietnamese woman, warm golden ivory light tan skin, Southeast Asian Vietnamese features, natural warm ivory to light tan complexion">🇻🇳 Vietnamita</span>
-      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Thai woman, warm golden tan skin, Southeast Asian Thai features, natural golden warm complexion, fine smooth skin">🇹🇭 Tailandesa</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Thai woman, warm golden tan skin, Southeast Asian Thai features, natural golden warm complexion, fine natural skin">🇹🇭 Tailandesa</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Filipina woman, warm golden tan skin, Southeast Asian Malay-Spanish mixed heritage, natural warm golden brown complexion">🇵🇭 Filipina</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Malay Indonesian woman, warm golden tan to medium brown skin, Southeast Asian Malay features, natural warm complexion">🇮🇩 Indonésia</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Mongolian woman, warm fair to light tan skin, Central Asian Mongolian features, natural warm complexion, strong cheekbone bone structure">🇲🇳 Mongol</span>
@@ -877,7 +877,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="West African woman, very deep dark ebony skin tone, high melanin rich complexion, strong West African features, deep blue-black skin undertone, rich dark skin sheen">🌿 Africana</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Black woman, dark rich melanin skin tone, deep ebony complexion, strong African features">🌍 Negra</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Nigerian woman, warm deep rich dark brown skin tone, West African Yoruba or Igbo features, rich warm melanin complexion">🇳🇬 Nigeriana</span>
-      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Ethiopian woman, warm medium dark smooth brown skin, East African Horn of Africa features, fine bone structure, natural warm brown complexion">🇪🇹 Etíope</span>
+      <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Ethiopian woman, warm medium dark brown skin, East African Horn of Africa features, fine bone structure, natural warm brown complexion">🇪🇹 Etíope</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Kenyan woman, warm rich dark brown East African skin tone, natural rich complexion, East African Bantu features, warm skin depth">🇰🇪 Queniana</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="South African woman, rich warm dark brown mixed heritage skin, Zulu or Xhosa South African features, natural rich melanin complexion">🇿🇦 Sul-Africana</span>
       <span class="quick-chip" data-cat="etnia" onclick="toggleQuickChip(this)" data-val="Angolan woman, warm deep rich dark skin tone, Bantu West Central African features, natural warm dark complexion, rich melanin skin">🇦🇴 Angolana</span>
@@ -10308,7 +10308,7 @@ const TEXT_CHIP_MAP = [
   { re: /\bbrancas?\b|\beuropeia\b|\bwhite\b/i,           cat: 'etnia', val: 'caucasian European woman, white skin, light complexion, natural European features' },
   { re: /\bbrasileira\b|\bmorena\b|\bbrazilian\b/i,        cat: 'etnia', val: 'Brazilian woman, warm olive skin, mixed heritage, Brazilian natural beauty' },
   { re: /\bnegra\b|\bblack\b|\bafricana\b|\befiopiana\b/i, cat: 'etnia', val: 'Black woman, deep rich dark skin, African heritage, natural kinky or curly hair' },
-  { re: /\basiatica\b|\basiática\b|\bjapones\b|\bchinesa\b|\basian\b/i, cat: 'etnia', val: 'East Asian woman, smooth fair skin, Asian features, natural straight dark hair' },
+  { re: /\basiatica\b|\basiática\b|\bjapones\b|\bchinesa\b|\basian\b/i, cat: 'etnia', val: 'East Asian woman, natural fair skin, Asian features, natural straight dark hair' },
   { re: /\bloira\b|\bloiro\b|\bblonde\b/i,                 cat: 'cabelo', val: 'long straight golden blonde hair, natural blonde highlights' },
   { re: /\bruiva\b|\bauburn\b|\bredhead\b/i,               cat: 'cabelo', val: 'long red auburn hair, natural copper tones' },
   { re: /\bcurvilínea\b|\bcurvilinea\b|\bcurvy\b/i,        cat: 'corpo',  val: 'voluptuous curvy body, large natural breasts, wide hips, soft full curves, plush figure' },
@@ -11256,7 +11256,8 @@ const BF_GPT = "Real feminine body facing camera. Natural breasts with realistic
 const BB_GPT = "Real feminine body from behind. Natural rounded buttocks with realistic skin texture — natural skin dimples, natural cellulite texture, skin micro-texture, visible pores. Skin physics: natural skin compression where buttocks contact surface, natural skin gravity and weight, skin fold physics at thigh-buttock junction. Wide hips. Natural waist curve. Natural legs with realistic skin. Correct body proportions. Natural skin imperfections, natural skin color variation, not airbrushed, not retouched, not plastic skin, real skin weight and drape.";
 
 // ── SCENE EXPANDER ────────────────────────────────────────────────────────────
-function expandScene(t){
+// skipExpression: true for back poses (face hidden) and explicit poses — prevents face/expression terms
+function expandScene(t, skipExpression){
   const s = t.toLowerCase();
 
   // ── LOCATION DETECTION ────────────────────────────────────────────────────
@@ -11370,7 +11371,7 @@ function expandScene(t){
   // ── EXPRESSION & POSE ─────────────────────────────────────────────────────
   const hasExpression = /smiling|laughing|serious|expression|gazing|posing|confident|happy|looking|glancing|shy/.test(s);
   let expression = '';
-  if(!hasExpression && !isExplicit){
+  if(!hasExpression && !isExplicit && !skipExpression){
     // Don't auto-add neutral expression for explicit scenes — it conflicts with the act
     if(isSelfie)       expression = 'natural playful smile, genuine candid selfie expression, relaxed casual look, authentic real-person energy';
     else if(isModel)   expression = 'confident direct gaze, fierce editorial expression, natural powerful presence, real model energy not forced';
@@ -13395,13 +13396,9 @@ function buildPrompt(englishText, rawPT){
       inputText = inputText + ', ' + chipState.expression;
   }
 
-  let expanded = expandScene(inputText);
-  if(pose.sup || _poseIsBack){
-    // sup: suppress expression for explicit poses; _poseIsBack: face is hidden — expression is irrelevant
-    expanded = expanded
-      .replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|fierce editorial expression|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
-      .replace(/,\s*,/g, ',').replace(/^,\s*/,'').trim();
-  }
+  // pass skipExpression=true for back poses and explicit poses — prevents face/expression terms from leaking
+  const _skipExp = pose.sup || _poseIsBack;
+  let expanded = expandScene(inputText, _skipExp);
 
   // ── Dynamic clothing/nudity enforcement ─────────────────────────────────
   const _clothingRe = /\b(panties|bra|bikini|underwear|lingerie|thong|dress|skirt|shirt|blouse|sports\s+bra|crop\s+top|bodysuit|corset|swimsuit|one-piece|gown|jeans|shorts|leggings|pants|trousers|hoodie|sweater|uniform|costume|top|outfit|clothed|dressed|stockings?|garter|leotard|suspender|thigh-high|tights|bodystocking|robe|camisole|negligee|bustier|bralette|tankini|jumpsuit|playsuit|fishnet|chemise|teddy|monokini|slip|nightgown|sleepwear|swimwear|beachwear|unitard|catsuit|bodycon|miniskirt|minidress|maxi\s*dress|sundress|wrap\s*dress|tube\s*top|halter|sarong|loincloth|bikini\s*bottom|bikini\s*top)\b/gi;
@@ -13538,18 +13535,29 @@ function buildPrompt(englishText, rawPT){
       _fluxLensCombined,
       // RAW anti-plastic + anti-digital-edit block EARLY (position 3) — FLUX pays most attention to early terms
       `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}`,
-      _faceFlux ? `same woman — ${_faceFlux},` : '',
+      // For back poses: only inject identity anchor (no face ID descriptors — they pull the model toward rendering a face)
+      _poseIsBack
+        ? (_faceFlux ? 'same consistent woman, consistent identity,' : '')
+        : (_faceFlux ? `same woman — ${_faceFlux},` : ''),
       'ultra-detailed documentary photograph of a real human woman,',
       _fluxCam + ', sharp focus,',
       'analog 35mm film, Kodak Portra 400, film grain, photorealistic RAW,',
       'visible skin pores, skin pore detail, skin micro-texture, natural skin imperfections, skin blemishes, skin color variation, natural skin redness, film grain on skin, photographic grain visible on skin, not plastic skin, not airbrushed skin, not poreless, individual hair strands,',
-      'five fingers on each hand, correct hand anatomy, correct finger count,',
-      'genuine catchlights in both eyes, symmetrical eyes, correct eye anatomy, detailed iris, natural iris texture, visible sclera detail, natural eyelashes, natural eyelash thickness variation, individual eyebrow hairs visible, natural lip texture, lip lines visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural T-zone slight oiliness, natural tear duct visible, eye moisture and wetness, blood vessels in sclera, iris depth and texture, natural skin texture on forehead, natural laugh lines, natural under-eye skin texture, natural slight facial asymmetry,',
+      // Face realism terms: only for front/side poses — for back poses use back-skin detail instead
+      _poseIsBack
+        ? 'natural back skin pores visible, skin micro-texture on back and shoulders, natural nape of neck skin detail, natural shoulder blade skin texture, spine skin texture visible, no face visible, face completely hidden, back of head with hair, natural back skin tone variation, shoulder skin micro-texture,'
+        : 'genuine catchlights in both eyes, symmetrical eyes, correct eye anatomy, detailed iris, natural iris texture, visible sclera detail, natural eyelashes, natural eyelash thickness variation, individual eyebrow hairs visible, natural lip texture, lip lines visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural T-zone slight oiliness, natural tear duct visible, eye moisture and wetness, blood vessels in sclera, iris depth and texture, natural skin texture on forehead, natural laugh lines, natural under-eye skin texture, natural slight facial asymmetry,',
       'individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural split ends, individual hair strand thickness variation, natural hair static, natural hair volume variation, hair reflecting ambient light naturally,',
       'natural skin subsurface scattering, authentic candid, not AI generated, not retouched, not beauty filtered, not airbrushed skin, not plastic skin, not poreless, not doll face, not synthetic, not hyperrealistic render, not studio gloss, film photography aesthetic, real human presence,',
       'correct human anatomy, realistic body proportions, no extra limbs, correct foot anatomy, natural spine curvature, correct shoulder anatomy, natural elbow anatomy, correct knee anatomy, natural wrist anatomy, realistic joint definition, five fingers on each hand, correct hand anatomy, correct finger count,',
-      'natural feminine body proportions, natural skin folds, natural body weight, natural cellulite, natural stretch marks, soft belly, not fitness model, not perfect body, not toned abs, real feminine body, not airbrushed body, natural collarbone definition, hand veins visible naturally, natural nail texture, natural cuticle detail, natural navel depth, natural thigh skin texture, natural skin drape over body,',
-      'natural human skin warmth, natural breathing presence, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, natural lip dryness texture, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin,',
+      // Gym poses: remove "not fitness model / not perfect body / not toned abs" — conflicts with intended look
+      (selectedPoseKey && (selectedPoseKey.startsWith('gym-') || selectedPoseKey.startsWith('legging-')))
+        ? 'natural feminine body proportions, natural skin folds, natural body weight, natural cellulite, natural stretch marks, real feminine body, not airbrushed body, natural collarbone definition, hand veins visible naturally, natural nail texture, natural cuticle detail, natural navel depth, natural thigh skin texture, natural skin drape over body,'
+        : 'natural feminine body proportions, natural skin folds, natural body weight, natural cellulite, natural stretch marks, soft belly, not fitness model, not perfect body, not toned abs, real feminine body, not airbrushed body, natural collarbone definition, hand veins visible naturally, natural nail texture, natural cuticle detail, natural navel depth, natural thigh skin texture, natural skin drape over body,',
+      // Life signs: remove face-specific terms for back poses (nostril, jaw, lip dryness)
+      _poseIsBack
+        ? 'natural human skin warmth, natural breathing presence, natural neck muscle visibility, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin, natural back skin warmth and living glow,'
+        : 'natural human skin warmth, natural breathing presence, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, natural lip dryness texture, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin,',
       _fluxEtnia,
       _fluxBody
     ].filter(Boolean).join(', ');
@@ -13728,13 +13736,8 @@ function buildPrompt(englishText, rawPT){
       if(chipState.expression && !pose.sup && !_poseIsBack)
         inputScene = inputScene + ', ' + chipState.expression;
     }
-    // expandScene returns: input text + lighting + environment (no outfit — handled below)
-    expanded = expandScene(inputScene);
-    if(pose.sup || _poseIsBack){
-      // sup: expression irrelevant for explicit; _poseIsBack: face hidden — expression terms confuse the model
-      expanded = expanded.replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|fierce editorial expression|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
-        .replace(/,\s*,/g, ',').replace(/^,\s*/,'').trim();
-    }
+    // expandScene returns: input text + lighting + environment + (expression only if not back/explicit)
+    expanded = expandScene(inputScene, _skipExp);
     // Clothing enforcement on the re-expanded scene
     // This OVERWRITES _sdClothingTerms with stronger weights specific to the user's scene text
     const _cm2 = [...expanded.matchAll(_clothingRe)].map(m => m[0]);
@@ -14544,9 +14547,9 @@ const ETNIA_AUTO_PROFILE = {
   'turca':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive Middle-Eastern features, Anatolian beauty, defined dark brows', cabelo:'long straight dark brunette hair, rich dark brown color' },
 
   // ── ASIÁTICAS ────────────────────────────────────────────────────────
-  'coreana':     { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape', tracos:'fair porcelain smooth East Asian skin, monolid or double-lid eyes, glass skin texture', cabelo:'long straight dark brunette hair, rich dark brown color' },
-  'japonesa':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair porcelain smooth Japanese skin, delicate refined features, graceful bone structure', cabelo:'long straight dark brunette hair, rich dark brown color' },
-  'chinesa':     { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair to medium East Asian skin, classic Chinese features, smooth complexion', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'coreana':     { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'perfectly bow-shaped lips, symmetrical defined cupid bow, classic lip shape', tracos:'fair porcelain clear East Asian skin, monolid or double-lid eyes, natural skin texture', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'japonesa':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair porcelain delicate Japanese skin, refined features, graceful bone structure', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'chinesa':     { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair to medium East Asian skin, classic Chinese features, natural clear complexion', cabelo:'long straight dark brunette hair, rich dark brown color' },
   'vietnamita':  { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm tan Southeast Asian skin, high cheekbones, exotic almond features', cabelo:'long straight dark brunette hair, rich dark brown color' },
   'tailandesa':  { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm golden tan Thai skin, exotic Southeast Asian features, soft round face', cabelo:'long straight dark brunette hair, rich dark brown color' },
   'filipina':    { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm caramel Malay-Pacific skin, mixed Spanish-Asian features, soft exotic look', cabelo:'long straight dark brunette hair, rich dark brown color' },
@@ -14587,7 +14590,7 @@ const ETNIA_AUTO_PROFILE = {
   'eslava':      { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'pale gray eyes, light silvery gray irises, icy gaze', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'very fair porcelain Slavic skin, prominent high cheekbones, delicate Eastern European features', cabelo:'long straight platinum blonde hair, golden highlights' },
   'mediterrânea':{ rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark hazel eyes with amber and green flecks in iris', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm olive Mediterranean tanned skin, expressive dark eyes, Southern European beauty', cabelo:'natural curly hair, defined curls, voluminous bouncy curls' },
   'europeia':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'deep blue round expressive eyes, vivid blue irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair light European skin, classic Western European features', cabelo:'long straight platinum blonde hair, golden highlights' },
-  'asiática':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair to medium East Asian skin, high prominent cheekbones, smooth clear complexion', cabelo:'long straight dark brunette hair, rich dark brown color' },
+  'asiática':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'thin delicate lips, subtle defined mouth, narrow lips', tracos:'fair to medium East Asian skin, high prominent cheekbones, natural clear complexion', cabelo:'long straight dark brunette hair, rich dark brown color' },
   'africana':    { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'near-black deep dark eyes, dark almost black irises', labios:'wide mouth, wide prominent lips spread broadly across face', tracos:'deep rich dark West African skin, strong striking features', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
   'negra':       { rosto:'oval face shape, high prominent cheekbones, balanced proportions', olhos:'dark brown deep almond eyes, dark brown irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'rich deep melanin skin, beautiful dark complexion, strong defined features', cabelo:'big natural afro hair, voluminous full afro, natural coil texture' },
   'indígena':    { rosto:'round face shape, soft full cheeks, rounded soft jawline', olhos:'near-black deep dark eyes, dark almost black irises', labios:'full plump naturally voluminous lips, prominent defined cupid\'s bow', tracos:'warm copper bronze Indigenous Native skin, strong cheekbones, earthy natural beauty', cabelo:'long straight dark brunette hair, rich dark brown color' },
@@ -15512,16 +15515,16 @@ function getEtniaSkinBoost(){
     return '(translucent porcelain Korean skin:1.9), (ultra fine pore texture:1.8), (natural soft pink-ivory undertone:1.8), (luminous Korean complexion:1.8), (natural K-beauty skin micro-texture:1.8), (light subsurface scattering on porcelain Korean skin:1.7), (natural subtle cheek pink blush:1.6), (fine vellus facial hair:1.4), (natural glowing skin translucency:1.7)';
   // ── Japanese (before generic Asian) ──
   if(/japanese woman|japonesa/.test(e))
-    return '(translucent porcelain Japanese skin:1.9), (fine delicate pore texture:1.8), (natural soft blush undertone:1.8), (smooth ivory warm Japanese complexion:1.8), (natural Japanese skin micro-texture:1.8), (light subsurface scattering on porcelain Japanese skin:1.7), (natural subtle cheek redness:1.5), (fine vellus facial hair:1.4), (natural delicate skin translucency:1.6)';
+    return '(translucent porcelain Japanese skin:1.9), (fine delicate pore texture:1.8), (natural soft blush undertone:1.8), (natural ivory warm Japanese complexion:1.8), (natural Japanese skin micro-texture:1.8), (light subsurface scattering on porcelain Japanese skin:1.7), (natural subtle cheek redness:1.5), (fine vellus facial hair:1.4), (natural delicate skin translucency:1.6)';
   // ── Chinese ──
   if(/chinese|chinesa/.test(e))
-    return '(light ivory warm Chinese skin:1.9), (fine smooth pore texture:1.8), (natural warm ivory undertone:1.8), (smooth light East Asian complexion:1.8), (natural Chinese skin micro-texture:1.7), (light subsurface scattering:1.6), (natural subtle skin warmth on cheeks:1.5), (fine vellus facial hair:1.4)';
+    return '(light ivory warm Chinese skin:1.9), (fine natural pore texture:1.8), (natural warm ivory undertone:1.8), (natural light East Asian complexion:1.8), (natural Chinese skin micro-texture:1.7), (light subsurface scattering:1.6), (natural subtle skin warmth on cheeks:1.5), (fine vellus facial hair:1.4)';
   // ── Vietnamese ──
   if(/vietnamese|vietnamita/.test(e))
-    return '(warm golden ivory Vietnamese skin:1.9), (fine smooth pore texture:1.8), (natural warm golden ivory undertone:1.7), (Southeast Asian Vietnamese skin texture:1.8), (natural warm light tan complexion:1.7), (warm subsurface glow:1.6), (natural fine hair follicles:1.4)';
+    return '(warm golden ivory Vietnamese skin:1.9), (fine natural pore texture:1.8), (natural warm golden ivory undertone:1.7), (Southeast Asian Vietnamese skin texture:1.8), (natural warm light tan complexion:1.7), (warm subsurface glow:1.6), (natural fine hair follicles:1.4)';
   // ── Thai ──
   if(/thai|tailandesa/.test(e))
-    return '(warm golden tan Thai skin:1.9), (fine smooth pore texture:1.8), (natural warm golden undertone:1.7), (Southeast Asian Thai skin texture:1.8), (natural warm golden complexion:1.7), (warm subsurface glow in golden tan skin:1.6)';
+    return '(warm golden tan Thai skin:1.9), (fine natural pore texture:1.8), (natural warm golden undertone:1.7), (Southeast Asian Thai skin texture:1.8), (natural warm golden complexion:1.7), (warm subsurface glow in golden tan skin:1.6)';
   // ── Filipino ──
   if(/filipin|filipina/.test(e))
     return '(warm golden tan Filipino skin:1.9), (natural warm golden brown undertone:1.8), (Southeast Asian Malay skin texture:1.8), (natural warm mixed heritage complexion:1.7), (warm caramel to tan Filipino skin:1.7), (natural warm subsurface glow:1.6)';
@@ -15533,10 +15536,10 @@ function getEtniaSkinBoost(){
     return '(warm fair to light tan Mongolian skin:1.8), (Central Asian skin texture:1.8), (natural warm ivory to light tan complexion:1.7), (high cheekbone skin structure:1.8), (warm subsurface light:1.6), (natural fine skin pore texture:1.7), (natural warm undertone:1.6)';
   // ── East Asian (generic) ──
   if(/east asian|epicanthic/.test(e))
-    return '(translucent porcelain skin tone:1.8), (fine delicate pore texture:1.8), (natural blush undertone:1.7), (smooth ivory warm complexion:1.7), (natural Asian skin micro-texture:1.8), (light subsurface scattering on pale Asian skin:1.6), (natural subtle skin redness on cheeks:1.5), (fine vellus hair on face:1.4)';
+    return '(translucent porcelain skin tone:1.8), (fine delicate pore texture:1.8), (natural blush undertone:1.7), (natural ivory warm complexion:1.7), (natural Asian skin micro-texture:1.8), (light subsurface scattering on pale Asian skin:1.6), (natural subtle skin redness on cheeks:1.5), (fine vellus hair on face:1.4)';
   // ── Ethiopian / East African ──
   if(/ethiopian|etíope|etiope|horn of africa/.test(e))
-    return '(warm medium dark smooth Ethiopian skin:1.9), (natural warm brown East African complexion:1.8), (fine bone structure skin texture:1.8), (warm rich brown skin pores:1.7), (natural warm brown subsurface depth:1.7), (Horn of Africa warm skin tone:1.6), (natural smooth warm skin sheen:1.6)';
+    return '(warm medium dark Ethiopian skin:1.9), (natural warm brown East African complexion:1.8), (fine bone structure skin texture:1.8), (warm rich brown skin pores:1.7), (natural warm brown subsurface depth:1.7), (Horn of Africa warm skin tone:1.6), (natural warm skin sheen:1.6)';
   // ── Kenyan ──
   if(/kenyan|queniana/.test(e))
     return '(warm rich dark brown Kenyan skin:1.9), (East African Bantu skin texture:1.8), (natural warm dark complexion:1.8), (deep warm brown skin pores:1.7), (warm melanin-rich skin depth:1.7), (natural warm dark skin sheen:1.6), (natural East African warm skin warmth:1.6)';
