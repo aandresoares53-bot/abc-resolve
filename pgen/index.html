@@ -567,15 +567,6 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 .suggest-chip:hover{background:#166534;color:#fff;border-color:#166534;}
 [data-theme="dark"] .suggest-chip{background:#052e16;border-color:#166534;color:#86efac;}
 
-/* SMART TEMPLATES */
-.templates-panel{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;margin-bottom:12px;}
-.templates-label{font-size:0.76em;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;}
-.templates-grid{display:flex;flex-wrap:wrap;gap:6px;}
-.template-btn{padding:6px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.74em;font-weight:600;cursor:pointer;background:#f8fafc;color:#334155;transition:all 0.15s;text-align:left;}
-.template-btn:hover{border-color:#1d4ed8;background:#eff6ff;color:#1d4ed8;}
-[data-theme="dark"] .templates-panel{background:#0f172a;border-color:#1e293b;}
-[data-theme="dark"] .template-btn{background:#1e293b;border-color:#334155;color:#94a3b8;}
-[data-theme="dark"] .template-btn:hover{border-color:#3b82f6;background:#0f1e40;color:#93c5fd;}
 
 /* AUTO-DETECT NOTIFICATION */
 .auto-notice{font-size:0.7em;color:#059669;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:3px 10px;margin-top:4px;display:none;}
@@ -2315,40 +2306,12 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <div class="outfit-auto-row" id="outfit-auto-row" style="display:none;">
       <span id="outfit-auto-text"></span>
     </div>
-    <!-- NEW outfit picker -->
-    <div class="outfit-picker-panel" id="outfit-picker-panel" style="display:none;">
-      <div class="outfit-picker-label">
-        <span>👗 Escolha a vestimenta para esta pose:</span>
-        <button class="outfit-clear-btn" style="margin:0;" onclick="_clearAutoOutfit()" title="Remover vestimenta">✕ Remover</button>
-      </div>
-      <div class="outfit-chips-wrap" id="outfit-chips-container"></div>
-    </div>
     <div class="pose-preview-outfit" id="pose-preview-outfit" style="display:none"></div>
     <div class="pose-preview-scene" id="pose-preview-scene" style="display:none"></div>
   </div>
 
 
 
-  <!-- SMART TEMPLATES -->
-  <div class="templates-panel" id="templates-panel">
-    <div class="templates-label">
-      <span>⚡ Templates Inteligentes</span>
-      <button class="btn-save-char" style="font-size:0.68em;padding:2px 8px;" onclick="document.getElementById('templates-panel').style.display='none'">✕</button>
-    </div>
-    <div class="templates-grid">
-      <button class="template-btn" onclick="applySmartTemplate('retrato-urbano')">🏙️ Retrato Urbano</button>
-      <button class="template-btn" onclick="applySmartTemplate('praia-verao')">🏖️ Praia / Verão</button>
-      <button class="template-btn" onclick="applySmartTemplate('boudoir-estudio')">💜 Boudoir Estúdio</button>
-      <button class="template-btn" onclick="applySmartTemplate('fitness-academia')">💪 Fitness / Academia</button>
-      <button class="template-btn" onclick="applySmartTemplate('natureza-campo')">🌿 Natureza / Campo</button>
-      <button class="template-btn" onclick="applySmartTemplate('fashion-editorial')">👗 Fashion Editorial</button>
-      <button class="template-btn" onclick="applySmartTemplate('noite-urbana')">🌃 Noite Urbana</button>
-      <button class="template-btn" onclick="applySmartTemplate('piscina-spa')">🏊 Piscina / Spa</button>
-      <button class="template-btn" onclick="applySmartTemplate('inverno-cafeteria')">☕ Inverno / Cafeteria</button>
-      <button class="template-btn" onclick="applySmartTemplate('conceito-artistico')">🎨 Conceito Artístico</button>
-    </div>
-    <div class="auto-notice" id="template-notice"></div>
-  </div>
 
   <div class="gen-row" id="section-gen">
     <button class="btn-generate" onclick="generate()">⚡ GERAR PROMPT</button>
@@ -2356,7 +2319,6 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <button class="btn-variations" onclick="generateVariations()">🎲 3 Variações</button>
     <button class="btn-random-all" onclick="generateRandom()" title="Escolhe pose aleatória de qualquer categoria e gera o prompt">🎰 Surpresa</button>
     <button class="btn-variations" onclick="generateSequence()" title="Gera 5 prompts progressivos em sequência narrativa" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border-color:#7c3aed;">🎬 Sequência</button>
-    <button class="btn-variations" onclick="document.getElementById('templates-panel').style.display='block'" style="background:linear-gradient(135deg,#059669,#047857);color:#fff;border-color:#059669;">⚡ Templates</button>
   </div>
 
   <!-- CONFLICT WARNING -->
@@ -9672,8 +9634,6 @@ function setPose(key){
       document.getElementById('pose-preview-outfit').textContent = '';
       document.getElementById('pose-preview-scene').textContent = '';
       previewCard.style.display = 'block';
-      // ── Auto-outfit: compute and show immediately ──────────────
-      _showAutoOutfit(key);
       // ── Auto-scene: compute, cache, and show matching scenario in preview ──
       const _scenePreviewEl = document.getElementById('pose-preview-scene');
       if(typeof autoScene === 'function'){
