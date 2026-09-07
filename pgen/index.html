@@ -2861,7 +2861,7 @@ const POSES = {
     sup: true, label: 'De quatro de costas'
   },
   'bent-back': {
-    sd_start: 'bent over, from behind, back to viewer,',
+    sd_start: 'bent forward at waist approximately 45 degrees, torso angled down, legs straight, buttocks prominently pushed back toward camera, back arched, from behind,',
     sd_end:   'bent over forward from behind, torso leaning down, spine arched, legs straight, face hidden',
     mj:  'bent over from behind, torso leaning forward, spine arched, rear view',
     neg: 'standing upright, front view, facing camera, face visible, side profile, sitting',
@@ -2875,7 +2875,7 @@ const POSES = {
     sup: true, label: 'Agachada de costas'
   },
   'lying-facedown': {
-    sd_start: 'lying face down, from behind, prone position,',
+    sd_start: 'lying face down prone on a surface, body flat and horizontal, from behind, buttocks facing up toward camera, legs together, arms at sides or bent forward,',
     sd_end:   'lying prone on surface, back facing up, face hidden, full body horizontal',
     mj:  'lying face down, prone position, back facing up, rear view',
     neg: 'standing, front view, facing camera, sitting, side view, face visible',
@@ -3218,7 +3218,7 @@ const POSES = {
     sup: false, label: 'Na beira da cama de frente'
   },
   'edge-of-bed-back': {
-    sd_start: 'kneeling or lying at edge of bed, from behind, back to viewer,',
+    sd_start: 'kneeling at edge of bed, from behind, back to viewer, buttocks toward camera,',
     sd_end:   'at the edge of the bed from behind, back and buttocks fully toward camera, legs or knees at the bed edge, face hidden, posterior presented',
     mj:  'at edge of bed from behind, back to camera, buttocks toward camera, rear view, face hidden',
     neg: 'front view, facing camera, face visible, middle of bed, standing on floor',
@@ -4946,7 +4946,7 @@ const POSES = {
     neg: 'standing, lying, kneeling, artificial light only', sup: false, label: 'Sentada no parapeito da janela'
   },
   'sitting-open-legs-bed': {
-    sd_start: 'sitting on edge of bed with legs spread apart, hands on thighs, looking at camera, bedroom setting,',
+    sd_start: 'sitting on edge of bed with legs spread apart, hands on thighs, looking at camera,',
     sd_end:   'sitting on bed edge, legs open, hands on thighs, direct eye contact, bedroom background, full body',
     mj: 'sitting on bed edge with legs open, hands on thighs, direct camera gaze, bedroom, full body',
     neg: 'standing, kneeling, lying, legs closed', sup: false, label: 'Sentada na cama pernas abertas'
@@ -4975,8 +4975,8 @@ const POSES = {
   /* ──── De joelhos v2 ──── */
   'kneeling-on-bed-front': {
     sd_start: 'kneeling upright on bed, facing camera, knees on mattress, hands on thighs or slightly raised,',
-    sd_end:   'kneeling on bed facing camera, knees on soft mattress, upright posture, bedroom setting, full body',
-    mj: 'kneeling on bed facing camera, upright kneeling pose, bedroom setting, full body',
+    sd_end:   'kneeling on bed facing camera, knees on soft mattress, upright posture, full body',
+    mj: 'kneeling on bed facing camera, upright kneeling pose, full body',
     neg: 'standing, sitting, lying, floor kneeling', sup: false, label: 'De joelhos na cama — de frente'
   },
   'allfours-chest-arch': {
@@ -11268,7 +11268,7 @@ function expandScene(t){
   const isCafe      = /cafe|coffee shop|bistro|bakery/.test(s);
   const isRestaurant= /restaurant|dining|dinner table|rooftop bar|terrace|brunch/.test(s);
   const isClub      = /club|nightclub|party|dance floor|pole dance|lounge|bar|twerk/.test(s);
-  const isIndoor    = /bedroom|boudoir|room|apartment|suite|penthouse|hotel|home|house|studio|office|gym|loft|indoor|manor|mansion|palazzo|villa|castle|palace|salon|lobby|lounge|riad|chalet|cabin|château|estate|interior/.test(s);
+  const isIndoor    = /bedroom|boudoir|\bbed\b|sofa|couch|mattress|sheets|pillow|room|apartment|suite|penthouse|hotel|home|house|studio|office|gym|loft|indoor|manor|mansion|palazzo|villa|castle|palace|salon|lobby|lounge|riad|chalet|cabin|château|estate|interior/.test(s);
   const isLuxury    = /suite|penthouse|boudoir|palazzo|villa|mansion|château|estate|palace|manor|loft|riad|resort|chalet|cabin|castle/.test(s);
   const isWedding   = /wedding|bride|ceremony|aisle|chapel/.test(s);
   const isRunway    = /runway|catwalk|fashion show|editorial|magazine/.test(s);
@@ -11788,7 +11788,7 @@ const SCENE_POOLS = {
     'Venice canal, gondola moored, historic palazzo facade behind, golden evening light on the water',
     'Norwegian fjord, glass-still water, dramatic reflection of cliffs and forest, deep blue absolute silence',
     'Bali temple bathing pool, sacred lotus-covered water, carved stone nagas, incense, filtered temple-garden light',
-    'Cappadocia hot air balloon valley, drifting above, volcanic rock chimneys far below, sunrise painting the sky',
+    'Maldives overwater bungalow, crystal-clear turquoise lagoon, coral reef visible below, warm golden afternoon light reflecting on water',
     'Amazon river, floatplane view, endless green canopy, silver river bending, tropical storm approaching',
     'Dead Sea at dawn, saline still water, lowest point on earth, hazy mineral air, Jordan mountains beyond',
     'Lake Baikal winter, ice as far as the eye can see, Siberian blue sky, frozen silence, Buryat shore in distance',
@@ -13515,12 +13515,12 @@ function buildPrompt(englishText, rawPT){
     // Strip SD-weight syntax from expanded — FLUX uses plain language, (term:1.9) is meaningless there
     const _expandedFlux = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
     // POSE FIRST — puts direction/body-position at the start for maximum FLUX attention
-    // Include cenário + scene chips directly in coreFlux so FLUX sees them as primary content
-    const _coreFlux = [_poseFlux, _cenarioChipFull, _sceneChipFull, _expandedFlux].filter(Boolean).join(', ');
+    // _expandedFlux already contains cenário + scene chips (injected into inputText before expandScene)
+    const _coreFlux = [_poseFlux, _expandedFlux].filter(Boolean).join(', ');
     const _photoStyle = _estiloFotoFull;  // already collected above
     const _cenarioFlux = '';             // already merged into _coreFlux
     const _fluxCam  = _getCameraSpec(selectedPoseKey || '');
-    const _fluxEtnia = getEtniaSkinBoost();
+    const _fluxEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
     const _fluxBody  = (quickChipState.corpo || '');
     // Use already-collected chip values (_illumChipFull, _lightingChipFull, _lensChipFull, _lensCamFull)
     const _fluxIllumCombined = [_illumChipFull, _lightingChipFull].filter(Boolean).join(', ');
@@ -13540,7 +13540,7 @@ function buildPrompt(englishText, rawPT){
       `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}`,
       _faceFlux ? `same woman — ${_faceFlux},` : '',
       'ultra-detailed documentary photograph of a real human woman,',
-      _fluxCam + ', ISO 800, f/1.8, sharp focus, 8k,',
+      _fluxCam + ', sharp focus,',
       'analog 35mm film, Kodak Portra 400, film grain, photorealistic RAW,',
       'visible skin pores, skin pore detail, skin micro-texture, natural skin imperfections, skin blemishes, skin color variation, natural skin redness, film grain on skin, photographic grain visible on skin, not plastic skin, not airbrushed skin, not poreless, individual hair strands,',
       'five fingers on each hand, correct hand anatomy, correct finger count,',
@@ -13552,7 +13552,7 @@ function buildPrompt(englishText, rawPT){
       'natural human skin warmth, natural breathing presence, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, natural lip dryness texture, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin,',
       _fluxEtnia,
       _fluxBody
-    ].filter(Boolean).join(' ');
+    ].filter(Boolean).join(', ');
     if(closeupMode && CLOSEUP_MAP[closeupTarget]){
       fluxPrompt = CLOSEUP_MAP[closeupTarget] + ', ' + fluxPrompt;
     }
@@ -13568,8 +13568,9 @@ function buildPrompt(englishText, rawPT){
     // MJ: POSE FIRST — put direction terms at the start for maximum MJ attention
     // Strip SD-weight syntax — MJ uses (term::weight) not (term:1.9) — plain text works better
     const _expandedMj = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    // Include cenário + scene + lighting + style chips in MJ content (plain text, no SD weights)
-    const _mjChipContent = [_cenarioChipFull, _sceneChipFull, _illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull, _lensCamFull, _lensChipFull].filter(Boolean).join(', ');
+    // _expandedMj already contains cenário + scene chips (injected into inputText before expandScene)
+    // lighting + style + lens chips go here since they are not injected into inputText
+    const _mjChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull, _lensCamFull, _lensChipFull].filter(Boolean).join(', ');
     const _mjUserContent = [pose.mj, _mjChipContent, _expandedMj].filter(Boolean).join(', ');
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI';
     // MJ: add ethnicity skin texture terms (strip SD weight syntax — MJ uses plain text)
@@ -13594,7 +13595,9 @@ function buildPrompt(englishText, rawPT){
       'bad anatomy, deformed face, cross-eyed, uneven eyes, bad eyes, melting face',
       'plastic skin, airbrushed skin, smooth skin, poreless skin, perfect skin, flawless skin, retouched skin, beauty filter, skin smoothing, silicone skin, rubber skin, synthetic skin, doll face, wax figure, mannequin, barbie look, no pores, smooth complexion, AI skin',
       'color graded, color grading, Lightroom edited, Photoshopped, digitally manipulated, frequency separation, dodge and burn, AI enhanced, professional retouch, studio portrait look, composite photo, post-processed, over-processed, LUTs applied, color corrected, magazine retouching, commercial retouching, digital airbrush, over-edited',
-      'perfect body, perfect proportions, ideal proportions, fitness model body, toned abs, hourglass figure, unrealistic body, gym body, model body',
+      (selectedPoseKey && (selectedPoseKey.startsWith('gym-') || selectedPoseKey.startsWith('legging-')))
+        ? 'perfect body, perfect proportions, ideal proportions, toned abs, hourglass figure, unrealistic body'
+        : 'perfect body, perfect proportions, ideal proportions, fitness model body, toned abs, hourglass figure, unrealistic body, gym body, model body',
       'CGI, 3D render, digital art, cartoon, anime, illustration, painting',
       'watermark, text, signature, logo'
     ].filter(Boolean).join(', ');
@@ -13617,8 +13620,9 @@ function buildPrompt(englishText, rawPT){
     // GPT/DALL-E: POSE FIRST — direction/position as the leading instruction
     // Strip SD-weight syntax — GPT uses natural language, not SD weight notation
     const _expandedGpt = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
-    // Include cenário + scene + lighting + style chips for GPT (plain natural language — no SD weights)
-    const _gptChipContent = [_cenarioChipFull, _sceneChipFull, _illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull].filter(Boolean).join(', ');
+    // _expandedGpt already contains cenário + scene chips (injected into inputText before expandScene)
+    // lighting + style chips go here since they are not injected into inputText
+    const _gptChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull].filter(Boolean).join(', ');
     // POSE FIRST — model interprets leading terms as primary instruction
     const _userContent = [pose.mj, _gptChipContent, _expandedGpt].filter(Boolean).join(', ');
     const _gptFilm = getFilmStock() || 'Kodak Portra 400';
@@ -13769,7 +13773,7 @@ function buildPrompt(englishText, rawPT){
   // Film grain on skin is physically incompatible with plastic smoothness — strongest anti-plastic lever.
   const _SKIN   = '(visible skin pores:2.0), (skin pore detail:2.0), (skin micro-texture:2.0), (organic skin texture:2.0), (natural skin texture:2.0), (real skin imperfections:2.0), (skin color variation:1.9), (natural skin undertones:1.9), (skin blemishes:1.8), (natural skin redness:1.8), (skin translucency:1.7), (natural skin warmth:1.7), (skin depth:1.7), (film grain on skin:2.0), (analog grain on skin:1.9), (photographic grain visible on skin:1.8), (not plastic skin:2.0), (not smooth skin:2.0), (not airbrushed skin:2.0), (not poreless skin:2.0), (no beauty filter:2.0), (no skin smoothing:2.0), (subsurface skin scattering:1.8), (skin capillaries visible:1.6), (natural skin tone variation by zone:1.7), (pore size variation across zones:1.7), (natural skin uneven tone:1.6), (dermal skin layers visible:1.6), (natural skin oiliness:1.5), (subcutaneous fat visible:1.6), (natural skin rosiness:1.6), (skin texture under tension:1.5), (natural skin compression under weight:1.7), (skin fold physics:1.7), (natural skin gravity:1.7), (skin tension lines:1.6), (natural skin contact deformation:1.6), (skin weight and drape:1.6), (natural skin pressure marks:1.5), (subcutaneous tissue depth:1.6), (natural skin bounce elasticity:1.5), (skin thickness variation by zone:1.6),';
   // _PHOTO: quality/RAW/film markers — _SKIN is now a separate early element, NOT appended here
-  const _PHOTO  = '(RAW photo:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (analog film:2.0), (35mm film:2.0), (film grain:2.0), (photographic grain:1.9), (Kodak Portra 400:1.9), (shot on DSLR:1.9), (analog photography:1.9), (no post-processing:2.0), (no retouching:2.0), (no color grading:2.0), (no Lightroom editing:2.0), (no Photoshop:2.0), (no digital manipulation:2.0), (no color correction:1.9), (no LUTs:1.9), (no frequency separation:1.9), (no dodge and burn:1.9), (no professional retouch:2.0), (not studio portrait:1.9), (unaltered natural photograph:2.0), (best quality:1.4), (ultra highres:1.4), (8k uhd:1.2), (natural lens chromatic aberration:1.4), (natural vignette:1.3), (natural depth-of-field bokeh:1.5), (shallow focus portrait lens:1.4), (natural light exposure:1.5),';
+  const _PHOTO  = '(RAW photo:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (analog film:2.0), (35mm film:2.0), (film grain:2.0), (photographic grain:1.9), (Kodak Portra 400:1.9), (shot on DSLR:1.9), (analog photography:1.9), (no post-processing:2.0), (no retouching:2.0), (no color grading:2.0), (no Lightroom editing:2.0), (no Photoshop:2.0), (no digital manipulation:2.0), (no color correction:1.9), (no LUTs:1.9), (no frequency separation:1.9), (no dodge and burn:1.9), (no professional retouch:2.0), (not studio portrait:1.9), (unaltered natural photograph:2.0), (natural lens chromatic aberration:1.4), (natural vignette:1.3), (natural depth-of-field bokeh:1.5), (shallow focus portrait lens:1.4), (natural light exposure:1.5),';
   // _FACE_REAL: ultra-detailed face realism — iris, catchlights, lips, pores, eyebrows, skin creases
   // Encodes every visible face surface at high weight; placed after _faceAnchor in parts[] for chunk 2-3
   // For back poses the face is hidden — use back-skin detail instead to avoid confusing the model
@@ -13795,7 +13799,7 @@ function buildPrompt(englishText, rawPT){
   // _REALISM_CORE: RAW film + anti-anime + face essentials — ALL weighted 2.0, injected at chunk-1 max CLIP
   // Integrates RAW photo foundation directly here so even long poses don't push these out of chunk 1.
   // "film grain" is physically incompatible with smooth plastic skin — the strongest anti-AI lever in SD.
-  const _REALISM_CORE = '(RAW analog photograph:2.0), (35mm film grain:2.0), (photorealistic:2.0), (hyperrealistic:2.0), (real person:2.0), (not anime:2.0), (not cartoon:2.0), (not CGI:2.0), (not 3D render:2.0), (not illustrated:2.0), (not drawn:2.0), (not AI art:2.0), (not digital painting:2.0), (not midjourney:2.0), (real human anatomy:2.0), (real flesh:1.9), (human skin texture:2.0), (anatomically correct:2.0), (shot on camera:2.0), (visible skin pores:2.0), (not plastic skin:2.0), (no beauty filter:2.0), (real human face:2.0), (realistic eyes:1.9), (pores on face:1.9), (natural facial skin:1.9), (real individual hair strands:1.8),';
+  const _REALISM_CORE = '(RAW analog photograph:2.0), (35mm film grain:2.0), (photorealistic:2.0), (real person:2.0), (not anime:2.0), (not cartoon:2.0), (not CGI:2.0), (not 3D render:2.0), (not illustrated:2.0), (not drawn:2.0), (not AI art:2.0), (not digital painting:2.0), (not midjourney:2.0), (real human anatomy:2.0), (real flesh:1.9), (human skin texture:2.0), (anatomically correct:2.0), (shot on camera:2.0), (visible skin pores:2.0), (not plastic skin:2.0), (no beauty filter:2.0), (real human face:2.0), (realistic eyes:1.9), (pores on face:1.9), (natural facial skin:1.9), (real individual hair strands:1.8),';
   // _EXPLICIT_REALISM: _REALISM_CORE for all poses + explicit-only terms for sup:true (genitals, adult film style)
   const _EXPLICIT_REALISM = pose.sup ? _REALISM_CORE + '(not hentai:2.0), (realistic genitals:1.9), (photographic explicit:1.9), (adult film photography style:1.8),' : _REALISM_CORE;
   const _HAIR   = ', (individual hair strands visible:1.7), (natural hair flyaways:1.6), (realistic hair texture:1.8), (natural hair parting:1.6), (genuine hair shine without HDR:1.5), (no hair smoothing filter:1.6), (real hair roots:1.5), (natural root-to-tip color gradient:1.6), (natural slight scalp oiliness at roots:1.4), (natural hair density variation:1.5), (natural split ends:1.4), (individual hair strand thickness variation:1.5), (natural hair static:1.4), (natural hair volume variation:1.5), (hair reflecting ambient light naturally:1.4)';
@@ -15505,7 +15509,7 @@ function getEtniaSkinBoost(){
   if(!e) return '';
   // ── Korean ──
   if(/korean|coreana|k-beauty/.test(e))
-    return '(translucent porcelain Korean skin:1.9), (ultra fine pore texture:1.8), (natural soft pink-ivory undertone:1.8), (smooth luminous Korean complexion:1.8), (natural K-beauty skin micro-texture:1.8), (light subsurface scattering on porcelain Korean skin:1.7), (natural subtle cheek pink blush:1.6), (fine vellus facial hair:1.4), (natural glowing skin translucency:1.7)';
+    return '(translucent porcelain Korean skin:1.9), (ultra fine pore texture:1.8), (natural soft pink-ivory undertone:1.8), (luminous Korean complexion:1.8), (natural K-beauty skin micro-texture:1.8), (light subsurface scattering on porcelain Korean skin:1.7), (natural subtle cheek pink blush:1.6), (fine vellus facial hair:1.4), (natural glowing skin translucency:1.7)';
   // ── Japanese (before generic Asian) ──
   if(/japanese woman|japonesa/.test(e))
     return '(translucent porcelain Japanese skin:1.9), (fine delicate pore texture:1.8), (natural soft blush undertone:1.8), (smooth ivory warm Japanese complexion:1.8), (natural Japanese skin micro-texture:1.8), (light subsurface scattering on porcelain Japanese skin:1.7), (natural subtle cheek redness:1.5), (fine vellus facial hair:1.4), (natural delicate skin translucency:1.6)';
