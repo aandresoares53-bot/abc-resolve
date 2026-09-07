@@ -12202,8 +12202,13 @@ function autoScene(poseKey){
   if(k.startsWith('beach-')  || k.includes('praia'))   return _randomFrom(SCENE_POOLS.beach);
   if(k.startsWith('pool-')   || k.includes('piscina')) return _randomFrom(SCENE_POOLS.pool);
   if(k.startsWith('shower-') || k.startsWith('bath-')) return _randomFrom(SCENE_POOLS.shower);
-  // selfie-bed-* poses are bedroom/wakeup-in-bed scenes — must be checked BEFORE the generic selfie-→mirror rule
-  if(k === 'selfie-bed-wakeup' || k.startsWith('selfie-bed-')) return _randomFrom(SCENE_POOLS.lying);
+  // selfie-bed-* poses are bedroom scenes — must be checked BEFORE the generic selfie-→mirror rule.
+  // Lying/prone/supine variants (wakeup, etc.) → lying pool; arch/overhead/other → boudoir pool.
+  if(k.startsWith('selfie-bed-')){
+    return (k.includes('wakeup') || k.includes('lying') || k.includes('prone') || k.includes('supine'))
+      ? _randomFrom(SCENE_POOLS.lying)
+      : _randomFrom(SCENE_POOLS.boudoir);
+  }
   if(k.startsWith('mirror-') || k.startsWith('selfie-')) return _randomFrom(SCENE_POOLS.mirror);
   if(k.startsWith('car-')    || k.startsWith('moto-')) return _randomFrom(SCENE_POOLS.car);
   if(k.startsWith('fantasy-'))                          return _randomFrom(SCENE_POOLS.fantasy);
@@ -13385,7 +13390,8 @@ function buildPrompt(englishText, rawPT){
     // Manual chip outfit (user clicked a chip, _autoOutfitActive=false) still prepends here via Priority 1
     if(chipState.outfit && !_autoOutfitActive && !/wearing|dressed|nude|naked|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|blusa|body|collant|maio|maiô|lingerie|fio dental|tanga|pelada|sem roupa|nua\b/.test(inputText.toLowerCase()))
       inputText = chipState.outfit + ', ' + inputText;
-    if(chipState.expression && !pose.sup)
+    // Back poses: face is hidden — expression chips are irrelevant and pollute expandScene detection
+    if(chipState.expression && !pose.sup && !_poseIsBack)
       inputText = inputText + ', ' + chipState.expression;
   }
 
@@ -13393,7 +13399,7 @@ function buildPrompt(englishText, rawPT){
   if(pose.sup || _poseIsBack){
     // sup: suppress expression for explicit poses; _poseIsBack: face is hidden — expression is irrelevant
     expanded = expanded
-      .replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
+      .replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|fierce editorial expression|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
       .replace(/,\s*,/g, ',').replace(/^,\s*/,'').trim();
   }
 
@@ -13714,14 +13720,15 @@ function buildPrompt(englishText, rawPT){
       // Auto-outfit bypasses this prepend (goes through scene Priority 3 below with full string + SD weights)
       if(chipState.outfit && !_autoOutfitActive && (!_descBoostRe || !_descBoostRe.test(inputScene.toLowerCase())))
         inputScene = chipState.outfit + ', ' + inputScene;
-      if(chipState.expression && !pose.sup)
+      // Back poses: face is hidden — expression chips pollute expandScene detection
+      if(chipState.expression && !pose.sup && !_poseIsBack)
         inputScene = inputScene + ', ' + chipState.expression;
     }
     // expandScene returns: input text + lighting + environment (no outfit — handled below)
     expanded = expandScene(inputScene);
     if(pose.sup || _poseIsBack){
       // sup: expression irrelevant for explicit; _poseIsBack: face hidden — expression terms confuse the model
-      expanded = expanded.replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
+      expanded = expanded.replace(/,?\s*(natural happy expression|genuine smile|candid selfie moment|natural relaxed expression|genuine candid smile|confident model pose|fierce editorial gaze|fierce editorial expression|soft romantic expression|gentle smile|determined athletic expression|playful flirtatious expression|approachable and elegant|looking at camera|eye contact|direct gaze)[^,]*/gi, '')
         .replace(/,\s*,/g, ',').replace(/^,\s*/,'').trim();
     }
     // Clothing enforcement on the re-expanded scene
@@ -13814,7 +13821,13 @@ function buildPrompt(englishText, rawPT){
   const _etniaSkinBoost = getEtniaSkinBoost();
   // _illumBoost removed — lighting is now _illumBoostSD in parts[] above for SD, and _fluxIllumCombined for FLUX
   // Split face traits individually so SD weight syntax stays valid (no commas inside parentheses)
-  const _faceAnchor = _faceID ? _faceID.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`(${t}:1.9)`).join(', ') + ', (same woman:1.8), (consistent character:1.7),' : '';
+  // Back poses: faceID descriptors pull the model toward rendering a face even when _FACE says (no face visible:2.0).
+  // Keep only the character-consistency terms (same woman, consistent character) — omit all visible-feature terms.
+  const _faceAnchor = _faceID
+    ? (_poseIsBack
+        ? '(same woman:1.8), (consistent character:1.7),'
+        : _faceID.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`(${t}:1.9)`).join(', ') + ', (same woman:1.8), (consistent character:1.7),')
+    : '';
   const _nsfwPrefix = _wantsNSFW ? '(nsfw:1.5), (explicit:1.5), (adult content:1.4),' : '';
   // Anti-plastic RAW stamp — placed FIRST so CLIP's very first tokens establish "film grain, not plastic"
   // Film grain is physically incompatible with smooth poreless skin — the strongest anti-plastic lever in SD
