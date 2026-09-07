@@ -13401,7 +13401,9 @@ function buildPrompt(englishText, rawPT){
   let expanded = expandScene(inputText, _skipExp);
 
   // ── Dynamic clothing/nudity enforcement ─────────────────────────────────
-  const _clothingRe = /\b(panties|bra|bikini|underwear|lingerie|thong|dress|skirt|shirt|blouse|sports\s+bra|crop\s+top|bodysuit|corset|swimsuit|one-piece|gown|jeans|shorts|leggings|pants|trousers|hoodie|sweater|uniform|costume|top|outfit|clothed|dressed|stockings?|garter|leotard|suspender|thigh-high|tights|bodystocking|robe|camisole|negligee|bustier|bralette|tankini|jumpsuit|playsuit|fishnet|chemise|teddy|monokini|slip|nightgown|sleepwear|swimwear|beachwear|unitard|catsuit|bodycon|miniskirt|minidress|maxi\s*dress|sundress|wrap\s*dress|tube\s*top|halter|sarong|loincloth|bikini\s*bottom|bikini\s*top)\b/gi;
+  // NOTE: standalone 'top' removed — too ambiguous (matches "on top", "top leg", "top down" in pose text).
+  // compound forms (crop top, tube top, bikini top) already cover clothing tops.
+  const _clothingRe = /\b(panties|bra|bikini|underwear|lingerie|thong|dress|skirt|shirt|blouse|sports\s+bra|crop\s+top|bodysuit|corset|swimsuit|one-piece|gown|jeans|shorts|leggings|pants|trousers|hoodie|sweater|uniform|costume|outfit|clothed|dressed|stockings?|garter|leotard|suspender|thigh-high|tights|bodystocking|robe|camisole|negligee|bustier|bralette|tankini|jumpsuit|playsuit|fishnet|chemise|teddy|monokini|slip|nightgown|sleepwear|swimwear|beachwear|unitard|catsuit|bodycon|miniskirt|minidress|maxi\s*dress|sundress|wrap\s*dress|tube\s*top|halter|sarong|loincloth|bikini\s*bottom|bikini\s*top)\b/gi;
   // Expanded NSFW detection — nudity + explicit sexual content
   const _nudeRe = /\b(nude|naked|topless|bottomless|undressed|no clothes|no clothing|explicit|nsfw|nipples?|areola|genital|vagina|vulva|penis|cock|pussy|pubic|intercourse|penetration|orgasm|erotic[a-z]*|pornograph[a-z]*|xxx|blowjob|oral\s*sex|cunnilingus|anal\s*sex|masturbat[a-z]*|fingering|squirting|creampie|cumshot|sex\s*position|sex\s*act|adult\s*content|sexually\s*explicit|genitalia)\b/i;
   const _clothingMatches = [...expanded.matchAll(_clothingRe)].map(m => m[0]);
