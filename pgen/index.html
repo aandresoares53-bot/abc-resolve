@@ -567,6 +567,15 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 .suggest-chip:hover{background:#166534;color:#fff;border-color:#166534;}
 [data-theme="dark"] .suggest-chip{background:#052e16;border-color:#166534;color:#86efac;}
 
+/* SELECTION PREVIEW BAR */
+.selection-preview-bar{display:none;flex-wrap:wrap;gap:5px;padding:8px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;margin-bottom:10px;}
+[data-theme="dark"] .selection-preview-bar{background:#0c1a27;border-color:#1e3a5f;}
+.sel-prev-item{font-size:0.72em;font-weight:600;color:#0369a1;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:2px 8px;white-space:nowrap;overflow:hidden;max-width:180px;text-overflow:ellipsis;}
+[data-theme="dark"] .sel-prev-item{color:#7dd3fc;background:#0c2a3f;border-color:#1e4b6e;}
+
+/* MONTAR button */
+.btn-montar{padding:8px 14px;border:1.5px solid #0891b2;border-radius:8px;font-size:0.8em;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0891b2,#0369a1);color:#fff;transition:all 0.15s;}
+.btn-montar:hover{background:linear-gradient(135deg,#0e7490,#1d4ed8);border-color:#0e7490;}
 
 /* AUTO-DETECT NOTIFICATION */
 .auto-notice{font-size:0.7em;color:#059669;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:3px 10px;margin-top:4px;display:none;}
@@ -2313,8 +2322,12 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 
 
 
+  <!-- SELECTION PREVIEW BAR -->
+  <div class="selection-preview-bar" id="selection-preview-bar"></div>
+
   <div class="gen-row" id="section-gen">
     <button class="btn-generate" onclick="generate()">⚡ GERAR PROMPT</button>
+    <button class="btn-montar" onclick="montarPersonagem()" title="Monta personagem completa: etnia, corpo, cabelo e pose aleatórios — e gera o prompt">🎲 Montar</button>
     <button class="btn-variations" onclick="generateSmartVariations()">✨ Light/Mid/Bold</button>
     <button class="btn-variations" onclick="generateVariations()">🎲 3 Variações</button>
     <button class="btn-random-all" onclick="generateRandom()" title="Escolhe pose aleatória de qualquer categoria e gera o prompt">🎰 Surpresa</button>
@@ -9684,6 +9697,8 @@ function setPose(key){
   try{ _applyPoseDefaults(key || null); }catch(e){}
   // ── Trigger auto-generate if character is already filled ─────────────────
   try{ _checkAutoGenerate(); }catch(e){}
+  // ── Update selection preview bar ─────────────────────────────────────────
+  try{ _updateSelectionPreview(); }catch(e){}
 }
 
 function setMode(mode){
@@ -14659,6 +14674,43 @@ function _applyEtniaProfile(etniaVal){
   }
 
   _updateFacePreview();
+
+  // ── Auto skin marks per ethnicity ─────────────────────────────────────────
+  const _ETNIA_MARKS_MAP = [
+    ['Irish',        ['natural freckles']],
+    ['Scandinavian', ['natural freckles']],
+    ['German',       ['natural freckles']],
+    ['British',      ['natural freckles']],
+    ['European',     ['natural freckles']],
+    ['Slavic',       ['natural skin redness']],
+    ['Italian',      ['natural beauty mole']],
+    ['Spanish',      ['natural beauty mole']],
+    ['French',       ['natural beauty mole']],
+    ['Mediterranean',['natural beauty mole']],
+    ['Portuguese',   ['natural beauty mole']],
+    ['Brazilian',    ['natural beauty mole']],
+    ['Colombian',    ['natural beauty mole']],
+    ['Argentine',    ['natural beauty mole']],
+    ['Venezuelan',   ['natural beauty mole']],
+    ['West African', ['natural stretch marks','natural hip dips']],
+    ['Black',        ['natural stretch marks','natural hip dips']],
+    ['Nigerian',     ['natural stretch marks','natural hip dips']],
+    ['Angolan',      ['natural stretch marks','natural hip dips']],
+    ['Ethiopian',    ['natural beauty mole']],
+    ['Korean',       ['natural beauty mole']],
+    ['Japanese',     ['natural beauty mole']],
+    ['Polynesian',   ['natural stretch marks','natural hip dips']],
+  ];
+  if(typeof _activateSkinMarksByPrefixes === 'function'){
+    for(const [keyword, marks] of _ETNIA_MARKS_MAP){
+      if(etniaVal && etniaVal.toLowerCase().includes(keyword.toLowerCase())){
+        _activateSkinMarksByPrefixes(marks);
+        break;
+      }
+    }
+  }
+  // Update preview bar after etnia changes
+  try{ _updateSelectionPreview(); }catch(e){}
 }
 
 // ── FACE IDENTITY (mesmo rosto em todos os prompts) ────────────────────────
@@ -14710,6 +14762,7 @@ function toggleQuickChip(el){
     }
   }
   _autoSaveCharDraft();
+  try{ _updateSelectionPreview(); }catch(e){}
 }
 
 function getQuickPreset(){
@@ -16491,6 +16544,136 @@ function pickBestModeForPose(poseKey, poseData){
   if(r < 0.40) return 'sd';
   if(r < 0.75) return 'mj';
   return 'flux';
+}
+
+// ── SELECTION PREVIEW BAR ────────────────────────────────────────────────────
+// Shows a compact summary of all active chips + pose + outfit + scene in real time
+function _updateSelectionPreview(){
+  const el = document.getElementById('selection-preview-bar');
+  if(!el) return;
+  const parts = [];
+
+  // Etnia — use chip text label (emoji + name)
+  const _eChip = document.querySelector('.quick-chip[data-cat="etnia"].active');
+  if(_eChip) parts.push(_eChip.textContent.trim().substring(0,22));
+
+  // Idade
+  const _idChip = document.querySelector('.quick-chip[data-cat="idade"].active');
+  if(_idChip) parts.push(_idChip.textContent.trim().substring(0,10));
+
+  // Corpo
+  const _cChip = document.querySelector('.quick-chip[data-cat="corpo"].active');
+  if(_cChip) parts.push(_cChip.textContent.trim().substring(0,14));
+
+  // Cabelo
+  const _hChip = document.querySelector('.quick-chip[data-cat="cabelo"].active');
+  if(_hChip) parts.push(_hChip.textContent.trim().substring(0,14));
+
+  // Pose
+  if(typeof selectedPoseKey !== 'undefined' && selectedPoseKey && typeof POSES !== 'undefined' && POSES[selectedPoseKey]){
+    parts.push('🧘 ' + (POSES[selectedPoseKey].label || selectedPoseKey).substring(0,22));
+  }
+
+  // Outfit
+  const _outfitVal = (typeof chipState !== 'undefined' && chipState.outfit) || _cachedPoseOutfit || '';
+  if(_outfitVal) parts.push('👗 ' + _outfitVal.split(',')[0].substring(0,28));
+
+  // Scene
+  if(typeof _cachedPoseScene !== 'undefined' && _cachedPoseScene)
+    parts.push('🌍 ' + _cachedPoseScene.substring(0,32));
+
+  if(parts.length){
+    el.innerHTML = parts.map(p => `<span class="sel-prev-item">${p}</span>`).join('');
+    el.style.display = 'flex';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// ── MONTAR PERSONAGEM COMPLETO ────────────────────────────────────────────────
+// Picks random etnia, corpo, cabelo from ALL chips, then a random pose,
+// and generates — character comes fully assembled with outfit, scene, lighting.
+async function montarPersonagem(){
+  const R = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  // 1. Clear all quick chips + face profile for a clean slate
+  document.querySelectorAll('.quick-chip.active').forEach(c => {
+    c.classList.remove('active','auto-set');
+    const cat = c.dataset.cat;
+    if(cat && cat !== 'skin_mark') quickChipState[cat] = '';
+    if(cat === 'skin_mark') skinMarksActive.delete(c.dataset.val);
+  });
+  Object.keys(faceProfile).forEach(k => faceProfile[k] = '');
+  document.querySelectorAll('.face-chip.active').forEach(c => c.classList.remove('active'));
+  const _tracosInp = document.getElementById('face-tracos-input');
+  if(_tracosInp) _tracosInp.value = '';
+  _updateFacePreview();
+  if(typeof chipState !== 'undefined') chipState.outfit = '';
+  _autoOutfitActive = false;
+  _cachedPoseOutfit = '';
+
+  // 2. Random etnia from ALL etnia chips
+  const _etniaChips = [...document.querySelectorAll('.quick-chip[data-cat="etnia"]')];
+  if(_etniaChips.length){
+    const _eEl = R(_etniaChips);
+    _eEl.classList.add('active');
+    quickChipState.etnia = _eEl.dataset.val;
+    try{ _applyEtniaProfile(_eEl.dataset.val); }catch(e){}
+  }
+
+  // 3. Random corpo from ALL corpo chips
+  const _corpoChips = [...document.querySelectorAll('.quick-chip[data-cat="corpo"]')];
+  if(_corpoChips.length){
+    const _cEl = R(_corpoChips);
+    document.querySelectorAll('.quick-chip[data-cat="corpo"]').forEach(c=>c.classList.remove('active','auto-set'));
+    _cEl.classList.add('active');
+    quickChipState.corpo = _cEl.dataset.val;
+  }
+
+  // 4. If etnia didn't set cabelo, pick random cabelo
+  if(!quickChipState.cabelo){
+    const _cabeloChips = [...document.querySelectorAll('.quick-chip[data-cat="cabelo"]')];
+    if(_cabeloChips.length){
+      const _hEl = R(_cabeloChips);
+      _hEl.classList.add('active');
+      quickChipState.cabelo = _hEl.dataset.val;
+    }
+  }
+
+  // 5. Random pose from all poses → triggers auto-outfit, scene, lighting, expression, age
+  const _allPoseKeys = Object.keys(typeof POSES !== 'undefined' ? POSES : {});
+  if(_allPoseKeys.length){
+    const _poseKey = R(_allPoseKeys);
+    setPose(_poseKey);
+    // Reveal pose button in its group
+    const _poseBtn = document.querySelector(`.pose-btn[data-pose="${_poseKey}"]`);
+    if(_poseBtn){
+      let prev = _poseBtn.previousElementSibling;
+      while(prev){
+        if(prev.classList.contains('pose-group-label')){
+          prev.classList.add('open');
+          let s = prev.nextElementSibling;
+          while(s && !s.classList.contains('pose-group-label')){
+            if(s.classList.contains('pose-btn')) s.classList.remove('hidden-by-collapse');
+            s = s.nextElementSibling;
+          }
+          break;
+        }
+        prev = prev.previousElementSibling;
+      }
+      setTimeout(()=>{ _poseBtn.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 100);
+    }
+  }
+
+  // 6. Clear user description
+  const _descEl = document.getElementById('user-description');
+  if(_descEl) _descEl.value = '';
+
+  // 7. Toast and generate
+  const _etniaLabel = document.querySelector('.quick-chip[data-cat="etnia"].active')?.textContent.trim() || '';
+  const _poseLabel = (typeof selectedPoseKey !== 'undefined' && selectedPoseKey && typeof POSES !== 'undefined') ? (POSES[selectedPoseKey]?.label || '') : '';
+  toast('🎲 ' + [_etniaLabel, _poseLabel].filter(Boolean).join(' · '));
+  await generate();
 }
 
 async function generateRandom(){
