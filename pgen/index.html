@@ -5724,7 +5724,7 @@ const POSES = {
 
   /* ──── Em pé v3 ──── */
   'standing-lean-glass': {
-    sd_start: 'standing pressed against a glass window or glass wall, facing the glass, hands flat on glass, body arched,',
+    sd_start: 'standing pressed against a glass window or glass wall, facing the glass, back to camera, hands flat on glass, body arched,',
     sd_end:   'standing pressed against glass wall, hands on glass, body arched toward glass, seen from behind, full body',
     mj: 'standing pressed against glass window, hands on glass, body arched, viewed from behind, moody light, full body',
     neg: 'sitting, kneeling, facing camera, facing away from glass', sup: false, label: 'Encostada no vidro — costas para camera'
@@ -13350,7 +13350,7 @@ function buildPrompt(englishText, rawPT){
   // Pre-compute pose direction flags — used for neg strengthening and pose anchor below
   const _poseStartRaw = (pose.sd_start || pose.sd || '').toLowerCase();
   const _poseIsOverShoulder = /(looking over shoulder|looking back over|face partially visible)/.test(_poseStartRaw);
-  const _poseIsBack  = !_poseIsOverShoulder && /(from behind|back to camera|back to viewer|back facing camera)/.test(_poseStartRaw);
+  const _poseIsBack  = !_poseIsOverShoulder && /(from behind|back to camera|back to viewer|back facing camera|facing away from camera|rear camera view|\brear view\b)/.test(_poseStartRaw);
   const _poseIsSide  = /(side profile|side view|\bprofile\b|lateral)/.test(_poseStartRaw);
   const _poseIsFront = !_poseIsBack && !_poseIsOverShoulder && /(facing viewer|facing camera|front view)/.test(_poseStartRaw);
 
