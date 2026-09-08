@@ -11238,51 +11238,229 @@ function expandScene(t, skipExpression){
   // Explicit sexual scene — suppress neutral expression auto-add
   const isExplicit  = /nude|naked|blowjob|oral sex|sucking|licking|penetrat|explicit|nsfw|sex position|intercourse|fingering|masturbat|cumshot|creampie|squirt|anal|pussy|cock|penis|vagina|nipples|areola|topless.*nude|nua|pelada|chupando|sexo|pênis|buceta|vagina|anal\b/.test(s);
 
-  // ── OUTFIT ────────────────────────────────────────────────────────────────
+  // ── ADDITIONAL LOCATION DETECTION ────────────────────────────────────────
+  const isRooftop   = /rooftop|terrace|terraço|cobertura|telhado/.test(s);
+  const isSpa       = /\bspa\b|wellness|sauna|hammam|steam room|masage|massage/.test(s);
+  const isSnow      = /snow|neve|winter|winter cabin|ski lodge|alpine|chalet/.test(s);
+  const isLuxuryHotel = /hotel room|hotel suite|suite|penthouse|luxury room/.test(s);
+  const isSunsetScene = /sunset|golden hour|dusk/.test(s) && !isBeach && !isPool;
+
+  // ── OUTFIT — randomized among 3 options per scene for variety ─────────────
+  const _pick = arr => arr[Math.floor(Math.random() * arr.length)];
   const hasOutfit = /wearing|dress|shirt|jeans|bikini|top|skirt|blouse|outfit|coat|jacket|suit|shorts|leggings|swimsuit|bodysuit|lingerie|bra|pants|trousers|hoodie|sweater|gown|uniform|costume|corset|crop|naked|nude|naked|topless|bottomless|undressed|no clothes|no clothing|without clothes|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|camisola|blusa|meias|meia-cal[cç]a|body|collant|maio|maiô|roupa|roupinha|fantasia|espartilho|colete|casaco|jaqueta|moletom|pijama|ling[eé]rie|fio dental|tanga|microbiqu[iíi]ni|decote|pelada|sem roupa|sem calcinha|sem suti|nu[ao]\b|peladinha|topless/.test(s);
   let outfit = '';
   if(!hasOutfit){
     if(isShower) outfit = ''; // naturally nude — no outfit for shower/bath
-    else if(isBeach)   outfit = 'wearing a tiny string triangle bikini, white or neon colored, micro coverage, side-tie bottom, tan lines visible, sun-kissed skin';
-    else if(isPool)    outfit = 'wearing a high-cut Brazilian bikini or deep-plunge cut-out one-piece swimsuit, colorful, wet fabric clinging to curves';
-    else if(isRain)    outfit = 'wearing a thin white fitted shirt soaking wet and fully see-through, no bra, white wet fabric completely transparent, wet micro shorts or skirt';
-    else if(isYoga)    outfit = 'wearing a seamless second-skin yoga set: high-waist compression leggings and matching strappy sports bra, pastel or black, barefoot';
-    else if(isMirror)  outfit = 'wearing a delicate black lace bralette and matching high-waist lace panties, garter belt visible, mirror selfie framing';
-    else if(isCar)     outfit = 'wearing a skin-tight bodycon micro mini dress, no underwear visible, very short hemline, provocative automotive pose';
-    else if(isNature)  outfit = 'wearing a sheer flowy white sundress, thin fabric backlit by natural light, no bra visible through sheer fabric, boho barefoot style';
-    else if(isWorkout) outfit = 'wearing a high-impact sports bra crop top and high-waist compression leggings, form-fitting athletic set, gym shoes';
-    else if(isClub)    outfit = 'wearing a skin-tight satin or sequin micro mini dress, deep plunging neckline, backless or cut-out sides, thigh-high slit, stiletto heels';
-    else if(isRestaurant) outfit = 'wearing a form-fitting wrap mini dress with a low-cut neckline, cinched waist, strappy heeled sandals, elegant dinner style';
-    else if(isWedding) outfit = 'wearing a sheer ivory lace bridal gown with deep open back, thigh-high front slit, fitted bodice with lace detail, bridal elegance';
-    else if(isRunway)  outfit = 'wearing a sheer barely-there haute couture designer gown with strategic cutouts, thigh-high slit, avant-garde high-fashion editorial look';
-    else if(isCafe)    outfit = 'wearing a fitted ribbed crop top and a micro plaid mini skirt with thigh-high boots, casual chic city style';
-    else if(isPark || isForest) outfit = 'wearing tiny high-waist denim cut-off shorts with frayed hem and a tied white crop top baring the midriff, casual outdoors';
-    else if(isCity)    outfit = 'wearing a skin-tight bodycon micro mini dress with a deep plunging neckline, stiletto heels, city night style';
-    else if(isIndoor)  outfit = 'wearing a matching black lace lingerie set: push-up bra with lace trim and high-cut cheeky panties, delicate and sensual';
-    else if(isNight)   outfit = 'wearing a backless satin micro mini dress with deep plunging neckline, thigh-high front slit, strappy stiletto heels, night-out elegance';
-    else               outfit = 'wearing a matching black lace lingerie set: delicate push-up bra and high-waist lace panties with garter belt detail';
+    else if(isBeach)   outfit = _pick([
+      'wearing a tiny string triangle bikini, micro coverage side-tie bottom, sun-kissed tan lines, wet sand on skin',
+      'wearing a Brazilian dental-floss thong bikini, vibrant print, micro top, glistening sun-warmed skin',
+      'wearing a crocheted micro bikini, natural fiber texture, barely-there coverage, golden sun-kissed glow',
+    ]);
+    else if(isPool)    outfit = _pick([
+      'wearing a high-cut Brazilian bikini, wet fabric clinging to every curve, water droplets on skin',
+      'wearing a deep-plunge cut-out one-piece swimsuit, wet glossy fabric, pool water dripping from body',
+      'wearing a string micro bikini, colorful tropical print, pool-wet body, shimmering wet skin',
+    ]);
+    else if(isRain)    outfit = _pick([
+      'wearing a thin white fitted shirt completely soaking wet and see-through, no bra, rain-drenched fabric transparent',
+      'wearing a white sheer crop top soaked by rain, fully transparent when wet, wet micro shorts, rain-soaked',
+      'wearing a light summer dress completely drenched by rain, transparent wet fabric, rain streaking down body',
+    ]);
+    else if(isYoga)    outfit = _pick([
+      'wearing a seamless second-skin high-waist compression leggings and matching strappy sports bra, pastel, barefoot',
+      'wearing a deep-cut racerback sports bra and high-waist seamless leggings, body-contouring athletic set',
+      'wearing a ribbed high-waist yoga tights and barely-there bandeau sports top, minimal coverage athletic wear',
+    ]);
+    else if(isMirror)  outfit = _pick([
+      'wearing a delicate black lace bralette and matching high-waist lace panties, garter belt detail',
+      'wearing a sheer silk slip dress with lace trim, no underwear visible under sheer fabric',
+      'wearing a matching satin bra and high-waist knickers set, soft intimate bedroom styling',
+    ]);
+    else if(isCar)     outfit = _pick([
+      'wearing a skin-tight bodycon micro mini dress, very short hemline, confident automotive pose',
+      'wearing a leather jacket open over a barely-there bralette and mini leather skirt, edgy automotive style',
+      'wearing a deep-V bodycon bandage mini dress, provocative car photography pose',
+    ]);
+    else if(isNature)  outfit = _pick([
+      'wearing a sheer flowy white sundress, thin fabric backlit by natural light, boho barefoot style',
+      'wearing a tiny floral bikini top and high-waist linen shorts, natural outdoor style',
+      'wearing a loose off-shoulder white maxi dress, sheer in backlight, barefoot in nature',
+    ]);
+    else if(isWorkout || isSpa) outfit = _pick([
+      'wearing a high-impact sports bra crop top and high-waist compression leggings, form-fitting athletic set',
+      'wearing a strappy deep-cut sports bra and bike shorts, minimal athletic coverage, fitness style',
+      'wearing a seamless one-piece athletic bodysuit, form-fitting, contoured, professional gym aesthetic',
+    ]);
+    else if(isClub)    outfit = _pick([
+      'wearing a skin-tight sequin micro mini dress, deep plunging neckline, backless, thigh-high slit, stiletto heels',
+      'wearing a metallic latex-look bodycon mini dress, ultra-tight, very short, strappy heeled sandals',
+      'wearing a sheer lace-over satin slip mini dress, strategically opaque panels, club night elegance',
+    ]);
+    else if(isRestaurant) outfit = _pick([
+      'wearing a form-fitting wrap mini dress, low-cut neckline, cinched waist, strappy heeled sandals, dinner style',
+      'wearing a velvet off-shoulder mini dress, deep neckline, fitted silhouette, elegant heels',
+      'wearing a satin cowl-neck slip dress, bias-cut, elegant drape, sophisticated dinner styling',
+    ]);
+    else if(isWedding) outfit = _pick([
+      'wearing a sheer ivory lace bridal gown, deep open back, thigh-high front slit, fitted bodice',
+      'wearing a minimalist silk satin wedding dress, deep V-back, sculpted bodice, bridal elegance',
+      'wearing a French lace wedding gown, illusion neckline, deep plunge, embroidered bridal detail',
+    ]);
+    else if(isRunway)  outfit = _pick([
+      'wearing a sheer haute couture designer gown, strategic cutouts, thigh slit, avant-garde editorial',
+      'wearing a sculptural architectural fashion piece, body-baring panels, high-fashion runway',
+      'wearing a luxury Italian couture gown, draped asymmetric silk, impossibly refined editorial',
+    ]);
+    else if(isCafe)    outfit = _pick([
+      'wearing a fitted ribbed crop top and micro plaid mini skirt with thigh-high boots, casual chic style',
+      'wearing a French-tuck silk blouse with high-waist tailored mini skirt, Parisian café aesthetic',
+      'wearing a cute knitted crop top with a denim mini skirt and ankle boots, cozy casual chic',
+    ]);
+    else if(isSunsetScene || isRooftop) outfit = _pick([
+      'wearing a flowing silk maxi dress with a deep plunging neckline, warm golden light on skin',
+      'wearing a backless satin mini dress, warm sunset light raking across silhouette',
+      'wearing a sheer chiffon wrap dress, sunset glow visible through thin fabric',
+    ]);
+    else if(isSnow)    outfit = _pick([
+      'wearing a cozy oversized knit sweater barely covering thighs, no pants, warm contrast with snow',
+      'wearing an open fur-trimmed coat over lingerie, bare legs, dramatic winter contrast',
+      'wearing a form-fitting ski suit half-unzipped, alpine chalet interior context',
+    ]);
+    else if(isLuxuryHotel) outfit = _pick([
+      'wearing a silk robe loosely belted, hotel suite morning light, soft luxury fabric',
+      'wearing matching silk satin bralette and high-waist shorts set, luxury hotel intimacy',
+      'wearing a sheer lace slip dress over bare skin, penthouse suite elegance',
+    ]);
+    else if(isPark || isForest) outfit = _pick([
+      'wearing tiny high-waist denim cut-off shorts with frayed hem and a tied white crop top, casual outdoors',
+      'wearing a floral micro mini skirt and a tied crop top, playful outdoor summer style',
+      'wearing linen high-waist shorts and a boho crochet crop bralette, natural outdoor bohemian style',
+    ]);
+    else if(isCity)    outfit = _pick([
+      'wearing a skin-tight bodycon micro mini dress, deep plunging neckline, stiletto heels, city style',
+      'wearing a leather mini skirt and sheer blouse, edgy urban sophisticated night look',
+      'wearing a cut-out bodycon mini dress, structured silhouette, high heels, urban editorial',
+    ]);
+    else if(isIndoor)  outfit = _pick([
+      'wearing a matching black lace lingerie set: push-up bra with lace trim and high-cut cheeky panties',
+      'wearing a delicate ivory silk chemise, thin straps, barely knee-length, intimate indoor styling',
+      'wearing a sheer mesh bodysuit over a tiny lace bralette and matching thong, sensual indoor look',
+    ]);
+    else if(isNight)   outfit = _pick([
+      'wearing a backless satin micro mini dress, deep plunging neckline, thigh-high slit, strappy stiletto heels',
+      'wearing an off-shoulder velvet mini dress, dramatic neckline, elegant night-out style',
+      'wearing a sheer black lace-overlay mini dress, bodycon silhouette, night elegance',
+    ]);
+    else               outfit = _pick([
+      'wearing a matching black lace lingerie set: delicate push-up bra and high-waist lace panties with garter belt',
+      'wearing a barely-there silk slip dress with spaghetti straps, delicate and sensual',
+      'wearing a sheer bodysuit over matching lace underwear, layered intimate look',
+    ]);
   }
 
   // ── LIGHTING ──────────────────────────────────────────────────────────────
   let lighting = '';
   if(!hasLight){
-    if(isShower)      lighting = 'warm 3000K steamy bathroom tungsten light, soft diffused steam glow, natural catchlights in eyes, condensation moisture in air, warm halation on wet skin, intimate low-light atmosphere';
-    else if(isRain)   lighting = 'flat 6500K overcast rain light, moody wet reflections on ground, rain-diffused grey-sky ambient, wet skin specular highlights, no harsh shadows, rain haze softening depth';
-    else if(isSunset) lighting = 'cinematic 2800K golden hour sun at 15° horizon angle, long raking shadows, warm specular catchlights in eyes, natural golden lens flare, orange-pink sky glow, sun-kissed warm skin tone, backlight halo around silhouette';
-    else if(isSunrise) lighting = 'delicate 3200K golden sunrise light at low angle, soft pastel pink-purple sky, gentle morning mist diffusion, fresh dewy glow on skin, cool shadows with warm highlights';
-    else if(isNight && isClub) lighting = 'dramatic mixed neon LED stage lighting, colorful cyan-magenta-red light streaks, cinematic motivated glow, subtle lens flare, high-contrast shadow play, club atmosphere depth';
-    else if(isNight)  lighting = 'moody 4000K blue-hour ambient, soft warm city sodium light glow, gentle cool moonlight rim, cinematic shadow gradients, natural dark-adapted eye exposure';
-    else if(isMorning) lighting = 'gentle 5500K soft morning window light from left, diffused clean fill, fresh cool shadow on right side, crisp natural daylight, authentic early-day atmosphere';
-    else if(isBeach)  lighting = 'bright 5800K tropical overhead sunlight, sparkling ocean-reflected specular highlights, sun-warmed skin catchlights, slight beach haze, natural shadow from above, bleached warm sand light bounce';
-    else if(isPool)   lighting = 'bright outdoor 6000K pool-reflected wavering light, caustic water light patterns on skin, warm midday sunlight, shimmer from pool surface, bright tropical resort ambiance';
-    else if(isPark || isForest) lighting = '5000K dappled natural sunlight filtering through leaf canopy, soft organic shadow patches, golden late-afternoon glow, atmospheric scattered light, green-tinted leaf-filtered fill light';
-    else if(isCafe || isRestaurant) lighting = 'warm 2900K cozy amber interior ambient, soft diffused window light from side, warm tungsten overhead glow, intimate golden-toned shadows, authentic café or restaurant atmosphere';
-    else if(isCar)    lighting = 'natural 5000K outdoor sun at 45° angle, golden hour automotive light if applicable, warm side highlight on car and body, crisp outdoor shadows, environmental clear sky ambient';
-    else if(isYoga)   lighting = 'clean 5500K natural window light or soft studio daylight, calm diffused fill, minimal shadow, clean background separation, athletic documentary atmosphere';
-    else if(isMirror) lighting = 'warm 3000K bedroom ambient lamp glow, soft diffused room light, natural slight warm cast, gentle catchlights in mirror reflection, intimate interior atmosphere';
-    else if(isLuxury)  lighting = 'warm 2800K intimate ambient — directional table-lamp glow as motivated key, natural soft window fill, subtle warm rim separation from background, golden shadow gradients, sophisticated interior depth and atmosphere';
-    else if(isIndoor)  lighting = 'natural 5200K window light creating soft split catchlights, realistic ambient fill from walls, gentle warm-side rim separation, authentic soft shadow gradients, no studio strobe artifacts, documentary indoor light';
-    else               lighting = '5200K soft natural diffused light, gentle directional catchlights, realistic ambient fill, natural rim separation from background, honest documentary photography light quality';
+    if(isShower)      lighting = _pick([
+      'warm 3000K steamy bathroom tungsten light, soft diffused steam glow, condensation in air, warm halation on wet skin',
+      'soft 2800K warm halogen shower light, steam diffusing the beam, wet skin specular highlights, intimate low-light',
+      'warm backlit shower steam, 3200K tungsten through frosted glass, moisture halos on wet surfaces, intimate glow',
+    ]);
+    else if(isRain)   lighting = _pick([
+      'flat 6500K overcast rain light, moody wet reflections on ground, rain-diffused grey-sky ambient, wet skin specular',
+      'dramatic moody overcast, silver 6000K rain diffusion, wet asphalt reflections, rain creating soft natural fill',
+      'moody cool daylight 6500K overcast, rain drops catching light, wet environment specular, atmospheric grey depth',
+    ]);
+    else if(isSunset || isSunsetScene) lighting = _pick([
+      'cinematic 2800K golden hour sun at 15° horizon, long raking shadows, warm lens flare, orange-pink sky, skin backlit halo',
+      'magic hour 2700K warm backlight, rim light separating subject from amber sky, golden hour lens flare, warm skin glow',
+      'golden sunset 3000K raking side light, warm orange specular on skin, long natural shadows, sunset sky gradient behind',
+    ]);
+    else if(isSunrise) lighting = _pick([
+      'delicate 3200K golden sunrise at low angle, soft pastel pink-purple sky, morning mist diffusion, dewy glow on skin',
+      'golden 3400K first light of dawn, cool blue shadows, warm sunrise highlights, fresh morning atmosphere',
+      'soft 3000K golden sunrise backlight, atmospheric morning haze, warm skin rim, cool blue fill from open sky',
+    ]);
+    else if(isSnow)   lighting = _pick([
+      'cold 6500K winter overcast, snow-reflected bright white fill, blue-cast shadows, sharp crisp cold-air clarity',
+      'warm 3000K cabin tungsten against cold blue winter outside, dramatic warm-cool contrast through window',
+      'soft diffused 5500K snow-reflected daylight, even shadowless fill from white ground bounce, winter clarity',
+    ]);
+    else if(isNight && isClub) lighting = _pick([
+      'dramatic mixed neon LED stage lighting, cyan-magenta-red streaks, cinematic motivated glow, high-contrast shadow play',
+      'colorful club LED wash, deep shadows, saturated colored rim lights, neon specular on skin, club atmosphere depth',
+      'pulsing club strobe freeze, colored gel lighting, blue and red neon fills, dramatic dark background contrast',
+    ]);
+    else if(isNight)  lighting = _pick([
+      'moody 4000K blue-hour ambient, warm sodium city light glow, cool moonlight rim, cinematic shadow gradients',
+      'nocturnal blue-hour light, 3800K warm city window glow as key, cool blue sky fill, cinematic depth',
+      'evening ambient 4200K, warm street lamp motivated key, deep cool shadows, atmospheric urban night',
+    ]);
+    else if(isMorning) lighting = _pick([
+      'gentle 5500K soft morning window light from left, diffused clean fill, crisp natural daylight, early-day atmosphere',
+      'soft 5200K morning sun through sheer curtains, diffused warm-white fill, fresh clean light, authentic morning',
+      'golden 4500K early morning sun at low angle, warm soft directional from window, cool ambient fill, fresh dawn',
+    ]);
+    else if(isBeach)  lighting = _pick([
+      'bright 5800K tropical overhead sunlight, ocean-reflected specular, sun-warmed skin, bleached warm sand bounce',
+      'warm beach golden hour 3000K, sun at 20° angle, long warm shadows, ocean sparkle, skin backlit by warm sky',
+      'midday tropical 6000K, hard top light, sharp beach shadows, strong skin specular, vivid blue sky fill from ocean',
+    ]);
+    else if(isPool)   lighting = _pick([
+      'bright 6000K pool-reflected wavering caustic light patterns on skin, warm midday sun, shimmer from pool surface',
+      'tropical pool 5800K overhead sun, aqua water light bounce, pool caustics dancing on skin, warm resort ambiance',
+      'warm afternoon 4500K pool light, water shimmer reflections, dappled caustic patterns, golden pool glow on skin',
+    ]);
+    else if(isRooftop) lighting = _pick([
+      'warm 3200K city ambient at blue hour, rooftop string lights, warm-cool contrast, city glow behind',
+      'golden 2800K sunset from rooftop, city in warm silhouette, warm rim separating from cool skyline',
+      'cinematic rooftop evening 4000K, urban ambient glow, architectural point lights, dramatic city depth',
+    ]);
+    else if(isSpa)    lighting = _pick([
+      'warm 2700K spa candle ambient, soft motivated candlelight key, warm serene shadows, intimate wellness atmosphere',
+      'soft 3000K warm spa lighting, diffused ambient glow, warm skin tone, serene and relaxing atmosphere',
+      'dim warm 2800K spa ambiance, candles and water feature glow, soft shadows, intimate tranquil light',
+    ]);
+    else if(isPark || isForest) lighting = _pick([
+      '5000K dappled natural sunlight through leaf canopy, soft organic shadow patches, golden afternoon glow, green fill',
+      'golden 4500K afternoon forest light, beams of sun through trees, dappled shadow patches, natural warm depth',
+      'diffused 5200K forest ambient, soft green-tinted canopy fill, natural organic shadows, fresh forest light quality',
+    ]);
+    else if(isCafe || isRestaurant) lighting = _pick([
+      'warm 2900K cozy amber interior, soft window light from side, tungsten overhead, intimate golden-toned shadows',
+      'warm 3000K restaurant ambient, motivated table lamp key, soft atmospheric fill, golden shadow gradients',
+      'cozy 2700K café tungsten glow, warm soft window fill from side, intimate warm shadows, authentic atmosphere',
+    ]);
+    else if(isCar)    lighting = _pick([
+      'natural 5000K outdoor sun at 45°, warm side highlight on car and body, crisp outdoor shadows, clear sky ambient',
+      'golden hour 3200K automotive light, warm raking side light on car body, dramatic long shadows, warm atmosphere',
+      'overcast 6000K soft automotive light, even diffused fill, car body reflections, clean shadow-free automotive',
+    ]);
+    else if(isYoga)   lighting = _pick([
+      'clean 5500K natural window light, calm diffused fill, minimal shadow, clean background separation, athletic doc',
+      'soft 5000K studio daylight, large diffused fill, clean even light, yoga documentary atmosphere',
+      'golden 4500K late-afternoon yoga light, warm natural rays, long soft shadows, serene athletic atmosphere',
+    ]);
+    else if(isMirror) lighting = _pick([
+      'warm 3000K bedroom ambient lamp glow, soft diffused room light, gentle catchlights in mirror reflection',
+      'warm 2800K bedside table lamp, intimate bedroom glow, warm shadows, soft motivated key on face',
+      'soft 3200K dressing-table lamp ring, warm even fill, intimate vanity atmosphere, natural catchlights',
+    ]);
+    else if(isLuxury || isLuxuryHotel) lighting = _pick([
+      'warm 2800K intimate ambient — table lamp key, natural soft window fill, golden shadow gradients, sophisticated depth',
+      'warm 3000K luxury interior light, motivated reading lamp key, architectural ambient fill, rich shadow gradients',
+      'soft 2900K chandelier ambient, directional architectural spot as motivated key, warm elegant atmosphere',
+    ]);
+    else if(isIndoor)  lighting = _pick([
+      'natural 5200K window light, soft split catchlights, gentle warm rim, authentic soft shadows, documentary indoor',
+      'diffused 5000K window natural light from side, ambient fill from white walls, soft shadows, authentic indoor',
+      'soft 4800K indoor daylight, window fill from left, warm wall-bounce fill from right, balanced natural indoor',
+    ]);
+    else               lighting = _pick([
+      '5200K soft natural diffused light, gentle directional catchlights, realistic ambient fill, honest documentary light',
+      'soft 5000K natural ambient, directional window key, ambient fill, authentic natural light quality',
+      'diffused 5200K natural light, soft catchlights, gentle rim separation, realistic documentary exposure',
+    ]);
   }
 
   // ── ENVIRONMENT ───────────────────────────────────────────────────────────
@@ -11290,62 +11468,269 @@ function expandScene(t, skipExpression){
   const hasEnv = /background|bokeh|atmosphere|scenery|surroundings|setting|in front of|next to|beside|inside|outside|on the|at the|near the|by the|against|facing a|facing the|leaning on|sitting on|standing on|on a|on her|in a|in the|at a|at the|with a/.test(s);
   let environment = '';
   if(!hasEnv){
-    if(isShower)       environment = 'tiled shower interior, glass shower door with condensation, steam filling the room, warm water';
-    else if(isRain)    environment = 'outdoor rain, wet street or garden, raindrops visible, grey overcast sky, rain puddles';
-    else if(isMirror)  environment = 'bedroom with large mirror, natural room setting, phone visible in reflection';
-    else if(isCar)     environment = 'outdoor car exterior, parked car or moving, real street or parking setting';
-    else if(isYoga)    environment = 'yoga studio with natural light or outdoor yoga mat on grass or rooftop';
-    else if(isNature)  environment = 'open natural landscape, golden field or lush forest, natural outdoor setting';
-    else if(isBeach)   environment = 'white sand beach, turquoise ocean water, palm trees in background, real outdoor location';
-    else if(isPool)    environment = 'outdoor swimming pool, sun loungers, tropical plants, resort setting';
-    else if(isPark)    environment = 'green park, trees in background, natural grass, open sky';
-    else if(isForest)  environment = 'forest setting, trees with green canopy, dappled natural light, natural outdoor location';
-    else if(isCity)    environment = 'urban street, buildings in background out of focus, real city location';
-    else if(isCafe)    environment = 'café interior, wooden tables, natural window light, real café location';
-    else if(isRestaurant) environment = 'restaurant interior, tables in background, warm ambient light';
-    else if(isClub)    environment = 'nightclub interior, bar lights in background, real nightlife location';
-    else if(isWedding) environment = 'wedding venue, floral decorations, natural light, real event photography';
-    else if(isRunway)  environment = 'fashion show stage, audience in background out of focus';
-    else if(isWorkout) environment = 'modern gym interior, weight machines in background, mirrored walls, gym setting, fitness center';
-    else if(isLuxury)  environment = 'elegant interior or private terrace, subtle bokeh, sophisticated atmosphere, tasteful background';
-    else               environment = 'real location, shallow depth of field, natural setting';
+    if(isShower)       environment = _pick([
+      'tiled shower interior, glass shower door with condensation droplets, steam filling the room, warm water streaming',
+      'marble wet-room shower, rainfall ceiling showerhead, steam rising, condensation on glass surfaces, warm mist',
+      'luxury hotel bathroom shower, floor-to-ceiling glass, tropical scene through window, steam atmosphere, warm water',
+    ]);
+    else if(isRain)    environment = _pick([
+      'outdoor rain, wet cobblestone street, grey overcast sky, rain puddles reflecting surroundings, raindrops in air',
+      'rain-soaked urban environment, wet asphalt reflections, moody grey sky, rain puddles, atmospheric rain haze',
+      'outdoor garden in heavy rain, wet grass, rain drops on all surfaces, moody overcast, rain creating ground mist',
+    ]);
+    else if(isMirror)  environment = _pick([
+      'bedroom with large full-length mirror, natural room setting, phone visible in reflection, intimate private atmosphere',
+      'walk-in wardrobe with floor mirror, soft closet lighting, couture in background, private luxury dressing room',
+      'luxury hotel room with ornate mirror, beautiful interior decor behind, intimate private moment',
+    ]);
+    else if(isCar)     environment = _pick([
+      'outdoor car exterior, elegant sports car or luxury vehicle, real street or urban environment in background',
+      'luxury car in urban setting, bokeh city background, sleek automotive environment, real outdoor location',
+      'muscle car or exotic automobile, outdoor parking or road setting, environmental automotive portrait',
+    ]);
+    else if(isYoga)    environment = _pick([
+      'yoga studio with large windows and natural light, sprung hardwood floor, plants, serene athletic environment',
+      'rooftop yoga deck, city or nature visible below, open sky, warm outdoor yoga atmosphere',
+      'outdoor yoga mat on grass or by the ocean, natural environment, serene open-air yoga setting',
+    ]);
+    else if(isNature)  environment = _pick([
+      'open natural landscape, golden field with wildflowers or lush green forest, pristine natural outdoor setting',
+      'coastal nature setting, cliffs and ocean in background, wild natural landscape, real outdoor location',
+      'meadow at golden hour, long grass, wildflowers, distant tree line, vast open natural environment',
+    ]);
+    else if(isBeach)   environment = _pick([
+      'white sand beach, turquoise ocean water in background, palm trees, authentic outdoor tropical location',
+      'pristine beach shoreline, waves gently breaking, clear blue sky, real outdoor tropical beach setting',
+      'exotic beach cove, crystal water, white sand, tropical vegetation, genuine remote beach location',
+    ]);
+    else if(isPool)    environment = _pick([
+      'outdoor swimming pool, sun loungers and tropical plants, resort or private villa setting, blue sky above',
+      'infinity pool with stunning view, water and landscape merging at the edge, luxury resort pool setting',
+      'private villa pool, surrounded by tropical garden, clear blue water, outdoor resort environment',
+    ]);
+    else if(isRooftop) environment = _pick([
+      'rooftop terrace, panoramic city skyline visible all around, urban rooftop atmosphere, string lights',
+      'city rooftop, buildings and skyline in the distance, warm evening atmosphere, high above the city',
+      'luxury rooftop terrace, potted plants and elegant seating, city panorama below, private elevated setting',
+    ]);
+    else if(isSpa)     environment = _pick([
+      'luxury spa interior, warm ambient candles, stone and wood materials, serene wellness atmosphere, water feature',
+      'spa treatment room, soft lighting, natural materials, orchids, tranquil wellness environment',
+      'wellness center interior, minimalist serene design, warm indirect lighting, peaceful spa atmosphere',
+    ]);
+    else if(isSnow)    environment = _pick([
+      'snow-covered landscape, pine trees heavy with snow, pristine white outdoor winter setting',
+      'cozy alpine cabin interior, snow visible through frosted window, warm wooden interior, winter outside',
+      'winter exterior, snowflakes falling, snow on ground, bare trees in background, crisp cold winter atmosphere',
+    ]);
+    else if(isPark)    environment = _pick([
+      'green urban park, trees in background, natural grass, open sky, authentic outdoor public setting',
+      'botanical garden, lush greenery, flowering plants in background, serene natural park setting',
+      'city park with trees and dappled light, benches visible in background, authentic natural urban setting',
+    ]);
+    else if(isForest)  environment = _pick([
+      'dense forest, tall trees with green canopy, dappled natural light, natural outdoor location',
+      'woodland forest path, ancient trees, filtered light, moss-covered ground, authentic natural forest',
+      'lush green jungle or forest, thick vegetation, filtered light through canopy, immersive nature setting',
+    ]);
+    else if(isCity)    environment = _pick([
+      'urban street, buildings in background slightly out of focus, real city location, authentic urban setting',
+      'city sidewalk, storefronts and buildings, pedestrians blurred, authentic street photography environment',
+      'downtown urban setting, architectural buildings, city activity, bokeh urban background, real location',
+    ]);
+    else if(isCafe)    environment = _pick([
+      'café interior, wooden tables and chairs, natural window light, real authentic café location, warm decor',
+      'Parisian-style café, marble tables, bentwood chairs, mosaic floor, warm interior café atmosphere',
+      'cozy café, exposed brick, bookshelves, natural window light, warm intimate café environment',
+    ]);
+    else if(isRestaurant) environment = _pick([
+      'upscale restaurant interior, elegant tables in background, warm ambient light, sophisticated dining setting',
+      'romantic restaurant, candlelit tables behind, warm architectural lighting, tasteful dining environment',
+      'rooftop restaurant terrace, city view in background, warm evening restaurant atmosphere',
+    ]);
+    else if(isClub)    environment = _pick([
+      'nightclub interior, colored bar lights in background, real nightlife environment, club crowd blurred',
+      'upscale club with neon lighting, dark interior, bottles and bar backdrop, authentic nightlife setting',
+      'club dance floor, colorful LED stage lighting behind, nightlife atmosphere, motion blurred crowd',
+    ]);
+    else if(isWedding) environment = _pick([
+      'wedding venue with floral decorations, natural light, real event photography environment',
+      'outdoor wedding garden, floral arch and decorations, golden afternoon light, romantic venue setting',
+      'elegant chapel or ballroom wedding venue, floral arrangements, soft ceremonial atmosphere',
+    ]);
+    else if(isRunway)  environment = _pick([
+      'fashion show runway, audience blurred in background out of focus, high-fashion show setting',
+      'editorial catwalk, runway lights above, branded backdrop, high-fashion event atmosphere',
+      'backstage fashion show area, racks of couture, bright makeup mirrors, backstage atmosphere',
+    ]);
+    else if(isWorkout) environment = _pick([
+      'modern premium gym, weight machines in background, mirrored walls, professional fitness center',
+      'luxury boutique gym, floor-to-ceiling mirrors, equipment gleaming, clean athletic environment',
+      'industrial converted gym, exposed brick, high ceilings, raw authentic fitness environment',
+    ]);
+    else if(isLuxury || isLuxuryHotel) environment = _pick([
+      'elegant luxury interior, designer furniture, subtle bokeh, sophisticated atmosphere, tasteful background',
+      'high-end hotel suite, panoramic window view, luxury decor, private sophisticated atmosphere',
+      'private villa or penthouse, refined interior design, premium materials, exclusive setting',
+    ]);
+    else               environment = 'real location, shallow depth of field, natural setting, authentic environment';
   }
+
+  // ── SCENE PHYSICS / ATMOSPHERE — physical effects from scene interaction ──
+  // These add the physical reality of the environment touching the subject's body
+  let scenePhysics = '';
+  if(isShower)       scenePhysics = 'water droplets cascading down skin, wet skin specular highlights, steam condensation on skin, wet hair plastered to neck and shoulders, skin glistening from water, moisture on lips and eyelashes';
+  else if(isRain)    scenePhysics = 'rain droplets on skin, rain streaks running down face and body, wet hair darkened and clinging, wet fabric texture, skin slightly flushed from cold rain, rain drops on eyelashes';
+  else if(isBeach)   scenePhysics = 'fine sand particles on wet skin, sea salt texture on skin, natural sun-kissed tan, salt-damp hair, skin warm and glowing from sun exposure, slight sand on legs and feet, sun-warmed natural skin sheen';
+  else if(isPool)    scenePhysics = 'water droplets on skin and body, wet hair darkened, pool water dripping, skin catching light through water droplets, glistening wet body, water pooling in natural curves';
+  else if(isWorkout) scenePhysics = 'natural perspiration sheen on skin, slight skin flush from exertion, natural sweat moisture on forehead and chest, hair slightly damp from workout, skin showing natural athletic warmth';
+  else if(isSpa)     scenePhysics = 'natural skin hydration glow from spa moisture, serene relaxed skin tone, subtle warm flush, moisture on skin, relaxed natural skin texture';
+  else if(isSnow)    scenePhysics = 'skin slightly flushed from cold temperature, natural cold-cheek redness, fresh crisp air on skin, possibly snowflakes in hair, skin natural winter paleness with cold flush';
+  else if(isSunset || isSunsetScene) scenePhysics = 'warm golden light painting skin, warm orange-gold skin tone from sunset, long warm shadows across body, warm rim of golden light in hair';
+  else if(isNight && isClub) scenePhysics = 'colored neon light washing over skin, night club atmosphere on skin tone, mixed LED light painting, sweat-damp skin from dancing energy';
+  else if(isNature)  scenePhysics = 'warm natural sunlight on skin, slight outdoor warmth on skin, natural light and shadow from environment, fresh outdoor air, natural skin glow from sunlight';
 
   // ── EXPRESSION & POSE ─────────────────────────────────────────────────────
   const hasExpression = /smiling|laughing|serious|expression|gazing|posing|confident|happy|looking|glancing|shy/.test(s);
   let expression = '';
   if(!hasExpression && !isExplicit && !skipExpression){
     // Don't auto-add neutral expression for explicit scenes — it conflicts with the act
-    if(isSelfie)       expression = 'natural playful smile, genuine candid selfie expression, relaxed casual look, authentic real-person energy';
-    else if(isModel)   expression = 'confident direct gaze, fierce editorial expression, natural powerful presence, real model energy not forced';
-    else if(isRomantic) expression = 'soft tender expression, natural parted lips, warm luminous eyes, intimate vulnerable look';
-    else if(isWorkout) expression = 'focused determined athletic look, natural exertion expression, strong body language, real effort visible in face';
-    else if(isClub)    expression = 'confident carefree social expression, natural flirtatious smile, real nightlife energy, genuine fun atmosphere';
-    else if(isBeach || isPool) expression = 'natural sun-happy relaxed smile, carefree vacation expression, candid outdoor joy, real summer energy';
-    else if(isYoga)    expression = 'serene focused inward expression, calm natural breath, peaceful body awareness, yoga meditation energy';
-    else if(isMirror)  expression = 'natural introspective self-aware gaze, subtle confident smile, candid mirror moment, genuine private look';
-    else if(isNature)  expression = 'serene organic outdoor expression, content peaceful natural look, candid nature connection, genuine unposed energy';
-    else if(isRunway)  expression = 'fierce editorial runway expression, powerful directional gaze, high-fashion presence, commanding catwalk energy';
-    else               expression = 'natural relaxed genuine expression, authentic real-person look, candid unposed moment, not forced not performed';
+    if(isSelfie)       expression = _pick([
+      'natural playful smile, genuine candid selfie expression, relaxed casual look, authentic real-person energy',
+      'confident selfie gaze, natural slight smile, relaxed authentic self-portrait energy, real person candid',
+      'playful candid selfie look, natural expression, slightly parted lips, genuine unposed selfie moment',
+    ]);
+    else if(isModel)   expression = _pick([
+      'confident direct gaze, fierce editorial expression, natural powerful presence, real model energy not forced',
+      'commanding editorial gaze, strong directional look, powerful natural presence, authentic editorial energy',
+      'intense model stare, high-fashion expression, natural directional eye contact, editorial power pose',
+    ]);
+    else if(isRomantic) expression = _pick([
+      'soft tender expression, natural parted lips, warm luminous eyes, intimate vulnerable look',
+      'dreamy soft gaze, naturally parted lips, vulnerable intimate expression, warm luminous eyes',
+      'soft loving look, gentle natural smile, tender warm eyes, authentic romantic expression',
+    ]);
+    else if(isShower)  expression = _pick([
+      'serene relaxed eyes closed or dreamy gaze, sensual private moment expression, water on face authentic',
+      'peaceful eyes closed, water streaming over face, natural sensual relaxed expression, private moment',
+      'eyes slightly closed, water droplets on lashes, soft sensual shower expression, natural private energy',
+    ]);
+    else if(isWorkout) expression = _pick([
+      'focused determined athletic look, natural exertion expression, strong body language, real effort in face',
+      'intense focused athletic gaze, natural exertion look, strength and determination, real physical effort',
+      'determined athletic expression, slight natural exertion, strong confident body energy, real workout look',
+    ]);
+    else if(isClub)    expression = _pick([
+      'confident carefree social expression, natural flirtatious smile, real nightlife energy, genuine fun',
+      'playful confident club energy, natural social smile, carefree nightlife expression, authentic fun',
+      'flirtatious natural smile, social confident gaze, nightlife energy, genuine carefree expression',
+    ]);
+    else if(isBeach || isPool) expression = _pick([
+      'natural sun-happy relaxed smile, carefree vacation expression, candid outdoor joy, real summer energy',
+      'relaxed vacation smile, genuine happy outdoor expression, carefree summer energy, sun-happy authentic look',
+      'candid beach joy, natural warm smile, genuine vacation happiness, relaxed carefree outdoor expression',
+    ]);
+    else if(isYoga)    expression = _pick([
+      'serene focused inward expression, calm natural breath, peaceful body awareness, yoga meditation energy',
+      'peaceful yoga serenity, eyes gently closed or soft downward gaze, calm mindful expression',
+      'meditative calm expression, soft peaceful yoga energy, inward-focused natural look, serene breath',
+    ]);
+    else if(isMirror)  expression = _pick([
+      'natural introspective self-aware gaze, subtle confident smile, candid mirror moment, genuine private look',
+      'confident self-aware mirror gaze, natural subtle smile, genuine private introspective moment',
+      'soft self-reflective gaze, slightly confident expression, authentic private mirror moment, natural look',
+    ]);
+    else if(isNature)  expression = _pick([
+      'serene organic outdoor expression, content peaceful natural look, candid nature connection, unposed energy',
+      'peaceful natural expression, soft content look, genuine outdoor freedom, candid nature energy',
+      'dreamy outdoor expression, soft eyes, natural content smile, genuine connection with natural surroundings',
+    ]);
+    else if(isRunway)  expression = _pick([
+      'fierce editorial runway expression, powerful directional gaze, high-fashion presence, commanding catwalk',
+      'intense runway stare, powerful fashion-forward expression, commanding directional gaze, editorial power',
+      'steely editorial gaze, high-fashion fierce expression, natural commanding presence, real model energy',
+    ]);
+    else if(isCar)     expression = _pick([
+      'confident flirtatious look, playful automotive energy, natural bold expression, real confident woman energy',
+      'bold confident gaze, natural playful automotive expression, flirtatious self-assured look',
+      'self-assured confident expression, natural automotive boldness, genuine playful confident look',
+    ]);
+    else if(isIndoor || isLuxury || isLuxuryHotel) expression = _pick([
+      'soft sensual confident expression, natural intimate look, genuine private elegant energy',
+      'natural confident indoor expression, subtle sensuality, genuine private authentic look',
+      'relaxed confident private expression, soft natural gaze, genuine intimate authentic energy',
+    ]);
+    else               expression = _pick([
+      'natural relaxed genuine expression, authentic real-person look, candid unposed moment, not forced',
+      'soft authentic expression, natural genuine look, candid real-person energy, unposed natural',
+      'genuine relaxed natural expression, authentic candid look, real human presence, not performed',
+    ]);
   }
 
-  // ── COLOR MOOD / GRADE ────────────────────────────────────────────────────
+  // ── COLOR MOOD / GRADE — matched film stock per mood ─────────────────────
   let colorGrade = '';
-  if(isSunset)        colorGrade = 'warm golden hour light, natural orange tones, Kodak film colors';
-  else if(isNight)    colorGrade = 'natural night ambient light, real shadows, available light photography';
-  else if(isBeach)    colorGrade = 'natural tropical light, real sun colors, Kodak Portra tones';
-  else if(isForest)   colorGrade = 'natural green tones, organic earthy light, real outdoor colors';
-  else if(isCafe)     colorGrade = 'natural warm indoor light, ambient tones, film grain';
-  else                colorGrade = 'natural true-to-life colors, Kodak Portra 400 film tones, slight grain';
+  if(isSunset || isSunsetScene) colorGrade = _pick([
+    'warm golden hour tones, natural orange-amber color science, Kodak Portra 400 warm film rendition',
+    'cinematic golden hour, warm amber-orange natural tones, analog film warm color grade, natural sunset palette',
+    'warm orange-gold natural light, Kodak Portra 800 pushed film colors, warm analog sunset rendering',
+  ]);
+  else if(isNight)    colorGrade = _pick([
+    'natural night ambient light, available light photography, real shadows, Cinestill 800T tungsten film tones',
+    'moody nocturnal real colors, available light photography, authentic night tones, warm sodium ambient',
+    'night analog tones, Cinestill 800T color science, warm halation on light sources, moody authentic night',
+  ]);
+  else if(isBeach)    colorGrade = _pick([
+    'natural tropical light, vivid saturated beach colors, Kodak Ektar 100 vivid outdoor film tones',
+    'tropical film tones, bright natural beach colors, Kodak Ektar vivid saturation, real outdoor warm colors',
+    'bright saturated tropical colors, natural beach light, Fuji Velvia-inspired vivid outdoor film rendering',
+  ]);
+  else if(isForest || isNature) colorGrade = _pick([
+    'natural green tones, organic earthy light, real outdoor colors, Kodak Portra 400 natural greens',
+    'earthy organic outdoor colors, natural green-gold tones, Fuji Pro 400H outdoor natural rendering',
+    'natural forest tones, organic green-warm palette, real outdoor documentary colors, analog natural',
+  ]);
+  else if(isShower)   colorGrade = _pick([
+    'warm intimate bathroom tones, slight warm cast from tungsten, Fuji Pro 400H soft color rendering',
+    'warm soft bathroom color, slightly muted intimate tones, analog film warm render in low light',
+    'intimate warm analog color, soft muted bathroom tones, gentle warm cast, film grain visible',
+  ]);
+  else if(isCafe || isRestaurant) colorGrade = _pick([
+    'natural warm indoor light, amber ambient tones, film grain, Kodak Portra warm indoor rendering',
+    'warm cozy interior tones, golden-amber natural color, Fuji Pro 400H indoor warm rendering',
+    'warm café amber tones, intimate indoor natural color, analog warm rendering, gentle film grain',
+  ]);
+  else if(isSnow)     colorGrade = _pick([
+    'cool crisp winter tones, slight blue-cast shadows, bright white environment, cool natural winter rendering',
+    'cold clear winter light, crisp cool color, blue-cast open sky ambient, clean analog winter rendering',
+    'cold winter blue-white tones, slight warm accent from indoor light if applicable, clean cold rendering',
+  ]);
+  else                colorGrade = _pick([
+    'natural true-to-life colors, Kodak Portra 400 film tones, slight grain, natural analog rendering',
+    'natural analog film color, Kodak Portra warm natural tones, authentic documentary colors',
+    'honest documentary color, natural film tones, Kodak Portra 400 natural warm rendering, real colors',
+  ]);
+
+  // ── CINEMATIC ATMOSPHERE ──────────────────────────────────────────────────
+  // Adds a cinematic depth/atmosphere layer per scene type — fog, mist, particles, haze
+  let atmosphere = '';
+  if(isShower || isSpa)  atmosphere = 'steam atmosphere, moisture in air, soft light diffusion through steam';
+  else if(isForest || isPark) atmosphere = 'atmospheric scattered light, light haze in forest depth, organic depth of field';
+  else if(isSunset || isSunsetScene) atmosphere = 'warm atmospheric haze, golden dust particles in light shafts, cinematic warm depth';
+  else if(isNight)       atmosphere = 'moody atmospheric depth, city light ambient pollution, cinematic nocturnal depth of field';
+  else if(isBeach)       atmosphere = 'sea salt haze in air, atmospheric beach light, slight warm coastal haze';
+  else if(isPool)        atmosphere = 'pool steam shimmer in hot sun, water vapour in tropical heat, atmospheric pool depth';
+  else if(isSnow)        atmosphere = 'snowflakes in air, cold crisp atmospheric clarity, winter cold depth of field';
+  else if(isClub)        atmosphere = 'club atmosphere, light haze from fog machine, atmospheric depth, cinematic nightclub depth';
+  else if(isRain)        atmosphere = 'rain mist in air, rain drops creating atmospheric haze, wet atmospheric depth';
+  else if(isRooftop)     atmosphere = 'city atmospheric glow, warm urban light pollution in background, cinematic rooftop depth';
 
   // ── UNIVERSAL HUMAN-REALISM ANCHOR ────────────────────────────────────────
   // Appended to every expanded scene regardless of type — prevents plastic/AI look
   // in any category (beach, gym, indoor, studio, outdoor, etc.)
   const _humanReal = 'authentic candid photograph, natural skin imperfections visible, real human skin pores, genuine human presence, not AI generated, not retouched, not beauty filtered';
 
-  // ── ASSEMBLE — lighting + environment + expression + colorGrade + realism ──
-  // NOTE: expression and colorGrade were previously computed but never included — fixed here
-  const extras = [lighting, environment, expression, colorGrade, _humanReal].filter(Boolean);
+  // ── ASSEMBLE — lighting + environment + scenePhysics + atmosphere + expression + colorGrade + realism ──
+  const extras = [lighting, environment, scenePhysics, atmosphere, expression, colorGrade, _humanReal].filter(Boolean);
   // expose scene outfit as Priority 4 fallback for clothing enforcement
   // only used when pose has no specific outfit (_POSE_OUTFIT_MAP, _cachedPoseOutfit, getPoseSensualOutfit all empty)
   expandScene._lastSceneOutfit = outfit;
@@ -13481,7 +13866,7 @@ function buildPrompt(englishText, rawPT){
       _fluxStyleCombined,
       _fluxLensCombined,
       // RAW anti-plastic + anti-digital-edit block EARLY (position 3) — FLUX pays most attention to early terms
-      `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}`,
+      `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || _autoFilmStock || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}`,
       // For back poses: only inject identity anchor (no face ID descriptors — they pull the model toward rendering a face)
       _poseIsBack
         ? (_faceFlux ? 'same consistent woman, consistent identity,' : '')
@@ -13514,7 +13899,7 @@ function buildPrompt(englishText, rawPT){
   }
   if(currentMode === 'mj'){
     // MJ realism core — style raw + high stylize brings it closest to real photography
-    const _mjFilm = getFilmStock() || 'Kodak Portra 400';
+    const _mjFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _mjSkinMarks = getSkinMarks();
     const _mjRealPrefix = _wantsNSFW
       ? `analog film photograph of a real human woman, 35mm film grain, ${_mjFilm}, documentary photography, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,${_mjSkinMarks ? ' ' + _mjSkinMarks + ',' : ''} explicit adult content, nsfw,`
@@ -13562,7 +13947,7 @@ function buildPrompt(englishText, rawPT){
     _params += ' --no ' + _mjNeg;
     const _mjFaceDesc = _getFaceID() ? `, ${_getFaceID()}, same consistent woman, same face` : '';
     // MJ mode: dynamic QF — use chip-selected film stock and lens
-    const _mjQFFilm = getFilmStock() || 'Kodak Portra 400';
+    const _mjQFFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _mjQFLensRaw = getLensCam();
     const _mjQFLens = _mjQFLensRaw ? _mjQFLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.4';
     const _mjQF = QF.replace('Kodak Portra 400', _mjQFFilm).replace('Canon EOS R5 85mm f/1.4', _mjQFLens);
@@ -13580,7 +13965,7 @@ function buildPrompt(englishText, rawPT){
     const _gptChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull].filter(Boolean).join(', ');
     // POSE FIRST — model interprets leading terms as primary instruction
     const _userContent = [pose.mj, _gptChipContent, _expandedGpt].filter(Boolean).join(', ');
-    const _gptFilm = getFilmStock() || 'Kodak Portra 400';
+    const _gptFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _gptLensRaw = _lensCamFull || getLensCam();
     const _gptLensSpec = _gptLensRaw ? _gptLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.8';
     const _gptSkinMarks = getSkinMarks();
@@ -13802,8 +14187,31 @@ function buildPrompt(englishText, rawPT){
   // Unique terms here: unedited RAW, SOOC, no Photoshop/retouching, subsurface scattering, bokeh, chromatic aberration
   // ── Film Stock injection (selected via chip or default Kodak Portra 400) ─
   const _selFilmStock = getFilmStock();
-  const _filmStockTerm = _selFilmStock || 'Kodak Portra 400 analog film';
-  const _rawStamp = `(${_filmStockTerm}:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (no post-processing:2.0), (no Photoshop:2.0), (no retouching:2.0), (no professional retouch:2.0), (not digital manipulation:2.0), (subsurface light scattering on skin:1.9), (${_selFilmStock ? _filmStockTerm : 'Kodak Portra analog color science'}:1.8), (natural skin translucency:1.8), (natural bokeh depth of field:1.7), (natural lens chromatic aberration:1.5), (natural vignette:1.4),`;
+  // Auto film stock: smart choice per scene mood when user has not picked one
+  const _autoFilmStock = (() => {
+    if(_selFilmStock) return _selFilmStock;
+    const _sk = (selectedPoseKey || '').toLowerCase();
+    const _cenLow = _cenarioChipFull.toLowerCase();
+    // Night/club → Cinestill 800T (warm halation tungsten look)
+    if(_sk.includes('night') || _sk.includes('club') || _cenLow.includes('night') || _cenLow.includes('club') || _cenLow.includes('neon'))
+      return 'Cinestill 800T pushed tungsten film';
+    // Beach/outdoor vivid → Kodak Ektar 100 (vivid saturated)
+    if(_sk.startsWith('beach-') || _sk.startsWith('pool-') || _cenLow.includes('beach') || _cenLow.includes('tropical') || _cenLow.includes('pool'))
+      return 'Kodak Ektar 100 vivid outdoor film';
+    // Shower/intimate/boudoir → Fuji Pro 400H (soft pastels)
+    if(_sk.startsWith('shower-') || _sk.startsWith('bath-') || _sk.includes('lying') || _sk.includes('boudoir') || _cenLow.includes('boudoir') || _cenLow.includes('bedroom'))
+      return 'Fuji Pro 400H soft pastel film';
+    // Sunset/golden hour → Kodak Portra 800 (warm pushed)
+    if(_sk.startsWith('sunset-') || _sk === 'sunset' || _cenLow.includes('sunset') || _cenLow.includes('golden hour'))
+      return 'Kodak Portra 800 pushed film';
+    // Gym/athletic → Kodak T-Max 400 (high contrast)
+    if(_sk.startsWith('gym-') || _sk.startsWith('legging-') || _sk.startsWith('yoga-'))
+      return 'Kodak T-Max 400 high-contrast film';
+    // Default: Portra 400
+    return 'Kodak Portra 400 analog film';
+  })();
+  const _filmStockTerm = _autoFilmStock;
+  const _rawStamp = `(${_filmStockTerm}:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (no post-processing:2.0), (no Photoshop:2.0), (no retouching:2.0), (no professional retouch:2.0), (not digital manipulation:2.0), (subsurface light scattering on skin:1.9), (${_filmStockTerm}:1.8), (natural skin translucency:1.8), (natural bokeh depth of field:1.7), (natural lens chromatic aberration:1.5), (natural vignette:1.4),`;
   // ── Skin Marks injection (multi-select) ────────────────────────────────
   const _skinMarksStr = getSkinMarks();
   const _skinMarksBoost = _skinMarksStr ? ', ' + _skinMarksStr.split(', ').filter(Boolean).map(t => `(${t}:1.8)`).join(', ') : '';
@@ -13907,38 +14315,67 @@ function getContextualNegative(){
   if(!selectedPoseKey) return '';
   const k = selectedPoseKey.toLowerCase();
   if(k.startsWith('beach-') || k.includes('praia') || k.includes('beach')){
-    return 'blurry water, blurry sand, out of focus waves, pixelated beach background, fake beach, studio beach';
+    return 'blurry water, blurry sand, out of focus waves, pixelated beach background, fake beach, studio beach, indoor beach backdrop, wrong sand texture, CGI ocean';
   }
   if(k.startsWith('yoga-') || k.includes('yoga') || k.includes('stretch')){
-    return 'wrong body stretch anatomy, impossible yoga pose, broken limbs stretch, dislocated joints, wrong flexibility';
+    return 'wrong body stretch anatomy, impossible yoga pose, broken limbs stretch, dislocated joints, wrong flexibility, broken spine, incorrect joint angles, unnatural limb position';
   }
   if(k.startsWith('shower-') || k.startsWith('bath-')){
-    return 'dry skin in shower, no water drops, no steam, fake wet look, dry hair when wet';
+    return 'dry skin in shower, no water drops, no steam, fake wet look, dry hair when wet, studio backdrop visible, painted water, fake shower tile';
   }
   if(k.startsWith('fantasy-') || k.includes('fantasy') || k.includes('warrior') || k.includes('mage')){
-    return 'real photograph, modern clothes, contemporary setting, non-fantasy elements, t-shirt in fantasy scene';
+    return 'real photograph, modern clothes, contemporary setting, non-fantasy elements, t-shirt in fantasy scene, modern urban setting, digital illustration flat look, cartoon render';
   }
   if(k.startsWith('dance-') || k.includes('dance') || k.includes('dancing')){
-    return 'frozen stiff pose, no movement, static rigid pose, blurry motion artifact, doubled body parts';
+    return 'frozen stiff pose, no movement, static rigid pose, blurry motion artifact, doubled body parts, wrong dance anatomy, impossible dance position';
   }
-  // Face close-up: add face symmetry + perfect features negatives
+  // Face close-up: face symmetry + perfect features negatives
   if(k.startsWith('butt-') || k.includes('closeup') || k.includes('close-up')){
-    return 'symmetrical perfect face, poreless skin, beauty filter, skin blur, no pores, doll face, AI face, CGI face, plastic face, fake eyelashes, perfect makeup, beauty retouch';
+    return 'symmetrical perfect face, poreless skin, beauty filter, skin blur, no pores, doll face, AI face, CGI face, plastic face, fake eyelashes, perfect makeup, beauty retouch, skin smoothing';
+  }
+  // Car poses: prevent floating, wrong car scale
+  if(k.startsWith('car-') || k.startsWith('moto-') || k.includes('car') || k.includes('moto')){
+    return 'floating above car, wrong car proportions, toy car, tiny car, impossible car scale, wrong perspective on vehicle, car interior visible when exterior, studio backdrop visible';
+  }
+  // Mirror poses: prevent double reflection errors
+  if(k.startsWith('mirror-') || k.includes('mirror') || k.includes('selfie')){
+    return 'wrong mirror reflection, impossible reflection angle, floating in mirror, mirror reflection mismatch, two different people in mirror, incorrect reflection physics, phone blocking face completely';
+  }
+  // Pool: water quality
+  if(k.includes('pool') || k.includes('swim') || k.includes('piscina')){
+    return 'dirty pool water, indoor bathroom look, blurry water, pixelated reflection, fake water, cloudy dirty pool, wrong water physics, incorrect water refraction';
   }
   // Standing full body: remove impossible figure
   if(k.startsWith('standing-') || (k.includes('standing') && !k.includes('closeup'))){
-    return 'perfect hourglass figure, impossible waist, CGI body, airbrushed body, perfect proportions, digital art body, plastic body, flawless skin, beauty filter';
+    return 'perfect hourglass figure, impossible waist, CGI body, airbrushed body, perfect proportions, digital art body, plastic body, flawless skin, beauty filter, feet cut off, floating';
   }
-  // Lying/boudoir: anti-smooth skin emphasis
+  // Sitting: prevent floating, wrong furniture scale
+  if(k.startsWith('sitting-') || k.includes('sitting') || k.startsWith('chair-')){
+    return 'floating above furniture, wrong furniture scale, impossible sitting anatomy, levitating, feet floating, incorrect contact with surface, wrong seat proportion';
+  }
+  // Kneeling: knee contact, floor realism
+  if(k.startsWith('kneeling-') || k.includes('kneeling')){
+    return 'floating above floor, knees not touching floor, wrong knee contact, levitating body, incorrect floor contact, hovering above surface';
+  }
+  // All fours / presenting: body contact with floor
+  if(k.startsWith('allfours-') || k.startsWith('presenting-') || k.includes('allfours')){
+    return 'floating above floor, hands not touching floor, knees floating, incorrect contact with surface, hovering, wrong floor contact physics';
+  }
+  // Lying/boudoir: anti-smooth skin emphasis + body physics
   if(k.includes('lying') || k.includes('supine') || k.includes('prone') || k.startsWith('outfit-')){
-    return 'perfect smooth skin, no pores, airbrushed, beauty filter, plastic skin, doll body, CGI render, no skin folds, perfect figure, unrealistic skin';
+    return 'perfect smooth skin, no pores, airbrushed, beauty filter, plastic skin, doll body, CGI render, no skin folds, perfect figure, unrealistic skin, floating above surface, no body contact with bed or floor';
   }
-
-  if(k.includes('pool') || k.includes('swim') || k.includes('piscina')){
-    return 'dirty pool water, indoor bathroom look, blurry water, pixelated reflection, fake water';
-  }
+  // Night/club atmosphere
   if(k.includes('night') || k.includes('club') || k.includes('noite')){
-    return 'daylight in nightclub, harsh flash, overexposed club scene, invisible face in dark, no atmosphere';
+    return 'daylight in nightclub, harsh flash, overexposed club scene, invisible face in dark, no atmosphere, flat lighting, studio flash in club, wrong nightclub vibe';
+  }
+  // Gym/workout: performance look realism
+  if(k.startsWith('gym-') || k.startsWith('legging-') || k.includes('workout') || k.includes('fitness')){
+    return 'perfect body, no sweat, plastic perfect skin in gym, unrealistic fitness model body, no muscle engagement, wrong gym equipment proportion, floating above gym floor';
+  }
+  // Nature/outdoor
+  if(k.startsWith('nature-') || k.startsWith('outdoor-') || k.startsWith('sunset-')){
+    return 'studio fake background, painted backdrop, obvious green screen, fake sky, wrong outdoor perspective, synthetic nature background, CGI landscape';
   }
   return '';
 }
