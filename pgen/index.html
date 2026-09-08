@@ -1031,6 +1031,38 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
         </div>
       </div>
 
+      <!-- 1️⃣5️⃣ TATUAGENS (multi-select) -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">1️⃣5️⃣ Tatuagens <span style="font-size:0.7em;font-weight:400;opacity:0.6;">— visíveis no corpo (multi)</span></div>
+        <div class="quick-chips" id="qchips-tatuagens">
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="small delicate tattoo on neck, fine line neck tattoo, small ink on neck">🖤 Pescoço</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="full sleeve tattoo on arm, detailed arm sleeve tattoo, covered arm with tattoo artwork from shoulder to wrist">💪 Sleeve Braço</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="tattoo on ribs and side torso, rib cage tattoo, side body ink visible">🌿 Costela</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="large back tattoo, full back body art, detailed spine and back ink artwork">🦋 Costas</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="thigh tattoo, upper leg tattoo, floral or decorative thigh ink visible">🌸 Coxa</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="ankle tattoo, small delicate ankle ink, fine line ankle tattoo">⚓ Tornozelo</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="delicate floral fine-line tattoo, small botanical tattoo, minimalist flower or vine tattoo">🌺 Floral Delicada</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="traditional tribal tattoo, bold black tribal pattern tattoo, large geometric tribal body art">🗿 Tribal</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="collarbone tattoo, delicate clavicle tattoo, small fine-line collarbone ink">🔑 Clavícula</span>
+          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="finger tattoos, small knuckle or finger ink, delicate finger ring tattoos">💍 Dedos</span>
+        </div>
+      </div>
+
+      <!-- 1️⃣6️⃣ PIERCINGS (multi-select) -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">1️⃣6️⃣ Piercings <span style="font-size:0.7em;font-weight:400;opacity:0.6;">— visíveis (multi)</span></div>
+        <div class="quick-chips" id="qchips-piercings">
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="small diamond nose stud piercing, nostril piercing, small nose ring">💎 Nariz</span>
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="eyebrow bar piercing, curved barbell eyebrow piercing, brow piercing jewelry">🔘 Sobrancelha</span>
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="lip ring piercing, labret stud or ring, lower lip piercing jewelry visible">💋 Lábio</span>
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="tongue piercing, silver tongue barbell, tongue stud visible when mouth slightly open">👅 Língua</span>
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="belly button navel piercing, navel ring with dangling gem, navel barbell jewelry">🌟 Umbigo</span>
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="multiple ear piercings, stacked ear studs and hoops, industrial and helix ear piercings, curated ear">👂 Orelha Múltipla</span>
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="nipple piercing, nipple ring or barbell jewelry, nipple piercing visible">🌸 Mamilo</span>
+          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="septum ring piercing, circular septum jewelry, horseshoe septum ring through septum">🐂 Septo</span>
+        </div>
+      </div>
+
     </div>
     <!-- ── face-id-wrap mantido vazio para compatibilidade com JS ────────── -->
     <div class="face-id-wrap" id="face-id-wrap" style="display:none;"></div>
@@ -10046,7 +10078,7 @@ function _autoSaveCharDraft(){
   }
 
   localStorage.setItem('pgen_saved_chars', JSON.stringify(savedChars));
-  try { localStorage.setItem('pgen_char_draft', JSON.stringify({ quickChipState:{...quickChipState}, faceProfile:{...faceProfile}, ts: Date.now() })); } catch(e){}
+  try { localStorage.setItem('pgen_char_draft', JSON.stringify({ quickChipState:{...quickChipState}, faceProfile:{...faceProfile}, skinMarks:[...skinMarksActive], tatPierc:[...tatPiercActive], ts: Date.now() })); } catch(e){}
 
   renderSavedChars();
 
@@ -10091,6 +10123,23 @@ function _restoreCharDraft(){
       });
       _updateFacePreview();
     }
+    // Restore skinMarks
+    if(d.skinMarks && Array.isArray(d.skinMarks)){
+      d.skinMarks.forEach(val => {
+        skinMarksActive.add(val);
+        const el = document.querySelector(`.quick-chip[data-cat="skin_mark"][data-val="${CSS.escape(val)}"]`);
+        if(el) el.classList.add('active');
+      });
+    }
+    // Restore tattoos & piercings
+    if(d.tatPierc && Array.isArray(d.tatPierc)){
+      d.tatPierc.forEach(val => {
+        tatPiercActive.add(val);
+        const el = document.querySelector(`.quick-chip[data-cat="tatuagem"][data-val="${CSS.escape(val)}"]`)
+                || document.querySelector(`.quick-chip[data-cat="piercing"][data-val="${CSS.escape(val)}"]`);
+        if(el) el.classList.add('active');
+      });
+    }
     // Re-link auto slot index
     _autoCharIdx = savedChars.findIndex(c=>c.auto===true);
     _autoSaveCharDraft();
@@ -10121,6 +10170,8 @@ function _clearAllChips(){
   }
   // Clear quick chips
   Object.keys(quickChipState).forEach(k=>quickChipState[k]='');
+  skinMarksActive.clear();
+  tatPiercActive.clear();
   document.querySelectorAll('.quick-chip.active').forEach(el=>el.classList.remove('active'));
   // Clear face chips
   Object.keys(faceProfile).forEach(k=>faceProfile[k]='');
@@ -13810,7 +13861,7 @@ function buildPrompt(englishText, rawPT){
       _fluxStyleCombined,
       _fluxLensCombined,
       // RAW anti-plastic + anti-digital-edit block EARLY (position 3) — FLUX pays most attention to early terms
-      `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || _autoFilmStock || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}`,
+      `RAW analog film photograph, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, 35mm film grain on skin, ${getFilmStock() || _autoFilmStock || 'Kodak Portra 400'}, visible skin pores, skin micro-texture, natural skin imperfections, not plastic skin, not airbrushed skin, not retouched, no beauty filter, film grain visible,${getSkinMarks() ? ' ' + getSkinMarks() + ',' : ''}${getTatPierc() ? ' ' + getTatPierc() + ',' : ''}`,
       // For back poses: only inject identity anchor (no face ID descriptors — they pull the model toward rendering a face)
       _poseIsBack
         ? (_faceFlux ? 'same consistent woman, consistent identity,' : '')
@@ -13858,7 +13909,8 @@ function buildPrompt(englishText, rawPT){
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI';
     // MJ: add ethnicity skin texture terms BEFORE anatomy — MJ is attention-based, earlier = more influence
     const _mjEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
-    const _mjUserWithEtnia = [_mjUserContent, _mjEtnia ? 'Ethnicity: ' + _mjEtnia : ''].filter(Boolean).join(', ');
+    const _mjTatPierc = getTatPierc();
+    const _mjUserWithEtnia = [_mjUserContent, _mjEtnia ? 'Ethnicity: ' + _mjEtnia : '', _mjTatPierc || ''].filter(Boolean).join(', ');
     const core = _mjRealPrefix + ' ' + _mjUserWithEtnia + ', ' + _mjAnatomy;
     const _ar       = document.getElementById('mj-ar')?.value       || '2:3';
     const _v        = document.getElementById('mj-v')?.value        || '6.1';
@@ -13924,8 +13976,9 @@ function buildPrompt(englishText, rawPT){
     const _gptFaceDesc = _getFaceID() ? ` Face: ${_getFaceID()}, same consistent character in every image.` : '';
     // GPT: add ethnicity skin tone as plain text (strip SD weight syntax)
     const _gptEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
+    const _gptTatPierc = getTatPierc();
     // Order: subject (what to draw) → ethnicity skin → body realism → anatomy mandate → photo style
-    return [core, _gptEtnia ? 'Ethnicity skin tone: ' + _gptEtnia + '.' : '', _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
+    return [core, _gptEtnia ? 'Ethnicity skin tone: ' + _gptEtnia + '.' : '', _gptTatPierc ? 'Visible body modifications: ' + _gptTatPierc + '.' : '', _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
   }
   // ── Pose boost: ALL pose terms get :1.9; critical direction terms get :2.0 ─
   // Critical direction terms — the primary camera/orientation signal — :2.0 so they
@@ -14159,6 +14212,9 @@ function buildPrompt(englishText, rawPT){
   // ── Skin Marks injection (multi-select) ────────────────────────────────
   const _skinMarksStr = getSkinMarks();
   const _skinMarksBoost = _skinMarksStr ? ', ' + _skinMarksStr.split(', ').filter(Boolean).map(t => `(${t}:1.8)`).join(', ') : '';
+  // ── Tattoos & Piercings injection (multi-select) ─────────────────────────
+  const _tatPiercStr = getTatPierc();
+  const _tatPiercBoost = _tatPiercStr ? ', ' + _tatPiercStr.split(', ').filter(Boolean).map(t => `(${t}:1.9)`).join(', ') : '';
   // TOKEN-BUDGET ORDER (CLIP chunks = 75 tokens each):
   //
   // MANDATORY DESCRIPTION: user's typed description goes FIRST at :2.0 — it is the law.
@@ -14217,7 +14273,7 @@ function buildPrompt(englishText, rawPT){
     charPlain,               // Attractiveness terms — lowest priority, end
     _QF_S                    // Final quality flags
   ].filter(Boolean);
-  let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _skinMarksBoost;
+  let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _skinMarksBoost + _tatPiercBoost;
   // ── Close-up mode injection ────────────────────────────────────
   if(closeupMode && CLOSEUP_MAP[closeupTarget]){
     result = CLOSEUP_MAP[closeupTarget] + ', ' + result;
@@ -14860,6 +14916,21 @@ function toggleSkinMark(el){
   }
 }
 function getSkinMarks(){ return [...skinMarksActive].join(', '); }
+
+// ── TATUAGENS & PIERCINGS (multi-select) ────────────────────────────────────
+const tatPiercActive = new Set();
+function toggleTatPierc(el){
+  const val = el.dataset.val;
+  el.classList.remove('auto-set');
+  if(tatPiercActive.has(val)){
+    tatPiercActive.delete(val);
+    el.classList.remove('active');
+  } else {
+    tatPiercActive.add(val);
+    el.classList.add('active');
+  }
+}
+function getTatPierc(){ return [...tatPiercActive].join(', '); }
 
 // ── AUTO-PROFILE POR ETNIA ──────────────────────────────────────────────
 // Quando o usuário seleciona uma etnia, preenche automaticamente rosto,
@@ -16923,8 +16994,9 @@ async function montarPersonagem(){
   document.querySelectorAll('.quick-chip.active').forEach(c => {
     c.classList.remove('active','auto-set');
     const cat = c.dataset.cat;
-    if(cat && cat !== 'skin_mark') quickChipState[cat] = '';
+    if(cat && cat !== 'skin_mark' && cat !== 'tatuagem' && cat !== 'piercing') quickChipState[cat] = '';
     if(cat === 'skin_mark') skinMarksActive.delete(c.dataset.val);
+    if(cat === 'tatuagem' || cat === 'piercing') tatPiercActive.delete(c.dataset.val);
   });
   Object.keys(faceProfile).forEach(k => faceProfile[k] = '');
   document.querySelectorAll('.face-chip.active').forEach(c => c.classList.remove('active'));
