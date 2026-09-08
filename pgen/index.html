@@ -952,6 +952,32 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
         <div id="face-id-preview" style="display:none;margin-top:6px;padding:6px 10px;background:#dbeafe;border-radius:8px;font-size:0.73em;color:#1e40af;font-style:italic;line-height:1.5;"></div>
       </div>
 
+      <!-- 8B ROSTO DE REFERÊNCIA — global face consistency URL -->
+      <div class="quick-chip-section" id="section-face-ref">
+        <div class="quick-chip-label" style="margin-bottom:8px;">
+          🎭 Rosto de Referência
+          <span style="font-size:0.7em;font-weight:400;opacity:0.6;margin-left:4px;">— mantém o rosto idêntico em todos os prompts</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="url" id="face-ref-url"
+            placeholder="Cole aqui a URL de uma foto do rosto do personagem…"
+            style="flex:1;box-sizing:border-box;padding:8px 10px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:0.79em;color:#1e293b;background:#f8fafc;outline:none;transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='#7c3aed'"
+            onblur="this.style.borderColor=_faceRefUrl?'#7c3aed':'#bfdbfe'"
+            oninput="_onFaceRefChange(this.value)" />
+          <button id="face-ref-clear-btn" onclick="_clearFaceRef()"
+            style="display:none;padding:6px 10px;border:none;border-radius:8px;background:#fee2e2;color:#dc2626;font-size:0.8em;cursor:pointer;font-weight:700;transition:background 0.15s;"
+            onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">✕</button>
+        </div>
+        <!-- Status badge -->
+        <div id="face-ref-status" style="display:none;margin-top:7px;display:none;padding:7px 10px;background:linear-gradient(135deg,#ede9fe,#dbeafe);border:1.5px solid #c4b5fd;border-radius:8px;font-size:0.71em;color:#5b21b6;font-weight:600;line-height:1.6;">
+          🟢 <strong>Referência ativa</strong> — MJ: --cref automático &nbsp;•&nbsp; FLUX: âncora de identidade &nbsp;•&nbsp; GPT: instrução de rosto &nbsp;•&nbsp; SD: âncora forte de consistência
+          <div id="face-ref-thumb-wrap" style="margin-top:6px;display:none;">
+            <img id="face-ref-thumb" src="" alt="preview" style="height:48px;border-radius:6px;border:1.5px solid #c4b5fd;object-fit:cover;vertical-align:middle;" onerror="this.parentElement.style.display='none'" />
+          </div>
+        </div>
+      </div>
+
       <!-- 9 ILUMINAÇÃO -->
       <div class="quick-chip-section">
         <div class="quick-chip-label">9️⃣ Iluminação</div>
@@ -10078,7 +10104,7 @@ function _autoSaveCharDraft(){
   }
 
   localStorage.setItem('pgen_saved_chars', JSON.stringify(savedChars));
-  try { localStorage.setItem('pgen_char_draft', JSON.stringify({ quickChipState:{...quickChipState}, faceProfile:{...faceProfile}, skinMarks:[...skinMarksActive], tatPierc:[...tatPiercActive], ts: Date.now() })); } catch(e){}
+  try { localStorage.setItem('pgen_char_draft', JSON.stringify({ quickChipState:{...quickChipState}, faceProfile:{...faceProfile}, skinMarks:[...skinMarksActive], tatPierc:[...tatPiercActive], faceRefUrl: _faceRefUrl, ts: Date.now() })); } catch(e){}
 
   renderSavedChars();
 
@@ -10140,6 +10166,11 @@ function _restoreCharDraft(){
         if(el) el.classList.add('active');
       });
     }
+    // Restore face reference URL
+    if(d.faceRefUrl){
+      const inp = document.getElementById('face-ref-url');
+      if(inp){ inp.value = d.faceRefUrl; _onFaceRefChange(d.faceRefUrl); }
+    }
     // Re-link auto slot index
     _autoCharIdx = savedChars.findIndex(c=>c.auto===true);
     _autoSaveCharDraft();
@@ -10172,6 +10203,7 @@ function _clearAllChips(){
   Object.keys(quickChipState).forEach(k=>quickChipState[k]='');
   skinMarksActive.clear();
   tatPiercActive.clear();
+  _clearFaceRef();
   document.querySelectorAll('.quick-chip.active').forEach(el=>el.classList.remove('active'));
   // Clear face chips
   Object.keys(faceProfile).forEach(k=>faceProfile[k]='');
@@ -13885,7 +13917,9 @@ function buildPrompt(englishText, rawPT){
       _poseIsBack
         ? 'natural human skin warmth, natural breathing presence, natural neck muscle visibility, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin, natural back skin warmth and living glow,'
         : 'natural human skin warmth, natural breathing presence, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, natural lip dryness texture, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin,',
-      _fluxBody
+      _fluxBody,
+      // Face reference URL identity anchor — injected when user set a face reference
+      _getFaceRefUrl() ? `same woman as in the face reference, identical face identity preserved, consistent character face across all images, face matches reference photograph,` : '',
     ].filter(Boolean).join(', ');
     if(closeupMode && CLOSEUP_MAP[closeupTarget]){
       fluxPrompt = CLOSEUP_MAP[closeupTarget] + ', ' + fluxPrompt;
@@ -13918,12 +13952,14 @@ function buildPrompt(englishText, rawPT){
     const _chaos    = parseInt(document.getElementById('mj-chaos')?.value  || '0');
     const _weird    = parseInt(document.getElementById('mj-weird')?.value  || '0');
     const _sref     = (document.getElementById('mj-sref')?.value    || '').trim();
-    const _cref     = (document.getElementById('mj-cref')?.value    || '').trim();
+    // --cref: global face ref URL takes priority; fall back to MJ panel field
+    const _crefPanel  = (document.getElementById('mj-cref')?.value || '').trim();
+    const _cref       = _getFaceRefUrl() || _crefPanel;
     let _params = ` --ar ${_ar} --v ${_v} --style raw --stylize ${_stylize}`;
     if(_chaos > 0) _params += ` --chaos ${_chaos}`;
     if(_weird > 0) _params += ` --weird ${_weird}`;
     if(_sref)      _params += ` --sref ${_sref}`;
-    if(_cref)      _params += ` --cref ${_cref}`;
+    if(_cref)      _params += ` --cref ${_cref} --cw 80`; // --cw 80 = strong face consistency
     // --no: always block anatomy errors + AI/render look; remove anti-nude only when NSFW
     const _mjNegBase = [
       pose.neg || '',
@@ -13977,8 +14013,13 @@ function buildPrompt(englishText, rawPT){
     // GPT: add ethnicity skin tone as plain text (strip SD weight syntax)
     const _gptEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
     const _gptTatPierc = getTatPierc();
-    // Order: subject (what to draw) → ethnicity skin → body realism → anatomy mandate → photo style
-    return [core, _gptEtnia ? 'Ethnicity skin tone: ' + _gptEtnia + '.' : '', _gptTatPierc ? 'Visible body modifications: ' + _gptTatPierc + '.' : '', _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
+    // GPT: face reference URL — prepend as explicit matching instruction
+    const _gptRefUrl = _getFaceRefUrl();
+    const _gptRefInstruction = _gptRefUrl
+      ? `IMPORTANT: The woman in this image must have the exact same face as shown in this reference photograph: ${_gptRefUrl} — match her facial features, bone structure, eye shape, nose, lips, and skin tone precisely. Maintain this exact face identity in every generated image.`
+      : '';
+    // Order: [face ref instruction] → subject → ethnicity skin → body realism → anatomy mandate → photo style
+    return [_gptRefInstruction, core, _gptEtnia ? 'Ethnicity skin tone: ' + _gptEtnia + '.' : '', _gptTatPierc ? 'Visible body modifications: ' + _gptTatPierc + '.' : '', _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
   }
   // ── Pose boost: ALL pose terms get :1.9; critical direction terms get :2.0 ─
   // Critical direction terms — the primary camera/orientation signal — :2.0 so they
@@ -14172,10 +14213,14 @@ function buildPrompt(englishText, rawPT){
   // Split face traits individually so SD weight syntax stays valid (no commas inside parentheses)
   // Back poses: faceID descriptors pull the model toward rendering a face even when _FACE says (no face visible:2.0).
   // Keep only the character-consistency terms (same woman, consistent character) — omit all visible-feature terms.
-  const _faceAnchor = _faceID
+  const _refUrl  = _getFaceRefUrl();
+  const _refConsistencyBoost = _refUrl
+    ? '(same woman as reference:2.0), (identical face identity:2.0), (consistent character face:2.0), (same face every image:1.9), (face consistency:1.9),'
+    : '';
+  const _faceAnchor = (_faceID || _refUrl)
     ? (_poseIsBack
-        ? '(same woman:1.8), (consistent character:1.7),'
-        : _faceID.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`(${t}:1.9)`).join(', ') + ', (same woman:1.8), (consistent character:1.7),')
+        ? '(same woman:1.8), (consistent character:1.7),' + (_refUrl ? ' (same face as reference:2.0), (face identity preserved:2.0),' : '')
+        : (_faceID ? _faceID.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`(${t}:1.9)`).join(', ') + ', ' : '') + '(same woman:1.8), (consistent character:1.7),' + (_refUrl ? ' (same face as reference image:2.0), (face identity preserved across images:2.0),' : ''))
     : '';
   const _nsfwPrefix = _wantsNSFW ? '(nsfw:1.5), (explicit:1.5), (adult content:1.4),' : '';
   // Anti-plastic RAW stamp — placed FIRST so CLIP's very first tokens establish "film grain, not plastic"
@@ -14265,6 +14310,7 @@ function buildPrompt(englishText, rawPT){
     _EXPLICIT_REALISM,       // Anti-anime/photorealism — all :2.0, effective in chunk 2+
     _rawStamp,               // RAW/anti-plastic — all :2.0, effective in chunk 2+
     _PHOTO,                  // Quality/RAW/film — all weighted, chunk 2-3 fine
+    _refConsistencyBoost,    // Face reference URL consistency boost — :2.0 when ref set
     _faceAnchor,             // Face consistency — weighted, chunk 2-3 fine
     _FACE_REAL,              // Face/eye/lip/pore ultra-realism — all :1.6–2.0, chunk 2-3 fine
     charBoost,               // Character physical terms — :1.8, chunk 3 fine
@@ -14931,6 +14977,45 @@ function toggleTatPierc(el){
   }
 }
 function getTatPierc(){ return [...tatPiercActive].join(', '); }
+
+// ── FACE REFERENCE URL — global face consistency across all modes ────────────
+let _faceRefUrl = '';
+function _getFaceRefUrl(){ return _faceRefUrl.trim(); }
+
+function _onFaceRefChange(val){
+  _faceRefUrl = val.trim();
+  const statusEl  = document.getElementById('face-ref-status');
+  const clearBtn  = document.getElementById('face-ref-clear-btn');
+  const thumbWrap = document.getElementById('face-ref-thumb-wrap');
+  const thumbImg  = document.getElementById('face-ref-thumb');
+  const inp       = document.getElementById('face-ref-url');
+  if(_faceRefUrl){
+    if(statusEl)  { statusEl.style.display  = 'block'; }
+    if(clearBtn)  { clearBtn.style.display  = 'inline-block'; }
+    if(inp)       { inp.style.borderColor   = '#7c3aed'; }
+    // Try to show thumbnail
+    if(thumbWrap && thumbImg){
+      thumbImg.src = _faceRefUrl;
+      thumbWrap.style.display = 'block';
+    }
+    // Auto-populate MJ --cref field if empty
+    const mjCrefEl = document.getElementById('mj-cref');
+    if(mjCrefEl && !mjCrefEl.value.trim()) mjCrefEl.value = _faceRefUrl;
+  } else {
+    if(statusEl)  { statusEl.style.display  = 'none'; }
+    if(clearBtn)  { clearBtn.style.display  = 'none'; }
+    if(inp)       { inp.style.borderColor   = '#bfdbfe'; }
+    if(thumbWrap) { thumbWrap.style.display = 'none'; }
+  }
+  try{ _autoSaveCharDraft(); }catch(e){}
+}
+
+function _clearFaceRef(){
+  _faceRefUrl = '';
+  const inp = document.getElementById('face-ref-url');
+  if(inp) inp.value = '';
+  _onFaceRefChange('');
+}
 
 // ── AUTO-PROFILE POR ETNIA ──────────────────────────────────────────────
 // Quando o usuário seleciona uma etnia, preenche automaticamente rosto,
