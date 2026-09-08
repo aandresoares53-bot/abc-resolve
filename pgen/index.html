@@ -9276,6 +9276,406 @@ const POSES = {
     neg:      'penis hidden, clothed, separate bodies, solo, regular woman only no shemale, missionary, no oral acts shown', sup: true, label: 'Shemale 69 reverse — ela por cima com mulher'
   },
 
+  // ── LÉSBICAS — SOLO SENSUAL ────────────────────────────────────────────────
+  'lesbian-solo-naked-front': {
+    sd_start: 'solo woman, fully nude, standing facing camera, provocative expression, hands at sides or lightly touching body,',
+    sd_end:   'beautiful woman completely nude standing facing camera, confident and provocative expression, hands softly resting at hips or lightly touching her own body, full frontal nude solo, natural curves visible, soft boudoir lighting, bedroom or studio background, no men present, full body front view',
+    mj:       'solo woman fully nude standing facing camera, confident provocative expression, hands at sides, soft boudoir lighting, full body front view',
+    neg:      'clothed, men, male anatomy, couples, covered body', sup: true, label: 'Solo — nua de frente, olhar provocante'
+  },
+  'lesbian-solo-lingerie-bed': {
+    sd_start: 'solo woman in lingerie lying on bed, sensual solo boudoir, lace lingerie, seductive pose,',
+    sd_end:   'beautiful woman alone in bed wearing elegant lace lingerie set, lying in a seductive boudoir pose, lace bra and matching panties or lingerie set visible, silky sheets around her, soft warm bedroom lighting, no men, no male anatomy, intimate solo boudoir photography, woman alone on bed looking at camera with seductive expression',
+    mj:       'solo woman in lace lingerie lying seductively on bed, boudoir photography, soft bedroom lighting, intimate solo, no men',
+    neg:      'clothed fully, men, male anatomy, explicit penetration, standing, outdoor', sup: true, label: 'Solo — lingerie na cama, sensual'
+  },
+  'lesbian-solo-masturbation': {
+    sd_start: 'explicit solo female masturbation, woman lying on back, hand between legs touching vagina, eyes closed in pleasure,',
+    sd_end:   'woman alone lying on her back with one hand clearly between her thighs touching her vagina in self-pleasure, other hand on her breast, eyes closed with expression of pleasure, fully nude or minimal clothing pushed aside, no men present, explicit solo female masturbation, bedroom setting with soft lighting, woman face showing pleasure, hand clearly on genitals',
+    mj:       'explicit solo woman masturbating lying on back, hand on vagina, eyes closed in pleasure, no men, explicit solo female self-pleasure',
+    neg:      'men, male anatomy, couples, clothed hands, no contact, separate bodies', sup: true, label: 'Solo — masturbação, mão na vagina'
+  },
+  'lesbian-solo-toy-vibrator': {
+    sd_start: 'explicit solo woman using vibrator on vagina, lying back, eyes closed in pleasure, vibrator visible,',
+    sd_end:   'woman alone lying on her back with a vibrator clearly pressed against her vagina or clitoris, holding the vibrator with one hand, other hand on her breast or stomach, eyes closed with an expression of ecstasy, nude body on bed with soft lighting, vibrator clearly visible in her hand and touching her genitals, solo female with sex toy, no men present, explicit pleasure expression',
+    mj:       'solo woman using vibrator on vagina lying back, eyes closed in pleasure, vibrator clearly visible, solo female explicit, no men',
+    neg:      'men, male anatomy, clothed, no toy visible, standing, couples', sup: true, label: 'Solo — vibrador, olhos fechados prazer'
+  },
+  'lesbian-solo-dildo-riding': {
+    sd_start: 'explicit solo woman riding dildo, straddling dildo mounted on surface, facing camera, nude,',
+    sd_end:   'woman straddling and riding a dildo mounted on a flat surface, dildo clearly visible entering her vagina from below as she rides it, woman upright torso facing camera with expressive face, hands on thighs or raised, nude body, explicit solo female dildo riding, no men or male anatomy present, full body view showing dildo penetration, bedroom or studio setting',
+    mj:       'solo woman riding mounted dildo facing camera, dildo visible entering her, nude, explicit solo female with dildo, no men',
+    neg:      'men, male anatomy, penis, couples, clothed, no dildo visible', sup: true, label: 'Solo — montada no dildo'
+  },
+  'lesbian-solo-fingers-spread': {
+    sd_start: 'explicit solo female, fingers spreading vagina open toward camera, close-up pussy spread, lying back,',
+    sd_end:   'woman lying on her back with both hands using fingers to spread her vagina open directly toward the camera, explicit close-up or wide-angle view of spread vagina with fingers holding labia apart, woman alone with no men present, nude, vagina clearly exposed and spread open for camera, seductive expression, soft studio lighting, explicit solo female genital display with fingers',
+    mj:       'solo woman fingers spreading vagina open toward camera, explicit close-up spread pussy with fingers, no men, nude solo',
+    neg:      'men, male anatomy, clothed, closed legs, couples, penetration', sup: true, label: 'Solo — dedos abrindo vagina para câmera'
+  },
+  'lesbian-solo-squirt': {
+    sd_start: 'explicit solo female squirting, female ejaculation, fluid squirting from vagina, woman in ecstasy, lying back,',
+    sd_end:   'woman alone experiencing intense orgasm with female ejaculation, fluid visibly squirting from her vagina in a stream or spray, woman lying back or slightly upright with expression of intense pleasure, hands possibly touching her own body or holding her thighs apart, no men or male anatomy, explicit solo female squirt orgasm, fluid stream visible leaving her genitals, nude body, bed or studio setting',
+    mj:       'solo woman squirting female ejaculation, fluid stream from vagina, intense orgasm expression, explicit solo female squirt, no men',
+    neg:      'men, male anatomy, clothed, no fluid, couples, no orgasm', sup: true, label: 'Solo — squirt, ejaculação feminina'
+  },
+  'lesbian-solo-mirror-touch': {
+    sd_start: 'solo woman nude in front of mirror touching her own body sensually, reflection visible, hands exploring curves,',
+    sd_end:   'beautiful nude woman standing in front of a large mirror, hands exploring her own body curves sensually, one hand on breast, other sliding down stomach or thigh, both the woman and her reflection visible in the mirror, intimate self-touching solo boudoir, no men present, soft warm lighting highlighting curves and reflection, mirror selfie-style intimate pose, seductive expression looking at own reflection or camera',
+    mj:       'nude woman touching herself sensually in front of mirror, reflection visible, both hands on own body, intimate solo boudoir, no men',
+    neg:      'clothed, men, male anatomy, couples, no reflection, standing far from mirror', sup: true, label: 'Solo — no espelho, tocando próprio corpo'
+  },
+
+  // ── LÉSBICAS — BEIJO / CARÍCIA ────────────────────────────────────────────
+  'lesbian-kiss-standing': {
+    sd_start: 'two women kissing intensely while standing, both hands on each others faces, passionate kiss, no men,',
+    sd_end:   'two beautiful women standing and kissing each other intensely and passionately, both women with hands cupping each others faces or tangled in each others hair, deep passionate kiss, bodies close together or pressed against each other, both women visible, no men present, boudoir or bedroom setting, soft warm lighting, full body or three-quarter shot of two women in passionate lesbian kiss standing',
+    mj:       'two women kissing passionately while standing, hands on each others faces, intense lesbian kiss, soft lighting, no men, boudoir',
+    neg:      'men, male anatomy, separated, no contact, peck on cheek, standing far apart', sup: true, label: 'Beijo — em pé, intenso, mãos no rosto'
+  },
+  'lesbian-kiss-bed-top': {
+    sd_start: 'two women kissing in bed, one woman on top of the other, making out on bed, lesbian kiss, no men,',
+    sd_end:   'two women lying on a bed kissing, one woman positioned on top of the other, both women engaged in passionate kiss, the woman on top with hair falling around them, woman on bottom with arms around the top woman, both in lingerie or partially clothed or nude, soft bed and sheets, no men or male anatomy, lesbian couple in bed kissing, overhead or side angle showing both women, intimate bedroom lighting',
+    mj:       'two women kissing in bed one on top of the other, passionate lesbian makeout on bed, lingerie or nude, soft bedroom light, no men',
+    neg:      'men, male anatomy, standing, on floor, fully clothed, separated', sup: true, label: 'Beijo — uma em cima da outra na cama'
+  },
+  'lesbian-kiss-wall-press': {
+    sd_start: 'two women kissing pressed against wall, one pinning the other against wall, lesbian kiss, passionate,',
+    sd_end:   'two women kissing intensely with one woman pressing the other against a wall, the pressed woman with her back against the wall, the other woman leaning into her with hands on wall beside her, passionate and slightly dominant kiss, bodies pressed close together, both women visible, lingerie or minimal clothing, no men present, dramatic lighting on wall scene, lesbian wall kiss',
+    mj:       'two women kissing against wall one pressing the other, passionate lesbian wall kiss, dramatic lighting, lingerie, no men',
+    neg:      'men, male anatomy, standing freely no wall, separated, gentle peck only', sup: true, label: 'Beijo — pressionadas contra a parede'
+  },
+  'lesbian-kiss-floor-straddle': {
+    sd_start: 'two women kissing on floor, one sitting on the others lap straddling, floor makeout, lesbian, no men,',
+    sd_end:   'two women on the floor kissing, one woman sitting in the other womans lap straddling her, the woman on bottom sitting cross-legged or with legs out, the woman straddling facing her, both engaged in passionate kiss with hands around each other, bodies close together, floor or rug setting, soft warm lighting, lingerie or minimal clothing, no men or male anatomy, lesbian floor straddle kiss',
+    mj:       'two women kissing on floor one straddling other in lap, lesbian floor straddle makeout, warm lighting, lingerie, no men',
+    neg:      'men, male anatomy, standing, bed, separated, no straddling', sup: true, label: 'Beijo — uma sentada no colo da outra no chão'
+  },
+  'lesbian-neck-kiss-behind': {
+    sd_start: 'two women, one kissing the others neck from behind, both women, neck kiss from behind, backs exposed, no men,',
+    sd_end:   'two women, one standing behind the other with lips pressed against her neck kissing her, the woman in front with her head tilted to expose neck, eyes closed in pleasure, the woman behind with lips on neck and hands possibly on the front womans waist or shoulders, both women visible in frame, lingerie or nude backs exposed, no men present, soft intimate lighting, lesbian neck kiss from behind, sensual rear embrace',
+    mj:       'one woman kissing other womans neck from behind, both women, back view, exposed necks, intimate lesbian, soft lighting, no men',
+    neg:      'men, male anatomy, kissing on lips only, separated, fully clothed, facing each other', sup: true, label: 'Beijo no pescoço — por trás, costas expostas'
+  },
+  'lesbian-body-kiss-trail': {
+    sd_start: 'one woman kissing trail down other womans body, kisses from neck down to stomach, two women, lesbian, no men,',
+    sd_end:   'two women on bed, one woman lying on her back while the other woman kisses a trail down her body, lips on neck, then collarbone, then breasts, then stomach, the kissing woman visible bending over the lying woman leaving a trail of kisses down her torso, the lying woman with expression of pleasure, hands in the kissing womans hair, both women nude or in minimal lingerie, no men, intimate lesbian body kissing, soft warm boudoir lighting',
+    mj:       'one woman kissing trail down other womans body from neck to stomach, two women on bed, lesbian body kiss, soft boudoir, no men',
+    neg:      'men, male anatomy, fully clothed, standing, separated, no contact, single woman', sup: true, label: 'Beijos no corpo — trilha de beijos na barriga'
+  },
+  'lesbian-breast-kiss': {
+    sd_start: 'explicit two women, one sucking and licking the others breasts and nipples, lesbian breast play, both women, no men,',
+    sd_end:   'two women together with one woman clearly licking and sucking the other womans exposed breasts and nipples, the woman receiving with head tilted back in pleasure, hands in the other womans hair, the woman performing breast play with lips visibly on nipple, tongue visible, explicit lesbian breast and nipple stimulation, no men or male anatomy, both women visible, nude upper bodies, boudoir or bed setting, intimate lighting',
+    mj:       'one woman licking and sucking other womans breasts and nipples, lesbian breast play, both women visible, explicit nipple licking, no men, boudoir',
+    neg:      'men, male anatomy, clothed chests, separated, peck on cheek only, no nipple contact', sup: true, label: 'Beijo nos seios — lambendo e chupando mamilos'
+  },
+  'lesbian-makeout-topless': {
+    sd_start: 'two women making out topless, both women shirtless kissing passionately, breasts pressed together, lesbian makeout, no men,',
+    sd_end:   'two women kissing passionately while both are topless, bare breasts pressed against each other or visible, hands on each others bodies, intense passionate makeout session, both women with exposed breasts, no men or male anatomy, lingerie bottoms or nude, bed or boudoir setting, soft warm lighting, lesbian topless makeout with both women clearly visible, bodies pressed together',
+    mj:       'two topless women kissing passionately, bare breasts pressing together, hands on each others bodies, lesbian makeout, soft boudoir lighting, no men',
+    neg:      'men, male anatomy, clothed tops, separated, gentle peck only, single woman', sup: true, label: 'Makeout — pegação sem top, seios nus'
+  },
+
+  // ── LÉSBICAS — ORAL / CUNNILINGUS ─────────────────────────────────────────
+  'lesbian-cunnilingus-lying': {
+    sd_start: 'explicit lesbian cunnilingus, woman lying on back legs spread, other woman face between her legs licking vagina, two women, no men,',
+    sd_end:   'two women in explicit lesbian oral sex, one woman lying on her back with legs spread apart, the other woman with her face buried between the lying womans thighs performing cunnilingus, tongue visible on vagina, the lying woman with hands in the other womans hair, head back in pleasure, no men or male anatomy present, both women clearly visible, explicit lesbian oral sex with tongue on vagina, bed setting with soft lighting',
+    mj:       'explicit lesbian cunnilingus, woman lying on back legs spread, other woman face between legs tongue on vagina, explicit lesbian oral, no men, both women visible',
+    neg:      'men, male anatomy, penis, clothed, separated, kissing on lips only, solo', sup: true, label: 'Cunnilingus — ela deitada, outra entre as pernas'
+  },
+  'lesbian-cunnilingus-sitting': {
+    sd_start: 'explicit lesbian cunnilingus, woman sitting on other womans face, face-sitting, two women, tongue on vagina, no men,',
+    sd_end:   'two women in face-sitting position, one woman sitting on the other womans face straddling it, the woman below with face between the seated womans thighs performing cunnilingus with tongue visible on vagina, the woman on top in ecstasy with hands on the wall or her own body, both women clearly visible, no men or male anatomy, explicit lesbian face-sitting oral sex, bedroom setting',
+    mj:       'explicit lesbian face-sitting, woman sitting on other womans face for cunnilingus, tongue on vagina visible, both women, explicit lesbian oral face-sitting, no men',
+    neg:      'men, male anatomy, standing, clothed, separated, kissing on lips, solo woman only', sup: true, label: 'Cunnilingus — sentada no rosto da outra'
+  },
+  'lesbian-cunnilingus-standing': {
+    sd_start: 'explicit lesbian cunnilingus standing, one woman on knees licking standing womans vagina, two women, no men,',
+    sd_end:   'two women, one standing with legs slightly apart while the other woman kneels before her with face between her thighs performing cunnilingus, tongue clearly visible on vagina of standing woman, standing woman hands in kneeling womans hair, head back in pleasure, explicit lesbian oral sex while standing, both women clearly visible, no men or male anatomy, bedroom or against wall setting, dramatic lighting',
+    mj:       'explicit lesbian oral sex standing, woman on knees licking standing womans vagina, tongue on vagina, both women visible, explicit lesbian cunnilingus, no men',
+    neg:      'men, male anatomy, both lying down, clothed, separated, kissing on lips only, solo', sup: true, label: 'Cunnilingus — em pé, uma de joelhos'
+  },
+  'lesbian-cunnilingus-doggy': {
+    sd_start: 'explicit lesbian cunnilingus from behind doggy, one woman on all fours, other woman licking vagina from behind, two women, no men,',
+    sd_end:   'two women, one woman on all fours in doggy position, other woman behind her with face between her buttocks licking her vagina from behind, tongue clearly visible on vagina or perineum area, the woman on all fours with back arched and looking back, explicit lesbian doggy cunnilingus from behind, both women clearly visible, no men or male anatomy, bed or floor setting, rear view showing tongue on vagina',
+    mj:       'explicit lesbian cunnilingus from behind, woman on all fours other woman licking vagina from behind, rear view tongue on vagina, both women visible, no men',
+    neg:      'men, male anatomy, front view only, clothed, separated, standing, solo', sup: true, label: 'Cunnilingus — por trás, de quatro'
+  },
+  'lesbian-cunnilingus-pov': {
+    sd_start: 'explicit lesbian cunnilingus POV, camera from above looking down at woman performing oral on vagina, other womans legs visible framing camera, two women, no men,',
+    sd_end:   'POV perspective looking down between spread thighs at another woman performing cunnilingus, the womans face clearly visible between the legs licking the vagina below camera, tongue on vagina visible from above POV, legs of the woman receiving framing the shot on either side, explicit lesbian cunnilingus from POV perspective, no men or male anatomy, two women only, close-up POV angle showing tongue on vagina',
+    mj:       'POV lesbian cunnilingus looking down between legs, woman face visible performing oral on vagina, tongue on vagina from above POV, two women, explicit lesbian oral POV, no men',
+    neg:      'men, male anatomy, third person side view, standing, clothed, no tongue visible, solo', sup: true, label: 'Cunnilingus POV — câmera de cima'
+  },
+  'lesbian-69-classic': {
+    sd_start: 'explicit lesbian 69 position, two women performing mutual oral sex simultaneously, one woman on top, both eating out each other, no men,',
+    sd_end:   'two women in classic 69 position performing mutual cunnilingus simultaneously, one woman on top facing opposite direction with face between lower womans legs, both women with faces buried in each others vaginas, tongues visible on genitals, explicit lesbian 69 mutual oral sex with both women eating each other out, no men or male anatomy, bed setting, overhead or side view showing both womens faces on each others vaginas',
+    mj:       'explicit lesbian 69 position, two women performing mutual cunnilingus, one on top eating other out, both faces on vaginas, explicit lesbian 69, no men',
+    neg:      'men, male anatomy, penis, clothed, separated, solo, kissing lips only, no oral contact', sup: true, label: '69 lésbico — oral mútuo uma em cima'
+  },
+  'lesbian-69-side': {
+    sd_start: 'explicit lesbian 69 side position, two women lying on their sides performing mutual cunnilingus, facing opposite directions, both eating each other, no men,',
+    sd_end:   'two women lying on their sides in 69 position facing opposite directions, both performing cunnilingus on each other simultaneously, each womans face buried in the other womans genitals, tongues visible, bodies curved together in horizontal 69 on their sides, no men or male anatomy, explicit lesbian side 69 mutual oral sex, both women clearly visible, bed setting, soft lighting',
+    mj:       'explicit lesbian 69 side position, two women lying sideways performing mutual cunnilingus, both faces on each others vaginas, horizontal side 69, no men',
+    neg:      'men, male anatomy, one on top, standing, sitting, clothed, separated, solo', sup: true, label: '69 de lado — oral mútuo deitadas'
+  },
+  'lesbian-ass-lick': {
+    sd_start: 'explicit lesbian analingus, one woman licking other womans anus, tongue on ass, two women, no men,',
+    sd_end:   'two women, one woman with face buried in the other womans buttocks performing analingus with tongue clearly visible licking her anus, the receiving woman in ecstasy, hands gripping sheets or surface, back arched, explicit lesbian rimming and analingus, no men or male anatomy, both women clearly visible, rear view showing tongue on anus, explicit lesbian ass licking, bed or floor setting',
+    mj:       'explicit lesbian analingus, one woman licking other womans anus tongue on ass, rear view both women visible, explicit lesbian rimming, no men',
+    neg:      'men, male anatomy, clothed, front view only, no tongue contact, separated, solo', sup: true, label: 'Analingus — língua no ânus da outra'
+  },
+  'lesbian-wet-pussy-close': {
+    sd_start: 'explicit close-up lesbian cunnilingus, tongue on wet vagina close-up, glistening wet pussy, two women, no men,',
+    sd_end:   'extreme close-up of lesbian oral sex, tongue clearly visible pressed against glistening wet vagina, the vagina visibly wet and aroused, tongue lapping at wet labia and clitoris, saliva and natural fluids making everything glisten, close-up macro shot of lesbian cunnilingus in progress, no men or male anatomy, explicit very close shot of tongue on wet vagina, two women, one performing oral on the other',
+    mj:       'explicit close-up lesbian cunnilingus, tongue on wet glistening vagina, very close macro shot of tongue on wet pussy, two women no men, explicit wet lesbian oral close-up',
+    neg:      'men, male anatomy, wide shot, clothed, separated, dry, no tongue contact', sup: true, label: 'Close — vagina melada, língua em close'
+  },
+  'lesbian-double-cunni': {
+    sd_start: 'explicit lesbian double cunnilingus, two women simultaneously licking one womans vagina, two tongues on one vagina, three women, no men,',
+    sd_end:   'three women, two women with their faces together between the third womans spread legs, both performing cunnilingus simultaneously with two tongues visible on the one womans vagina and clitoris, the receiving woman in intense ecstasy, hands in both their hair, explicit triple lesbian scene with double oral, both oral performers visible with tongues on vagina, no men or male anatomy, explicit two tongues one vagina lesbian scene',
+    mj:       'explicit three women lesbian, two tongues simultaneously on one womans vagina, double cunnilingus, three women no men, explicit double lesbian oral',
+    neg:      'men, male anatomy, solo, just two women, clothed, separated, no tongue contact', sup: true, label: 'Duplo oral — duas línguas na vagina'
+  },
+
+  // ── LÉSBICAS — TRIBBING / TESOURA ─────────────────────────────────────────
+  'lesbian-tribbing-lying': {
+    sd_start: 'explicit lesbian tribbing, two women lying down grinding vaginas together, scissoring position, genitals touching, no men,',
+    sd_end:   'two women lying down with their vaginas pressed together in tribbing position, legs intertwined with each womans genitals in direct contact with the others, both women in pleasure, hands touching each other or gripping sheets, explicit lesbian tribbing with vaginas clearly pressed together and grinding, no men or male anatomy, both women fully visible, bed setting with soft lighting, bodies intertwined',
+    mj:       'explicit lesbian tribbing lying down, two women vaginas pressed and grinding together, bodies intertwined, explicit lesbian tribbing both visible, no men',
+    neg:      'men, male anatomy, separated genitals, clothed, solo, kissing only, no genital contact', sup: true, label: 'Tribbing — deitadas, vaginas juntas'
+  },
+  'lesbian-tribbing-sitting': {
+    sd_start: 'explicit lesbian tribbing sitting face to face, two women sitting facing each other grinding vaginas together, both sitting, no men,',
+    sd_end:   'two women sitting facing each other with their legs intertwined and vaginas pressed together in tribbing, both women upright sitting and grinding against each other, hands on each others shoulders or bodies for balance, explicit lesbian face-to-face tribbing sitting position, vaginas clearly in contact and grinding, both women visible with expressive pleasure faces, no men or male anatomy, bed or floor setting',
+    mj:       'explicit lesbian tribbing sitting face to face, two women sitting grinding vaginas together intertwined legs, explicit sitting tribbing both visible, no men',
+    neg:      'men, male anatomy, lying down, clothed, standing, separated, solo woman only', sup: true, label: 'Tribbing — sentadas frente a frente'
+  },
+  'lesbian-scissors-side': {
+    sd_start: 'explicit lesbian scissoring, two women lying on sides legs intertwined vaginas pressing together, side view, no men,',
+    sd_end:   'two women in scissoring position lying on their sides with legs deeply intertwined, one womans leg over the others, both womens vaginas pressed together and grinding in scissor sex position, side view of both women lying with intertwined legs, both women visible in profile, no men or male anatomy, explicit lesbian scissoring side view, bed setting, intimate lighting',
+    mj:       'explicit lesbian scissoring side view, two women lying on sides legs intertwined vaginas pressed together, explicit lesbian scissors position both visible, no men',
+    neg:      'men, male anatomy, sitting, standing, separated, clothed, solo woman', sup: true, label: 'Tesoura — de lado, pernas entrelaçadas'
+  },
+  'lesbian-scissors-standing': {
+    sd_start: 'two women standing embracing with genitals in contact, upright tribbing or standing scissoring, both women, no men,',
+    sd_end:   'two women standing embracing each other closely with one leg raised or intertwined, bodies pressed together closely with vaginas in contact in standing tribbing position, both women with arms around each other for balance, passionate embrace while grinding, explicit standing lesbian tribbing or scissoring, no men or male anatomy, both women fully visible upright, dramatic or soft lighting',
+    mj:       'two women standing embracing in upright tribbing position, vaginas in contact while standing, both women visible, lesbian standing scissoring embrace, no men',
+    neg:      'men, male anatomy, lying down, sitting, clothed, separated, solo, no genital contact', sup: true, label: 'Tesoura em pé — abraçadas, vaginas em contato'
+  },
+  'lesbian-grind-straddle': {
+    sd_start: 'explicit lesbian grinding, one woman straddling and riding the other from above, dry humping or tribbing straddle, two women, no men,',
+    sd_end:   'one woman straddling the other woman who is lying on her back, the straddling woman grinding her vagina against the lower womans vagina or thigh, both women in pleasure, the woman on top with hands on the lower womans chest or riding upright, explicit lesbian straddle grinding, vaginas in close contact, both women visible, no men or male anatomy, bed setting with warm lighting',
+    mj:       'one woman straddling and grinding on top of other woman, lesbian grinding straddle, explicit vaginal contact, both women visible, no men, bed',
+    neg:      'men, male anatomy, clothed, separated, standing, solo, side by side only', sup: true, label: 'Grinding — uma montada na outra, esfregando'
+  },
+  'lesbian-tribbing-doggy-style': {
+    sd_start: 'explicit lesbian tribbing from behind, one woman behind the other grinding vaginas doggy style, both women, no men,',
+    sd_end:   'two women with one woman positioned behind the other in a doggy-style tribbing, the woman behind pressing her vagina against the rear woman and grinding, both women on their knees or crouching, rear view showing both women with vaginas in contact from behind, the front woman looking back in pleasure, explicit lesbian doggy tribbing from behind, no men or male anatomy, both women visible, bed or floor setting',
+    mj:       'explicit lesbian tribbing from behind doggy style, one woman behind other grinding vaginas, rear view both women visible, lesbian doggy tribbing, no men',
+    neg:      'men, male anatomy, face to face, standing upright, clothed, separated, solo', sup: true, label: 'Tribbing doggy — por trás esfregando'
+  },
+
+  // ── LÉSBICAS — DEDILHADO / BRINQUEDOS ────────────────────────────────────
+  'lesbian-fingering-lying': {
+    sd_start: 'explicit lesbian fingering, one woman fingering the other lying on back, finger inside vagina, two women, no men,',
+    sd_end:   'two women, one lying on her back with the other woman beside or on top of her with fingers clearly inserted into her vagina, finger penetration visible, the receiving woman in ecstasy with eyes closed or head back, the giving woman with hand between the lying womans legs and fingers inside, explicit lesbian fingering, no men or male anatomy, both women visible, bed setting with intimate lighting',
+    mj:       'explicit lesbian fingering, one woman fingering other lying on back, fingers inside vagina visible, both women, explicit lesbian digital penetration, no men',
+    neg:      'men, male anatomy, clothed, separated, no finger contact, hand touching outside only, solo', sup: true, label: 'Dedilhado — deitada, dedo na vagina'
+  },
+  'lesbian-fingering-standing': {
+    sd_start: 'explicit lesbian fingering from behind, one woman behind other fingering her vagina from behind while standing, two women, no men,',
+    sd_end:   'two women standing, one woman behind the other with hand reaching around or between her legs from behind with fingers inserted into her vagina, the receiving woman leaning back into the other with head back in pleasure, the giving woman watching her reaction, explicit lesbian standing fingering from behind, fingers clearly inside vagina visible from side or rear, no men or male anatomy, both women standing and visible, dramatic or soft lighting',
+    mj:       'explicit lesbian fingering from behind while standing, one woman behind fingering other womans vagina, fingers inside from behind, both women visible, no men',
+    neg:      'men, male anatomy, lying down, sitting, facing each other, clothed, separated, solo', sup: true, label: 'Dedilhado em pé — por trás, dedos dentro'
+  },
+  'lesbian-fingering-doggy': {
+    sd_start: 'explicit lesbian fingering doggy, one woman on all fours, other woman fingering her vagina from behind, deep fingering, two women, no men,',
+    sd_end:   'two women, one woman on all fours in doggy position with the other woman kneeling behind her with fingers deeply inserted into her vagina from behind, fingers clearly visible entering vagina from the rear, the woman on all fours with back arched and expression of pleasure, explicit lesbian doggy fingering, rear view showing fingers deep in vagina, no men or male anatomy, both women clearly visible, bed or floor setting',
+    mj:       'explicit lesbian fingering doggy style, woman on all fours other woman fingering her from behind, fingers inside vagina rear view, both women visible, no men',
+    neg:      'men, male anatomy, lying on back, face to face, standing, clothed, separated, solo', sup: true, label: 'Dedilhado — de quatro, dedo profundo'
+  },
+  'lesbian-fingering-mutual': {
+    sd_start: 'explicit lesbian mutual fingering, two women simultaneously fingering each others vaginas, facing each other, fingers in each others genitals, no men,',
+    sd_end:   'two women sitting or lying facing each other, both simultaneously with fingers inside each others vaginas performing mutual masturbation and fingering, both hands between each others legs with fingers clearly inserted, both women in pleasure and looking at each other, explicit lesbian mutual fingering with both women fingering each other at same time, no men or male anatomy, both women clearly visible, intimate setting',
+    mj:       'explicit lesbian mutual fingering, two women simultaneously fingering each others vaginas, both women hands in each others genitals, facing each other, explicit mutual lesbian fingering, no men',
+    neg:      'men, male anatomy, one-sided only, clothed, standing, separated, solo', sup: true, label: 'Dedilhado mútuo — dedo na outra simultaneamente'
+  },
+  'lesbian-toy-dildo-sharing': {
+    sd_start: 'explicit lesbian double-ended dildo, two women sharing one dildo with one end in each womans vagina simultaneously, two women, no men,',
+    sd_end:   'two women sharing a double-ended dildo with one end inserted in each womans vagina simultaneously, both women facing each other or back to back with the dildo connecting them, both ends of the dildo clearly visible going into each womans vagina, both women in ecstasy, explicit lesbian double dildo sharing, no men or male anatomy, dildo clearly shown going into both women, bed setting with intimate lighting',
+    mj:       'explicit two women sharing double-ended dildo, one end in each womans vagina simultaneously, double dildo connecting both women, explicit lesbian double dildo, no men',
+    neg:      'men, male anatomy, one woman only, clothed, separated, no dildo visible, regular dildo for one', sup: true, label: 'Double dildo — compartilhando dildo duplo'
+  },
+  'lesbian-toy-vibrator-cunni': {
+    sd_start: 'explicit lesbian with vibrator and oral simultaneously, one woman performing cunnilingus while other uses vibrator on her, two women, no men,',
+    sd_end:   'two women with one performing oral cunnilingus on the other while simultaneously pressing a vibrator against her clitoris or vagina, tongue and vibrator both visible stimulating the receiving woman at once, the receiving woman in intense ecstasy, explicit lesbian combined oral and vibrator stimulation, both the tongue and vibrator clearly visible on the genitals, no men or male anatomy, both women visible, bed setting',
+    mj:       'explicit lesbian oral and vibrator combined, one woman licking other while also using vibrator on her vagina, tongue and vibrator both visible, both women, no men',
+    neg:      'men, male anatomy, just oral alone, just vibrator alone, clothed, separated, solo', sup: true, label: 'Vibrador + oral — vibrador e língua juntos'
+  },
+  'lesbian-toy-anal-beads': {
+    sd_start: 'explicit lesbian anal play with anal beads, one woman inserting anal beads into other womans anus, two women, no men,',
+    sd_end:   'two women engaged in anal play, one woman carefully inserting a string of anal beads into the other womans anus, the beads partially inserted and visible, the receiving woman in pleasure, explicit lesbian anal bead insertion, both women clearly visible, no men or male anatomy, the beads clearly shown being inserted or partially inside, intimate boudoir or bed setting with soft lighting',
+    mj:       'explicit lesbian anal beads play, one woman inserting anal beads into other womans anus, beads partially visible, both women, explicit lesbian anal play, no men',
+    neg:      'men, male anatomy, vaginal insertion, clothed, separated, no beads visible, solo', sup: true, label: 'Anal beads — contas anais inseridas'
+  },
+  'lesbian-toy-butt-plug': {
+    sd_start: 'explicit lesbian butt plug with oral, woman wearing butt plug in anus while receiving cunnilingus from other woman, two women, no men,',
+    sd_end:   'two women, one with a butt plug clearly inserted in her anus while receiving cunnilingus from the other woman simultaneously, the butt plug base visible in the anus, the tongue of the other woman on her vagina below, receiving woman in intense ecstasy, explicit lesbian simultaneous anal plug and oral, no men or male anatomy, both women visible, rear angle or side angle showing both the plug and the oral sex in progress',
+    mj:       'explicit lesbian butt plug and cunnilingus simultaneously, woman with butt plug in anus receiving oral sex, butt plug base visible, both women, no men',
+    neg:      'men, male anatomy, no plug visible, no oral, clothed, separated, solo', sup: true, label: 'Butt plug — plug anal com oral simultâneo'
+  },
+  'lesbian-fisting': {
+    sd_start: 'explicit lesbian fisting, one woman inserting fist into other womans vagina, hand inside, two women, no men,',
+    sd_end:   'two women, one with her hand or fist clearly inserted into the other womans vagina performing vaginal fisting, the fist or wrist visible at the vaginal opening or inside, the receiving woman in intense pleasure or ecstasy, hands gripping sheets, explicit lesbian vaginal fisting, no men or male anatomy, both women clearly visible, the hand insertion clearly shown, bed setting with intimate lighting',
+    mj:       'explicit lesbian vaginal fisting, one woman fist inside other womans vagina, wrist or fist at vaginal opening, both women visible, explicit lesbian fisting, no men',
+    neg:      'men, male anatomy, anal only, clothed, separated, no hand contact, solo', sup: true, label: 'Fisting — punho dentro da vagina'
+  },
+
+  // ── LÉSBICAS — STRAP-ON ────────────────────────────────────────────────────
+  'lesbian-strapon-doggy': {
+    sd_start: 'explicit lesbian strap-on sex doggy style, one woman wearing strap-on dildo penetrating other woman from behind, two women, no men,',
+    sd_end:   'two women in doggy position, one woman wearing a strap-on harness with dildo clearly visible penetrating the woman on all fours from behind, the receiving woman on hands and knees with back arched, the woman wearing strap-on holding her hips from behind, strap-on dildo clearly inserted and visible, explicit lesbian strap-on doggy sex, no men or male anatomy, both women visible, side view or rear showing penetration, bed setting',
+    mj:       'explicit lesbian strap-on doggy style, one woman wearing strap-on penetrating other from behind, dildo visible inserted, both women, lesbian strap-on sex, no men',
+    neg:      'men, male anatomy, real penis, face to face, lying down, clothed, separated, solo', sup: true, label: 'Strap-on — doggy, por trás'
+  },
+  'lesbian-strapon-missionary': {
+    sd_start: 'explicit lesbian strap-on missionary, one woman wearing strap-on penetrating other woman face to face, two women, no men,',
+    sd_end:   'two women in missionary position, one woman wearing a strap-on dildo on top of and facing the other woman who is lying on her back with legs apart, strap-on dildo clearly visible penetrating the woman below, face to face lesbian strap-on missionary sex, both women clearly visible, the top woman with strap-on harness showing, the bottom woman in pleasure looking up, explicit lesbian strap-on missionary, no men or male anatomy, bed setting',
+    mj:       'explicit lesbian strap-on missionary, woman with strap-on on top of woman lying on back face to face, dildo visible penetrating, both women, lesbian strap-on missionary, no men',
+    neg:      'men, male anatomy, real penis, doggy, cowgirl, clothed, separated, solo', sup: true, label: 'Strap-on — missionário, face a face'
+  },
+  'lesbian-strapon-cowgirl': {
+    sd_start: 'explicit lesbian strap-on cowgirl, woman riding strap-on worn by other woman below, cowgirl position, two women, no men,',
+    sd_end:   'two women in cowgirl position with one woman lying on her back wearing a strap-on dildo harness, and the other woman straddling and riding her from above with the strap-on dildo visibly inside her, riding woman upright facing the camera with hands on the strap-on wearers chest, explicit lesbian strap-on cowgirl riding, dildo visible between them, no men or male anatomy, both women clearly visible, front view showing both women',
+    mj:       'explicit lesbian strap-on cowgirl, woman riding strap-on worn by woman below, dildo visible between them, both women visible, lesbian strap-on cowgirl riding, no men',
+    neg:      'men, male anatomy, real penis, doggy, missionary, clothed, separated, solo, woman facing away', sup: true, label: 'Strap-on — cowgirl, montada'
+  },
+  'lesbian-strapon-reverse-cowgirl': {
+    sd_start: 'explicit lesbian strap-on reverse cowgirl, woman riding strap-on with back to strap-on wearer, two women, no men,',
+    sd_end:   'two women in reverse cowgirl position, one woman lying on her back wearing strap-on harness, other woman riding the strap-on facing away with her back to the wearer, dildo clearly visible between her thighs as she rides facing away, rear view of the riding woman with strap-on entering from below, both women visible, explicit lesbian reverse cowgirl strap-on, no men or male anatomy, bed setting',
+    mj:       'explicit lesbian strap-on reverse cowgirl, woman riding strap-on facing away, dildo visible entering from below, rear view both women, lesbian reverse cowgirl strap-on, no men',
+    neg:      'men, male anatomy, real penis, facing each other, missionary, doggy, clothed, separated', sup: true, label: 'Strap-on — reverse cowgirl'
+  },
+  'lesbian-strapon-standing': {
+    sd_start: 'explicit lesbian strap-on standing from behind, one woman wearing strap-on penetrating bent-forward woman from behind while standing, two women, no men,',
+    sd_end:   'two women standing, one woman wearing strap-on harness penetrating the other woman who is bent forward at the hips, strap-on dildo clearly visible entering the bent woman from behind, both standing, side view showing both women and the strap-on penetration, the bent woman with hands on a surface for support, explicit lesbian standing strap-on sex from behind, no men or male anatomy, both women visible',
+    mj:       'explicit lesbian strap-on standing from behind, woman with strap-on penetrating bent-forward woman both standing, dildo visible from behind, side view both women, no men',
+    neg:      'men, male anatomy, real penis, lying down, cowgirl, sitting, clothed, separated, solo', sup: true, label: 'Strap-on — em pé, por trás'
+  },
+  'lesbian-strapon-legs-up': {
+    sd_start: 'explicit lesbian strap-on legs up position, woman wearing strap-on penetrating woman with legs raised high, deep penetration, two women, no men,',
+    sd_end:   'two women in legs-up penetration position, the receiving woman on her back with legs raised high while the other woman wearing a strap-on dildo penetrates deeply, strap-on clearly visible entering at a deep angle due to raised legs, both women clearly visible, the penetrating woman holding the raised legs, the receiving woman in ecstasy, explicit lesbian strap-on deep legs-up penetration, no men or male anatomy, bed setting',
+    mj:       'explicit lesbian strap-on legs-up position, woman wearing strap-on penetrating woman with legs raised high, deep angle dildo visible, both women visible, no men',
+    neg:      'men, male anatomy, real penis, flat legs, standing, clothed, separated, solo', sup: true, label: 'Strap-on — pernas levantadas, fundo'
+  },
+  'lesbian-strapon-anal': {
+    sd_start: 'explicit lesbian strap-on anal sex, one woman wearing strap-on penetrating other womans anus, anal penetration with dildo, two women, no men,',
+    sd_end:   'two women engaged in anal sex with a strap-on, one woman wearing a strap-on harness with dildo clearly visible inserted into the other womans anus, the receiving woman in doggy or prone position showing anus clearly accepting the strap-on dildo, explicit lesbian strap-on anal penetration with dildo in anus clearly visible, no men or male anatomy, both women visible, rear angle showing dildo in anus',
+    mj:       'explicit lesbian strap-on anal sex, woman wearing strap-on dildo penetrating other womans anus, dildo in anus visible, both women, explicit lesbian anal strap-on, no men',
+    neg:      'men, male anatomy, real penis, vaginal only, clothed, separated, solo, no penetration visible', sup: true, label: 'Strap-on anal — penetração anal'
+  },
+  'lesbian-strapon-blowjob': {
+    sd_start: 'explicit lesbian sucking strap-on dildo, one woman on knees giving blowjob to strap-on worn by other woman, two women, no men,',
+    sd_end:   'two women, one wearing a strap-on harness with dildo and the other kneeling before her with mouth on the strap-on dildo performing oral sex on it, the kneeling woman with lips around the dildo sucking it, the strap-on wearer looking down with hands possibly in the kneeling womans hair, explicit lesbian strap-on blowjob oral on dildo, no men or real penis, both women clearly visible, studio or bedroom setting',
+    mj:       'explicit lesbian sucking strap-on dildo, woman on knees blowing strap-on worn by standing woman, dildo in mouth, both women visible, lesbian strap-on oral, no men no real penis',
+    neg:      'men, real penis, male anatomy, lying down, penetration, clothed, separated, solo', sup: true, label: 'Strap-on boquete — chupando o strap-on'
+  },
+  'lesbian-strapon-dp': {
+    sd_start: 'explicit lesbian double penetration with strap-ons, two women using two strap-ons for vaginal and anal penetration simultaneously, three women, no men,',
+    sd_end:   'three women in lesbian double penetration scene, one woman receiving two strap-on dildos simultaneously — one in vagina and one in anus — from two other women both wearing strap-on harnesses, both strap-on dildos clearly visible entering the receiving womans two openings simultaneously, explicit lesbian DP with two strap-ons, no men or male anatomy, all three women clearly visible, intimate lighting',
+    mj:       'explicit lesbian double penetration with two strap-ons, woman receiving two dildos vaginal and anal simultaneously from two other women with strap-ons, three women no men',
+    neg:      'men, male anatomy, real penis, one dildo only, clothed, separated, solo, just two women', sup: true, label: 'Strap-on DP — dupla penetração lésbica'
+  },
+  'lesbian-strapon-pov': {
+    sd_start: 'explicit lesbian strap-on POV, camera from strap-on wearer perspective looking down at woman below being penetrated by strap-on, two women, no men,',
+    sd_end:   'POV perspective from the strap-on wearing womans point of view looking down at the other woman below, strap-on dildo visible in lower frame entering the woman below, the receiving womans face looking up at camera with expressive pleasure, possibly her legs visible framing the strap-on, explicit lesbian strap-on POV penetration perspective, no men or male anatomy, just two women, dildo visible going into woman below camera',
+    mj:       'explicit lesbian strap-on POV, looking down from strap-on wearers perspective at woman being penetrated, dildo visible entering woman below, POV lesbian strap-on, no men',
+    neg:      'men, male anatomy, real penis, third person view, standing, clothed, separated, solo', sup: true, label: 'Strap-on POV — câmera da dominante'
+  },
+
+  // ── LÉSBICAS — DOM/SUB / FETICHE ──────────────────────────────────────────
+  'lesbian-dom-sub-kneel': {
+    sd_start: 'lesbian dominant submissive, submissive woman kneeling at feet of dominant woman, BDSM lesbian dynamic, two women, no men,',
+    sd_end:   'two women in dominant and submissive dynamic, one woman confidently standing while the other woman kneels submissively at her feet, the dominant woman looking down with authority possibly with a hand on the kneeling womans head, the submissive woman looking up in submission, both women in leather, latex or lingerie, collar possibly on submissive neck, explicit lesbian dom-sub power dynamic, no men or male anatomy, both women clearly visible',
+    mj:       'lesbian dominant-submissive, dominant woman standing submissive woman kneeling at her feet, BDSM dynamic two women, collar, dominant posture, no men',
+    neg:      'men, male anatomy, both standing, both kneeling, clothed casually, no power dynamic visible, separated', sup: true, label: 'Dom/Sub — submissa ajoelhada, dominante em pé'
+  },
+  'lesbian-dom-sub-leash': {
+    sd_start: 'lesbian BDSM dominant woman holding leash attached to submissive womans collar, two women, no men,',
+    sd_end:   'two women in lesbian BDSM dynamic, one woman as the dominant holding a leash attached to a collar worn by the other woman who is submissive, the dominant woman in leather or lingerie holding the leash with authority, the submissive woman on all fours or kneeling with collar and leash visible, explicit lesbian dom with leash and collar control, no men or male anatomy, both women visible, dramatic dark boudoir lighting',
+    mj:       'lesbian BDSM dominant woman holding leash on collar of submissive woman, two women dom-sub with leash, no men, dramatic dark boudoir',
+    neg:      'men, male anatomy, both dominant, no leash visible, no collar, casual clothing, separated', sup: true, label: 'Dom/Sub — coleira e guia, dominante controlando'
+  },
+  'lesbian-dom-sub-spanking': {
+    sd_start: 'explicit lesbian spanking, dominant woman spanking submissive womans bare bottom, hand on bare ass, two women, no men,',
+    sd_end:   'two women in spanking scene, the dominant woman spanking the submissive womans bare exposed buttocks with an open hand, the submissive woman bent over the dominant womans knee or lying across a surface presenting her bare ass for spanking, the hand of the dominant woman clearly shown making contact with bare buttocks, both women clearly visible, no men or male anatomy, explicit lesbian spanking BDSM scene, dramatic lighting',
+    mj:       'explicit lesbian spanking, dominant woman hand spanking submissive womans bare ass, hand on bare buttocks, both women visible, lesbian BDSM spanking, no men',
+    neg:      'men, male anatomy, clothed bottom, no hand contact, gentle touch, separated, solo', sup: true, label: 'Dom/Sub — spanking, palmada na bunda'
+  },
+  'lesbian-dom-sub-bondage': {
+    sd_start: 'explicit lesbian bondage, one woman tied with rope, exposed and bound, other woman dominant, two women, no men,',
+    sd_end:   'two women in bondage scene, one woman bound with rope in decorative or functional Shibari-style bondage with arms tied behind her back or wrists bound, body exposed and vulnerable, the dominant woman standing near her with authority, the bound woman in helpless but erotic position, ropes visible around body, no men or male anatomy, explicit lesbian bondage BDSM with bound woman exposed, both women visible, boudoir setting with dramatic lighting',
+    mj:       'lesbian bondage, one woman tied with rope exposed and bound, dominant woman near her, Shibari ropes visible, both women, BDSM lesbian bondage, no men',
+    neg:      'men, male anatomy, clothed bound woman, no ropes visible, both free, casual setting, solo', sup: true, label: 'Bondage — amarrada com corda, exposta'
+  },
+  'lesbian-dom-sub-blindfold': {
+    sd_start: 'lesbian BDSM blindfold, one woman blindfolded with hands tied, other woman dominant touching her, two women, no men,',
+    sd_end:   'two women in sensory play BDSM scene, one woman with a blindfold over her eyes and wrists bound together, body exposed and slightly tense with anticipation, the dominant woman with hands on the blindfolded womans body teasing or touching her, the blindfolded woman unable to see in vulnerable state, explicit lesbian dom-sub blindfold scene, both women visible, no men or male anatomy, moody dramatic boudoir lighting',
+    mj:       'lesbian BDSM blindfold scene, one woman blindfolded hands tied, other woman touching her body dominantly, both women, lesbian sensory bondage play, no men',
+    neg:      'men, male anatomy, both seeing, no blindfold visible, casual, separated, solo', sup: true, label: 'Vendada — olhos vendados, mãos amarradas'
+  },
+  'lesbian-dom-feet-worship': {
+    sd_start: 'lesbian foot worship, submissive woman licking and kissing dominant womans feet, two women, no men,',
+    sd_end:   'two women in foot worship dynamic, one woman kneeling submissively and licking or kissing the other womans feet and toes, tongue visible on foot or toes, the dominant woman seated or standing with feet presented for worship looking down with authority, the submissive woman on knees with mouth on feet, explicit lesbian foot worship and toe sucking, no men or male anatomy, both women clearly visible, BDSM undertone',
+    mj:       'lesbian foot worship, submissive woman on knees licking and kissing dominant womans feet, tongue on feet, both women, lesbian feet worship dom-sub, no men',
+    neg:      'men, male anatomy, both standing equal, no foot contact, separate, casual, solo', sup: true, label: 'Foot worship — lambendo os pés da dominante'
+  },
+  'lesbian-wax-play': {
+    sd_start: 'lesbian wax play BDSM, dominant woman dripping candle wax on submissive womans nude body, two women, no men,',
+    sd_end:   'two women in wax play scene, the dominant woman holding a candle and dripping hot wax onto the submissive womans nude body, wax drips visible on skin of the submissive woman who is lying back or bound, expression of intense mixed sensation on the submissive womans face, the dominant woman in control with the candle, explicit lesbian wax play BDSM, no men or male anatomy, both women clearly visible, dramatic candlelit moody lighting',
+    mj:       'lesbian wax play, dominant woman dripping candle wax on nude submissive womans body, wax on skin, both women, lesbian BDSM wax play, no men, candlelight',
+    neg:      'men, male anatomy, no wax visible, clothed submissive, casual, separated, solo', sup: true, label: 'Wax play — cera quente no corpo da submissa'
+  },
+
+  // ── LÉSBICAS — GRUPAL / TROCA ────────────────────────────────────────────
+  'lesbian-threesome-69-chain': {
+    sd_start: 'explicit lesbian threesome 69 chain, three women in daisy chain 69 all performing oral on each other simultaneously, three women, no men,',
+    sd_end:   'three women in a lesbian daisy chain of 69 positions, each woman simultaneously performing cunnilingus on the next in a circular chain, three faces all buried in three vaginas simultaneously, all three women engaged in mutual oral pleasure in a circle or chain, explicit lesbian threesome oral daisy chain, no men or male anatomy, all three women clearly visible with faces between each others legs, intimate lighting',
+    mj:       'explicit lesbian threesome daisy chain 69, three women in oral sex chain each eating the next, all three faces on vaginas, lesbian oral chain three women, no men',
+    neg:      'men, male anatomy, just two women, not all performing oral, clothed, separated, solo', sup: true, label: 'Trío — corrente de 69, três em oral mútuo'
+  },
+  'lesbian-threesome-strapon': {
+    sd_start: 'explicit lesbian threesome strap-on, one woman wearing strap-on penetrating another while third woman receives oral, three women, no men,',
+    sd_end:   'three women in lesbian threesome, one woman wearing strap-on harness with dildo penetrating a second woman from behind or in front, while the second woman simultaneously performs cunnilingus on the third woman, all three connected in sexual acts, strap-on dildo visible, oral sex visible simultaneously, explicit lesbian threesome with strap-on and oral combined, no men or male anatomy, all three women clearly visible',
+    mj:       'explicit lesbian threesome, woman with strap-on penetrating second woman who is eating out third woman, all three connected, three women, lesbian threesome strap-on oral, no men',
+    neg:      'men, male anatomy, real penis, just two women, clothed, separated, solo', sup: true, label: 'Trío — strap-on + oral simultâneo'
+  },
+  'lesbian-threesome-double-cunni': {
+    sd_start: 'explicit lesbian threesome double cunnilingus, two women simultaneously eating out one woman, two tongues on one vagina, three women, no men,',
+    sd_end:   'three women in lesbian threesome with two women together performing double cunnilingus on one woman, both oral performers with their faces between the receiving womans spread legs, both tongues simultaneously on her vagina and clitoris, the receiving woman in extreme ecstasy with hands in both their hair, explicit lesbian threesome double oral, two tongues clearly visible on one vagina, no men or male anatomy, all three women visible',
+    mj:       'explicit lesbian threesome two women eating out one woman simultaneously, two tongues on one vagina, three women lesbian double cunnilingus, no men',
+    neg:      'men, male anatomy, one tongue only, clothed, separated, solo, just two women', sup: true, label: 'Trío — duas línguas em uma vagina'
+  },
+  'lesbian-orgy': {
+    sd_start: 'explicit lesbian orgy, multiple women engaged in oral and sexual acts simultaneously, group lesbian sex, no men, women only,',
+    sd_end:   'group of four or more women in lesbian orgy engaged in various simultaneous sexual acts including oral sex, fingering, strap-on use, kissing and fondling, all women engaged with each other in various positions and combinations, explicit lesbian group sex orgy with multiple women pleasuring each other, no men or male anatomy present, all women visible in various states of pleasure and sexual activity, boudoir or bedroom setting with dramatic lighting',
+    mj:       'explicit lesbian orgy, multiple women engaged in simultaneous oral sex fingering and pleasure, group lesbian sex all women no men, explicit lesbian group scene',
+    neg:      'men, male anatomy, just two women, just three women, clothed, separated, solo, no sexual contact', sup: true, label: 'Orgia lésbica — grupo, poses variadas simultâneas'
+  },
+  'lesbian-squirt-on-face': {
+    sd_start: 'explicit lesbian squirt, one woman squirting female ejaculation fluid onto other womans face, two women, no men,',
+    sd_end:   'two women, one woman experiencing female ejaculation with a stream or spray of fluid squirting from her vagina onto the face of the other woman who is positioned below or in front of her, the receiving womans face wet with squirt fluid, eyes possibly closed, the squirting woman in intense orgasm with fluid stream clearly visible leaving her vagina, explicit lesbian squirt onto face, no men or male anatomy, both women clearly visible, dramatic action shot',
+    mj:       'explicit lesbian squirting, one woman squirting female ejaculation fluid stream onto other womans face, both women visible, squirt on face, explicit lesbian squirt scene, no men',
+    neg:      'men, male anatomy, no fluid visible, dry, clothed, separated, solo, swallowing only', sup: true, label: 'Squirt no rosto — ejaculação feminina na outra'
+  },
+  'lesbian-pussy-to-pussy-close': {
+    sd_start: 'explicit close-up lesbian pussy to pussy tribbing, two vaginas pressed together in extreme close-up, glistening wet, two women, no men,',
+    sd_end:   'extreme close-up shot of two womens vaginas pressed together in tribbing or scissoring position, both vaginas glistening wet and in direct contact with each other, labia and clitorises in contact, natural arousal fluids making both vaginas glisten, very close macro shot of two vaginas touching and grinding, no men or male anatomy present, two women with genitals in intimate close contact, explicit close-up pussy-to-pussy lesbian tribbing',
+    mj:       'explicit extreme close-up two vaginas pressed together lesbian tribbing, both pussies glistening wet in contact, close-up macro pussy to pussy, two women no men',
+    neg:      'men, male anatomy, wide shot full body, clothed, separated, not touching, solo', sup: true, label: 'Close — vaginas juntas, tribbing close-up'
+  },
+
   /* ── NEW STANDING POSES ── */
   'standing-hip-sway-side': {
     sd_start: 'standing pose, hip sway to side, weight on one leg, hand on hip,',
