@@ -17118,11 +17118,46 @@ async function montarPersonagem(){
     }
   }
 
+  // 4b. Random tattoos (70% chance of 1-2 tattoos)
+  const _tatLabels = [];
+  if(Math.random() < 0.70){
+    const _tatAll = [...document.querySelectorAll('.quick-chip[data-cat="tatuagem"]')];
+    if(_tatAll.length){
+      // Shuffle and pick 1 or 2
+      const _tatPicks = _tatAll.sort(()=>Math.random()-0.5).slice(0, Math.random()<0.40 ? 2 : 1);
+      _tatPicks.forEach(chip => {
+        chip.classList.add('active');
+        tatPiercActive.add(chip.dataset.val);
+        _tatLabels.push(chip.textContent.trim().split(' ')[0]); // emoji only
+      });
+    }
+  }
+
+  // 4c. Random piercings (65% chance of 1-2 piercings)
+  const _piercLabels = [];
+  if(Math.random() < 0.65){
+    const _piercAll = [...document.querySelectorAll('.quick-chip[data-cat="piercing"]')];
+    if(_piercAll.length){
+      const _piercPicks = _piercAll.sort(()=>Math.random()-0.5).slice(0, Math.random()<0.35 ? 2 : 1);
+      _piercPicks.forEach(chip => {
+        chip.classList.add('active');
+        tatPiercActive.add(chip.dataset.val);
+        _piercLabels.push(chip.textContent.trim().split(' ')[0]); // emoji only
+      });
+    }
+  }
+
   // 5. Random pose from all poses → triggers auto-outfit, scene, lighting, expression, age
   const _allPoseKeys = Object.keys(typeof POSES !== 'undefined' ? POSES : {});
   if(_allPoseKeys.length){
     const _poseKey = R(_allPoseKeys);
     setPose(_poseKey);
+    // Ensure outfit is applied for this pose (setPose sets _cachedPoseOutfit and auto-outfit)
+    if(!_cachedPoseOutfit && selectedPoseKey){
+      try{
+        _cachedPoseOutfit = (_POSE_OUTFIT_MAP && _POSE_OUTFIT_MAP[selectedPoseKey]) || getPoseSensualOutfit(selectedPoseKey) || '';
+      }catch(e){}
+    }
     // Reveal pose button in its group
     const _poseBtn = document.querySelector(`.pose-btn[data-pose="${_poseKey}"]`);
     if(_poseBtn){
@@ -17149,8 +17184,9 @@ async function montarPersonagem(){
 
   // 7. Toast and generate
   const _etniaLabel = document.querySelector('.quick-chip[data-cat="etnia"].active')?.textContent.trim() || '';
-  const _poseLabel = (typeof selectedPoseKey !== 'undefined' && selectedPoseKey && typeof POSES !== 'undefined') ? (POSES[selectedPoseKey]?.label || '') : '';
-  toast('🎲 ' + [_etniaLabel, _poseLabel].filter(Boolean).join(' · '));
+  const _poseLabel  = (typeof selectedPoseKey !== 'undefined' && selectedPoseKey && typeof POSES !== 'undefined') ? (POSES[selectedPoseKey]?.label || '') : '';
+  const _modExtras  = [..._tatLabels, ..._piercLabels].join(' ');
+  toast('🎲 ' + [_etniaLabel, _poseLabel, _modExtras].filter(Boolean).join(' · '));
   await generate();
 }
 
