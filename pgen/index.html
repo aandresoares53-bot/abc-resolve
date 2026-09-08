@@ -9622,6 +9622,7 @@ function setPose(key){
         if(_autoScenePreview){
           // Cache it so generate functions use the SAME scene that's shown in preview
           _cachedPoseScene = _autoScenePreview;
+          quickChipState.cenario = _autoScenePreview; // keep cenario chip in sync — single source of truth
           if(!_POSE_SCENE_MAP[key]) _POSE_SCENE_MAP[key] = _autoScenePreview;
           if(_scenePreviewEl){
             _scenePreviewEl.textContent = '🌍 ' + (_autoScenePreview.length > 90 ? _autoScenePreview.substring(0,90)+'…' : _autoScenePreview);
@@ -15087,23 +15088,19 @@ function _applyPoseDefaults(key){
   }
   if(!_sceneCat) _sceneCat = 'boudoir'; // ultimate fallback
 
-  // Auto-set cenário from SCENE_POOLS if available
+  // Auto-set cenário — use the scene already computed by autoScene() in setPose()
+  // so _cachedPoseScene and quickChipState.cenario are always the SAME string.
+  // Falls back to SCENE_POOLS only if autoScene() hasn't run yet (edge case).
   try{
-    if(typeof SCENE_POOLS !== 'undefined' && SCENE_POOLS[_sceneCat] && SCENE_POOLS[_sceneCat].length){
+    if(typeof _cachedPoseScene !== 'undefined' && _cachedPoseScene){
+      // Primary path: use the contextual scene from autoScene() — keeps both sources in sync
+      quickChipState.cenario = _cachedPoseScene;
+    } else if(typeof SCENE_POOLS !== 'undefined' && SCENE_POOLS[_sceneCat] && SCENE_POOLS[_sceneCat].length){
+      // Fallback: pick from SCENE_POOLS (no autoScene result available yet)
       const _pool = SCENE_POOLS[_sceneCat];
-      const _sceneIdx = Math.floor(Math.random() * _pool.length);
-      const _sceneVal = _pool[_sceneIdx];
+      const _sceneVal = _pool[Math.floor(Math.random() * _pool.length)];
       quickChipState.cenario = _sceneVal;
-      // Update scene picker label
-      const _lbl = document.getElementById('scene-picker-label');
-      const _catMeta = (typeof SCENE_CAT_META !== 'undefined') && SCENE_CAT_META.find(m=>m.key===_sceneCat);
-      if(_lbl){
-        const _emoji = _catMeta ? _catMeta.label.split(' ')[0] : '🎬';
-        const _short  = _sceneVal.length > 38 ? _sceneVal.substring(0,36)+'…' : _sceneVal;
-        _lbl.textContent = _emoji + ' ' + _short + ' ✦';
-      }
-      const _toggle = document.getElementById('scene-picker-toggle');
-      if(_toggle) _toggle.classList.add('has-scene');
+      _cachedPoseScene = _sceneVal; // keep both in sync
     }
   }catch(e){}
 
