@@ -337,10 +337,12 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 .pose-preview-name{font-size:0.82em;font-weight:700;color:#166534;margin-bottom:6px;}
 .pose-preview-outfit{font-size:0.76em;color:#15803d;margin-bottom:4px;line-height:1.4;}
 .pose-preview-scene{font-size:0.73em;color:#4d7c0f;line-height:1.4;}
+.pose-preview-format{font-size:0.72em;color:#1d4ed8;font-weight:600;margin-top:5px;padding:3px 8px;background:#dbeafe;border-radius:5px;display:inline-block;}
 [data-theme="dark"] .pose-preview-card{background:#052e16;border-color:#166534;}
 [data-theme="dark"] .pose-preview-name{color:#86efac;}
 [data-theme="dark"] .pose-preview-outfit{color:#4ade80;}
 [data-theme="dark"] .pose-preview-scene{color:#a3e635;}
+[data-theme="dark"] .pose-preview-format{background:#1e3a8a;color:#93c5fd;}
 /* ── Outfit picker panel ────────────────────────────────────────── */
 .outfit-picker-panel{margin-top:6px;}
 .outfit-picker-label{font-size:0.68em;font-weight:700;color:#166534;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;}
@@ -2504,6 +2506,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     </div>
     <div class="pose-preview-outfit" id="pose-preview-outfit" style="display:none"></div>
     <div class="pose-preview-scene" id="pose-preview-scene" style="display:none"></div>
+    <div class="pose-preview-format" id="pose-preview-format" style="display:none"></div>
   </div>
 
 
@@ -11289,6 +11292,31 @@ function setPose(key){
   try{ _autoFillDescription(); }catch(e){}
   // ── Auto-suggest iluminação, película, lente, marcas, cenário, estilo_foto ─
   try{ _applyPoseDefaults(key || null); }catch(e){}
+  // ── Auto-select best prompt format for this pose ──────────────────────────
+  try{
+    if(key){
+      const _bestMode = _getBestModeForPose(key);
+      const _modeLabels = {
+        sd:'🎨 Stable Diffusion', mj:'🌌 Midjourney',
+        flux:'⚡ FLUX', video:'🎬 Vídeo',
+        gpt:'🤖 ChatGPT/DALL-E', inpaint:'🖌️ Inpainting'
+      };
+      // Show suggested format in preview card regardless of current mode
+      const _fmtEl = document.getElementById('pose-preview-format');
+      if(_fmtEl && _bestMode){
+        _fmtEl.textContent = '⚙️ Formato: ' + (_modeLabels[_bestMode] || _bestMode);
+        _fmtEl.style.display = 'inline-block';
+      }
+      // Switch mode if different from current
+      if(_bestMode && _bestMode !== currentMode){
+        setMode(_bestMode);
+        toast((_modeLabels[_bestMode] || _bestMode) + ' selecionado para esta pose');
+      }
+    } else {
+      const _fmtEl = document.getElementById('pose-preview-format');
+      if(_fmtEl){ _fmtEl.style.display = 'none'; }
+    }
+  }catch(e){}
   // ── Trigger auto-generate if character is already filled ─────────────────
   try{ _checkAutoGenerate(); }catch(e){}
   // ── Update selection preview bar ─────────────────────────────────────────
@@ -11321,6 +11349,61 @@ function setMode(mode){
   // LoRA stack: SD only
   const loraGroup = document.getElementById('lora-group');
   if(loraGroup) loraGroup.style.display = (mode==='sd' || mode==='inpaint') ? 'flex' : 'none';
+}
+
+// ── SELEÇÃO AUTOMÁTICA DE FORMATO POR POSE ────────────────────────────────
+// Retorna o melhor modo ('sd','mj','flux','video','gpt','inpaint') para a pose
+function _getBestModeForPose(key){
+  if(!key) return null;
+  const pose = POSES[key];
+
+  // ── 1. Explicitamente NSFW (sup:true) → SD tem controle máximo via negativos ──
+  if(pose && pose.sup === true) return 'sd';
+
+  // ── 2. Dança / twerk / club → Vídeo (poses de movimento) ─────────────────
+  if(/^(dance-|twerk-|club-)/.test(key)) return 'video';
+
+  // ── 3. Fantasy → MJ (arte fantástica, mundos épicos) ─────────────────────
+  if(key.startsWith('fantasy-')) return 'mj';
+
+  // ── 4. Alt aesthetic (dark / cyber / color / rock) → MJ ──────────────────
+  if(key.startsWith('alt-')) return 'mj';
+
+  // ── 5. Outdoor / natureza / praia / pool / sunset / mountain → MJ ─────────
+  if(/^(outdoor-|beach-|water-|pool-|nature-)/.test(key) ||
+     key === 'sunset' || key.startsWith('sunset-') ||
+     key.includes('waterfall') || key.includes('mountain') ||
+     key.includes('desert') || key.includes('winter-outdoor')) return 'mj';
+
+  // ── 6. Moda editorial / modelo pro → MJ ──────────────────────────────────
+  if(key.startsWith('model-')) return 'mj';
+
+  // ── 7. Gym / yoga / fitness → FLUX (realismo atlético) ───────────────────
+  if(/^(gym-|yoga-|fitness-)/.test(key)) return 'flux';
+
+  // ── 8. Jeans / street → FLUX (realismo urbano casual) ────────────────────
+  if(key.startsWith('jeans-')) return 'flux';
+
+  // ── 9. Selfie → FLUX (estética de snapshot, candidez) ────────────────────
+  if(key.startsWith('selfie-')) return 'flux';
+
+  // ── 10. POV / closeup → FLUX (realismo de close fotográfico) ─────────────
+  if(key.startsWith('pov-') || key.startsWith('closeup-') || key.startsWith('dutch-tilt-')) return 'flux';
+
+  // ── 11. Escort / OnlyFans / lésbicas / cenas explícitas → SD ─────────────
+  if(/^(escort-|of-|lesbian-|sex-|oral-|anal-|cumshot-|doggy-|prone-|spoon|scissors|mating-press|pile-driver|reverse-missionary|lap-dance|cowgirl|missionary|lotus-|position-69|suspended-)/.test(key)) return 'sd';
+
+  // ── 12. Ducha / banho → SD (controle de conteúdo implícito) ─────────────
+  if(/^(shower-|bath-)/.test(key)) return 'sd';
+
+  // ── 13. Lingerie / outfit / boudoir → SD ─────────────────────────────────
+  if(/^(outfit-|shemale-|boudoir-)/.test(key)) return 'sd';
+
+  // ── 14. Espelho / car / moto → FLUX (fotorrealismo ambiental) ────────────
+  if(/^(mirror-|car-|moto-|motorcycle-)/.test(key)) return 'flux';
+
+  // ── 15. Default: SD — controle total de prompt + negativos ───────────────
+  return 'sd';
 }
 
 // ── DETECTOR DE MODELO AUTOMÁTICO ─────────────────────────────────────────
