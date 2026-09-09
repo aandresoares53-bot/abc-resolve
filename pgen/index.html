@@ -14448,6 +14448,9 @@ function getPoseSensualOutfit(key, returnAll){
   // ── Explicitly sexual / naturally nude poses — no outfit injection ────────
   const _explicitPfx = /^(shower-|bath-|sex-|anal-|oral-|multi-|cumshot-|doggy-|prone-bone|spoon$|scissors$|anvil$|leapfrog$|mating-press$|pile-driver$|reverse-missionary$|lap-dance$|lotus-nsfw$|position-69$|cowgirl$|cowgirl-|reverse-cowgirl$|reverse-cowgirl-|missionary$|missionary-|lesbian-)/;
   if(_explicitPfx.test(key)) return returnAll ? [] : '';
+  // Fully explicit escort/OF poses (sup:true) — the POSES sd_start/sd_end handle clothing
+  const _explicitPoses = /^(escort-kneeling-ready-front|escort-client-pov-explicit|of-doggy-ring-light-back|of-spread-overhead-explicit|of-ppv-explicit-lying)$/;
+  if(_explicitPoses.test(key)) return returnAll ? [] : '';
 
   // ── Pose definitions already embed clothing ───────────────────────────────
   if(/^(fantasy-|alt-|outfit-|shemale-)/.test(key)) return returnAll ? [] : '';
@@ -15566,6 +15569,146 @@ function getPoseSensualOutfit(key, returnAll){
       'loose flowy blouse and high-waist linen trousers, relaxed seated',
       'cotton wrap dress, casual cross-legged seated look',
     ]);
+
+  // ── ESCORT / PROSTITUTAS ─────────────────────────────────────────────────
+  if(key.startsWith('escort-')){
+    // car / street scenes → provocative streetwear
+    if(key.includes('car') || key.includes('backseat') || key.includes('street') || key.includes('window'))
+      return R([
+        'skin-tight red pleather mini skirt and black push-up bustier, platform heels',
+        'black latex micro skirt and sheer fishnet crop top, stiletto heels',
+        'neon bodycon micro dress, strapless, thigh-high vinyl boots',
+        'leopard print micro mini dress, very short, spaghetti straps, heels',
+        'tight denim shorts unbuttoned and corset-style bustier top, boots',
+        'shiny PVC micro skirt and halter crop top, platform pumps',
+        'black patent leather micro dress, sleeveless, deep neckline',
+        'red satin micro slip dress with spaghetti straps and lace hem',
+      ]);
+    // doorway / hotel lobby / counter → glamour escort dress
+    if(key.includes('doorway') || key.includes('hotel') || key.includes('lobby') || key.includes('counter') || key.includes('doorframe'))
+      return R([
+        'black velvet plunge-neck bodycon midi dress, thigh-high slit, heels',
+        'deep red satin slip dress, very short, thin straps, stilettos',
+        'sequin bodycon mini dress, halter neck, barely mid-thigh, heels',
+        'sheer lace-overlay mini dress with lingerie visible underneath, heels',
+        'backless black plunge mini dress, gold accessories, stilettos',
+        'fitted emerald velvet mini dress, off-shoulder, high heels',
+        'white bodycon mini dress with deep plunge and thigh slit',
+        'black sheer mesh mini dress over matching strappy lingerie, heels',
+        'silk bias-cut micro slip dress, spaghetti straps, nude heels',
+        'deep plunge halter neck mini dress, open back, stiletto heels',
+      ]);
+    // bed / lying → boudoir lingerie
+    if(key.includes('bed') || key.includes('lying') || key.includes('kneeling') || key.includes('ready') || key.includes('mirror') || key.includes('dressing'))
+      return R([
+        'black lace push-up bra and matching micro thong, garter and stockings',
+        'red satin plunge bra and matching micro thong, heels',
+        'sheer lace bodysuit, thong back, barely-there coverage',
+        'strappy cage-harness bralette and micro G-string, stockings',
+        'elegant black corset with built-in garter and sheer black stockings',
+        'lace babydoll negligee and matching micro thong, stilettos',
+        'silk bra and cheeky panties with lace garter belt and stockings',
+        'open-cup lace bra and matching crotchless thong, boudoir',
+        'black sheer fishnet bodysuit over bra and G-string, heels',
+        'red lace corset, matching thong and garter stockings, heels',
+      ]);
+    // fallback escort → luxury mini dress
+    return R([
+      'black sequin micro mini dress, plunge neckline, stiletto heels',
+      'red bodycon halter mini dress, backless, thigh slit, heels',
+      'black lace bra and matching thong under open silk kimono robe',
+      'sheer mesh mini dress over strappy black lingerie, clear heels',
+      'black velvet plunge bodycon mini dress, gold accessories, heels',
+      'satin micro slip dress with lace trim, thin straps, stilettos',
+    ]);
+  }
+
+  // ── ONLYFANS — CONTEÚDO ──────────────────────────────────────────────────
+  if(key.startsWith('of-')){
+    // bathroom / mirror selfie
+    if(key.includes('mirror') || key.includes('bathroom') || key.includes('selfie'))
+      return R([
+        'strappy lace bralette and seamless micro thong, bare midriff',
+        'matching satin bra and high-cut cheeky panties',
+        'sheer lace bodysuit, barely covering, thong back',
+        'black lace push-up bra and matching micro bikini panties',
+        'white sheer bralette and lace trim micro thong',
+        'silk demi-cup bra and matching french knickers',
+        'barely-there string bikini in solid color, indoor selfie vibe',
+      ]);
+    // bathtub / shower
+    if(key.includes('bathtub') || key.includes('bath'))
+      return R([
+        'nothing — nude in bathtub, bubbles and foam covering',
+        'white wet bralette clinging to skin, wet and see-through, in bathtub',
+        'sheer white cami soaking wet in bath, second-skin transparent',
+        'matching wet lace bra and thong, dripping wet in tub',
+      ]);
+    // gym / fitness
+    if(key.includes('gym') || key.includes('fitness'))
+      return R([
+        'sports bra (hot pink or black) and matching high-waist biker shorts',
+        'racerback crop sports bra and ultra-high-waist leggings, gym outfit',
+        'bandeau sports bra and scrunch-butt high-waist leggings',
+        'seamless ribbed sports set: crop bralette and matching mid-rise shorts',
+        'tiny cropped sports bra and high-waist booty shorts, gym mirror',
+        'strappy back sports bra and seamless compression shorts, athletic',
+      ]);
+    // outdoor / topless content
+    if(key.includes('outdoor') || (key.includes('topless') && key.includes('back')))
+      return R([
+        'micro G-string bikini bottom, topless, bare back, outdoors',
+        'tiny Brazilian string bikini bottom, no top, natural outdoor',
+        'denim micro shorts unbuttoned, no top, from behind',
+        'micro thong bottom, topless, outdoors near water',
+      ]);
+    // kitchen apron
+    if(key.includes('kitchen') || key.includes('apron'))
+      return R([
+        'nothing but a short kitchen apron tied at the back, nude under',
+        'tiny apron (no bra, no underwear), side profile, kitchen',
+        'barely-there lace thong and white apron tied at neck and waist',
+        'white chef apron with nothing underneath, tied at back',
+      ]);
+    // kneeling camera POV / doggy / explicit
+    if(key.includes('doggy') || key.includes('spread') || key.includes('ppv') || key.includes('explicit'))
+      return R([
+        'strappy black lace thong, no bra, doggy pose rear view',
+        'micro G-string, bare back and rear, ring light illuminated',
+        'tiny satin thong, sheer lace bodysuit pushed aside',
+        'nothing — nude, ring light, content creator style',
+        'minimal matching lace bra and micro thong, set aside',
+      ]);
+    // bed / morning reveal / lying / tease
+    if(key.includes('bed') || key.includes('morning') || key.includes('lying') || key.includes('tease') || key.includes('legs'))
+      return R([
+        'silk babydoll slip in nude or blush, thin straps, barely covering',
+        'matching satin bra and micro thong, bed sheets around hips',
+        'sheer lace bralette and seamless micro thong, morning boudoir',
+        'black strappy lace teddy, thong back, lounging boudoir',
+        'satin cami and matching lace-trim micro shorts, morning reveal',
+        'strappy cage harness bralette and micro G-string, boudoir',
+        'white cotton bralette and lace-trim cheeky panties, fresh morning',
+      ]);
+    // standing body reveal / desk / welcome / face close-up
+    if(key.includes('standing') || key.includes('desk') || key.includes('welcome') || key.includes('face') || key.includes('wink'))
+      return R([
+        'strappy lace bralette and micro thong, ring light glow',
+        'sheer mesh bodysuit, thong back, barely-there',
+        'matching velvet bra and high-cut panties, content creator glam',
+        'white sheer bralette and seamless G-string, front lighting',
+        'lace plunge bra and matching french knickers, studio OF look',
+        'black push-up bralette and micro cheeky panties, ring light',
+        'silk satin bra and matching high-waist lace panties, glam OF style',
+      ]);
+    // fallback OF → boudoir lingerie
+    return R([
+      ..._LINGERIE_FULL,
+      'sheer lace bodysuit, thong back, ring light boudoir',
+      'strappy lace bralette and micro G-string, boudoir editorial',
+      'silk babydoll slip, barely covering, content creator style',
+    ]);
+  }
 
   // ── GENERIC POSES (catch-all for all pose prefixes) ───────────────────────
   if(/^(bent-|arched-|legs-|pov-|side-|one-|reclined-|arm-|shoulder-|torso-|butterfly|tippy-|double-|wide-|leaning-)/.test(key))
