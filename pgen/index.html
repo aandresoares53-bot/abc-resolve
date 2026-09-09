@@ -11317,8 +11317,16 @@ function setPose(key){
       if(_fmtEl){ _fmtEl.style.display = 'none'; }
     }
   }catch(e){}
-  // ── Trigger auto-generate if character is already filled ─────────────────
-  try{ _checkAutoGenerate(); }catch(e){}
+  // ── Auto-gerar prompt ao selecionar pose (sempre, independente de personagem) ──
+  try{
+    if(key){
+      clearTimeout(_autoGenDebounce);
+      _autoGenDebounce = setTimeout(()=>{
+        toast('⚡ Gerando prompt...');
+        generate();
+      }, 500);
+    }
+  }catch(e){}
   // ── Update selection preview bar ─────────────────────────────────────────
   try{ _updateSelectionPreview(); }catch(e){}
 }
