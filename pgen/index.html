@@ -11318,24 +11318,13 @@ function setPose(key){
     }
   }catch(e){}
   // ── Auto-gerar prompt ao selecionar pose (sempre, independente de personagem) ──
-  try{
-    if(key){
-      clearTimeout(_autoGenDebounce);
-      _autoGenDebounce = setTimeout(()=>{
-        try{
-          // Garante que selectedPoseKey está setado antes de gerar
-          if(selectedPoseKey){
-            const _btn = document.querySelector('.btn-generate');
-            if(_btn && !_btn.disabled){
-              _btn.click();
-            } else {
-              generate();
-            }
-          }
-        }catch(ex){ console.warn('auto-gen error:', ex); }
-      }, 600);
-    }
-  }catch(e){}
+  if(key){
+    const _capturedKey = key;
+    setTimeout(function(){
+      if(selectedPoseKey !== _capturedKey) return; // pose mudou, aborta
+      generate().catch(function(){});
+    }, 750);
+  }
   // ── Update selection preview bar ─────────────────────────────────────────
   try{ _updateSelectionPreview(); }catch(e){}
 }
