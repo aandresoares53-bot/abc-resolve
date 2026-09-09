@@ -11322,9 +11322,18 @@ function setPose(key){
     if(key){
       clearTimeout(_autoGenDebounce);
       _autoGenDebounce = setTimeout(()=>{
-        toast('⚡ Gerando prompt...');
-        generate();
-      }, 500);
+        try{
+          // Garante que selectedPoseKey está setado antes de gerar
+          if(selectedPoseKey){
+            const _btn = document.querySelector('.btn-generate');
+            if(_btn && !_btn.disabled){
+              _btn.click();
+            } else {
+              generate();
+            }
+          }
+        }catch(ex){ console.warn('auto-gen error:', ex); }
+      }, 600);
     }
   }catch(e){}
   // ── Update selection preview bar ─────────────────────────────────────────
