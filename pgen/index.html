@@ -14015,10 +14015,33 @@ function autoScene(poseKey){
       ? _randomFrom(SCENE_POOLS.lying)
       : _randomFrom(SCENE_POOLS.boudoir);
   }
+  // Specific selfie locations — checked BEFORE the generic selfie-→mirror rule
+  if(k === 'selfie-park-day')              return _randomFrom(SCENE_POOLS.nature);
+  if(k === 'selfie-restaurant-glam')       return _randomFrom(SCENE_POOLS.restaurant);
+  if(k === 'selfie-standing-art-museum')   return _randomFrom(SCENE_POOLS.art_studio);
+  if(k === 'selfie-fitting-lingerie-side') return _randomFrom(SCENE_POOLS.mirror);
   if(k.startsWith('mirror-') || k.startsWith('selfie-')) return _randomFrom(SCENE_POOLS.mirror);
   if(k.startsWith('car-')    || k.startsWith('moto-')) return _randomFrom(SCENE_POOLS.car);
   if(k.startsWith('lesbian-'))                          return _randomFrom(SCENE_POOLS.boudoir);
   if(k.startsWith('fantasy-'))                          return _randomFrom(SCENE_POOLS.fantasy);
+  // dance / twerk / club → party/nightclub atmosphere
+  if(k.startsWith('dance-') || k.startsWith('twerk-') || k.startsWith('club-'))
+    return _randomFrom(SCENE_POOLS.party);
+  // outdoor-* → specific environment based on key
+  if(k.startsWith('outdoor-')){
+    if(k.includes('desert'))                           return _randomFrom(SCENE_POOLS.desert);
+    if(k.includes('mountain') || k.includes('peak') || k.includes('cliff')) return _randomFrom(SCENE_POOLS.mountain);
+    if(k.includes('snow') || k.includes('winter'))     return _randomFrom(SCENE_POOLS.winter);
+    if(k.includes('flower') || k.includes('field') || k.includes('forest')) return _randomFrom(SCENE_POOLS.nature);
+    if(k.includes('sunset') || k.includes('sunrise'))  return _randomFrom(SCENE_POOLS.sunset);
+    return _randomFrom(SCENE_POOLS.nature);
+  }
+  // model-* → fashion/art studio
+  if(k.startsWith('model-')) return _randomFrom(SCENE_POOLS.art_studio);
+  // pov-* / closeup-* → close-up pool
+  if(k.startsWith('pov-')) return _randomFrom(SCENE_POOLS.closeup);
+  // dutch-tilt-* → boudoir (dramatic portrait)
+  if(k.startsWith('dutch-tilt-')) return _randomFrom(SCENE_POOLS.boudoir);
   // water-shower-*, water-bathtub-*, water-jacuzzi-* → shower/bath scene (NOT pool/waterfall)
   if(k.startsWith('water-shower-') || k.startsWith('water-bathtub') || k.startsWith('water-jacuzzi'))
     return _randomFrom(SCENE_POOLS.shower);
@@ -14099,6 +14122,8 @@ function autoScene(poseKey){
   }
 
   // ── 🖤 Alt Dark: gothic / punk / witch / dark fairy ─────────────────────
+  if(k === 'alt-festival-body-paint') return _randomFrom(SCENE_POOLS.festival);
+  if(k === 'alt-dark-academia')       return _randomFrom(SCENE_POOLS.castle);
   if(k === 'alt-gothic-corset' || k === 'alt-gothic-latex' || k === 'alt-gothic-standing-back' ||
      k === 'alt-punk-leather'  || k === 'alt-punk-corset'  || k === 'alt-dark-fairy' ||
      k === 'alt-witch-dark'){
@@ -14132,7 +14157,7 @@ function autoScene(poseKey){
     return _randomFrom(SCENE_POOLS.kneeling);
   if(k.startsWith('sitting-')  || k.includes('sitting') || k.includes('seated') || k.includes('chair'))
     return _randomFrom(SCENE_POOLS.sitting);
-  if(k.startsWith('standing-') || k.includes('standing') || k.includes('walking') || k.includes('sidewalk'))
+  if(k.startsWith('standing-') || k.startsWith('stand-') || k.includes('standing') || k.includes('walking') || k.includes('sidewalk'))
     return _randomFrom(SCENE_POOLS.standing);
   if(k.includes('bent') || k.includes('bending'))
     return Math.random() < 0.5 ? _randomFrom(SCENE_POOLS.standing) : _randomFrom(SCENE_POOLS.kneeling);
@@ -14159,9 +14184,21 @@ function getDefaultSceneForPose(key){
   if(k.startsWith('lesbian-'))                                    return 'luxury boudoir';
   if(k.startsWith('fantasy-'))                                   return 'fantasy setting';
   if(k.startsWith('jeans-'))                                     return 'city street';
-  if(k.startsWith('nature-') || k.startsWith('outdoor-') ||
-     k === 'sunset' || k.startsWith('sunset-'))                  return 'outdoors in nature';
   if(k.startsWith('dance-') || k.startsWith('twerk-') || k.startsWith('club-')) return 'nightclub';
+  if(k.startsWith('outdoor-')){
+    if(k.includes('desert'))                           return 'desert landscape';
+    if(k.includes('mountain') || k.includes('peak') || k.includes('cliff')) return 'mountain peak';
+    if(k.includes('snow') || k.includes('winter'))     return 'snowy outdoor';
+    if(k.includes('flower') || k.includes('field'))    return 'flower field outdoors';
+    return 'outdoors in nature';
+  }
+  if(k.startsWith('nature-') || k === 'sunset' || k.startsWith('sunset-')) return 'outdoors in nature';
+  if(k.startsWith('model-'))                                     return 'fashion studio';
+  if(k.startsWith('pov-'))                                       return 'close-up perspective';
+  if(k.startsWith('dutch-tilt-'))                                return 'dramatic portrait boudoir';
+  if(k === 'selfie-park-day')                                    return 'park outdoors';
+  if(k === 'selfie-restaurant-glam')                             return 'restaurant interior';
+  if(k === 'selfie-standing-art-museum')                         return 'art museum gallery';
   if(k.includes('lying') || k.includes('supine') || k.includes('prone') ||
      k.startsWith('sitting-edge') || k.startsWith('edge-of-bed') ||
      k.includes('-on-bed') || k.endsWith('-bed'))                return 'bedroom';
@@ -16237,12 +16274,14 @@ async function generate(){
   // If user rewrote from scratch, return full value.
   const _userScene = _extractUserComplement(_taEl, raw);
 
-  // Scene: user-typed → cached auto-scene (matches preview card) → short keyword fallback
-  const sceneText = _userScene || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
+  // Auto-scene: the pose's environment context (already in English) — always preserved.
+  // User text ADDS to this; it does not replace it.
+  const _autoSceneForPose = _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
 
-  // Combine: chip values (English) + preset (English or PT) + user complement only
-  // _userScene is already stripped of any auto-fill duplicate content
-  const rawFull = [_quickPre, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+  // Combine: chip values (English) + preset (PT/EN) + user complement (PT/EN) + auto-scene (EN)
+  // rawFull is the Portuguese-friendly string used for NSFW detection and pose inference.
+  // User text and auto-scene are BOTH included so buildPrompt receives the full context.
+  const rawFull = [_quickPre, hasPreset ? activePreset : '', _userScene, _autoSceneForPose].filter(Boolean).join(', ');
 
   const btn = document.querySelector('.btn-generate');
   btn.disabled = true;
@@ -16260,12 +16299,14 @@ async function generate(){
       // All content is English (chips + default pose scene) — no translation needed
       _result = buildPrompt(rawFull, rawFull);
     } else {
-      // User typed a complement or has a preset — translate ONLY non-chip parts
-      // Chips (_quickPre) are already in English — sending them through pt→en translator garbles them
-      const _toTranslate = [hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+      // User typed a complement or has a preset — translate ONLY those parts.
+      // Chips (_quickPre) are already English — translating them garbles the output.
+      // _autoSceneForPose is already English — no re-translation needed.
+      const _toTranslate = [hasPreset ? activePreset : '', _userScene].filter(Boolean).join(', ');
       const _translated = _toTranslate ? await _translateText(_toTranslate) : '';
-      // Re-prepend the (unchanged) English chip values to the translated text
-      const englishText = [_quickPre, _translated].filter(Boolean).join(', ');
+      // Re-prepend the (unchanged) English chip values, add translated user content,
+      // then append the auto-scene (already English) so it enriches the final prompt.
+      const englishText = [_quickPre, _translated, _autoSceneForPose].filter(Boolean).join(', ');
       _result = buildPrompt(englishText, rawFull);
     }
     // Handle object returns from video/inpainting modes
