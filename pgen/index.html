@@ -11322,8 +11322,9 @@ function setPose(key){
     const _capturedKey = key;
     setTimeout(function(){
       if(selectedPoseKey !== _capturedKey) return; // pose mudou, aborta
-      generate().catch(function(){});
-    }, 750);
+      toast('⚡ Gerando prompt...');
+      generate().catch(function(err){ console.error('[auto-gen] erro:', err); });
+    }, 800);
   }
   // ── Update selection preview bar ─────────────────────────────────────────
   try{ _updateSelectionPreview(); }catch(e){}
@@ -16746,8 +16747,7 @@ async function generate(){
   const rawFull = [_quickPre, hasPreset ? activePreset : '', _userScene, _autoSceneForPose].filter(Boolean).join(', ');
 
   const btn = document.querySelector('.btn-generate');
-  btn.disabled = true;
-  btn.textContent = '⏳ Gerando…';
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ Gerando…'; }
 
   // Reset negative prompt to default
   const negEl = document.getElementById('neg-text');
@@ -16789,8 +16789,7 @@ async function generate(){
       showPrompt(_fb);
     }
   } finally {
-    btn.disabled = false;
-    btn.textContent = '⚡ GERAR PROMPT';
+    if(btn){ btn.disabled = false; btn.textContent = '⚡ GERAR PROMPT'; }
   }
 }
 
