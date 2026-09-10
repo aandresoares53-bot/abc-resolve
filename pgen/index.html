@@ -11323,7 +11323,7 @@ function setPose(key){
     setTimeout(function(){
       if(selectedPoseKey !== _capturedKey) return; // pose mudou, aborta
       toast('⚡ Gerando prompt...');
-      generate().catch(function(err){ console.error('[auto-gen] erro:', err); });
+      generate().catch(function(err){ console.error('[auto-gen] erro:', err); toast('⚠️ ' + (err && err.message ? err.message.substring(0,60) : String(err).substring(0,60))); });
     }, 800);
   }
   // ── Update selection preview bar ─────────────────────────────────────────
@@ -16780,13 +16780,28 @@ async function generate(){
       showPrompt(_result);
     }
   } catch(e) {
-    const _fb = buildPrompt(translatePT(rawFull), rawFull);
-    if(_fb && typeof _fb === 'object' && _fb.prompt !== undefined){
-      const negElFb = document.getElementById('neg-text');
-      if(negElFb && _fb.negative) negElFb.value = _fb.negative;
-      showPrompt(_fb.prompt);
-    } else {
-      showPrompt(_fb);
+    try {
+      const _fb = buildPrompt(translatePT(rawFull), rawFull);
+      if(_fb && typeof _fb === 'object' && _fb.prompt !== undefined){
+        const negElFb = document.getElementById('neg-text');
+        if(negElFb && _fb.negative) negElFb.value = _fb.negative;
+        showPrompt(_fb.prompt);
+      } else {
+        showPrompt(_fb || rawFull || '');
+      }
+    } catch(e2) {
+      // Last resort: always show something — bypass buildPrompt entirely
+      const _lrText = (selectedPose && (selectedPose.sd_start || selectedPose.mj)) || rawFull || 'portrait of a woman, photorealistic';
+      try {
+        showPrompt(_lrText);
+      } catch(e3) {
+        // Direct DOM fallback — bypass showPrompt entirely
+        const _oc2 = document.getElementById('output-card');
+        const _pr2 = document.getElementById('prompt');
+        if(_pr2) _pr2.value = _lrText;
+        if(_oc2) _oc2.classList.add('visible');
+        if(_oc2) _oc2.scrollIntoView({behavior:'smooth',block:'start'});
+      }
     }
   } finally {
     if(btn){ btn.disabled = false; btn.textContent = '⚡ GERAR PROMPT'; }
