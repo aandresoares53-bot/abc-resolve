@@ -649,12 +649,8 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   <!-- MODE TOGGLE -->
   <div class="mode-toggle-wrap">
     <span class="mode-label">Formato do prompt:</span>
-    <button class="mode-btn active-sd" id="btn-sd"  onclick="setMode('sd')">🎨 Stable Diffusion<br><small style="font-weight:400;font-size:0.85em">SDXL · FLUX · Realistic Vision</small></button>
-    <button class="mode-btn"           id="btn-mj"  onclick="setMode('mj')">🌌 Midjourney<br><small style="font-weight:400;font-size:0.85em">MJ v6 · Niji</small></button>
-    <button class="mode-btn"           id="btn-gpt" onclick="setMode('gpt')">🤖 ChatGPT / DALL-E<br><small style="font-weight:400;font-size:0.85em">GPT-4o · DALL-E 3</small></button>
+    <button class="mode-btn active-mj" id="btn-mj"   onclick="setMode('mj')">🌌 Midjourney<br><small style="font-weight:400;font-size:0.85em">MJ v6 · Niji</small></button>
     <button class="mode-btn"           id="btn-flux" onclick="setMode('flux')">⚡ FLUX<br><small style="font-weight:400;font-size:0.85em">FLUX.1 · FLUX Pro</small></button>
-    <button class="mode-btn"           id="btn-video" onclick="setMode('video')">🎬 Vídeo<br><small style="font-weight:400;font-size:0.85em">Kling · Runway · Pika</small></button>
-    <button class="mode-btn"           id="btn-inpaint" onclick="setMode('inpaint')">🖌️ Inpainting<br><small style="font-weight:400;font-size:0.85em">SD · ComfyUI</small></button>
   </div>
 
   <!-- MJ PARAMS PANEL -->
@@ -709,8 +705,8 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     </div>
   </div>
 
-  <!-- SD MODEL PROFILE PANEL -->
-  <div class="sd-model-panel" id="sd-model-panel" style="display:block;">
+  <!-- SD MODEL PROFILE PANEL (hidden — SD removed) -->
+  <div class="sd-model-panel" id="sd-model-panel" style="display:none;">
     <div class="sd-model-label">🖥️ Perfil de Modelo SD</div>
     <div class="sd-model-row">
       <button class="sd-model-btn active" id="sdm-realistic" onclick="setSdModel('realistic',this)">📷 Realistic Vision</button>
@@ -2581,7 +2577,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <button class="btn-clear-out" onclick="clearOutput()">✕ Limpar</button>
     </div>
 
-    <div class="neg-box">
+    <div class="neg-box" id="neg-box" style="display:none;">
       <div class="neg-label">🚫 Negative Prompt:</div>
       <div class="neg-cats-row" id="neg-cats-row">
         <span class="neg-cat-chip" data-cat="skin" onclick="toggleNegCat(this)">🧴 Pele</span>
@@ -2973,7 +2969,7 @@ function translatePT(text){
   return out;
 }
 
-let currentMode = 'sd';
+let currentMode = 'mj';
 
 // ── POSE DEFINITIONS ──────────────────────────────────────────────────────────
 // sd_start: goes BEFORE everything else in the SD prompt (highest priority)
@@ -11342,88 +11338,47 @@ function setPose(key){
 
 function setMode(mode){
   currentMode = mode;
-  document.getElementById('btn-sd').className      = 'mode-btn' + (mode==='sd'      ? ' active-sd'      : '');
-  document.getElementById('btn-mj').className      = 'mode-btn' + (mode==='mj'      ? ' active-mj'      : '');
-  document.getElementById('btn-gpt').className     = 'mode-btn' + (mode==='gpt'     ? ' active-gpt'     : '');
-  const btnFlux    = document.getElementById('btn-flux');
-  const btnVideo   = document.getElementById('btn-video');
-  const btnInpaint = document.getElementById('btn-inpaint');
-  if(btnFlux)    btnFlux.className    = 'mode-btn' + (mode==='flux'    ? ' active-flux'    : '');
-  if(btnVideo)   btnVideo.className   = 'mode-btn' + (mode==='video'   ? ' active-video'   : '');
-  if(btnInpaint) btnInpaint.className = 'mode-btn' + (mode==='inpaint' ? ' active-inpaint' : '');
-  // MJ params panel
+  // Only MJ and FLUX buttons remain
+  const btnMj   = document.getElementById('btn-mj');
+  const btnFlux  = document.getElementById('btn-flux');
+  if(btnMj)   btnMj.className   = 'mode-btn' + (mode==='mj'   ? ' active-mj'   : '');
+  if(btnFlux) btnFlux.className = 'mode-btn' + (mode==='flux' ? ' active-flux' : '');
+  // MJ params panel: visible only in MJ mode
   const mjPanel = document.getElementById('mj-params-panel');
   if(mjPanel) mjPanel.style.display = mode==='mj' ? 'block' : 'none';
-  // SD Model Profile: SD only
-  const sdModelPanel = document.getElementById('sd-model-panel');
-  if(sdModelPanel) sdModelPanel.style.display = mode==='sd' ? 'block' : 'none';
-  // Video panel: video only
-  const videoPanel = document.getElementById('video-panel');
-  if(videoPanel) videoPanel.style.display = mode==='video' ? 'block' : 'none';
-  // Inpainting panel: inpaint only
-  const inpaintPanel = document.getElementById('inpaint-panel');
-  if(inpaintPanel) inpaintPanel.style.display = mode==='inpaint' ? 'block' : 'none';
-  // LoRA stack: SD only
-  const loraGroup = document.getElementById('lora-group');
-  if(loraGroup) loraGroup.style.display = (mode==='sd' || mode==='inpaint') ? 'flex' : 'none';
+  // SD/Video/Inpaint/LoRA panels: always hidden (modes removed)
+  const els = ['sd-model-panel','video-panel','inpaint-panel','lora-group','neg-box'];
+  els.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
 }
 
 // ── SELEÇÃO AUTOMÁTICA DE FORMATO POR POSE ────────────────────────────────
 // Retorna o melhor modo ('sd','mj','flux','video','gpt','inpaint') para a pose
 function _getBestModeForPose(key){
   if(!key) return null;
-  const pose = POSES[key];
 
-  // ── 1. Explicitamente NSFW (sup:true) → SD tem controle máximo via negativos ──
-  if(pose && pose.sup === true) return 'sd';
+  // ── Fantasy / Alt aesthetic → MJ ─────────────────────────────────────────
+  if(key.startsWith('fantasy-') || key.startsWith('alt-')) return 'mj';
 
-  // ── 2. Dança / twerk / club → Vídeo (poses de movimento) ─────────────────
-  if(/^(dance-|twerk-|club-)/.test(key)) return 'video';
-
-  // ── 3. Fantasy → MJ (arte fantástica, mundos épicos) ─────────────────────
-  if(key.startsWith('fantasy-')) return 'mj';
-
-  // ── 4. Alt aesthetic (dark / cyber / color / rock) → MJ ──────────────────
-  if(key.startsWith('alt-')) return 'mj';
-
-  // ── 5. Outdoor / natureza / praia / pool / sunset / mountain → MJ ─────────
+  // ── Outdoor / natureza / praia / pool / sunset / mountain → MJ ───────────
   if(/^(outdoor-|beach-|water-|pool-|nature-)/.test(key) ||
      key === 'sunset' || key.startsWith('sunset-') ||
      key.includes('waterfall') || key.includes('mountain') ||
      key.includes('desert') || key.includes('winter-outdoor')) return 'mj';
 
-  // ── 6. Moda editorial / modelo pro → MJ ──────────────────────────────────
+  // ── Moda editorial → MJ ───────────────────────────────────────────────────
   if(key.startsWith('model-')) return 'mj';
 
-  // ── 7. Gym / yoga / fitness → FLUX (realismo atlético) ───────────────────
-  if(/^(gym-|yoga-|fitness-)/.test(key)) return 'flux';
+  // ── Gym / yoga / fitness / jeans / selfie / closeup → FLUX ───────────────
+  if(/^(gym-|yoga-|fitness-|jeans-|selfie-|pov-|closeup-|dutch-tilt-|mirror-|car-|moto-|motorcycle-)/.test(key)) return 'flux';
 
-  // ── 8. Jeans / street → FLUX (realismo urbano casual) ────────────────────
-  if(key.startsWith('jeans-')) return 'flux';
+  // ── Shower / bath / lingerie / boudoir / cenas explícitas → FLUX ─────────
+  if(/^(shower-|bath-|outfit-|boudoir-|escort-|of-|lesbian-|sex-|oral-|anal-|cumshot-|doggy-|prone-|spoon|scissors|mating-press|pile-driver|reverse-missionary|lap-dance|cowgirl|missionary|lotus-|position-69|suspended-)/.test(key)) return 'flux';
 
-  // ── 9. Selfie → FLUX (estética de snapshot, candidez) ────────────────────
-  if(key.startsWith('selfie-')) return 'flux';
-
-  // ── 10. POV / closeup → FLUX (realismo de close fotográfico) ─────────────
-  if(key.startsWith('pov-') || key.startsWith('closeup-') || key.startsWith('dutch-tilt-')) return 'flux';
-
-  // ── 11. Escort / OnlyFans / lésbicas / cenas explícitas → SD ─────────────
-  if(/^(escort-|of-|lesbian-|sex-|oral-|anal-|cumshot-|doggy-|prone-|spoon|scissors|mating-press|pile-driver|reverse-missionary|lap-dance|cowgirl|missionary|lotus-|position-69|suspended-)/.test(key)) return 'sd';
-
-  // ── 12. Ducha / banho → SD (controle de conteúdo implícito) ─────────────
-  if(/^(shower-|bath-)/.test(key)) return 'sd';
-
-  // ── 13. Lingerie / outfit / boudoir → SD ─────────────────────────────────
-  if(/^(outfit-|shemale-|boudoir-)/.test(key)) return 'sd';
-
-  // ── 14. Espelho / car / moto → FLUX (fotorrealismo ambiental) ────────────
-  if(/^(mirror-|car-|moto-|motorcycle-)/.test(key)) return 'flux';
-
-  // ── 15. Default: SD — controle total de prompt + negativos ───────────────
-  return 'sd';
+  // ── Default: MJ ───────────────────────────────────────────────────────────
+  return 'mj';
 }
 
-// ── DETECTOR DE MODELO AUTOMÁTICO ─────────────────────────────────────────
+// ── DETECTOR DE MODELO AUTOMÁTICO (somente MJ e FLUX) ─────────────────────
 function detectModelFromText(text){
   if(!text) return;
   const t = text.toLowerCase();
@@ -11431,8 +11386,6 @@ function detectModelFromText(text){
     setMode('flux'); toast('⚡ Modo FLUX detectado automaticamente');
   } else if(/\bmidjourney\b|\b--ar\b|\b--v \d|\b--sref\b|\bniji\b/.test(t) && currentMode !== 'mj'){
     setMode('mj'); toast('🌌 Modo MJ detectado automaticamente');
-  } else if(/dall.?e|gpt-4o|openai|chatgpt/.test(t) && currentMode !== 'gpt'){
-    setMode('gpt'); toast('🤖 Modo GPT detectado automaticamente');
   }
 }
 
@@ -16398,6 +16351,8 @@ function buildPrompt(englishText, rawPT){
     // Order: [face ref instruction] → subject → ethnicity skin → body realism → anatomy mandate → photo style
     return [_gptRefInstruction, core, _gptEtnia ? 'Ethnicity skin tone: ' + _gptEtnia + '.' : '', _gptTatPierc ? 'Visible body modifications: ' + _gptTatPierc + '.' : '', _bodyGpt, _gptAnatomy, QF_GPT].filter(Boolean).join(' ') + _gptFaceDesc;
   }
+  // ── Safety: only MJ and FLUX are active modes; return empty for any other ──
+  if(currentMode !== 'mj' && currentMode !== 'flux') return '';
   // ── Pose boost: ALL pose terms get :1.9; critical direction terms get :2.0 ─
   // Critical direction terms — the primary camera/orientation signal — :2.0 so they
   // compete equally with outfit/description :2.0 terms for CLIP guidance weight.
