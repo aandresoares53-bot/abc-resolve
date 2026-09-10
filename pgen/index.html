@@ -58,8 +58,6 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 /* OUTPUT */
 .output-card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:20px;display:none;}
 .output-card.visible{display:block;}
-@keyframes _flashCard{0%{box-shadow:0 0 0 0 rgba(29,78,216,0.5)}50%{box-shadow:0 0 0 12px rgba(29,78,216,0)}100%{box-shadow:0 0 0 0 rgba(29,78,216,0)}}
-.output-card.flash{animation:_flashCard 0.7s ease-out;}
 .out-label{font-weight:700;color:#1d4ed8;font-size:0.88em;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
 .prompt-textarea{width:100%;min-height:200px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;color:#1e293b;padding:14px;font-size:0.84em;font-family:monospace;resize:vertical;white-space:pre-wrap;line-height:1.6;}
 .out-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
@@ -339,12 +337,10 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 .pose-preview-name{font-size:0.82em;font-weight:700;color:#166534;margin-bottom:6px;}
 .pose-preview-outfit{font-size:0.76em;color:#15803d;margin-bottom:4px;line-height:1.4;}
 .pose-preview-scene{font-size:0.73em;color:#4d7c0f;line-height:1.4;}
-.pose-preview-format{font-size:0.72em;color:#1d4ed8;font-weight:600;margin-top:5px;padding:3px 8px;background:#dbeafe;border-radius:5px;display:inline-block;}
 [data-theme="dark"] .pose-preview-card{background:#052e16;border-color:#166534;}
 [data-theme="dark"] .pose-preview-name{color:#86efac;}
 [data-theme="dark"] .pose-preview-outfit{color:#4ade80;}
 [data-theme="dark"] .pose-preview-scene{color:#a3e635;}
-[data-theme="dark"] .pose-preview-format{background:#1e3a8a;color:#93c5fd;}
 /* ── Outfit picker panel ────────────────────────────────────────── */
 .outfit-picker-panel{margin-top:6px;}
 .outfit-picker-label{font-size:0.68em;font-weight:700;color:#166534;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;}
@@ -2508,7 +2504,6 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     </div>
     <div class="pose-preview-outfit" id="pose-preview-outfit" style="display:none"></div>
     <div class="pose-preview-scene" id="pose-preview-scene" style="display:none"></div>
-    <div class="pose-preview-format" id="pose-preview-format" style="display:none"></div>
   </div>
 
 
@@ -11294,40 +11289,8 @@ function setPose(key){
   try{ _autoFillDescription(); }catch(e){}
   // ── Auto-suggest iluminação, película, lente, marcas, cenário, estilo_foto ─
   try{ _applyPoseDefaults(key || null); }catch(e){}
-  // ── Auto-select best prompt format for this pose ──────────────────────────
-  try{
-    if(key){
-      const _bestMode = _getBestModeForPose(key);
-      const _modeLabels = {
-        sd:'🎨 Stable Diffusion', mj:'🌌 Midjourney',
-        flux:'⚡ FLUX', video:'🎬 Vídeo',
-        gpt:'🤖 ChatGPT/DALL-E', inpaint:'🖌️ Inpainting'
-      };
-      // Show suggested format in preview card regardless of current mode
-      const _fmtEl = document.getElementById('pose-preview-format');
-      if(_fmtEl && _bestMode){
-        _fmtEl.textContent = '⚙️ Formato: ' + (_modeLabels[_bestMode] || _bestMode);
-        _fmtEl.style.display = 'inline-block';
-      }
-      // Switch mode if different from current
-      if(_bestMode && _bestMode !== currentMode){
-        setMode(_bestMode);
-        toast((_modeLabels[_bestMode] || _bestMode) + ' selecionado para esta pose');
-      }
-    } else {
-      const _fmtEl = document.getElementById('pose-preview-format');
-      if(_fmtEl){ _fmtEl.style.display = 'none'; }
-    }
-  }catch(e){}
-  // ── Auto-gerar prompt ao selecionar pose (sempre, independente de personagem) ──
-  if(key){
-    const _capturedKey = key;
-    setTimeout(function(){
-      if(selectedPoseKey !== _capturedKey) return; // pose mudou, aborta
-      toast('⚡ Gerando prompt...');
-      generate().catch(function(err){ console.error('[auto-gen] erro:', err); toast('⚠️ ' + (err && err.message ? err.message.substring(0,60) : String(err).substring(0,60))); });
-    }, 800);
-  }
+  // ── Trigger auto-generate if character is already filled ─────────────────
+  try{ _checkAutoGenerate(); }catch(e){}
   // ── Update selection preview bar ─────────────────────────────────────────
   try{ _updateSelectionPreview(); }catch(e){}
 }
@@ -11358,61 +11321,6 @@ function setMode(mode){
   // LoRA stack: SD only
   const loraGroup = document.getElementById('lora-group');
   if(loraGroup) loraGroup.style.display = (mode==='sd' || mode==='inpaint') ? 'flex' : 'none';
-}
-
-// ── SELEÇÃO AUTOMÁTICA DE FORMATO POR POSE ────────────────────────────────
-// Retorna o melhor modo ('sd','mj','flux','video','gpt','inpaint') para a pose
-function _getBestModeForPose(key){
-  if(!key) return null;
-  const pose = POSES[key];
-
-  // ── 1. Explicitamente NSFW (sup:true) → SD tem controle máximo via negativos ──
-  if(pose && pose.sup === true) return 'sd';
-
-  // ── 2. Dança / twerk / club → Vídeo (poses de movimento) ─────────────────
-  if(/^(dance-|twerk-|club-)/.test(key)) return 'video';
-
-  // ── 3. Fantasy → MJ (arte fantástica, mundos épicos) ─────────────────────
-  if(key.startsWith('fantasy-')) return 'mj';
-
-  // ── 4. Alt aesthetic (dark / cyber / color / rock) → MJ ──────────────────
-  if(key.startsWith('alt-')) return 'mj';
-
-  // ── 5. Outdoor / natureza / praia / pool / sunset / mountain → MJ ─────────
-  if(/^(outdoor-|beach-|water-|pool-|nature-)/.test(key) ||
-     key === 'sunset' || key.startsWith('sunset-') ||
-     key.includes('waterfall') || key.includes('mountain') ||
-     key.includes('desert') || key.includes('winter-outdoor')) return 'mj';
-
-  // ── 6. Moda editorial / modelo pro → MJ ──────────────────────────────────
-  if(key.startsWith('model-')) return 'mj';
-
-  // ── 7. Gym / yoga / fitness → FLUX (realismo atlético) ───────────────────
-  if(/^(gym-|yoga-|fitness-)/.test(key)) return 'flux';
-
-  // ── 8. Jeans / street → FLUX (realismo urbano casual) ────────────────────
-  if(key.startsWith('jeans-')) return 'flux';
-
-  // ── 9. Selfie → FLUX (estética de snapshot, candidez) ────────────────────
-  if(key.startsWith('selfie-')) return 'flux';
-
-  // ── 10. POV / closeup → FLUX (realismo de close fotográfico) ─────────────
-  if(key.startsWith('pov-') || key.startsWith('closeup-') || key.startsWith('dutch-tilt-')) return 'flux';
-
-  // ── 11. Escort / OnlyFans / lésbicas / cenas explícitas → SD ─────────────
-  if(/^(escort-|of-|lesbian-|sex-|oral-|anal-|cumshot-|doggy-|prone-|spoon|scissors|mating-press|pile-driver|reverse-missionary|lap-dance|cowgirl|missionary|lotus-|position-69|suspended-)/.test(key)) return 'sd';
-
-  // ── 12. Ducha / banho → SD (controle de conteúdo implícito) ─────────────
-  if(/^(shower-|bath-)/.test(key)) return 'sd';
-
-  // ── 13. Lingerie / outfit / boudoir → SD ─────────────────────────────────
-  if(/^(outfit-|shemale-|boudoir-)/.test(key)) return 'sd';
-
-  // ── 14. Espelho / car / moto → FLUX (fotorrealismo ambiental) ────────────
-  if(/^(mirror-|car-|moto-|motorcycle-)/.test(key)) return 'flux';
-
-  // ── 15. Default: SD — controle total de prompt + negativos ───────────────
-  return 'sd';
 }
 
 // ── DETECTOR DE MODELO AUTOMÁTICO ─────────────────────────────────────────
@@ -15865,26 +15773,6 @@ function buildPrompt(englishText, rawPT){
   const _styleChipFull    = (typeof chipState !== 'undefined' && chipState.style)   ? chipState.style   : '';
   const _lensChipFull     = (typeof chipState !== 'undefined' && chipState.lens)    ? chipState.lens    : '';
 
-  // ── Film Stock — declared EARLY so FLUX/MJ/GPT branches can access it ─────
-  // (was previously declared after the mode-specific blocks → caused TDZ ReferenceError)
-  const _selFilmStock = getFilmStock();
-  const _autoFilmStock = (() => {
-    if(_selFilmStock) return _selFilmStock;
-    const _sk = (selectedPoseKey || '').toLowerCase();
-    const _cenLow = _cenarioChipFull.toLowerCase();
-    if(_sk.includes('night') || _sk.includes('club') || _cenLow.includes('night') || _cenLow.includes('club') || _cenLow.includes('neon'))
-      return 'Cinestill 800T pushed tungsten film';
-    if(_sk.startsWith('beach-') || _sk.startsWith('pool-') || _cenLow.includes('beach') || _cenLow.includes('tropical') || _cenLow.includes('pool'))
-      return 'Kodak Ektar 100 vivid outdoor film';
-    if(_sk.startsWith('shower-') || _sk.startsWith('bath-') || _sk.includes('lying') || _sk.includes('boudoir') || _cenLow.includes('boudoir') || _cenLow.includes('bedroom'))
-      return 'Fuji Pro 400H soft pastel film';
-    if(_sk.startsWith('sunset-') || _sk === 'sunset' || _cenLow.includes('sunset') || _cenLow.includes('golden hour'))
-      return 'Kodak Portra 800 pushed film';
-    if(_sk.startsWith('gym-') || _sk.startsWith('legging-') || _sk.startsWith('yoga-'))
-      return 'Kodak T-Max 400 high-contrast film';
-    return 'Kodak Portra 400 analog film';
-  })();
-
   // inject outfit/expression chips into the description before expansion
   let inputText = englishText;
   // ── CRITICAL: inject cenário chip FIRST so expandScene() detects the correct location ──
@@ -16380,7 +16268,31 @@ function buildPrompt(englishText, rawPT){
   // Film grain is physically incompatible with smooth poreless skin — the strongest anti-plastic lever in SD
   // _rawStamp: RAW file + no post-processing + Kodak analog science — redundancy reinforces chunk-1 REALISM_CORE
   // Unique terms here: unedited RAW, SOOC, no Photoshop/retouching, subsurface scattering, bokeh, chromatic aberration
-  // ── Film Stock stamp term (uses _autoFilmStock declared early above) ─────
+  // ── Film Stock injection (selected via chip or default Kodak Portra 400) ─
+  const _selFilmStock = getFilmStock();
+  // Auto film stock: smart choice per scene mood when user has not picked one
+  const _autoFilmStock = (() => {
+    if(_selFilmStock) return _selFilmStock;
+    const _sk = (selectedPoseKey || '').toLowerCase();
+    const _cenLow = _cenarioChipFull.toLowerCase();
+    // Night/club → Cinestill 800T (warm halation tungsten look)
+    if(_sk.includes('night') || _sk.includes('club') || _cenLow.includes('night') || _cenLow.includes('club') || _cenLow.includes('neon'))
+      return 'Cinestill 800T pushed tungsten film';
+    // Beach/outdoor vivid → Kodak Ektar 100 (vivid saturated)
+    if(_sk.startsWith('beach-') || _sk.startsWith('pool-') || _cenLow.includes('beach') || _cenLow.includes('tropical') || _cenLow.includes('pool'))
+      return 'Kodak Ektar 100 vivid outdoor film';
+    // Shower/intimate/boudoir → Fuji Pro 400H (soft pastels)
+    if(_sk.startsWith('shower-') || _sk.startsWith('bath-') || _sk.includes('lying') || _sk.includes('boudoir') || _cenLow.includes('boudoir') || _cenLow.includes('bedroom'))
+      return 'Fuji Pro 400H soft pastel film';
+    // Sunset/golden hour → Kodak Portra 800 (warm pushed)
+    if(_sk.startsWith('sunset-') || _sk === 'sunset' || _cenLow.includes('sunset') || _cenLow.includes('golden hour'))
+      return 'Kodak Portra 800 pushed film';
+    // Gym/athletic → Kodak T-Max 400 (high contrast)
+    if(_sk.startsWith('gym-') || _sk.startsWith('legging-') || _sk.startsWith('yoga-'))
+      return 'Kodak T-Max 400 high-contrast film';
+    // Default: Portra 400
+    return 'Kodak Portra 400 analog film';
+  })();
   const _filmStockTerm = _autoFilmStock;
   const _rawStamp = `(${_filmStockTerm}:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (no post-processing:2.0), (no Photoshop:2.0), (no retouching:2.0), (no professional retouch:2.0), (not digital manipulation:2.0), (subsurface light scattering on skin:1.9), (${_filmStockTerm}:1.8), (natural skin translucency:1.8), (natural bokeh depth of field:1.7), (natural lens chromatic aberration:1.5), (natural vignette:1.4),`;
   // ── Skin Marks injection (multi-select) ────────────────────────────────
@@ -16580,21 +16492,11 @@ function cycleOutfit(){
 
 function showPrompt(prompt){
   _onPromptGenerated();
-  const _el = document.getElementById('prompt');
-  if(_el) _el.value = prompt || '';
+  document.getElementById('prompt').value = prompt;
   const card = document.getElementById('output-card');
-  if(!card){ toast('⚠️ Elemento output-card não encontrado'); return; }
   card.classList.add('visible');
-  // Flash + scroll so user can't miss it
-  card.classList.remove('flash');
-  void card.offsetWidth; // force reflow to restart animation
-  card.classList.add('flash');
-  try { card.scrollIntoView({behavior:'smooth',block:'start'}); } catch(e){
-    try { window.scrollTo({top: card.offsetTop - 10, behavior:'smooth'}); } catch(e2){}
-  }
-  toast('✅ Prompt pronto! ↓');
-  const _fab = document.getElementById('fab');
-  if(_fab) _fab.classList.add('visible');
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('fab').classList.add('visible');
   // token counter (CLIP budget tracker)
   updateTokenCount(prompt);
   // Live score + CLIP bar update
@@ -16755,7 +16657,8 @@ async function generate(){
   const rawFull = [_quickPre, hasPreset ? activePreset : '', _userScene, _autoSceneForPose].filter(Boolean).join(', ');
 
   const btn = document.querySelector('.btn-generate');
-  if(btn){ btn.disabled = true; btn.textContent = '⏳ Gerando…'; }
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando…';
 
   // Reset negative prompt to default
   const negEl = document.getElementById('neg-text');
@@ -16788,35 +16691,17 @@ async function generate(){
       showPrompt(_result);
     }
   } catch(e) {
-    // Surface the actual error so user/dev can see what's failing
-    try{ toast('⚠️ Erro: ' + (e && e.message ? e.message.substring(0,70) : String(e).substring(0,70))); }catch(_){}
-    try {
-      const _fb = buildPrompt(translatePT(rawFull), rawFull);
-      if(_fb && typeof _fb === 'object' && _fb.prompt !== undefined){
-        const negElFb = document.getElementById('neg-text');
-        if(negElFb && _fb.negative) negElFb.value = _fb.negative;
-        showPrompt(_fb.prompt);
-      } else {
-        showPrompt(_fb || rawFull || '');
-      }
-    } catch(e2) {
-      // Surface secondary error
-      try{ toast('⚠️ Erro2: ' + (e2 && e2.message ? e2.message.substring(0,70) : String(e2).substring(0,70))); }catch(_){}
-      // Last resort: always show something — bypass buildPrompt entirely
-      const _lrText = (selectedPose && (selectedPose.sd_start || selectedPose.mj)) || rawFull || 'portrait of a woman, photorealistic';
-      try {
-        showPrompt(_lrText);
-      } catch(e3) {
-        // Direct DOM fallback — bypass showPrompt entirely
-        const _oc2 = document.getElementById('output-card');
-        const _pr2 = document.getElementById('prompt');
-        if(_pr2) _pr2.value = _lrText;
-        if(_oc2) _oc2.classList.add('visible');
-        if(_oc2) _oc2.scrollIntoView({behavior:'smooth',block:'start'});
-      }
+    const _fb = buildPrompt(translatePT(rawFull), rawFull);
+    if(_fb && typeof _fb === 'object' && _fb.prompt !== undefined){
+      const negElFb = document.getElementById('neg-text');
+      if(negElFb && _fb.negative) negElFb.value = _fb.negative;
+      showPrompt(_fb.prompt);
+    } else {
+      showPrompt(_fb);
     }
   } finally {
-    if(btn){ btn.disabled = false; btn.textContent = '⚡ GERAR PROMPT'; }
+    btn.disabled = false;
+    btn.textContent = '⚡ GERAR PROMPT';
   }
 }
 
