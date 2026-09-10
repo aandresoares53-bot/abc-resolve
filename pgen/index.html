@@ -16085,6 +16085,30 @@ function buildPrompt(englishText, rawPT){
   const _styleChipFull    = (typeof chipState !== 'undefined' && chipState.style)   ? chipState.style   : '';
   const _lensChipFull     = (typeof chipState !== 'undefined' && chipState.lens)    ? chipState.lens    : '';
 
+  // ── Film stock — declared HERE (before FLUX/MJ/GPT blocks) to avoid TDZ ──
+  // _autoFilmStock is referenced inside FLUX, MJ and GPT early-return blocks.
+  // With `const`, hoisting puts the binding in scope at function entry but the
+  // value is undefined until this line — accessing it before here throws TDZ.
+  // Moving these declarations before every mode block is the correct fix.
+  const _selFilmStock = getFilmStock();
+  const _autoFilmStock = (() => {
+    if(_selFilmStock) return _selFilmStock;
+    const _sk = (selectedPoseKey || '').toLowerCase();
+    const _cenLow = _cenarioChipFull.toLowerCase();
+    if(_sk.includes('night') || _sk.includes('club') || _cenLow.includes('night') || _cenLow.includes('club') || _cenLow.includes('neon'))
+      return 'Cinestill 800T pushed tungsten film';
+    if(_sk.startsWith('beach-') || _sk.startsWith('pool-') || _cenLow.includes('beach') || _cenLow.includes('tropical') || _cenLow.includes('pool'))
+      return 'Kodak Ektar 100 vivid outdoor film';
+    if(_sk.startsWith('shower-') || _sk.startsWith('bath-') || _sk.includes('lying') || _sk.includes('boudoir') || _cenLow.includes('boudoir') || _cenLow.includes('bedroom'))
+      return 'Fuji Pro 400H soft pastel film';
+    if(_sk.startsWith('sunset-') || _sk === 'sunset' || _cenLow.includes('sunset') || _cenLow.includes('golden hour'))
+      return 'Kodak Portra 800 pushed film';
+    if(_sk.startsWith('gym-') || _sk.startsWith('legging-') || _sk.startsWith('yoga-'))
+      return 'Kodak T-Max 400 high-contrast film';
+    return 'Kodak Portra 400 analog film';
+  })();
+  const _filmStockTerm = _autoFilmStock;
+
   // inject outfit/expression chips into the description before expansion
   let inputText = englishText;
   // ── CRITICAL: inject cenário chip FIRST so expandScene() detects the correct location ──
