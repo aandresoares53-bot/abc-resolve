@@ -16582,10 +16582,15 @@ function cycleOutfit(){
 
 function showPrompt(prompt){
   _onPromptGenerated();
-  document.getElementById('prompt').value = prompt;
+  const _el = document.getElementById('prompt');
+  if(_el) _el.value = prompt || '';
   const card = document.getElementById('output-card');
+  if(!card){ toast('⚠️ Elemento output-card não encontrado'); return; }
   card.classList.add('visible');
-  card.scrollIntoView({behavior:'smooth',block:'start'});
+  // Force scroll to output: smooth on desktop, instant fallback for mobile
+  try { card.scrollIntoView({behavior:'smooth',block:'start'}); } catch(e){}
+  try { window.scrollTo({top: card.offsetTop - 10, behavior:'smooth'}); } catch(e){}
+  toast('✅ Prompt pronto!');
   document.getElementById('fab').classList.add('visible');
   // token counter (CLIP budget tracker)
   updateTokenCount(prompt);
