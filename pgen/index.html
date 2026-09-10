@@ -58,6 +58,8 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 /* OUTPUT */
 .output-card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:20px;display:none;}
 .output-card.visible{display:block;}
+@keyframes _flashCard{0%{box-shadow:0 0 0 0 rgba(29,78,216,0.5)}50%{box-shadow:0 0 0 12px rgba(29,78,216,0)}100%{box-shadow:0 0 0 0 rgba(29,78,216,0)}}
+.output-card.flash{animation:_flashCard 0.7s ease-out;}
 .out-label{font-weight:700;color:#1d4ed8;font-size:0.88em;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
 .prompt-textarea{width:100%;min-height:200px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;color:#1e293b;padding:14px;font-size:0.84em;font-family:monospace;resize:vertical;white-space:pre-wrap;line-height:1.6;}
 .out-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
@@ -16587,11 +16589,16 @@ function showPrompt(prompt){
   const card = document.getElementById('output-card');
   if(!card){ toast('⚠️ Elemento output-card não encontrado'); return; }
   card.classList.add('visible');
-  // Force scroll to output: smooth on desktop, instant fallback for mobile
-  try { card.scrollIntoView({behavior:'smooth',block:'start'}); } catch(e){}
-  try { window.scrollTo({top: card.offsetTop - 10, behavior:'smooth'}); } catch(e){}
-  toast('✅ Prompt pronto!');
-  document.getElementById('fab').classList.add('visible');
+  // Flash + scroll so user can't miss it
+  card.classList.remove('flash');
+  void card.offsetWidth; // force reflow to restart animation
+  card.classList.add('flash');
+  try { card.scrollIntoView({behavior:'smooth',block:'start'}); } catch(e){
+    try { window.scrollTo({top: card.offsetTop - 10, behavior:'smooth'}); } catch(e2){}
+  }
+  toast('✅ Prompt pronto! ↓');
+  const _fab = document.getElementById('fab');
+  if(_fab) _fab.classList.add('visible');
   // token counter (CLIP budget tracker)
   updateTokenCount(prompt);
   // Live score + CLIP bar update
