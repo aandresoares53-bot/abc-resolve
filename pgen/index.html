@@ -16604,32 +16604,8 @@ function buildPrompt(englishText, rawPT){
   // Film grain is physically incompatible with smooth poreless skin — the strongest anti-plastic lever in SD
   // _rawStamp: RAW file + no post-processing + Kodak analog science — redundancy reinforces chunk-1 REALISM_CORE
   // Unique terms here: unedited RAW, SOOC, no Photoshop/retouching, subsurface scattering, bokeh, chromatic aberration
-  // ── Film Stock injection (selected via chip or default Kodak Portra 400) ─
-  const _selFilmStock = getFilmStock();
-  // Auto film stock: smart choice per scene mood when user has not picked one
-  const _autoFilmStock = (() => {
-    if(_selFilmStock) return _selFilmStock;
-    const _sk = (selectedPoseKey || '').toLowerCase();
-    const _cenLow = _cenarioChipFull.toLowerCase();
-    // Night/club → Cinestill 800T (warm halation tungsten look)
-    if(_sk.includes('night') || _sk.includes('club') || _cenLow.includes('night') || _cenLow.includes('club') || _cenLow.includes('neon'))
-      return 'Cinestill 800T pushed tungsten film';
-    // Beach/outdoor vivid → Kodak Ektar 100 (vivid saturated)
-    if(_sk.startsWith('beach-') || _sk.startsWith('pool-') || _cenLow.includes('beach') || _cenLow.includes('tropical') || _cenLow.includes('pool'))
-      return 'Kodak Ektar 100 vivid outdoor film';
-    // Shower/intimate/boudoir → Fuji Pro 400H (soft pastels)
-    if(_sk.startsWith('shower-') || _sk.startsWith('bath-') || _sk.includes('lying') || _sk.includes('boudoir') || _cenLow.includes('boudoir') || _cenLow.includes('bedroom'))
-      return 'Fuji Pro 400H soft pastel film';
-    // Sunset/golden hour → Kodak Portra 800 (warm pushed)
-    if(_sk.startsWith('sunset-') || _sk === 'sunset' || _cenLow.includes('sunset') || _cenLow.includes('golden hour'))
-      return 'Kodak Portra 800 pushed film';
-    // Gym/athletic → Kodak T-Max 400 (high contrast)
-    if(_sk.startsWith('gym-') || _sk.startsWith('legging-') || _sk.startsWith('yoga-'))
-      return 'Kodak T-Max 400 high-contrast film';
-    // Default: Portra 400
-    return 'Kodak Portra 400 analog film';
-  })();
-  const _filmStockTerm = _autoFilmStock;
+  // ── Film Stock: _selFilmStock / _autoFilmStock / _filmStockTerm declared earlier (before FLUX/MJ/GPT blocks) ─
+  // (declarations moved to avoid TDZ — see ~line 16088)
   const _rawStamp = `(${_filmStockTerm}:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (no post-processing:2.0), (no Photoshop:2.0), (no retouching:2.0), (no professional retouch:2.0), (not digital manipulation:2.0), (subsurface light scattering on skin:1.9), (${_filmStockTerm}:1.8), (natural skin translucency:1.8), (natural bokeh depth of field:1.7), (natural lens chromatic aberration:1.5), (natural vignette:1.4),`;
   // ── Skin Marks injection (multi-select) ────────────────────────────────
   const _skinMarksStr = getSkinMarks();
