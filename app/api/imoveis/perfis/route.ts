@@ -1,68 +1,63 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { getSQL } from '../../../lib/db';
 import { normalizeProfile } from '../../../lib/matching';
 
-export const runtime = 'edge';
-
-function getDB(req: NextRequest) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (req as any).cf?.env?.DB as D1Database | undefined;
+export async function GET() {
+  try {
+    const sql = getSQL();
+    const rows = await sql`SELECT * FROM buyer_profiles WHERE active = true ORDER BY created_at DESC`;
+    const profiles = rows.map(r => normalizeProfile(r as Record<string, unknown>));
+    return NextResponse.json({ profiles });
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
 }
 
-// GET: listar perfis
-export async function GET(req: NextRequest) {
-  const db = getDB(req);
-  if (!db) return NextResponse.json({ error: 'DB indisponível' }, { status: 503 });
-
-  const { results } = await db.prepare('SELECT * FROM buyer_profiles WHERE active=1 ORDER BY created_at DESC').all();
-  const profiles = results.map(r => normalizeProfile(r as Record<string, unknown>));
-  return NextResponse.json({ profiles });
-}
-
-// POST: criar perfil
 export async function POST(req: NextRequest) {
-  const db = getDB(req);
-  if (!db) return NextResponse.json({ error: 'DB indisponível' }, { status: 503 });
+  try {
+    const sql = getSQL();
+    const body = await req.json() as Record<string, unknown>;
 
-  const body = await req.json() as Record<string, unknown>;
+    const {
+      name, email, phone, whatsapp,
+      operation_type = 'both',
+      property_types = [],
+      cities = [],
+      neighborhoods = [],
+      min_price, max_price,
+      min_area, max_area,
+      min_bedrooms, max_bedrooms,
+      required_features = [],
+      notes,
+    } = body;
 
-  const {
-    name, email, phone, whatsapp,
-    operation_type = 'both',
-    property_types = [],
-    cities = [],
-    neighborhoods = [],
-    min_price, max_price,
-    min_area, max_area,
-    min_bedrooms, max_bedrooms,
-    required_features = [],
-    notes,
-  } = body;
+    if (!name) return NextResponse.json({ error: 'Nome obrigatório' }, { status: 400 });
 
-  if (!name) return NextResponse.json({ error: 'Nome obrigatório' }, { status: 400 });
+    const id = crypto.randomUUID();
+    const now = new Date().toISOString();
 
-  const id = crypto.randomUUID();
-  const now = new Date().toISOString();
+    await sql`
+      INSERT INTO buyer_profiles
+        (id, name, email, phone, whatsapp, operation_type, property_types, cities,
+         neighborhoods, min_price, max_price, min_area, max_area, min_bedrooms, max_bedrooms,
+         required_features, notes, active, created_at, updated_at)
+      VALUES (
+        ${id}, ${name as string}, ${email as string ?? null}, ${phone as string ?? null},
+        ${whatsapp as string ?? null}, ${operation_type as string},
+        ${JSON.stringify(property_types)}, ${JSON.stringify(cities)},
+        ${JSON.stringify(neighborhoods)},
+        ${min_price as number ?? null}, ${max_price as number ?? null},
+        ${min_area as number ?? null}, ${max_area as number ?? null},
+        ${min_bedrooms as number ?? null}, ${max_bedrooms as number ?? null},
+        ${JSON.stringify(required_features)}, ${notes as string ?? null},
+        true, ${now}, ${now}
+      )
+    `;
 
-  await db.prepare(`
-    INSERT INTO buyer_profiles
-      (id, name, email, phone, whatsapp, operation_type, property_types, cities,
-       neighborhoods, min_price, max_price, min_area, max_area, min_bedrooms, max_bedrooms,
-       required_features, notes, active, created_at, updated_at)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,?,?)
-  `).bind(
-    id, name, email ?? null, phone ?? null, whatsapp ?? null,
-    operation_type,
-    JSON.stringify(property_types),
-    JSON.stringify(cities),
-    JSON.stringify(neighborhoods),
-    min_price ?? null, max_price ?? null,
-    min_area ?? null, max_area ?? null,
-    min_bedrooms ?? null, max_bedrooms ?? null,
-    JSON.stringify(required_features),
-    notes ?? null,
-    now, now,
-  ).run();
-
-  const created = await db.prepare('SELECT * FROM buyer_profiles WHERE id=?').bind(id).first();
-  return NextResponse.json({ success: true, profile: normalizeProfile(created as Record<string, unknown>) }, { status: 201 });
+    const rows = await sql`SELECT * FROM buyer_profiles WHERE id = ${id} LIMIT 1`;
+    return NextResponse.json({ success: true, profile: normalizeProfile(rows[0] as Record<string, unknown>) }, { status: 201 });
+  } catch (error) {
+    console.error('Erro ao criar perfil:', error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
 }

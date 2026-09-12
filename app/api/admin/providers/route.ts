@@ -1,26 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import type { CloudflareEnv, User } from '@/lib/db';
+import { getSQL, type User } from '@/lib/db';
 
-
-interface AdminEnv extends CloudflareEnv {
-  ADMIN_SECRET: string;
-}
-
-function isAuthorized(request: NextRequest, adminSecret: string): boolean {
-  return request.headers.get('Authorization') === `Bearer ${adminSecret}`;
+function isAuthorized(request: NextRequest): boolean {
+  const secret = process.env.ADMIN_SECRET ?? '';
+  return request.headers.get('Authorization') === `Bearer ${secret}`;
 }
 
 export async function GET(request: NextRequest) {
-  const { env } = (await getCloudflareContext()) as unknown as { env: AdminEnv };
-
-  if (!isAuthorized(request, env.ADMIN_SECRET)) {
+  if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  const result = await env.DB
-    .prepare(`SELECT id, name, email, phone, service, city, created_at FROM users WHERE type = 'provider' ORDER BY created_at DESC`)
-    .all<Omit<User, 'password_hash' | 'updated_at' | 'type'>>();
+  const sql = getSQL();
+  const rows = await sql`
+    SELECT id, name, email, phone, service, city, created_at
+    FROM users WHERE type = 'provider'
+    ORDER BY created_at DESC
+  `;
 
-  return NextResponse.json({ providers: result.results });
+  return NextResponse.json({ providers: rows as Omit<User, 'password_hash' | 'updated_at' | 'type'>[] });
 }
