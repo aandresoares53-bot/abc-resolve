@@ -129,6 +129,51 @@ export default function Home() {
         </div>
       </section>
 
+      {/* IMÓVEIS ABC */}
+      <section style={{ background: '#fff', padding: '80px 24px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{ display: 'inline-block', background: '#eff6ff', color: '#1d4ed8', padding: '4px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600, marginBottom: 12 }}>🏠 NOVO</div>
+            <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, color: '#111', margin: '0 0 8px' }}>Imóveis à Venda e para Alugar no ABC</h2>
+            <p style={{ fontSize: 16, color: '#6b7280', margin: 0, maxWidth: 520, marginLeft: 'auto', marginRight: 'auto' }}>
+              Encontre imóveis em Santo André, São Bernardo, São Caetano e toda a região do Grande ABC.
+              Nosso algoritmo de matching conecta você às propriedades mais compatíveis com seu perfil.
+            </p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 20, marginBottom: 36 }}>
+            {[
+              { emoji: '🏢', title: 'Apartamentos', desc: 'Studios, 2 e 3 dormitórios nos melhores bairros', bg: '#eff6ff' },
+              { emoji: '🏡', title: 'Casas', desc: 'Com quintal, piscina e espaço para sua família', bg: '#f0fdf4' },
+              { emoji: '🏪', title: 'Comercial', desc: 'Salas, lojas e galpões em regiões estratégicas', bg: '#fefce8' },
+              { emoji: '🌳', title: 'Terrenos', desc: 'Oportunidades para construção e investimento', bg: '#fdf4ff' },
+            ].map(({ emoji, title, desc, bg }) => (
+              <div key={title} style={{ background: bg, borderRadius: 16, padding: '28px 20px', textAlign: 'center' }}>
+                <div style={{ fontSize: 40, marginBottom: 10 }}>{emoji}</div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{title}</h3>
+                <p style={{ fontSize: 13, color: '#6b7280', margin: 0 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ background: 'linear-gradient(135deg,#1d4ed8,#4338ca)', borderRadius: 20, padding: '40px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
+            <div>
+              <h3 style={{ color: '#fff', fontSize: 22, fontWeight: 800, margin: '0 0 8px' }}>🎯 Matching Inteligente de Imóveis</h3>
+              <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 15, margin: 0, lineHeight: 1.6 }}>
+                Cadastre seu perfil e nosso algoritmo encontra os imóveis mais compatíveis.<br />
+                Score baseado em orçamento, localização, tipo, metragem e características.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <Link href="/imoveis" style={{ background: '#fff', color: '#1d4ed8', padding: '13px 24px', borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                🏠 Ver Imóveis
+              </Link>
+              <Link href="/imoveis/perfil" style={{ background: '#fbbf24', color: '#111', padding: '13px 24px', borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                🎯 Criar Perfil
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA PRESTADOR */}
       <section style={{ background: 'linear-gradient(135deg,#059669,#047857)', padding: '80px 24px', color: '#fff', textAlign: 'center' }}>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
