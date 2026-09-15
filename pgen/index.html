@@ -11583,6 +11583,8 @@ function setPose(key){
 }
 
 function setMode(mode){
+  // Remap removed modes to MJ so buildPrompt never receives an unknown mode
+  if(mode !== 'mj' && mode !== 'flux') mode = 'mj';
   currentMode = mode;
   // Only MJ and FLUX buttons remain
   const btnMj   = document.getElementById('btn-mj');
@@ -12489,7 +12491,7 @@ const SMART_TEMPLATES = {
     lighting: 'warm golden hour street light, urban ambient light, bokeh city background',
     scene: 'urban street, city background, buildings, pedestrian zone',
     chips: { iluminacao: 'golden hour', cenario: 'urban street' },
-    mode: 'sd', camera: 'Canon EOS R5 50mm f/1.4, urban portrait'
+    mode: 'flux', camera: 'Canon EOS R5 50mm f/1.4, urban portrait'
   },
   'praia-verao': {
     desc: 'mulher na praia, biquíni, verão',
@@ -12501,13 +12503,13 @@ const SMART_TEMPLATES = {
     desc: 'mulher sensual, boudoir, iluminação íntima',
     lighting: 'soft intimate boudoir lighting, warm lamp glow, dramatic single key light',
     scene: 'luxury bedroom, soft bed, silk sheets, intimate boudoir setting',
-    mode: 'sd', camera: 'Canon EOS R5 85mm f/1.4, intimate portrait'
+    mode: 'mj', camera: 'Canon EOS R5 85mm f/1.4, intimate portrait'
   },
   'fitness-academia': {
     desc: 'mulher atlética, academia, malhação',
     lighting: 'bright gym fluorescent overhead light, strong athletic lighting, high contrast',
     scene: 'modern gym, weights, fitness equipment, mirror background',
-    mode: 'sd', camera: 'Canon EOS R5 35mm f/2.0, action shot'
+    mode: 'mj', camera: 'Canon EOS R5 35mm f/2.0, action shot'
   },
   'natureza-campo': {
     desc: 'mulher em campo aberto, natureza, ar livre',
@@ -12525,7 +12527,7 @@ const SMART_TEMPLATES = {
     desc: 'mulher à noite, cidade, luz de neon',
     lighting: 'neon city light at night, colorful urban neon glow, street lamp illumination, bokeh city lights',
     scene: 'nighttime city street, neon signs, urban night atmosphere',
-    mode: 'sd', camera: 'Canon EOS R5 35mm f/1.4, night photography'
+    mode: 'flux', camera: 'Canon EOS R5 35mm f/1.4, night photography'
   },
   'piscina-spa': {
     desc: 'mulher na piscina, spa, relaxando',
@@ -19760,7 +19762,6 @@ function updateTokenCount(text){
 // ── SMART MODE PICKER — choose the best format for a given pose ───────────
 function pickBestModeForPose(poseKey, poseData){
   const k = (poseKey || '').toLowerCase();
-  const label = (poseData && poseData.label || '').toLowerCase();
 
   // Close-up / portrait / eyes / lips → MJ (cinematic, rich atmosphere)
   if(k.includes('close') || k.includes('face') || k.includes('eyes') ||
@@ -19768,15 +19769,18 @@ function pickBestModeForPose(poseKey, poseData){
      k.includes('labios') || k.includes('rosto')){
     return 'mj';
   }
-  // Supine / doggy / explicit positioning → SD (needs technical control)
+  // Explicit / supine / doggy positions → MJ (detailed natural language)
   if((poseData && poseData.sup === true) || k.includes('doggy') ||
-     k.includes('quatro') || k.includes('reverse') || k.includes('leg-up')){
-    return 'sd';
+     k.includes('quatro') || k.includes('reverse') || k.includes('leg-up') ||
+     k.includes('ppv') || k.includes('explicit') || k.includes('riding')){
+    return 'mj';
   }
   // Natural standing / walking / outdoor / environment → FLUX (natural language)
   if(k.includes('standing') || k.includes('walking') || k.includes('piscina') ||
      k.includes('pool') || k.includes('praia') || k.includes('beach') ||
-     k.includes('outdoor') || k.includes('danca') || k.includes('dance')){
+     k.includes('outdoor') || k.includes('danca') || k.includes('dance') ||
+     k.includes('neon') || k.includes('sofa') || k.includes('hotel') ||
+     k.includes('balcony') || k.includes('window') || k.includes('stairs')){
     return 'flux';
   }
   // Kneeling / seated artistic → MJ
@@ -19784,11 +19788,8 @@ function pickBestModeForPose(poseKey, poseData){
      k.includes('lotus') || k.includes('split')){
     return 'mj';
   }
-  // Everything else: alternate SD / MJ with slight FLUX chance
-  const r = Math.random();
-  if(r < 0.40) return 'sd';
-  if(r < 0.75) return 'mj';
-  return 'flux';
+  // Everything else: alternate MJ / FLUX only
+  return Math.random() < 0.55 ? 'mj' : 'flux';
 }
 
 // ── SELECTION PREVIEW BAR ────────────────────────────────────────────────────
@@ -19967,7 +19968,7 @@ async function generateRandom(){
 
   // ── 2. Auto-select the best prompt format for this pose ───────────────
   const bestMode = pickBestModeForPose(randomKey, poseData);
-  const modeLabels = { sd:'🎨 SD', mj:'🌌 MJ', flux:'⚡ FLUX', gpt:'🤖 GPT' };
+  const modeLabels = { mj:'🌌 MJ', flux:'⚡ FLUX' };
   setMode(bestMode);
 
   // ── 3. Reveal the pose button in its category (open collapse) ─────────
