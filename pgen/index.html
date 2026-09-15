@@ -2081,6 +2081,31 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
             <button class="pose-btn" data-pose="moto-straddling-fuel-tank" onclick="setPose('moto-straddling-fuel-tank')"><span class="pose-icon">🏍️</span>Moto — sentada no tanque de frente</button>
             <button class="pose-btn" data-pose="car-trunk-allfours" onclick="setPose('car-trunk-allfours')"><span class="pose-icon">🍑</span>Carro — de quatro no porta-malas, de costas</button>
             <button class="pose-btn" data-pose="car-dashboard-sitting-front" onclick="setPose('car-dashboard-sitting-front')"><span class="pose-icon">🚗</span>Carro — sentada no painel, de frente</button>
+      <div class="pose-group-label">🛋️ Sofá / Sala de Estar</div>
+      <button class="pose-btn" data-pose="sofa-lying-front" onclick="setPose('sofa-lying-front')"><span class="pose-icon">🛋️</span>Sofá — deitada de frente, câmera acima</button>
+      <button class="pose-btn" data-pose="sofa-lying-back" onclick="setPose('sofa-lying-back')"><span class="pose-icon">🛋️</span>Sofá — deitada de costas, arco nas costas</button>
+      <button class="pose-btn" data-pose="sofa-sitting-reclined" onclick="setPose('sofa-sitting-reclined')"><span class="pose-icon">🛋️</span>Sofá — sentada reclinada, pernas esticadas</button>
+      <button class="pose-btn" data-pose="sofa-kneeling-back" onclick="setPose('sofa-kneeling-back')"><span class="pose-icon">🍑</span>Sofá — de joelhos de costas, curvas para câmera</button>
+      <button class="pose-btn" data-pose="sofa-over-back" onclick="setPose('sofa-over-back')"><span class="pose-icon">🛋️</span>Sofá — drapejada sobre o encosto de costas</button>
+      <div class="pose-group-label">🏙️ Neon / Cidade à Noite</div>
+      <button class="pose-btn" data-pose="neon-standing-front" onclick="setPose('neon-standing-front')"><span class="pose-icon">🌃</span>Neon — em pé de frente, luzes coloridas</button>
+      <button class="pose-btn" data-pose="neon-standing-back" onclick="setPose('neon-standing-back')"><span class="pose-icon">🌃</span>Neon — em pé de costas, reflexo neon</button>
+      <button class="pose-btn" data-pose="neon-sitting-ground" onclick="setPose('neon-sitting-ground')"><span class="pose-icon">🌃</span>Neon — sentada no chão sob luzes neon</button>
+      <div class="pose-group-label">🪟 Varanda / Janela</div>
+      <button class="pose-btn" data-pose="window-leaning-back" onclick="setPose('window-leaning-back')"><span class="pose-icon">🪟</span>Janela — encostada de costas com vista da cidade</button>
+      <button class="pose-btn" data-pose="window-sitting-ledge" onclick="setPose('window-sitting-ledge')"><span class="pose-icon">🪟</span>Janela — sentada no peitoril olhando para fora</button>
+      <button class="pose-btn" data-pose="balcony-railing-back" onclick="setPose('balcony-railing-back')"><span class="pose-icon">🪟</span>Varanda — de costas na grade, cidade ao fundo</button>
+      <div class="pose-group-label">🏨 Hotel / Quarto de Luxo</div>
+      <button class="pose-btn" data-pose="hotel-lying-front" onclick="setPose('hotel-lying-front')"><span class="pose-icon">🏨</span>Hotel — deitada de frente na cama, lençóis brancos</button>
+      <button class="pose-btn" data-pose="hotel-standing-window-back" onclick="setPose('hotel-standing-window-back')"><span class="pose-icon">🏨</span>Hotel — em pé de costas na janela panorâmica</button>
+      <button class="pose-btn" data-pose="hotel-bath-edge-sitting" onclick="setPose('hotel-bath-edge-sitting')"><span class="pose-icon">🛁</span>Hotel — sentada na borda da banheira</button>
+      <div class="pose-group-label">🍳 Interior / Cozinha</div>
+      <button class="pose-btn" data-pose="kitchen-counter-back" onclick="setPose('kitchen-counter-back')"><span class="pose-icon">🍳</span>Cozinha — encostada no balcão de costas</button>
+      <button class="pose-btn" data-pose="floor-sitting-back-wall" onclick="setPose('floor-sitting-back-wall')"><span class="pose-icon">🏠</span>Interior — sentada no chão de costas na parede</button>
+      <div class="pose-group-label">🪜 Escadas / Corredor</div>
+      <button class="pose-btn" data-pose="stairs-seated-front" onclick="setPose('stairs-seated-front')"><span class="pose-icon">🪜</span>Escadas — sentada de frente, arquitetura ao fundo</button>
+      <button class="pose-btn" data-pose="stairs-standing-side" onclick="setPose('stairs-standing-side')"><span class="pose-icon">🪜</span>Escadas — em pé de perfil, luz dramática</button>
+      <button class="pose-btn" data-pose="stairs-lying-dramatic" onclick="setPose('stairs-lying-dramatic')"><span class="pose-icon">🪜</span>Escadas — deitada dramaticamente, vista aérea</button>
       <div class="pose-group-label">🌅 Outdoor / Natureza</div>
       <button class="pose-btn" data-pose="nature-field-standing" onclick="setPose('nature-field-standing')"><span class="pose-icon">🌅</span>Natureza — em pé no campo, hora dourada</button>
       <button class="pose-btn" data-pose="nature-forest-back" onclick="setPose('nature-forest-back')"><span class="pose-icon">🌲</span>Natureza — na floresta de costas</button>
@@ -11186,6 +11211,127 @@ const POSES = {
     neg: 'from behind, back view, clothed conservative, legs together, outdoors, no bed, harsh uneven lighting, side profile only', sup: true, label: 'OF — PPV conteúdo explícito deitada aberta (NSFW)'
   },
 
+  // ── Sofá / Living Room ──────────────────────────────────────────────────────
+  'sofa-lying-front': {
+    sd_start: 'woman lying on sofa facing camera, overhead angle, luxury living room,',
+    sd_end:   'woman lying face-up on luxurious sofa, overhead or slight down-angle shot, plush cushions surrounding her, warm apartment evening light, sensual relaxed expression, premium interior décor, bokeh background',
+    mj:  'woman lying on sofa facing camera overhead angle, luxury apartment living room, warm evening light, plush cushions, sensual relaxed pose',
+    neg: 'standing, outdoors, beach, pool, no sofa', sup: false, label: 'Sofá — deitada de frente'
+  },
+  'sofa-lying-back': {
+    sd_start: 'woman lying on sofa from behind, arched back, luxury living room,',
+    sd_end:   'woman lying face-down or arched on luxury sofa, view from behind, plush cushions, back arched showing curves, warm ambient apartment light, premium interior, sensual editorial',
+    mj:  'woman on luxury sofa from behind, back arched, plush cushions, warm apartment light, sensual curves, premium interior décor',
+    neg: 'facing camera, outdoors, no sofa, no interior', sup: false, label: 'Sofá — deitada de costas'
+  },
+  'sofa-sitting-reclined': {
+    sd_start: 'woman sitting reclined on sofa, legs stretched out, luxury living room,',
+    sd_end:   'woman sitting comfortably reclined on luxury sofa, legs stretched out or crossed, one arm resting along sofa back, warm apartment light, relaxed confident expression, premium interior décor, plush cushions',
+    mj:  'woman sitting reclined on luxury sofa legs stretched, warm apartment living room, confident relaxed pose, plush cushions, premium interior',
+    neg: 'standing, outdoors, no sofa, kneeling, lying down', sup: false, label: 'Sofá — sentada reclinada'
+  },
+  'sofa-kneeling-back': {
+    sd_start: 'woman kneeling on sofa facing away from camera, curves prominent, luxury living room,',
+    sd_end:   'woman kneeling on luxury sofa facing away from camera, back arched, curves prominently displayed, plush cushions around her, warm apartment golden light, sensual confident pose, premium interior décor',
+    mj:  'woman kneeling on sofa from behind back arched, luxury living room, warm ambient light, curves on display, plush sofa',
+    neg: 'facing camera, outdoors, no sofa, standing', sup: true, label: 'Sofá — de joelhos de costas'
+  },
+  'sofa-over-back': {
+    sd_start: 'woman draped over sofa back from behind, arched over sofa top, luxury living room,',
+    sd_end:   'woman draped over the back of a luxury sofa viewed from behind, body arched over sofa top, curves revealed, warm indoor ambient lighting, premium apartment décor, candid editorial atmosphere',
+    mj:  'woman draped over sofa back from behind, arched over sofa top, luxury apartment, warm light, editorial sensual pose',
+    neg: 'facing camera, outdoors, no sofa, seated normally', sup: true, label: 'Sofá — drapejada de costas'
+  },
+  // ── Neon / Cidade à Noite ───────────────────────────────────────────────────
+  'neon-standing-front': {
+    sd_start: 'woman standing facing camera in neon-lit city night, colorful neon signs,',
+    sd_end:   'woman standing facing camera in vibrant neon-lit city scene, colorful neon signs reflecting off wet pavement, Tokyo or Las Vegas style urban night, moody atmospheric lighting, neon colors casting on skin, confident editorial pose',
+    mj:  'woman standing facing camera vibrant neon city night, colorful neon signs wet reflective pavement, atmospheric urban night photography, editorial confidence',
+    neg: 'daytime, natural light, rural, no neon, from behind', sup: false, label: 'Neon — em pé de frente'
+  },
+  'neon-standing-back': {
+    sd_start: 'woman standing with back to camera in neon-lit city night, colorful neon reflections,',
+    sd_end:   'woman standing from behind in vibrant neon city night, colorful neon light reflecting on her silhouette and wet street, moody atmospheric urban night, Tokyo Shinjuku or Blade Runner aesthetic, editorial atmospheric',
+    mj:  'woman from behind neon-lit city at night, colorful neon reflections, wet pavement, Blade Runner aesthetic, atmospheric editorial',
+    neg: 'facing camera, daytime, rural, no neon', sup: false, label: 'Neon — de costas'
+  },
+  'neon-sitting-ground': {
+    sd_start: 'woman sitting on ground in neon-lit city alley, colorful neon light on face and body,',
+    sd_end:   'woman sitting on ground in vibrant neon-lit urban alley, colorful neon signs overhead, wet reflective pavement, moody cyberpunk aesthetic, vulnerable and beautiful, editorial night photography',
+    mj:  'woman sitting on ground neon city alley, colorful neon lights, wet pavement reflection, cyberpunk aesthetic, moody night editorial',
+    neg: 'standing, daytime, rural, indoors without neon', sup: false, label: 'Neon — sentada no chão'
+  },
+  // ── Varanda / Janela ────────────────────────────────────────────────────────
+  'window-leaning-back': {
+    sd_start: 'woman leaning against window from behind, city view through glass, luxury apartment,',
+    sd_end:   'woman leaning with back against large floor-to-ceiling window viewed from behind, city skyline through glass behind her, warm interior light contrasting with city lights, sensual silhouette, luxury apartment',
+    mj:  'woman from behind leaning against large window, city skyline view through glass, warm indoor light, luxury apartment, sensual silhouette',
+    neg: 'facing camera directly, outdoors, no window, no city view', sup: false, label: 'Janela — encostada de costas'
+  },
+  'window-sitting-ledge': {
+    sd_start: 'woman sitting on window ledge looking out at city view, luxury apartment,',
+    sd_end:   'woman sitting on wide window ledge, legs drawn up or hanging, gazing out at city view below, warm interior light behind her, contemplative and beautiful, luxury apartment setting, soft natural light from window',
+    mj:  'woman sitting on window ledge looking out at city, warm interior luxury apartment, contemplative pose, soft natural window light',
+    neg: 'standing, no window, outdoors, urban street level', sup: false, label: 'Janela — sentada no peitoril'
+  },
+  'balcony-railing-back': {
+    sd_start: 'woman from behind on balcony gripping railing, city skyline beyond, golden hour or evening,',
+    sd_end:   'woman standing from behind on luxury apartment balcony, hands on iron railing, city skyline stretching to horizon, magic hour or evening light, hair moving gently in breeze, sensual silhouette against vast cityscape',
+    mj:  'woman from behind on balcony hands on railing, city skyline golden hour or evening, hair in breeze, sensual silhouette, luxury apartment terrace',
+    neg: 'facing camera, indoors, no balcony, no city view', sup: false, label: 'Varanda — de costas na grade'
+  },
+  // ── Hotel / Quarto de Luxo ──────────────────────────────────────────────────
+  'hotel-lying-front': {
+    sd_start: 'woman lying on hotel bed facing camera, luxury hotel suite, crisp white linens,',
+    sd_end:   'woman lying face-up on luxurious hotel bed facing camera, crisp white premium bed linens, warm ambient hotel room lighting, elegant headboard behind, sensual relaxed expression, luxury hotel suite, ring light or soft window light',
+    mj:  'woman lying on luxury hotel bed facing camera, crisp white linens, warm hotel room light, elegant suite, sensual relaxed pose, premium hotel photography',
+    neg: 'from behind, outdoors, no bed, cheap room, harsh lighting', sup: false, label: 'Hotel — deitada de frente'
+  },
+  'hotel-standing-window-back': {
+    sd_start: 'woman standing at hotel window from behind, panoramic city or sea view, luxury suite,',
+    sd_end:   'woman standing from behind at large hotel room window, panoramic city or sea view through glass, morning or evening light, elegant contemplative pose, luxury hotel suite interior visible, robe or minimal clothing',
+    mj:  'woman from behind at hotel window, panoramic city view, luxury hotel room, morning or evening light, elegant contemplative pose',
+    neg: 'facing camera, no window, cheap room, outdoors', sup: false, label: 'Hotel — de costas na janela'
+  },
+  'hotel-bath-edge-sitting': {
+    sd_start: 'woman sitting on edge of freestanding bathtub, luxury hotel bathroom, marble,',
+    sd_end:   'woman sitting on rim of freestanding luxury bathtub, marble bathroom, warm candle and ambient light, steam atmosphere, elegant and sensual, luxury hotel or villa bathroom, relaxed intimate expression',
+    mj:  'woman sitting on edge of freestanding bathtub, luxury marble bathroom, candle light, steam, warm ambient glow, elegant sensual pose',
+    neg: 'outdoors, no bathtub, cheap bathroom, fully clothed formal', sup: false, label: 'Hotel — borda da banheira'
+  },
+  // ── Interior / Cozinha ──────────────────────────────────────────────────────
+  'kitchen-counter-back': {
+    sd_start: 'woman leaning against kitchen counter from behind, modern luxury kitchen,',
+    sd_end:   'woman leaning with back against modern kitchen counter viewed from behind, marble or stone countertops, warm kitchen lighting, morning or evening atmosphere, relaxed natural candid pose, contemporary luxury kitchen',
+    mj:  'woman from behind leaning on kitchen counter, modern luxury kitchen, warm lighting, relaxed natural pose, marble countertop',
+    neg: 'facing camera directly, outdoors, no kitchen, restaurant', sup: false, label: 'Cozinha — de costas no balcão'
+  },
+  'floor-sitting-back-wall': {
+    sd_start: 'woman sitting on floor back against wall, moody interior dramatic light,',
+    sd_end:   'woman sitting on floor with back against wall, knees up or legs stretched, moody dramatic interior light from window, natural shadow and highlights, raw emotional or sensual energy, minimalist interior or luxury apartment, candid',
+    mj:  'woman sitting on floor back against wall knees up, moody window light, dramatic shadows, minimalist interior, raw sensual candid energy',
+    neg: 'standing, outdoors, no wall, bright flat light', sup: false, label: 'Interior — sentada no chão'
+  },
+  // ── Escadas / Corredor ──────────────────────────────────────────────────────
+  'stairs-seated-front': {
+    sd_start: 'woman seated on staircase facing camera, grand marble architectural staircase,',
+    sd_end:   'woman seated on steps of an elegant staircase facing camera, grand marble or wooden staircase, dramatic architectural lighting, hand on railing or knee, sensual confident expression, luxury hotel or villa or mansion staircase',
+    mj:  'woman seated on grand staircase facing camera, marble steps, dramatic architectural lighting, luxury hotel or mansion, confident sensual pose',
+    neg: 'outdoors, no stairs, plain floor, standing, from behind', sup: false, label: 'Escadas — sentada de frente'
+  },
+  'stairs-standing-side': {
+    sd_start: 'woman standing on staircase in profile, grand staircase, dramatic side lighting,',
+    sd_end:   'woman standing mid-staircase in side profile, elegant railing to one side, dramatic shaft of light from above or window, architectural grandeur, sensual silhouette against staircase backdrop, hand on banister, luxury interior',
+    mj:  'woman standing on grand staircase in profile, dramatic side lighting, elegant banister, luxury interior, architectural sensual silhouette',
+    neg: 'facing camera directly, outdoors, no stairs, from behind', sup: false, label: 'Escadas — de perfil'
+  },
+  'stairs-lying-dramatic': {
+    sd_start: 'woman lying draped across grand staircase steps, aerial view from above, dramatic,',
+    sd_end:   'woman lying draped across grand staircase steps viewed from above or dramatic angle, marble or polished wooden stairs, dramatic cinematic lighting from above, editorial fashion or fine art aesthetic, sensual and artistic',
+    mj:  'woman lying draped on grand staircase aerial view, marble steps, dramatic cinematic light, editorial fashion art photography, sensual dramatic',
+    neg: 'standing, outdoors, no stairs, plain floor, natural candid', sup: false, label: 'Escadas — deitada dramaticamente'
+  },
+
 };let selectedPose = null;
 let selectedPoseKey = null;
 // Cached pose outfit — computed once per generate so scene + outfit are coherent
@@ -14411,6 +14557,120 @@ const SCENE_POOLS = {
     'ballet rehearsal studio, mirrored walls, barres, sprung floor, piano, late afternoon light, dance and discipline',
   ],
 
+  sofa: [
+    'luxury penthouse living room, plush velvet sofa, warm amber lamp glow, city skyline through floor-to-ceiling windows at night',
+    'modern loft apartment living room, exposed brick, designer sofa, warm afternoon window light casting long soft shadows',
+    'elegant Parisian apartment salon, ornate molding, tufted chaise sofa, soft warm lamplight, evening ambiance',
+    'contemporary open-plan apartment, minimalist sofa, city view through large window, golden evening light',
+    'cozy Scandinavian living room, clean lines, plush grey sofa, warm hygge lamp and candle glow',
+    'New York loft, industrial windows, leather sofa, midday Manhattan light slanting in diagonally',
+    'Beverly Hills modern villa living room, cream sectional sofa, warm afternoon California light',
+    'London Georgian apartment drawing room, corniced ceiling, velvet sofa, tall sash windows, afternoon',
+    'Miami penthouse living room, curved white sofa, ocean view through panoramic windows, warm tropical light',
+    'Tokyo high-rise apartment, contemporary minimalist sofa, city panorama below at night, soft ambient glow',
+    'bohemian eclectic living room, patterned sofa, macramé wall hanging, warm layered lamp glow',
+    'Madrid modernist flat, mid-century modern sofa, warm Spanish afternoon light, tiled floor, balcony door ajar',
+    'Sydney harbourfront apartment, designer sofa, Opera House visible through window, golden afternoon',
+    'Dubai ultra-modern penthouse, oversized plush sofa, desert cityscape glittering below at night',
+    'Rome centro storico apartment, antique sofa, warm ochre walls, afternoon light through shuttered windows',
+    'Copenhagen design studio apartment, award-winning furniture, cool Nordic afternoon light, hygge vibes',
+    'São Paulo rooftop apartment, contemporary sofa, tropical city skyline at golden hour, warm evening',
+    'Los Angeles hillside home, retractable glass wall open, sofa facing infinity pool and canyon view at sunset',
+    'Lisbon tiled-facade apartment, vintage sofa, azulejo details, afternoon light filtering through shutters',
+    'Singapore serviced apartment, sleek contemporary sofa, Marina Bay panorama below, warm evening glow',
+  ],
+
+  neon_city: [
+    'Tokyo Shinjuku neon district, dense colorful signage, rain-wet pavement reflecting electric colors, cyberpunk night',
+    'Las Vegas Strip at midnight, casino neon blaze, warm electric glow on everything, opulent excess and light',
+    'Blade Runner-style urban alley, pink and blue neon puddles in rain, steam from grates, atmospheric dystopia',
+    'Hong Kong Mong Kok neon signs, layered Chinese characters illuminated, dense urban vertical neon canopy',
+    'Times Square New York, gigantic screens and billboards, overwhelming colorful light, evening crowd energy',
+    'Seoul Hongdae entertainment district, vibrant neon, K-pop aesthetic LED signs, festive night energy',
+    'Osaka Dōtonbori canal at night, Glico man sign, neon reflections on water, festive vibrant Japanese night',
+    'Berlin nightclub district, cool industrial neon, minimalist pink and blue gels, techno aesthetic',
+    'Miami South Beach Ocean Drive neon, Art Deco pastel neon trim, warm humid Florida night, retro glamour',
+    'Macau casino strip at night, gold and red neon blaze, luxury and opulence reflected on polished surfaces',
+    'Taipei XiMenDing, Taiwanese youth culture neon, warm amber and pink glow, vibrant',
+    'Amsterdam Leidseplein at night, warm European neon, wet cobblestones reflecting lights, canal glow',
+    'Chicago Loop at night, green subway neon and skyscraper light, steel-and-glass urban canyon',
+    'New Orleans Bourbon Street at night, festive neon bar signs, warm humid Southern night, jazz energy',
+    'Montréal St-Denis at night, bilingual neon signs, warm French-Canadian urban night, festive',
+    'Sydney Kings Cross night, Australian city neon, warm summer night, vibrant local nightlife scene',
+    'neon-lit cyberpunk city rooftop at night, city glowing below, electric atmospheric fog, sci-fi urban',
+    'wet alleyway in neon city, multiple colored neon signs overhead, rain on pavement, moody cinematic',
+    'underground neon-lit bar entrance, vibrant multicolor neon arch, velvet rope, glamorous city night',
+  ],
+
+  hotel: [
+    'luxurious Parisian palace hotel suite, gilded molding, tall silk curtains, warm chandelier and lamp glow',
+    'New York City five-star penthouse hotel suite, panoramic Manhattan skyline at dusk, refined understated luxury',
+    'Santorini cliffside boutique hotel room, whitewashed walls, caldera view through arched window, golden afternoon',
+    'Dubai Burj Al Arab hotel suite, opulent gold-and-white décor, floor-to-ceiling glass, Persian Gulf below',
+    'Tokyo luxury hotel room, contemporary minimalism, floor-to-ceiling city view, warm ambient lighting at night',
+    'Milan five-star fashion hotel suite, Italian design, marble surfaces, warm afternoon light, refined elegance',
+    'Maldives overwater villa, crystal water visible below, warm tropical noon glow, paradise atmosphere',
+    'London Claridges-style hotel suite, Art Deco interior, warm amber lamp, crisp white linens, British luxury',
+    'Monaco luxury suite, principality and harbour view, warm evening glow, Mediterranean luxury interior',
+    'Bali ultra-luxury private villa, jungle or rice terrace view, warm teak and stone, lantern glow at dusk',
+    'Bangkok Mandarin Oriental-style suite, Thai silk cushions, river view through tall windows, ambient evening',
+    'Rome Hassler-style hotel, terrace view over Roman rooftops and columns, warm golden morning light',
+    'Vienna Sacher-style hotel room, imperial Austro-Hungarian interior, warm mahogany and velvet, refinement',
+    'Istanbul Bosphorus-view hotel suite, panoramic strait and minarets at dusk, Ottoman-modern interior',
+    'Kyoto luxury ryokan room, tatami floor, shoji screens glowing amber, garden view, wabi-sabi perfection',
+    'New Orleans boutique hotel suite, French Quarter charm, wrought iron, tall shutters, warm Southern lamplight',
+    'Amalfi Coast clifftop hotel suite, terracotta and lime, sweeping sea view, warm Mediterranean morning light',
+    'Swiss mountain resort hotel room, panoramic Alps view, chalet-luxe interior, fireplace glowing, snow outside',
+    'Sydney Harbour hotel room, Opera House and bridge view, contemporary Australian luxury, warm amber dusk',
+    'Marrakech riad boutique hotel, ornate carved plaster, zellige tile, lantern glow, courtyard below at dusk',
+  ],
+
+  stairs: [
+    'grand marble staircase of a Beaux-Arts building, ornate iron railing, warm amber light from overhead chandelier',
+    'luxury hotel lobby staircase, sweeping curved design, polished marble, warm architectural spot lighting',
+    'Victorian mansion main staircase, carved wood banisters, stained-glass window above, warm filtered afternoon light',
+    'Parisian Haussmann apartment building stairwell, wrought-iron spiral railing, warm yellow lamp glow',
+    'modern luxury penthouse spiral staircase, open steel and glass design, warm ambient glow from below',
+    'Italian Renaissance villa staircase, stone steps, cypress courtyard beyond the archway, warm Mediterranean afternoon',
+    'New York brownstone stoop entrance, sandstone steps, warm urban afternoon, iron railing and city street behind',
+    'Monaco casino staircase, Belle Époque grandeur, warm red carpet on marble steps, gilded columns',
+    'Spanish castle stone spiral staircase, ancient worn stone, dramatic shaft of light from high window',
+    'Art Deco Hollywood hotel staircase, geometric railing, warm amber and white light, 1930s glamour',
+    'Havana colonial mansion staircase, peeling grandeur, wrought iron, tropical light and shadow from shutters',
+    'Buenos Aires palacio interior staircase, ornate Italian-style architecture, warm afternoon light',
+    'Singapore Peranakan shophouse staircase, colorful heritage tile, carved timber rail, warm filtered afternoon',
+    'Lisbon azulejo-tiled stairwell, blue and white ceramic tile walls, warm afternoon light',
+    'Budapest parliament or opera house staircase, neo-Gothic grandeur, red velvet rail, warm chandelier light',
+    'London townhouse Edwardian staircase, polished mahogany, white runner, warm afternoon through fanlight above',
+    'Istanbul Dolmabahçe-style palace staircase, crystal chandelier above, white marble, gilded railing',
+    'Copenhagen contemporary museum spiral staircase, pale concrete and wood, cool Nordic natural light',
+    'Moroccan riad interior staircase, ornate zellige tile treads, geometric carved plaster wall, warm amber lamp',
+    'Versailles-inspired palace staircase, gilded banisters, fresco ceiling above, warm opulent French grandeur',
+  ],
+
+  balcony: [
+    'luxury apartment balcony over Paris, Haussman-style rooftops and chimneys at golden hour, iron railing',
+    'Santorini terrace balcony, whitewashed walls, caldera and Aegean below at sunset, bougainvillea in bloom',
+    'Tokyo high-rise balcony at night, city stretching to horizon, colorful city glow, warm breeze',
+    'Barcelona rooftop terrace, Gaudí mosaic visible, city and Mediterranean beyond, warm evening',
+    'Miami Beach penthouse terrace, Atlantic Ocean panorama, warm tropical sunset, art deco buildings below',
+    'Positano cliffside terrace, tumbling bougainvillea, Tyrrhenian Sea and boats below, warm Amalfi afternoon',
+    'New York financial district balcony at night, Brooklyn Bridge and East River lit, electric urban night',
+    'Monaco port-facing balcony, luxury superyachts below, principality hills behind, warm Mediterranean evening',
+    'Dubai hotel terrace, vast desert and skyscraper skyline, warm gold and purple sunset, dry warm air',
+    'Sydney harbour-facing apartment balcony, Opera House in distance, warm Australian afternoon, gentle breeze',
+    'Singapore Marina Bay hotel balcony, iconic skyline with Gardens by the Bay, warm tropical evening glow',
+    'Venice canal apartment balcony, gondolas below, Renaissance facades reflected in water, late afternoon',
+    'Rio de Janeiro Ipanema penthouse balcony, ocean and Christ the Redeemer in distance, warm tropical sunset',
+    'Cape Town Atlantic Seaboard balcony, Lion\'s Head and ocean at golden hour, crisp South African light',
+    'London Chelsea penthouse terrace, Thames and city spread below, warm summer evening, Battersea Power Station',
+    'Vienna Ringstrasse apartment balcony, imperial architecture below, warm Central European evening light',
+    'Lisbon hillside terrace, city of seven hills and Tagus below, pink and orange sunset, pink bougainvillea',
+    'Buenos Aires Palermo balcony, tree-lined boulevard below, warm South American afternoon, jacaranda purple',
+    'Mexico City Roma Norte apartment terrace, jacaranda trees below, warm highland afternoon, CDMX energy',
+    'Istanbul Bosphorus-facing apartment balcony, strait and Asian shore at sunset, minarets silhouette',
+  ],
+
 };
 
 // ── autoScene(): pick a random scenario from the right pool ──────────────
@@ -14440,6 +14700,13 @@ function autoScene(poseKey){
   if(k === 'selfie-standing-art-museum')   return _randomFrom(SCENE_POOLS.art_studio);
   if(k === 'selfie-fitting-lingerie-side') return _randomFrom(SCENE_POOLS.mirror);
   if(k.startsWith('mirror-') || k.startsWith('selfie-')) return _randomFrom(SCENE_POOLS.mirror);
+  if(k.startsWith('sofa-'))                              return _randomFrom(SCENE_POOLS.sofa);
+  if(k.startsWith('neon-'))                              return _randomFrom(SCENE_POOLS.neon_city);
+  if(k.startsWith('hotel-'))                             return _randomFrom(SCENE_POOLS.hotel);
+  if(k.startsWith('stairs-'))                            return _randomFrom(SCENE_POOLS.stairs);
+  if(k.startsWith('window-') || k.startsWith('balcony-')) return _randomFrom(SCENE_POOLS.balcony);
+  if(k === 'kitchen-counter-back')                       return _randomFrom(SCENE_POOLS.default);
+  if(k === 'floor-sitting-back-wall')                    return _randomFrom(SCENE_POOLS.boudoir);
   if(k.startsWith('car-')    || k.startsWith('moto-')) return _randomFrom(SCENE_POOLS.car);
   if(k.startsWith('lesbian-'))                          return _randomFrom(SCENE_POOLS.boudoir);
   if(k.startsWith('fantasy-'))                          return _randomFrom(SCENE_POOLS.fantasy);
@@ -14617,6 +14884,13 @@ function getDefaultSceneForPose(key){
   if(k.startsWith('selfie-bed-'))                                return 'bedroom';
   if(k.startsWith('mirror-') || k.startsWith('selfie-'))        return 'bedroom mirror selfie';
   if(k.startsWith('car-') || k.startsWith('moto-') || k.startsWith('motorcycle-')) return 'by the car';
+  if(k.startsWith('sofa-'))                                       return 'luxury apartment living room';
+  if(k.startsWith('neon-'))                                       return 'neon-lit city at night';
+  if(k.startsWith('hotel-'))                                      return 'luxury hotel suite';
+  if(k.startsWith('stairs-'))                                     return 'grand staircase';
+  if(k.startsWith('window-') || k.startsWith('balcony-'))         return 'apartment balcony city view';
+  if(k === 'kitchen-counter-back')                                return 'modern kitchen interior';
+  if(k === 'floor-sitting-back-wall')                             return 'indoor minimalist interior';
   if(k.startsWith('lesbian-'))                                    return 'luxury boudoir';
   if(k.startsWith('fantasy-'))                                   return 'fantasy setting';
   if(k.startsWith('escort-')){
@@ -14727,6 +15001,21 @@ function getPoseSensualOutfit(key, returnAll){
     'white sheer organza bralette and matching micro bikini panties, delicate and ethereal',
     'silver metallic balcony bra and matching high-cut panties, futuristic boudoir',
     'deep plunge emerald satin bra and lace thong with gold chain trim, luxurious editorial',
+    // additional lingerie
+    'dusty lilac silk triangle bralette and matching micro thong, soft romantic',
+    'black wet-look vinyl bra and matching high-cut panties, daring fetish chic',
+    'embellished crystal-strap bralette and barely-there G-string, red carpet lingerie',
+    'soft-touch modal bralette and matching seamless briefs, everyday elevated',
+    'bronze metallic halter bralette and matching high-cut panties, editorial luxury',
+    'tie-dye silk balconette bra and matching cheeky panties, artistic boudoir',
+    'pale blue satin plunge bra and matching high-waist lace panties, ethereal blue',
+    'black ribbon-lace bodysuit with sheer panels, intricate one-piece lingerie',
+    'sheer stretch-mesh bodysuit, no lining, barely-there full-body coverage',
+    'ivory embroidered eyelet bralette and matching midi-cut briefs, romantic feminine',
+    'red velvet plunge bra and matching full-coverage panties with gold ring, holiday boudoir',
+    'champagne nude lace longline bralette and matching seamless thong, barely-there nude',
+    'bold cobalt blue push-up balcony bra and matching micro bikini briefs, vivid boudoir',
+    'slate grey jersey bralette and matching boy-short cut panties, minimalist intimate',
   ];
 
   // ── Mini & bodycon dresses ─────────────────────────────────────────────────
@@ -14774,6 +15063,19 @@ function getPoseSensualOutfit(key, returnAll){
     'floral chiffon micro babydoll dress, sheer overlay, romantic',
     'ribbed knit turtleneck micro dress, second-skin, minimalist',
     'crystal-embellished micro cami dress, disco-inspired sparkle',
+    // additional mini dresses
+    'neon green micro mini dress, high-impact going-out look, electric',
+    'midnight blue velvet plunge-neck bodycon mini, sophisticated sexy',
+    'white lace micro mini dress over skin-tone liner, romantic and revealing',
+    'blush satin ruched micro mini, effortlessly sensual, barely there',
+    'printed geometric bodycon mini, colour-blocked editorial statement',
+    'deep-red long-sleeve micro mini dress with sheer inserts, glamorous',
+    'backless criss-cross strap micro mini in black satin, seductive back',
+    'leather-look black micro mini skirt and matching crop bra-top co-ord',
+    'ultra-short asymmetric off-shoulder mini in dusty rose, playful',
+    'sparkly silver holographic bodycon micro mini, festival club look',
+    'low-back satin cowl mini dress, fluid barely-there coverage',
+    'cut-out waist metallic bodycon mini, editorial futuristic',
   ];
 
   // ── Casual sundresses & midi dresses ─────────────────────────────────────
@@ -14806,6 +15108,15 @@ function getPoseSensualOutfit(key, returnAll){
     'velvet slip midi dress in deep plum, effortless evening casual',
     'ruffle-sleeve off-shoulder midi dress, romantic garden look',
     'poplin button-front midi dress with belt, classic casual',
+    // additional casual dresses
+    'daisy-print cotton midi dress, vintage-inspired flirty',
+    'cobalt blue wrap sundress, cinched waist, breezy summer',
+    'burnt orange maxi dress, boho casual resort wear',
+    'white cotton eyelet midi dress, romantic summer occasion',
+    'sage green slip midi dress, minimalist ethereal',
+    'paisley print midi skirt and matching crop top co-ord, bohemian',
+    'sherbet yellow flowy halter midi dress, cheerful summer',
+    'vintage floral off-shoulder mini sundress, retro charm',
   ];
 
   // ── Formal & elegant dresses ──────────────────────────────────────────────
@@ -14833,6 +15144,14 @@ function getPoseSensualOutfit(key, returnAll){
     'satin cape-detail gown, dramatic red-carpet presence',
     'sculpted strapless couture gown with architectural seaming',
     'long sequin column dress, full-length sparkle, formal glam',
+    // additional formal dresses
+    'emerald green plunge halter gown with open back, luxurious event wear',
+    'ivory structured corseted ballgown with full skirt, bridal-inspired elegance',
+    'black tailored tuxedo-style pantsuit with deep-V jacket, power formal',
+    'champagne beaded fringe cocktail dress, Art Deco glamour',
+    'draped rose-gold chiffon gown with one bare shoulder, ethereal formal',
+    'deep navy floor-length column gown, architectural and austere elegance',
+    'red carpet custom-fit satin column dress with thigh slit, iconic statement',
   ];
 
   // ── Casual street tops + bottoms ──────────────────────────────────────────
@@ -14865,6 +15184,15 @@ function getPoseSensualOutfit(key, returnAll){
     'knit co-ord two-piece: ribbed midi skirt and matching crop top',
     'biker shorts and oversized blazer, athleisure street',
     'high-waist flared jeans and tucked-in silk camisole, chic casual',
+    // additional casual street
+    'oversized graphic tee knotted above navel and high-waist micro shorts, off-duty',
+    'tennis mini skirt and fitted polo shirt, preppy athletic',
+    'wide-leg linen trousers and ribbed square-neck crop tank, resort casual',
+    'sheer printed wrap skirt over bikini bottoms and matching halter top, beach-to-bar',
+    'long flowy linen cardigan over crop tank and straight-leg jeans, relaxed chic',
+    'vinyl-shine leggings and cropped boxy tee, Y2K street revival',
+    'tailored bermuda shorts and crisp button-down blouse half-tucked, smart summer',
+    'lightweight silk-effect wide-leg culottes and cami, elevated casual',
   ];
 
   // ── Fashion-forward chic ──────────────────────────────────────────────────
@@ -14892,6 +15220,14 @@ function getPoseSensualOutfit(key, returnAll){
     'crisp white suit: blazer over nothing and matching tapered trousers',
     'sleek biker jacket and silk slip midi skirt, contrasting textures',
     'dramatic cape-sleeve structured dress, editorial power look',
+    // additional fashion chic
+    'all-black tailored pinstripe wide-leg suit with nothing underneath, power editorial',
+    'draped asymmetric silk one-shoulder top and matching wide-leg trousers, couture',
+    'latex-effect high-neck crop top and matching flared trousers, futuristic editorial',
+    'oversized military coat with nothing but lingerie underneath, fashion week bold',
+    'sheer pleated palazzo trousers and crystal-embellished bralette, luxury editorial',
+    'exaggerated-shoulder blazer as dress, power silhouette, fashion week statement',
+    'floor-length printed silk kimono worn open as a coat over minimal outfit, editorial',
   ];
 
   // ── Casual sexy ───────────────────────────────────────────────────────────
@@ -14932,6 +15268,16 @@ function getPoseSensualOutfit(key, returnAll){
     'strapless bra-let and low-rise baggy jeans, Y2K revival street casual',
     'sheer chiffon blouse tied at waist over sports bra and micro skirt, layered feminine',
     'backless halter bodysuit tucked into high-waist shorts, sensual summery',
+    // additional casual sexy
+    'cut-out side crop hoodie and matching biker shorts, athleisure sexy',
+    'extreme crop denim jacket and matching denim micro shorts, co-ord denim sexy',
+    'plunge-neck bandeau under open blazer with micro mini skirt, office-to-night',
+    'wrap sarong skirt tied low on hips and matching strapless bandeau, island sexy',
+    'sheer bodycon midi skirt and minimal bralette, barely-there sexy casual',
+    'fishnet crop top worn over matching bralette with high-waist jeans, alt casual',
+    'barely-there spaghetti strap micro jersey dress, no bra, casual sensual',
+    'cropped vintage band tee knotted at waist and high-waist vinyl micro skirt',
+    'matching rib knit micro shorts and long-sleeve crop top, casual cool lounge',
   ];
 
   // ── Lounge & sleep ────────────────────────────────────────────────────────
@@ -14959,6 +15305,14 @@ function getPoseSensualOutfit(key, returnAll){
     'vintage-style baby doll with robe, sheer layers, romantic',
     'deep-V bamboo jersey sleep dress, barely covering thighs, breathable',
     'modal lounge set: wide crop top and high-waist wide-leg pants, luxury casual',
+    // additional lounge/robe
+    'silk short robe loosely open, nothing underneath, candid intimate morning',
+    'oversized boyfriend shirt, top buttons open, thigh-high socks, no bottoms, cozy seductive',
+    'cashmere wrap cardigan and matching shorts, luxe winter loungewear',
+    'satin slip dress (mid-thigh) with lace trim, vintage-inspired lounge',
+    'plush monogrammed hotel bathrobe loosely tied, luxury intimate morning',
+    'long silk chemise nightgown, sheer at hem, romantic and vintage',
+    'matching ribbed crop top and wide-leg lounge pants, minimalist cozy',
   ];
 
   // ══════════════════════════════════════════════════════════════════════════
