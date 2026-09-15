@@ -2514,6 +2514,20 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <button class="pose-btn" data-pose="of-close-face-tongue-wink"       onclick="setPose('of-close-face-tongue-wink')"><span class="pose-icon">😜</span>OF — close rosto, língua de fora, piscada câmera</button>
       <button class="pose-btn" data-pose="of-welcome-standing-front"       onclick="setPose('of-welcome-standing-front')"><span class="pose-icon">👋</span>OF — welcome post, em pé sorrindo para câmera</button>
       <button class="pose-btn" data-pose="of-ppv-explicit-lying"           onclick="setPose('of-ppv-explicit-lying')"><span class="pose-icon">🔞</span>OF — PPV conteúdo explícito deitada aberta (NSFW)</button>
+      <button class="pose-btn" data-pose="of-riding-front"                 onclick="setPose('of-riding-front')"><span class="pose-icon">🔞</span>OF — montando de frente, câmera ao nível da cama</button>
+      <button class="pose-btn" data-pose="of-riding-back"                  onclick="setPose('of-riding-back')"><span class="pose-icon">🔞</span>OF — montando de costas (reverse cowgirl)</button>
+      <button class="pose-btn" data-pose="of-chest-down-ass-up"            onclick="setPose('of-chest-down-ass-up')"><span class="pose-icon">🍑</span>OF — peito no chão, traseiro para cima (NSFW)</button>
+      <button class="pose-btn" data-pose="of-doggy-side-view"              onclick="setPose('of-doggy-side-view')"><span class="pose-icon">🔞</span>OF — quatro apoios, câmera de lado (NSFW)</button>
+      <button class="pose-btn" data-pose="of-squatting-open-pov"           onclick="setPose('of-squatting-open-pov')"><span class="pose-icon">🔞</span>OF — agachada, pernas abertas, câmera de frente</button>
+      <button class="pose-btn" data-pose="of-lying-legs-over-shoulder"     onclick="setPose('of-lying-legs-over-shoulder')"><span class="pose-icon">🔞</span>OF — deitada pernas sobre ombros, aberta câmera</button>
+      <button class="pose-btn" data-pose="of-chair-spread-explicit"        onclick="setPose('of-chair-spread-explicit')"><span class="pose-icon">🔞</span>OF — sentada cadeira, pernas abertas, de frente</button>
+      <button class="pose-btn" data-pose="of-against-wall-back-arch"       onclick="setPose('of-against-wall-back-arch')"><span class="pose-icon">🔞</span>OF — encostada na parede, costas arqueadas (NSFW)</button>
+      <button class="pose-btn" data-pose="of-shower-glass-pressed"         onclick="setPose('of-shower-glass-pressed')"><span class="pose-icon">🚿</span>OF — corpo pressionado no vidro do chuveiro</button>
+      <button class="pose-btn" data-pose="of-ppv-oral-pov"                 onclick="setPose('of-ppv-oral-pov')"><span class="pose-icon">🔞</span>OF — POV oral explícito (NSFW)</button>
+      <button class="pose-btn" data-pose="of-ppv-anal-arch"                onclick="setPose('of-ppv-anal-arch')"><span class="pose-icon">🔞</span>OF — explícito anal, costas arqueadas (NSFW)</button>
+      <button class="pose-btn" data-pose="of-mirror-doggy-reflection"      onclick="setPose('of-mirror-doggy-reflection')"><span class="pose-icon">🔞</span>OF — doggy com reflexo no espelho (NSFW)</button>
+      <button class="pose-btn" data-pose="of-standing-bent-over-back"      onclick="setPose('of-standing-bent-over-back')"><span class="pose-icon">🍑</span>OF — curvada para frente de costas, câmera atrás</button>
+      <button class="pose-btn" data-pose="of-bed-spread-overhead-explicit" onclick="setPose('of-bed-spread-overhead-explicit')"><span class="pose-icon">🔞</span>OF — câmera aérea cima, aberta na cama (NSFW)</button>
     </div>
     <span class="pose-none" onclick="setPose(null)">✕ Sem pose específica</span>
   </div>
@@ -11209,6 +11223,92 @@ const POSES = {
     sd_end:   'explicit OnlyFans PPV pay-per-view content, woman lying on bed facing camera in explicit open position, legs spread or bent and open revealing intimate areas, direct seductive gaze at camera, professional ring light overhead or side creating clean even illumination, lingerie pulled aside or nude, clean premium bed sheets, authentic natural feminine body with real proportions, adult documentary photography style',
     mj:  'woman lying on bed explicit open position facing camera, ring light, premium sheets, direct gaze, adult OnlyFans PPV content style, authentic body',
     neg: 'from behind, back view, clothed conservative, legs together, outdoors, no bed, harsh uneven lighting, side profile only', sup: true, label: 'OF — PPV conteúdo explícito deitada aberta (NSFW)'
+  },
+
+  // ── OnlyFans — Explícito / NSFW extra ──────────────────────────────────────
+  'of-riding-front': {
+    sd_start: 'woman in cowgirl riding position, facing camera, straddling, explicit PPV content, bed, ring light from front,',
+    sd_end:   'explicit OnlyFans PPV content, woman in cowgirl position straddling and riding, facing camera directly, ring light illuminating her from front, intimate bed environment, lingerie pushed aside or topless, direct gaze at camera with seductive expression, authentic natural body, clean premium sheets, adult content photography perspective at slight low angle',
+    mj:  'woman cowgirl riding position facing camera, ring light, bed, direct seductive gaze, authentic body, adult PPV content photography',
+    neg: 'from behind, back view, standing, lying flat, no riding position, side view, outdoors, clothed conservative, no bed', sup: true, label: 'OF — montando de frente (cowgirl) PPV'
+  },
+  'of-riding-back': {
+    sd_start: 'woman in reverse cowgirl position, back to camera, explicit PPV content, bed, ring light behind,',
+    sd_end:   'explicit OnlyFans PPV content, woman in reverse cowgirl position with back facing camera, back arched, ring light behind her creating rim light halo effect, lingerie pushed aside or nude, clean premium bed sheets, back and lower body prominently facing camera, authentic natural feminine body, rear view adult content photography',
+    mj:  'woman reverse cowgirl position back to camera, back arched, ring light rim halo effect, bed premium sheets, adult PPV content rear view',
+    neg: 'facing camera, front view, standing, lying flat, side view only, outdoors, fully clothed', sup: true, label: 'OF — montando de costas (reverse cowgirl) PPV'
+  },
+  'of-chest-down-ass-up': {
+    sd_start: 'woman on bed face down, chest pressed to bed, hips raised high, explicit submissive position, back arched, buttocks raised prominently, camera behind,',
+    sd_end:   'explicit OnlyFans PPV content, woman face down with chest flat against bed and hips raised high in air, back deeply arched, buttocks prominently raised and facing camera, camera positioned behind and slightly above, ring light even illumination, lingerie pulled aside or nude, authentic natural feminine body with real proportions, premium bed sheets',
+    mj:  'woman face down chest on bed hips raised explicit position, back arched, buttocks raised toward camera, ring light, premium sheets, PPV content',
+    neg: 'standing, facing camera, front view, sitting, lying flat, outdoors, clothed conservative, side view', sup: true, label: 'OF — peito no chão, traseiro elevado (NSFW)'
+  },
+  'of-doggy-side-view': {
+    sd_start: 'woman on hands and knees, camera positioned directly to the side, full profile view, explicit doggy position, ring light from side,',
+    sd_end:   'explicit OnlyFans content, woman on all fours in doggy position photographed from directly to the side, complete profile silhouette visible from head to raised hips, ring light creating even side illumination, back arched down, lingerie removed or aside, authentic natural body, premium bed or floor, side-profile full-body explicit view',
+    mj:  'woman on all fours explicit doggy position from the side, full profile view, back arched, ring light side light, authentic body, OnlyFans explicit content',
+    neg: 'from behind, front view, standing, sitting, overhead, no all-fours, outdoors, clothed', sup: true, label: 'OF — quatro apoios, câmera de lado (NSFW)'
+  },
+  'of-squatting-open-pov': {
+    sd_start: 'woman squatting facing camera, knees spread wide apart, lowered stance, explicit squat position, camera at eye level or slightly below, ring light front,',
+    sd_end:   'explicit OnlyFans content, woman squatting low facing camera with knees spread wide apart, lingerie visible or pulled aside, ring light from front creating even illumination, slight low-angle camera perspective looking up slightly, direct seductive gaze at camera, authentic natural feminine body, intimate bedroom or studio environment, genuine explicit squat open pose',
+    mj:  'woman squatting facing camera, knees spread wide, explicit open position, slight low angle, ring light front, direct gaze, bedroom studio',
+    neg: 'standing, lying, from behind, side view, knees together, outdoor, casual clothes, no squat', sup: true, label: 'OF — agachada pernas abertas, POV câmera'
+  },
+  'of-lying-legs-over-shoulder': {
+    sd_start: 'woman lying on back, both legs raised and folded over toward shoulders, explicit folded open position, facing camera, camera from front or slight overhead,',
+    sd_end:   'explicit OnlyFans PPV content, woman lying on back with both legs raised high and bent back toward her shoulders, fully open vulnerable position, camera positioned from front or slight overhead angle, direct seductive gaze at camera, lingerie pulled aside or nude, ring light overhead illumination, authentic natural body, clean premium bed sheets, explicit adult content photography',
+    mj:  'woman lying back legs raised over shoulders, explicit open folded position, camera from front, ring light overhead, premium sheets, adult PPV content',
+    neg: 'standing, sitting, legs together, from behind, side profile, clothed conservative, outdoors, legs down flat', sup: true, label: 'OF — deitada pernas sobre ombros, aberta (NSFW)'
+  },
+  'of-chair-spread-explicit': {
+    sd_start: 'woman sitting on chair, legs spread wide open, facing camera, explicit seated position, feet on chair edges or floor, ring light front,',
+    sd_end:   'explicit OnlyFans PPV content, woman sitting on a chair with legs spread wide open facing the camera, feet placed apart on chair edge or floor, direct seductive gaze at camera, ring light creating even front illumination, lingerie or pulled aside, intimate bedroom or studio environment, authentic natural feminine body, genuine explicit seated open pose',
+    mj:  'woman on chair legs spread wide open facing camera, explicit seated position, ring light front, direct gaze, bedroom studio, adult content PPV',
+    neg: 'standing, lying, from behind, side view, legs together, outdoor, clothed conservative, no chair', sup: true, label: 'OF — cadeira pernas abertas, câmera de frente'
+  },
+  'of-against-wall-back-arch': {
+    sd_start: 'woman bent over against wall from behind, back arched, hips pushed back toward camera, explicit rear view,',
+    sd_end:   'explicit OnlyFans PPV content, woman bent forward with hands against wall, hips arched back prominently toward camera, camera positioned behind her, lingerie pulled aside or nude, rear view with back and lower body prominently displayed, ring light illuminating from behind, authentic natural feminine body, back deeply arched, explicit standing rear view position',
+    mj:  'woman bent over hands against wall from behind, hips pushed back toward camera, back arched, ring light, explicit standing rear view, PPV content',
+    neg: 'facing camera, front view, sitting, lying, standing straight upright, side profile, outdoors, fully clothed', sup: true, label: 'OF — parede costas arqueadas, traseiro câmera (NSFW)'
+  },
+  'of-shower-glass-pressed': {
+    sd_start: 'woman pressing body against glass shower door or wall, facing camera through glass, wet skin, steam, explicit shower content,',
+    sd_end:   'explicit OnlyFans shower content, woman pressing her body against the glass shower door from inside, facing outward through steamed glass, hands pressed flat on glass, wet dripping skin, steam filling the shower, backlit warm bathroom light creating silhouette or semi-transparent effect through glass, authentic natural body, lingerie-wet or nude, intimate shower environment',
+    mj:  'woman pressing body against glass shower door from inside, facing outward through steamed glass, wet skin, hands on glass, steam, warm backlight through glass',
+    neg: 'dry, no glass, no steam, outdoors, pool, not in shower, from behind, no glass pressed', sup: false, label: 'OF — corpo pressionado vidro chuveiro, molhada'
+  },
+  'of-ppv-oral-pov': {
+    sd_start: 'explicit POV perspective, woman kneeling, looking up at camera, mouth open or tongue extended, explicit oral ready position, close distance,',
+    sd_end:   'explicit OnlyFans PPV oral content, first-person POV perspective looking downward, woman kneeling very close, looking directly upward at camera with explicit ready oral expression, mouth slightly open or tongue extended, ring light creating catch lights, very close intimate distance, authentic natural feminine face, warm bedroom or hotel lighting, adult documentary photography style',
+    mj:  'explicit POV looking down at woman kneeling close, looking up at camera, mouth open oral ready expression, ring light catch lights, close distance, adult PPV content',
+    neg: 'side view, back view, standing, lying, far away distance, casual closed mouth, clothed conservative, outdoor, group', sup: true, label: 'OF — POV oral explícito, olhando câmera (NSFW)'
+  },
+  'of-ppv-anal-arch': {
+    sd_start: 'woman on all fours from behind, back deeply arched, explicit anal position, camera behind and above, ring light, premium bed,',
+    sd_end:   'explicit OnlyFans PPV anal content, woman on hands and knees with back deeply arched, hips raised and tilted, buttocks prominently facing camera positioned directly behind and slightly above, ring light creating even professional illumination, lingerie pulled fully aside or nude, clean premium bed sheets, authentic natural feminine body, adult content photography rear view explicit',
+    mj:  'woman all fours back deeply arched explicit anal position, camera directly behind slightly above, ring light, premium sheets, adult PPV anal content photography',
+    neg: 'facing camera, front view, standing, lying flat, side view, outdoors, clothed, back not arched, no all-fours', sup: true, label: 'OF — PPV anal costas arqueadas (NSFW)'
+  },
+  'of-mirror-doggy-reflection': {
+    sd_start: 'woman on all fours in front of large mirror, both direct rear view AND mirror reflection visible simultaneously, explicit doggy position, ring light,',
+    sd_end:   'explicit OnlyFans PPV content, woman on all fours with large floor or wall mirror in front of her, camera positioned behind capturing both her rear view directly and her full facial expression reflected in the mirror simultaneously, back arched, ring light from side or front creating dual illumination, lingerie removed or aside, premium bed or floor, authentic natural body, dual view adult photography',
+    mj:  'woman doggy position in front of mirror, camera behind sees both her rear directly AND face reflected in mirror, ring light, explicit dual view PPV content',
+    neg: 'no mirror, single view only, front view only, standing, sitting, side view only, outdoors, clothed', sup: true, label: 'OF — doggy com espelho reflexo do rosto (NSFW)'
+  },
+  'of-standing-bent-over-back': {
+    sd_start: 'woman standing bent forward at the waist, facing away from camera, hands on floor or furniture, back arched, explicit bent over from behind,',
+    sd_end:   'explicit OnlyFans PPV content, woman standing and bent forward at the waist, back to camera, hands touching floor or a surface for support, back deeply arched pushing hips up and toward camera, ring light illuminating from behind creating rim light, lingerie pulled aside or nude, buttocks prominently displayed, camera at waist level behind her, authentic natural feminine body',
+    mj:  'woman standing bent forward from behind, hands on floor, back arched, buttocks toward camera, ring light rim light, explicit PPV content rear view',
+    neg: 'facing camera, front view, standing upright, sitting, lying, side profile, outdoors, fully clothed, no bend', sup: true, label: 'OF — curvada para frente, de costas (NSFW)'
+  },
+  'of-bed-spread-overhead-explicit': {
+    sd_start: 'woman lying on bed, legs spread wide, explicit position, camera directly overhead looking straight down, top-down aerial view, ring light above,',
+    sd_end:   'explicit OnlyFans PPV overhead content, woman lying on back with legs spread wide in explicit open position, camera mounted or held directly overhead at 90 degrees looking straight down, bird\'s-eye view, face visible looking upward at overhead camera with seductive gaze, ring light overhead creating shadow-free even illumination, lingerie pulled fully aside or nude, clean white premium bed sheets, authentic natural body',
+    mj:  'woman lying spread open on bed, camera directly overhead top-down view, face looking up at camera, ring light overhead, clean white sheets, explicit aerial PPV content',
+    neg: 'side view, eye level, from behind, standing, sitting, legs together, clothed conservative, outdoor, low angle', sup: true, label: 'OF — cama aberta, câmera aérea de cima (NSFW)'
   },
 
   // ── Sofá / Living Room ──────────────────────────────────────────────────────
