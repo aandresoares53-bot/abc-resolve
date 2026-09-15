@@ -1,8 +1,8 @@
 const https = require('https');
 // Commit hash pinned so GitHub raw CDN serves exact version (bypasses branch cache lag)
-const COMMIT = 'ca250a6';
+const COMMIT = '7598d2b';
 module.exports = function(req, res) {
-  const url = 'https://raw.githubusercontent.com/aandresoares53-bot/abc-resolve/ca250a6/pgen/index.html';
+  const url = 'https://raw.githubusercontent.com/aandresoares53-bot/abc-resolve/7598d2b/pgen/index.html';
   https.get(url, function(r) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=300');
