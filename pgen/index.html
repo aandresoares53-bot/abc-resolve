@@ -12601,12 +12601,12 @@ async function generateSmartVariations(){
   if(!_userSceneVar && !selectedPoseKey && !hasPreset && !_qp){ toast('⚠️ Selecione uma pose ou personagem'); return; }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneVar || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
-  const rawFull = [_qp, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+  const rawFull = [_qp, hasPreset ? _presetText(activePreset) : '', sceneText].filter(Boolean).join(', ');
   const btn = document.querySelector('[onclick="generateSmartVariations()"]');
   if(btn){ btn.disabled = true; btn.textContent = '⏳…'; }
   try {
     // Translate ONLY non-chip parts — chips (_qp) are already English, sending them through pt→en garbles them
-    const _toTranslateSV = [hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+    const _toTranslateSV = [hasPreset ? _presetText(activePreset) : '', sceneText].filter(Boolean).join(', ');
     let eng = [_qp, _toTranslateSV].filter(Boolean).join(', ');
     try {
       const _ac = new AbortController();
@@ -16852,7 +16852,7 @@ function buildPrompt(englishText, rawPT){
   // ── Character boost: only concrete physical descriptors get :1.8 ──────────
   // Subjective/attractiveness terms (sexy, sensual, seductive, etc.) at high weight
   // push the model toward AI-beauty/plastic look — they must NOT be boosted
-  const _presetRaw = (typeof activePreset !== 'undefined' && activePreset) ? activePreset : '';
+  const _presetRaw = (typeof activePreset !== 'undefined' && activePreset) ? _presetText(activePreset) : '';
   const _presetTermCount = _presetRaw ? _presetRaw.split(',').length : 0;
   const _noBoostRe = /\b(sexy|sensual|seductive|attractive|beautiful|gorgeous|stunning|perfect|hot|curvy|voluptuous|busty|slim|toned|fit|athletic|naughty|erotic|sultry|alluring|irresistible|flawless|glamorous|elegant|charming|provocative|tempting)\b/i;
   let charBoost = '';
@@ -17377,7 +17377,7 @@ async function generate(){
   // Combine: chip values (English) + preset (PT/EN) + user complement (PT/EN) + auto-scene (EN)
   // rawFull is the Portuguese-friendly string used for NSFW detection and pose inference.
   // User text and auto-scene are BOTH included so buildPrompt receives the full context.
-  const rawFull = [_quickPre, hasPreset ? activePreset : '', _userScene, _autoSceneForPose].filter(Boolean).join(', ');
+  const rawFull = [_quickPre, hasPreset ? _presetText(activePreset) : '', _userScene, _autoSceneForPose].filter(Boolean).join(', ');
 
   const btn = document.querySelector('.btn-generate');
   btn.disabled = true;
@@ -17398,7 +17398,7 @@ async function generate(){
       // User typed a complement or has a preset — translate ONLY those parts.
       // Chips (_quickPre) are already English — translating them garbles the output.
       // _autoSceneForPose is already English — no re-translation needed.
-      const _toTranslate = [hasPreset ? activePreset : '', _userScene].filter(Boolean).join(', ');
+      const _toTranslate = [hasPreset ? _presetText(activePreset) : '', _userScene].filter(Boolean).join(', ');
       const _translated = _toTranslate ? await _translateText(_toTranslate) : '';
       // Re-prepend the (unchanged) English chip values, add translated user content,
       // then append the auto-scene (already English) so it enriches the final prompt.
@@ -17603,7 +17603,7 @@ async function generateSequence(){
   if(!_userSceneSeq && !selectedPoseKey && !hasPreset && !_quickPre){ toast('⚠️ Selecione uma pose ou personagem'); return; }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneSeq || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
-  const rawFull = [_quickPre, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+  const rawFull = [_quickPre, hasPreset ? _presetText(activePreset) : '', sceneText].filter(Boolean).join(', ');
   const progression = SEQUENCE_PROGRESSIONS[Math.floor(Math.random() * SEQUENCE_PROGRESSIONS.length)];
   const btn = document.querySelector('[onclick="generateSequence()"]');
   if(btn){ btn.disabled = true; btn.textContent = '⏳ Gerando…'; }
@@ -20023,12 +20023,12 @@ async function generateVariations(){
   }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneV2 || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
-  const rawFull = [_quickPre2, hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+  const rawFull = [_quickPre2, hasPreset ? _presetText(activePreset) : '', sceneText].filter(Boolean).join(', ');
   const btn = document.querySelector('.btn-variations');
   btn.disabled = true; btn.textContent = '⏳…';
   try {
     // Translate ONLY non-chip parts — chips (_quickPre2) are already English, sending them through pt→en garbles them
-    const _toTranslate2 = [hasPreset ? activePreset : '', sceneText].filter(Boolean).join(', ');
+    const _toTranslate2 = [hasPreset ? _presetText(activePreset) : '', sceneText].filter(Boolean).join(', ');
     const _ac = new AbortController();
     const _tid = setTimeout(() => _ac.abort(), 5000);
     const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=${encodeURIComponent(_toTranslate2)}`, { signal: _ac.signal });
