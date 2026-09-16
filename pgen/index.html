@@ -1851,6 +1851,18 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
             <button class="pose-btn" data-pose="fantasy-barmaid" onclick="setPose('fantasy-barmaid')"><span class="pose-icon">🍺</span>Garçonete medieval — taverna</button>
             <button class="pose-btn" data-pose="fantasy-cat-girl" onclick="setPose('fantasy-cat-girl')"><span class="pose-icon">🐱</span>Cat girl — orelhas de gato e rabo</button>
             <button class="pose-btn" data-pose="fantasy-dragon-rider" onclick="setPose('fantasy-dragon-rider')"><span class="pose-icon">🐉</span>Cavaleira do dragão — fantasia épica</button>
+            <button class="pose-btn" data-pose="fantasy-wet-dress"       onclick="setPose('fantasy-wet-dress')"><span class="pose-icon">💧</span>Vestido molhado — chuva sedutora</button>
+            <button class="pose-btn" data-pose="fantasy-devil-nun"       onclick="setPose('fantasy-devil-nun')"><span class="pose-icon">📿</span>Freira pecadora — contraste sagrado</button>
+            <button class="pose-btn" data-pose="fantasy-forest-nymph"    onclick="setPose('fantasy-forest-nymph')"><span class="pose-icon">🌿</span>Ninfa da floresta — natureza sensual</button>
+            <button class="pose-btn" data-pose="fantasy-cleopatra-back"  onclick="setPose('fantasy-cleopatra-back')"><span class="pose-icon">🐍</span>Cleópatra de costas — câmara real</button>
+            <button class="pose-btn" data-pose="fantasy-moon-witch"      onclick="setPose('fantasy-moon-witch')"><span class="pose-icon">🌙</span>Bruxa lunar — ritual noturno</button>
+            <button class="pose-btn" data-pose="fantasy-water-goddess"   onclick="setPose('fantasy-water-goddess')"><span class="pose-icon">🌊</span>Deusa das águas — poder divino</button>
+            <button class="pose-btn" data-pose="fantasy-temptress-mirror" onclick="setPose('fantasy-temptress-mirror')"><span class="pose-icon">🪞</span>Sedutora no espelho — boudoir</button>
+            <button class="pose-btn" data-pose="fantasy-dark-ballet"     onclick="setPose('fantasy-dark-ballet')"><span class="pose-icon">🩰</span>Bailarina sombria — cisne negro</button>
+            <button class="pose-btn" data-pose="fantasy-tiger-girl"      onclick="setPose('fantasy-tiger-girl')"><span class="pose-icon">🐯</span>Tiger girl — corpo pintado selvagem</button>
+            <button class="pose-btn" data-pose="fantasy-apsara"          onclick="setPose('fantasy-apsara')"><span class="pose-icon">💛</span>Apsara — dançarina celestial indiana</button>
+            <button class="pose-btn" data-pose="fantasy-enchantress"     onclick="setPose('fantasy-enchantress')"><span class="pose-icon">✨</span>Encantadora — magia sedutora</button>
+            <button class="pose-btn" data-pose="fantasy-gothic-doll"     onclick="setPose('fantasy-gothic-doll')"><span class="pose-icon">🎀</span>Boneca gótica — beleza vitoriana sombria</button>
       <div class="pose-group-label">👙 Roupas Sensuais / Lingerie</div>
       <button class="pose-btn" data-pose="outfit-lingerie-front"      onclick="setPose('outfit-lingerie-front')"><span class="pose-icon">🩱</span>Lingerie — de frente</button>
       <button class="pose-btn" data-pose="outfit-lingerie-back"       onclick="setPose('outfit-lingerie-back')"><span class="pose-icon">🩱</span>Lingerie — de costas</button>
@@ -10746,6 +10758,80 @@ const POSES = {
     sd_end:   'woman in elaborate steampunk fantasy world setting, wearing detailed steampunk fashion with gears, goggles, corsets and Victorian-era futurism, in a steampunk city or airship setting, warm amber and copper tones, elaborate fantasy world building in the frame',
     mj:  'woman in elaborate steampunk fantasy world, detailed steampunk fashion with gears and goggles, airship or steampunk city setting, warm amber copper tones, Victorian sci-fi fantasy aesthetic',
     neg: 'modern casual, clean sci-fi, no costume, contemporary, plain background, digital minimal', sup: false, label: 'Fantasy — steampunk, mundo vitoriano'
+  },
+
+  // ── Novas fantasias sensuais e provocantes ────────────────────────────────
+  'fantasy-wet-dress': {
+    sd_start: 'woman in soaking wet clinging white or sheer dress in heavy rain outdoors, wet fabric transparent and pressed against every curve,',
+    sd_end: 'woman wearing a soaking wet clinging sheer or white dress in heavy rain, dress completely transparent from water revealing silhouette underneath, wet fabric pressed against every curve of the body, water droplets covering skin and face, wet disheveled hair stuck to face and shoulders, rain or wet wall background, intense seductive rain atmosphere, dramatic wet weather mood',
+    mj: 'woman in soaking wet clinging white sheer dress in heavy rain, wet transparent fabric pressed against every curve revealing silhouette, water droplets on skin, wet disheveled hair, intense seductive rain atmosphere, dramatic wet photography --ar 2:3',
+    neg: 'dry clothing, indoor studio, no rain, clean dry hair, fashion editorial, modest', sup: false, label: 'Vestido molhado — chuva sedutora'
+  },
+  'fantasy-devil-nun': {
+    sd_start: 'woman as sinful devil nun, dark twisted nun habit revealing seductive outfit underneath, gothic church or dark convent, inverted religious imagery,',
+    sd_end: 'woman in dark provocative nun-inspired costume with torn or revealing habit exposing seductive outfit underneath, inverted cross or dark religious symbols, gothic cathedral or dark convent setting, deep red dramatic lighting, complex expression mixing forbidden innocence with dangerous seduction, dark religious blasphemous fantasy aesthetic',
+    mj: 'woman as sinful dark nun temptress, torn black habit revealing seductive costume underneath, gothic cathedral dark convent, deep red moody lighting, innocence meets forbidden desire expression, dark provocative religious fantasy --ar 2:3',
+    neg: 'pure innocent wholesome, white bright church, no seductive elements, cheerful expression', sup: false, label: 'Freira pecadora — convento sombrio'
+  },
+  'fantasy-forest-nymph': {
+    sd_start: 'woman as forest nymph wood sprite, barely covered by leaves vines and flowers, natural green body paint, enchanted ancient forest glade,',
+    sd_end: 'woman as a wild sensual forest nymph or nature spirit, minimally covered by strategically placed large leaves, trailing vines and wild flowers, natural green and brown body paint on skin, ancient enchanted forest clearing with magical dappled light filtering through canopy, ethereal wild feminine expression, barefoot on mossy ground, forest fog and golden light',
+    mj: 'woman as wild sensual forest nymph barely covered by leaves and vines, natural body paint, enchanted ancient forest glade with magical dappled golden light, ethereal wild feminine nature goddess expression, barefoot on moss --ar 2:3',
+    neg: 'urban modern, indoor, fully clothed, harsh artificial light, no nature, fantasy armor, sci-fi', sup: false, label: 'Ninfa da floresta — natureza sensual'
+  },
+  'fantasy-cleopatra-back': {
+    sd_start: 'woman as Cleopatra from behind, ornate Egyptian royal costume seen from rear, Egyptian throne chamber, back to camera,',
+    sd_end: 'woman dressed as Egyptian queen Cleopatra seen fully from behind, ornate golden and turquoise Egyptian royal costume revealing back, elaborate golden headdress and layered body jewelry seen from behind, royal Egyptian throne chamber interior with hieroglyphs carved into stone walls, dramatic torch and golden oil lamp light, regal powerful rear pose, from behind full body',
+    mj: 'woman as Cleopatra Egyptian queen fully from behind, ornate golden Egyptian royal costume revealing bare back, elaborate golden headdress and jewelry, royal Egyptian throne chamber with hieroglyphs and torchlight, regal powerful rear pose --ar 2:3',
+    neg: 'front view, modern casual, no Egyptian elements, no jewelry, bright daylight, western', sup: true, label: 'Cleópatra de costas — câmara real'
+  },
+  'fantasy-moon-witch': {
+    sd_start: 'woman as moon witch or lunar sorceress, silver and dark purple flowing magical costume, moonlit forest clearing, full moon ritual,',
+    sd_end: 'woman as a powerful and sensual moon witch or lunar sorceress, wearing minimal silver and dark purple flowing magical costume or ritual robe, standing in a moonlit ancient forest clearing with full moon glowing large behind her, silver moonlight radiating from above, magical silver energy, arms raised in ritual pose, night sky with full moon and stars, ethereally seductive and powerful expression',
+    mj: 'woman as moon witch lunar sorceress, silver dark purple magical costume, full moon glowing large behind her in moonlit forest clearing, silver magical energy aura, arms raised in lunar ritual, stars and full moon, powerfully seductive expression --ar 2:3',
+    neg: 'daylight, no moon, no magic, casual modern, harsh artificial light, sunny, no forest', sup: false, label: 'Bruxa lunar — ritual noturno'
+  },
+  'fantasy-water-goddess': {
+    sd_start: 'woman as water goddess or ocean deity, minimal sheer water-fabric costume, ocean rocks or waterfall, water flowing over body,',
+    sd_end: 'woman as a powerful and sensual water goddess or ocean deity, wearing minimal sheer flowing water-inspired fabric or water itself forming a translucent garment, standing on ocean rocks or at base of waterfall with water flowing and cascading over and around her body, turquoise and deep blue divine light, water spray creating natural veil effect, divine powerful and seductive water goddess expression',
+    mj: 'woman as water goddess ocean deity, minimal sheer translucent water-fabric costume, waterfall or ocean rocks, water cascading over body creating natural veil, turquoise blue divine light, powerful seductive water goddess expression --ar 2:3',
+    neg: 'indoor studio, fully covered, no water, dark gothic earth tones, no natural elements', sup: false, label: 'Deusa das águas — poder divino'
+  },
+  'fantasy-temptress-mirror': {
+    sd_start: 'woman in sheer silk robe or luxury lingerie, posing seductively before ornate gilded mirror, reflection visible, luxurious boudoir,',
+    sd_end: 'woman in sheer translucent silk robe or opulent luxury lingerie posing seductively before an ornate full-length gilded antique mirror, reflection clearly visible showing profile or back view, luxurious aristocratic boudoir bedroom setting with velvet drapes and gold accents, warm golden candlelight or dramatic lamp glow, confident self-admiring deeply seductive expression, dual-view through mirror',
+    mj: 'woman in sheer silk robe or luxury lingerie posing seductively at ornate gilded antique mirror, reflection showing profile or back, luxurious aristocratic boudoir with velvet and gold, warm golden candlelight, confidently seductive self-admiring expression --ar 2:3',
+    neg: 'outdoor, casual, plain cheap mirror, cold light, no reflection, modest, simple setting', sup: false, label: 'Sedutora no espelho — boudoir'
+  },
+  'fantasy-dark-ballet': {
+    sd_start: 'woman as dark seductive ballet dancer, black swan tutu, gothic dark stage performance, dramatic stage lighting,',
+    sd_end: 'woman as a dark and seductive ballet dancer in elaborate black swan tutu costume with dark feathers and black bodice, performing on a dramatically lit gothic stage or baroque opera house, powerful chiaroscuro stage lighting, dark feather accents and intricate black costume, sensually powerful dark ballerina expression with dark smoky eye makeup, baroque theater background with deep shadows',
+    mj: 'woman as dark ballet dancer in black swan tutu with dark feathers, dramatically lit gothic baroque stage, powerful chiaroscuro lighting, dark smoky eye makeup, seductively powerful dark ballerina expression, baroque opera theater --ar 2:3',
+    neg: 'white swan bright stage, cheerful ballet, outdoor, casual, modern minimal set, no tutu, pastel colors', sup: false, label: 'Bailarina sombria — cisne negro'
+  },
+  'fantasy-tiger-girl': {
+    sd_start: 'woman as tiger girl with intricate tiger stripe body paint, tiger ears and tail, jungle setting, feline predatory expression,',
+    sd_end: 'woman as a sensual and wild tiger girl fantasy character, intricately painted orange black and white tiger stripe body paint covering most of body, tiger ears atop head and long tiger tail, minimal actual clothing so body paint serves as primary covering, wild jungle or savannah setting with tall grasses or dense vegetation, intense golden light, predatory feline seductive expression, wild untamed feminine animal power',
+    mj: 'woman as tiger girl with intricate orange black white tiger stripe body paint, tiger ears and tail, minimal outfit, dense jungle or savannah, golden wild light, intense predatory feline seductive expression --ar 2:3',
+    neg: 'fully clothed, no body paint, no tiger elements, urban modern, studio portrait, tame expression, CGI', sup: false, label: 'Tiger girl — corpo pintado selvagem'
+  },
+  'fantasy-apsara': {
+    sd_start: 'woman as Apsara Hindu celestial dancer, elaborate traditional Indian dance costume, intricate jewelry, ancient stone Hindu temple,',
+    sd_end: 'woman as an Apsara or Hindu celestial dancer, wearing elaborate traditional Indian dance costume with rich embroidered silk fabrics in gold red and saffron, intricate jewelry from crown to anklets including maang tikka, necklaces, armlets and jhanjhar ankle bells, performing classical Bharatanatyam or Odissi dance pose with traditional mudra hand gesture, ancient carved stone Hindu or Khmer temple setting with warm golden torchlight, sensual spiritual feminine grace',
+    mj: 'woman as Apsara Hindu celestial dancer in elaborate traditional Indian dance costume with rich gold and saffron silk and intricate jewelry, ancient carved stone Hindu temple, warm golden torchlight, sensual spiritual grace, classical dance mudra pose --ar 2:3',
+    neg: 'western costume, modern setting, no jewelry, no temple, casual light, no dance elements, dull colors', sup: false, label: 'Apsara — dançarina celestial indiana'
+  },
+  'fantasy-enchantress': {
+    sd_start: 'woman as enchantress love sorceress, minimal sheer magical flowing costume, magical energy in purple rose and gold, casting seductive love spell,',
+    sd_end: 'woman as a powerful and seductive enchantress or love sorceress, wearing minimal sheer flowing magical costume that moves with ethereal energy, surrounded by swirling magical energy effects in purple, rose pink, and gold, casting a love spell with hands glowing, arcane forest clearing or magical ruined tower setting, dramatic and sensual magical lighting, seductive yet powerfully authoritative feminine magical expression',
+    mj: 'woman as enchantress love sorceress in minimal sheer magical flowing costume, surrounded by swirling purple rose and gold magical energy, casting seductive love spell with glowing hands, arcane forest or ruined tower, dramatic magical lighting, powerfully seductive feminine magic --ar 2:3',
+    neg: 'dark evil ugly magic, fully covered robe, casual modern, no magical effects, plain ordinary setting', sup: false, label: 'Encantadora — magia sedutora'
+  },
+  'fantasy-gothic-doll': {
+    sd_start: 'woman styled as gothic porcelain doll, dark Victorian doll costume with black corset petticoat and dark lace, dramatic doll makeup, Victorian boudoir or curiosity cabinet,',
+    sd_end: 'woman styled as an eerie and seductive gothic porcelain doll character, wearing elaborate dark Victorian doll costume featuring a black corset bodice, layers of dark petticoats and ruffled skirts, intricate black lace accents, dramatic doll-like stage makeup with perfect artificial blush circles, dark red lips and darkened eyes, posed in a Victorian curiosity cabinet or dark aristocratic boudoir, combining unsettling doll artifice with seductive feminine presence',
+    mj: 'woman as gothic porcelain doll in dark Victorian doll costume, black corset petticoat and dark lace, dramatic doll makeup with dark red lips and blush circles, Victorian curiosity cabinet or dark aristocratic boudoir, eerie and seductive doll-like expression --ar 2:3',
+    neg: 'casual modern, natural minimal makeup, outdoor, cheerful bright colors, no doll costume, sci-fi', sup: false, label: 'Boneca gótica — beleza vitoriana sombria'
   },
 
   /* ── GYM ADDITIONAL ── */
