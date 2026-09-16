@@ -649,8 +649,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   <!-- MODE TOGGLE -->
   <div class="mode-toggle-wrap">
     <span class="mode-label">Formato do prompt:</span>
-    <button class="mode-btn active-mj" id="btn-mj"   onclick="setMode('mj')">🌌 Midjourney<br><small style="font-weight:400;font-size:0.85em">MJ v6 · Niji</small></button>
-    <button class="mode-btn"           id="btn-flux" onclick="setMode('flux')">⚡ FLUX<br><small style="font-weight:400;font-size:0.85em">FLUX.1 · FLUX Pro</small></button>
+    <button class="mode-btn active-mj" id="btn-mj" onclick="setMode('mj')">🌌 Midjourney<br><small style="font-weight:400;font-size:0.85em">MJ v6 · 100% Realismo</small></button>
   </div>
 
   <!-- MJ PARAMS PANEL -->
@@ -2612,7 +2611,6 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" onclick="useAsBase()" title="Copia o prompt editado para a caixa de descrição">♻️ Usar como base</button>
       <button class="btn-copy" style="background:#0284c7;border-color:#0284c7;" onclick="sharePrompt()" title="Compartilhar prompt via link">🔗 Compartilhar</button>
       <button class="btn-copy" style="background:#059669;border-color:#059669;" onclick="copyAsMJ()" title="Copia o prompt limpo (sem pesos SD) com parâmetros Midjourney">🎨 Copiar MJ</button>
-      <button class="btn-copy" style="background:#b45309;border-color:#b45309;" onclick="copyAsFlux()" title="Copia o prompt em linguagem natural para FLUX">⚡ Copiar FLUX</button>
       <button class="btn-clear-out" onclick="clearOutput()">✕ Limpar</button>
     </div>
 
@@ -2741,9 +2739,11 @@ function resetNegative(){
 (function(){
   const negEl = document.getElementById('neg-text');
   if(negEl) negEl.value = NEGATIVE;
-  // Default mode is MJ — show neg-box so negative prompt is visible from the start
+  // MJ is the only mode — show neg-box and MJ params panel from the start
   const negBox = document.getElementById('neg-box');
   if(negBox) negBox.style.display = 'block';
+  const mjPanel = document.getElementById('mj-params-panel');
+  if(mjPanel) mjPanel.style.display = 'block';
 })();
 
 function toggle(id){
@@ -11586,23 +11586,19 @@ function setPose(key){
 }
 
 function setMode(mode){
-  // Remap removed modes to MJ so buildPrompt never receives an unknown mode
-  if(mode !== 'mj' && mode !== 'flux') mode = 'mj';
-  currentMode = mode;
-  // Only MJ and FLUX buttons remain
-  const btnMj   = document.getElementById('btn-mj');
-  const btnFlux  = document.getElementById('btn-flux');
-  if(btnMj)   btnMj.className   = 'mode-btn' + (mode==='mj'   ? ' active-mj'   : '');
-  if(btnFlux) btnFlux.className = 'mode-btn' + (mode==='flux' ? ' active-flux' : '');
-  // MJ params panel: visible only in MJ mode
+  // Only MJ mode is active — all other modes remapped to MJ
+  currentMode = 'mj';
+  const btnMj = document.getElementById('btn-mj');
+  if(btnMj) btnMj.className = 'mode-btn active-mj';
+  // MJ params panel: always visible
   const mjPanel = document.getElementById('mj-params-panel');
-  if(mjPanel) mjPanel.style.display = mode==='mj' ? 'block' : 'none';
+  if(mjPanel) mjPanel.style.display = 'block';
   // SD/Video/Inpaint/LoRA panels: always hidden (modes removed)
   const els = ['sd-model-panel','video-panel','inpaint-panel','lora-group'];
   els.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
-  // neg-box: visible in MJ mode (shows --no content for reference/copy); hidden in FLUX
+  // neg-box: always visible in MJ mode
   const negBox = document.getElementById('neg-box');
-  if(negBox) negBox.style.display = mode === 'mj' ? 'block' : 'none';
+  if(negBox) negBox.style.display = 'block';
 }
 
 // ── SELEÇÃO AUTOMÁTICA DE FORMATO POR POSE ────────────────────────────────
@@ -11622,25 +11618,13 @@ function _getBestModeForPose(key){
   // ── Moda editorial → MJ ───────────────────────────────────────────────────
   if(key.startsWith('model-')) return 'mj';
 
-  // ── Gym / yoga / fitness / jeans / selfie / closeup → FLUX ───────────────
-  if(/^(gym-|yoga-|fitness-|jeans-|selfie-|pov-|closeup-|dutch-tilt-|mirror-|car-|moto-|motorcycle-)/.test(key)) return 'flux';
-
-  // ── Shower / bath / lingerie / boudoir / cenas explícitas → FLUX ─────────
-  if(/^(shower-|bath-|outfit-|boudoir-|escort-|of-|lesbian-|sex-|oral-|anal-|cumshot-|doggy-|prone-|spoon|scissors|mating-press|pile-driver|reverse-missionary|lap-dance|cowgirl|missionary|lotus-|position-69|suspended-)/.test(key)) return 'flux';
-
-  // ── Default: MJ ───────────────────────────────────────────────────────────
+  // ── All poses use MJ (FLUX removed) ─────────────────────────────────────
   return 'mj';
 }
 
-// ── DETECTOR DE MODELO AUTOMÁTICO (somente MJ e FLUX) ─────────────────────
+// ── DETECTOR DE MODELO AUTOMÁTICO (somente MJ) ────────────────────────────
 function detectModelFromText(text){
-  if(!text) return;
-  const t = text.toLowerCase();
-  if(/\bflux\b|flux\.1|flux pro|flux dev|flux schnell/.test(t) && currentMode !== 'flux'){
-    setMode('flux'); toast('⚡ Modo FLUX detectado automaticamente');
-  } else if(/\bmidjourney\b|\b--ar\b|\b--v \d|\b--sref\b|\bniji\b/.test(t) && currentMode !== 'mj'){
-    setMode('mj'); toast('🌌 Modo MJ detectado automaticamente');
-  }
+  // FLUX removed — MJ is the only mode
 }
 
 // ── CLOSE-UP MODE ─────────────────────────────────────────────────────────
