@@ -2741,6 +2741,9 @@ function resetNegative(){
 (function(){
   const negEl = document.getElementById('neg-text');
   if(negEl) negEl.value = NEGATIVE;
+  // Default mode is MJ — show neg-box so negative prompt is visible from the start
+  const negBox = document.getElementById('neg-box');
+  if(negBox) negBox.style.display = 'block';
 })();
 
 function toggle(id){
@@ -11595,8 +11598,11 @@ function setMode(mode){
   const mjPanel = document.getElementById('mj-params-panel');
   if(mjPanel) mjPanel.style.display = mode==='mj' ? 'block' : 'none';
   // SD/Video/Inpaint/LoRA panels: always hidden (modes removed)
-  const els = ['sd-model-panel','video-panel','inpaint-panel','lora-group','neg-box'];
+  const els = ['sd-model-panel','video-panel','inpaint-panel','lora-group'];
   els.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
+  // neg-box: visible in MJ mode (shows --no content for reference/copy); hidden in FLUX
+  const negBox = document.getElementById('neg-box');
+  if(negBox) negBox.style.display = mode === 'mj' ? 'block' : 'none';
 }
 
 // ── SELEÇÃO AUTOMÁTICA DE FORMATO POR POSE ────────────────────────────────
@@ -16717,8 +16723,8 @@ function buildPrompt(englishText, rawPT){
     const _mjFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _mjSkinMarks = getSkinMarks();
     const _mjRealPrefix = _wantsNSFW
-      ? `analog film photograph of a real everyday human woman not a model, 35mm film grain, ${_mjFilm}, candid documentary photography, amateur snapshot, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, natural human body proportions not model proportions, authentic feminine curves, soft natural belly, no plastic surgery, no implants, no idealized body, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,${_mjSkinMarks ? ' ' + _mjSkinMarks + ',' : ''} explicit adult content, nsfw,`
-      : `analog film photograph of a real everyday human woman not a model, 35mm film grain, ${_mjFilm}, candid documentary photography, amateur snapshot, SOOC straight out of camera, unaltered natural photograph, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, natural human body proportions not model proportions, authentic feminine curves, soft natural belly, no plastic surgery, no implants, no idealized body, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,${_mjSkinMarks ? ' ' + _mjSkinMarks + ',' : ''}`;
+      ? `100% photorealistic human woman, hyperrealistic human skin, authentic human anatomy, analog film photograph of a real everyday human woman not a model, 35mm film grain, ${_mjFilm}, candid documentary photography, photojournalism, street photography, amateur snapshot, SOOC straight out of camera, unaltered natural photograph, real person captured on film not AI-generated, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, natural facial asymmetry, real eye iris texture, real lip texture with lip lines, real hair strands, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, natural human body proportions not model proportions, authentic feminine curves, soft natural belly, no plastic surgery, no implants, no idealized body, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,${_mjSkinMarks ? ' ' + _mjSkinMarks + ',' : ''} explicit adult content, nsfw,`
+      : `100% photorealistic human woman, hyperrealistic human skin, authentic human anatomy, analog film photograph of a real everyday human woman not a model, 35mm film grain, ${_mjFilm}, candid documentary photography, photojournalism, street photography, amateur snapshot, SOOC straight out of camera, unaltered natural photograph, real person captured on film not AI-generated, no color grading, no Lightroom editing, no Photoshop, no digital manipulation, no frequency separation, no professional retouch, no studio portrait look, no color correction, no LUTs, not digitally edited, visible skin pores, skin pore detail, skin micro-texture, organic skin texture, natural skin blemishes, natural skin redness, natural skin color variation, skin color variation by zone, natural skin undertones, subsurface light scattering on skin, film grain on skin, photographic grain on skin, natural facial asymmetry, real eye iris texture, real lip texture with lip lines, real hair strands, not retouched, not airbrushed, not beauty filtered, not poreless, not plastic skin, not silicone skin, not smooth complexion, natural human body proportions not model proportions, authentic feminine curves, soft natural belly, no plastic surgery, no implants, no idealized body, f/1.8 sharp focus, natural light, shot on DSLR, handheld camera,${_mjSkinMarks ? ' ' + _mjSkinMarks + ',' : ''}`;
     // MJ: POSE FIRST — put direction terms at the start for maximum MJ attention
     // Strip SD-weight syntax — MJ uses (term::weight) not (term:1.9) — plain text works better
     const _expandedMj = expanded.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g, ',').trim();
@@ -16756,8 +16762,9 @@ function buildPrompt(englishText, rawPT){
       (selectedPoseKey && (selectedPoseKey.startsWith('gym-') || selectedPoseKey.startsWith('legging-')))
         ? 'perfect body, perfect proportions, ideal proportions, toned abs, hourglass figure, unrealistic body, plastic surgery, implants, idealized figure'
         : 'perfect body, perfect proportions, ideal proportions, fitness model body, toned abs, hourglass figure, unrealistic body, gym body, model body, plastic surgery look, breast implants, idealized proportions, impossible waist, fashion model proportions, victoria secret model, magazine model body',
-      'CGI, 3D render, digital art, cartoon, anime, illustration, painting',
-      'watermark, text, signature, logo'
+      'CGI, 3D render, digital art, cartoon, anime, illustration, painting, AI-generated look, AI art style, artificial look, synthetic person, virtual human, deepfake aesthetic',
+      'watermark, text, signature, logo',
+      'idealized beauty, perfect symmetry, impossibly smooth skin, magazine cover look, fashion advertisement, commercial beauty photography, professional model pose, high fashion editorial look'
     ].filter(Boolean).join(', ');
     const _mjNeg = _wantsNSFW
       ? _mjNegBase.replace(/\b(nude|naked|topless|explicit|nsfw|adult content)[^,]*(,\s*)?/gi, '').replace(/,\s*$/, '').trim()
