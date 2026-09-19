@@ -32,18 +32,9 @@ yarn-error.log*
 # vercel
 .vercel
 
-# wrangler
-.wrangler/
-dist/
-
-# cloudflare build output
-.open-next/
-
-# typescript build info
+# typescript
 *.tsbuildinfo
+next-env.d.ts
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# drizzle
+drizzle/migrations/*.sql
