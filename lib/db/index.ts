@@ -1,24 +1,24 @@
-import { neon } from '@neondatabase/serverless'
-import { drizzle, NeonHttpDatabase } from 'drizzle-orm/neon-http'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
 import * as schema from '@/drizzle/schema'
 
-type SchemaDB = NeonHttpDatabase<typeof schema>
+let _client: ReturnType<typeof postgres> | null = null
+let _db: ReturnType<typeof drizzle<typeof schema>> | null = null
 
-let _db: SchemaDB | null = null
-
-export function getDb(): SchemaDB {
+export function getDb() {
   if (!_db) {
-    const sql = neon(process.env.DATABASE_URL!)
-    _db = drizzle(sql, { schema })
+    const url = process.env.DATABASE_URL
+    if (!url) throw new Error('DATABASE_URL is not set')
+    _client = postgres(url, { max: 1 })
+    _db = drizzle(_client, { schema })
   }
   return _db
 }
 
-// Export db as a getter-based proxy so it lazily connects
-export const db: SchemaDB = new Proxy({} as SchemaDB, {
+export const db = new Proxy({} as ReturnType<typeof getDb>, {
   get(_target, prop: string | symbol) {
     return (getDb() as unknown as Record<string | symbol, unknown>)[prop]
   },
 })
 
-export type DB = SchemaDB
+export type DB = ReturnType<typeof getDb>
