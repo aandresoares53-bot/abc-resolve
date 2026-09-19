@@ -12398,8 +12398,8 @@ function scorePrompt(prompt){
   if(/raw photograph|film grain|kodak|shot on canon|best quality|masterpiece|analog film/.test(p)) score += 20; else tips.push('⚠️ CRÍTICO: Adicionar prefixo RAW photograph + film grain');
   // Has subject
   if(/woman|man|girl|person|female|male|model/.test(p)) score += 10; else tips.push('Adicionar sujeito claro');
-  // Has clothing or nudity
-  if(/wearing|dressed|nude|naked|bikini|lingerie|topless|shirt|dress|skirt/.test(p)) score += 10; else tips.push('Definir vestimenta ou nudez');
+  // Has clothing or nudity (or anatomy/feminine terms always present in MJ prefix)
+  if(/wearing|dressed|nude|naked|bikini|lingerie|topless|shirt|dress|skirt|anatomy|feminine|proportions/.test(p)) score += 10; else tips.push('Definir vestimenta ou nudez');
   // Has lighting
   if(/light|lighting|shadow|illuminat|golden hour|softbox|ambient|sunlight/.test(p)) score += 15; else tips.push('Adicionar iluminação');
   // Has camera/lens
@@ -12415,7 +12415,6 @@ function scorePrompt(prompt){
   // Penalty: too short
   const wordCount = prompt.split(/[\s,]+/).filter(Boolean).length;
   if(wordCount < 20) { score -= 20; tips.push('Prompt muito curto — adicionar mais detalhes'); }
-  else if(wordCount > 120) { score -= 5; tips.push('Prompt muito longo — CLIP pode perder foco'); }
   score = Math.max(0, Math.min(100, score));
   const label = score >= 75 ? `⭐ Score: ${score}/100 — Excelente` : score >= 50 ? `⚡ Score: ${score}/100 — Bom` : `⚠️ Score: ${score}/100 — Melhorar`;
   const cls   = score >= 75 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
