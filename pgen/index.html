@@ -16800,7 +16800,7 @@ function buildPrompt(englishText, rawPT){
     // _expandedMj already contains cenário + scene chips (injected into inputText before expandScene)
     // lighting + style + lens chips go here since they are not injected into inputText
     const _mjChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull, _lensCamFull, _lensChipFull].filter(Boolean).join(', ');
-    const _mjUserContent = [pose.mj, _mjChipContent, _expandedMj].filter(Boolean).join(', ');
+    const _mjUserContent = [pose.mj, _expandedMj, _mjChipContent].filter(Boolean).join(', ');
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI, everyday woman not a model, natural human proportions not idealized, no plastic surgery look, no breast implants appearance, authentic soft feminine belly, natural body weight distribution, real woman curves';
     // MJ: add ethnicity skin texture terms BEFORE anatomy — MJ is attention-based, earlier = more influence
     const _mjEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
@@ -17289,9 +17289,18 @@ function cycleOutfit(){
   toast('👗 ' + newOutfit.slice(0, 40) + '…');
 }
 
+function _cleanPrompt(str){
+  return str
+    .replace(/,(\s*,)+/g, ',')       // collapse double/triple commas
+    .replace(/(^\s*,\s*|\s*,\s*$)/g, '') // strip leading/trailing commas
+    .replace(/\s{2,}/g, ' ')         // collapse multiple spaces
+    .replace(/,\s*--/g, ' --')       // remove comma before MJ params
+    .trim();
+}
+
 function showPrompt(prompt){
   _onPromptGenerated();
-  document.getElementById('prompt').value = prompt;
+  document.getElementById('prompt').value = _cleanPrompt(prompt);
   const card = document.getElementById('output-card');
   card.classList.add('visible');
   card.scrollIntoView({behavior:'smooth',block:'start'});
