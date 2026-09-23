@@ -16694,6 +16694,7 @@ function buildPrompt(englishText, rawPT){
   // _sdClothingTerms: SD-weight clothing terms placed FIRST in parts[] for maximum CLIP priority.
   // MJ/FLUX/GPT use plain-text version embedded in `expanded` — SD weights don't work there.
   let _sdClothingTerms = '';
+  buildPrompt._lastOutfit = ''; // reset each call to avoid stale value from previous invocation
 
   if(_wantsClothing){
     // Priority 1: user explicitly described clothing (typed or manual chip) — reinforce with FULL context
@@ -16710,6 +16711,8 @@ function buildPrompt(englishText, rawPT){
     _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8), (fully clothed:1.8),`;
     // Plain text prepended to expanded — used by MJ/FLUX/GPT (they don't use SD weight syntax)
     expanded = `wearing ${_outfitStr}, keep outfit on, ` + expanded;
+    // Store outfit for MJ block
+    buildPrompt._lastOutfit = _outfitStr;
     // Negative prompt left unchanged — user description is 100% accepted
   } else if(_poseHasClothing){
     // Priority 2: pose definition already embeds clothing — extract and reinforce with SD weights
@@ -16719,6 +16722,15 @@ function buildPrompt(englishText, rawPT){
     if(_p2Matches.length > 0){
       const _p2Str = [...new Set(_p2Matches.slice(0, 4).map(s => s.toLowerCase()))].join(', ');
       _sdClothingTerms = `(${_p2Str}:2.0), (wearing ${_p2Str}:1.9), (keep outfit on:1.9), (${_p2Str} visible:1.8), (fully clothed:1.8),`;
+      buildPrompt._lastOutfit = _p2Str;
+    } else {
+      // pose text passed clothing check but no matches extracted — use auto-outfit fallback
+      const _p2Auto = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+      buildPrompt._lastOutfit = _p2Auto || '';
+      if(_p2Auto){
+        _sdClothingTerms = `(${_p2Auto}:2.0), (keep outfit on:1.9), (fully clothed:1.8),`;
+        expanded = `${_p2Auto}, keep outfit on, ` + expanded;
+      }
     }
   } else if(!_wantsNude){
     // Priority 3: picker selection (chipState.outfit when _autoOutfitActive=true) → _POSE_OUTFIT_MAP → cached → fresh random
