@@ -15526,6 +15526,103 @@ function getPoseSensualOutfit(key, returnAll){
     'matching ribbed crop top and wide-leg lounge pants, minimalist cozy',
   ];
 
+  // ── Blusas, tops e croppeds ───────────────────────────────────────────────
+  const _TOPS_BLOUSES = [
+    'white fitted cropped blouse with puff sleeves, feminine and fresh',
+    'black ribbed crop top, short and fitted, midriff on show',
+    'floral print off-shoulder blouse, casual chic',
+    'oversized white button-down shirt tied at the waist, relaxed',
+    'fitted spaghetti-strap camisole in silk, tucked into jeans',
+    'cropped graphic band tee knotted at the front, effortless cool',
+    'sheer chiffon blouse with floral embroidery, romantic feminine',
+    'sleeveless square-neck crop top in ribbed knit, effortless minimal',
+    'fitted long-sleeve crop top in neutral tones, everyday essential',
+    'boxy cropped linen shirt, half-tucked, relaxed summer',
+    'off-shoulder smocked top with short puff sleeves, boho feminine',
+    'stripe fitted t-shirt cropped above the navel, casual classic',
+    'fitted corset-style top with boning, boned bodice, everyday edgy',
+    'flutter-sleeve chiffon cami blouse, delicate and elegant',
+    'zip-up cropped cardigan, cozy and minimal, no bra visible',
+    'structured bustier top in satin, worn with high-waist jeans',
+    'oversized vintage graphic tee cropped and knotted, street casual',
+    'sleeveless knit halter top, fitted and feminine',
+    'mesh long-sleeve fitted top over a bralette, layered street style',
+    'cropped denim jacket worn as a top, nothing underneath but a bralette',
+    'white linen square-neck blouse with wide sleeves, elegant summer',
+    'ruched gathered front cami top in dusty rose, feminine casual',
+  ];
+
+  // ── Moletons e hoodies ────────────────────────────────────────────────────
+  const _HOODIES_SWEATERS = [
+    'oversized cream hoodie, unzipped revealing sports bra, cozy casual',
+    'cropped zip-up hoodie in grey, high-waist leggings, sporty',
+    'oversized collegiate sweatshirt, no pants, bare legs, cozy casual',
+    'fitted ribbed turtleneck sweater, tucked into high-waist jeans',
+    'oversized chunky knit sweater in camel, cozy autumn look',
+    'cropped crewneck sweatshirt and high-waist sweatpants, matching set',
+    'vintage band crewneck sweatshirt, slightly worn, casual cool',
+    'fitted long-sleeve thermal top in sage green, understated casual',
+    'cozy oversized hoodie worn off-shoulder, bare shoulder visible',
+    'zip-up athletic hoodie and matching leggings, athleisure set',
+    'cashmere crewneck sweater in ivory, elegant and warm',
+    'slouchy knit cardigan in dusty pink over minimal crop top',
+    'cropped pullover hoodie with fleece lining, streetwear minimal',
+    'oversized boyfriend knit sweater slipping off one shoulder, intimate cozy',
+  ];
+
+  // ── Jeans e calças ────────────────────────────────────────────────────────
+  const _JEANS_PANTS = [
+    'high-waist wide-leg blue denim jeans and fitted white crop top',
+    'skinny distressed jeans and simple fitted tee, effortless casual',
+    'low-rise straight-leg jeans and spaghetti-strap cami, Y2K revival',
+    'high-waist mom jeans and ribbed crop top, casual everyday',
+    'flared bootcut jeans and fitted long-sleeve top, 70s inspired',
+    'tailored high-waist cigarette trousers and silk blouse, polished',
+    'ripped knee skinny jeans and white graphic tee, street casual',
+    'high-waist wide-leg tailored trousers and structured crop top',
+    'dark wash straight-leg jeans and relaxed fitted blouse, smart casual',
+    'vintage high-waist denim flares and knotted tied blouse, retro',
+    'paper-bag waist trousers in neutral and tucked-in cami, chic casual',
+    'black high-waist skinny jeans and off-shoulder knit top',
+    'relaxed-fit linen trousers and simple crop tank, resort casual',
+    'jogger pants with ribbed waist and cropped hoodie, loungewear street',
+  ];
+
+  // ── Leggings e calças de ginástica ───────────────────────────────────────
+  const _LEGGINGS_ATHLETIC = [
+    'high-waist black leggings and matching sports bra, gym ready',
+    'colorful printed leggings and fitted crop top, vibrant athleisure',
+    'seamless high-waist leggings and long-sleeve performance crop top',
+    'high-waist yoga leggings and bralette, studio athletic',
+    'biker shorts and matching sports bra, athleisure minimalist',
+    'high-waist leggings and cropped zip-up hoodie, gym-to-street',
+    'flare yoga pants and fitted sports crop top, pilates ready',
+    'ribbed high-waist leggings and matching sports bra, tonal set',
+    'compression leggings and fitted athletic tank top, running look',
+    'high-waist printed leggings and sports bra, bold athletic',
+    'seamless full-length leggings and strapless tube bra top, minimal athletic',
+    'wide-leg athletic sweatpants and crop sports top, off-duty athlete',
+  ];
+
+  // ── Shorts e saias ────────────────────────────────────────────────────────
+  const _SHORTS_SKIRTS = [
+    'high-waist denim shorts and fitted white crop top, summer casual',
+    'mini pleated skirt and fitted ribbed top, feminine street',
+    'athletic biker shorts and casual fitted tee, off-duty cool',
+    'flowy floral mini skirt and white tank top, summer feminine',
+    'tailored high-waist shorts and silk blouse tucked in, polished casual',
+    'tennis skirt and matching crop top, sporty chic',
+    'ripped denim micro shorts and simple crop tee, casual edgy',
+    'satin midi skirt and tucked-in fitted top, elevated casual',
+    'linen wide-leg shorts and breezy linen top, resort relaxed',
+    'corduroy mini skirt and knit crop sweater, autumn street',
+    'high-waist cargo shorts and fitted crop top, utility street',
+    'silk slip skirt (midi) and simple cami, effortless evening casual',
+    'plaid mini skirt and fitted turtleneck crop top, preppy chic',
+    'velvet mini skirt and matching velvet crop top, rich co-ord',
+    'flared mini skirt in pastel and matching crop blouse, playful Y2K',
+  ];
+
   // ══════════════════════════════════════════════════════════════════════════
   // WATER / AQUÁTICO
   // ══════════════════════════════════════════════════════════════════════════
@@ -16249,127 +16346,129 @@ function getPoseSensualOutfit(key, returnAll){
   // ── STANDING (specific sub-types) ─────────────────────────────────────────
   if(key === 'standing-front' || key === 'standing-back')
     return R([
-      ..._LINGERIE_FULL,
-      ..._MINIDRESS_POOL,
+      ..._LINGERIE_FULL.slice(0, 10),
+      ..._MINIDRESS_POOL.slice(0, 8),
       ..._CASUAL_DRESS.slice(0, 6),
       ..._CASUAL_STREET.slice(0, 6),
+      ..._TOPS_BLOUSES.slice(0, 6),
+      ..._JEANS_PANTS.slice(0, 6),
+      ..._SHORTS_SKIRTS.slice(0, 5),
+      ..._HOODIES_SWEATERS.slice(0, 4),
       'fitted crop top and high-waist trousers, standing full body',
-      'silk slip camisole and matching high-cut panties',
-      'sheer lace bodysuit, second-skin, full standing',
-      'elegant corset, garter belt and sheer stockings',
-      'white plunge bodysuit and wide-leg pants, standing editorial',
+      'white plunge bodysuit and wide-leg jeans, standing editorial',
     ]);
 
   if(key === 'standing-spread-back' || key === 'standing-spread-front' || key === 'spread-eagle-standing' || key === 'hands-up-front' || key === 'hands-up-back')
     return R([
-      ..._LINGERIE_FULL,
+      ..._LINGERIE_FULL.slice(0, 8),
       'sheer stretch bodysuit, high-cut, spread-eagle pose',
       'strappy harness bralette and micro thong, open pose',
       'metallic bodysuit, form-fitting, arms-up pose',
       ..._MINIDRESS_POOL.slice(0, 6),
-      'crop top and micro shorts, hands above head',
-      'fitted tank top and high-waist midi skirt, dynamic standing',
+      ..._TOPS_BLOUSES.slice(0, 5),
+      ..._SHORTS_SKIRTS.slice(0, 5),
       ..._CASUAL_STREET.slice(0, 4),
     ]);
 
   if(key === 'standing-dynamic' || key === 'standing-one-leg' || key === 'standing-hands-hips' || key === 'standing-arms-crossed' || key === 'standing-supported-back')
     return R([
       ..._LINGERIE_FULL.slice(0, 8),
-      ..._MINIDRESS_POOL,
+      ..._MINIDRESS_POOL.slice(0, 6),
       ..._CASUAL_DRESS.slice(0, 6),
       ..._FASHION_CHIC.slice(0, 5),
-      'crop top and high-waist midi skirt, dynamic pose',
-      'fitted blazer as dress with no pants, power pose',
-      'form-fitting bodysuit and wide-leg pants, confident stance',
+      ..._TOPS_BLOUSES.slice(0, 6),
+      ..._JEANS_PANTS.slice(0, 5),
+      ..._SHORTS_SKIRTS.slice(0, 5),
+      ..._HOODIES_SWEATERS.slice(0, 4),
       ..._CASUAL_STREET.slice(0, 5),
     ]);
 
   if(key.startsWith('standing-'))
     return R([
-      ..._LINGERIE_FULL,
+      ..._LINGERIE_FULL.slice(0, 8),
       ..._MINIDRESS_POOL.slice(0, 6),
       ..._CASUAL_DRESS.slice(0, 6),
       ..._CASUAL_STREET.slice(0, 6),
       ..._FASHION_CHIC.slice(0, 4),
+      ..._TOPS_BLOUSES.slice(0, 5),
+      ..._JEANS_PANTS.slice(0, 5),
+      ..._SHORTS_SKIRTS.slice(0, 4),
+      ..._HOODIES_SWEATERS.slice(0, 3),
       ..._ROBE_POOL.slice(0, 3),
     ]);
 
   // ── SITTING ───────────────────────────────────────────────────────────────
   if(key.startsWith('sitting-'))
     return R([
-      ..._LINGERIE_FULL,
-      ..._ROBE_POOL,
+      ..._LINGERIE_FULL.slice(0, 8),
+      ..._ROBE_POOL.slice(0, 5),
       ..._CASUAL_DRESS.slice(0, 6),
       ..._CASUAL_STREET.slice(0, 5),
+      ..._TOPS_BLOUSES.slice(0, 5),
+      ..._JEANS_PANTS.slice(0, 5),
+      ..._SHORTS_SKIRTS.slice(0, 5),
+      ..._HOODIES_SWEATERS.slice(0, 4),
       'tight mini dress riding up while seated, thighs exposed',
-      'satin cami slip dress, barely covering thighs, seated',
       'knit midi dress, form-hugging, seated elegant',
-      'lace garter belt and sheer stockings, seated elegantly',
-      'one-shoulder satin mini dress, seated editorial',
-      'wide-leg linen trousers and blouse, cross-legged seated',
       'floral midi skirt and fitted top, sitting gracefully',
     ]);
 
   // ── KNEELING ─────────────────────────────────────────────────────────────
   if(key.startsWith('kneeling-'))
     return R([
-      ..._LINGERIE_FULL,
+      ..._LINGERIE_FULL.slice(0, 8),
       'elegant black corset with garter and sheer stockings, kneeling boudoir',
       'sheer stretch bodysuit, high-cut, kneeling pose',
-      'velvet bralette and matching high-waist briefs, kneeling',
-      'silk babydoll negligee loosely draped, kneeling on bed',
-      'lace garter belt with thong and stockings, kneeling elegantly',
-      'sheer lace robe loosely open, lingerie underneath, kneeling',
-      // everyday kneeling looks
+      ..._CASUAL_DRESS.slice(0, 5),
+      ..._TOPS_BLOUSES.slice(0, 5),
+      ..._JEANS_PANTS.slice(0, 4),
+      ..._SHORTS_SKIRTS.slice(0, 4),
+      ..._HOODIES_SWEATERS.slice(0, 3),
       'maxi dress with slit, kneeling elegantly',
       'knit sweater dress, kneeling on soft surface',
-      'linen dress, kneeling in garden, casual editorial',
     ]);
 
   // ── LYING / LYING DOWN ────────────────────────────────────────────────────
   if(key.startsWith('lying-') || key === 'sphinx' || key === 'spread-eagle-lying')
     return R([
-      ..._LINGERIE_FULL,
+      ..._LINGERIE_FULL.slice(0, 10),
       ..._ROBE_POOL.slice(0, 5),
+      ..._HOODIES_SWEATERS.slice(0, 5),
+      ..._TOPS_BLOUSES.slice(0, 4),
+      ..._SHORTS_SKIRTS.slice(0, 4),
       'silk babydoll negligee barely covering body, lying on satin sheets',
-      'sheer mesh babydoll and matching G-string, lying boudoir',
-      'lace garter belt with stockings, lying back elegantly',
-      'white cotton oversized shirt, no bottoms, morning lying pose',
-      'velvet bralette and matching briefs on soft bedding',
-      'embroidered silk camisole and lace shorts, lying intimate',
-      // everyday lying looks
       'silk pajama set, elegant lying on bed',
       'cozy matching lounge set: shorts and cropped hoodie, lying relaxed',
       'flowy midi dress, lying in meadow outdoors, dreamy editorial',
       'fitted sundress, lying on a picnic blanket',
+      'oversized college sweatshirt and biker shorts, casual lying pose',
+      'ribbed high-waist leggings and crop hoodie, cozy lying lounge',
     ]);
 
   // ── ALL FOURS ─────────────────────────────────────────────────────────────
   if(key.startsWith('allfours-'))
     return R([
-      ..._LINGERIE_FULL,
+      ..._LINGERIE_FULL.slice(0, 8),
       'lace garter belt with matching thong and sheer stockings, all-fours',
       'sheer stretch bodysuit with thong cut, on all fours',
-      'strappy harness bralette and micro G-string, all-fours provocative',
-      'silk babydoll negligee hanging loosely, all-fours pose',
-      'velvet crop bra and matching micro shorts, on all fours',
+      ..._TOPS_BLOUSES.slice(0, 5),
+      ..._JEANS_PANTS.slice(0, 4),
+      ..._SHORTS_SKIRTS.slice(0, 4),
+      ..._LEGGINGS_ATHLETIC.slice(0, 4),
       'white bodycon mini dress riding up, all-fours editorial',
       'sports bra and micro booty shorts, all-fours athletic',
-      'embroidered lace bodysuit, thong back, on all fours',
     ]);
 
   // ── SQUAT ─────────────────────────────────────────────────────────────────
   if(key.startsWith('squat-'))
     return R([
-      ..._LINGERIE_FULL.slice(0, 8),
+      ..._LINGERIE_FULL.slice(0, 6),
+      ..._LEGGINGS_ATHLETIC,
+      ..._TOPS_BLOUSES.slice(0, 5),
+      ..._SHORTS_SKIRTS.slice(0, 5),
       'high-cut sports bra and micro booty shorts, deep squat',
       'seamless sports set: micro bralette and booty shorts, squat',
-      'yoga micro shorts and strappy sports bra, squat position',
-      'gym micro shorts and push-up sports bra, deep squat pose',
-      'bodycon mini dress riding up during squat, editorial',
-      // everyday squat looks
       'high-waist jeans and fitted crop top, streetwear squat',
-      'athletic wide-leg shorts and sports crop top',
       'denim shorts and crop tee, casual street squat pose',
     ]);
 
@@ -16388,13 +16487,13 @@ function getPoseSensualOutfit(key, returnAll){
   // ── CROSS-LEGGED / FETAL / OVER-SHOULDER ─────────────────────────────────
   if(key === 'cross-legged' || key === 'fetal' || key.startsWith('over-shoulder') || key.startsWith('hand-'))
     return R([
-      ..._LINGERIE_FULL,
-      ..._ROBE_POOL.slice(0, 5),
-      'soft pink satin lingerie set, feminine and sensual',
-      'oversized cable-knit sweater, no bottoms, intimate cozy',
-      'white sheer bodysuit, barely covering, curled pose',
-      'velvet bralette and matching lace briefs, soft intimate',
-      // everyday
+      ..._LINGERIE_FULL.slice(0, 6),
+      ..._ROBE_POOL.slice(0, 4),
+      ..._HOODIES_SWEATERS,
+      ..._TOPS_BLOUSES.slice(0, 5),
+      ..._JEANS_PANTS.slice(0, 5),
+      ..._SHORTS_SKIRTS.slice(0, 5),
+      ..._LEGGINGS_ATHLETIC.slice(0, 4),
       'cozy oversized knit sweater dress, hugging knees, soft light',
       'loose flowy blouse and high-waist linen trousers, relaxed seated',
       'cotton wrap dress, casual cross-legged seated look',
@@ -16561,7 +16660,13 @@ function getPoseSensualOutfit(key, returnAll){
     ..._CASUAL_SEXY,
     ..._CASUAL_DRESS,
     ..._CASUAL_STREET,
+    ..._FASHION_CHIC,
     ..._ROBE_POOL,
+    ..._TOPS_BLOUSES,
+    ..._HOODIES_SWEATERS,
+    ..._JEANS_PANTS,
+    ..._LEGGINGS_ATHLETIC,
+    ..._SHORTS_SKIRTS,
   ]);
 }
 
