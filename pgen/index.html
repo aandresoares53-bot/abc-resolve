@@ -16703,8 +16703,13 @@ function buildPrompt(englishText, rawPT){
       if(_autoOutfit){
         _sdClothingTerms = `(${_autoOutfit}:2.0), (keep outfit on:1.9), (fully clothed:1.8),`;
         expanded = `${_autoOutfit}, keep outfit on, ` + expanded;
-        // Negative prompt left unchanged — user description is 100% accepted
+        // Store outfit for MJ — placed at start of prompt for max attention weight
+        buildPrompt._lastOutfit = _autoOutfit;
+      } else {
+        buildPrompt._lastOutfit = '';
       }
+    } else {
+      buildPrompt._lastOutfit = '';
     }
   }
 
@@ -16800,7 +16805,11 @@ function buildPrompt(englishText, rawPT){
     // _expandedMj already contains cenário + scene chips (injected into inputText before expandScene)
     // lighting + style + lens chips go here since they are not injected into inputText
     const _mjChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull, _lensCamFull, _lensChipFull].filter(Boolean).join(', ');
-    const _mjUserContent = [pose.mj, _expandedMj, _mjChipContent].filter(Boolean).join(', ');
+    // Outfit anchor — placed FIRST in user content for maximum MJ attention weight
+    const _mjOutfitAnchor = (buildPrompt._lastOutfit && !_wantsNSFW)
+      ? `wearing ${buildPrompt._lastOutfit}, fully dressed, clothed,`
+      : '';
+    const _mjUserContent = [_mjOutfitAnchor, pose.mj, _expandedMj, _mjChipContent].filter(Boolean).join(', ');
     const _mjAnatomy = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI, everyday woman not a model, natural human proportions not idealized, no plastic surgery look, no breast implants appearance, authentic soft feminine belly, natural body weight distribution, real woman curves';
     // MJ: add ethnicity skin texture terms BEFORE anatomy — MJ is attention-based, earlier = more influence
     const _mjEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
@@ -16835,9 +16844,13 @@ function buildPrompt(englishText, rawPT){
       'watermark, text, signature, logo',
       'idealized beauty, perfect symmetry, impossibly smooth skin, magazine cover look, fashion advertisement, commercial beauty photography, professional model pose, high fashion editorial look, model face, fashion model, glamour portrait, beauty photography, editorial beauty, flawless face, perfect skin tone, ceramic skin, porcelain skin, Instagram filter, TikTok filter, beauty app filter, face tuned, FaceApp'
     ].filter(Boolean).join(', ');
+    // When dressed: reinforce in --no that nudity is not wanted
+    const _mjNudeSuppressor = (buildPrompt._lastOutfit && !_wantsNSFW)
+      ? ', nude, naked, topless, bottomless, undressed, no clothes, exposed breasts, exposed genitals, without clothing'
+      : '';
     const _mjNeg = _wantsNSFW
       ? _mjNegBase.replace(/\b(nude|naked|topless|explicit|nsfw|adult content)[^,]*(,\s*)?/gi, '').replace(/,\s*$/, '').trim()
-      : _mjNegBase;
+      : _mjNegBase + _mjNudeSuppressor;
     _params += ' --no ' + _mjNeg;
     const _mjFaceDesc = _getFaceID() ? `, ${_getFaceID()}, same consistent woman, same face` : '';
     // MJ mode: dynamic QF — use chip-selected film stock and lens
