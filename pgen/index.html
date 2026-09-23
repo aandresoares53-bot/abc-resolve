@@ -16866,7 +16866,11 @@ function buildPrompt(englishText, rawPT){
     const _mjQFFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _mjQFLensRaw = getLensCam();
     const _mjQFLens = _mjQFLensRaw ? _mjQFLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.4';
-    const _mjQF = QF.replace('Kodak Portra 400', _mjQFFilm).replace('Canon EOS R5 85mm f/1.4', _mjQFLens);
+    const _mjQFRaw = QF.replace('Kodak Portra 400', _mjQFFilm).replace('Canon EOS R5 85mm f/1.4', _mjQFLens);
+    const _mjQFNudeTermsRe = /,?\s*(natural cellulite texture|natural stretch marks|real feminine weight and softness|authentic imperfect body|natural gravity-pulled skin|skin weight and drape|natural skin laxity|skin fold physics|natural skin laxity|skin contact deformation)/gi;
+    const _mjQF = (_mjOutfitResolved && !_wantsNSFW)
+      ? _mjQFRaw.replace(_mjQFNudeTermsRe, '').replace(/,\s*,/g, ',').replace(/(^,\s*|\s*,\s*$)/g, '').trim()
+      : _mjQFRaw;
     return core + _mjFaceDesc + ', ' + _mjQF + _params;
   }
   if(currentMode === 'gpt'){
