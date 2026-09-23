@@ -15117,17 +15117,51 @@ function _getPoseOutfitOptions(key){ return getPoseSensualOutfit(key, true) || [
 function getPoseSensualOutfit(key, returnAll){
   if(!key) return returnAll ? [] : '';
 
-  // ── Explicitly sexual / naturally nude poses — no outfit injection ────────
-  const _explicitPfx = /^(shower-|bath-|sex-|anal-|oral-|multi-|cumshot-|doggy-|prone-bone|spoon$|scissors$|anvil$|leapfrog$|mating-press$|pile-driver$|reverse-missionary$|lap-dance$|lotus-nsfw$|position-69$|cowgirl$|cowgirl-|reverse-cowgirl$|reverse-cowgirl-|missionary$|missionary-|lesbian-)/;
-  if(_explicitPfx.test(key)) return returnAll ? [] : '';
-  // Fully explicit escort/OF poses (sup:true) — the POSES sd_start/sd_end handle clothing
-  const _explicitPoses = /^(escort-kneeling-ready-front|escort-client-pov-explicit|of-doggy-ring-light-back|of-spread-overhead-explicit|of-ppv-explicit-lying)$/;
-  if(_explicitPoses.test(key)) return returnAll ? [] : '';
-
-  // ── Pose definitions already embed clothing ───────────────────────────────
-  if(/^(fantasy-|alt-|outfit-|shemale-)/.test(key)) return returnAll ? [] : '';
+  // ── Pose definitions already embed clothing (fantasy-, alt-, outfit-) ────
+  if(/^(fantasy-|alt-|outfit-)/.test(key)) return returnAll ? [] : '';
 
   const R = returnAll ? arr => arr : arr => arr[Math.floor(Math.random() * arr.length)];
+
+  // ── Shower & bath poses → robe or wet swimsuit ───────────────────────────
+  if(key.startsWith('shower-') || key.startsWith('bath-')){
+    return R([
+      'fluffy white bath towel wrapped around body',
+      'plush white terry cloth bath robe, loosely belted',
+      'black satin kimono robe, loosely open revealing lingerie underneath',
+      'wet white one-piece swimsuit, second-skin',
+      'wet black string bikini, fully covering',
+      'silk dressing gown loosely tied, post-shower intimate',
+    ]);
+  }
+
+  // ── Beach topless / waterfall → full bikini or swimsuit ─────────────────
+  if(key === 'beach-topless-back' || key === 'nature-waterfall-back'){
+    return R([
+      'white string bikini top and matching bottom',
+      'black triangle bikini, fully covered',
+      'colorful bandeau bikini set',
+      'sporty one-piece swimsuit, open-back',
+      'bright red string bikini, fully covering',
+    ]);
+  }
+
+  // ── Explicit sexual / escort / OF poses → lingerie ───────────────────────
+  const _isExplicitPose = /^(sex-|anal-|oral-|multi-|cumshot-|doggy-|prone-bone|spoon$|scissors$|anvil$|leapfrog$|mating-press$|pile-driver$|reverse-missionary$|lap-dance$|lotus-nsfw$|position-69$|cowgirl$|cowgirl-|reverse-cowgirl$|reverse-cowgirl-|missionary$|missionary-|lesbian-|shemale-|escort-kneeling-ready-front|escort-client-pov-explicit|of-doggy-ring-light-back|of-spread-overhead-explicit|of-ppv-explicit-lying)/.test(key);
+  if(_isExplicitPose){
+    // Return compact lingerie inline — _LINGERIE_FULL is defined below, can't reference yet
+    return R([
+      'black lace push-up bra and matching micro thong',
+      'strappy lace bralette and seamless micro thong',
+      'silk satin plunge bra and cheeky panties, sensual boudoir',
+      'sheer lace bodysuit, thong back, barely-there',
+      'elegant black corset with built-in garter and sheer black stockings',
+      'white sheer lace lingerie set: balconette bra and bikini panties',
+      'velvet bralette and matching velvet high-waist panties, luxe',
+      'satin demi-cup bra and lace high-waist panties',
+      'red satin push-up bra and high-cut French panties, bold boudoir',
+      'strappy criss-cross bandage bralette and matching high-cut panties',
+    ]);
+  }
 
   // ══════════════════════════════════════════════════════════════════════════
   // SHARED WARDROBE POOLS — reused across multiple pose categories
@@ -16687,27 +16721,16 @@ function buildPrompt(englishText, rawPT){
       _sdClothingTerms = `(${_p2Str}:2.0), (wearing ${_p2Str}:1.9), (keep outfit on:1.9), (${_p2Str} visible:1.8), (fully clothed:1.8),`;
     }
   } else if(!_wantsNude){
-    // Naturally nude scenes — shower, bath, waterfall topless: skip clothing injection
-    const _isNaturallyNude = selectedPoseKey && (
-      selectedPoseKey.startsWith('shower-') ||
-      selectedPoseKey.startsWith('bath-') ||
-      selectedPoseKey === 'beach-topless-back' ||
-      selectedPoseKey === 'nature-waterfall-back'
-    );
-    if(!_isNaturallyNude){
-      // Priority 3: picker selection (chipState.outfit when _autoOutfitActive=true) → _POSE_OUTFIT_MAP → cached → fresh random
-      const _poseOutfit = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
-      // Priority 4: scene-based outfit fallback (beach→bikini, indoor→lingerie, etc.)
-      const _sceneOutfit = expandScene._lastSceneOutfit || '';
-      const _autoOutfit = _poseOutfit || _sceneOutfit;
-      if(_autoOutfit){
-        _sdClothingTerms = `(${_autoOutfit}:2.0), (keep outfit on:1.9), (fully clothed:1.8),`;
-        expanded = `${_autoOutfit}, keep outfit on, ` + expanded;
-        // Store outfit for MJ — placed at start of prompt for max attention weight
-        buildPrompt._lastOutfit = _autoOutfit;
-      } else {
-        buildPrompt._lastOutfit = '';
-      }
+    // Priority 3: picker selection (chipState.outfit when _autoOutfitActive=true) → _POSE_OUTFIT_MAP → cached → fresh random
+    const _poseOutfit = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+    // Priority 4: scene-based outfit fallback (beach→bikini, indoor→lingerie, etc.)
+    const _sceneOutfit = expandScene._lastSceneOutfit || '';
+    const _autoOutfit = _poseOutfit || _sceneOutfit;
+    if(_autoOutfit){
+      _sdClothingTerms = `(${_autoOutfit}:2.0), (keep outfit on:1.9), (fully clothed:1.8),`;
+      expanded = `${_autoOutfit}, keep outfit on, ` + expanded;
+      // Store outfit for MJ — placed at start of prompt for max attention weight
+      buildPrompt._lastOutfit = _autoOutfit;
     } else {
       buildPrompt._lastOutfit = '';
     }
