@@ -13788,6 +13788,88 @@ function expandScene(t, skipExpression){
   return t + (extras.length ? ', ' + extras.join(', ') : '');
 }
 
+// ── POSE AUTO EXTRAS — camera angle, accessories, makeup per pose category ────────────────────
+// Returns {camera, accessories, makeup} strings based on pose key.
+// All three are injected into the prompt automatically when no user override exists.
+function getPoseAutoExtras(key){
+  if(!key) return {camera:'', accessories:'', makeup:''};
+  const k = key.toLowerCase();
+  const _pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  // ── CAMERA ANGLE ────────────────────────────────────────────────────────────
+  let camera = '';
+  if(k.startsWith('lying-') || k.includes('lying') || k === 'sphinx' || k === 'spread-eagle-lying')
+    camera = _pick(['low camera angle, ground level shot, camera at mattress height shooting upward', 'slightly elevated overhead angle, camera above looking down at subject lying below', 'side-angle low camera, horizontal composition, camera at bed height']);
+  else if(k.startsWith('sitting-') || k === 'cross-legged' || k.includes('sitting'))
+    camera = _pick(['eye-level camera, subject seated, camera at sitting eye height, natural perspective', 'slightly low angle camera, shot from below seated eye level, slightly looking up at subject', 'three-quarter angle, camera slightly to the side at seated eye height']);
+  else if(k.startsWith('kneeling-') || k.includes('kneeling'))
+    camera = _pick(['low camera angle, camera below kneeling subject looking slightly upward', 'eye-level with kneeling height, camera at chest level of kneeling subject', 'three-quarter low angle, camera at floor level angled up toward kneeling subject']);
+  else if(k.startsWith('allfours-') || k.includes('all-fours') || k.includes('allfours'))
+    camera = _pick(['side camera angle, full body profile view of all-fours pose', 'low camera behind subject, camera at floor level shooting toward back and hips', 'three-quarter side angle, camera at floor level slightly elevated']);
+  else if(k.startsWith('squat-') || k.includes('squat'))
+    camera = _pick(['low camera angle looking up at squatting subject, slightly below eye level', 'eye-level camera at squat height, front-facing full body squat composition', 'three-quarter low camera, side-front angle of deep squat pose']);
+  else if(k.startsWith('boudoir-') || k === 'boudoir' || k.includes('boudoir'))
+    camera = _pick(['intimate close-up angle, 50mm equivalent lens, tight portrait composition', 'three-quarter body framing, soft focus background, subject fills the frame', 'overhead angle looking down at boudoir pose, intimate bird-eye composition']);
+  else if(k.startsWith('beach-') || k.startsWith('pool-'))
+    camera = _pick(['low sun-level camera angle, beach or pool ground level, dramatic low perspective', 'full body front view, camera at waist height, natural outdoor composition', 'three-quarter body framing, natural outdoor light, subject centered in frame']);
+  else if(k.startsWith('gym-') || k.startsWith('workout-') || k.includes('yoga') || k.includes('pilates'))
+    camera = _pick(['dynamic low camera angle, athletic full body shot from below', 'eye-level camera, three-quarter body framing, athletic environment visible behind', 'full body front view, camera at chest height, athletic composition']);
+  else if(k.startsWith('standing-front') || k.startsWith('standing-back') || k === 'standing-front' || k === 'standing-back')
+    camera = _pick(['full body front view, camera at chest height, 35mm perspective', 'full body shot, slight low angle looking up from waist level', 'full body three-quarter view, 50mm natural perspective, slight angle']);
+  else if(k.startsWith('standing-'))
+    camera = _pick(['full body or three-quarter body shot, natural eye-level camera perspective', 'three-quarter angle full body, camera at natural standing eye height, 50mm perspective', 'full body with slight low angle, camera below standing eye level looking up slightly']);
+  else if(k.startsWith('selfie-') || k.includes('mirror'))
+    camera = _pick(['phone camera POV, self-portrait arm extended angle, slight upward selfie tilt', 'mirror selfie angle, full body in frame, phone visible in hand at chest height', 'front-camera angle slightly above eye level, typical selfie perspective']);
+  else if(k.startsWith('pov-') || k.includes('pov'))
+    camera = _pick(['first-person POV, camera at viewer eye level, immersive direct perspective', 'POV angle, camera close to subject at first-person height', 'direct POV framing, personal intimate angle, no camera visible']);
+  else
+    camera = _pick(['full body or three-quarter body framing, natural 50mm perspective, eye-level camera', 'three-quarter body shot, slight three-quarter angle, natural eye-level camera', 'full body composition, camera at natural standing height, authentic documentary angle']);
+
+  // ── ACCESSORIES — matched to pose context ────────────────────────────────────
+  let accessories = '';
+  if(k.startsWith('boudoir-') || k === 'boudoir')
+    accessories = _pick(['delicate gold chain necklace, small stud earrings, natural nail polish', 'pearl drop earrings, thin gold bracelet, subtle ring, natural manicure', 'simple diamond stud earrings, thin gold choker necklace, clean natural nails']);
+  else if(k.startsWith('beach-') || k.startsWith('pool-'))
+    accessories = _pick(['straw sun hat, thin gold anklet, no other jewelry, natural sunscreen sheen', 'oversized round sunglasses, thin gold necklace, small hoop earrings, beachy accessories', 'colorful hair scrunchie, waterproof watch, anklet, beach-ready minimal accessories']);
+  else if(k.startsWith('gym-') || k.startsWith('workout-') || k.includes('yoga') || k.includes('pilates') || k.startsWith('squat-'))
+    accessories = _pick(['hair tied in high ponytail, small stud earrings only, minimal clean athlete look, no jewelry risk', 'athletic headband keeping hair back, water bottle nearby, sports watch on wrist, minimal athlete accessories', 'hair in tight bun, small hoop earrings, sports watch, clean minimal athletic accessories']);
+  else if(k.startsWith('dance-') || k.startsWith('club-') || k.startsWith('twerk-'))
+    accessories = _pick(['statement earrings, layered gold necklaces, rings on fingers, evening-ready bold accessories', 'dangling chandelier earrings, thin bracelet stack, ring on middle finger, bold party accessories', 'oversized hoop earrings, choker necklace, multiple rings, bold confident night-out jewelry']);
+  else if(k.startsWith('model-') || k.startsWith('fashion-') || k.startsWith('runway-'))
+    accessories = _pick(['architectural statement earrings, minimal other jewelry, editorial accessory balance', 'bold single statement necklace, clean minimal other accessories, editorial restraint', 'geometric sculptural earrings, single bold ring, high-fashion editorial accessories']);
+  else if(k.startsWith('sitting-') || k === 'cross-legged')
+    accessories = _pick(['small gold hoop earrings, simple ring, thin bracelet, casual everyday jewelry', 'stud earrings and thin layered necklaces, natural nails, minimal comfortable accessories', 'small pendant necklace, tiny stud earrings, simple watch, understated everyday accessories']);
+  else if(k.startsWith('standing-') || k.startsWith('kneeling-'))
+    accessories = _pick(['small gold hoop earrings, thin pendant necklace, one ring, simple everyday accessories', 'stud earrings, layered thin necklaces, natural nails, understated everyday jewelry', 'simple drop earrings, thin bracelet, single ring, casual chic accessories']);
+  else if(k.startsWith('lying-') || k === 'sphinx' || k.includes('lying'))
+    accessories = _pick(['small stud earrings only, minimal jewelry for lying pose, clean and simple', 'delicate thin necklace visible, small stud earrings, simple natural nails', 'minimal jewelry: only a thin bracelet or small studs, relaxed intimate accessories']);
+  else
+    accessories = _pick(['small gold hoop earrings, thin chain necklace, one delicate ring, natural everyday accessories', 'stud earrings, simple pendant necklace, natural manicure, minimal authentic accessories', 'minimal everyday jewelry: small earrings, thin necklace, clean natural look']);
+
+  // ── MAKEUP — matched to pose/context mood ────────────────────────────────────
+  let makeup = '';
+  if(k.startsWith('boudoir-') || k === 'boudoir')
+    makeup = _pick(['bold boudoir makeup: smoky eye, defined black liner, nude lip or bold red, contoured complexion', 'dramatic boudoir makeup: dark smoky eye, strong brows, nude-pink lip, full contour, long lashes', 'editorial boudoir makeup: defined wing liner, subtle smoky, glossy lip, flawless complexion, bold brow']);
+  else if(k.startsWith('beach-') || k.startsWith('pool-'))
+    makeup = _pick(['natural beach makeup: light bronzer, mascara only, tinted balm, sun-kissed no-makeup look', 'barely-there beach glow: light tinted moisturizer, clear brow gel, waterproof mascara, glossy lip balm', 'fresh no-makeup makeup: natural bronzer, waterproof mascara, SPF tinted balm, beach-ready minimal look']);
+  else if(k.startsWith('gym-') || k.startsWith('workout-') || k.includes('yoga') || k.includes('pilates') || k.startsWith('squat-'))
+    makeup = _pick(['natural no-makeup gym look: mascara and tinted lip balm only, fresh athletic face', 'minimal athletic makeup: clear brow gel, waterproof mascara, no foundation, natural skin showing', 'barely-there workout makeup: tinted moisturizer, mascara, brow gel, fresh athletic natural face']);
+  else if(k.startsWith('dance-') || k.startsWith('club-') || k.startsWith('twerk-') || k.includes('nightclub'))
+    makeup = _pick(['bold night-out makeup: strong smoky eye, graphic liner, glossy lip or bold red, contoured', 'dramatic club makeup: metallic eye shadow, bold liner, nude glossy lip, strong contour and highlight', 'editorial night makeup: cut-crease eye, defined brow, bold lip color, full glam contour']);
+  else if(k.startsWith('model-') || k.startsWith('fashion-') || k.startsWith('runway-'))
+    makeup = _pick(['editorial fashion makeup: strong defined brow, architectural eye, matte skin, editorial color choice', 'high-fashion editorial makeup: graphic liner, bold color eye, matte complexion, defined editorial look', 'runway makeup: bold editorial choice — strong eye or bold lip (not both), flawless matte base, defined brow']);
+  else if(k.startsWith('outdoor-') || k.startsWith('nature-') || k.includes('sunset') || k.includes('golden hour'))
+    makeup = _pick(['natural outdoor glow makeup: light bronzer, mascara, tinted balm, natural sun-kissed look', 'golden hour natural makeup: warm bronzer, mascara, nude gloss, skin-tone foundation, dewy finish', 'fresh outdoors makeup: tinted moisturizer, bronze highlighter, mascara, balm, natural authentic face']);
+  else if(k.startsWith('sitting-') || k === 'cross-legged' || k.startsWith('standing-') || k.startsWith('kneeling-'))
+    makeup = _pick(['natural everyday makeup: tinted moisturizer, mascara, nude or tinted lip, soft defined brow', 'soft everyday glam: light foundation, defined brow, mascara, soft pink-nude lip, subtle highlight', 'fresh face everyday makeup: skin-tone BB cream, brow pencil, mascara, gloss, natural daily look']);
+  else if(k.startsWith('lying-') || k === 'sphinx' || k.includes('lying'))
+    makeup = _pick(['soft intimate makeup: light foundation, mascara, nude lip, soft defined brow, intimate natural look', 'natural relaxed makeup: tinted moisturizer, mascara, nude balm, soft brow, relaxed intimate face', 'barely-there lying makeup: clean dewy skin, mascara, tinted balm, minimal intimate natural face']);
+  else
+    makeup = _pick(['natural everyday makeup: mascara, tinted lip, defined brow, light foundation, authentic daily look', 'soft natural makeup: BB cream, brow pencil, mascara, nude lip gloss, everyday authentic face', 'minimal authentic makeup: light tinted moisturizer, mascara, balm, natural real-person daily look']);
+
+  return {camera, accessories, makeup};
+}
+
 // ── POSE ENGINE ──────────────────────────────────────────────────────────────────────────────
 // Reads original Portuguese. Describes what the CAMERA SEES, not just what person does.
 // SD uses attention weights (term:1.X); MJ gets clean natural language.
@@ -16850,6 +16932,14 @@ function buildPrompt(englishText, rawPT){
     }
   }
 
+  // ── Auto pose extras: camera angle, accessories, makeup — by selected pose key ──
+  const _poseAutoExtras = (typeof getPoseAutoExtras === 'function' && selectedPoseKey)
+    ? getPoseAutoExtras(selectedPoseKey)
+    : {camera:'', accessories:'', makeup:''};
+  const _autoCamera     = _poseAutoExtras.camera     || '';
+  const _autoAccessories= _poseAutoExtras.accessories|| '';
+  const _autoMakeup     = _poseAutoExtras.makeup     || '';
+
   // When NSFW requested: strip any anti-nude/anti-explicit terms from negative
   if(_wantsNSFW){
     _negText = _negText.replace(/\b(nude|naked|topless|bottomless|undressed|no\s*clothing|no\s*underwear|skin\s*exposed|explicit|nsfw|adult\s*content)[^,]*(,\s*)?/gi, '').replace(/,\s*,/g, ',').replace(/^,\s*/, '').trim();
@@ -16876,7 +16966,10 @@ function buildPrompt(englishText, rawPT){
     const _coreFlux = [_poseFlux, _expandedFlux].filter(Boolean).join(', ');
     const _photoStyle = _estiloFotoFull;  // already collected above
     const _cenarioFlux = '';             // already merged into _coreFlux
-    const _fluxCam  = _getCameraSpec(selectedPoseKey || '');
+    const _fluxCam  = _lensCamFull || _lensChipFull || _getCameraSpec(selectedPoseKey || '') || _autoCamera;
+    const _fluxCamAngle = (!_lensCamFull && !_lensChipFull && _autoCamera) ? _autoCamera : '';
+    const _fluxAccessories = _autoAccessories;
+    const _fluxMakeup = _autoMakeup;
     const _fluxEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
     const _fluxBody  = (quickChipState.corpo || '');
     // Use already-collected chip values (_illumChipFull, _lightingChipFull, _lensChipFull, _lensCamFull)
@@ -16921,6 +17014,9 @@ function buildPrompt(englishText, rawPT){
         ? 'natural human skin warmth, natural breathing presence, natural neck muscle visibility, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin, natural back skin warmth and living glow,'
         : 'natural human skin warmth, natural breathing presence, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, natural lip dryness texture, living skin glow, natural forearm vein visibility, hand vein definition, natural body heat in skin,',
       _fluxBody,
+      _fluxCamAngle,
+      _fluxAccessories,
+      (!_poseIsBack && _fluxMakeup) ? _fluxMakeup : '',
       // Face reference URL identity anchor — injected when user set a face reference
       _getFaceRefUrl() ? `same woman as in the face reference, identical face identity preserved, consistent character face across all images, face matches reference photograph,` : '',
     ].filter(Boolean).join(', ');
@@ -16947,11 +17043,15 @@ function buildPrompt(englishText, rawPT){
     // _expandedMj already contains cenário + scene chips (injected into inputText before expandScene)
     // lighting + style + lens chips go here since they are not injected into inputText
     const _mjChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull, _lensCamFull, _lensChipFull].filter(Boolean).join(', ');
+    // Pose-auto extras for MJ: camera angle if no lens chip, accessories, makeup (skip for back poses)
+    const _mjAutoCamera = (!_lensCamFull && !_lensChipFull) ? _autoCamera : '';
+    const _mjAutoAccessories = _autoAccessories;
+    const _mjAutoMakeup = (!_poseIsBack) ? _autoMakeup : '';
     // Outfit repeated mid-prompt as reinforcement
     const _mjOutfitMid = (_mjOutfitResolved && !_wantsNSFW)
       ? `${_mjOutfitResolved}, keep outfit on, do not remove clothing,`
       : '';
-    const _mjUserContent = [_mjOutfitMid, pose.mj, _expandedMj, _mjChipContent].filter(Boolean).join(', ');
+    const _mjUserContent = [_mjOutfitMid, pose.mj, _expandedMj, _mjChipContent, _mjAutoCamera, _mjAutoAccessories, _mjAutoMakeup].filter(Boolean).join(', ');
     // Anatomy block — when clothed, remove nude-body-area terms that push MJ toward rendering bare skin
     const _mjAnatomyFull = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI, everyday woman not a model, natural human proportions not idealized, no plastic surgery look, no breast implants appearance, authentic soft feminine belly, natural body weight distribution, real woman curves';
     // Clothed anatomy — only face, hands, hair, neck; removes nude body-area terms that fight clothing
@@ -17020,8 +17120,11 @@ function buildPrompt(englishText, rawPT){
     // _expandedGpt already contains cenário + scene chips (injected into inputText before expandScene)
     // lighting + style chips go here since they are not injected into inputText
     const _gptChipContent = [_illumChipFull, _lightingChipFull, _estiloFotoFull, _styleChipFull].filter(Boolean).join(', ');
+    const _gptAutoCamera = (!_lensCamFull && _autoCamera) ? _autoCamera : '';
+    const _gptAutoAccessories = _autoAccessories;
+    const _gptAutoMakeup = (!_poseIsBack) ? _autoMakeup : '';
     // POSE FIRST — model interprets leading terms as primary instruction
-    const _userContent = [pose.mj, _gptChipContent, _expandedGpt].filter(Boolean).join(', ');
+    const _userContent = [pose.mj, _gptChipContent, _expandedGpt, _gptAutoCamera, _gptAutoAccessories, _gptAutoMakeup].filter(Boolean).join(', ');
     const _gptFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _gptLensRaw = _lensCamFull || getLensCam();
     const _gptLensSpec = _gptLensRaw ? _gptLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.8';
@@ -17310,6 +17413,10 @@ function buildPrompt(englishText, rawPT){
     _styleBoostSD,           // ← FREEFORM STYLE CHIP at :1.7
     _lensBoostSD,            // ← CAMERA/LENS CHIP at :1.7
     _lensChipBoostSD,        // ← FREEFORM LENS CHIP at :1.6
+    // Auto pose extras (camera angle, accessories, makeup) — only when no chip overrides
+    (!_lensCamFull && !_lensChipFull && _autoCamera) ? `(${_autoCamera}:1.6),` : '',
+    _autoAccessories ? `(${_autoAccessories}:1.5),` : '',
+    (!_poseIsBack && _autoMakeup) ? `(${_autoMakeup}:1.5),` : '',
     _EXPLICIT_REALISM,       // Anti-anime/photorealism — all :2.0, effective in chunk 2+
     _rawStamp,               // RAW/anti-plastic — all :2.0, effective in chunk 2+
     _PHOTO,                  // Quality/RAW/film — all weighted, chunk 2-3 fine
