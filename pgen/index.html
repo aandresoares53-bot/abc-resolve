@@ -13867,7 +13867,51 @@ function getPoseAutoExtras(key){
   else
     makeup = _pick(['natural everyday makeup: mascara, tinted lip, defined brow, light foundation, authentic daily look', 'soft natural makeup: BB cream, brow pencil, mascara, nude lip gloss, everyday authentic face', 'minimal authentic makeup: light tinted moisturizer, mascara, balm, natural real-person daily look']);
 
-  return {camera, accessories, makeup};
+  // ── COLOR PALETTE — warm/cool tones by pose/scene mood ─────────────────────
+  let colorPalette = '';
+  if(k.startsWith('boudoir-') || k === 'boudoir' || k.includes('bed') || k.includes('lying'))
+    colorPalette = _pick(['warm intimate color palette: soft amber, dusty rose, warm cream tones, moody warm shadows', 'romantic warm palette: blush pink, champagne gold, warm ivory, soft shadow tones', 'moody boudoir palette: deep rose, warm shadow, cream highlights, soft candlelight warmth']);
+  else if(k.startsWith('beach-') || k.startsWith('pool-'))
+    colorPalette = _pick(['vivid tropical palette: turquoise water tones, warm golden sand, bright natural sunlight, vibrant outdoor colors', 'warm beach palette: golden hour amber, sun-bleached warm tones, turquoise accents, bright daylight', 'fresh coastal palette: bright aqua blue, warm golden yellow, natural daylight whites, vivid outdoor colors']);
+  else if(k.startsWith('gym-') || k.startsWith('workout-') || k.includes('yoga') || k.includes('pilates'))
+    colorPalette = _pick(['clean athletic palette: neutral grays, white accents, cool clinical lighting, clean sharp tones', 'energetic gym palette: warm tungsten mixed with cool daylight, high contrast, clean neutral background', 'fresh athletic palette: cool blue-gray tones, bright white highlights, clean neutral environment']);
+  else if(k.startsWith('dance-') || k.startsWith('club-') || k.includes('nightclub') || k.includes('night'))
+    colorPalette = _pick(['neon night palette: electric blue, hot pink, neon purple, deep black shadows, high contrast night tones', 'moody club palette: deep teal, amber highlights, purple shadows, dramatic low-key lighting tones', 'dramatic night palette: crimson red accents, deep blue shadows, golden highlights, high-contrast night club atmosphere']);
+  else if(k.startsWith('outdoor-') || k.startsWith('nature-') || k.includes('sunset') || k.includes('golden hour'))
+    colorPalette = _pick(['golden hour palette: warm amber, burnt sienna, soft gold, long warm shadows, rich sunset tones', 'natural outdoor palette: green leafy tones, warm golden light, earth browns, fresh natural colors', 'magic hour palette: deep orange-gold, dusty pink horizon, warm amber skin tones, rich natural light']);
+  else if(k.startsWith('model-') || k.startsWith('fashion-') || k.startsWith('runway-'))
+    colorPalette = _pick(['editorial palette: high contrast monochrome or bold single color accent, crisp whites, deep blacks, graphic look', 'fashion editorial palette: desaturated base with one bold color accent, clean sharp editorial tones', 'high fashion palette: clean minimalist tones, bright whites, graphic black accents, editorial color control']);
+  else if(k.startsWith('sitting-') || k === 'cross-legged' || k.startsWith('kneeling-'))
+    colorPalette = _pick(['warm natural palette: soft warm whites, natural wood tones, window light warmth, everyday natural colors', 'casual everyday palette: warm neutral tones, natural daylight, soft earthy accents, authentic everyday colors', 'soft lifestyle palette: warm cream tones, natural ambient light, gentle warm shadows, authentic home atmosphere']);
+  else if(k.startsWith('standing-'))
+    colorPalette = _pick(['natural daylight palette: balanced warm-cool daylight tones, natural skin colors, authentic outdoor or indoor light', 'clean lifestyle palette: bright natural daylight, neutral background tones, authentic documentary colors', 'warm documentary palette: natural daylight warmth, authentic colors, no color grading, film grain color tone']);
+  else
+    colorPalette = _pick(['natural film palette: warm analog film color cast, natural skin tones, authentic Kodak Portra color rendition', 'documentary palette: natural ungraded colors, authentic daylight balance, real analog film color science', 'warm analog palette: slight warm cast of analog film, natural colors, authentic film photography color rendering']);
+
+  // ── HAIR STYLE — appropriate to pose context ─────────────────────────────────
+  let hairStyle = '';
+  if(k.startsWith('boudoir-') || k === 'boudoir')
+    hairStyle = _pick(['hair loosely tousled and flowing, soft romantic waves, natural bedhead texture', 'hair in loose soft curls, slightly disheveled romantic style, some strands falling over face', 'hair half up half down, loose romantic style, soft flowing with natural texture']);
+  else if(k.startsWith('beach-') || k.startsWith('pool-'))
+    hairStyle = _pick(['hair wind-tossed and natural at beach, loose beach waves with salt texture', 'hair in casual loose braid, wind-blown beach style, natural humidity texture', 'hair pulled back in loose bun with tendrils falling, beach-ready casual style']);
+  else if(k.startsWith('gym-') || k.startsWith('workout-') || k.includes('yoga') || k.includes('pilates') || k.startsWith('squat-'))
+    hairStyle = _pick(['hair in high tight ponytail, athletic practical style, clean and secure', 'hair in tight bun on top of head, practical athletic style, no loose strands', 'hair in athletic braid, secure and practical, pulled away from face for workout']);
+  else if(k.startsWith('dance-') || k.startsWith('club-') || k.startsWith('twerk-'))
+    hairStyle = _pick(['hair flowing loose and dynamic with movement, full volume, night-out glam style', 'hair in sleek high ponytail, editorial night-out style, slicked back roots, flowing tail', 'hair big and voluminous, blow-dried with full body, glamorous night-out style']);
+  else if(k.startsWith('model-') || k.startsWith('fashion-') || k.startsWith('runway-'))
+    hairStyle = _pick(['hair styled for editorial shoot — sleek straight or structured updo, high fashion styling', 'hair in architectural editorial style — severe part, slicked back or geometric shape, high fashion', 'hair in polished editorial blowout, high-fashion styled, intentional and controlled']);
+  else if(k.startsWith('outdoor-') || k.startsWith('nature-') || k.includes('sunset'))
+    hairStyle = _pick(['hair loose and natural in outdoor breeze, soft movement, natural texture', 'hair in casual natural style, loose with natural wave, outdoor casual look', 'hair in effortless loose style, natural outdoor wind movement, authentic relaxed texture']);
+  else if(k.startsWith('lying-') || k === 'sphinx' || k.includes('lying'))
+    hairStyle = _pick(['hair spread loosely around head, natural flow while lying, soft and relaxed', 'hair fanned out behind head, soft romantic flow while lying down, natural texture', 'hair loosely arranged beside face while lying, natural gravity pull, relaxed intimate style']);
+  else if(k.startsWith('sitting-') || k === 'cross-legged')
+    hairStyle = _pick(['hair down in natural relaxed style, slight natural wave, everyday casual look', 'hair in loose casual style, pulled softly to one side, everyday natural texture', 'hair in relaxed everyday style — loose, natural, effortless casual texture']);
+  else if(k.startsWith('standing-') || k.startsWith('kneeling-'))
+    hairStyle = _pick(['hair in natural everyday style, loose and relaxed, slight natural wave or straightened', 'hair down with natural texture, effortless everyday look, authentic natural styling', 'hair in casual everyday blowout, natural volume, relaxed authentic daily style']);
+  else
+    hairStyle = _pick(['hair in natural everyday style, loose with authentic texture, no over-styled look', 'hair down in relaxed natural way, slight wave, authentic real-person hair styling', 'hair naturally styled, authentic everyday look, real hair texture and natural movement']);
+
+  return {camera, accessories, makeup, colorPalette, hairStyle};
 }
 
 // ── POSE ENGINE ──────────────────────────────────────────────────────────────────────────────
@@ -16935,10 +16979,12 @@ function buildPrompt(englishText, rawPT){
   // ── Auto pose extras: camera angle, accessories, makeup — by selected pose key ──
   const _poseAutoExtras = (typeof getPoseAutoExtras === 'function' && selectedPoseKey)
     ? getPoseAutoExtras(selectedPoseKey)
-    : {camera:'', accessories:'', makeup:''};
-  const _autoCamera     = _poseAutoExtras.camera     || '';
-  const _autoAccessories= _poseAutoExtras.accessories|| '';
-  const _autoMakeup     = _poseAutoExtras.makeup     || '';
+    : {camera:'', accessories:'', makeup:'', colorPalette:'', hairStyle:''};
+  const _autoCamera      = _poseAutoExtras.camera      || '';
+  const _autoAccessories = _poseAutoExtras.accessories || '';
+  const _autoMakeup      = _poseAutoExtras.makeup      || '';
+  const _autoColorPalette= _poseAutoExtras.colorPalette|| '';
+  const _autoHairStyle   = _poseAutoExtras.hairStyle   || '';
 
   // When NSFW requested: strip any anti-nude/anti-explicit terms from negative
   if(_wantsNSFW){
@@ -17017,6 +17063,8 @@ function buildPrompt(englishText, rawPT){
       _fluxCamAngle,
       _fluxAccessories,
       (!_poseIsBack && _fluxMakeup) ? _fluxMakeup : '',
+      _autoColorPalette,
+      _autoHairStyle,
       // Face reference URL identity anchor — injected when user set a face reference
       _getFaceRefUrl() ? `same woman as in the face reference, identical face identity preserved, consistent character face across all images, face matches reference photograph,` : '',
     ].filter(Boolean).join(', ');
@@ -17051,7 +17099,9 @@ function buildPrompt(englishText, rawPT){
     const _mjOutfitMid = (_mjOutfitResolved && !_wantsNSFW)
       ? `${_mjOutfitResolved}, keep outfit on, do not remove clothing,`
       : '';
-    const _mjUserContent = [_mjOutfitMid, pose.mj, _expandedMj, _mjChipContent, _mjAutoCamera, _mjAutoAccessories, _mjAutoMakeup].filter(Boolean).join(', ');
+    const _mjAutoColorPalette = _autoColorPalette;
+    const _mjAutoHairStyle = _autoHairStyle;
+    const _mjUserContent = [_mjOutfitMid, pose.mj, _expandedMj, _mjChipContent, _mjAutoCamera, _mjAutoAccessories, _mjAutoMakeup, _mjAutoColorPalette, _mjAutoHairStyle].filter(Boolean).join(', ');
     // Anatomy block — when clothed, remove nude-body-area terms that push MJ toward rendering bare skin
     const _mjAnatomyFull = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI, everyday woman not a model, natural human proportions not idealized, no plastic surgery look, no breast implants appearance, authentic soft feminine belly, natural body weight distribution, real woman curves';
     // Clothed anatomy — only face, hands, hair, neck; removes nude body-area terms that fight clothing
@@ -17124,7 +17174,7 @@ function buildPrompt(englishText, rawPT){
     const _gptAutoAccessories = _autoAccessories;
     const _gptAutoMakeup = (!_poseIsBack) ? _autoMakeup : '';
     // POSE FIRST — model interprets leading terms as primary instruction
-    const _userContent = [pose.mj, _gptChipContent, _expandedGpt, _gptAutoCamera, _gptAutoAccessories, _gptAutoMakeup].filter(Boolean).join(', ');
+    const _userContent = [pose.mj, _gptChipContent, _expandedGpt, _gptAutoCamera, _gptAutoAccessories, _gptAutoMakeup, _autoColorPalette, _autoHairStyle].filter(Boolean).join(', ');
     const _gptFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _gptLensRaw = _lensCamFull || getLensCam();
     const _gptLensSpec = _gptLensRaw ? _gptLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.8';
@@ -17413,10 +17463,12 @@ function buildPrompt(englishText, rawPT){
     _styleBoostSD,           // ← FREEFORM STYLE CHIP at :1.7
     _lensBoostSD,            // ← CAMERA/LENS CHIP at :1.7
     _lensChipBoostSD,        // ← FREEFORM LENS CHIP at :1.6
-    // Auto pose extras (camera angle, accessories, makeup) — only when no chip overrides
+    // Auto pose extras (camera, accessories, makeup, color palette, hair) — only when no chip overrides
     (!_lensCamFull && !_lensChipFull && _autoCamera) ? `(${_autoCamera}:1.6),` : '',
     _autoAccessories ? `(${_autoAccessories}:1.5),` : '',
     (!_poseIsBack && _autoMakeup) ? `(${_autoMakeup}:1.5),` : '',
+    _autoColorPalette ? `(${_autoColorPalette}:1.4),` : '',
+    _autoHairStyle ? `(${_autoHairStyle}:1.5),` : '',
     _EXPLICIT_REALISM,       // Anti-anime/photorealism — all :2.0, effective in chunk 2+
     _rawStamp,               // RAW/anti-plastic — all :2.0, effective in chunk 2+
     _PHOTO,                  // Quality/RAW/film — all weighted, chunk 2-3 fine
