@@ -13911,7 +13911,185 @@ function getPoseAutoExtras(key){
   else
     hairStyle = _pick(['hair in natural everyday style, loose with authentic texture, no over-styled look', 'hair down in relaxed natural way, slight wave, authentic real-person hair styling', 'hair naturally styled, authentic everyday look, real hair texture and natural movement']);
 
-  return {camera, accessories, makeup, colorPalette, hairStyle};
+  // ── LIGHT PHYSICS — how light interacts with skin surface per pose/context ──
+  let lightPhysics = '';
+  if(k.startsWith('boudoir-') || k === 'boudoir' || k.includes('bed') || k.includes('lying'))
+    lightPhysics = _pick([
+      'soft side lighting creating specular highlight on shoulder and hip curve, subsurface scattering visible through ear and nose tip, warm rim light catching hair edges, soft shadow under jaw and collarbone hollow, natural light falloff across body curves',
+      'window side light casting soft directional shadow, specular skin highlight on highest body points, subsurface translucency on earlobe and fingertips, gentle rim light separating hair from dark background, natural skin luminosity from soft diffused light source',
+      'warm ambient light with soft specular on skin surface, subsurface scattering warmth through cheek and ear, catchlight source visible in eye reflection, natural shadow pooling in body hollows and fabric folds'
+    ]);
+  else if(k.startsWith('beach-') || k.startsWith('pool-'))
+    lightPhysics = _pick([
+      'direct overhead sun creating hard specular highlight on nose bridge, shoulder top and knee cap, strong shadow under chin and nose, sun-bleached skin highlight on highest points, subsurface scattering through ear with sunlight, visible lens flare from direct sunlight',
+      'bright outdoor sun with multiple specular highlights across exposed skin, strong directional shadow, natural sky light filling shadow areas, rim light from reflective water surface, sun-warmed skin specular glow on shoulders and chest',
+      'tropical direct sunlight with high-key specular on skin, hard directional shadows from sun above, blue sky fill light in shadows, natural chromatic aberration at image edges from bright outdoor light'
+    ]);
+  else if(k.startsWith('gym-') || k.startsWith('workout-') || k.includes('yoga') || k.startsWith('squat-'))
+    lightPhysics = _pick([
+      'overhead gym fluorescent light creating flat specular across top of shoulders and head, harsh downward shadows under nose and chin, skin specular heightened by sweat moisture, cool blue-white light quality on skin',
+      'mixed gym lighting: overhead LED creating top-light specular on sweaty skin, side window light creating directional rim, specular highlights enhanced by perspiration moisture on skin surface',
+      'gym overhead light with hard specular on sweaty shoulders and forehead, downward shadow under brow creating dramatic face lighting, rim light catching wet skin edges'
+    ]);
+  else if(k.startsWith('dance-') || k.startsWith('club-') || k.includes('nightclub'))
+    lightPhysics = _pick([
+      'colored stage lighting creating colored specular highlights on skin, multiple light sources creating multi-directional catchlights in eyes, rim light in neon color catching hair and shoulder edges, dramatic high-contrast lit shadows',
+      'club strobe/spot lighting: hard specular highlight from above-front light source, dramatic shadow on half face, rim light from behind creating strong edge separation, colored light spill on skin surface',
+      'dramatic nightclub lighting with strong directional specular, deep shadow areas, colored rim light from stage lights, multiple catchlight points in eyes from multiple light sources'
+    ]);
+  else if(k.includes('sunset') || k.includes('golden hour') || k.startsWith('outdoor-'))
+    lightPhysics = _pick([
+      'golden hour side lighting: warm orange specular highlight on cheekbone, shoulder, and hip, subsurface scattering warmth glowing through ear in direct golden light, long warm shadow cast to opposite side, rim light in warm gold on hair edges creating halo effect',
+      'low sun angle creating dramatic side specular across face and body, warm golden light with subsurface scattering visible through thin skin areas, hair back-lit with golden glow, long directional shadow from low sun angle',
+      'sunset golden light with warm specular highlights on all sun-facing skin surfaces, deep warm shadow on shadow side, sky fill light cooling shadows slightly, subsurface scattering warmth visible through ear and nose tip in golden sun'
+    ]);
+  else if(k.startsWith('standing-') || k.startsWith('kneeling-'))
+    lightPhysics = _pick([
+      'natural window light from side creating directional specular on cheekbone and shoulder, soft shadow on opposite side of face, subsurface scattering warmth through ear with light behind, catchlight in eye matching window shape, natural light falloff across body',
+      'soft natural ambient light with gentle specular highlight on highest facial planes, subtle shadow under nose and chin, natural skin luminosity from diffused daylight, slight rim separation from environmental bounce light',
+      'indoor natural light: soft directional specular on nose bridge and cheekbone, window reflection visible in eye catchlight, gentle shadow gradation across face and body, natural skin tone variation under even natural light'
+    ]);
+  else if(k.startsWith('sitting-') || k === 'cross-legged')
+    lightPhysics = _pick([
+      'ambient room light creating soft omnidirectional lighting with gentle specular on nose, forehead and shoulder tops, soft unflattering shadow under chin from overhead room light, natural catchlight in eyes from window or light source in room',
+      'window side light on seated figure: directional specular on cheek and shoulder facing window, soft shadow on opposite side, natural light on lap and hands, catchlight clearly showing window in eye reflection',
+      'soft lifestyle interior lighting: even low-contrast specular across face, gentle highlight on cheekbones, subtle shadow depth in eye sockets and under nose, warm interior light color temperature on skin'
+    ]);
+  else
+    lightPhysics = _pick([
+      'natural directional light creating specular highlight on prominent facial planes and shoulder, subsurface scattering warmth through ear, soft shadow depth in hollows and under brow, natural catchlight in eyes matching light source',
+      'soft natural light with gentle specular highlights on highest skin surfaces, natural shadow gradation, subsurface scattering warmth visible in thin skin areas, realistic light-to-shadow transition on face and body',
+      'ambient natural light: soft specular across skin surface, natural shadow in eye sockets and under nose, catchlight reflection of light source in eyes, even natural illumination with subtle directional quality'
+    ]);
+
+  // ── SURFACE CONTACT — skin deformation at contact points per pose ─────────
+  let contactPoints = '';
+  if(k.startsWith('lying-') || k.includes('lying') || k === 'sphinx')
+    contactPoints = _pick([
+      'natural skin compression against mattress surface visible on contact side, cheek skin slightly deformed against pillow, natural skin indentation marks from surface texture, body weight flattening skin against bed naturally, natural skin drape pooling at lowest gravity points',
+      'skin flatten and spread against mattress at hip and shoulder contact, pillow indentation mark on cheek skin, natural soft tissue deformation at all floor contact points, skin gravity pulling downward toward surface contact',
+      'natural body weight sinking into surface causing realistic skin compression, mattress surface texture impression on skin, natural spread of soft tissue against supporting surface, real physics of body resting on surface visible'
+    ]);
+  else if(k.startsWith('sitting-') || k === 'cross-legged')
+    contactPoints = _pick([
+      'natural thigh skin compression and spread against chair or floor surface, fabric or surface texture impression on back of thigh skin, natural skin fold at hip flexion crease where leg meets torso, sitting surface contact flattening thigh skin realistically',
+      'thigh skin compressing and spreading against seat surface, natural pressure mark on back of thigh from sitting, skin fold at lap crease natural depth and shadow, realistic soft tissue deformation from seated body weight',
+      'seated thigh naturally flattening against surface, visible skin crease at hip-thigh junction, natural pressure marks from seat surface on skin, skin fold shadow in lap area natural depth'
+    ]);
+  else if(k.startsWith('kneeling-'))
+    contactPoints = _pick([
+      'natural knee skin compression against floor surface, slight knee skin indentation from hard floor contact, shin skin resting against floor surface with natural weight, natural ankle skin fold from kneeling position',
+      'knee skin pressing against surface with natural deformation, realistic contact mark on knee from floor pressure, natural shin and instep skin resting weight visible on floor contact areas',
+      'knee skin compressing against floor with realistic contact deformation, natural tension in front of ankle from kneeling position, shin skin flattening slightly against surface under body weight'
+    ]);
+  else if(k.startsWith('allfours-') || k.includes('allfours') || k.includes('all-fours'))
+    contactPoints = _pick([
+      'palms and knees bearing weight with natural skin compression at floor contact, slight skin spread on palm heel at contact point, knee skin deformation against floor, wrist joint skin tension visible from weight bearing',
+      'hands flat on floor with realistic palm skin deformation under weight, knee skin compressed against floor surface, natural wrist extension tension, weight-bearing hand veins slightly more prominent',
+      'hand skin spreading slightly at palm floor contact under body weight, knee contact point showing natural skin compression, realistic weight distribution visible in hand and knee skin deformation'
+    ]);
+  else if(k.startsWith('squat-'))
+    contactPoints = _pick([
+      'thigh and calf skin compressing together at knee fold in deep squat, natural skin crease at back of knee, foot skin under pressure at balls of feet, Achilles tendon skin under stretch tension visible at back of ankle',
+      'deep squat thigh-calf skin contact fold, natural skin bunching at back of knee, heel lift tension at Achilles area, realistic skin compression at all joint flexion points in squat position',
+      'knee flexion skin fold deep crease natural depth, thigh skin compression where leg folds, foot pressure distribution on floor visible, ankle skin tension from dorsiflexion in squat'
+    ]);
+  else
+    contactPoints = '';
+
+  // ── GAZE / EYE DIRECTION — natural candid look per pose context ──────────
+  let gazeDirection = '';
+  if(!k.startsWith('allfours-') && !k.includes('allfours') && !k.includes('all-fours')){
+    if(k.startsWith('boudoir-') || k === 'boudoir')
+      gazeDirection = _pick([
+        'direct intimate gaze into camera with slightly heavy-lidded eyes, soft unfocused vulnerable expression, natural slight parting of lips in repose',
+        'gaze directed slightly past camera to one side, dreamy unfocused intimate expression, natural relaxed eyelid weight, authentic vulnerable candid look',
+        'eyes looking directly at lens with soft intensity, natural slight squint from light, authentic intimate expression without posing'
+      ]);
+    else if(k.startsWith('beach-') || k.startsWith('pool-'))
+      gazeDirection = _pick([
+        'squinting slightly from bright sunlight, gaze toward horizon or sun, natural candid unposed outdoor expression, slight smile from warmth',
+        'eyes closed or half-closed in sun enjoyment, natural relaxed outdoor expression, not looking at camera, caught in natural moment',
+        'gaze directed down at water or sand, natural curious outdoor expression, authentic candid beach moment not posed for camera'
+      ]);
+    else if(k.startsWith('gym-') || k.startsWith('workout-') || k.includes('yoga') || k.startsWith('squat-'))
+      gazeDirection = _pick([
+        'focused gaze on task or exercise, not looking at camera, natural exertion expression, mouth slightly open from effort, concentrated authentic athletic expression',
+        'gaze directed slightly down or to side in concentration, natural athletic focus expression, authentic unposed workout moment, natural exertion in facial muscles',
+        'eyes focused forward on workout task, natural athletic concentration, not posing for camera, authentic effort expression visible in brow and jaw'
+      ]);
+    else if(k.startsWith('dance-') || k.startsWith('club-') || k.startsWith('twerk-'))
+      gazeDirection = _pick([
+        'eyes closed in music enjoyment, natural in-the-moment dance expression, head slightly tilted, authentic lost-in-music candid expression',
+        'gaze directed off-camera to side with confident expression, natural dance energy in face, authentic nightlife moment not staged',
+        'eyes half-closed in enjoyment of movement and music, authentic dance expression, natural smile from movement pleasure, candid and real'
+      ]);
+    else if(k.startsWith('sitting-') || k === 'cross-legged')
+      gazeDirection = _pick([
+        'gaze directed slightly off-camera to side or down, natural thoughtful relaxed expression, authentic candid sitting moment not posed',
+        'eyes directed to distance or down at hands, natural relaxed contemplative expression, not looking at camera, authentic quiet moment',
+        'natural distracted gaze slightly past camera, relaxed authentic everyday expression, slight natural asymmetry in relaxed face'
+      ]);
+    else if(k.startsWith('standing-'))
+      gazeDirection = _pick([
+        'gaze slightly off-axis from lens, natural candid walking or standing expression, not stiffly posed for camera, authentic street candid quality',
+        'natural direct gaze but with authentic slightly distracted quality, real person caught in candid moment not posing, natural human eye expression',
+        'eyes directed naturally slightly past camera, authentic unposed expression, real person not a model, natural standing moment'
+      ]);
+    else if(k.startsWith('lying-') || k.includes('lying'))
+      gazeDirection = _pick([
+        'dreamy unfocused gaze directed past camera or slightly to side, heavy relaxed eyelids, natural repose expression, authentic restful intimate look',
+        'eyes half-closed in relaxation, gaze softly directed upward or off to side, natural sleepy or dreamy expression, authentic intimate restful moment',
+        'direct camera gaze but with heavy relaxed lids, soft intimate expression, natural lip parting in repose, authentic vulnerable candid look'
+      ]);
+    else
+      gazeDirection = _pick([
+        'natural candid gaze slightly off lens axis, authentic human expression not stiffly posed, real person caught in genuine moment',
+        'eyes directed naturally with authentic expression, not model-posed, genuine human presence and natural look quality',
+        'natural relaxed expression with authentic gaze, real person not performing for camera, candid authentic human moment'
+      ]);
+  }
+
+  // ── DEPTH OF FIELD — matched to pose distance and lens ────────────────────
+  let dofSpec = '';
+  if(k.startsWith('boudoir-') || k === 'boudoir' || k.includes('closeup') || k.includes('close-up'))
+    dofSpec = _pick([
+      'very shallow depth of field f/1.4 equivalent, sharp focus plane on eyes with face slightly falling off focus at ears, background completely dissolved in creamy bokeh, lens compression flattening perspective',
+      'extremely shallow DOF: razor-thin focus plane across eyes, eyelashes at edge of focus circle, background fully dissolved, bokeh balls from any background light sources, lens compression portrait style',
+      'intimate close portrait DOF: eyes in sharp focus, ears and back of head falling softly out of focus, background completely defocused, natural lens vignette, 85mm portrait compression'
+    ]);
+  else if(k.startsWith('lying-') || k.includes('lying'))
+    dofSpec = _pick([
+      'shallow depth of field across lying figure, near end of body closer to camera falling out of focus, face and mid-body in sharp focus plane, far end of body gently defocusing, natural horizontal focus plane',
+      'moderate shallow DOF with focus on face, feet or head end of lying figure softly defocused, natural focus plane parallel to body length, background fully out of focus',
+      'DOF matched to horizontal lying figure: sharp focus zone covers face and shoulders, far body end softly blurring, natural defocus gradient along body length, background bokeh'
+    ]);
+  else if(k.startsWith('allfours-') || k.includes('allfours') || k.startsWith('squat-') || k.startsWith('kneeling-'))
+    dofSpec = _pick([
+      'moderate shallow depth of field, focus plane on torso and face, limbs at different depths showing natural defocus, background dissolved in soft bokeh, natural focus fall-off front and back',
+      'shallow DOF with focus on nearest body plane, back of pose slightly soft, background fully out of focus, natural focus gradient through 3D pose depth, documentary lens rendering',
+      'natural shallow focus showing pose depth: sharpest at primary body plane, elements closer and farther softly defocusing, natural documentary 35mm lens DOF rendering'
+    ]);
+  else if(k.startsWith('standing-') && (k.includes('full') || k.includes('front') || k.includes('back')))
+    dofSpec = _pick([
+      'full body portrait DOF: entire figure roughly in focus with soft background defocus, moderate f/2.8 equivalent, natural separation from background without extreme bokeh, authentic portrait lens rendering',
+      'full body sharp focus with moderate background separation, f/2.0 equivalent portrait DOF, natural background blur without excessive bokeh, documentary full-body portrait rendering',
+      'environmental portrait DOF: subject in focus across full body, background gently defocused showing location context, moderate depth of field natural for full-body portrait distance'
+    ]);
+  else if(k.startsWith('selfie-') || k.includes('mirror'))
+    dofSpec = _pick([
+      'phone camera DOF: face in sharp focus, slight focus softness on background from phone camera optics, natural phone portrait mode edge detection, slight phone lens distortion at edges',
+      'smartphone portrait DOF: face sharply focused, background artificially softened from phone portrait mode, slight edge artifacts typical of phone AI bokeh, natural phone camera perspective',
+      'selfie lens DOF: slight wide-angle face distortion from short focal length, face in focus, background moderately defocused, natural selfie perspective and phone camera rendering'
+    ]);
+  else
+    dofSpec = _pick([
+      'moderate shallow depth of field, face and upper body in sharp focus, background softly defocused creating natural subject separation, authentic portrait lens bokeh',
+      'natural portrait DOF: face in sharpest focus, slight defocus increasing toward edges and background, soft natural bokeh, authentic documentary photography depth rendering',
+      'shallow focus with sharpest zone on face, natural defocus gradient outward and into background, realistic portrait lens depth of field, no artificial focus stacking'
+    ]);
+
+  return {camera, accessories, makeup, colorPalette, hairStyle, lightPhysics, contactPoints, gazeDirection, dofSpec};
 }
 
 // ── POSE ENGINE ──────────────────────────────────────────────────────────────────────────────
@@ -16979,12 +17157,16 @@ function buildPrompt(englishText, rawPT){
   // ── Auto pose extras: camera angle, accessories, makeup — by selected pose key ──
   const _poseAutoExtras = (typeof getPoseAutoExtras === 'function' && selectedPoseKey)
     ? getPoseAutoExtras(selectedPoseKey)
-    : {camera:'', accessories:'', makeup:'', colorPalette:'', hairStyle:''};
-  const _autoCamera      = _poseAutoExtras.camera      || '';
-  const _autoAccessories = _poseAutoExtras.accessories || '';
-  const _autoMakeup      = _poseAutoExtras.makeup      || '';
-  const _autoColorPalette= _poseAutoExtras.colorPalette|| '';
-  const _autoHairStyle   = _poseAutoExtras.hairStyle   || '';
+    : {camera:'', accessories:'', makeup:'', colorPalette:'', hairStyle:'', lightPhysics:'', contactPoints:'', gazeDirection:'', dofSpec:''};
+  const _autoCamera        = _poseAutoExtras.camera        || '';
+  const _autoAccessories   = _poseAutoExtras.accessories   || '';
+  const _autoMakeup        = _poseAutoExtras.makeup        || '';
+  const _autoColorPalette  = _poseAutoExtras.colorPalette  || '';
+  const _autoHairStyle     = _poseAutoExtras.hairStyle     || '';
+  const _autoLightPhysics  = _poseAutoExtras.lightPhysics  || '';
+  const _autoContactPoints = _poseAutoExtras.contactPoints || '';
+  const _autoGazeDirection = _poseAutoExtras.gazeDirection || '';
+  const _autoDofSpec       = _poseAutoExtras.dofSpec       || '';
 
   // When NSFW requested: strip any anti-nude/anti-explicit terms from negative
   if(_wantsNSFW){
@@ -17066,6 +17248,11 @@ function buildPrompt(englishText, rawPT){
       _autoColorPalette,
       _autoHairStyle,
       _autoSweat.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g,',').trim(),
+      _autoLightPhysics,
+      _autoContactPoints,
+      (!_poseIsBack && _autoGazeDirection) ? _autoGazeDirection : '',
+      _autoDofSpec,
+      _autoClothPhysics.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g,',').trim(),
       // Face reference URL identity anchor — injected when user set a face reference
       _getFaceRefUrl() ? `same woman as in the face reference, identical face identity preserved, consistent character face across all images, face matches reference photograph,` : '',
     ].filter(Boolean).join(', ');
@@ -17103,7 +17290,17 @@ function buildPrompt(englishText, rawPT){
     const _mjAutoColorPalette = _autoColorPalette;
     const _mjAutoHairStyle = _autoHairStyle;
     const _mjAutoSweat = _autoSweat.replace(/\([^)]+:[0-9.]+\)/g, s => s.replace(/:[0-9.]+\)/, ')')).replace(/\(([^)]+)\)/g, '$1').replace(/,\s*,/g,',').trim();
-    const _mjUserContent = [_mjOutfitMid, pose.mj, _expandedMj, _mjChipContent, _mjAutoCamera, _mjAutoAccessories, _mjAutoMakeup, _mjAutoColorPalette, _mjAutoHairStyle, _mjAutoSweat].filter(Boolean).join(', ');
+    const _mjStripSD = s => s.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g,',').trim();
+    const _mjUserContent = [
+      _mjOutfitMid, pose.mj, _expandedMj, _mjChipContent,
+      _mjAutoCamera, _mjAutoAccessories, _mjAutoMakeup,
+      _mjAutoColorPalette, _mjAutoHairStyle, _mjAutoSweat,
+      _autoLightPhysics,
+      _autoContactPoints,
+      (!_poseIsBack && _autoGazeDirection) ? _autoGazeDirection : '',
+      _autoDofSpec,
+      _mjStripSD(_autoClothPhysics)
+    ].filter(Boolean).join(', ');
     // Anatomy block — when clothed, remove nude-body-area terms that push MJ toward rendering bare skin
     const _mjAnatomyFull = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI, everyday woman not a model, natural human proportions not idealized, no plastic surgery look, no breast implants appearance, authentic soft feminine belly, natural body weight distribution, real woman curves';
     // Clothed anatomy — only face, hands, hair, neck; removes nude body-area terms that fight clothing
@@ -17177,7 +17374,16 @@ function buildPrompt(englishText, rawPT){
     const _gptAutoMakeup = (!_poseIsBack) ? _autoMakeup : '';
     // POSE FIRST — model interprets leading terms as primary instruction
     const _gptAutoSweat = _autoSweat.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g,',').trim();
-    const _userContent = [pose.mj, _gptChipContent, _expandedGpt, _gptAutoCamera, _gptAutoAccessories, _gptAutoMakeup, _autoColorPalette, _autoHairStyle, _gptAutoSweat].filter(Boolean).join(', ');
+    const _gptStripSD = s => s.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g,',').trim();
+    const _userContent = [
+      pose.mj, _gptChipContent, _expandedGpt,
+      _gptAutoCamera, _gptAutoAccessories, _gptAutoMakeup,
+      _autoColorPalette, _autoHairStyle, _gptAutoSweat,
+      _autoLightPhysics, _autoContactPoints,
+      (!_poseIsBack && _autoGazeDirection) ? _autoGazeDirection : '',
+      _autoDofSpec,
+      _gptStripSD(_autoClothPhysics)
+    ].filter(Boolean).join(', ');
     const _gptFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
     const _gptLensRaw = _lensCamFull || getLensCam();
     const _gptLensSpec = _gptLensRaw ? _gptLensRaw.split(',')[0].replace(/^shot on\s*/i,'').trim() : 'Canon EOS R5 85mm f/1.8';
@@ -17340,9 +17546,9 @@ function buildPrompt(englishText, rawPT){
   // _SKIN: placed SEPARATELY and EARLY in the parts array so these critical terms
   // land within the first 77 CLIP tokens — NOT buried at the end of _PHOTO.
   // Film grain on skin is physically incompatible with plastic smoothness — strongest anti-plastic lever.
-  const _SKIN   = '(visible skin pores:2.0), (skin pore detail:2.0), (skin micro-texture:2.0), (organic skin texture:2.0), (natural skin texture:2.0), (real skin imperfections:2.0), (skin color variation:1.9), (natural skin undertones:1.9), (skin blemishes:1.8), (natural skin redness:1.8), (skin translucency:1.7), (natural skin warmth:1.7), (skin depth:1.7), (film grain on skin:2.0), (analog grain on skin:1.9), (photographic grain visible on skin:1.8), (not plastic skin:2.0), (not smooth skin:2.0), (not airbrushed skin:2.0), (not poreless skin:2.0), (no beauty filter:2.0), (no skin smoothing:2.0), (subsurface skin scattering:1.8), (skin capillaries visible:1.6), (natural skin tone variation by zone:1.7), (pore size variation across zones:1.7), (natural skin uneven tone:1.6), (dermal skin layers visible:1.6), (natural skin oiliness:1.5), (subcutaneous fat visible:1.6), (natural skin rosiness:1.6), (skin texture under tension:1.5), (natural skin compression under weight:1.7), (skin fold physics:1.7), (natural skin gravity:1.7), (skin tension lines:1.6), (natural skin contact deformation:1.6), (skin weight and drape:1.6), (natural skin pressure marks:1.5), (subcutaneous tissue depth:1.6), (natural skin bounce elasticity:1.5), (skin thickness variation by zone:1.6),';
+  const _SKIN   = '(visible skin pores:2.0), (skin pore detail:2.0), (skin micro-texture:2.0), (organic skin texture:2.0), (natural skin texture:2.0), (real skin imperfections:2.0), (skin color variation:1.9), (natural skin undertones:1.9), (skin blemishes:1.8), (natural skin redness:1.8), (skin translucency:1.7), (natural skin warmth:1.7), (skin depth:1.7), (film grain on skin:2.0), (analog grain on skin:1.9), (photographic grain visible on skin:1.8), (not plastic skin:2.0), (not smooth skin:2.0), (not airbrushed skin:2.0), (not poreless skin:2.0), (no beauty filter:2.0), (no skin smoothing:2.0), (subsurface skin scattering:1.8), (skin capillaries visible:1.6), (natural skin tone variation by zone:1.7), (pore size variation across zones:1.7), (natural skin uneven tone:1.6), (dermal skin layers visible:1.6), (natural skin oiliness:1.5), (subcutaneous fat visible:1.6), (natural skin rosiness:1.6), (skin texture under tension:1.5), (natural skin compression under weight:1.7), (skin fold physics:1.7), (natural skin gravity:1.7), (skin tension lines:1.6), (natural skin contact deformation:1.6), (skin weight and drape:1.6), (natural skin pressure marks:1.5), (subcutaneous tissue depth:1.6), (natural skin bounce elasticity:1.5), (skin thickness variation by zone:1.6), (T-zone slightly oilier skin tone than cheeks:1.5), (cheek skin rosier than forehead skin:1.5), (neck skin tone slightly different from face skin:1.4), (chest skin lighter than face skin where not sun exposed:1.4), (inner arm skin lighter than outer arm:1.4), (natural tan line difference if outdoor pose:1.3), (elbow and knee skin rougher texture than other body areas:1.4), (natural freckle or sun spot clustering on sun-exposed areas:1.4), (skin specular highlight on highest anatomical points:1.6), (natural skin specularity from skin surface oils:1.5),';
   // _PHOTO: quality/RAW/film markers — _SKIN is now a separate early element, NOT appended here
-  const _PHOTO  = '(RAW photo:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (analog film:2.0), (35mm film:2.0), (film grain:2.0), (photographic grain:1.9), (Kodak Portra 400:1.9), (shot on DSLR:1.9), (analog photography:1.9), (no post-processing:2.0), (no retouching:2.0), (no color grading:2.0), (no Lightroom editing:2.0), (no Photoshop:2.0), (no digital manipulation:2.0), (no color correction:1.9), (no LUTs:1.9), (no frequency separation:1.9), (no dodge and burn:1.9), (no professional retouch:2.0), (not studio portrait:1.9), (unaltered natural photograph:2.0), (natural lens chromatic aberration:1.4), (natural vignette:1.3), (natural depth-of-field bokeh:1.5), (shallow focus portrait lens:1.4), (natural light exposure:1.5),';
+  const _PHOTO  = '(RAW photo:2.0), (unedited RAW file:2.0), (SOOC straight out of camera:2.0), (analog film:2.0), (35mm film:2.0), (film grain:2.0), (photographic grain:1.9), (Kodak Portra 400:1.9), (shot on DSLR:1.9), (analog photography:1.9), (no post-processing:2.0), (no retouching:2.0), (no color grading:2.0), (no Lightroom editing:2.0), (no Photoshop:2.0), (no digital manipulation:2.0), (no color correction:1.9), (no LUTs:1.9), (no frequency separation:1.9), (no dodge and burn:1.9), (no professional retouch:2.0), (not studio portrait:1.9), (unaltered natural photograph:2.0), (natural lens chromatic aberration:1.6), (chromatic aberration at image edges:1.5), (natural lens vignette:1.5), (slight natural vignette darkening corners:1.4), (natural depth-of-field bokeh:1.6), (shallow focus portrait lens:1.5), (natural lens barrel distortion:1.3), (natural focus fall-off toward edges:1.4), (natural light exposure:1.5), (natural lens flare when facing light source:1.4),';
   // _FACE_REAL: ultra-detailed face realism — iris, catchlights, lips, pores, eyebrows, skin creases
   // Encodes every visible face surface at high weight; placed after _faceAnchor in parts[] for chunk 2-3
   // For back poses the face is hidden — use back-skin detail instead to avoid confusing the model
@@ -17444,6 +17650,21 @@ function buildPrompt(englishText, rawPT){
       return '(wet glistening skin from shower:1.7), (natural water droplets on skin:1.6), (wet skin surface:1.7), (real water droplet physics on skin:1.6), (skin slightly flushed from warm water:1.5),';
     return '';
   })();
+  // ── Clothing physics — fabric wrinkle/tension by pose (only when clothed) ──
+  const _autoClothPhysics = (() => {
+    if(_wantsNude || !buildPrompt._lastOutfit) return '';
+    if(_sk_low.startsWith('sitting-') || _sk_low === 'cross-legged')
+      return '(natural fabric wrinkles at lap from sitting position:1.5), (fabric tension at hip and thigh from seated pose:1.4), (natural clothing drape over seated legs:1.4), (fabric creasing at waist where sitting:1.4),';
+    if(_sk_low.startsWith('kneeling-'))
+      return '(fabric tension at knee from kneeling:1.4), (natural fabric drape over kneeling legs:1.4), (clothing bunching at back of knee:1.3), (natural fabric crease at hip flexion:1.4),';
+    if(_sk_low.startsWith('lying-') || _sk_low.includes('lying'))
+      return '(fabric draping naturally with gravity while lying:1.5), (clothing fabric following body contours lying:1.4), (natural fabric spread against surface:1.4), (fabric pooling at lowest gravity point:1.4),';
+    if(_sk_low.startsWith('squat-') || _sk_low.startsWith('allfours-') || _sk_low.includes('allfours'))
+      return '(fabric pulling tight at hips and thighs in bent position:1.5), (natural fabric tension lines from bent pose:1.4), (clothing stretching realistically at joint flexion points:1.4),';
+    if(_sk_low.startsWith('standing-'))
+      return '(natural fabric hang and drape while standing:1.4), (fabric following natural body lines while standing:1.4), (natural gravity on clothing fabric:1.4),';
+    return '(natural fabric physics and drape:1.4), (realistic clothing wrinkles from body position:1.4),';
+  })();
   // ── Boost cenário chip and content chips for SD weight priority ──────────
   // Each chip value can have commas inside; we must wrap each term individually
   // so SD weight syntax (term:1.X) is valid — commas inside (term1, term2:1.8) break parsing.
@@ -17484,6 +17705,11 @@ function buildPrompt(englishText, rawPT){
     _autoColorPalette ? `(${_autoColorPalette}:1.4),` : '',
     _autoHairStyle ? `(${_autoHairStyle}:1.5),` : '',
     _autoSweat,
+    _autoLightPhysics ? `(${_autoLightPhysics}:1.6),` : '',
+    _autoContactPoints ? `(${_autoContactPoints}:1.5),` : '',
+    (!_poseIsBack && _autoGazeDirection) ? `(${_autoGazeDirection}:1.5),` : '',
+    _autoDofSpec ? `(${_autoDofSpec}:1.5),` : '',
+    _autoClothPhysics,
     _EXPLICIT_REALISM,       // Anti-anime/photorealism — all :2.0, effective in chunk 2+
     _rawStamp,               // RAW/anti-plastic — all :2.0, effective in chunk 2+
     _PHOTO,                  // Quality/RAW/film — all weighted, chunk 2-3 fine
