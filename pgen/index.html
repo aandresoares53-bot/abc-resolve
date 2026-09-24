@@ -16346,69 +16346,66 @@ function getPoseSensualOutfit(key, returnAll){
   // ── STANDING (specific sub-types) ─────────────────────────────────────────
   if(key === 'standing-front' || key === 'standing-back')
     return R([
-      ..._LINGERIE_FULL.slice(0, 10),
-      ..._MINIDRESS_POOL.slice(0, 8),
-      ..._CASUAL_DRESS.slice(0, 6),
-      ..._CASUAL_STREET.slice(0, 6),
-      ..._TOPS_BLOUSES.slice(0, 6),
-      ..._JEANS_PANTS.slice(0, 6),
-      ..._SHORTS_SKIRTS.slice(0, 5),
-      ..._HOODIES_SWEATERS.slice(0, 4),
-      'fitted crop top and high-waist trousers, standing full body',
-      'white plunge bodysuit and wide-leg jeans, standing editorial',
+      ..._TOPS_BLOUSES,
+      ..._JEANS_PANTS,
+      ..._HOODIES_SWEATERS,
+      ..._CASUAL_DRESS,
+      ..._CASUAL_STREET,
+      ..._SHORTS_SKIRTS,
+      ..._FASHION_CHIC.slice(0, 5),
+      ..._MINIDRESS_POOL.slice(0, 5),
+      ..._LINGERIE_FULL.slice(0, 4),
     ]);
 
   if(key === 'standing-spread-back' || key === 'standing-spread-front' || key === 'spread-eagle-standing' || key === 'hands-up-front' || key === 'hands-up-back')
     return R([
-      ..._LINGERIE_FULL.slice(0, 8),
-      'sheer stretch bodysuit, high-cut, spread-eagle pose',
-      'strappy harness bralette and micro thong, open pose',
-      'metallic bodysuit, form-fitting, arms-up pose',
-      ..._MINIDRESS_POOL.slice(0, 6),
-      ..._TOPS_BLOUSES.slice(0, 5),
-      ..._SHORTS_SKIRTS.slice(0, 5),
-      ..._CASUAL_STREET.slice(0, 4),
+      ..._TOPS_BLOUSES.slice(0, 8),
+      ..._JEANS_PANTS.slice(0, 6),
+      ..._SHORTS_SKIRTS.slice(0, 6),
+      ..._CASUAL_STREET.slice(0, 5),
+      ..._MINIDRESS_POOL.slice(0, 5),
+      ..._HOODIES_SWEATERS.slice(0, 4),
+      ..._LINGERIE_FULL.slice(0, 3),
     ]);
 
   if(key === 'standing-dynamic' || key === 'standing-one-leg' || key === 'standing-hands-hips' || key === 'standing-arms-crossed' || key === 'standing-supported-back')
     return R([
-      ..._LINGERIE_FULL.slice(0, 8),
-      ..._MINIDRESS_POOL.slice(0, 6),
-      ..._CASUAL_DRESS.slice(0, 6),
-      ..._FASHION_CHIC.slice(0, 5),
-      ..._TOPS_BLOUSES.slice(0, 6),
-      ..._JEANS_PANTS.slice(0, 5),
-      ..._SHORTS_SKIRTS.slice(0, 5),
-      ..._HOODIES_SWEATERS.slice(0, 4),
+      ..._TOPS_BLOUSES,
+      ..._JEANS_PANTS,
+      ..._HOODIES_SWEATERS,
+      ..._CASUAL_DRESS,
+      ..._FASHION_CHIC.slice(0, 6),
+      ..._SHORTS_SKIRTS,
       ..._CASUAL_STREET.slice(0, 5),
+      ..._MINIDRESS_POOL.slice(0, 5),
+      ..._LINGERIE_FULL.slice(0, 3),
     ]);
 
   if(key.startsWith('standing-'))
     return R([
-      ..._LINGERIE_FULL.slice(0, 8),
-      ..._MINIDRESS_POOL.slice(0, 6),
-      ..._CASUAL_DRESS.slice(0, 6),
-      ..._CASUAL_STREET.slice(0, 6),
-      ..._FASHION_CHIC.slice(0, 4),
-      ..._TOPS_BLOUSES.slice(0, 5),
-      ..._JEANS_PANTS.slice(0, 5),
-      ..._SHORTS_SKIRTS.slice(0, 4),
-      ..._HOODIES_SWEATERS.slice(0, 3),
-      ..._ROBE_POOL.slice(0, 3),
+      ..._TOPS_BLOUSES,
+      ..._JEANS_PANTS,
+      ..._HOODIES_SWEATERS,
+      ..._CASUAL_DRESS,
+      ..._CASUAL_STREET,
+      ..._SHORTS_SKIRTS,
+      ..._FASHION_CHIC.slice(0, 5),
+      ..._MINIDRESS_POOL.slice(0, 5),
+      ..._LINGERIE_FULL.slice(0, 3),
     ]);
 
   // ── SITTING ───────────────────────────────────────────────────────────────
   if(key.startsWith('sitting-'))
     return R([
-      ..._LINGERIE_FULL.slice(0, 8),
-      ..._ROBE_POOL.slice(0, 5),
-      ..._CASUAL_DRESS.slice(0, 6),
-      ..._CASUAL_STREET.slice(0, 5),
-      ..._TOPS_BLOUSES.slice(0, 5),
-      ..._JEANS_PANTS.slice(0, 5),
-      ..._SHORTS_SKIRTS.slice(0, 5),
-      ..._HOODIES_SWEATERS.slice(0, 4),
-      'tight mini dress riding up while seated, thighs exposed',
+      ..._TOPS_BLOUSES,
+      ..._JEANS_PANTS,
+      ..._HOODIES_SWEATERS,
+      ..._CASUAL_DRESS,
+      ..._CASUAL_STREET.slice(0, 6),
+      ..._SHORTS_SKIRTS,
+      ..._MINIDRESS_POOL.slice(0, 5),
+      ..._LINGERIE_FULL.slice(0, 3),
+      ..._ROBE_POOL.slice(0, 3),
       'knit midi dress, form-hugging, seated elegant',
       'floral midi skirt and fitted top, sitting gracefully',
     ]);
@@ -16416,14 +16413,13 @@ function getPoseSensualOutfit(key, returnAll){
   // ── KNEELING ─────────────────────────────────────────────────────────────
   if(key.startsWith('kneeling-'))
     return R([
-      ..._LINGERIE_FULL.slice(0, 8),
-      'elegant black corset with garter and sheer stockings, kneeling boudoir',
-      'sheer stretch bodysuit, high-cut, kneeling pose',
-      ..._CASUAL_DRESS.slice(0, 5),
-      ..._TOPS_BLOUSES.slice(0, 5),
-      ..._JEANS_PANTS.slice(0, 4),
-      ..._SHORTS_SKIRTS.slice(0, 4),
-      ..._HOODIES_SWEATERS.slice(0, 3),
+      ..._TOPS_BLOUSES,
+      ..._JEANS_PANTS,
+      ..._HOODIES_SWEATERS,
+      ..._CASUAL_DRESS,
+      ..._SHORTS_SKIRTS,
+      ..._MINIDRESS_POOL.slice(0, 5),
+      ..._LINGERIE_FULL.slice(0, 3),
       'maxi dress with slit, kneeling elegantly',
       'knit sweater dress, kneeling on soft surface',
     ]);
@@ -16431,43 +16427,43 @@ function getPoseSensualOutfit(key, returnAll){
   // ── LYING / LYING DOWN ────────────────────────────────────────────────────
   if(key.startsWith('lying-') || key === 'sphinx' || key === 'spread-eagle-lying')
     return R([
-      ..._LINGERIE_FULL.slice(0, 10),
-      ..._ROBE_POOL.slice(0, 5),
-      ..._HOODIES_SWEATERS.slice(0, 5),
-      ..._TOPS_BLOUSES.slice(0, 4),
-      ..._SHORTS_SKIRTS.slice(0, 4),
-      'silk babydoll negligee barely covering body, lying on satin sheets',
+      ..._HOODIES_SWEATERS,
+      ..._TOPS_BLOUSES.slice(0, 6),
+      ..._JEANS_PANTS.slice(0, 5),
+      ..._LEGGINGS_ATHLETIC,
+      ..._SHORTS_SKIRTS.slice(0, 5),
+      ..._CASUAL_DRESS.slice(0, 5),
+      ..._ROBE_POOL.slice(0, 4),
+      ..._LINGERIE_FULL.slice(0, 3),
       'silk pajama set, elegant lying on bed',
       'cozy matching lounge set: shorts and cropped hoodie, lying relaxed',
       'flowy midi dress, lying in meadow outdoors, dreamy editorial',
       'fitted sundress, lying on a picnic blanket',
-      'oversized college sweatshirt and biker shorts, casual lying pose',
-      'ribbed high-waist leggings and crop hoodie, cozy lying lounge',
     ]);
 
   // ── ALL FOURS ─────────────────────────────────────────────────────────────
   if(key.startsWith('allfours-'))
     return R([
-      ..._LINGERIE_FULL.slice(0, 8),
-      'lace garter belt with matching thong and sheer stockings, all-fours',
-      'sheer stretch bodysuit with thong cut, on all fours',
-      ..._TOPS_BLOUSES.slice(0, 5),
-      ..._JEANS_PANTS.slice(0, 4),
-      ..._SHORTS_SKIRTS.slice(0, 4),
-      ..._LEGGINGS_ATHLETIC.slice(0, 4),
+      ..._TOPS_BLOUSES.slice(0, 8),
+      ..._JEANS_PANTS.slice(0, 6),
+      ..._SHORTS_SKIRTS.slice(0, 6),
+      ..._LEGGINGS_ATHLETIC,
+      ..._HOODIES_SWEATERS.slice(0, 4),
+      ..._CASUAL_STREET.slice(0, 4),
+      ..._LINGERIE_FULL.slice(0, 3),
       'white bodycon mini dress riding up, all-fours editorial',
-      'sports bra and micro booty shorts, all-fours athletic',
     ]);
 
   // ── SQUAT ─────────────────────────────────────────────────────────────────
   if(key.startsWith('squat-'))
     return R([
-      ..._LINGERIE_FULL.slice(0, 6),
       ..._LEGGINGS_ATHLETIC,
-      ..._TOPS_BLOUSES.slice(0, 5),
-      ..._SHORTS_SKIRTS.slice(0, 5),
-      'high-cut sports bra and micro booty shorts, deep squat',
-      'seamless sports set: micro bralette and booty shorts, squat',
+      ..._TOPS_BLOUSES.slice(0, 6),
+      ..._SHORTS_SKIRTS.slice(0, 6),
+      ..._JEANS_PANTS.slice(0, 5),
+      ..._HOODIES_SWEATERS.slice(0, 4),
+      ..._CASUAL_STREET.slice(0, 4),
+      ..._LINGERIE_FULL.slice(0, 2),
       'high-waist jeans and fitted crop top, streetwear squat',
       'denim shorts and crop tee, casual street squat pose',
     ]);
@@ -16487,13 +16483,14 @@ function getPoseSensualOutfit(key, returnAll){
   // ── CROSS-LEGGED / FETAL / OVER-SHOULDER ─────────────────────────────────
   if(key === 'cross-legged' || key === 'fetal' || key.startsWith('over-shoulder') || key.startsWith('hand-'))
     return R([
-      ..._LINGERIE_FULL.slice(0, 6),
-      ..._ROBE_POOL.slice(0, 4),
       ..._HOODIES_SWEATERS,
-      ..._TOPS_BLOUSES.slice(0, 5),
-      ..._JEANS_PANTS.slice(0, 5),
-      ..._SHORTS_SKIRTS.slice(0, 5),
-      ..._LEGGINGS_ATHLETIC.slice(0, 4),
+      ..._TOPS_BLOUSES,
+      ..._JEANS_PANTS,
+      ..._LEGGINGS_ATHLETIC,
+      ..._SHORTS_SKIRTS,
+      ..._CASUAL_DRESS.slice(0, 5),
+      ..._LINGERIE_FULL.slice(0, 2),
+      ..._ROBE_POOL.slice(0, 3),
       'cozy oversized knit sweater dress, hugging knees, soft light',
       'loose flowy blouse and high-waist linen trousers, relaxed seated',
       'cotton wrap dress, casual cross-legged seated look',
