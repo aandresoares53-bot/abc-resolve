@@ -17270,8 +17270,25 @@ function buildPrompt(englishText, rawPT){
   }
 
   // ── Auto pose extras: camera angle, accessories, makeup — by selected pose key ──
-  const _poseAutoExtras = (typeof getPoseAutoExtras === 'function' && selectedPoseKey)
-    ? getPoseAutoExtras(selectedPoseKey)
+  // When no pose is selected, infer a virtual pose category from the description text
+  // so that all auto-extras (camera, accessories, makeup, lighting, etc.) still fire.
+  let _effectivePoseKey = selectedPoseKey || '';
+  if(!_effectivePoseKey && englishText){
+    const _eLow = englishText.toLowerCase();
+    if(/beach|pool|piscina|praia|ocean|sea|swim|wave|sand/.test(_eLow))             _effectivePoseKey = 'beach-natural';
+    else if(/gym|workout|fitness|exercise|training|lift|dumbbell|barbell/.test(_eLow)) _effectivePoseKey = 'gym-generic';
+    else if(/yoga|pilates|stretch|meditat/.test(_eLow))                              _effectivePoseKey = 'yoga-generic';
+    else if(/danc|club|nightclub|dance|twerk/.test(_eLow))                           _effectivePoseKey = 'dance-generic';
+    else if(/boudoir|lingerie|intimate|bedroom|bed\b|deitada/.test(_eLow))           _effectivePoseKey = 'boudoir-lying';
+    else if(/lying|deitad|lie down|bed\b/.test(_eLow))                              _effectivePoseKey = 'lying-side';
+    else if(/sitting|sentada|chair|sofa|cadeira/.test(_eLow))                       _effectivePoseKey = 'sitting-front';
+    else if(/kneeling|joelho|ajoelhada/.test(_eLow))                                _effectivePoseKey = 'kneeling-front';
+    else if(/model|runway|editorial|fashion|passarela/.test(_eLow))                  _effectivePoseKey = 'model-runway-walk';
+    else if(/outdoor|nature|sunset|golden hour|park|forest|nature/.test(_eLow))     _effectivePoseKey = 'outdoor-sunset';
+    else                                                                              _effectivePoseKey = 'standing-front';
+  }
+  const _poseAutoExtras = (typeof getPoseAutoExtras === 'function')
+    ? getPoseAutoExtras(_effectivePoseKey)
     : {camera:'', accessories:'', makeup:'', colorPalette:'', hairStyle:'', lightPhysics:'', contactPoints:'', gazeDirection:'', dofSpec:''};
   const _autoCamera        = _poseAutoExtras.camera        || '';
   const _autoAccessories   = _poseAutoExtras.accessories   || '';
@@ -17282,8 +17299,8 @@ function buildPrompt(englishText, rawPT){
   const _autoContactPoints = _poseAutoExtras.contactPoints || '';
   const _autoGazeDirection = _poseAutoExtras.gazeDirection || '';
   const _autoDofSpec       = _poseAutoExtras.dofSpec       || '';
-  // ── Pose-contextual perspiration/skin sheen — activates for active/hot poses ──
-  const _sk_low = (selectedPoseKey || '').toLowerCase();
+  // ── Pose-contextual perspiration/skin sheen — uses effective key for scene inference ──
+  const _sk_low = _effectivePoseKey.toLowerCase();
   const _autoSweat = (() => {
     if(_sk_low.startsWith('gym-') || _sk_low.startsWith('workout-') || _sk_low.startsWith('squat-') || _sk_low.includes('yoga') || _sk_low.includes('pilates') || _sk_low.startsWith('twerk-') || _sk_low.startsWith('dance-'))
       return '(natural athletic perspiration on skin:1.6), (light sweat sheen on skin:1.5), (natural moisture on forehead:1.5), (natural sweat on upper lip:1.4), (glistening athletic skin:1.5), (wet skin highlights from sweat:1.4), (natural exertion skin flush:1.6),';
