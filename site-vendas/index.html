@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Propostas Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #080D1A;
+    --surface: #0F1828;
+    --surface2: #182035;
+    --accent: #00E676;
+    --accent-dim: #00C25A;
+    --accent-glow: rgba(0,230,118,0.15);
+    --text: #F0F4FF;
+    --text-muted: #64748B;
+    --text-soft: #94A3B8;
+    --border: rgba(255,255,255,0.07);
+    --red: #FF4D4D;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    padding-bottom: 80px;
+  }
+
+  /* ---------- STICKY CTA BAR ---------- */
+  .sticky-bar {
+    position: fixed;
+    bottom: env(safe-area-inset-bottom, 0px);
+    left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .sticky-bar .price-small { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+  .sticky-bar .price-small s { color: var(--text-muted); font-size: 0.85rem; font-weight: 400; margin-right: 6px; }
+
+  /* ---------- UTILS ---------- */
+  .wrapper { max-width: 760px; margin: 0 auto; padding-inline: 20px; }
+  .accent { color: var(--accent); }
+  .btn-main {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 14px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn-main:hover { background: var(--accent-dim); transform: translateY(-1px); }
+  .btn-main:active { transform: translateY(0); }
+  .btn-full { display: block; width: 100%; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding-top: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .hero-eyebrow {
+    display: inline-block;
+    background: var(--accent-glow);
+    border: 1px solid rgba(0,230,118,0.3);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.12;
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text-soft);
+    max-width: 540px;
+    margin: 0 auto 32px;
+  }
+
+  /* ---------- COUNTDOWN ---------- */
+  .countdown-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .countdown-unit {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    min-width: 72px;
+    text-align: center;
+  }
+  .countdown-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .countdown-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+  .proof-strip {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    color: var(--text-soft);
+    font-size: 0.88rem;
+  }
+  .proof-strip span { display: flex; align-items: center; gap: 6px; }
+  .proof-strip .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+  /* ---------- PAIN SECTION ---------- */
+  .pain-section { padding-block: 64px; }
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .pain-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-wrap: balance;
+    margin: 0 0 32px;
+  }
+  .pain-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .pain-list li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .pain-list .icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .pain-list strong { display: block; font-weight: 600; margin-bottom: 2px; }
+  .pain-list p { margin: 0; color: var(--text-soft); font-size: 0.9rem; }
+
+  /* ---------- PRODUCT GRID ---------- */
+  .product-section {
+    padding-block: 64px;
+    border-top: 1px solid var(--border);
+  }
+  .product-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-wrap: balance;
+    margin: 0 0 8px;
+  }
+  .product-section > .wrapper > p {
+    color: var(--text-soft);
+    margin: 0 0 36px;
+  }
+  .templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .template-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .template-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .template-card:hover::before { opacity: 1; }
+  .template-card .t-icon { font-size: 1.6rem; margin-bottom: 10px; }
+  .template-card h3 { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; margin: 0 0 6px; }
+  .template-card p { margin: 0; color: var(--text-soft); font-size: 0.82rem; }
+  .template-count {
+    display: inline-block;
+    background: var(--accent-glow);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-bottom: 8px;
+  }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testimonials-section {
+    padding-block: 64px;
+    border-top: 1px solid var(--border);
+  }
+  .testimonials-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    font-weight: 700;
+    margin: 0 0 32px;
+    text-wrap: balance;
+  }
+  .testimonials-grid { display: grid; gap: 14px; }
+  .testimonial {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 22px 18px;
+  }
+  .stars { color: #FBBF24; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 10px; }
+  .testimonial blockquote {
+    margin: 0 0 14px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-soft);
+    font-style: italic;
+  }
+  .t-author { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .t-role { font-size: 0.78rem; color: var(--text-muted); }
+
+  /* ---------- BONUS SECTION ---------- */
+  .bonus-section {
+    padding-block: 56px;
+    border-top: 1px solid var(--border);
+  }
+  .bonus-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    font-weight: 700;
+    margin: 0 0 24px;
+  }
+  .bonus-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .bonus-list li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.92rem;
+  }
+  .bonus-list .check {
+    width: 22px; height: 22px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .bonus-value { margin-left: auto; font-size: 0.8rem; color: var(--text-muted); text-decoration: line-through; }
+
+  /* ---------- PRICING ---------- */
+  .pricing-section {
+    padding-block: 64px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .pricing-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 700;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .pricing-section > .wrapper > p { color: var(--text-soft); margin: 0 0 36px; }
+  .pricing-card {
+    background: var(--surface);
+    border: 1px solid rgba(0,230,118,0.35);
+    border-radius: 16px;
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .pricing-card::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(0,230,118,0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .price-from { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 4px; }
+  .price-was { color: var(--text-muted); font-size: 1rem; text-decoration: line-through; margin-bottom: 6px; }
+  .price-now {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.6rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .price-now sup { font-size: 1.8rem; vertical-align: super; }
+  .price-installment { color: var(--text-soft); font-size: 0.88rem; margin-bottom: 24px; }
+  .price-features { list-style: none; padding: 0; margin: 0 0 28px; text-align: left; display: grid; gap: 10px; }
+  .price-features li { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+  .price-features .ck { color: var(--accent); font-weight: 700; }
+  .guarantee {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .spots-left {
+    background: rgba(255,77,77,0.1);
+    border: 1px solid rgba(255,77,77,0.2);
+    color: var(--red);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  /* ---------- SOCIAL PROOF NUMBERS ---------- */
+  .numbers-strip {
+    padding-block: 48px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .numbers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+  .number-item { padding: 8px; }
+  .number-big {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .number-desc { font-size: 0.8rem; color: var(--text-soft); }
+
+  /* ---------- FAQ ---------- */
+  .faq-section { padding-block: 64px; }
+  .faq-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    font-weight: 700;
+    margin: 0 0 28px;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding-block: 18px;
+  }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 600;
+    text-align: left;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .faq-q .arrow {
+    color: var(--accent);
+    font-size: 1.2rem;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .faq-q[aria-expanded="true"] .arrow { transform: rotate(45deg); }
+  .faq-a {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease;
+  }
+  .faq-a p { margin: 12px 0 0; color: var(--text-soft); font-size: 0.9rem; }
+
+  @media (min-width: 560px) {
+    .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---------- WHATSAPP BUTTON ---------- */
+  .wa-btn {
+    position: fixed;
+    right: 20px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 88px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #25D366;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-decoration: none;
+    padding: 12px 18px 12px 14px;
+    border-radius: 100px;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+    max-width: calc(100vw - 40px);
+  }
+  .wa-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(37,211,102,0.55);
+  }
+  .wa-btn svg { flex-shrink: 0; }
+  .wa-tooltip {
+    position: fixed;
+    right: 20px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 152px);
+    z-index: 199;
+    background: #fff;
+    color: #111;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+  }
+  .wa-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; right: 28px;
+    border: 6px solid transparent;
+    border-bottom: none;
+    border-top-color: #fff;
+  }
+  .wa-tooltip.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 400px) {
+    .wa-btn-label { display: none; }
+    .wa-btn { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<div class="wa-tooltip" id="wa-tooltip">Fale comigo agora! 👋</div>
+<a class="wa-btn" href="https://wa.me/5511946437698?text=Ol%C3%A1%21+Tenho+interesse+no+Kit+Propostas+Pro." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.22-1.63A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.22-3.48-8.52zM12 21.97a9.9 9.9 0 0 1-5.04-1.38l-.36-.22-3.69.97.98-3.6-.23-.37A9.92 9.92 0 0 1 2.03 12C2.03 6.48 6.48 2.03 12 2.03c2.67 0 5.18 1.04 7.07 2.93A9.93 9.93 0 0 1 21.97 12c0 5.52-4.45 9.97-9.97 9.97zm5.47-7.47c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.52.07-.79.37-.28.3-1.05 1.03-1.05 2.5s1.08 2.9 1.23 3.1c.15.2 2.12 3.24 5.14 4.54.72.31 1.28.5 1.72.64.72.23 1.38.2 1.9.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="white"/>
+  </svg>
+  <span class="wa-btn-label">Falar no WhatsApp</span>
+</a>
+
+<!-- STICKY BAR -->
+<div class="sticky-bar">
+  <div class="price-small"><s>R$ 197</s> R$ 47</div>
+  <button onclick="openPayModal()" class="btn-main" style="padding:12px 22px;font-size:0.92rem;">Quero o Kit Agora</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrapper">
+    <div class="hero-eyebrow">⚡ Oferta por tempo limitado</div>
+    <h1>Feche mais negócios com <span class="accent">propostas que impressionam</span> em minutos</h1>
+    <p class="hero-sub">+47 modelos prontos de proposta, contrato, orçamento e apresentação. Baixe, edite e envie — sem designer, sem advogado, sem enrolação.</p>
+
+    <!-- Countdown -->
+    <div class="countdown-wrap" aria-label="Tempo restante da oferta">
+      <div class="countdown-unit"><div class="countdown-num" id="cd-h">08</div><div class="countdown-label">horas</div></div>
+      <div class="countdown-unit"><div class="countdown-num" id="cd-m">43</div><div class="countdown-label">minutos</div></div>
+      <div class="countdown-unit"><div class="countdown-num" id="cd-s">17</div><div class="countdown-label">segundos</div></div>
+    </div>
+
+    <button onclick="openPayModal()" class="btn-main" style="font-size:1.05rem;padding:16px 36px;">Quero por R$ 47 →</button>
+    <div class="proof-strip">
+      <span><span class="dot"></span>Acesso imediato após pagamento</span>
+      <span><span class="dot"></span>Garantia de 7 dias</span>
+      <span><span class="dot"></span>+2.300 profissionais usando</span>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers-strip">
+  <div class="wrapper">
+    <div class="numbers-grid">
+      <div class="number-item"><div class="number-big">2.3k+</div><div class="number-desc">clientes ativos</div></div>
+      <div class="number-item"><div class="number-big">47</div><div class="number-desc">modelos prontos</div></div>
+      <div class="number-item"><div class="number-big">4.9★</div><div class="number-desc">avaliação média</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain-section">
+  <div class="wrapper">
+    <p class="section-label">O problema</p>
+    <h2>Você perde clientes por parecer <span class="accent">menos profissional</span> do que é</h2>
+    <ul class="pain-list">
+      <li>
+        <span class="icon">😰</span>
+        <div>
+          <strong>Proposta feita no Word às 23h</strong>
+          <p>Apagando e refazendo parágrafo por parágrafo, com medo de que ficou amador.</p>
+        </div>
+      </li>
+      <li>
+        <span class="icon">⏳</span>
+        <div>
+          <strong>Horas perdidas em cada orçamento</strong>
+          <p>Quando você podia estar fechando outro contrato, está formatando tabela.</p>
+        </div>
+      </li>
+      <li>
+        <span class="icon">😶</span>
+        <div>
+          <strong>Cliente some depois de receber a proposta</strong>
+          <p>Não é o preço — é a apresentação. Uma proposta fraca sinaliza risco.</p>
+        </div>
+      </li>
+      <li>
+        <span class="icon">💸</span>
+        <div>
+          <strong>Pagar designer ou advogado para documentos básicos</strong>
+          <p>Dinheiro que sai do seu lucro antes mesmo de você receber.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section class="product-section">
+  <div class="wrapper">
+    <p class="section-label">O que você recebe</p>
+    <h2>47 modelos prontos para usar <span class="accent">ainda hoje</span></h2>
+    <p>Todos editáveis no Word, Google Docs e Canva. Linguagem clara, estrutura profissional, campos para preencher em minutos.</p>
+    <div class="templates-grid">
+      <div class="template-card">
+        <div class="t-icon">📋</div>
+        <div class="template-count">12 modelos</div>
+        <h3>Propostas Comerciais</h3>
+        <p>Para serviços, consultoria, agências e freelancers.</p>
+      </div>
+      <div class="template-card">
+        <div class="t-icon">📝</div>
+        <div class="template-count">9 modelos</div>
+        <h3>Contratos Prontos</h3>
+        <p>Prestação de serviço, parceria, NDA e muito mais.</p>
+      </div>
+      <div class="template-card">
+        <div class="t-icon">💰</div>
+        <div class="template-count">8 modelos</div>
+        <h3>Orçamentos</h3>
+        <p>Profissionais para qualquer área, com cálculo de margem.</p>
+      </div>
+      <div class="template-card">
+        <div class="t-icon">📊</div>
+        <div class="template-count">7 modelos</div>
+        <h3>Apresentações</h3>
+        <p>Slides para pitch, portfólio e proposta executiva.</p>
+      </div>
+      <div class="template-card">
+        <div class="t-icon">📧</div>
+        <div class="template-count">6 modelos</div>
+        <h3>E-mails de Fechamento</h3>
+        <p>Sequência de follow-up que acelera a decisão do cliente.</p>
+      </div>
+      <div class="template-card">
+        <div class="t-icon">🧾</div>
+        <div class="template-count">5 modelos</div>
+        <h3>Recibos e Notas</h3>
+        <p>Documentos de cobrança para MEI e autônomos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="wrapper">
+    <p class="section-label">Depoimentos reais</p>
+    <h2>Quem já usa o <span class="accent">Kit Propostas Pro</span></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Em 20 minutos montei uma proposta que o cliente aprovou na hora. Antes eu levava 3 horas no mesmo processo."</blockquote>
+        <div class="t-author">Carla Mendes</div>
+        <div class="t-role">Designer Freelancer · SP</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Os contratos eram meu maior bloqueio. Comprei o kit, adaptei em 15 minutos e fechei um projeto de R$ 8.000."</blockquote>
+        <div class="t-author">Rafael Torres</div>
+        <div class="t-role">Consultor de Marketing · RJ</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Minha taxa de aprovação de propostas subiu de 40% para quase 70% depois que comecei a usar os modelos."</blockquote>
+        <div class="t-author">Ana Beatriz Lima</div>
+        <div class="t-role">Arquiteta · BH</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Vale mais do que um curso de vendas. Os modelos já têm a estrutura certa para convencer. Simples assim."</blockquote>
+        <div class="t-author">Marcos Vieira</div>
+        <div class="t-role">Desenvolvedor · Curitiba</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS -->
+<section class="bonus-section">
+  <div class="wrapper">
+    <p class="section-label">Bônus exclusivos</p>
+    <h2>Você também leva <span class="accent">grátis</span></h2>
+    <ul class="bonus-list">
+      <li><span class="check">✓</span> Planilha de controle financeiro para MEI / autônomo <span class="bonus-value">R$ 47</span></li>
+      <li><span class="check">✓</span> Guia: como precificar seus serviços sem perder dinheiro <span class="bonus-value">R$ 29</span></li>
+      <li><span class="check">✓</span> Pack de 20 scripts de resposta a objeções de clientes <span class="bonus-value">R$ 37</span></li>
+      <li><span class="check">✓</span> Checklist de onboarding de cliente (pós-fechamento) <span class="bonus-value">R$ 19</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="comprar">
+  <div class="wrapper">
+    <p class="section-label">Oferta especial</p>
+    <h2>Acesso completo por um <span class="accent">investimento único</span></h2>
+    <p>Sem assinatura, sem mensalidade. Pague uma vez, use para sempre.</p>
+    <div class="pricing-card">
+      <div class="spots-left">⚠ Apenas 37 vagas restantes nesta oferta</div>
+      <div class="price-from">de</div>
+      <div class="price-was">R$ 197,00</div>
+      <div class="price-now"><sup>R$</sup>47</div>
+      <div class="price-installment">ou 3× de R$ 17,00 no cartão</div>
+      <ul class="price-features">
+        <li><span class="ck">✓</span> 47 modelos editáveis (Word, Google Docs e Canva)</li>
+        <li><span class="ck">✓</span> 4 bônus exclusivos (valor: R$ 132)</li>
+        <li><span class="ck">✓</span> Acesso vitalício + atualizações</li>
+        <li><span class="ck">✓</span> Suporte via WhatsApp por 30 dias</li>
+        <li><span class="ck">✓</span> Download imediato após pagamento</li>
+      </ul>
+      <button onclick="openPayModal()" class="btn-main btn-full" style="font-size:1.05rem;padding:16px;">Quero o Kit por R$ 47 →</button>
+      <div class="guarantee">
+        🔒 Garantia incondicional de 7 dias. Se não gostar, devolvemos 100% do valor. Sem perguntas.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="wrapper">
+    <h2>Dúvidas frequentes</h2>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        Como recebo o kit após o pagamento?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a"><p>Imediatamente após a confirmação do pagamento, você recebe um e-mail com o link para baixar todos os arquivos. Funciona 24h por dia, 7 dias por semana.</p></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        Precisa de software pago para usar?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a"><p>Não. Todos os modelos funcionam no Google Docs e Google Slides, que são gratuitos. Alguns também têm versão para o Microsoft Word e para o Canva (plano gratuito).</p></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        Os contratos têm validade jurídica?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a"><p>Os modelos seguem as boas práticas do direito contratual brasileiro, mas recomendamos revisão de um advogado para contratos de alto valor. Para serviços cotidianos de até R$ 5.000, os modelos são amplamente usados sem revisão adicional.</p></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        Posso usar o kit para qualquer área?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a"><p>Sim. Os modelos foram desenvolvidos para freelancers, consultores, agências, designers, desenvolvedores, arquitetos, fotógrafos, coaches e outros prestadores de serviço. Os campos são adaptáveis para qualquer nicho.</p></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        E se eu não gostar?
+        <span class="arrow">+</span>
+      </button>
+      <div class="faq-a"><p>Sem problema. Você tem 7 dias corridos para pedir o reembolso integral, sem precisar explicar o motivo. Basta enviar um e-mail e devolvemos 100% do valor pago.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL PAGAMENTO -->
+<div id="pay-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#0F1828;border:1px solid rgba(255,255,255,0.1);border-radius:16px;max-width:460px;width:100%;padding:32px 28px;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="closePayModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#64748B;font-size:1.5rem;cursor:pointer;line-height:1;">×</button>
+
+    <h3 style="font-family:'Syne',sans-serif;font-size:1.2rem;margin:0 0 4px;color:#F0F4FF;">Escolha como pagar</h3>
+    <p style="font-size:0.85rem;color:#64748B;margin:0 0 24px;">Kit Propostas Pro · <strong style="color:#00E676;">R$ 47,00</strong></p>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:8px;margin-bottom:24px;">
+      <button id="tab-pix" onclick="showTab('pix')" style="flex:1;padding:10px;border-radius:8px;border:2px solid #00E676;background:rgba(0,230,118,0.1);color:#00E676;font-weight:700;cursor:pointer;font-size:0.9rem;font-family:'Syne',sans-serif;">⚡ PIX (instantâneo)</button>
+      <button id="tab-card" onclick="showTab('card')" style="flex:1;padding:10px;border-radius:8px;border:2px solid rgba(255,255,255,0.1);background:none;color:#94A3B8;font-weight:600;cursor:pointer;font-size:0.9rem;font-family:'Syne',sans-serif;">💳 Cartão</button>
+    </div>
+
+    <!-- PIX PANEL -->
+    <div id="panel-pix">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="background:#fff;border-radius:12px;display:inline-block;padding:12px;margin-bottom:12px;">
+          <div id="pix-qr" style="width:200px;height:200px;"></div>
+        </div>
+        <p style="font-size:0.8rem;color:#64748B;margin:0 0 4px;">Escaneie com o app do banco</p>
+        <p style="font-size:0.78rem;color:#475569;margin:0;">Valor: <strong style="color:#F0F4FF;">R$ 47,00</strong></p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <p style="font-size:0.75rem;color:#64748B;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">Ou copie a chave PIX (CPF)</p>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input id="pix-key-input" readonly value="19228408820" style="flex:1;background:#182035;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#F0F4FF;font-family:monospace;font-size:0.95rem;outline:none;">
+          <button onclick="copyPixKey()" id="copy-pix-btn" style="background:#00E676;color:#000;border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;font-family:'Syne',sans-serif;">Copiar</button>
+        </div>
+      </div>
+
+      <div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);border-radius:10px;padding:14px 16px;font-size:0.82rem;color:#94A3B8;line-height:1.6;margin-bottom:14px;">
+        <strong style="color:#00E676;">Após pagar:</strong> clique no botão abaixo ou envie o comprovante pelo WhatsApp
+        <a href="https://wa.me/5511946437698?text=Ol%C3%A1%21+Efetuei+o+pagamento+do+Kit+Propostas+Pro+via+PIX.+Segue+o+comprovante." target="_blank" style="color:#00E676;font-weight:700;"> (11) 94643-7698</a>
+        para liberar seu acesso. ⚡
+      </div>
+      <button onclick="showThanks()" style="width:100%;padding:14px;background:var(--accent);color:#080D1A;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;border:none;border-radius:10px;cursor:pointer;letter-spacing:0.02em;">
+        ✅ Já paguei — quero meu acesso
+      </button>
+    </div>
+
+    <!-- TELA OBRIGADO -->
+    <div id="panel-obrigado" style="display:none;text-align:center;padding:8px 0;">
+      <div style="font-size:3.5rem;margin-bottom:16px;">🎉</div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:0 0 10px;">Obrigado pela compra!</h3>
+      <p style="color:#94A3B8;font-size:0.9rem;line-height:1.6;margin-bottom:24px;">Seu acesso à biblioteca completa de modelos está liberado. Clique abaixo para acessar agora mesmo.</p>
+      <a href="https://kit-propostas-modelos-as-digital-design-s-projects.vercel.app" target="_blank" style="display:block;width:100%;padding:16px;background:var(--accent);color:#080D1A;font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;border-radius:10px;text-decoration:none;margin-bottom:16px;">
+        📂 Acessar Biblioteca de Modelos →
+      </a>
+      <p style="font-size:0.78rem;color:#475569;">Dúvidas? Fale no WhatsApp <a href="https://wa.me/5511946437698" target="_blank" style="color:#00E676;">(11) 94643-7698</a></p>
+    </div>
+
+    <!-- CARD PANEL -->
+    <div id="panel-card" style="display:none;text-align:center;padding:12px 0;">
+      <div style="font-size:3rem;margin-bottom:12px;">💳</div>
+      <p style="color:#94A3B8;margin-bottom:8px;">Pague com cartão de crédito ou débito.</p>
+      <p style="color:#64748B;font-size:0.82rem;margin-bottom:20px;">Parcelamento em até 3× sem juros</p>
+      <a href="https://kiwify.com.br" target="_blank" class="btn-main" style="display:block;padding:14px;">Pagar com Cartão →</a>
+      <p style="font-size:0.75rem;color:#475569;margin-top:10px;">Você será redirecionado para o checkout seguro</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  // PIX QR Code
+  function buildPixPayload(key, name, city, amount) {
+    function tlv(id, v) { return id + String(v.length).padStart(2,'0') + v; }
+    function crc16(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      }
+      return ((crc & 0xFFFF).toString(16).toUpperCase().padStart(4,'0'));
+    }
+    const mai = tlv('26', tlv('00','br.gov.bcb.pix') + tlv('01', key));
+    const ref = tlv('62', tlv('05','KIT47'));
+    const amtStr = parseFloat(amount).toFixed(2);
+    const body = '000201' + '010212' + mai + '52040000' + '5303986' + tlv('54', amtStr) + '5802BR' + tlv('59', name.substring(0,25)) + tlv('60', city.substring(0,15)) + ref + '6304';
+    return body + crc16(body);
+  }
+
+  let qrRendered = false;
+  function openPayModal() {
+    const modal = document.getElementById('pay-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    showTab('pix');
+    if (!qrRendered) {
+      qrRendered = true;
+      const payload = buildPixPayload('19228408820', 'KIT PROPOSTAS PRO', 'SAO PAULO', '47.00');
+      const el = document.getElementById('pix-qr');
+      el.innerHTML = '';
+      new QRCode(el, { text: payload, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+    }
+  }
+  function closePayModal() {
+    document.getElementById('pay-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  function showThanks() {
+    document.getElementById('panel-pix').style.display = 'none';
+    document.getElementById('panel-card').style.display = 'none';
+    document.getElementById('panel-obrigado').style.display = 'block';
+    document.getElementById('tab-pix').style.display = 'none';
+    document.getElementById('tab-card').style.display = 'none';
+  }
+  function showTab(tab) {
+    const isPix = tab === 'pix';
+    document.getElementById('panel-pix').style.display = isPix ? 'block' : 'none';
+    document.getElementById('panel-card').style.display = isPix ? 'none' : 'block';
+    const tPix = document.getElementById('tab-pix');
+    const tCard = document.getElementById('tab-card');
+    tPix.style.borderColor = isPix ? '#00E676' : 'rgba(255,255,255,0.1)';
+    tPix.style.background = isPix ? 'rgba(0,230,118,0.1)' : 'none';
+    tPix.style.color = isPix ? '#00E676' : '#94A3B8';
+    tCard.style.borderColor = isPix ? 'rgba(255,255,255,0.1)' : '#00E676';
+    tCard.style.background = isPix ? 'none' : 'rgba(0,230,118,0.1)';
+    tCard.style.color = isPix ? '#94A3B8' : '#00E676';
+  }
+  function copyPixKey() {
+    const input = document.getElementById('pix-key-input');
+    const btn = document.getElementById('copy-pix-btn');
+    navigator.clipboard.writeText(input.value).then(() => {
+      btn.textContent = '✓ Copiado!';
+      btn.style.background = '#059669';
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.style.background = '#00E676'; }, 2500);
+    }).catch(() => { input.select(); document.execCommand('copy'); });
+  }
+  // Close on backdrop click
+  document.getElementById('pay-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePayModal();
+  });
+
+  // Admin access via ?admin in URL
+  if (new URLSearchParams(location.search).has('admin')) {
+    const bar = document.createElement('div');
+    bar.innerHTML = `
+      <div style="position:fixed;bottom:80px;right:20px;z-index:9999;background:#0F1828;border:2px solid #00E676;border-radius:12px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,0,0,0.5);max-width:240px;">
+        <p style="margin:0 0 4px;font-size:0.7rem;color:#00E676;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">🔐 Modo Admin</p>
+        <p style="margin:0 0 12px;font-size:0.8rem;color:#94A3B8;">Acesso direto sem pagamento</p>
+        <a href="https://kit-propostas-modelos-as-digital-design-s-projects.vercel.app" target="_blank" style="display:block;text-align:center;background:#00E676;color:#080D1A;font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;padding:10px 14px;border-radius:8px;text-decoration:none;">
+          📂 Abrir Biblioteca
+        </a>
+      </div>`;
+    document.body.appendChild(bar);
+  }
+</script>
+
+<script>
+  // Countdown timer
+  (function() {
+    const end = Date.now() + (8 * 3600 + 43 * 60 + 17) * 1000;
+    function tick() {
+      const diff = Math.max(0, end - Date.now());
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      const pad = n => String(n).padStart(2, '0');
+      const elH = document.getElementById('cd-h');
+      const elM = document.getElementById('cd-m');
+      const elS = document.getElementById('cd-s');
+      if (elH) elH.textContent = pad(h);
+      if (elM) elM.textContent = pad(m);
+      if (elS) elS.textContent = pad(s);
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+
+  // WhatsApp tooltip pulse
+  (function() {
+    const tooltip = document.getElementById('wa-tooltip');
+    if (!tooltip) return;
+    function show() { tooltip.classList.add('visible'); }
+    function hide() { tooltip.classList.remove('visible'); }
+    setTimeout(show, 3000);
+    setTimeout(hide, 7000);
+    setInterval(() => { show(); setTimeout(hide, 4000); }, 30000);
+  })();
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      // close all
+      document.querySelectorAll('.faq-q').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        b.nextElementSibling.style.maxHeight = '0';
+      });
+      if (!expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        const ans = btn.nextElementSibling;
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+</body>
+</html>

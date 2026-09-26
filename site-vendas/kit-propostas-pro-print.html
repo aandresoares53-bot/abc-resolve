@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Kit Propostas Pro — 13 Modelos Profissionais</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11pt;
+    color: #1a1a2e;
+    background: #fff;
+    line-height: 1.65;
+  }
+
+  /* ── CAPA ── */
+  .cover {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0f172a 100%);
+    color: #fff;
+    text-align: center;
+    padding: 60px 40px;
+    page-break-after: always;
+  }
+  .cover-badge {
+    font-size: 10pt;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #00E676;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-family: 'Lora', serif;
+    font-size: 42pt;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .cover h1 span { color: #00E676; }
+  .cover-sub {
+    font-size: 14pt;
+    color: rgba(255,255,255,0.75);
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+  .cover-divider {
+    width: 60px;
+    height: 3px;
+    background: #00E676;
+    margin: 0 auto 40px;
+    border-radius: 2px;
+  }
+  .cover-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 40px;
+    text-align: left;
+    max-width: 480px;
+    margin-bottom: 60px;
+  }
+  .cover-list li {
+    font-size: 11pt;
+    color: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .cover-list li::before { content: "✓"; color: #00E676; font-weight: 700; flex-shrink: 0; }
+  .cover-footer {
+    font-size: 9pt;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── ÍNDICE ── */
+  .index-page {
+    padding: 60px 70px;
+    page-break-after: always;
+    min-height: 100vh;
+  }
+  .section-label {
+    font-size: 9pt;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #1A56DB;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .index-page h2 {
+    font-family: 'Lora', serif;
+    font-size: 26pt;
+    color: #0f172a;
+    margin-bottom: 36px;
+    line-height: 1.2;
+  }
+  .index-category { margin-bottom: 28px; }
+  .index-category h3 {
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #1A56DB;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+  }
+  .index-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 1px dotted #e2e8f0;
+    font-size: 11pt;
+  }
+  .index-item span { color: #64748b; font-size: 10pt; }
+  .index-note {
+    margin-top: 40px;
+    background: #f0f7ff;
+    border-left: 4px solid #1A56DB;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    font-size: 10pt;
+    color: #334155;
+    line-height: 1.6;
+  }
+
+  /* ── PÁGINAS DOS MODELOS ── */
+  .model-page {
+    padding: 52px 70px;
+    page-break-before: always;
+    page-break-after: always;
+    min-height: 100vh;
+    position: relative;
+  }
+  .model-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #1A56DB;
+  }
+  .model-header-left h2 {
+    font-family: 'Lora', serif;
+    font-size: 20pt;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+  .model-header-left .cat-tag {
+    font-size: 9pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #1A56DB;
+    font-weight: 600;
+  }
+  .model-num {
+    font-family: 'Lora', serif;
+    font-size: 36pt;
+    color: #e2e8f0;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .model-body { font-size: 10.5pt; color: #1e293b; }
+  .model-body p { margin-bottom: 10px; }
+  .model-body .field {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-style: normal;
+    font-weight: 500;
+  }
+  .model-body h3 {
+    font-family: 'Lora', serif;
+    font-size: 12pt;
+    color: #0f172a;
+    margin: 18px 0 6px;
+  }
+  .model-body ul, .model-body ol {
+    padding-left: 20px;
+    margin-bottom: 10px;
+  }
+  .model-body li { margin-bottom: 4px; }
+  .model-body .sig-block {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .model-body .sig-line {
+    border-top: 1px solid #94a3b8;
+    padding-top: 6px;
+    font-size: 9.5pt;
+    color: #64748b;
+  }
+  .model-body .highlight-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .model-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10pt;
+    margin: 12px 0;
+  }
+  .model-body th {
+    background: #1A56DB;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9pt;
+    letter-spacing: 0.5px;
+  }
+  .model-body td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .model-body tr:nth-child(even) td { background: #f8fafc; }
+  .model-body .total-row td {
+    font-weight: 600;
+    color: #1A56DB;
+    background: #eff6ff;
+    border-top: 2px solid #1A56DB;
+  }
+  .model-body .checklist { list-style: none; padding: 0; }
+  .model-body .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 10pt;
+  }
+  .model-body .checklist li::before {
+    content: "☐";
+    font-size: 13pt;
+    color: #1A56DB;
+    flex-shrink: 0;
+    margin-top: -1px;
+  }
+
+  .page-footer {
+    position: absolute;
+    bottom: 28px;
+    left: 70px;
+    right: 70px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    color: #94a3b8;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 8px;
+  }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .cover, .index-page, .model-page { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ CAPA ══════════════ -->
+<div class="cover">
+  <div class="cover-badge">Material Exclusivo</div>
+  <h1>Kit Propostas<br><span>Pro</span></h1>
+  <p class="cover-sub">13 modelos profissionais prontos para usar e fechar mais clientes hoje mesmo</p>
+  <div class="cover-divider"></div>
+  <ul class="cover-list">
+    <li>3 Modelos de Proposta</li>
+    <li>3 Modelos de Contrato</li>
+    <li>2 Modelos de Orçamento</li>
+    <li>3 Modelos de E-mail</li>
+    <li>1 Checklist de Onboarding</li>
+    <li>1 Recibo de Pagamento</li>
+  </ul>
+  <div class="cover-footer">kitpropostaspro.com.br &nbsp;·&nbsp; Uso pessoal e comercial permitido</div>
+</div>
+
+<!-- ══════════════ ÍNDICE ══════════════ -->
+<div class="index-page">
+  <div class="section-label">Conteúdo do Kit</div>
+  <h2>O que você vai encontrar<br>neste material</h2>
+
+  <div class="index-category">
+    <h3>Propostas</h3>
+    <div class="index-item">Modelo 01 — Proposta de Serviços Gerais <span>Pág. 3</span></div>
+    <div class="index-item">Modelo 02 — Proposta de Consultoria <span>Pág. 4</span></div>
+    <div class="index-item">Modelo 03 — Proposta de Marketing Digital <span>Pág. 5</span></div>
+  </div>
+
+  <div class="index-category">
+    <h3>Contratos</h3>
+    <div class="index-item">Modelo 04 — Contrato de Prestação de Serviço <span>Pág. 6</span></div>
+    <div class="index-item">Modelo 05 — Acordo de Confidencialidade (NDA) <span>Pág. 7</span></div>
+    <div class="index-item">Modelo 06 — Contrato de Parceria Comercial <span>Pág. 8</span></div>
+  </div>
+
+  <div class="index-category">
+    <h3>Orçamentos</h3>
+    <div class="index-item">Modelo 07 — Orçamento de Serviços Mensais <span>Pág. 9</span></div>
+    <div class="index-item">Modelo 08 — Orçamento de Projeto Único <span>Pág. 10</span></div>
+  </div>
+
+  <div class="index-category">
+    <h3>E-mails</h3>
+    <div class="index-item">Modelo 09 — E-mail de Envio da Proposta <span>Pág. 11</span></div>
+    <div class="index-item">Modelo 10 — E-mail de Follow-up (Dia 3) <span>Pág. 12</span></div>
+    <div class="index-item">Modelo 11 — E-mail de Fechamento Final <span>Pág. 13</span></div>
+  </div>
+
+  <div class="index-category">
+    <h3>Gestão</h3>
+    <div class="index-item">Modelo 12 — Checklist de Onboarding do Cliente <span>Pág. 14</span></div>
+    <div class="index-item">Modelo 13 — Recibo de Pagamento <span>Pág. 15</span></div>
+  </div>
+
+  <div class="index-note">
+    <strong>Como usar:</strong> Os campos em <span style="background:#dbeafe;color:#1d4ed8;padding:1px 5px;border-radius:3px;font-weight:500;">destaque azul</span> devem ser substituídos pelas suas informações. Todos os modelos foram desenvolvidos para uso profissional no Brasil e podem ser adaptados livremente para o seu negócio.
+  </div>
+</div>
+
+<!-- ══════════════ MODELO 01 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Proposta</div>
+      <h2>Proposta de Serviços Gerais</h2>
+    </div>
+    <div class="model-num">01</div>
+  </div>
+  <div class="model-body">
+    <p><strong>De:</strong> <span class="field">[Seu Nome / Empresa]</span> &nbsp;|&nbsp; <strong>Para:</strong> <span class="field">[Nome do Cliente]</span> &nbsp;|&nbsp; <strong>Data:</strong> <span class="field">[Data]</span> &nbsp;|&nbsp; <strong>Validade:</strong> 7 dias</p>
+
+    <h3>Prezado(a) <span class="field">[Nome do Cliente]</span>,</h3>
+    <p>É com satisfação que apresento esta proposta para <span class="field">[descreva brevemente o serviço]</span>. Após nossa conversa, entendo que o principal desafio que você enfrenta é <span class="field">[desafio do cliente]</span>, e estou confiante de que posso ajudá-lo(a) a superar isso.</p>
+
+    <h3>Escopo dos Serviços</h3>
+    <ul>
+      <li><span class="field">[Serviço 1 — descreva o que será entregue]</span></li>
+      <li><span class="field">[Serviço 2 — descreva o que será entregue]</span></li>
+      <li><span class="field">[Serviço 3 — descreva o que será entregue]</span></li>
+    </ul>
+
+    <h3>Prazo de Entrega</h3>
+    <p>Estimativa de <span class="field">[X dias/semanas]</span> a partir da confirmação e pagamento do sinal.</p>
+
+    <h3>Investimento</h3>
+    <div class="highlight-box">
+      <table>
+        <tr><th>Item</th><th>Valor</th></tr>
+        <tr><td><span class="field">[Serviço 1]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+        <tr><td><span class="field">[Serviço 2]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+        <tr class="total-row"><td><strong>Total</strong></td><td><strong>R$ <span class="field">[total]</span></strong></td></tr>
+      </table>
+      <p style="margin-top:10px;font-size:9.5pt;color:#475569;"><strong>Forma de pagamento:</strong> <span class="field">[Ex: 50% de entrada + 50% na entrega / Pix / Cartão]</span></p>
+    </div>
+
+    <h3>Próximos Passos</h3>
+    <ol>
+      <li>Aprovação desta proposta</li>
+      <li>Assinatura do contrato</li>
+      <li>Pagamento do sinal de <span class="field">[%]</span></li>
+      <li>Início dos trabalhos em até <span class="field">[X dias úteis]</span></li>
+    </ol>
+
+    <div class="sig-block">
+      <div class="sig-line"><span class="field">[Seu Nome]</span><br>Prestador de Serviços</div>
+      <div class="sig-line"><span class="field">[Nome do Cliente]</span><br>Contratante</div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 01 — Proposta de Serviços Gerais</span></div>
+</div>
+
+<!-- ══════════════ MODELO 02 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Proposta</div>
+      <h2>Proposta de Consultoria</h2>
+    </div>
+    <div class="model-num">02</div>
+  </div>
+  <div class="model-body">
+    <p><strong>Consultor:</strong> <span class="field">[Seu Nome]</span> &nbsp;|&nbsp; <strong>Cliente:</strong> <span class="field">[Empresa do Cliente]</span> &nbsp;|&nbsp; <strong>Data:</strong> <span class="field">[Data]</span></p>
+
+    <h3>Diagnóstico Inicial</h3>
+    <p>Com base nas informações levantadas, identifiquei os seguintes pontos críticos no seu negócio:</p>
+    <ul>
+      <li><span class="field">[Problema/oportunidade identificada 1]</span></li>
+      <li><span class="field">[Problema/oportunidade identificada 2]</span></li>
+      <li><span class="field">[Problema/oportunidade identificada 3]</span></li>
+    </ul>
+
+    <h3>Metodologia de Trabalho</h3>
+    <div class="highlight-box">
+      <p><strong>Fase 1 — Imersão</strong> (<span class="field">[X semanas]</span>): <span class="field">[descrição]</span></p>
+      <p><strong>Fase 2 — Diagnóstico</strong> (<span class="field">[X semanas]</span>): <span class="field">[descrição]</span></p>
+      <p><strong>Fase 3 — Implementação</strong> (<span class="field">[X semanas]</span>): <span class="field">[descrição]</span></p>
+      <p><strong>Fase 4 — Acompanhamento</strong> (<span class="field">[X semanas]</span>): <span class="field">[descrição]</span></p>
+    </div>
+
+    <h3>Resultados Esperados</h3>
+    <ul>
+      <li><span class="field">[Resultado mensurável 1 — ex: Redução de 20% nos custos operacionais]</span></li>
+      <li><span class="field">[Resultado mensurável 2]</span></li>
+      <li><span class="field">[Resultado mensurável 3]</span></li>
+    </ul>
+
+    <h3>Investimento da Consultoria</h3>
+    <table>
+      <tr><th>Modalidade</th><th>Duração</th><th>Valor</th></tr>
+      <tr><td>Sessão avulsa</td><td>2h</td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr><td>Pacote mensal</td><td>4 sessões/mês</td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr><td>Projeto completo</td><td><span class="field">[X meses]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+    </table>
+
+    <div class="sig-block">
+      <div class="sig-line"><span class="field">[Seu Nome]</span><br>Consultor(a)</div>
+      <div class="sig-line"><span class="field">[Nome do Responsável]</span><br>Contratante — <span class="field">[Cargo]</span></div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 02 — Proposta de Consultoria</span></div>
+</div>
+
+<!-- ══════════════ MODELO 03 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Proposta</div>
+      <h2>Proposta de Marketing Digital</h2>
+    </div>
+    <div class="model-num">03</div>
+  </div>
+  <div class="model-body">
+    <p><strong>Agência/Freelancer:</strong> <span class="field">[Seu Nome/Empresa]</span> &nbsp;|&nbsp; <strong>Cliente:</strong> <span class="field">[Empresa]</span> &nbsp;|&nbsp; <strong>Referência:</strong> <span class="field">[MKT-001]</span></p>
+
+    <h3>Análise da Situação Atual</h3>
+    <p>Realizamos uma análise prévia da presença digital de <span class="field">[Empresa do Cliente]</span> e identificamos as seguintes oportunidades de crescimento:</p>
+    <ul>
+      <li><span class="field">[Ex: Baixo engajamento no Instagram — média de X curtidas por post]</span></li>
+      <li><span class="field">[Ex: Site sem otimização para SEO — fora do top 50 no Google]</span></li>
+      <li><span class="field">[Ex: Ausência de estratégia de e-mail marketing]</span></li>
+    </ul>
+
+    <h3>Serviços Propostos</h3>
+    <table>
+      <tr><th>Serviço</th><th>Entregáveis/mês</th><th>Valor</th></tr>
+      <tr><td>Gestão de Redes Sociais</td><td><span class="field">[X posts + X stories]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr><td>Tráfego Pago (Google/Meta)</td><td>Gestão + relatório mensal</td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr><td>Produção de Conteúdo</td><td><span class="field">[X artigos/vídeos]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr><td>E-mail Marketing</td><td><span class="field">[X disparos/mês]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr class="total-row"><td colspan="2"><strong>Pacote Completo (com desconto)</strong></td><td><strong>R$ <span class="field">[total]</span>/mês</strong></td></tr>
+    </table>
+
+    <h3>Metas para os Primeiros 90 Dias</h3>
+    <ul>
+      <li>Crescimento de <span class="field">[X]%</span> no alcance orgânico</li>
+      <li>Geração de <span class="field">[X]</span> leads qualificados por mês</li>
+      <li>Redução do CPL (custo por lead) para R$ <span class="field">[valor]</span></li>
+    </ul>
+
+    <div class="sig-block">
+      <div class="sig-line"><span class="field">[Seu Nome]</span><br>Especialista em Marketing Digital</div>
+      <div class="sig-line"><span class="field">[Nome do Cliente]</span><br>Contratante</div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 03 — Proposta de Marketing Digital</span></div>
+</div>
+
+<!-- ══════════════ MODELO 04 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Contrato</div>
+      <h2>Contrato de Prestação de Serviço</h2>
+    </div>
+    <div class="model-num">04</div>
+  </div>
+  <div class="model-body">
+    <p><strong>CONTRATANTE:</strong> <span class="field">[Nome/Empresa]</span>, CPF/CNPJ <span class="field">[número]</span>, residente/sediado(a) em <span class="field">[Endereço]</span>.</p>
+    <p><strong>CONTRATADO(A):</strong> <span class="field">[Seu Nome/Empresa]</span>, CPF/CNPJ <span class="field">[número]</span>, residente/sediado(a) em <span class="field">[Endereço]</span>.</p>
+    <p>As partes acima identificadas celebram o presente Contrato, que se regerá pelas seguintes cláusulas:</p>
+
+    <h3>Cláusula 1 — Objeto</h3>
+    <p>O(A) CONTRATADO(A) prestará ao CONTRATANTE os seguintes serviços: <span class="field">[descreva detalhadamente o serviço]</span>.</p>
+
+    <h3>Cláusula 2 — Prazo</h3>
+    <p>Os serviços terão início em <span class="field">[data]</span> e término previsto em <span class="field">[data]</span>, podendo ser renovados mediante acordo escrito entre as partes.</p>
+
+    <h3>Cláusula 3 — Valor e Forma de Pagamento</h3>
+    <p>O CONTRATANTE pagará ao CONTRATADO(A) o valor de <strong>R$ <span class="field">[valor]</span></strong> (<span class="field">[valor por extenso]</span>), da seguinte forma: <span class="field">[ex: 50% na assinatura e 50% na entrega final]</span>.</p>
+
+    <h3>Cláusula 4 — Obrigações do Contratado(a)</h3>
+    <ul>
+      <li>Executar os serviços com qualidade e dentro do prazo acordado;</li>
+      <li>Manter sigilo sobre informações confidenciais do CONTRATANTE;</li>
+      <li>Comunicar imediatamente qualquer impedimento que possa atrasar a entrega.</li>
+    </ul>
+
+    <h3>Cláusula 5 — Propriedade Intelectual</h3>
+    <p>Após o pagamento integral, todos os direitos sobre o trabalho entregue serão transferidos ao CONTRATANTE, exceto: <span class="field">[exceções, se houver / ou "Não há exceções"]</span>.</p>
+
+    <h3>Cláusula 6 — Rescisão</h3>
+    <p>O presente contrato poderá ser rescindido por qualquer das partes mediante aviso prévio de <span class="field">[X dias]</span>, devendo o CONTRATADO(A) receber pelos serviços já prestados proporcionalmente.</p>
+
+    <p style="margin-top:16px;font-size:9.5pt;color:#64748b;"><span class="field">[Cidade]</span>, <span class="field">[data]</span>.</p>
+
+    <div class="sig-block">
+      <div class="sig-line">______________________________<br><span class="field">[Nome do Contratante]</span><br>CPF: <span class="field">[número]</span></div>
+      <div class="sig-line">______________________________<br><span class="field">[Seu Nome]</span><br>CPF: <span class="field">[número]</span></div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 04 — Contrato de Prestação de Serviço</span></div>
+</div>
+
+<!-- ══════════════ MODELO 05 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Contrato</div>
+      <h2>Acordo de Confidencialidade (NDA)</h2>
+    </div>
+    <div class="model-num">05</div>
+  </div>
+  <div class="model-body">
+    <p><strong>PARTE DIVULGADORA:</strong> <span class="field">[Nome/Empresa]</span>, CPF/CNPJ <span class="field">[número]</span>.</p>
+    <p><strong>PARTE RECEPTORA:</strong> <span class="field">[Nome/Empresa]</span>, CPF/CNPJ <span class="field">[número]</span>.</p>
+
+    <h3>1. Objeto e Propósito</h3>
+    <p>Este Acordo tem como objetivo proteger as informações confidenciais trocadas entre as partes no contexto de <span class="field">[ex: possível parceria comercial / desenvolvimento de projeto / prestação de serviços]</span>.</p>
+
+    <h3>2. Definição de Informações Confidenciais</h3>
+    <p>Consideram-se confidenciais todas as informações marcadas como tal ou que, por sua natureza, devam ser tratadas como sigilosas, incluindo: dados financeiros, estratégias de negócio, listas de clientes, processos internos, código-fonte e qualquer material técnico compartilhado.</p>
+
+    <h3>3. Obrigações da Parte Receptora</h3>
+    <ul>
+      <li>Não divulgar as informações a terceiros sem autorização prévia e por escrito;</li>
+      <li>Utilizar as informações somente para o propósito descrito neste acordo;</li>
+      <li>Adotar medidas de segurança adequadas para proteger as informações recebidas.</li>
+    </ul>
+
+    <h3>4. Exceções</h3>
+    <p>As obrigações deste Acordo não se aplicam a informações que: (a) já eram de domínio público antes da divulgação; (b) tornaram-se públicas sem culpa da Parte Receptora; (c) foram recebidas de terceiros sem restrição de confidencialidade.</p>
+
+    <h3>5. Vigência</h3>
+    <p>Este Acordo vigorará por <span class="field">[X anos/indefinidamente]</span> a partir da data de assinatura.</p>
+
+    <h3>6. Penalidades</h3>
+    <p>O descumprimento deste Acordo sujeitará a Parte Receptora ao pagamento de indenização por perdas e danos, sem prejuízo de outras medidas legais cabíveis.</p>
+
+    <p style="margin-top:16px;font-size:9.5pt;color:#64748b;"><span class="field">[Cidade]</span>, <span class="field">[data]</span>.</p>
+
+    <div class="sig-block">
+      <div class="sig-line">______________________________<br><span class="field">[Parte Divulgadora]</span></div>
+      <div class="sig-line">______________________________<br><span class="field">[Parte Receptora]</span></div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 05 — Acordo de Confidencialidade (NDA)</span></div>
+</div>
+
+<!-- ══════════════ MODELO 06 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Contrato</div>
+      <h2>Contrato de Parceria Comercial</h2>
+    </div>
+    <div class="model-num">06</div>
+  </div>
+  <div class="model-body">
+    <p><strong>PARCEIRO A:</strong> <span class="field">[Nome/Empresa]</span>, CNPJ/CPF <span class="field">[número]</span>, representado por <span class="field">[Nome]</span>.</p>
+    <p><strong>PARCEIRO B:</strong> <span class="field">[Nome/Empresa]</span>, CNPJ/CPF <span class="field">[número]</span>, representado por <span class="field">[Nome]</span>.</p>
+
+    <h3>1. Objeto da Parceria</h3>
+    <p>Os parceiros se unem para <span class="field">[descreva o objetivo da parceria — ex: desenvolvimento e comercialização de produto X / indicação de clientes / co-produção de serviço Y]</span>.</p>
+
+    <h3>2. Responsabilidades</h3>
+    <div class="highlight-box">
+      <p><strong>Parceiro A ficará responsável por:</strong></p>
+      <ul>
+        <li><span class="field">[Responsabilidade 1]</span></li>
+        <li><span class="field">[Responsabilidade 2]</span></li>
+      </ul>
+      <p style="margin-top:10px;"><strong>Parceiro B ficará responsável por:</strong></p>
+      <ul>
+        <li><span class="field">[Responsabilidade 1]</span></li>
+        <li><span class="field">[Responsabilidade 2]</span></li>
+      </ul>
+    </div>
+
+    <h3>3. Divisão de Receitas</h3>
+    <table>
+      <tr><th>Parceiro</th><th>Participação</th><th>Observação</th></tr>
+      <tr><td>Parceiro A</td><td><span class="field">[X]%</span></td><td><span class="field">[condição, se houver]</span></td></tr>
+      <tr><td>Parceiro B</td><td><span class="field">[Y]%</span></td><td><span class="field">[condição, se houver]</span></td></tr>
+    </table>
+
+    <h3>4. Vigência e Rescisão</h3>
+    <p>Prazo: <span class="field">[X meses/indefinido]</span>, com possibilidade de renovação. Rescisão com aviso prévio de <span class="field">[X dias]</span>.</p>
+
+    <p style="margin-top:16px;font-size:9.5pt;color:#64748b;"><span class="field">[Cidade]</span>, <span class="field">[data]</span>.</p>
+
+    <div class="sig-block">
+      <div class="sig-line">______________________________<br>Parceiro A — <span class="field">[Nome]</span></div>
+      <div class="sig-line">______________________________<br>Parceiro B — <span class="field">[Nome]</span></div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 06 — Contrato de Parceria Comercial</span></div>
+</div>
+
+<!-- ══════════════ MODELO 07 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Orçamento</div>
+      <h2>Orçamento de Serviços Mensais</h2>
+    </div>
+    <div class="model-num">07</div>
+  </div>
+  <div class="model-body">
+    <div class="highlight-box" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div><strong>Prestador:</strong><br><span class="field">[Seu Nome/Empresa]</span></div>
+      <div><strong>Cliente:</strong><br><span class="field">[Nome do Cliente]</span></div>
+      <div><strong>Orçamento nº:</strong> <span class="field">[ORC-001]</span></div>
+      <div><strong>Data:</strong> <span class="field">[Data]</span></div>
+    </div>
+
+    <h3>Detalhamento dos Serviços Mensais</h3>
+    <table>
+      <tr><th>Serviço</th><th>Descrição</th><th>Qtd.</th><th>Valor Unit.</th><th>Total</th></tr>
+      <tr><td><span class="field">[Serviço 1]</span></td><td><span class="field">[descrição]</span></td><td><span class="field">[1]</span></td><td>R$ <span class="field">[valor]</span></td><td>R$ <span class="field">[total]</span></td></tr>
+      <tr><td><span class="field">[Serviço 2]</span></td><td><span class="field">[descrição]</span></td><td><span class="field">[1]</span></td><td>R$ <span class="field">[valor]</span></td><td>R$ <span class="field">[total]</span></td></tr>
+      <tr><td><span class="field">[Serviço 3]</span></td><td><span class="field">[descrição]</span></td><td><span class="field">[1]</span></td><td>R$ <span class="field">[valor]</span></td><td>R$ <span class="field">[total]</span></td></tr>
+      <tr class="total-row"><td colspan="4"><strong>TOTAL MENSAL</strong></td><td><strong>R$ <span class="field">[total geral]</span></strong></td></tr>
+    </table>
+
+    <h3>Condições</h3>
+    <ul>
+      <li><strong>Vigência:</strong> <span class="field">[X meses com renovação automática / mês a mês]</span></li>
+      <li><strong>Vencimento:</strong> Todo dia <span class="field">[X]</span> do mês</li>
+      <li><strong>Pagamento:</strong> <span class="field">[Pix / Boleto / Cartão]</span></li>
+      <li><strong>Reajuste:</strong> Anual pelo <span class="field">[IPCA / IGP-M / acordo entre as partes]</span></li>
+    </ul>
+
+    <h3>O que está incluído</h3>
+    <ul>
+      <li><span class="field">[Benefício/incluso 1]</span></li>
+      <li><span class="field">[Benefício/incluso 2]</span></li>
+      <li><span class="field">[Benefício/incluso 3]</span></li>
+    </ul>
+
+    <p style="margin-top:12px;font-size:9pt;color:#64748b;">Orçamento válido por 7 dias. Após aprovação, enviaremos o contrato para assinatura.</p>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 07 — Orçamento de Serviços Mensais</span></div>
+</div>
+
+<!-- ══════════════ MODELO 08 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Orçamento</div>
+      <h2>Orçamento de Projeto Único</h2>
+    </div>
+    <div class="model-num">08</div>
+  </div>
+  <div class="model-body">
+    <div class="highlight-box" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div><strong>Prestador:</strong><br><span class="field">[Seu Nome/Empresa]</span></div>
+      <div><strong>Cliente:</strong><br><span class="field">[Nome do Cliente]</span></div>
+      <div><strong>Projeto:</strong><br><span class="field">[Nome do Projeto]</span></div>
+      <div><strong>Data:</strong> <span class="field">[Data]</span></div>
+    </div>
+
+    <h3>Escopo do Projeto</h3>
+    <p><span class="field">[Descreva em 2-3 frases o que será desenvolvido, o objetivo e o resultado esperado]</span></p>
+
+    <h3>Etapas e Cronograma</h3>
+    <table>
+      <tr><th>Etapa</th><th>Descrição</th><th>Prazo</th><th>Valor</th></tr>
+      <tr><td>1 — <span class="field">[Nome]</span></td><td><span class="field">[o que acontece nessa etapa]</span></td><td><span class="field">[X dias]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr><td>2 — <span class="field">[Nome]</span></td><td><span class="field">[o que acontece nessa etapa]</span></td><td><span class="field">[X dias]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr><td>3 — <span class="field">[Nome]</span></td><td><span class="field">[o que acontece nessa etapa]</span></td><td><span class="field">[X dias]</span></td><td>R$ <span class="field">[valor]</span></td></tr>
+      <tr class="total-row"><td colspan="2"><strong>TOTAL DO PROJETO</strong></td><td><strong><span class="field">[X dias úteis]</span></strong></td><td><strong>R$ <span class="field">[total]</span></strong></td></tr>
+    </table>
+
+    <h3>Forma de Pagamento</h3>
+    <ul>
+      <li><span class="field">[X]%</span> na aprovação do orçamento (R$ <span class="field">[valor]</span>)</li>
+      <li><span class="field">[Y]%</span> na entrega da etapa 2 (R$ <span class="field">[valor]</span>)</li>
+      <li><span class="field">[Z]%</span> na aprovação final (R$ <span class="field">[valor]</span>)</li>
+    </ul>
+
+    <h3>O que não está incluído</h3>
+    <ul>
+      <li><span class="field">[Ex: Hospedagem e domínio do site]</span></li>
+      <li><span class="field">[Ex: Alterações após aprovação final]</span></li>
+      <li><span class="field">[Ex: Suporte técnico pós-entrega]</span></li>
+    </ul>
+
+    <p style="margin-top:12px;font-size:9pt;color:#64748b;">Orçamento válido por 7 dias. Inclui <span class="field">[X rodadas de revisão]</span>.</p>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 08 — Orçamento de Projeto Único</span></div>
+</div>
+
+<!-- ══════════════ MODELO 09 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">E-mail</div>
+      <h2>E-mail de Envio da Proposta</h2>
+    </div>
+    <div class="model-num">09</div>
+  </div>
+  <div class="model-body">
+    <div class="highlight-box">
+      <p><strong>Assunto:</strong> Proposta personalizada para <span class="field">[Nome do Cliente]</span> — <span class="field">[Serviço]</span></p>
+    </div>
+
+    <p style="margin-top:20px;">Olá, <span class="field">[Nome do Cliente]</span>!</p>
+    <p>Foi um prazer conversar com você <span class="field">[hoje / na última semana / no dia X]</span>. Como prometido, estou enviando a proposta personalizada para <span class="field">[descreva o serviço de forma resumida]</span>.</p>
+
+    <p>Com base no que você me contou, desenvolvi uma solução que vai <span class="field">[benefício principal — ex: aumentar suas vendas / reduzir sua carga de trabalho / profissionalizar sua comunicação]</span>.</p>
+
+    <div class="highlight-box">
+      <p><strong>Resumo da proposta:</strong></p>
+      <ul>
+        <li>Serviço: <span class="field">[nome do serviço]</span></li>
+        <li>Prazo de entrega: <span class="field">[X dias/semanas]</span></li>
+        <li>Investimento: R$ <span class="field">[valor]</span></li>
+        <li>Validade da proposta: 7 dias</li>
+      </ul>
+    </div>
+
+    <p>A proposta completa está em anexo com todos os detalhes. Se tiver alguma dúvida, pode me chamar no WhatsApp (<span class="field">[número]</span>) ou responder este e-mail.</p>
+
+    <p><strong>Para avançarmos, basta me responder com um "topei"</strong> que já envio o contrato para assinatura.</p>
+
+    <p>Fico à disposição!</p>
+
+    <p>Abraço,<br><strong><span class="field">[Seu Nome]</span></strong><br><span class="field">[Cargo / Especialidade]</span><br><span style="color:#1A56DB;"><span class="field">[E-mail]</span></span><br><span class="field">[WhatsApp]</span></p>
+
+    <p style="margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:9pt;color:#94a3b8;">P.S.: <span class="field">[adicione um P.S. com urgência — ex: "Tenho apenas 2 vagas disponíveis para início em [mês]. Se quiser garantir sua, me avise ainda essa semana!"]</span></p>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 09 — E-mail de Envio da Proposta</span></div>
+</div>
+
+<!-- ══════════════ MODELO 10 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">E-mail</div>
+      <h2>E-mail de Follow-up (Dia 3)</h2>
+    </div>
+    <div class="model-num">10</div>
+  </div>
+  <div class="model-body">
+    <div class="highlight-box">
+      <p><strong>Assunto:</strong> <span class="field">[Nome]</span>, você viu minha proposta? 👀</p>
+    </div>
+
+    <p style="margin-top:20px;">Oi, <span class="field">[Nome]</span>!</p>
+    <p>Enviei a proposta há 3 dias e queria saber se você teve a oportunidade de dar uma olhada.</p>
+
+    <p>Sei que a rotina é corrida, por isso trouxe um resumo rápido do que preparei para você:</p>
+
+    <ul>
+      <li>✅ <span class="field">[Benefício 1 — ex: Site profissional entregue em 15 dias]</span></li>
+      <li>✅ <span class="field">[Benefício 2 — ex: Inclui 3 revisões sem custo extra]</span></li>
+      <li>✅ <span class="field">[Benefício 3 — ex: Suporte por 30 dias após entrega]</span></li>
+    </ul>
+
+    <p>Por apenas R$ <span class="field">[valor]</span>, você terá <span class="field">[descreva a transformação em uma frase — ex: uma presença digital profissional que passa confiança e atrai clientes]</span>.</p>
+
+    <p>A proposta ainda está válida, mas <strong>só até <span class="field">[data]</span></strong>. Depois disso, não consigo garantir o mesmo prazo de entrega.</p>
+
+    <p>Fica à vontade para tirar qualquer dúvida aqui ou pelo WhatsApp: <span class="field">[número]</span>.</p>
+
+    <p>Abraço,<br><strong><span class="field">[Seu Nome]</span></strong></p>
+
+    <p style="margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:9pt;color:#94a3b8;">💡 <em>Dica de uso: Envie este e-mail exatamente 3 dias após a proposta inicial. Não espere mais do que isso — o timing é fundamental para o fechamento.</em></p>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 10 — E-mail de Follow-up (Dia 3)</span></div>
+</div>
+
+<!-- ══════════════ MODELO 11 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">E-mail</div>
+      <h2>E-mail de Fechamento Final</h2>
+    </div>
+    <div class="model-num">11</div>
+  </div>
+  <div class="model-body">
+    <div class="highlight-box">
+      <p><strong>Assunto:</strong> Última chance — proposta para <span class="field">[Nome]</span> vence amanhã</p>
+    </div>
+
+    <p style="margin-top:20px;"><span class="field">[Nome]</span>, tudo bem?</p>
+    <p>Estou encerrando as negociações desta semana e <strong>sua proposta vence amanhã, <span class="field">[data]</span></strong>.</p>
+
+    <p>Quero muito trabalhar com você e entregar <span class="field">[resultado esperado]</span>. Mas preciso confirmar minha agenda até o final do dia.</p>
+
+    <p>Se ainda houver alguma dúvida ou algo na proposta que te travar, me diz agora — posso ajustar <span class="field">[ex: a forma de pagamento / o escopo / o prazo]</span>.</p>
+
+    <div class="highlight-box" style="border-left-color:#ef4444;background:#fff5f5;">
+      <p style="color:#dc2626;font-weight:600;">⏰ Proposta válida até: <span class="field">[data e hora]</span></p>
+      <p style="font-size:10pt;margin-top:6px;">Após esse prazo, não consigo garantir <span class="field">[o mesmo preço / a disponibilidade na agenda / o prazo de entrega]</span>.</p>
+    </div>
+
+    <p>Se quiser confirmar, basta responder este e-mail ou me chamar no WhatsApp: <span class="field">[número]</span>.</p>
+
+    <p>Qualquer resposta — sim ou não — já me ajuda a organizar minha agenda. Obrigado(a) pela atenção!</p>
+
+    <p>Abraço,<br><strong><span class="field">[Seu Nome]</span></strong></p>
+
+    <p style="margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:9pt;color:#94a3b8;">💡 <em>Dica de uso: Este é o 3º e último contato da sequência. Envie no 7º dia após a proposta. Se não houver resposta após este e-mail, aguarde 30 dias e retome o contato com uma nova abordagem.</em></p>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 11 — E-mail de Fechamento Final</span></div>
+</div>
+
+<!-- ══════════════ MODELO 12 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Gestão</div>
+      <h2>Checklist de Onboarding do Cliente</h2>
+    </div>
+    <div class="model-num">12</div>
+  </div>
+  <div class="model-body">
+    <div class="highlight-box" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div><strong>Cliente:</strong> <span class="field">[Nome]</span></div>
+      <div><strong>Projeto:</strong> <span class="field">[Nome do Projeto]</span></div>
+      <div><strong>Data de início:</strong> <span class="field">[Data]</span></div>
+      <div><strong>Responsável:</strong> <span class="field">[Seu Nome]</span></div>
+    </div>
+
+    <h3>✅ Antes do Início (Pré-Onboarding)</h3>
+    <ul class="checklist">
+      <li>Contrato assinado por ambas as partes</li>
+      <li>Pagamento do sinal confirmado</li>
+      <li>E-mail de boas-vindas enviado ao cliente</li>
+      <li>Acesso à pasta compartilhada (Google Drive / Notion) enviado</li>
+      <li>Formulário de briefing enviado e respondido</li>
+    </ul>
+
+    <h3>📋 Primeira Semana</h3>
+    <ul class="checklist">
+      <li>Reunião de kickoff realizada</li>
+      <li>Objetivos e KPIs documentados</li>
+      <li>Cronograma detalhado enviado ao cliente</li>
+      <li>Canais de comunicação definidos (<span class="field">[WhatsApp / Slack / E-mail]</span>)</li>
+      <li>Frequência de atualizações combinada</li>
+      <li>Acesso às ferramentas e sistemas do cliente obtido</li>
+    </ul>
+
+    <h3>🚀 Durante o Projeto</h3>
+    <ul class="checklist">
+      <li>Relatório semanal/quinzenal enviado</li>
+      <li>Revisões agendadas conforme contrato</li>
+      <li>Aprovações documentadas por e-mail</li>
+      <li>Alterações fora do escopo registradas e orçadas</li>
+    </ul>
+
+    <h3>🎯 Encerramento</h3>
+    <ul class="checklist">
+      <li>Entrega final aprovada pelo cliente</li>
+      <li>Pagamento final recebido</li>
+      <li>Arquivos e acessos transferidos ao cliente</li>
+      <li>Depoimento/avaliação solicitado</li>
+      <li>Proposta de continuidade ou indicação apresentada</li>
+    </ul>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 12 — Checklist de Onboarding do Cliente</span></div>
+</div>
+
+<!-- ══════════════ MODELO 13 ══════════════ -->
+<div class="model-page">
+  <div class="model-header">
+    <div class="model-header-left">
+      <div class="cat-tag">Gestão</div>
+      <h2>Recibo de Pagamento</h2>
+    </div>
+    <div class="model-num">13</div>
+  </div>
+  <div class="model-body">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:9pt;letter-spacing:3px;text-transform:uppercase;color:#1A56DB;font-weight:600;margin-bottom:4px;">RECIBO DE PAGAMENTO</div>
+      <div style="font-size:9pt;color:#64748b;">Nº <span class="field">[REC-001]</span> &nbsp;·&nbsp; Data: <span class="field">[Data]</span></div>
+    </div>
+
+    <div class="highlight-box" style="margin-bottom:20px;">
+      <p><strong>Valor recebido:</strong></p>
+      <p style="font-size:20pt;font-family:'Lora',serif;color:#1A56DB;font-weight:700;margin:8px 0;">R$ <span class="field">[valor em números]</span></p>
+      <p style="font-size:10pt;color:#475569;">(<span class="field">[valor por extenso]</span>)</p>
+    </div>
+
+    <table>
+      <tr><th colspan="2">Dados do Pagamento</th></tr>
+      <tr><td style="width:40%;font-weight:600;">Pagador</td><td><span class="field">[Nome do Cliente]</span>, CPF/CNPJ <span class="field">[número]</span></td></tr>
+      <tr><td style="font-weight:600;">Recebedor</td><td><span class="field">[Seu Nome]</span>, CPF/CNPJ <span class="field">[número]</span></td></tr>
+      <tr><td style="font-weight:600;">Referente a</td><td><span class="field">[descreva o serviço pago — ex: Sinal referente ao desenvolvimento de website]</span></td></tr>
+      <tr><td style="font-weight:600;">Forma de pagamento</td><td><span class="field">[Pix / Transferência / Dinheiro / Cartão]</span></td></tr>
+      <tr><td style="font-weight:600;">Data do pagamento</td><td><span class="field">[Data]</span></td></tr>
+    </table>
+
+    <p style="margin-top:20px;font-size:10pt;">Declaro ter recebido a quantia acima descrita referente ao serviço mencionado, dando ao pagador plena, geral e irrevogável quitação.</p>
+
+    <div class="sig-block" style="margin-top:40px;">
+      <div class="sig-line">______________________________<br><span class="field">[Seu Nome]</span><br>CPF: <span class="field">[número]</span><br><span style="font-size:9pt;color:#64748b;">Recebedor</span></div>
+      <div></div>
+    </div>
+
+    <p style="margin-top:20px;font-size:9pt;color:#94a3b8;text-align:center;"><span class="field">[Cidade]</span>, <span class="field">[data]</span> &nbsp;·&nbsp; Este recibo foi gerado pelo Kit Propostas Pro</p>
+  </div>
+  <div class="page-footer"><span>Kit Propostas Pro</span><span>Modelo 13 — Recibo de Pagamento</span></div>
+</div>
+
+</body>
+</html>

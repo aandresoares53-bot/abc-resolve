@@ -1,0 +1,880 @@
+<title>Modelos Kit Propostas Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root {
+  --bg: #FAFAF8;
+  --surface: #FFFFFF;
+  --surface2: #F3F4F6;
+  --accent: #1A56DB;
+  --accent-light: #EBF0FF;
+  --text: #111827;
+  --text-soft: #4B5563;
+  --text-muted: #9CA3AF;
+  --border: #E5E7EB;
+  --green: #059669;
+  --green-light: #ECFDF5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1117;
+    --surface: #1A1F2E;
+    --surface2: #242938;
+    --accent: #4F79F6;
+    --accent-light: #1E2A4A;
+    --text: #F1F5F9;
+    --text-soft: #94A3B8;
+    --text-muted: #64748B;
+    --border: #2D3548;
+    --green: #34D399;
+    --green-light: #0D2118;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1117;
+  --surface: #1A1F2E;
+  --surface2: #242938;
+  --accent: #4F79F6;
+  --accent-light: #1E2A4A;
+  --text: #F1F5F9;
+  --text-soft: #94A3B8;
+  --text-muted: #64748B;
+  --border: #2D3548;
+  --green: #34D399;
+  --green-light: #0D2118;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100%;
+}
+
+/* LAYOUT */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+.sidebar-sub { font-size: 0.75rem; color: var(--text-muted); }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 10px; }
+.nav-group { margin-bottom: 6px; }
+.nav-group-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 8px 8px 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-soft);
+  transition: background 0.15s, color 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.nav-item .badge {
+  margin-left: auto;
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 100px;
+}
+.nav-item.active .badge { background: var(--accent); color: #fff; }
+
+/* MAIN */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.topbar-title { font-family: 'Lora', serif; font-size: 1.15rem; font-weight: 700; }
+.topbar-meta { font-size: 0.8rem; color: var(--text-muted); }
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.copy-btn:hover { opacity: 0.88; }
+.copy-btn.copied { background: var(--green); }
+
+/* CONTENT */
+.content { flex: 1; overflow-y: auto; padding: 32px 24px; }
+.doc-panel { display: none; }
+.doc-panel.visible { display: block; }
+
+/* DOCUMENT STYLES */
+.doc-notice {
+  background: var(--accent-light);
+  border: 1px solid rgba(79,121,246,0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--accent);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-body {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 36px 40px;
+  max-width: 720px;
+  font-size: 0.93rem;
+  line-height: 1.75;
+}
+.doc-body h1 {
+  font-family: 'Lora', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.doc-body .doc-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.doc-body h2 {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--text);
+}
+.doc-body p { margin-bottom: 12px; color: var(--text-soft); }
+.doc-body p:last-child { margin-bottom: 0; }
+.field {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+  font-weight: 600;
+  font-style: normal;
+  white-space: nowrap;
+}
+.doc-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.88rem;
+}
+.doc-body th {
+  background: var(--surface2);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.doc-body td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+}
+.doc-body .sig-block {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.doc-body .sig-line {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.doc-body ul { padding-left: 20px; margin-bottom: 12px; color: var(--text-soft); }
+.doc-body ul li { margin-bottom: 4px; }
+.doc-body .highlight-box {
+  background: var(--green-light);
+  border-left: 3px solid var(--green);
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+  margin: 16px 0;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
+
+/* MOBILE */
+@media (max-width: 640px) {
+  .app { flex-direction: column; height: auto; }
+  .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .sidebar-nav { padding: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .nav-group { margin-bottom: 0; }
+  .nav-group-label { display: none; }
+  .nav-item { width: auto; font-size: 0.8rem; padding: 6px 10px; }
+  .main { overflow: visible; }
+  .content { overflow: visible; padding: 20px 16px; }
+  .doc-body { padding: 20px 18px; }
+  .doc-body .sig-block { grid-template-columns: 1fr; }
+  .topbar { flex-wrap: wrap; }
+}
+</style>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Kit Propostas Pro</div>
+    <div class="sidebar-sub">47 modelos prontos para usar</div>
+  </div>
+  <nav class="sidebar-nav">
+
+    <div class="nav-group">
+      <div class="nav-group-label">Propostas</div>
+      <button class="nav-item active" onclick="show('prop1')">📋 Proposta — Serviços Gerais<span class="badge">1</span></button>
+      <button class="nav-item" onclick="show('prop2')">📋 Proposta — Consultoria<span class="badge">2</span></button>
+      <button class="nav-item" onclick="show('prop3')">📋 Proposta — Agência/Marketing<span class="badge">3</span></button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Contratos</div>
+      <button class="nav-item" onclick="show('cont1')">📝 Contrato — Prestação de Serviço<span class="badge">4</span></button>
+      <button class="nav-item" onclick="show('cont2')">📝 Contrato — NDA (Sigilo)<span class="badge">5</span></button>
+      <button class="nav-item" onclick="show('cont3')">📝 Contrato — Parceria Comercial<span class="badge">6</span></button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Orçamentos</div>
+      <button class="nav-item" onclick="show('orc1')">💰 Orçamento — Serviços<span class="badge">7</span></button>
+      <button class="nav-item" onclick="show('orc2')">💰 Orçamento — Projeto Único<span class="badge">8</span></button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">E-mails</div>
+      <button class="nav-item" onclick="show('email1')">📧 E-mail — Envio da Proposta<span class="badge">9</span></button>
+      <button class="nav-item" onclick="show('email2')">📧 E-mail — Follow-up (Dia 3)<span class="badge">10</span></button>
+      <button class="nav-item" onclick="show('email3')">📧 E-mail — Fechamento Final<span class="badge">11</span></button>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Gestão</div>
+      <button class="nav-item" onclick="show('check1')">✅ Onboarding de Cliente<span class="badge">12</span></button>
+      <button class="nav-item" onclick="show('recibo1')">🧾 Recibo de Pagamento<span class="badge">13</span></button>
+    </div>
+
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Proposta Comercial — Serviços Gerais</div>
+      <div class="topbar-meta">Campos em <span style="background:var(--accent-light);color:var(--accent);padding:1px 5px;border-radius:3px;font-size:0.78rem;font-weight:600;">azul</span> devem ser preenchidos com seus dados</div>
+    </div>
+    <button class="copy-btn" id="copy-btn" onclick="copyDoc()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copiar texto
+    </button>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- PROPOSTA 1 -->
+    <div class="doc-panel visible" id="prop1">
+      <div class="doc-notice">ℹ Substitua todos os campos destacados em azul pelos seus dados reais antes de enviar.</div>
+      <div class="doc-body">
+        <h1>Proposta Comercial</h1>
+        <div class="doc-subtitle">Preparada por <em class="field">[Seu Nome / Empresa]</em> · Data: <em class="field">[DD/MM/AAAA]</em> · Válida por 15 dias</div>
+
+        <h2>Apresentação</h2>
+        <p>Prezado(a) <em class="field">[Nome do Cliente]</em>, é com satisfação que apresento esta proposta para atendimento às suas necessidades. Sou <em class="field">[Seu Nome]</em>, especialista em <em class="field">[sua área]</em> com <em class="field">[X anos]</em> de experiência atendendo <em class="field">[tipo de cliente/segmento]</em>.</p>
+
+        <h2>Entendimento da Necessidade</h2>
+        <p>Com base em nossa conversa, entendo que <em class="field">[Nome do Cliente]</em> busca <em class="field">[descreva brevemente o que o cliente precisa]</em>. O principal desafio relatado foi <em class="field">[principal dor do cliente]</em>, e o resultado esperado é <em class="field">[resultado que o cliente quer alcançar]</em>.</p>
+
+        <h2>O Que Será Entregue</h2>
+        <ul>
+          <li><em class="field">[Entrega 1 — descreva com clareza]</em></li>
+          <li><em class="field">[Entrega 2 — descreva com clareza]</em></li>
+          <li><em class="field">[Entrega 3 — descreva com clareza]</em></li>
+        </ul>
+
+        <h2>Prazo de Execução</h2>
+        <p>Início: <em class="field">[data de início prevista]</em><br>
+        Entrega final: <em class="field">[data de entrega prevista]</em><br>
+        Formato de acompanhamento: <em class="field">[ex: reuniões semanais / relatório quinzenal]</em></p>
+
+        <h2>Investimento</h2>
+        <table>
+          <tr><th>Serviço</th><th>Valor</th></tr>
+          <tr><td><em class="field">[Descrição do serviço principal]</em></td><td><em class="field">R$ X.XXX,00</em></td></tr>
+          <tr><td><em class="field">[Serviço adicional, se houver]</em></td><td><em class="field">R$ X.XXX,00</em></td></tr>
+          <tr><td><strong>Total</strong></td><td><strong><em class="field">R$ X.XXX,00</em></strong></td></tr>
+        </table>
+        <p>Condições de pagamento: <em class="field">[ex: 50% na assinatura + 50% na entrega / parcelado em 3x]</em></p>
+
+        <h2>Próximos Passos</h2>
+        <p>Para confirmar o início do projeto, basta responder a este e-mail com sua aprovação ou entrar em contato pelo WhatsApp <em class="field">[(11) 9XXXX-XXXX]</em>. Após a confirmação, envio o contrato para assinatura e alinhamos o cronograma detalhado.</p>
+
+        <div class="sig-block">
+          <div class="sig-line"><em class="field">[Seu Nome]</em><br><em class="field">[Cargo / Especialidade]</em><br><em class="field">[E-mail]</em> · <em class="field">[Telefone]</em></div>
+          <div class="sig-line">Aprovação do Cliente<br><br><em class="field">[Nome do responsável]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROPOSTA 2 -->
+    <div class="doc-panel" id="prop2">
+      <div class="doc-notice">ℹ Substitua todos os campos destacados em azul pelos seus dados reais antes de enviar.</div>
+      <div class="doc-body">
+        <h1>Proposta de Consultoria</h1>
+        <div class="doc-subtitle">Preparada por <em class="field">[Seu Nome / Empresa]</em> · Data: <em class="field">[DD/MM/AAAA]</em> · Válida por 15 dias</div>
+
+        <h2>Sobre a Consultoria</h2>
+        <p>Esta proposta apresenta um programa de consultoria personalizado para <em class="field">[Nome da Empresa do Cliente]</em>, com foco em <em class="field">[área: ex. gestão financeira / marketing / processos operacionais]</em>.</p>
+
+        <h2>Diagnóstico Inicial</h2>
+        <p>Com base no briefing realizado em <em class="field">[data da reunião]</em>, identifiquei os seguintes pontos de atenção:</p>
+        <ul>
+          <li><em class="field">[Problema ou oportunidade 1]</em></li>
+          <li><em class="field">[Problema ou oportunidade 2]</em></li>
+          <li><em class="field">[Problema ou oportunidade 3]</em></li>
+        </ul>
+
+        <h2>Metodologia</h2>
+        <p>A consultoria será conduzida em <em class="field">[X]</em> fases:</p>
+        <ul>
+          <li><strong>Fase 1 — Diagnóstico</strong>: Levantamento de dados, entrevistas e mapeamento de processos. Duração: <em class="field">[X semanas]</em></li>
+          <li><strong>Fase 2 — Estratégia</strong>: Apresentação de plano de ação com prioridades e métricas. Duração: <em class="field">[X semanas]</em></li>
+          <li><strong>Fase 3 — Implementação</strong>: Acompanhamento da execução e ajustes. Duração: <em class="field">[X semanas]</em></li>
+        </ul>
+
+        <h2>Resultados Esperados</h2>
+        <div class="highlight-box">Ao final da consultoria, <em class="field">[Nome da Empresa]</em> terá <em class="field">[descreva o resultado concreto esperado: ex. "um processo de vendas documentado com conversão estimada X% maior" ou "redução de X% nos custos operacionais"]</em>.</div>
+
+        <h2>Investimento</h2>
+        <table>
+          <tr><th>Modalidade</th><th>Descrição</th><th>Valor</th></tr>
+          <tr><td>Pacote completo</td><td><em class="field">[X]</em> sessões + relatórios</td><td><em class="field">R$ X.XXX,00</em></td></tr>
+          <tr><td>Mensalidade (retainer)</td><td><em class="field">[X]</em> h/mês de suporte</td><td><em class="field">R$ X.XXX,00/mês</em></td></tr>
+        </table>
+
+        <div class="sig-block">
+          <div class="sig-line"><em class="field">[Consultor]</em><br><em class="field">[Especialidade]</em><br><em class="field">[Contato]</em></div>
+          <div class="sig-line">Aprovação<br><br><em class="field">[Nome / Cargo do cliente]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROPOSTA 3 -->
+    <div class="doc-panel" id="prop3">
+      <div class="doc-notice">ℹ Substitua todos os campos destacados em azul pelos seus dados reais antes de enviar.</div>
+      <div class="doc-body">
+        <h1>Proposta — Serviços de Marketing Digital</h1>
+        <div class="doc-subtitle">Agência / Freelancer: <em class="field">[Seu Nome / Agência]</em> · Data: <em class="field">[DD/MM/AAAA]</em></div>
+
+        <h2>Objetivo da Campanha</h2>
+        <p>Esta proposta foi desenvolvida para <em class="field">[Nome da Empresa]</em>, com o objetivo de <em class="field">[ex: aumentar o número de leads qualificados / fortalecer presença nas redes sociais / gerar R$ X em vendas nos próximos 90 dias]</em>.</p>
+
+        <h2>Escopo de Serviços</h2>
+        <table>
+          <tr><th>Serviço</th><th>Frequência</th><th>Detalhes</th></tr>
+          <tr><td>Gestão de Instagram</td><td><em class="field">[X posts/semana]</em></td><td>Feed + Stories + Reels</td></tr>
+          <tr><td>Gestão de Tráfego Pago</td><td>Mensal</td><td>Meta Ads / Google Ads</td></tr>
+          <tr><td>Criação de Conteúdo</td><td><em class="field">[X peças/mês]</em></td><td>Arte + Copywriting</td></tr>
+          <tr><td>Relatório de Resultados</td><td>Mensal</td><td>KPIs e insights</td></tr>
+          <tr><td><em class="field">[Serviço adicional]</em></td><td><em class="field">[Frequência]</em></td><td><em class="field">[Detalhe]</em></td></tr>
+        </table>
+
+        <h2>Investimento Mensal</h2>
+        <table>
+          <tr><th>Item</th><th>Valor</th></tr>
+          <tr><td>Fee de gestão (honorários)</td><td><em class="field">R$ X.XXX,00</em></td></tr>
+          <tr><td>Verba de mídia (investimento em anúncios)</td><td><em class="field">R$ X.XXX,00</em></td></tr>
+          <tr><td><strong>Total mensal</strong></td><td><strong><em class="field">R$ X.XXX,00</em></strong></td></tr>
+        </table>
+        <p>Contrato mínimo: <em class="field">[3 meses]</em>. Cancelamento com aviso prévio de 30 dias.</p>
+
+        <h2>Diferenciais</h2>
+        <ul>
+          <li><em class="field">[Diferencial 1 — ex: atendimento exclusivo, relatório semanal]</em></li>
+          <li><em class="field">[Diferencial 2]</em></li>
+          <li><em class="field">[Diferencial 3]</em></li>
+        </ul>
+
+        <div class="sig-block">
+          <div class="sig-line"><em class="field">[Seu Nome]</em><br><em class="field">[Agência / Freelancer]</em></div>
+          <div class="sig-line">Aprovação do Cliente<br><br><em class="field">[Nome / Data]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRATO 1 -->
+    <div class="doc-panel" id="cont1">
+      <div class="doc-notice">ℹ Substitua todos os campos destacados em azul. Para valores acima de R$ 5.000, recomende revisão com advogado.</div>
+      <div class="doc-body">
+        <h1>Contrato de Prestação de Serviços</h1>
+        <div class="doc-subtitle">Celebrado entre as partes identificadas abaixo na data de <em class="field">[DD/MM/AAAA]</em></div>
+
+        <h2>Partes</h2>
+        <p><strong>CONTRATANTE:</strong> <em class="field">[Nome completo ou Razão Social]</em>, <em class="field">[CPF/CNPJ: XX.XXX.XXX/XXXX-XX]</em>, residente/sediado em <em class="field">[endereço completo]</em>.</p>
+        <p><strong>CONTRATADO(A):</strong> <em class="field">[Seu Nome completo ou Empresa]</em>, <em class="field">[CPF/CNPJ]</em>, residente/sediado em <em class="field">[seu endereço]</em>.</p>
+
+        <h2>Cláusula 1 — Objeto do Contrato</h2>
+        <p>O(A) CONTRATADO(A) se compromete a prestar os seguintes serviços ao CONTRATANTE: <em class="field">[descrição detalhada dos serviços]</em>, conforme briefing acordado em <em class="field">[data da reunião]</em>.</p>
+
+        <h2>Cláusula 2 — Prazo</h2>
+        <p>Os serviços terão início em <em class="field">[DD/MM/AAAA]</em> e previsão de conclusão em <em class="field">[DD/MM/AAAA]</em>. Prorrogações devem ser acordadas por escrito entre as partes.</p>
+
+        <h2>Cláusula 3 — Remuneração e Pagamento</h2>
+        <p>O CONTRATANTE pagará ao CONTRATADO(A) o valor de <em class="field">R$ X.XXX,00 (valor por extenso)</em>, nas seguintes condições: <em class="field">[ex: 50% na assinatura deste contrato e 50% na entrega final]</em>.</p>
+        <p>Pagamento via: <em class="field">[PIX / TED / Boleto]</em> — Dados: <em class="field">[chave PIX / dados bancários]</em>.</p>
+        <p>Atrasos incorrem em multa de 2% + juros de 1% ao mês.</p>
+
+        <h2>Cláusula 4 — Responsabilidades do Contratante</h2>
+        <ul>
+          <li>Fornecer materiais, acessos e informações necessários em até <em class="field">[X]</em> dias úteis após solicitação.</li>
+          <li>Aprovar ou solicitar revisões em até <em class="field">[X]</em> dias úteis após cada entrega.</li>
+          <li>Designar um responsável para comunicação e tomada de decisões.</li>
+        </ul>
+
+        <h2>Cláusula 5 — Revisões e Alterações de Escopo</h2>
+        <p>Estão incluídas <em class="field">[X]</em> rodadas de revisão. Solicitações além deste limite ou alterações de escopo serão orçadas separadamente com valor mínimo de <em class="field">R$ XXX,00/hora</em>.</p>
+
+        <h2>Cláusula 6 — Confidencialidade</h2>
+        <p>Ambas as partes se comprometem a manter sigilo sobre informações confidenciais trocadas durante a execução deste contrato, pelo prazo de <em class="field">[2 anos]</em> após o encerramento.</p>
+
+        <h2>Cláusula 7 — Rescisão</h2>
+        <p>Qualquer das partes pode rescindir este contrato com aviso prévio de <em class="field">[30]</em> dias. Em caso de rescisão pelo CONTRATANTE após início dos serviços, é devida remuneração proporcional ao trabalho já executado, sem devolução do sinal pago.</p>
+
+        <h2>Cláusula 8 — Foro</h2>
+        <p>Fica eleito o foro da comarca de <em class="field">[Cidade/Estado]</em> para dirimir eventuais litígios.</p>
+
+        <div class="sig-block">
+          <div class="sig-line">CONTRATANTE<br><br>Assinatura: _________________________<br><em class="field">[Nome]</em> · <em class="field">[Data]</em></div>
+          <div class="sig-line">CONTRATADO(A)<br><br>Assinatura: _________________________<br><em class="field">[Seu Nome]</em> · <em class="field">[Data]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRATO NDA -->
+    <div class="doc-panel" id="cont2">
+      <div class="doc-notice">ℹ Modelo de Acordo de Confidencialidade (NDA). Preencha os campos antes de usar.</div>
+      <div class="doc-body">
+        <h1>Acordo de Confidencialidade (NDA)</h1>
+        <div class="doc-subtitle">Non-Disclosure Agreement · Celebrado em <em class="field">[DD/MM/AAAA]</em></div>
+
+        <h2>Partes</h2>
+        <p><strong>PARTE REVELADORA:</strong> <em class="field">[Nome / Empresa]</em>, <em class="field">[CPF/CNPJ]</em>.</p>
+        <p><strong>PARTE RECEPTORA:</strong> <em class="field">[Nome / Empresa]</em>, <em class="field">[CPF/CNPJ]</em>.</p>
+
+        <h2>1. Objeto</h2>
+        <p>Este acordo regula o compartilhamento de informações confidenciais relacionadas a <em class="field">[descreva o projeto ou relação comercial: ex. desenvolvimento de produto / parceria estratégica]</em>.</p>
+
+        <h2>2. Informações Confidenciais</h2>
+        <p>Consideram-se confidenciais todas as informações técnicas, comerciais, financeiras, estratégicas e operacionais compartilhadas entre as partes, sejam orais, escritas, digitais ou em qualquer outro formato, incluindo mas não se limitando a: planos de negócio, base de clientes, preços, processos internos, dados pessoais e propriedade intelectual.</p>
+
+        <h2>3. Obrigações da Parte Receptora</h2>
+        <ul>
+          <li>Manter sigilo absoluto sobre as informações recebidas.</li>
+          <li>Não divulgar, reproduzir ou utilizar as informações para fins além do acordado.</li>
+          <li>Restringir o acesso às informações a colaboradores com necessidade direta de conhecê-las.</li>
+          <li>Notificar imediatamente em caso de vazamento ou uso não autorizado.</li>
+        </ul>
+
+        <h2>4. Vigência</h2>
+        <p>Este acordo vigorará por <em class="field">[2 anos]</em> a partir da data de assinatura, independentemente do término da relação comercial entre as partes.</p>
+
+        <h2>5. Penalidades</h2>
+        <p>O descumprimento deste acordo sujeita a Parte Receptora ao pagamento de multa de <em class="field">R$ X.XXX,00</em>, sem prejuízo de reparação por perdas e danos adicionais, na forma da lei.</p>
+
+        <div class="sig-block">
+          <div class="sig-line">Parte Reveladora<br><br>Assinatura: _________________________<br><em class="field">[Nome]</em> · <em class="field">[Data]</em></div>
+          <div class="sig-line">Parte Receptora<br><br>Assinatura: _________________________<br><em class="field">[Nome]</em> · <em class="field">[Data]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRATO PARCERIA -->
+    <div class="doc-panel" id="cont3">
+      <div class="doc-notice">ℹ Modelo de contrato de parceria comercial. Adapte conforme o tipo de parceria.</div>
+      <div class="doc-body">
+        <h1>Contrato de Parceria Comercial</h1>
+        <div class="doc-subtitle">Celebrado em <em class="field">[DD/MM/AAAA]</em> entre as partes abaixo</div>
+
+        <h2>Partes</h2>
+        <p><strong>PARCEIRO A:</strong> <em class="field">[Nome / Empresa / CNPJ]</em>.</p>
+        <p><strong>PARCEIRO B:</strong> <em class="field">[Nome / Empresa / CNPJ]</em>.</p>
+
+        <h2>1. Objeto da Parceria</h2>
+        <p>As partes se associam com o objetivo de <em class="field">[descreva a parceria: ex. indicação mútua de clientes / prestação conjunta de serviços / co-criação de produto]</em>.</p>
+
+        <h2>2. Responsabilidades de Cada Parte</h2>
+        <p><strong>Parceiro A:</strong> <em class="field">[liste as responsabilidades]</em></p>
+        <p><strong>Parceiro B:</strong> <em class="field">[liste as responsabilidades]</em></p>
+
+        <h2>3. Distribuição de Receitas</h2>
+        <p>Os resultados financeiros provenientes da parceria serão divididos na proporção de <em class="field">[X%]</em> para o Parceiro A e <em class="field">[X%]</em> para o Parceiro B. Pagamentos serão realizados até o dia <em class="field">[X]</em> de cada mês, mediante comprovante.</p>
+
+        <h2>4. Exclusividade</h2>
+        <p><em class="field">[Esta parceria é / não é]</em> exclusiva para o segmento de <em class="field">[segmento ou região]</em> durante o período de vigência.</p>
+
+        <h2>5. Vigência e Renovação</h2>
+        <p>Vigência: <em class="field">[12 meses]</em> a partir da assinatura, com renovação automática por igual período, salvo aviso prévio de <em class="field">[30 dias]</em>.</p>
+
+        <div class="sig-block">
+          <div class="sig-line">Parceiro A<br><br>Assinatura: _________________________<br><em class="field">[Nome]</em> · <em class="field">[Data]</em></div>
+          <div class="sig-line">Parceiro B<br><br>Assinatura: _________________________<br><em class="field">[Nome]</em> · <em class="field">[Data]</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORÇAMENTO 1 -->
+    <div class="doc-panel" id="orc1">
+      <div class="doc-notice">ℹ Orçamento de serviços recorrentes. Adapte os itens e valores.</div>
+      <div class="doc-body">
+        <h1>Orçamento — Serviços Mensais</h1>
+        <div class="doc-subtitle">Emitido por <em class="field">[Seu Nome / Empresa]</em> · Data: <em class="field">[DD/MM/AAAA]</em> · Válido por 10 dias</div>
+
+        <h2>Dados do Cliente</h2>
+        <p><strong>Cliente:</strong> <em class="field">[Nome / Empresa]</em><br>
+        <strong>Responsável:</strong> <em class="field">[Nome do contato]</em><br>
+        <strong>E-mail / WhatsApp:</strong> <em class="field">[contato]</em></p>
+
+        <h2>Serviços Orçados</h2>
+        <table>
+          <tr><th>Serviço</th><th>Qtd./Freq.</th><th>Valor Unit.</th><th>Total</th></tr>
+          <tr><td><em class="field">[Serviço 1]</em></td><td><em class="field">[X/mês]</em></td><td><em class="field">R$ XXX</em></td><td><em class="field">R$ X.XXX</em></td></tr>
+          <tr><td><em class="field">[Serviço 2]</em></td><td><em class="field">[X/mês]</em></td><td><em class="field">R$ XXX</em></td><td><em class="field">R$ X.XXX</em></td></tr>
+          <tr><td><em class="field">[Serviço 3]</em></td><td><em class="field">[X/mês]</em></td><td><em class="field">R$ XXX</em></td><td><em class="field">R$ X.XXX</em></td></tr>
+          <tr><td colspan="3"><strong>Total mensal</strong></td><td><strong><em class="field">R$ X.XXX,00</em></strong></td></tr>
+        </table>
+
+        <h2>Condições</h2>
+        <ul>
+          <li>Contrato mínimo: <em class="field">[3 meses]</em></li>
+          <li>Vencimento: todo dia <em class="field">[X]</em> do mês</li>
+          <li>Pagamento via: <em class="field">[PIX / Boleto]</em></li>
+          <li>Reajuste: <em class="field">[IPCA anual]</em></li>
+        </ul>
+
+        <h2>Não Incluso</h2>
+        <ul>
+          <li><em class="field">[Item não incluso 1 — ex: verba de mídia paga]</em></li>
+          <li><em class="field">[Item não incluso 2]</em></li>
+        </ul>
+
+        <div class="sig-block">
+          <div class="sig-line"><em class="field">[Seu Nome]</em><br><em class="field">[Contato]</em></div>
+          <div class="sig-line">Aprovação do Cliente<br><br>Data: _____________________</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORÇAMENTO 2 -->
+    <div class="doc-panel" id="orc2">
+      <div class="doc-notice">ℹ Orçamento para projeto único com prazo definido.</div>
+      <div class="doc-body">
+        <h1>Orçamento — Projeto Único</h1>
+        <div class="doc-subtitle">Emitido por <em class="field">[Seu Nome / Empresa]</em> · Nº <em class="field">[001/2025]</em> · Data: <em class="field">[DD/MM/AAAA]</em></div>
+
+        <h2>Cliente</h2>
+        <p><em class="field">[Nome / Empresa / CPF ou CNPJ]</em> · <em class="field">[E-mail]</em> · <em class="field">[Telefone]</em></p>
+
+        <h2>Escopo do Projeto</h2>
+        <p><em class="field">[Descreva o projeto com clareza: o que será feito, como e com qual objetivo]</em></p>
+
+        <h2>Detalhamento de Valores</h2>
+        <table>
+          <tr><th>Etapa</th><th>Descrição</th><th>Valor</th></tr>
+          <tr><td>Etapa 1</td><td><em class="field">[Planejamento / Briefing]</em></td><td><em class="field">R$ X.XXX</em></td></tr>
+          <tr><td>Etapa 2</td><td><em class="field">[Desenvolvimento / Execução]</em></td><td><em class="field">R$ X.XXX</em></td></tr>
+          <tr><td>Etapa 3</td><td><em class="field">[Entrega / Ajustes finais]</em></td><td><em class="field">R$ X.XXX</em></td></tr>
+          <tr><td colspan="2"><strong>Total do Projeto</strong></td><td><strong><em class="field">R$ X.XXX,00</em></strong></td></tr>
+        </table>
+
+        <h2>Forma de Pagamento</h2>
+        <p><em class="field">[Ex: 30% na aprovação do orçamento + 40% na entrega intermediária + 30% na entrega final]</em></p>
+
+        <h2>Prazo</h2>
+        <p>Início: <em class="field">[DD/MM/AAAA]</em> · Entrega: <em class="field">[DD/MM/AAAA]</em></p>
+        <p>O prazo está condicionado ao recebimento dos materiais necessários pelo cliente em até <em class="field">[X dias úteis]</em> após aprovação.</p>
+
+        <div class="sig-block">
+          <div class="sig-line"><em class="field">[Prestador]</em><br><em class="field">[Contato]</em></div>
+          <div class="sig-line">Cliente aprovado em<br><br>Data: _____________________</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMAIL 1 -->
+    <div class="doc-panel" id="email1">
+      <div class="doc-notice">ℹ E-mail de envio da proposta. Cole no corpo do e-mail ou no WhatsApp.</div>
+      <div class="doc-body">
+        <h1>E-mail — Envio da Proposta</h1>
+        <div class="doc-subtitle">Usar no momento de enviar a proposta ao cliente</div>
+
+        <h2>Assunto do E-mail</h2>
+        <p><strong>Proposta Comercial — <em class="field">[Nome da Empresa do Cliente]</em> × <em class="field">[Seu Nome/Empresa]</em></strong></p>
+
+        <h2>Corpo do E-mail</h2>
+        <p>Olá, <em class="field">[Nome do Cliente]</em>!</p>
+        <p>Foi um prazer conversar com você <em class="field">[hoje / na [data]]</em>. Como combinamos, estou enviando a proposta para <em class="field">[descreva brevemente o serviço: ex. gestão das redes sociais da empresa / desenvolvimento do site / consultoria de precificação]</em>.</p>
+        <p>Na proposta você encontrará:</p>
+        <ul>
+          <li>Entendimento das suas necessidades</li>
+          <li>O que será entregue, com prazos</li>
+          <li>Investimento e formas de pagamento</li>
+        </ul>
+        <p>Preparei tudo com base no que você me contou, então está bem alinhado com o que você precisa. Se tiver alguma dúvida ou quiser ajustar algo, é só me chamar.</p>
+        <p>A proposta é válida por <em class="field">[15 dias]</em>. Para avançar, basta me confirmar por e-mail ou pelo WhatsApp <em class="field">[(11) 9XXXX-XXXX]</em>.</p>
+        <p>Fico à disposição!</p>
+        <p>Abraços,<br><strong><em class="field">[Seu Nome]</em></strong><br><em class="field">[Cargo / Especialidade]</em><br><em class="field">[WhatsApp]</em> · <em class="field">[E-mail]</em></p>
+      </div>
+    </div>
+
+    <!-- EMAIL 2 -->
+    <div class="doc-panel" id="email2">
+      <div class="doc-notice">ℹ Follow-up enviado 3 dias após a proposta, sem pressão. Tom leve e prestativo.</div>
+      <div class="doc-body">
+        <h1>E-mail — Follow-up (Dia 3)</h1>
+        <div class="doc-subtitle">Enviar 3 dias após o envio da proposta sem resposta</div>
+
+        <h2>Assunto</h2>
+        <p><strong>Re: Proposta Comercial — alguma dúvida?</strong></p>
+
+        <h2>Corpo</h2>
+        <p>Olá, <em class="field">[Nome]</em>!</p>
+        <p>Tudo bem? Passei para checar se a proposta chegou bem e se surgiu alguma dúvida que eu possa te ajudar a esclarecer.</p>
+        <p>Às vezes um detalhe ou outro gera questionamento — seja sobre o escopo, o prazo ou os valores — e prefiro deixar tudo claro antes do que você ficar com dúvida no ar.</p>
+        <p>Se quiser, posso agendar uma chamada rápida de 15 minutos para conversar. É só me falar o melhor horário.</p>
+        <p>Abraços,<br><strong><em class="field">[Seu Nome]</em></strong><br><em class="field">[WhatsApp]</em></p>
+      </div>
+    </div>
+
+    <!-- EMAIL 3 -->
+    <div class="doc-panel" id="email3">
+      <div class="doc-notice">ℹ E-mail de fechamento final. Cria urgência sem pressionar. Enviar 7–10 dias após a proposta.</div>
+      <div class="doc-body">
+        <h1>E-mail — Fechamento Final</h1>
+        <div class="doc-subtitle">Enviar 7 a 10 dias após a proposta sem resposta definitiva</div>
+
+        <h2>Assunto</h2>
+        <p><strong>Última oportunidade — agenda para <em class="field">[mês]</em></strong></p>
+
+        <h2>Corpo</h2>
+        <p>Olá, <em class="field">[Nome]</em>!</p>
+        <p>Não quero te pressionar, mas como minha agenda para <em class="field">[mês]</em> está quase completa, precisarei confirmar os projetos até <em class="field">[data]</em>. Após essa data, só consigo iniciar em <em class="field">[próximo mês disponível]</em>.</p>
+        <p>Se você ainda tiver interesse em avançar, é só me confirmar agora e eu já reservo o espaço para você. Podemos ajustar qualquer detalhe da proposta se precisar — estou aqui para isso.</p>
+        <p>Caso este não seja o momento certo, tudo bem também. Só me avise para eu liberar a agenda e podemos conversar novamente quando fizer mais sentido para você.</p>
+        <p>Abraços,<br><strong><em class="field">[Seu Nome]</em></strong><br><em class="field">[WhatsApp]</em></p>
+      </div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="doc-panel" id="check1">
+      <div class="doc-notice">ℹ Checklist de onboarding. Use logo após o fechamento para iniciar o projeto com profissionalismo.</div>
+      <div class="doc-body">
+        <h1>Checklist de Onboarding de Cliente</h1>
+        <div class="doc-subtitle">Processo de início de projeto — use após a aprovação do contrato</div>
+
+        <h2>Dados a Coletar do Cliente</h2>
+        <ul>
+          <li>☐ Nome completo / Razão Social e CPF/CNPJ</li>
+          <li>☐ Endereço completo (para contrato)</li>
+          <li>☐ E-mail e WhatsApp do responsável pelo projeto</li>
+          <li>☐ Dados de faturamento / NF</li>
+          <li>☐ Dados bancários ou chave PIX para eventuais reembolsos</li>
+        </ul>
+
+        <h2>Materiais a Solicitar</h2>
+        <ul>
+          <li>☐ Logo em alta resolução (PNG com fundo transparente)</li>
+          <li>☐ Manual de marca / guia de identidade visual (se houver)</li>
+          <li>☐ Senha de acessos necessários: <em class="field">[ex: Instagram, Google Analytics, painel do site]</em></li>
+          <li>☐ Materiais de referência ou inspiração</li>
+          <li>☐ <em class="field">[Outros materiais específicos do projeto]</em></li>
+        </ul>
+
+        <h2>Documentos a Enviar ao Cliente</h2>
+        <ul>
+          <li>☐ Contrato assinado (arquivo PDF)</li>
+          <li>☐ Recibo do sinal de pagamento</li>
+          <li>☐ Cronograma detalhado com marcos e entregas</li>
+          <li>☐ Canal de comunicação definido: <em class="field">[WhatsApp / E-mail / Slack / Notion]</em></li>
+        </ul>
+
+        <h2>Alinhamentos Iniciais</h2>
+        <ul>
+          <li>☐ Reunião de kickoff agendada para: <em class="field">[DD/MM/AAAA às HH:MM]</em></li>
+          <li>☐ Definição de tom de voz e estilo de comunicação</li>
+          <li>☐ Definição de quem aprova entregas do lado do cliente</li>
+          <li>☐ Explicação do processo de revisões e prazos para feedback</li>
+          <li>☐ Combinado: o que acontece em caso de atraso do cliente</li>
+        </ul>
+
+        <div class="highlight-box">Dica: compartilhe este checklist preenchido com o cliente logo após a assinatura. Demonstra organização e já define expectativas claras desde o primeiro dia.</div>
+      </div>
+    </div>
+
+    <!-- RECIBO -->
+    <div class="doc-panel" id="recibo1">
+      <div class="doc-notice">ℹ Recibo simples de pagamento. Válido como comprovante informal; para NF use o sistema da sua cidade.</div>
+      <div class="doc-body">
+        <h1>Recibo de Pagamento</h1>
+        <div class="doc-subtitle">Nº <em class="field">[001/2025]</em> · Emitido em <em class="field">[DD/MM/AAAA]</em></div>
+
+        <h2>Emissor</h2>
+        <p><em class="field">[Seu Nome completo]</em>, <em class="field">[CPF/CNPJ: XXX.XXX.XXX-XX]</em>, residente em <em class="field">[endereço]</em>.</p>
+
+        <h2>Pagador</h2>
+        <p><em class="field">[Nome / Empresa do cliente]</em>, <em class="field">[CPF/CNPJ]</em>.</p>
+
+        <h2>Descrição do Pagamento</h2>
+        <table>
+          <tr><th>Descrição</th><th>Valor</th></tr>
+          <tr><td><em class="field">[Ex: Sinal referente ao contrato de prestação de serviços de design]</em></td><td><em class="field">R$ X.XXX,00</em></td></tr>
+          <tr><td><strong>Total recebido</strong></td><td><strong><em class="field">R$ X.XXX,00 (valor por extenso)</em></strong></td></tr>
+        </table>
+
+        <h2>Forma de Pagamento</h2>
+        <p><em class="field">[PIX / Transferência bancária / Dinheiro]</em> · Comprovante nº <em class="field">[XXXX]</em> (se aplicável)</p>
+
+        <h2>Referência</h2>
+        <p>Referente ao contrato celebrado em <em class="field">[DD/MM/AAAA]</em> para prestação de <em class="field">[descrição do serviço]</em>.</p>
+
+        <p style="margin-top:32px;font-size:0.85rem;color:var(--text-muted);">Declaro ter recebido a importância acima descrita, dando plena e geral quitação pelo valor referenciado.</p>
+
+        <div class="sig-block">
+          <div class="sig-line"><em class="field">[Cidade]</em>, <em class="field">[DD/MM/AAAA]</em><br><br>Assinatura: _________________________<br><em class="field">[Seu Nome]</em></div>
+          <div class="sig-line"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+const titles = {
+  prop1: 'Proposta Comercial — Serviços Gerais',
+  prop2: 'Proposta de Consultoria',
+  prop3: 'Proposta — Marketing Digital',
+  cont1: 'Contrato de Prestação de Serviços',
+  cont2: 'Acordo de Confidencialidade (NDA)',
+  cont3: 'Contrato de Parceria Comercial',
+  orc1: 'Orçamento — Serviços Mensais',
+  orc2: 'Orçamento — Projeto Único',
+  email1: 'E-mail — Envio da Proposta',
+  email2: 'E-mail — Follow-up (Dia 3)',
+  email3: 'E-mail — Fechamento Final',
+  check1: 'Checklist de Onboarding de Cliente',
+  recibo1: 'Recibo de Pagamento',
+};
+
+let current = 'prop1';
+
+function show(id) {
+  document.querySelectorAll('.doc-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById(id);
+  if (panel) panel.classList.add('visible');
+  document.querySelectorAll('.nav-item').forEach(b => {
+    if (b.getAttribute('onclick') === `show('${id}')`) b.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = 'Copiar texto';
+  btn.classList.remove('copied');
+  current = id;
+  // scroll to top on mobile
+  const content = document.getElementById('content');
+  if (content) content.scrollTop = 0;
+}
+
+function copyDoc() {
+  const panel = document.getElementById(current);
+  if (!panel) return;
+  const text = panel.innerText || panel.textContent;
+  const btn = document.getElementById('copy-btn');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerHTML = '✓ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar texto';
+      btn.classList.remove('copied');
+    }, 2500);
+  }).catch(() => {
+    // fallback: select text
+    const range = document.createRange();
+    range.selectNodeContents(panel);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    btn.innerHTML = '✓ Texto selecionado';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar texto';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+}
+</script>
