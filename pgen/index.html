@@ -14216,10 +14216,28 @@ function buildPoseBlock(rawPT){
     sup: true
   };
   if(isKneeling) return {
-    sd:  '(kneeling:1.8), (from behind:1.7), (rear view:1.7), knees on surface, upright torso, back facing camera',
-    mj:  'kneeling from behind, back to camera, rear view',
-    neg: 'standing, front view, facing camera, side profile',
-    sup: true
+    sd:  '(kneeling:1.8), knees on surface, upright torso, (facing camera:1.7), (front view:1.7)',
+    mj:  'kneeling, facing camera, front view, upright torso',
+    neg: 'standing, from behind, rear view, side profile',
+    sup: false
+  };
+  if(isSitting) return {
+    sd:  '(sitting:1.8), (seated pose:1.7), (facing camera:1.6), (front view:1.6)',
+    mj:  'sitting, facing camera, front view, seated pose',
+    neg: 'standing, from behind, rear view, side profile',
+    sup: false
+  };
+  if(isSquatting) return {
+    sd:  '(squatting:1.8), (deep squat position:1.7), (facing camera:1.6), thighs parallel to ground',
+    mj:  'squatting, facing camera, deep squat position',
+    neg: 'standing, from behind, rear view, side profile',
+    sup: false
+  };
+  if(isStanding) return {
+    sd:  '(standing:1.7), (upright posture:1.6), (facing camera:1.6), (front view:1.6)',
+    mj:  'standing, facing camera, front view, upright posture',
+    neg: 'sitting, from behind, rear view, side profile',
+    sup: false
   };
   if(isOverShoulder) return {
     sd:  '(looking over her shoulder:1.8), body turned away from camera, face partially visible, three-quarter rear view',
