@@ -17124,6 +17124,25 @@ function buildPrompt(englishText, rawPT){
   const _styleChipFull    = (typeof chipState !== 'undefined' && chipState.style)   ? chipState.style   : '';
   const _lensChipFull     = (typeof chipState !== 'undefined' && chipState.lens)    ? chipState.lens    : '';
 
+  // ── Effective pose key — inferred from description when no pose selected ──
+  // Must be computed EARLY so _autoFilmStock, outfit picker, and auto-extras
+  // all use the same scene-aware key even when selectedPoseKey is empty.
+  let _effectivePoseKey = selectedPoseKey || '';
+  if(!_effectivePoseKey && englishText){
+    const _eLow = englishText.toLowerCase();
+    if(/beach|pool|piscina|praia|ocean|sea|swim|wave|sand/.test(_eLow))              _effectivePoseKey = 'beach-natural';
+    else if(/gym|workout|fitness|exercise|training|lift|dumbbell|barbell/.test(_eLow)) _effectivePoseKey = 'gym-generic';
+    else if(/yoga|pilates|stretch|meditat/.test(_eLow))                               _effectivePoseKey = 'yoga-generic';
+    else if(/danc|club|nightclub|dance|twerk/.test(_eLow))                            _effectivePoseKey = 'dance-generic';
+    else if(/boudoir|lingerie|intimate|bedroom|bed\b|deitada/.test(_eLow))            _effectivePoseKey = 'boudoir-lying';
+    else if(/lying|deitad|lie down|bed\b/.test(_eLow))                               _effectivePoseKey = 'lying-side';
+    else if(/sitting|sentada|chair|sofa|cadeira/.test(_eLow))                        _effectivePoseKey = 'sitting-front';
+    else if(/kneeling|joelho|ajoelhada/.test(_eLow))                                 _effectivePoseKey = 'kneeling-front';
+    else if(/model|runway|editorial|fashion|passarela/.test(_eLow))                   _effectivePoseKey = 'model-runway-walk';
+    else if(/outdoor|nature|sunset|golden.?hour|park|forest/.test(_eLow))            _effectivePoseKey = 'outdoor-sunset';
+    else                                                                               _effectivePoseKey = 'standing-front';
+  }
+
   // ── Film stock — declared HERE (before FLUX/MJ/GPT blocks) to avoid TDZ ──
   // _autoFilmStock is referenced inside FLUX, MJ and GPT early-return blocks.
   // With `const`, hoisting puts the binding in scope at function entry but the
@@ -17132,7 +17151,7 @@ function buildPrompt(englishText, rawPT){
   const _selFilmStock = getFilmStock();
   const _autoFilmStock = (() => {
     if(_selFilmStock) return _selFilmStock;
-    const _sk = (selectedPoseKey || '').toLowerCase();
+    const _sk = _effectivePoseKey.toLowerCase();
     const _cenLow = _cenarioChipFull.toLowerCase();
     if(_sk.includes('night') || _sk.includes('club') || _cenLow.includes('night') || _cenLow.includes('club') || _cenLow.includes('neon'))
       return 'Cinestill 800T pushed tungsten film';
@@ -17246,7 +17265,7 @@ function buildPrompt(englishText, rawPT){
       buildPrompt._lastOutfit = _p2Str;
     } else {
       // pose text passed clothing check but no matches extracted — use auto-outfit fallback
-      const _p2Auto = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+      const _p2Auto = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(_effectivePoseKey || selectedPoseKey || '');
       buildPrompt._lastOutfit = _p2Auto || '';
       if(_p2Auto){
         _sdClothingTerms = `(${_p2Auto}:2.0), (keep outfit on:1.9), (fully clothed:1.8),`;
@@ -17255,7 +17274,7 @@ function buildPrompt(englishText, rawPT){
     }
   } else if(!_wantsNude){
     // Priority 3: picker selection (chipState.outfit when _autoOutfitActive=true) → _POSE_OUTFIT_MAP → cached → fresh random
-    const _poseOutfit = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+    const _poseOutfit = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(_effectivePoseKey || selectedPoseKey || '');
     // Priority 4: scene-based outfit fallback (beach→bikini, indoor→lingerie, etc.)
     const _sceneOutfit = expandScene._lastSceneOutfit || '';
     const _autoOutfit = _poseOutfit || _sceneOutfit;
@@ -17269,24 +17288,8 @@ function buildPrompt(englishText, rawPT){
     }
   }
 
-  // ── Auto pose extras: camera angle, accessories, makeup — by selected pose key ──
-  // When no pose is selected, infer a virtual pose category from the description text
-  // so that all auto-extras (camera, accessories, makeup, lighting, etc.) still fire.
-  let _effectivePoseKey = selectedPoseKey || '';
-  if(!_effectivePoseKey && englishText){
-    const _eLow = englishText.toLowerCase();
-    if(/beach|pool|piscina|praia|ocean|sea|swim|wave|sand/.test(_eLow))             _effectivePoseKey = 'beach-natural';
-    else if(/gym|workout|fitness|exercise|training|lift|dumbbell|barbell/.test(_eLow)) _effectivePoseKey = 'gym-generic';
-    else if(/yoga|pilates|stretch|meditat/.test(_eLow))                              _effectivePoseKey = 'yoga-generic';
-    else if(/danc|club|nightclub|dance|twerk/.test(_eLow))                           _effectivePoseKey = 'dance-generic';
-    else if(/boudoir|lingerie|intimate|bedroom|bed\b|deitada/.test(_eLow))           _effectivePoseKey = 'boudoir-lying';
-    else if(/lying|deitad|lie down|bed\b/.test(_eLow))                              _effectivePoseKey = 'lying-side';
-    else if(/sitting|sentada|chair|sofa|cadeira/.test(_eLow))                       _effectivePoseKey = 'sitting-front';
-    else if(/kneeling|joelho|ajoelhada/.test(_eLow))                                _effectivePoseKey = 'kneeling-front';
-    else if(/model|runway|editorial|fashion|passarela/.test(_eLow))                  _effectivePoseKey = 'model-runway-walk';
-    else if(/outdoor|nature|sunset|golden hour|park|forest|nature/.test(_eLow))     _effectivePoseKey = 'outdoor-sunset';
-    else                                                                              _effectivePoseKey = 'standing-front';
-  }
+  // ── Auto pose extras: camera angle, accessories, makeup — by effective pose key ──
+  // _effectivePoseKey was computed early (before _autoFilmStock) so it is already set.
   const _poseAutoExtras = (typeof getPoseAutoExtras === 'function')
     ? getPoseAutoExtras(_effectivePoseKey)
     : {camera:'', accessories:'', makeup:'', colorPalette:'', hairStyle:'', lightPhysics:'', contactPoints:'', gazeDirection:'', dofSpec:''};
@@ -17690,7 +17693,7 @@ function buildPrompt(englishText, rawPT){
     } else if(!_wn2){
       // Priority: picker selection → _POSE_OUTFIT_MAP → _cachedPoseOutfit → fresh random
       // _autoOutfitActive=true means user chose (or accepted default) from the outfit picker
-      const _poseOut = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(selectedPoseKey || '');
+      const _poseOut = (_autoOutfitActive && chipState.outfit) || (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || _cachedPoseOutfit || getPoseSensualOutfit(_effectivePoseKey || selectedPoseKey || '');
       const _sceneOut = expandScene._lastSceneOutfit || '';
       const _out = _poseOut || _sceneOut;
       if(_out){
