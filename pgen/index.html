@@ -335,12 +335,28 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 /* ── POSE / OUTFIT SECTIONS HIDDEN — description-only mode ─────── */
 #section-pose{display:none!important;}
 #pose-preview-card{display:none!important;}
-/* ── CORPO / CABELO HIDDEN — use description instead ──────────── */
-#qchips-corpo,#qchips-corpo~*,
-#qchips-cabelo,#qchips-cabelo~*{display:none!important;}
-#qchips-corpo,#qchips-cabelo{display:none!important;}
+/* ── SIMPLIFIED UI: apenas Idade + Descrição + Gerar ──────────── */
+/* Ocultar tudo em #section-char exceto a seção de Idade */
+#btn-pin, .btn-pin,
+#saved-chars-panel,
+#closeup-toggle-wrap,
+#auto-charlock-badge,
+#auto-char-preview,
+[id^="atog-"],
 .quick-chip-section:has(#qchips-corpo),
-.quick-chip-section:has(#qchips-cabelo){display:none!important;}
+.quick-chip-section:has(#qchips-cabelo),
+.quick-chip-section:has(#qchips-olhos),
+.quick-chip-section:has(#qchips-rosto),
+.quick-chip-section:has(#qchips-labios),
+.quick-chip-section:has(#face-tracos-input),
+#section-face-ref,
+.quick-chip-section:has(#qchips-iluminacao),
+.quick-chip-section:has(#qchips-estilo-foto),
+.quick-chip-section:has(#qchips-film-stock),
+.quick-chip-section:has(#qchips-lens-cam),
+.quick-chip-section:has(#qchips-skin-marks),
+.quick-chip-section:has(#qchips-tatuagens),
+.quick-chip-section:has(#qchips-piercings) { display:none!important; }
 /* ── POSE PREVIEW PANEL ────────────────────────────────────────── */
 .pose-preview-card{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:12px 16px;margin-bottom:14px;}
 .pose-preview-name{font-size:0.82em;font-weight:700;color:#166534;margin-bottom:6px;}
