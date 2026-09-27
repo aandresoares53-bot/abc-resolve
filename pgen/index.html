@@ -18155,9 +18155,10 @@ async function generate(){
     return;
   }
 
-  // ── Auto-complete: se nenhum chip de personagem está ativo, escolhe aleatoriamente ─
-  // Isso garante que qualquer geração tenha pelo menos etnia + corpo + cabelo básicos.
-  if(!quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo && !_quickPre && !hasPreset){
+  // ── Auto-complete: só dispara quando NÃO há descrição digitada pelo usuário ─
+  // Se o usuário já digitou uma descrição, ela é a fonte autoritativa de personagem —
+  // não conflitar com auto-complete de etnia/corpo/cabelo aleatórios.
+  if(!raw && !quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo && !_quickPre && !hasPreset){
     try{ _autoCompleteCharacter(); }catch(e){}
     // Re-capture after auto-complete — chip state changed, so _quickPre must match
     // what buildPrompt() will see via getQuickPreset(), otherwise _sceneOnly is computed
