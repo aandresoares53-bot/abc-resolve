@@ -332,6 +332,9 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 [data-theme="dark"] .mj-ref-group input[type=url]{background:#0f0a1e;border-color:#4c1d95;color:#c4b5fd;}
 [data-theme="dark"] .mj-params-label,[data-theme="dark"] .mj-param-group label,[data-theme="dark"] .mj-ref-group label{color:#a78bfa;}
 
+/* ── POSE / OUTFIT SECTIONS HIDDEN — description-only mode ─────── */
+#section-pose{display:none!important;}
+#pose-preview-card{display:none!important;}
 /* ── POSE PREVIEW PANEL ────────────────────────────────────────── */
 .pose-preview-card{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:12px 16px;margin-bottom:14px;}
 .pose-preview-name{font-size:0.82em;font-weight:700;color:#166534;margin-bottom:6px;}
@@ -1104,17 +1107,17 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     </div>
     <!-- ── END SELECTIONS ─────────────────────────────────────────────────── -->
 
-    <!-- DESCRIÇÃO — vem após a pose e os chips de personagem -->
+    <!-- DESCRIÇÃO — campo principal e obrigatório -->
     <div class="input-label-row" style="margin-top:14px;margin-bottom:6px;">
-      <label class="input-label" for="user-description">✏️ Descrição adicional <span style="font-weight:400;font-size:0.88em;opacity:0.6;">— opcional</span></label>
+      <label class="input-label" for="user-description">✏️ Descrição <span style="font-weight:700;font-size:0.88em;color:#dc2626;">— obrigatória</span></label>
     </div>
     <textarea
       id="user-description"
       class="user-input-textarea"
-      placeholder="Opcional — Ex: mulher brasileira, loira, 25 anos, praia ao pôr do sol… (se vazio, a pose define a cena automaticamente)"
+      placeholder="Ex: mulher brasileira, loira, 25 anos, praia ao pôr do sol, biquíni… Descreva o que você quer gerar."
       rows="4"
     ></textarea>
-    <p class="input-hint">💡 Opcional — selecione uma pose e clique em Gerar. A cena é definida automaticamente pela pose escolhida.</p>
+    <p class="input-hint">💡 Descreva a cena, personagem e contexto. O prompt será gerado automaticamente com câmera, iluminação, roupa e maquiagem baseados na sua descrição.</p>
     <div class="auto-notice" id="auto-detect-notice"></div>
   </div>
 
@@ -12708,7 +12711,7 @@ async function generateSmartVariations(){
   const hasPreset = typeof activePreset !== 'undefined' && activePreset;
   const _qp = getQuickPreset();
   const _userSceneVar = _getUserSceneText();
-  if(!_userSceneVar && !selectedPoseKey && !hasPreset && !_qp){ toast('⚠️ Selecione uma pose ou personagem'); return; }
+  if(!_userSceneVar && !hasPreset && !_qp){ toast('⚠️ Digite uma descrição para gerar o prompt'); document.getElementById('user-description')?.focus(); return; }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneVar || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_qp, hasPreset ? _presetText(activePreset) : '', sceneText].filter(Boolean).join(', ');
@@ -18126,10 +18129,11 @@ async function generate(){
   if(raw) detectModelFromText(raw);
   const hasPreset = typeof activePreset !== 'undefined' && activePreset;
 
-  // Require at least a pose OR description OR preset OR chips
+  // Require description — it is now the sole mandatory input
   let _quickPre = getQuickPreset();
-  if(!raw && !selectedPoseKey && !hasPreset && !_quickPre){
-    toast('⚠️ Selecione uma pose ou personagem');
+  if(!raw && !hasPreset && !_quickPre){
+    toast('⚠️ Digite uma descrição para gerar o prompt');
+    document.getElementById('user-description')?.focus();
     return;
   }
 
@@ -18383,7 +18387,7 @@ async function generateSequence(){
   const hasPreset = typeof activePreset !== 'undefined' && activePreset;
   const _quickPre = getQuickPreset();
   const _userSceneSeq = _getUserSceneText();
-  if(!_userSceneSeq && !selectedPoseKey && !hasPreset && !_quickPre){ toast('⚠️ Selecione uma pose ou personagem'); return; }
+  if(!_userSceneSeq && !hasPreset && !_quickPre){ toast('⚠️ Digite uma descrição para gerar o prompt'); document.getElementById('user-description')?.focus(); return; }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
   const sceneText = _userSceneSeq || _cachedPoseScene || getDefaultSceneForPose(selectedPoseKey || '');
   const rawFull = [_quickPre, hasPreset ? _presetText(activePreset) : '', sceneText].filter(Boolean).join(', ');
@@ -20800,8 +20804,9 @@ async function generateVariations(){
   const hasPreset = typeof activePreset !== 'undefined' && activePreset;
   const _quickPre2 = getQuickPreset();
   const _userSceneV2 = _getUserSceneText();
-  if(!_userSceneV2 && !selectedPoseKey && !hasPreset && !_quickPre2){
-    toast('⚠️ Selecione uma pose ou personagem');
+  if(!_userSceneV2 && !hasPreset && !_quickPre2){
+    toast('⚠️ Digite uma descrição para gerar o prompt');
+    document.getElementById('user-description')?.focus();
     return;
   }
   _cachedPoseOutfit = (selectedPoseKey && _POSE_OUTFIT_MAP[selectedPoseKey]) || (selectedPoseKey ? getPoseSensualOutfit(selectedPoseKey) : '');
