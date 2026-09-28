@@ -2820,8 +2820,48 @@ function val(id){
 
 // ── PT → EN TRANSLATION ──────────────────────────────────────────────────────
 // Rules applied longest-match first. NO generic prepositions — they break English words.
+// ── Semantic pre-processor: decompose common PT description patterns ─────────
+// Converts natural phrases like "loira de 19 anos apenas de calcinha e sutiã
+// deitada na cama com as pernas abertas e as mãos nos cabelos" into structured
+// English that the prompt builder can parse correctly.
+function semanticPreProcess(text){
+  if(!text) return text;
+  let t = text;
+
+  // Pattern: "apenas de [clothing] [pose]" → "wearing only [clothing], [pose]"
+  t = t.replace(/apenas\s*de\s*(calcinha\s*e\s*suti[ãa]|suti[ãa]\s*e\s*calcinha)/gi,
+    'wearing only panties and bra,');
+  t = t.replace(/apenas\s*de\s*(calcinha)/gi, 'wearing only panties,');
+  t = t.replace(/apenas\s*de\s*(suti[ãa])/gi, 'wearing only bra,');
+  t = t.replace(/apenas\s*de\s*(biquíni|biquini)/gi, 'wearing only bikini,');
+  t = t.replace(/apenas\s*de\s*(lingerie)/gi, 'wearing only lingerie,');
+
+  // Pattern: "[color] de [age] anos" → "[age]-year-old [color]"
+  t = t.replace(/(loira|loiro|morena|moreno|ruiva|ruivo|negra|negro|preta|preto|asiática|latina)\s*de\s*(\d{2})\s*anos?/gi,
+    (_, color, age) => `${age}-year-old ${color}`);
+
+  // Pattern: "deitada na cama com as pernas abertas" → structured
+  t = t.replace(/deitada\s*na\s*cama\s*com\s*as\s*pernas\s*abertas/gi,
+    'lying on her back on bed, legs spread open, thighs apart,');
+  t = t.replace(/deitada\s*na\s*cama/gi, 'lying on her back on bed,');
+
+  // Pattern: "com as mãos nos cabelos" → gesture descriptor
+  t = t.replace(/com\s*as?\s*m[ãa]os?\s*nos?\s*cabelos?/gi,
+    'hands in her hair, fingers running through hair,');
+
+  // Pattern: "com as pernas abertas" standalone
+  t = t.replace(/com\s*as\s*pernas\s*abertas/gi, 'with legs spread open, thighs apart,');
+
+  // Pattern: "de [age] anos" → "[age] years old"
+  t = t.replace(/\bde\s*(\d{2})\s*anos?\b/gi, (_, age) => `${age} years old`);
+
+  return t;
+}
+
 function translatePT(text){
   if(!text) return text;
+  // Apply semantic pre-processing before regex translation
+  text = semanticPreProcess(text);
   const rules = [
     // ── POSES & POSITIONS (multi-word first) ──
     [/de costas olhando para tr[aá]s/gi, 'from behind looking back seductively'],
@@ -17178,7 +17218,34 @@ function buildPrompt(englishText, rawPT){
     return { prompt: ip, negative: SD_NEG_PREFIX + ', ' + NEGATIVE };
   }
   // Selected pose from UI takes full priority over text detection
-  const pose = selectedPose || buildPoseBlock(rawPT || englishText);
+  let pose = selectedPose || buildPoseBlock(rawPT || englishText);
+
+  // ── Inject gesture modifiers into pose SD block ────────────────────────────
+  // Gestures described in text (hands in hair, biting lip, etc.) get SD weights
+  // added to the pose block so they appear early in the prompt with high priority.
+  if(pose && !selectedPose){
+    const _gestureText = (rawPT || englishText || '').toLowerCase();
+    const _gestureTerms = [];
+    if(/m[ãa]os?\s*nos?\s*cabelos?|hands?\s*in\s*hair|fingers?\s*in\s*hair/.test(_gestureText))
+      _gestureTerms.push('(both hands in hair:1.8), (fingers running through hair:1.7), (hands tangled in hair:1.7)');
+    if(/m[ãa]o\s*no\s*rosto|hand\s*on\s*face|touching\s*face/.test(_gestureText))
+      _gestureTerms.push('(hand touching face:1.7), (fingers near lips:1.6)');
+    if(/bra[çc]os?\s*abertos?|arms?\s*open|arms?\s*wide/.test(_gestureText))
+      _gestureTerms.push('(arms spread open:1.7), (arms extended outward:1.6)');
+    if(/m[ãa]os?\s*no\s*corpo|touching\s*(her\s*)?(body|torso|belly)/.test(_gestureText))
+      _gestureTerms.push('(hands on body:1.7), (touching her torso:1.6)');
+    if(_gestureTerms.length > 0){
+      const _gStr = _gestureTerms.join(', ');
+      pose = {
+        sd:       (pose.sd       || '') + (_gestureTerms.length ? ', ' + _gStr : ''),
+        sd_start: (pose.sd_start || ''),
+        sd_end:   (pose.sd_end   || ''),
+        mj:       (pose.mj       || ''),
+        neg:      (pose.neg      || ''),
+        sup:      pose.sup
+      };
+    }
+  }
   // Pre-compute pose direction flags — used for neg strengthening and pose anchor below
   const _poseStartRaw = (pose.sd_start || pose.sd || '').toLowerCase();
   const _poseIsOverShoulder = /(looking over shoulder|looking back over|face partially visible)/.test(_poseStartRaw);
@@ -17257,6 +17324,16 @@ function buildPrompt(englishText, rawPT){
     // Back poses: face is hidden — expression chips are irrelevant and pollute expandScene detection
     if(chipState.expression && !pose.sup && !_poseIsBack)
       inputText = inputText + ', ' + chipState.expression;
+  }
+
+  // ── Auto-inject bedroom scene when lying on bed and no scene chip selected ──
+  if(!_cenarioChipFull && !_sceneChipFull){
+    const _inputLow = inputText.toLowerCase();
+    const _isLyingOnBed = /deitada|lying.*bed|lying down|on.*bed|bed\b|cama\b/.test(_inputLow);
+    const _hasScene = /beach|pool|praia|hotel|park|forest|outdoor|studio|kitchen|living room|rua|street/.test(_inputLow);
+    if(_isLyingOnBed && !_hasScene){
+      inputText = 'luxury bedroom, soft natural window light, white linen bedsheets, intimate boudoir atmosphere, ' + inputText;
+    }
   }
 
   // pass skipExpression=true for back poses and explicit poses — prevents face/expression terms from leaking
@@ -19671,7 +19748,24 @@ function _getCameraSpec(poseKey){
 // ── SKIN REALISM per ethnicity ───────────────────────────────────────────────
 function getEtniaSkinBoost(){
   const e = (quickChipState.etnia || '').toLowerCase();
-  if(!e) return '';
+  if(!e){
+    // Infer skin tone from user's raw description when etnia chip is empty
+    const _rawDesc = (document.getElementById('user-description') ? document.getElementById('user-description').value : '').toLowerCase();
+    if(/loira|blonde|loiro/.test(_rawDesc))
+      return '(natural fair skin:1.7), (light warm skin tone:1.6), (natural skin pore texture:1.6), (warm ivory complexion:1.6)';
+    if(/morena|brunette|moreninha/.test(_rawDesc))
+      return '(warm natural tan skin:1.7), (medium warm skin tone:1.6), (natural skin pore texture:1.6), (warm olive to tan complexion:1.6)';
+    if(/negra|preta|black woman|melanin|ebony/.test(_rawDesc))
+      return '(melanin-rich deep skin:1.8), (natural dark skin texture:1.7), (rich complexion:1.7), (natural skin pores on dark skin:1.7)';
+    if(/ruiva|redhead|red hair/.test(_rawDesc))
+      return '(very fair freckle-prone skin:1.7), (natural light complexion:1.6), (natural light skin pore texture:1.6), (pale warm undertone:1.6)';
+    if(/asiática|japonesa|coreana|chinesa|asian/.test(_rawDesc))
+      return '(translucent porcelain Asian skin:1.7), (fine pore texture:1.6), (natural ivory warm complexion:1.6), (light subsurface scattering:1.5)';
+    if(/latina|brasileira|brazil/.test(_rawDesc))
+      return '(warm natural Brazilian skin:1.7), (warm olive to tan complexion:1.6), (natural skin pore texture:1.6), (warm undertone:1.6)';
+    // Default: natural realistic skin — no ethnicity assumption, just anti-plastic
+    return '(natural real skin texture:1.6), (natural skin pore texture:1.6), (realistic skin micro-texture:1.5), (not plastic skin:1.5)';
+  }
   // ── Korean ──
   if(/korean|coreana|k-beauty/.test(e))
     return '(translucent porcelain Korean skin:1.9), (ultra fine pore texture:1.8), (natural soft pink-ivory undertone:1.8), (luminous Korean complexion:1.8), (natural K-beauty skin micro-texture:1.8), (light subsurface scattering on porcelain Korean skin:1.7), (natural subtle cheek pink blush:1.6), (fine vellus facial hair:1.4), (natural glowing skin translucency:1.7)';
