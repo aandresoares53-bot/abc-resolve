@@ -17563,6 +17563,25 @@ function buildPrompt(englishText, rawPT){
   } else if(_poseIsSide){
     _negText += ', (front view:1.7), (back view:1.7), (facing camera directly:1.7)';
   }
+  // ── Camera angle negative strengthening ──────────────────────────────────
+  {
+    const _ac2 = _anguloCamera.toLowerCase();
+    if(/from below|upshot|worm/.test(_ac2)){
+      _negText += ', (high angle:2.0), (bird\'s eye view:2.0), (top-down:2.0), (overhead:2.0), (camera above:2.0), (shot from above:2.0), (eye level:1.8)';
+    } else if(/bird.s eye|overhead|top.down|directly above/.test(_ac2)){
+      _negText += ', (low angle:2.0), (from below:2.0), (upshot:2.0), (eye level:1.8), (worm\'s eye:2.0)';
+    } else if(/high angle|from above/.test(_ac2)){
+      _negText += ', (low angle:2.0), (from below:2.0), (upshot:2.0), (worm\'s eye:2.0), (eye level:1.7)';
+    } else if(/dutch angle|canted/.test(_ac2)){
+      _negText += ', (straight horizontal:1.8), (level camera:1.8), (no tilt:1.8)';
+    } else if(/close.up|tight portrait|head shot/.test(_ac2)){
+      _negText += ', (full body:1.8), (wide shot:1.8), (far away:1.8), (distant shot:1.8)';
+    } else if(/full body|head to toe/.test(_ac2)){
+      _negText += ', (close-up:1.8), (portrait crop:1.8), (tight framing:1.8)';
+    } else if(/medium shot|waist up|half body/.test(_ac2)){
+      _negText += ', (full body:1.7), (close-up face:1.7), (extreme close-up:1.7)';
+    }
+  }
 
   // Check if the pose definition itself already includes clothing (e.g. fantasy-gym-trainer has sports bra)
   const _poseText = ((pose.sd_start || '') + ' ' + (pose.sd_end || '')).toLowerCase();
@@ -17936,7 +17955,31 @@ function buildPrompt(englishText, rawPT){
       return `(${tr}:1.9)`; // All other pose terms: :1.9 — effective in any CLIP chunk
     }).filter(Boolean).join(', ');
   };
-  const sdStart = _boost(pose.sd_start || pose.sd || '');
+  // Inject camera angle chip terms INTO sdStart so they're boosted alongside pose terms
+  const _cameraAngleInject = (() => {
+    if(!_anguloCamera) return '';
+    const _ac3 = _anguloCamera.toLowerCase();
+    if(/from below|upshot|worm/.test(_ac3))
+      return 'from below, low angle shot, upward angle, worm\'s eye view,';
+    if(/bird.s eye|overhead|top.down|directly above/.test(_ac3))
+      return 'bird\'s eye view, overhead top-down, camera directly above,';
+    if(/high angle|from above/.test(_ac3))
+      return 'high angle shot, from above, downward angle,';
+    if(/dutch angle|canted/.test(_ac3))
+      return 'dutch angle, tilted camera, canted angle,';
+    if(/close.up|tight portrait|head shot/.test(_ac3))
+      return 'close-up shot, tight portrait framing, face close-up,';
+    if(/full body|head to toe/.test(_ac3))
+      return 'full body shot, full figure, head to toe,';
+    if(/medium shot|waist up|half body/.test(_ac3))
+      return 'medium shot, waist up framing,';
+    if(/pov|point of view|first person/.test(_ac3))
+      return 'POV shot, first person perspective,';
+    if(/eye level|straight on/.test(_ac3))
+      return 'eye level shot, straight on neutral angle,';
+    return '';
+  })();
+  const sdStart = _boost((_cameraAngleInject ? _cameraAngleInject + ' ' : '') + (pose.sd_start || pose.sd || ''));
   const sdEnd   = _boost(pose.sd_end || '');
   // ── Compact pose direction priority anchor — 4-6 tokens at :2.0 ────────────
   // Placed FIRST in parts[] so CLIP's very first tokens establish the camera angle.
