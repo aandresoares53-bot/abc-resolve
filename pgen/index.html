@@ -336,8 +336,15 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 #section-pose{display:none!important;}
 #pose-preview-card{display:none!important;}
 /* ── SIMPLIFIED UI: apenas Idade + Descrição + Gerar ──────────── */
-/* Ocultar TUDO dentro de section-char exceto a seção de Idade */
-#section-char > *:not(#quick-chips-wrap):not(.presets-area) { display:none!important; }
+/* Ocultar elementos extras de section-char, manter descrição visível */
+.input-label-row:has(#btn-pin),
+.saved-chars-panel,
+.closeup-toggle-wrap,
+#auto-bar,
+#auto-lighting-suggest,
+#auto-charlock-badge,
+#auto-char-preview,
+.face-id-wrap { display:none!important; }
 /* Ocultar o wrap inteiro e mostrar só a seção de Idade */
 #quick-chips-wrap > *:not(:first-child) { display:none!important; }
 #quick-chips-wrap { border:none!important; padding:0!important; margin:0!important; }
