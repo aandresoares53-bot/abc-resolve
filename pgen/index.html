@@ -941,18 +941,18 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <div class="quick-chip-section">
         <div class="quick-chip-label">📷 Ângulo de câmera</div>
         <div class="quick-chips" id="qchips-angulo-camera">
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="eye level shot, straight-on angle, camera at eye level">👁️ Nível dos olhos</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="low angle shot, shot from below, upward camera angle, camera below subject">⬆️ Ângulo baixo</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="worm's eye view, extreme low angle, ground level camera, dramatic upward perspective">🐛 Worm's eye</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="high angle shot, shot from above, downward camera angle, camera above subject">⬇️ Ângulo alto</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="bird's eye view, overhead shot, top-down view, camera directly above">🐦 Bird's eye</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="POV shot, first person perspective, point of view, viewer perspective">👁️ POV</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="low angle POV, upward POV shot, shot from below looking up, low POV perspective">🔥 POV baixo</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="dutch angle, tilted camera, canted angle, diagonal framing">📐 Dutch angle</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="over the shoulder shot, behind and over shoulder, three-quarter back view">🤸 Sobre o ombro</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="close-up shot, tight portrait, head and shoulders, face close-up">🔍 Close-up rosto</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="full body shot, full figure, head to toe, entire body visible">📸 Full body</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="medium shot, waist up, mid-shot framing, half body">🎬 Meio corpo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="eye level, straight on, neutral camera angle">👁️ Nível dos olhos</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="low angle, from below, upward angle, camera below subject looking up">⬆️ Ângulo baixo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="worm's eye view, extreme low angle, ground level, looking straight up">🐛 Worm's eye</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="high angle, from above, downward angle, camera above subject looking down">⬇️ Ângulo alto</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="bird's eye view, overhead, top-down, directly above looking down">🐦 Bird's eye</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="pov, first person view, viewer perspective, point of view shot">👁️ POV</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="from below, low angle, upshot, looking up at subject, camera on floor level, upward angle pov">🔥 POV baixo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="dutch angle, tilted camera, canted angle">📐 Dutch angle</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="over the shoulder, behind and over shoulder, three-quarter rear view">🤸 Sobre o ombro</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="close-up, tight portrait, face close-up, head shot">🔍 Close-up rosto</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="full body, full figure, head to toe, wide shot showing entire body">📸 Full body</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="medium shot, waist up, half body, mid shot">🎬 Meio corpo</span>
         </div>
       </div>
 
@@ -17950,6 +17950,16 @@ function buildPrompt(englishText, rawPT){
       return '(side profile:2.0), (lateral view:2.0),';
     if(_poseIsFront)
       return '(front view:2.0), (facing camera:2.0), (face visible:2.0),';
+    // Camera angle chip anchor — when no pose is set, anchor camera angle direction first
+    const _ac = _anguloCamera.toLowerCase();
+    if(/from below|upshot|worm/.test(_ac))
+      return '(from below:2.0), (low angle:2.0), (upward angle:2.0),';
+    if(/bird.s eye|overhead|top.down/.test(_ac))
+      return '(top-down view:2.0), (overhead:2.0), (bird\'s eye view:2.0),';
+    if(/high angle|from above/.test(_ac))
+      return '(high angle:2.0), (from above:2.0),';
+    if(/dutch angle|canted/.test(_ac))
+      return '(dutch angle:2.0), (tilted camera:2.0),';
     return '';
   })();
 
