@@ -17977,6 +17977,10 @@ function buildPrompt(englishText, rawPT){
       return 'POV shot, first person perspective,';
     if(/eye level|straight on/.test(_ac3))
       return 'eye level shot, straight on neutral angle,';
+    if(/over the shoulder|behind and over/.test(_ac3))
+      return 'over the shoulder shot, three-quarter rear view,';
+    if(/pov\b/.test(_ac3) && !/from below|upshot/.test(_ac3))
+      return 'POV shot, first person view, point of view,';
     return '';
   })();
   const sdStart = _boost((_cameraAngleInject ? _cameraAngleInject + ' ' : '') + (pose.sd_start || pose.sd || ''));
@@ -17986,23 +17990,35 @@ function buildPrompt(englishText, rawPT){
   // This prevents content/outfit terms from overriding pose direction in latent space.
   const _posePriorityAnchor = (() => {
     if(_poseIsBack)
-      return '(from behind:2.0), (rear view:2.0), (face hidden:2.0), (back to camera:2.0),';
+      return '(from behind:2.0), (rear view:2.0), (face hidden:2.0), (back to camera:2.0), BREAK';
     if(_poseIsOverShoulder)
-      return '(from behind:2.0), (rear view:2.0), (face partially visible:2.0),';
+      return '(from behind:2.0), (rear view:2.0), (face partially visible:2.0), BREAK';
     if(_poseIsSide)
-      return '(side profile:2.0), (lateral view:2.0),';
+      return '(side profile:2.0), (lateral view:2.0), BREAK';
     if(_poseIsFront)
-      return '(front view:2.0), (facing camera:2.0), (face visible:2.0),';
-    // Camera angle chip anchor — when no pose is set, anchor camera angle direction first
+      return '(front view:2.0), (facing camera:2.0), (face visible:2.0), BREAK';
+    // Camera angle chip anchor — BREAK isolates camera angle in its own CLIP chunk for maximum weight
     const _ac = _anguloCamera.toLowerCase();
     if(/from below|upshot|worm/.test(_ac))
-      return '(from below:2.0), (low angle:2.0), (upward angle:2.0),';
-    if(/bird.s eye|overhead|top.down/.test(_ac))
-      return '(top-down view:2.0), (overhead:2.0), (bird\'s eye view:2.0),';
+      return '(from below:2.0), (low angle shot:2.0), (upshot:2.0), (camera below subject:2.0), (looking up at subject:2.0), BREAK';
+    if(/bird.s eye|overhead|top.down|directly above/.test(_ac))
+      return '(bird\'s eye view:2.0), (top-down:2.0), (overhead shot:2.0), (directly above:2.0), BREAK';
     if(/high angle|from above/.test(_ac))
-      return '(high angle:2.0), (from above:2.0),';
+      return '(high angle:2.0), (from above:2.0), (downward angle:2.0), (camera above subject:2.0), BREAK';
     if(/dutch angle|canted/.test(_ac))
-      return '(dutch angle:2.0), (tilted camera:2.0),';
+      return '(dutch angle:2.0), (tilted camera:2.0), (canted angle:2.0), BREAK';
+    if(/close.up|tight portrait|head shot/.test(_ac))
+      return '(close-up shot:2.0), (tight portrait:2.0), (face close-up:2.0), BREAK';
+    if(/full body|head to toe/.test(_ac))
+      return '(full body shot:2.0), (full figure:2.0), (head to toe:2.0), BREAK';
+    if(/medium shot|waist up|half body/.test(_ac))
+      return '(medium shot:2.0), (waist up:2.0), (half body shot:2.0), BREAK';
+    if(/pov|first person|point of view/.test(_ac))
+      return '(pov shot:2.0), (first person view:2.0), (point of view:2.0), BREAK';
+    if(/eye level|straight on/.test(_ac))
+      return '(eye level:2.0), (straight on:2.0), (neutral angle:2.0), BREAK';
+    if(/over the shoulder|behind and over/.test(_ac))
+      return '(over the shoulder:2.0), (three-quarter rear view:2.0), BREAK';
     return '';
   })();
 
