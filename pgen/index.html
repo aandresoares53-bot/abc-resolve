@@ -865,6 +865,9 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <div id="auto-charlock-badge" style="display:none;padding:5px 10px;background:#dcfce7;border:1.5px solid #86efac;border-radius:9px;font-size:0.72em;color:#166534;font-weight:600;margin-bottom:8px;">🔒 Personagem travado — mantido em todas as variações e sequências</div>
 
     <!-- QUICK SELECT — REDESIGNED: numerado, ordenado, simplificado -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:6px;">
+      <button onclick="clearAllQuickChips()" style="padding:4px 12px;background:transparent;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;font-size:0.8em;color:#64748b;font-weight:600;" title="Zerar todos os filtros de chips">🗑️ Zerar filtros</button>
+    </div>
     <div class="quick-chips-wrap" id="quick-chips-wrap">
 
       <!-- 1 IDADE -->
@@ -17358,7 +17361,10 @@ function buildPrompt(englishText, rawPT){
   buildPrompt._userTranslated = '';
 
   // Selected pose from UI takes full priority over text detection
-  let pose = selectedPose || buildPoseBlock(rawPT || englishText);
+  const _poseChipEarly = (typeof getQuickPose === 'function' ? getQuickPose() : '') || '';
+  let pose = selectedPose
+    || (_poseChipEarly ? { sd: _poseChipEarly, sd_start: _poseChipEarly, sd_end: '', mj: _poseChipEarly, neg: '', sup: false } : null)
+    || buildPoseBlock(rawPT || englishText);
 
   // ── Inject gesture modifiers into pose SD block ────────────────────────────
   // Gestures described in text (hands in hair, biting lip, etc.) get SD weights
@@ -17398,7 +17404,7 @@ function buildPrompt(englishText, rawPT){
   const _cenarioChipFull  = (typeof getQuickCenario    === 'function' ? getQuickCenario()    : '') || '';
   const _estiloFotoFull   = (typeof getQuickEstiloFoto === 'function' ? getQuickEstiloFoto() : '') || '';
   const _anguloCamera     = (typeof getQuickAnguloCamera === 'function' ? getQuickAnguloCamera() : '') || '';
-  const _poseChip         = (typeof getQuickPose === 'function' ? getQuickPose() : '') || '';
+  const _poseChip         = _poseChipEarly;
   const _lensCamFull      = [_anguloCamera, (typeof getLensCam === 'function' ? getLensCam() : '')].filter(Boolean).join(', ') || '';
   const _illumChipFull    = (typeof getQuickIluminacao === 'function' ? getQuickIluminacao() : '') || '';
   const _sceneChipFull    = (typeof chipState !== 'undefined' && chipState.scene)   ? chipState.scene   : '';
@@ -17456,8 +17462,6 @@ function buildPrompt(englishText, rawPT){
   // incompatible lighting/environment even when the user selected a different location chip.
   if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()))
     inputText = _cenarioChipFull + ', ' + inputText;
-  if(_poseChip && !selectedPose && !inputText.toLowerCase().includes(_poseChip.substring(0,15).toLowerCase()))
-    inputText = _poseChip + ', ' + inputText;
   if(_sceneChipFull && !inputText.includes(_sceneChipFull.substring(0,15)))
     inputText = inputText + ', ' + _sceneChipFull;
   if(typeof chipState !== 'undefined'){
@@ -19144,6 +19148,11 @@ function getQuickPreset(){
   return [quickChipState.etnia, quickChipState.idade, quickChipState.corpo, quickChipState.cabelo, quickChipState.cor_cabelo].filter(Boolean).join(', ');
 }
 function getQuickAnguloCamera(){ return quickChipState.angulo_camera || ''; }
+function clearAllQuickChips(){
+  Object.keys(quickChipState).forEach(k => quickChipState[k] = '');
+  document.querySelectorAll('.quick-chip.active').forEach(el => el.classList.remove('active'));
+  if(typeof _autoSaveCharDraft === 'function') _autoSaveCharDraft();
+}
 function getQuickPose(){ return quickChipState.pose || ''; }
 function getQuickCenario(){ return quickChipState.cenario || ''; }
 function getQuickIluminacao(){ return quickChipState.iluminacao || ''; }
