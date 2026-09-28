@@ -17390,12 +17390,13 @@ function buildPrompt(englishText, rawPT){
   }
 
   // ── Auto-inject bedroom scene when user explicitly mentions bed/cama ────────
-  // Only when: (1) no scene chip selected, (2) description mentions cama/bed, (3) no other scene
+  // Check both English inputText and Portuguese rawPT for "cama" / bed keywords
   if(!_cenarioChipFull && !_sceneChipFull){
     const _inputLow = inputText.toLowerCase();
-    // Only trigger on explicit "cama" or "on the bed" — not just "deitada" (user may be on a couch, floor, etc.)
-    const _isOnBed = /\bcama\b|\bon\s+the\s+bed\b|\bon\s+bed\b|lying\s+on\s+(?:her\s+)?(?:back\s+on\s+)?bed/.test(_inputLow);
-    const _hasScene = /beach|pool|praia|hotel|park|forest|outdoor|studio|kitchen|living\s+room|rua|street|varanda|balcony|sofa|couch/.test(_inputLow);
+    const _rawLow  = (rawPT || '').toLowerCase();
+    const _isOnBed = /\bcama\b/.test(_rawLow) ||
+      /\bon\s+the\s+bed\b|\bon\s+bed\b|lying\s+on\s+(?:her\s+)?(?:back\s+on\s+)?bed|lying\s+in\s+bed/.test(_inputLow);
+    const _hasScene = /beach|pool|praia|hotel|park|forest|outdoor|studio|kitchen|living\s+room|rua|street|varanda|balcony|sofa|couch/.test(_inputLow + ' ' + _rawLow);
     if(_isOnBed && !_hasScene){
       inputText = 'luxury bedroom, soft natural window light, white linen bedsheets, ' + inputText;
     }
@@ -18411,7 +18412,13 @@ async function generate(){
       // User typed a complement or has a preset — translate ONLY those parts.
       // Chips (_quickPre) are already English — translating them garbles the output.
       // _autoSceneForPose is already English — no re-translation needed.
-      const _toTranslate = [hasPreset ? _presetText(activePreset) : '', _userScene].filter(Boolean).join(', ');
+      // Apply semanticPreProcess BEFORE Google Translate: converts idiomatic PT phrases
+      // ("apenas de calcinha", "deitada na cama", etc.) to SD-friendly English so Google
+      // Translate receives the correct terms and doesn't mangle them.
+      const _userSceneProcessed = (typeof semanticPreProcess === 'function')
+        ? semanticPreProcess(_userScene)
+        : _userScene;
+      const _toTranslate = [hasPreset ? _presetText(activePreset) : '', _userSceneProcessed].filter(Boolean).join(', ');
       const _translated = _toTranslate ? await _translateText(_toTranslate) : '';
       // Re-prepend the (unchanged) English chip values, add translated user content,
       // then append the auto-scene (already English) so it enriches the final prompt.
