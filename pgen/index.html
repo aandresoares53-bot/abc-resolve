@@ -941,18 +941,18 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       <div class="quick-chip-section">
         <div class="quick-chip-label">📷 Ângulo de câmera</div>
         <div class="quick-chips" id="qchips-angulo-camera">
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="eye level shot, camera at subject eye level, natural neutral camera angle, straight-on perspective">👁️ Nível dos olhos</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="low angle shot, camera positioned below subject, shot from below looking up, upward camera angle, dramatic low perspective">⬆️ Ângulo baixo</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="worm's eye view, extreme low angle from ground level, camera at floor level looking steeply upward, dramatic upward perspective">🐛 Worm's eye</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="high angle shot, camera positioned above subject, shot from above looking down, downward camera angle">⬇️ Ângulo alto</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="bird's eye view, overhead top-down shot, camera directly above looking straight down, 90 degree downward angle">🐦 Bird's eye</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="POV first-person perspective, point of view shot, camera from subject's point of view">👁️ POV</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="low angle POV shot, shot from below looking up at subject, upward POV perspective">🔥 POV baixo</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="Dutch angle shot, camera tilted diagonally, canted angle, diagonal composition">📐 Dutch angle</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="over the shoulder shot, camera behind and over shoulder, three-quarter back view">🤸 Sobre o ombro</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="close-up portrait shot, tight framing on face and shoulders, head and shoulders composition">🔍 Close-up rosto</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="full body wide shot, entire body visible, head to toe composition, full figure framing">📸 Full body</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="medium shot, waist up composition, mid-shot framing from waist to head">🎬 Meio corpo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="eye level shot, straight-on angle, camera at eye level">👁️ Nível dos olhos</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="low angle shot, shot from below, upward camera angle, camera below subject">⬆️ Ângulo baixo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="worm's eye view, extreme low angle, ground level camera, dramatic upward perspective">🐛 Worm's eye</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="high angle shot, shot from above, downward camera angle, camera above subject">⬇️ Ângulo alto</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="bird's eye view, overhead shot, top-down view, camera directly above">🐦 Bird's eye</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="POV shot, first person perspective, point of view, viewer perspective">👁️ POV</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="low angle POV, upward POV shot, shot from below looking up, low POV perspective">🔥 POV baixo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="dutch angle, tilted camera, canted angle, diagonal framing">📐 Dutch angle</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="over the shoulder shot, behind and over shoulder, three-quarter back view">🤸 Sobre o ombro</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="close-up shot, tight portrait, head and shoulders, face close-up">🔍 Close-up rosto</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="full body shot, full figure, head to toe, entire body visible">📸 Full body</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="medium shot, waist up, mid-shot framing, half body">🎬 Meio corpo</span>
         </div>
       </div>
 
@@ -18166,11 +18166,12 @@ function buildPrompt(englishText, rawPT){
   const _lightBoostSD  = _boostChipTerms(_lightingChipFull, '1.8'); // freeform lighting — :1.8
   const _estiloBoostSD = _boostChipTerms(_estiloFotoFull,   '1.8'); // photo style — :1.8
   const _styleBoostSD  = _boostChipTerms(_styleChipFull,    '1.7'); // freeform style — :1.7
-  const _lensBoostSD   = _boostChipTerms(_lensCamFull,      '1.7'); // lens/camera chip — :1.7
+  const _lensBoostSD   = _boostChipTerms(_lensCamFull,      '2.0'); // camera angle chip — :2.0
   const _lensChipBoostSD = _boostChipTerms(_lensChipFull,   '1.6'); // freeform lens — :1.6
 
   const parts = [
     _posePriorityAnchor,     // POSE DIRECTION ANCHOR — :2.0, establishes camera angle FIRST in CLIP
+    _lensBoostSD,            // ← CAMERA ANGLE CHIP at :2.0 — immediately after pose anchor
     _nsfwPrefix,             // NSFW flag
     _cenarioBoost,           // ← CENÁRIO CHIP at :2.0 — key scene/location content, must be EARLY
     _sceneChipBoost,         // ← SCENE CHIP (freeform) at :1.9 — user explicit scene override
@@ -18185,7 +18186,6 @@ function buildPrompt(englishText, rawPT){
     _lightBoostSD,           // ← FREEFORM LIGHTING CHIP at :1.8
     _estiloBoostSD,          // ← PHOTO STYLE CHIP at :1.8 — before generic quality flags
     _styleBoostSD,           // ← FREEFORM STYLE CHIP at :1.7
-    _lensBoostSD,            // ← CAMERA/LENS CHIP at :1.7
     _lensChipBoostSD,        // ← FREEFORM LENS CHIP at :1.6
     // Auto pose extras (camera, accessories, makeup, color palette, hair) — only when no chip overrides
     (!_lensCamFull && !_lensChipFull && _autoCamera) ? `(${_autoCamera}:1.6),` : '',
