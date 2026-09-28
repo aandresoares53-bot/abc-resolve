@@ -17255,6 +17255,11 @@ function buildPrompt(englishText, rawPT){
     try{ detectConflicts(ip); }catch(e){}
     return { prompt: ip, negative: SD_NEG_PREFIX + ', ' + NEGATIVE };
   }
+  // Clear stored translated text — will be set by generate() before calling us.
+  // Must clear at entry so that recursive / non-generate() calls don't reuse stale value.
+  const _storedUserTranslated = typeof buildPrompt._userTranslated === 'string' ? buildPrompt._userTranslated : '';
+  buildPrompt._userTranslated = '';
+
   // Selected pose from UI takes full priority over text detection
   let pose = selectedPose || buildPoseBlock(rawPT || englishText);
 
@@ -17366,25 +17371,33 @@ function buildPrompt(englishText, rawPT){
 
   // ── Semantic character attribute extraction from PT description ────────────
   // When chips (etnia, idade, corpo) are empty, extract attrs from the raw description
-  // and prepend them to inputText so expandScene() and charBoost see them.
+  // and append them to inputText (after desc) only when not already present.
   if(typeof extractCharacterAttributes === 'function'){
     const _emptyChips = !quickChipState.etnia && !quickChipState.idade && !quickChipState.corpo;
     if(_emptyChips && (rawPT || '')){
       const _attrs = extractCharacterAttributes(rawPT);
-      const _attrTerms = [_attrs.age, _attrs.hair, _attrs.body, _attrs.eyes].filter(Boolean);
+      const _inputLowCheck = inputText.toLowerCase();
+      const _attrTerms = [_attrs.age, _attrs.hair, _attrs.body, _attrs.eyes].filter(t => {
+        // Only inject if this attribute is NOT already in inputText (avoid duplicates)
+        if(!t) return false;
+        const _key = t.split(',')[0].toLowerCase().substring(0, 12);
+        return !_inputLowCheck.includes(_key);
+      });
       if(_attrTerms.length > 0){
-        inputText = _attrTerms.join(', ') + ', ' + inputText;
+        inputText = inputText + ', ' + _attrTerms.join(', ');
       }
     }
   }
 
-  // ── Auto-inject bedroom scene when lying on bed and no scene chip selected ──
+  // ── Auto-inject bedroom scene when user explicitly mentions bed/cama ────────
+  // Only when: (1) no scene chip selected, (2) description mentions cama/bed, (3) no other scene
   if(!_cenarioChipFull && !_sceneChipFull){
     const _inputLow = inputText.toLowerCase();
-    const _isLyingOnBed = /deitada|lying.*bed|lying down|on.*bed|bed\b|cama\b/.test(_inputLow);
-    const _hasScene = /beach|pool|praia|hotel|park|forest|outdoor|studio|kitchen|living room|rua|street/.test(_inputLow);
-    if(_isLyingOnBed && !_hasScene){
-      inputText = 'luxury bedroom, soft natural window light, white linen bedsheets, intimate boudoir atmosphere, ' + inputText;
+    // Only trigger on explicit "cama" or "on the bed" — not just "deitada" (user may be on a couch, floor, etc.)
+    const _isOnBed = /\bcama\b|\bon\s+the\s+bed\b|\bon\s+bed\b|lying\s+on\s+(?:her\s+)?(?:back\s+on\s+)?bed/.test(_inputLow);
+    const _hasScene = /beach|pool|praia|hotel|park|forest|outdoor|studio|kitchen|living\s+room|rua|street|varanda|balcony|sofa|couch/.test(_inputLow);
+    if(_isOnBed && !_hasScene){
+      inputText = 'luxury bedroom, soft natural window light, white linen bedsheets, ' + inputText;
     }
   }
 
@@ -17454,12 +17467,14 @@ function buildPrompt(englishText, rawPT){
     const _isIntimate = /panties|bra\b|lingerie|thong|bikini|underwear|g-string|pasties/.test(_outfitStr);
     const _clothedTag = _isIntimate ? '' : ', (fully clothed:1.8)';
     _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8)${_clothedTag},`;
-    // Intimate wear sensual mode: inject atmosphere and mood when minimal clothing detected
-    if(_isIntimate && !_wantsNSFW){
-      _sdClothingTerms += ' (intimate boudoir atmosphere:1.6), (soft sensual mood lighting:1.5), (feminine sensuality:1.5), (warm intimate glow:1.4), (sensual confident pose:1.5),';
+    // Intimate wear sensual mode: inject atmosphere only when no scene was already described
+    const _hasExplicitScene = _cenarioChipFull || _sceneChipFull ||
+      /beach|pool|outdoor|praia|hotel|park|forest|studio|kitchen|street|rua|varanda|balcony/.test(expanded.toLowerCase());
+    if(_isIntimate && !_wantsNSFW && !_hasExplicitScene){
+      _sdClothingTerms += ' (intimate boudoir atmosphere:1.5), (soft sensual mood lighting:1.4), (feminine sensuality:1.4),';
     }
     // Plain text prepended to expanded — used by MJ/FLUX/GPT (they don't use SD weight syntax)
-    expanded = `wearing ${_outfitStr}, keep outfit on, ` + (_isIntimate && !_wantsNSFW ? 'intimate boudoir atmosphere, soft sensual mood, ' : '') + expanded;
+    expanded = `wearing ${_outfitStr}, keep outfit on, ` + expanded;
     // Store outfit for MJ block
     buildPrompt._lastOutfit = _outfitStr;
     // Negative prompt left unchanged — user description is 100% accepted
@@ -17850,12 +17865,16 @@ function buildPrompt(englishText, rawPT){
   }
 
   // ── Description: non-character part of englishText (user's optional input) ─
-  // _quickPreCount: number of chip-value terms (etnia, age, body, hair) in englishText
-  // When there is no activePreset the chip values are prepended via _quickPre (see buildPrompt top),
-  // so _presetTermCount=0 but _quickPre still contributes terms. Count them separately.
+  // Prefer the stored translated user text (set by generate() before calling buildPrompt)
+  // so the full user description lands in descBoost without slicing off chip-count terms.
+  // Fall back to the old slice method only when no translated text was stored.
   const _quickPreCount = (typeof getQuickPreset === 'function') ? (getQuickPreset()||'').split(',').filter(t=>t.trim()).length : 0;
   const _totalCharCount = _presetTermCount || _quickPreCount;
-  const _sceneOnly = englishText.split(',').slice(_totalCharCount).map(t => t.trim()).filter(Boolean);
+  const _userTranslatedDirect = _storedUserTranslated
+    ? _storedUserTranslated.split(',').map(t => t.trim()).filter(Boolean)
+    : null;
+  const _sceneOnly = _userTranslatedDirect ||
+    englishText.split(',').slice(_totalCharCount).map(t => t.trim()).filter(Boolean);
 
   // MANDATORY: boost ALL user description terms at :2.0 — no filtering — description is law
   // User's words override any heuristic; highest CLIP weight keeps them in chunk 1
@@ -18397,6 +18416,9 @@ async function generate(){
       // Re-prepend the (unchanged) English chip values, add translated user content,
       // then append the auto-scene (already English) so it enriches the final prompt.
       const englishText = [_quickPre, _translated, _autoSceneForPose].filter(Boolean).join(', ');
+      // Store translated user text so buildPrompt can use it directly for descBoost
+      // without slicing off chip terms that may exceed the translation length
+      buildPrompt._userTranslated = _translated || '';
       _result = buildPrompt(englishText, rawFull);
     }
     // Handle object returns from video/inpainting modes
