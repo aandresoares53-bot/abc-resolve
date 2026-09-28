@@ -2866,6 +2866,36 @@ function semanticPreProcess(text){
   if(!text) return text;
   let t = text;
 
+  // ── CAMERA / POV ANGLES (must run first — before clothing/pose patterns) ──
+  t = t.replace(/\bpov\s*low\s*angle\b/gi,  'low angle POV shot, shot from below, upward camera angle,');
+  t = t.replace(/\bpov\s*high\s*angle\b/gi, 'high angle POV shot, shot from above, downward camera angle,');
+  t = t.replace(/\bpov\b/gi,                'POV first-person perspective,');
+  t = t.replace(/\b[aâ]ngulo\s*baixo\b/gi,  'low angle shot, shot from below,');
+  t = t.replace(/\b[aâ]ngulo\s*alto\b/gi,   'high angle shot, shot from above,');
+
+  // ── CLOTHED-REVEALING phrases (convert BEFORE nude-detection sees them) ──
+  // "vulva marcada" = camel toe through fabric — NOT nudity, clothed revealing
+  t = t.replace(/vulva\s*marcada/gi,  'camel toe visible through fabric, fabric hugging pubic mound,');
+  t = t.replace(/marquinha\s*de\s*biquíni/gi, 'bikini tan lines, tan line marks on skin,');
+
+  // "sem calcinha" / "sem sutiã" when OTHER clothing is also present = commando, not nude
+  const _hasOtherClothing = /legging|calça|vestido|short|saia|top\b|blusa|camisa|body\b|macacão|collant|biquíni|maio/.test(t.toLowerCase());
+  if(_hasOtherClothing){
+    t = t.replace(/sem\s*calcinha\s*e\s*sem\s*suti[ãa]/gi, 'commando under clothes, no underwear,');
+    t = t.replace(/sem\s*calcinha/gi, 'no panties under clothes, commando,');
+    t = t.replace(/sem\s*suti[ãa]/gi, 'braless under top,');
+  }
+
+  // ── BODY TYPE ──
+  t = t.replace(/\bcorpo\s*curvilíneo\b/gi, 'curvy voluptuous body, hourglass figure,');
+  t = t.replace(/\bcorpo\s*atl[eé]tico\b/gi,'athletic toned body,');
+  t = t.replace(/\bcorpo\s*definido\b/gi,   'toned defined body,');
+
+  // ── LEGGING / TIGHT CLOTHING specifics ──
+  t = t.replace(/legging\s*branca\s*apertada/gi, 'tight white leggings, form-fitting white leggings,');
+  t = t.replace(/legging\s*preta\s*apertada/gi,  'tight black leggings, form-fitting black leggings,');
+  t = t.replace(/legging\s*apertada/gi,           'tight form-fitting leggings,');
+
   // Pattern: "apenas de [clothing] [pose]" → "wearing only [clothing], [pose]"
   t = t.replace(/apenas\s*de\s*(calcinha\s*e\s*suti[ãa]|suti[ãa]\s*e\s*calcinha)/gi,
     'wearing only panties and bra,');
