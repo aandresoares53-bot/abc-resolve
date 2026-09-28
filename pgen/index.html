@@ -14358,14 +14358,14 @@ function getPoseAutoExtras(key){
 function buildPoseBlock(rawPT){
   const t = rawPT.toLowerCase();
 
-  const isBehind       = /de costas|costas para|de tr[\u00e1\u00e0s]|from behind|facing away/.test(t);
+  const isBehind       = /de costas|costas para|de tr[\u00e1\u00e0s]|from behind|facing away|back to camera|rear view/.test(t);
   const isAllFours     = /de quatro|de\s*4\b|de gatas|quatro apoios|all fours|hands and knees/.test(t);
   const isKneeling     = /de joelhos|ajoelhada|kneeling/.test(t);
   const isBentOver     = /dobrada|curvada|inclinada|bent over|leaning forward/.test(t);
   const isSquatting    = /agachada|squatting/.test(t);
   const isFaceDown     = /de bru[\u00e7c]os|boca abaixo|face down|prone/.test(t);
   const isOnBack       = /deitada de frente|deitada olhando|on her back|lying on back/.test(t);
-  const isDeitada      = /\bdeitada\b|lying down|laid down/.test(t);
+  const isDeitada      = /\bdeitada\b|lying down|laid down|lying on/.test(t);
   const isLegsOpen     = /pernas abertas|perna aberta|legs? open|legs? spread|spread.*legs?|open.*legs?/.test(t);
   const isSitting      = /sentada|sitting/.test(t);
   const isStanding     = /em p[\u00e9e]|de p[\u00e9e]|standing/.test(t);
@@ -14524,6 +14524,18 @@ function buildPoseBlock(rawPT){
     mj:  'bent over from behind, spine arched, rear view',
     neg: 'standing upright, front view, facing camera',
     sup: true
+  };
+  if(/splits?|split pose|doing.*split|legs.*fully spread/.test(t)) return {
+    sd:  '(doing the splits:1.9), (legs fully extended:1.8), (split position:1.8), (180 degree split:1.7), both legs extended to sides, body upright above split',
+    mj:  'doing the splits, legs fully extended sideways, split position, flexible pose',
+    neg: 'standing, kneeling, sitting, lying down',
+    sup: false
+  };
+  if(/tip.?toe|tiptoe|on.*toe|heels? raised/.test(t)) return {
+    sd:  '(standing on tiptoes:1.8), (heels raised:1.7), (balancing on toes:1.7), (elevated on toe tips:1.6), full body, standing pose',
+    mj:  'standing on tiptoes, heels raised, balancing on toe tips, full body standing',
+    neg: 'flat footed, kneeling, sitting, lying down',
+    sup: false
   };
   return { sd: '', mj: '', neg: '', sup: false };
 }
@@ -17382,8 +17394,10 @@ function buildPrompt(englishText, rawPT){
 
   // Selected pose from UI takes full priority over text detection
   const _poseChipEarly = (typeof getQuickPose === 'function' ? getQuickPose() : '') || '';
+  // When a pose chip is active, feed its English text into buildPoseBlock so all
+  // SD weights, negatives and direction flags are properly computed.
   let pose = selectedPose
-    || (_poseChipEarly ? { sd: _poseChipEarly, sd_start: _poseChipEarly, sd_end: '', mj: _poseChipEarly, neg: '', sup: false } : null)
+    || (_poseChipEarly ? buildPoseBlock(_poseChipEarly) : null)
     || buildPoseBlock(rawPT || englishText);
 
   // ── Inject gesture modifiers into pose SD block ────────────────────────────
