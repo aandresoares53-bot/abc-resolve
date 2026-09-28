@@ -2824,6 +2824,44 @@ function val(id){
 // Converts natural phrases like "loira de 19 anos apenas de calcinha e sutiã
 // deitada na cama com as pernas abertas e as mãos nos cabelos" into structured
 // English that the prompt builder can parse correctly.
+// Extract implicit character attributes from PT description when chips are empty.
+// Returns an object with inferred values to enrich the SD/MJ prompt.
+function extractCharacterAttributes(rawDesc){
+  if(!rawDesc) return {};
+  const d = rawDesc.toLowerCase();
+  const attrs = {};
+
+  // Age inference
+  const ageMatch = d.match(/\b(\d{2})\s*anos?\b/) || d.match(/(\d{2})[- ]?year[- ]?old/);
+  if(ageMatch) attrs.age = ageMatch[1] + ' years old';
+
+  // Hair color / ethnicity cues → SD character terms
+  if(/\bloira\b|\bloiro\b|\bblonde\b/.test(d))          attrs.hair = 'blonde hair, light fair complexion';
+  else if(/\brunha\b|\brunette\b/.test(d))               attrs.hair = 'brunette hair, warm complexion';
+  else if(/\bruiva\b|\bredhead\b|\bred hair\b/.test(d))  attrs.hair = 'red hair, fair freckle-prone skin';
+  else if(/\bmorena\b|\bmoreno\b/.test(d))               attrs.hair = 'dark brown hair, warm olive skin';
+  else if(/\bnegra\b|\bpreta\b|\bebony\b/.test(d))       attrs.hair = 'black woman, dark rich skin';
+  else if(/\basi[aá]tica\b|\bjaponesa\b|\bcoreana\b/.test(d)) attrs.hair = 'Asian woman, East Asian features, porcelain skin';
+  else if(/\blatina\b|\bbrasileira\b/.test(d))           attrs.hair = 'Latina woman, warm tan skin';
+
+  // Body type hints
+  if(/\bcurvilínea\b|\bcurvy\b|\bcurvas\b/.test(d))     attrs.body = 'curvy voluptuous body';
+  else if(/\bmagra\b|\bslim\b|\besbelta\b/.test(d))     attrs.body = 'slim slender body';
+  else if(/\batl[eé]tica\b|\bathletic\b/.test(d))        attrs.body = 'athletic toned body';
+  else if(/\bpetite\b|\bbaixa\b/.test(d))               attrs.body = 'petite small frame body';
+  else if(/\bplus size\b|\bgorda\b|\bcheia\b/.test(d))  attrs.body = 'plus size full figured body';
+
+  // Eye color
+  const eyeMatch = d.match(/olhos?\s*(azuis?|verdes?|castanhos?|pretos?|negros?|mel\b|âmbar)/i);
+  if(eyeMatch){
+    const eyeMap = {azuis:'blue',azul:'blue',verdes:'green',verde:'green',castanhos:'brown',castanho:'brown',pretos:'dark',preto:'dark',negros:'dark',negro:'dark',mel:'honey-colored',âmbar:'amber-colored'};
+    const eyeKey = eyeMatch[1].toLowerCase().replace(/s$/,'');
+    if(eyeMap[eyeKey]) attrs.eyes = eyeMap[eyeKey] + ' eyes';
+  }
+
+  return attrs;
+}
+
 function semanticPreProcess(text){
   if(!text) return text;
   let t = text;
@@ -17326,6 +17364,20 @@ function buildPrompt(englishText, rawPT){
       inputText = inputText + ', ' + chipState.expression;
   }
 
+  // ── Semantic character attribute extraction from PT description ────────────
+  // When chips (etnia, idade, corpo) are empty, extract attrs from the raw description
+  // and prepend them to inputText so expandScene() and charBoost see them.
+  if(typeof extractCharacterAttributes === 'function'){
+    const _emptyChips = !quickChipState.etnia && !quickChipState.idade && !quickChipState.corpo;
+    if(_emptyChips && (rawPT || '')){
+      const _attrs = extractCharacterAttributes(rawPT);
+      const _attrTerms = [_attrs.age, _attrs.hair, _attrs.body, _attrs.eyes].filter(Boolean);
+      if(_attrTerms.length > 0){
+        inputText = _attrTerms.join(', ') + ', ' + inputText;
+      }
+    }
+  }
+
   // ── Auto-inject bedroom scene when lying on bed and no scene chip selected ──
   if(!_cenarioChipFull && !_sceneChipFull){
     const _inputLow = inputText.toLowerCase();
@@ -17402,8 +17454,12 @@ function buildPrompt(englishText, rawPT){
     const _isIntimate = /panties|bra\b|lingerie|thong|bikini|underwear|g-string|pasties/.test(_outfitStr);
     const _clothedTag = _isIntimate ? '' : ', (fully clothed:1.8)';
     _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8)${_clothedTag},`;
+    // Intimate wear sensual mode: inject atmosphere and mood when minimal clothing detected
+    if(_isIntimate && !_wantsNSFW){
+      _sdClothingTerms += ' (intimate boudoir atmosphere:1.6), (soft sensual mood lighting:1.5), (feminine sensuality:1.5), (warm intimate glow:1.4), (sensual confident pose:1.5),';
+    }
     // Plain text prepended to expanded — used by MJ/FLUX/GPT (they don't use SD weight syntax)
-    expanded = `wearing ${_outfitStr}, keep outfit on, ` + expanded;
+    expanded = `wearing ${_outfitStr}, keep outfit on, ` + (_isIntimate && !_wantsNSFW ? 'intimate boudoir atmosphere, soft sensual mood, ' : '') + expanded;
     // Store outfit for MJ block
     buildPrompt._lastOutfit = _outfitStr;
     // Negative prompt left unchanged — user description is 100% accepted
