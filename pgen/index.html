@@ -17940,7 +17940,7 @@ function buildPrompt(englishText, rawPT){
   // ── Pose boost: ALL pose terms get :1.9; critical direction terms get :2.0 ─
   // Critical direction terms — the primary camera/orientation signal — :2.0 so they
   // compete equally with outfit/description :2.0 terms for CLIP guidance weight.
-  const _critDirRe = /\b(from behind|rear view|back to camera|back to viewer|back facing camera|facing camera|facing viewer|front view|side profile|side view|face visible|face hidden|face partially visible|back to viewer)\b/i;
+  const _critDirRe = /\b(from behind|rear view|back to camera|back to viewer|back facing camera|facing camera|facing viewer|front view|side profile|side view|face visible|face hidden|face partially visible|back to viewer|from below|low angle|low angle shot|upshot|worm.s eye|bird.s eye|top.down|overhead|high angle|dutch angle|eye level)\b/i;
   // _boost: boosts ALL pose terms to :1.9 (effective in any CLIP chunk), critical direction to :2.0.
   //         Strips NOT-prefixed terms (they belong in the negative prompt).
   //         Checks per-term — avoids the early-exit bug on partially-weighted strings.
