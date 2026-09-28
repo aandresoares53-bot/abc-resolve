@@ -3004,6 +3004,17 @@ function translatePT(text){
     [/\bcontraluz\b/gi,          'backlight silhouette'],
     [/luzes\s*neon/gi,           'neon lights'],
     [/luz\s*dramática/gi,        'dramatic moody lighting'],
+    // ── POSE & GESTURES ──
+    [/m[ãa]os\s*nos\s*cabelos/gi,   'hands in hair, fingers running through her hair'],
+    [/m[ãa]o\s*no\s*cabelo/gi,      'hand in hair, running fingers through her hair'],
+    [/pernas\s*abertas/gi,               'legs spread open, thighs apart'],
+    [/perna\s*aberta/gi,                 'one leg open, thigh apart'],
+    [/deitada\s*na\s*cama/gi,            'lying on her back on bed, supine on bed'],
+    [/\bdeitada\b/gi,                    'lying down on her back'],
+    [/apenas\s*de\s*calcinha\s*e\s*suti[ãa]/gi, 'wearing only panties and bra, bra and panties only'],
+    [/apenas\s*de\s*suti[ãa]\s*e\s*calcinha/gi, 'wearing only bra and panties'],
+    [/apenas\s*de\s*calcinha/gi,         'wearing only panties, bottomless'],
+    [/apenas\s*de\s*suti[ãa]/gi,    'wearing only bra, topless except bra'],
     // ── ACTIONS & DESCRIPTORS ──
     [/mordendo\s*o\s*lábio/gi,   'biting her lower lip seductively'],
     [/\bsorrindo\b/gi,           'smiling confidently'],
@@ -14156,6 +14167,8 @@ function buildPoseBlock(rawPT){
   const isSquatting    = /agachada|squatting/.test(t);
   const isFaceDown     = /de bru[\u00e7c]os|boca abaixo|face down|prone/.test(t);
   const isOnBack       = /deitada de frente|deitada olhando|on her back|lying on back/.test(t);
+  const isDeitada      = /\bdeitada\b|lying down|laid down/.test(t);
+  const isLegsOpen     = /pernas abertas|perna aberta|legs? open|legs? spread|spread.*legs?|open.*legs?/.test(t);
   const isSitting      = /sentada|sitting/.test(t);
   const isStanding     = /em p[\u00e9e]|de p[\u00e9e]|standing/.test(t);
   const isOverShoulder = /olhando para tr[\u00e1a]s|olhando por cima|looking back|over.*shoulder/.test(t);
@@ -14276,10 +14289,36 @@ function buildPoseBlock(rawPT){
     neg: 'standing, front view, sitting',
     sup: true
   };
+  if(isDeitada && isLegsOpen) return {
+    sd:  '(lying on her back:1.9), (supine position:1.8), (legs spread open:1.9), (spread legs:1.8), '
+       + '(thighs apart:1.7), knees bent outward, (facing camera:1.7), (camera looking down:1.6), '
+       + 'lying on bed, face visible, looking at camera, arms relaxed',
+    mj:  'lying on her back on bed, legs spread open, thighs apart, facing camera, camera angle from above, face visible',
+    neg: 'standing, sitting upright, from behind, rear view, legs closed, kneeling',
+    sup: false
+  };
+  if(isDeitada && isBehind) return {
+    sd:  '(lying face down:1.8), (prone position:1.7), (rear view:1.6), back facing up, on bed',
+    mj:  'lying face down on bed, prone position, back view',
+    neg: 'standing, front view, sitting, face visible',
+    sup: true
+  };
+  if(isDeitada) return {
+    sd:  '(lying on her back:1.8), (supine position:1.7), (facing camera:1.6), on bed, face visible, relaxed pose',
+    mj:  'lying on her back on bed, facing camera, relaxed pose',
+    neg: 'standing, sitting upright, from behind, rear view',
+    sup: false
+  };
   if(isOnBack) return {
     sd:  '(lying on her back:1.8), supine position, camera looking down from above, face visible',
     mj:  'lying on her back, camera above looking down',
     neg: 'standing, from behind, rear view',
+    sup: false
+  };
+  if(isLegsOpen) return {
+    sd:  '(legs spread open:1.8), (thighs apart:1.7), (facing camera:1.7), (front view:1.6)',
+    mj:  'legs spread open, thighs apart, facing camera, front view',
+    neg: 'legs closed, from behind, rear view',
     sup: false
   };
   if(isBentOver) return {
@@ -17282,7 +17321,10 @@ function buildPrompt(englishText, rawPT){
     });
     const _outfitStr = [...new Set(_clothingCtx.map(s => s.toLowerCase()))].join(', ');
     // SD-weight version for parts[] — maximum weight for clothing adherence
-    _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8), (fully clothed:1.8),`;
+    // Don't add "fully clothed" for intimate/minimal clothing (panties, bra, lingerie, thong, bikini)
+    const _isIntimate = /panties|bra\b|lingerie|thong|bikini|underwear|g-string|pasties/.test(_outfitStr);
+    const _clothedTag = _isIntimate ? '' : ', (fully clothed:1.8)';
+    _sdClothingTerms = `(${_outfitStr}:2.0), (wearing ${_outfitStr}:1.9), (keep outfit on:1.9), (${_outfitStr} visible:1.8)${_clothedTag},`;
     // Plain text prepended to expanded — used by MJ/FLUX/GPT (they don't use SD weight syntax)
     expanded = `wearing ${_outfitStr}, keep outfit on, ` + expanded;
     // Store outfit for MJ block
