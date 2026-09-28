@@ -14374,15 +14374,16 @@ function buildPoseBlock(rawPT){
   const isFacingCam    = /de frente|virada para|facing camera|front view/.test(t);
 
   if(isBehind && isAllFours) return {
-    sd:  '(crawling position:1.9), (on all fours:1.9), (tabletop position:1.8), '
-       + '(from behind:1.9), (rear view:1.9), (back facing camera:1.8), '
-       + 'what the camera sees: back of her head, horizontal spine, shoulder blades, '
-       + 'lower back, (buttocks prominently raised:1.7), back of thighs, '
-       + 'hands flat on mattress below her shoulders, knees on mattress below her hips, '
-       + '(torso horizontal like a table:1.9), (arms straight supporting weight:1.6), '
-       + 'camera at hip height behind her, she is NOT sitting, she is NOT upright',
-    mj:  'crawling position from behind, tabletop body position, torso horizontal like a table, hands flat on bed under shoulders, knees on bed under hips, spine horizontal, buttocks raised toward camera, rear view, camera at hip level behind her',
-    neg: 'sitting, kneeling upright, torso vertical, upright posture, torso raised, front view, facing camera, face visible, standing, side view, profile',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
+    sd:  '(on all fours:2.0), (crawling position:2.0), (tabletop position:1.9), '
+       + '(torso horizontal:2.0), (back facing camera:2.0), '
+       + '(back of head visible:1.9), (horizontal spine:1.9), (shoulder blades visible:1.9), '
+       + '(lower back visible:1.9), (buttocks raised toward camera:1.9), (back of thighs:1.8), '
+       + '(hands on surface below shoulders:1.8), (knees on surface below hips:1.8), '
+       + '(arms straight:1.7), (weight on hands and knees:1.7)',
+    sd_end: '(camera behind her:1.9), (camera at hip level:1.8), (no frontal view:2.0), (back only visible:2.0)',
+    mj:  'crawling position from behind, torso horizontal like a table, hands on surface under shoulders, knees on surface under hips, spine horizontal, buttocks raised toward camera, rear view, camera at hip level behind her, face not visible',
+    neg: 'front view, facing camera, face visible, face toward camera, looking at viewer, frontal pose, standing, sitting upright, kneeling upright, torso vertical, side view, profile',
     sup: true
   };
   if(isBehind && isKneeling) return {
@@ -18103,7 +18104,10 @@ function buildPrompt(englishText, rawPT){
   // _REALISM_CORE: RAW film + anti-anime + face essentials — ALL weighted 2.0, injected at chunk-1 max CLIP
   // Integrates RAW photo foundation directly here so even long poses don't push these out of chunk 1.
   // "film grain" is physically incompatible with smooth plastic skin — the strongest anti-AI lever in SD.
-  const _REALISM_CORE = '(RAW analog photograph:2.0), (35mm film grain:2.0), (photorealistic:2.0), (real person:2.0), (not anime:2.0), (not cartoon:2.0), (not CGI:2.0), (not 3D render:2.0), (not illustrated:2.0), (not drawn:2.0), (not AI art:2.0), (not digital painting:2.0), (not midjourney:2.0), (real human anatomy:2.0), (real flesh:1.9), (human skin texture:2.0), (anatomically correct:2.0), (shot on camera:2.0), (visible skin pores:2.0), (not plastic skin:2.0), (no beauty filter:2.0), (real human face:2.0), (realistic eyes:1.9), (pores on face:1.9), (natural facial skin:1.9), (real individual hair strands:1.8),';
+  const _REALISM_CORE = '(RAW analog photograph:2.0), (35mm film grain:2.0), (photorealistic:2.0), (real person:2.0), (not anime:2.0), (not cartoon:2.0), (not CGI:2.0), (not 3D render:2.0), (not illustrated:2.0), (not drawn:2.0), (not AI art:2.0), (not digital painting:2.0), (not midjourney:2.0), (real human anatomy:2.0), (real flesh:1.9), (human skin texture:2.0), (anatomically correct:2.0), (shot on camera:2.0), (visible skin pores:2.0), (not plastic skin:2.0), (no beauty filter:2.0), '
+    + (_poseIsBack
+      ? '(real human back:2.0), (realistic back anatomy:1.9), (real skin on back:1.9), (real individual hair strands:1.8),'
+      : '(real human face:2.0), (realistic eyes:1.9), (pores on face:1.9), (natural facial skin:1.9), (real individual hair strands:1.8),');
   // _EXPLICIT_REALISM: _REALISM_CORE for all poses + explicit-only terms for sup:true (genitals, adult film style)
   const _EXPLICIT_REALISM = pose.sup ? _REALISM_CORE + '(not hentai:2.0), (realistic genitals:1.9), (photographic explicit:1.9), (adult film photography style:1.8),' : _REALISM_CORE;
   const _HAIR   = ', (individual hair strands visible:1.7), (natural hair flyaways:1.6), (realistic hair texture:1.8), (natural hair parting:1.6), (genuine hair shine without HDR:1.5), (no hair smoothing filter:1.6), (real hair roots:1.5), (natural root-to-tip color gradient:1.6), (natural slight scalp oiliness at roots:1.4), (natural hair density variation:1.5), (natural split ends:1.4), (individual hair strand thickness variation:1.5), (natural hair static:1.4), (natural hair volume variation:1.5), (hair reflecting ambient light naturally:1.4), (natural scalp visible through hair:1.4), (hair follicle direction variation:1.4), (natural hair translucency in light:1.5), (stray hair strands catching light:1.5), (natural hair moisture level:1.4)';
