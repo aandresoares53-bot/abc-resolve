@@ -953,6 +953,31 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
         </div>
       </div>
 
+      <!-- 4d POSE -->
+      <div class="quick-chip-section">
+        <div class="quick-chip-label">🧍 Pose</div>
+        <div class="quick-chips" id="qchips-pose">
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="standing facing forward, full frontal stance, facing camera directly, upright standing position from the front">🧍 Em pé de frente</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="standing facing away from camera, back to camera, rear view standing pose, full back view">🔙 Em pé de costas</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="squatting facing forward, crouching pose facing camera, low squat frontal view, knees bent crouching forward">🦵 Agachada de frente</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="squatting with back to camera, crouching rear view, low squat back view, knees bent crouching facing away">🍑 Agachada de costas</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="side profile pose, standing sideways, lateral profile view, 90 degree side angle, body turned to the side">↔️ Perfil lateral</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="three-quarter angle pose, body turned 45 degrees toward camera, three-quarter view, slight body turn with face toward camera">🔄 3/4 de frente</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="three-quarter back angle pose, body turned 45 degrees away from camera, looking back over shoulder, three-quarter rear view">↩️ 3/4 de costas</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on back, lying face up, supine position, lying down looking up at camera, on her back">🛏️ Deitada de costas</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on stomach, prone position, lying face down, on her belly, lying down facing downward">🛌 Deitada de bruços</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on side, side-lying position, lateral recumbent pose, lying on her side facing camera">🌙 Deitada de lado</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="sitting pose, seated position, sitting facing camera, sitting upright looking forward">🪑 Sentada</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="on all fours, kneeling on hands and knees, quadruped pose, on hands and knees position">🐾 De quatro</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="kneeling pose, on knees, kneeling upright, knees on ground body upright">🙏 Ajoelhada</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="leaning against wall, leaning back on wall, wall lean pose, back against wall relaxed stance">🧱 Encostada na parede</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="arching back, back arch pose, chest out back arched, dramatic back arch with chest forward">🌈 Arqueando as costas</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="hands on hips, hands placed on hips, confident hip pose, arms akimbo">✋ Mãos nos quadris</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="arms raised above head, hands above head pose, arms lifted overhead, reaching upward pose">🙌 Braços levantados</span>
+          <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="looking back over shoulder, glancing back toward camera, head turned over shoulder, over-the-shoulder glance">👀 Olhando por cima do ombro</span>
+        </div>
+      </div>
+
       <!-- 5 OLHOS -->
       <div class="quick-chip-section">
         <div class="quick-chip-label">5️⃣ Olhos</div>
@@ -12257,6 +12282,7 @@ const _CHIP_LABELS = {
   cabelo:        { key:'cabelo',        icon:'💇', label:'Cabelo'   },
   cor_cabelo:    { key:'cor_cabelo',    icon:'🎨', label:'Cor cabelo'},
   angulo_camera: { key:'angulo_camera', icon:'📷', label:'Ângulo'   },
+  pose:          { key:'pose',          icon:'🧍', label:'Pose'     },
   iluminacao:    { key:'iluminacao',    icon:'💡', label:'Luz'      },
   estilo_foto:   { key:'estilo_foto',   icon:'📷', label:'Estilo'   },
 };
@@ -12298,7 +12324,7 @@ function _autoSaveCharDraft(){
 
   // Build pills HTML
   const items = [];
-  const ORDERED_CATS = ['etnia','idade','corpo','cabelo','cor_cabelo','angulo_camera'];
+  const ORDERED_CATS = ['etnia','idade','corpo','cabelo','cor_cabelo','angulo_camera','pose'];
   ORDERED_CATS.forEach(cat => {
     const v = quickChipState[cat];
     if(!v) return;
@@ -17371,6 +17397,7 @@ function buildPrompt(englishText, rawPT){
   const _cenarioChipFull  = (typeof getQuickCenario    === 'function' ? getQuickCenario()    : '') || '';
   const _estiloFotoFull   = (typeof getQuickEstiloFoto === 'function' ? getQuickEstiloFoto() : '') || '';
   const _anguloCamera     = (typeof getQuickAnguloCamera === 'function' ? getQuickAnguloCamera() : '') || '';
+  const _poseChip         = (typeof getQuickPose === 'function' ? getQuickPose() : '') || '';
   const _lensCamFull      = [_anguloCamera, (typeof getLensCam === 'function' ? getLensCam() : '')].filter(Boolean).join(', ') || '';
   const _illumChipFull    = (typeof getQuickIluminacao === 'function' ? getQuickIluminacao() : '') || '';
   const _sceneChipFull    = (typeof chipState !== 'undefined' && chipState.scene)   ? chipState.scene   : '';
@@ -17428,6 +17455,8 @@ function buildPrompt(englishText, rawPT){
   // incompatible lighting/environment even when the user selected a different location chip.
   if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()))
     inputText = _cenarioChipFull + ', ' + inputText;
+  if(_poseChip && !selectedPose && !inputText.toLowerCase().includes(_poseChip.substring(0,15).toLowerCase()))
+    inputText = _poseChip + ', ' + inputText;
   if(_sceneChipFull && !inputText.includes(_sceneChipFull.substring(0,15)))
     inputText = inputText + ', ' + _sceneChipFull;
   if(typeof chipState !== 'undefined'){
@@ -18808,7 +18837,7 @@ function lockSeed(){
 }
 
 // ── QUICK CHIPS (etnia / corpo / cabelo) ────────────────────────────────
-const quickChipState = { etnia:'', idade:'', corpo:'', cabelo:'', cor_cabelo:'', angulo_camera:'', cenario:'', estilo_foto:'', iluminacao:'', film_stock:'', lens_cam:'' };
+const quickChipState = { etnia:'', idade:'', corpo:'', cabelo:'', cor_cabelo:'', angulo_camera:'', pose:'', cenario:'', estilo_foto:'', iluminacao:'', film_stock:'', lens_cam:'' };
 
 // ── SKIN MARKS multi-select state ─────────────────────────────────────────
 const skinMarksActive = new Set();
@@ -19114,6 +19143,7 @@ function getQuickPreset(){
   return [quickChipState.etnia, quickChipState.idade, quickChipState.corpo, quickChipState.cabelo, quickChipState.cor_cabelo].filter(Boolean).join(', ');
 }
 function getQuickAnguloCamera(){ return quickChipState.angulo_camera || ''; }
+function getQuickPose(){ return quickChipState.pose || ''; }
 function getQuickCenario(){ return quickChipState.cenario || ''; }
 function getQuickIluminacao(){ return quickChipState.iluminacao || ''; }
 function getFilmStock(){ return quickChipState.film_stock || ''; }
