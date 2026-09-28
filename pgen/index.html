@@ -1157,37 +1157,6 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
         </div>
       </div>
 
-      <!-- 1️⃣5️⃣ TATUAGENS (multi-select) -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">1️⃣5️⃣ Tatuagens <span style="font-size:0.7em;font-weight:400;opacity:0.6;">— visíveis no corpo (multi)</span></div>
-        <div class="quick-chips" id="qchips-tatuagens">
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="small delicate tattoo on neck, fine line neck tattoo, small ink on neck">🖤 Pescoço</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="full sleeve tattoo on arm, detailed arm sleeve tattoo, covered arm with tattoo artwork from shoulder to wrist">💪 Sleeve Braço</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="tattoo on ribs and side torso, rib cage tattoo, side body ink visible">🌿 Costela</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="large back tattoo, full back body art, detailed spine and back ink artwork">🦋 Costas</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="thigh tattoo, upper leg tattoo, floral or decorative thigh ink visible">🌸 Coxa</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="ankle tattoo, small delicate ankle ink, fine line ankle tattoo">⚓ Tornozelo</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="delicate floral fine-line tattoo, small botanical tattoo, minimalist flower or vine tattoo">🌺 Floral Delicada</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="traditional tribal tattoo, bold black tribal pattern tattoo, large geometric tribal body art">🗿 Tribal</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="collarbone tattoo, delicate clavicle tattoo, small fine-line collarbone ink">🔑 Clavícula</span>
-          <span class="quick-chip" data-cat="tatuagem" data-multi="1" onclick="toggleTatPierc(this)" data-val="finger tattoos, small knuckle or finger ink, delicate finger ring tattoos">💍 Dedos</span>
-        </div>
-      </div>
-
-      <!-- 1️⃣6️⃣ PIERCINGS (multi-select) -->
-      <div class="quick-chip-section">
-        <div class="quick-chip-label">1️⃣6️⃣ Piercings <span style="font-size:0.7em;font-weight:400;opacity:0.6;">— visíveis (multi)</span></div>
-        <div class="quick-chips" id="qchips-piercings">
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="small diamond nose stud piercing, nostril piercing, small nose ring">💎 Nariz</span>
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="eyebrow bar piercing, curved barbell eyebrow piercing, brow piercing jewelry">🔘 Sobrancelha</span>
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="lip ring piercing, labret stud or ring, lower lip piercing jewelry visible">💋 Lábio</span>
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="tongue piercing, silver tongue barbell, tongue stud visible when mouth slightly open">👅 Língua</span>
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="belly button navel piercing, navel ring with dangling gem, navel barbell jewelry">🌟 Umbigo</span>
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="multiple ear piercings, stacked ear studs and hoops, industrial and helix ear piercings, curated ear">👂 Orelha Múltipla</span>
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="nipple piercing, nipple ring or barbell jewelry, nipple piercing visible">🌸 Mamilo</span>
-          <span class="quick-chip" data-cat="piercing" data-multi="1" onclick="toggleTatPierc(this)" data-val="septum ring piercing, circular septum jewelry, horseshoe septum ring through septum">🐂 Septo</span>
-        </div>
-      </div>
 
     </div>
     <!-- ── face-id-wrap mantido vazio para compatibilidade com JS ────────── -->
@@ -14387,21 +14356,27 @@ function buildPoseBlock(rawPT){
     sup: true
   };
   if(isBehind && isKneeling) return {
-    sd:  '(from behind:1.9), (rear view:1.9), (kneeling:1.8), (back facing camera:1.8), knees on surface, upright torso, (back fully visible:1.6), spine straight, buttocks resting on heels, NO face visible',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
+    sd:  '(kneeling:1.9), (back facing camera:2.0), (back fully visible:1.9), (knees on surface:1.7), (upright torso from behind:1.8)',
+    sd_end: '(no frontal view:2.0), (back only visible:1.9)',
     mj:  'kneeling from behind, back to camera, upright torso, back fully visible, rear view, face not visible',
-    neg: 'front view, facing camera, face visible, standing, sitting sideways, side profile, on all fours',
+    neg: 'front view, facing camera, face visible, face toward camera, looking at viewer, standing, side profile',
     sup: true
   };
   if(isBehind && isBentOver) return {
-    sd:  '(from behind:1.9), (rear view:1.9), (bent over forward:1.8), (back facing camera:1.8), torso leaning forward and down, (spine arched:1.6), back of body visible, legs straight or slightly bent',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
+    sd:  '(bent over forward:1.9), (back facing camera:2.0), (torso leaning forward:1.8), (spine arched:1.7), (back of body visible:1.9)',
+    sd_end: '(no frontal view:2.0), (back only visible:1.9)',
     mj:  'bent over from behind, torso leaning forward, spine arched, back to camera, rear view',
-    neg: 'front view, facing camera, face visible, standing upright, side profile',
+    neg: 'front view, facing camera, face visible, face toward camera, standing upright, side profile',
     sup: true
   };
   if(isBehind && isSquatting) return {
-    sd:  '(from behind:1.9), (rear view:1.9), (squatting:1.8), (back facing camera:1.8), deep squat position, thighs parallel to ground, (spine arched:1.4), NO face visible',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
+    sd:  '(squatting:1.9), (back facing camera:2.0), (deep squat rear view:1.9), (thighs parallel to ground:1.7), (buttocks visible from behind:1.8)',
+    sd_end: '(no frontal view:2.0), (back only visible:1.9)',
     mj:  'squatting from behind, deep squat, back to camera, rear view, face not visible',
-    neg: 'front view, facing camera, face visible, standing, side profile',
+    neg: 'front view, facing camera, face visible, face toward camera, standing, side profile',
     sup: true
   };
   if(isBehind && isFaceDown) return {
@@ -14411,27 +14386,34 @@ function buildPoseBlock(rawPT){
     sup: true
   };
   if(isBehind && isSitting) return {
-    sd:  '(from behind:1.9), (rear view:1.9), (sitting:1.7), (back facing camera:1.8), back fully visible, legs forward, NO face visible',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
+    sd:  '(sitting:1.9), (back facing camera:2.0), (back fully visible:1.9), (legs forward:1.7), (seated rear view:1.8)',
+    sd_end: '(no frontal view:2.0), (back only visible:1.9)',
     mj:  'sitting from behind, back to camera, rear view, face not visible',
-    neg: 'front view, facing camera, face visible, side profile',
+    neg: 'front view, facing camera, face visible, face toward camera, looking at viewer, side profile',
     sup: true
   };
   if(isBehind && isStanding) return {
-    sd:  '(from behind:1.9), (rear view:1.9), (standing:1.7), (back facing camera:1.8), full body rear view, back fully visible, legs visible, NO face visible',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
+    sd:  '(standing:1.9), (back facing camera:2.0), (full body rear view:1.9), (back fully visible:1.9), (legs visible from behind:1.7)',
+    sd_end: '(no frontal view:2.0), (back only visible:1.9)',
     mj:  'standing from behind, back to camera, full body rear view, face not visible',
-    neg: 'front view, facing camera, face visible, side profile',
+    neg: 'front view, facing camera, face visible, face toward camera, looking at viewer, side profile',
     sup: true
   };
   if(isBehind && isOverShoulder) return {
-    sd:  '(from behind:1.7), body turned away, (looking over her shoulder:1.8), face partially visible, three-quarter rear view',
-    mj:  'looking over shoulder at camera, body turned away, three-quarter rear view',
-    neg: 'fully facing camera, pure front view',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0),',
+    sd:  '(looking over her shoulder:1.9), (face partially visible:1.8), (three-quarter rear view:1.8), body turned away',
+    mj:  'looking over shoulder at camera, body turned away, three-quarter rear view, face partially visible',
+    neg: 'fully facing camera, pure front view, full frontal face',
     sup: false
   };
   if(isBehind) return {
-    sd:  '(from behind:1.9), (rear view:1.9), (back facing camera:1.8), back fully visible, full body rear view, NO face visible',
+    sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
+    sd:  '(back facing camera:2.0), (back fully visible:1.9), (full body rear view:1.9)',
+    sd_end: '(no frontal view:2.0), (back only visible:1.9)',
     mj:  'from behind, back to camera, full body rear view, face not visible',
-    neg: 'front view, facing camera, face visible, frontal pose',
+    neg: 'front view, facing camera, face visible, face toward camera, frontal pose',
     sup: true
   };
   if(isAllFours) return {
@@ -18498,9 +18480,13 @@ async function generate(){
   if(raw) detectModelFromText(raw);
   const hasPreset = typeof activePreset !== 'undefined' && activePreset;
 
-  // Require description — it is now the sole mandatory input
+  // Require at least some input — description, preset, character chip, or pose/scene chip
   let _quickPre = getQuickPreset();
-  if(!raw && !hasPreset && !_quickPre){
+  const _anyChip = _quickPre
+    || (typeof getQuickPose === 'function' && getQuickPose())
+    || (typeof getQuickAnguloCamera === 'function' && getQuickAnguloCamera())
+    || (typeof getQuickCenario === 'function' && getQuickCenario());
+  if(!raw && !hasPreset && !_anyChip){
     toast('⚠️ Digite uma descrição para gerar o prompt');
     document.getElementById('user-description')?.focus();
     return;
