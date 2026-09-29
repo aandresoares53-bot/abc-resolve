@@ -17514,7 +17514,10 @@ function buildPrompt(englishText, rawPT){
   // ── CRITICAL: inject cenário chip FIRST so expandScene() detects the correct location ──
   // Without this, the scene expander uses the auto-scene's location keywords and generates
   // incompatible lighting/environment even when the user selected a different location chip.
-  if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()))
+  // EXCEPTION: if the user's typed description already contains a specific location/scene
+  // keyword, their text takes priority — the chip is skipped to avoid conflicting scenes.
+  const _userHasSceneWord = /\b(bedroom|quarto|praia|beach|pool|piscina|gym|academia|café|cafe|restaurant|restaurante|kitchen|cozinha|bathroom|banheiro|chuveiro|shower|office|escritório|escritorio|park|parque|club|nightclub|boate|hotel|spa|forest|floresta|jungle|selva|rooftop|cobertura|city|cidade|rua|street|snow|neve|cabin|sala|living room|varanda|balcony)\b/i;
+  if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()) && !_userHasSceneWord.test(inputText))
     inputText = _cenarioChipFull + ', ' + inputText;
   if(_sceneChipFull && !inputText.includes(_sceneChipFull.substring(0,15)))
     inputText = inputText + ', ' + _sceneChipFull;
