@@ -953,6 +953,8 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="close-up, tight portrait, face close-up, head shot">🔍 Close-up rosto</span>
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="full body, full figure, head to toe, wide shot showing entire body">📸 Full body</span>
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="medium shot, waist up, half body, mid shot">🎬 Meio corpo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="three-quarter view, 3/4 angle, body turned 45 degrees toward camera, face angled">🔄 3/4 view</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="extreme close-up detail, macro shot, face detail, skin texture close-up, eyes filling frame">🔬 Extreme close-up</span>
         </div>
       </div>
 
@@ -2685,6 +2687,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 
   <!-- OUTPUT -->
   <div class="output-card" id="output-card">
+    <div id="active-chips-summary" style="display:none;margin:0 0 8px 0;padding:6px 10px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:0.7em;color:#166534;line-height:1.6;"></div>
     <div class="out-label">📋 Prompt Gerado:</div>
     <textarea class="prompt-textarea" id="prompt" spellcheck="false" oninput="onPromptEdit(); liveAnalyze();"></textarea>
     <div class="token-count" id="token-count"></div>
@@ -17861,6 +17864,10 @@ function buildPrompt(englishText, rawPT){
         return "eye level shot, straight on neutral angle,";
       if(/over the shoulder|behind and over/.test(_ac))
         return "over the shoulder shot, three-quarter rear view,";
+      if(/three.quarter view|3\/4 angle|body turned 45/.test(_ac))
+        return "three-quarter angle view, body turned 45 degrees toward camera,";
+      if(/extreme close.up detail|macro shot|face detail|skin texture close.up/.test(_ac))
+        return "extreme macro close-up, face detail filling frame, ultra close portrait,";
       return '';
     })();
     const core = (_mjCameraAnglePrefix ? _mjCameraAnglePrefix + ' ' : '') + _mjRealPrefix + ' ' + _mjUserWithEtnia + ', ' + _mjAnatomy;
@@ -17899,7 +17906,37 @@ function buildPrompt(englishText, rawPT){
     const _mjNeg = _wantsNSFW
       ? _mjNegBase.replace(/\b(nude|naked|topless|explicit|nsfw|adult content)[^,]*(,\s*)?/gi, '').replace(/,\s*$/, '').trim()
       : _mjNegBase + _mjNudeSuppressor;
-    _params += ' --no ' + _mjNeg;
+    // Camera angle negatives for MJ --no
+    const _mjAngleNeg = (() => {
+      if(!_anguloCamera) return '';
+      const _ac = _anguloCamera.toLowerCase();
+      if(/from below|upshot|worm/.test(_ac))
+        return 'bird\'s eye view, top-down, overhead shot, high angle, from above, downward angle';
+      if(/bird.s eye|overhead|top.down|directly above/.test(_ac))
+        return 'low angle, from below, upshot, worm\'s eye view, ground level';
+      if(/high angle|from above/.test(_ac))
+        return 'low angle, from below, upshot, worm\'s eye view, eye level shot';
+      if(/dutch angle|canted/.test(_ac))
+        return 'straight camera, level camera, no tilt, normal angle';
+      if(/close.up|tight portrait|head shot/.test(_ac))
+        return 'wide shot, full body, establishing shot, environmental shot, far away';
+      if(/full body|head to toe/.test(_ac))
+        return 'close-up, tight crop, cropped, cut off body, partial body';
+      if(/medium shot|waist up|half body/.test(_ac))
+        return 'close-up, full body, extreme wide shot';
+      if(/pov|first person|point of view/.test(_ac))
+        return 'third person view, wide establishing shot';
+      if(/eye level|straight on/.test(_ac))
+        return 'high angle, low angle, dutch angle, bird\'s eye, worm\'s eye';
+      if(/over the shoulder|behind and over/.test(_ac))
+        return 'front face view, straight face portrait';
+      if(/three.quarter view|3\/4 angle|body turned 45/.test(_ac))
+        return 'full frontal, straight on, profile view, side view';
+      if(/extreme close.up detail|macro shot|face detail/.test(_ac))
+        return 'wide shot, full body, medium shot, far away, establishing shot';
+      return '';
+    })();
+    _params += ' --no ' + _mjNeg + (_mjAngleNeg ? ', ' + _mjAngleNeg : '');
     const _mjFaceDesc = _getFaceID() ? `, ${_getFaceID()}, same consistent woman, same face` : '';
     // MJ mode: dynamic QF — use chip-selected film stock and lens
     const _mjQFFilm = getFilmStock() || _autoFilmStock || 'Kodak Portra 400';
@@ -18045,6 +18082,10 @@ function buildPrompt(englishText, rawPT){
       return '(eye level:2.0), (straight on:2.0), (neutral angle:2.0), BREAK';
     if(/over the shoulder|behind and over/.test(_ac))
       return '(over the shoulder:2.0), (three-quarter rear view:2.0), BREAK';
+    if(/three.quarter view|3\/4 angle|body turned 45/.test(_ac))
+      return '(three-quarter view:2.0), (3/4 angle:2.0), (body turned 45 degrees:2.0), BREAK';
+    if(/extreme close.up detail|macro shot|face detail|skin texture close.up/.test(_ac))
+      return '(extreme close-up:2.0), (macro shot:2.0), (face detail filling frame:2.0), BREAK';
     return '';
   })();
 
@@ -18332,6 +18373,10 @@ function buildPrompt(englishText, rawPT){
       _hardAngle = '(eye level:2.0), (straight on:2.0), (neutral camera angle:2.0)';
     else if(/over the shoulder|behind and over/.test(_acH))
       _hardAngle = '(over the shoulder:2.0), (three-quarter rear view:2.0)';
+    else if(/three.quarter view|3\/4 angle|body turned 45/.test(_acH))
+      _hardAngle = '(three-quarter view:2.0), (3/4 angle:2.0), (body turned 45 degrees:2.0)';
+    else if(/extreme close.up detail|macro shot|face detail/.test(_acH))
+      _hardAngle = '(extreme close-up:2.0), (macro shot:2.0), (face detail:2.0), (ultra close:2.0)';
     if(_hardAngle) result = _hardAngle + ' BREAK ' + result;
   }
   // ── Close-up mode injection ────────────────────────────────────
@@ -18472,6 +18517,22 @@ function _cleanPrompt(str){
     .trim();
 }
 
+function _updateChipSummary(){
+  const s = document.getElementById('active-chips-summary');
+  if(!s) return;
+  const parts = [];
+  const angCam = quickChipState.angulo_camera;
+  if(angCam) parts.push('📷 ' + (document.querySelector('[data-cat="angulo_camera"].chip-active')?.textContent?.trim() || angCam));
+  const pose = quickChipState.pose;
+  if(pose) parts.push('🧍 ' + (document.querySelector('[data-cat="pose"].chip-active')?.textContent?.trim() || pose));
+  const lens = quickChipState.lens_cam;
+  if(lens) parts.push('🔭 ' + (document.querySelector('[data-cat="lens_cam"].chip-active')?.textContent?.trim() || lens));
+  const ilum = Array.isArray(quickChipState.iluminacao) ? quickChipState.iluminacao : (quickChipState.iluminacao ? [quickChipState.iluminacao] : []);
+  if(ilum.length) parts.push('💡 ' + ilum.map(v => document.querySelector(`[data-cat="iluminacao"][data-val="${CSS.escape(v)}"]`)?.textContent?.trim() || v).join(' + '));
+  if(parts.length){ s.innerHTML = '<b>Chips ativos:</b> ' + parts.join(' &nbsp;|&nbsp; '); s.style.display=''; }
+  else s.style.display='none';
+}
+
 function showPrompt(prompt){
   _onPromptGenerated();
   document.getElementById('prompt').value = _cleanPrompt(prompt);
@@ -18483,6 +18544,8 @@ function showPrompt(prompt){
   updateTokenCount(prompt);
   // Live score + CLIP bar update
   try{ liveAnalyze(); }catch(e){}
+  // Active chip summary badge
+  try{ _updateChipSummary(); }catch(e){}
   // history
   const poseKey = selectedPose ? Object.keys(POSES).find(k=>POSES[k]===selectedPose) : null;
   addToHistory(prompt, currentMode, poseKey || 'livre');
