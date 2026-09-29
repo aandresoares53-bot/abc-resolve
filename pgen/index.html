@@ -2952,10 +2952,33 @@ function semanticPreProcess(text){
   t = t.replace(/\bcorpo\s*atl[eé]tico\b/gi,'athletic toned body,');
   t = t.replace(/\bcorpo\s*definido\b/gi,   'toned defined body,');
 
+  // ── SCENE / LOCATION keywords (PT → EN) — must run before Google Translate ──
+  t = t.replace(/\bacademia\b/gi,       'gym');
+  t = t.replace(/\bpiscina\b/gi,        'swimming pool');
+  t = t.replace(/\bpraia\b/gi,          'beach');
+  t = t.replace(/\bescrit[oó]rio\b/gi,  'office');
+  t = t.replace(/\bcozinha\b/gi,        'kitchen');
+  t = t.replace(/\bquarto\b/gi,         'bedroom');
+  t = t.replace(/\bsala\b/gi,           'living room');
+  t = t.replace(/\bbanheiro\b/gi,       'bathroom');
+  t = t.replace(/\bparque\b/gi,         'park');
+
   // ── LEGGING / TIGHT CLOTHING specifics ──
-  t = t.replace(/legging\s*branca\s*apertada/gi, 'tight white leggings, form-fitting white leggings,');
-  t = t.replace(/legging\s*preta\s*apertada/gi,  'tight black leggings, form-fitting black leggings,');
-  t = t.replace(/legging\s*apertada/gi,           'tight form-fitting leggings,');
+  // Handle "legging <cor>, apertada" (with comma) and "legging <cor> apertada" (no comma)
+  t = t.replace(/legging[s]?\s*branca[,\s]+apertada/gi, 'tight white leggings, form-fitting white leggings,');
+  t = t.replace(/legging[s]?\s*preta[,\s]+apertada/gi,  'tight black leggings, form-fitting black leggings,');
+  t = t.replace(/legging[s]?\s*branca/gi, 'white leggings,');
+  t = t.replace(/legging[s]?\s*preta/gi,  'black leggings,');
+  t = t.replace(/legging[s]?\s*apertada/gi, 'tight form-fitting leggings,');
+  t = t.replace(/\blegging[s]?\b/gi,        'leggings');
+
+  // ── TOPS / SHIRTS (PT → EN) ──
+  t = t.replace(/\bblusinha\b/gi,    'crop top');
+  t = t.replace(/\bcamiseta\b/gi,    'shirt');
+  t = t.replace(/\bcamisa\b/gi,      'shirt');
+  t = t.replace(/\bblusa\b/gi,       'blouse');
+  t = t.replace(/\bcropt[oó]p\b/gi,  'crop top');
+  t = t.replace(/\bt[êe]nis\b/gi,    'sneakers');
 
   // Pattern: "apenas de [clothing] [pose]" → "wearing only [clothing], [pose]"
   t = t.replace(/apenas\s*de\s*(calcinha\s*e\s*suti[ãa]|suti[ãa]\s*e\s*calcinha)/gi,
@@ -13532,7 +13555,7 @@ function expandScene(t, skipExpression){
 
   // ── OUTFIT — randomized among 3 options per scene for variety ─────────────
   const _pick = arr => arr[Math.floor(Math.random() * arr.length)];
-  const hasOutfit = /wearing|dress|shirt|jeans|bikini|top|skirt|blouse|outfit|coat|jacket|suit|shorts|leggings|swimsuit|bodysuit|lingerie|bra|pants|trousers|hoodie|sweater|gown|uniform|costume|corset|crop|naked|nude|naked|topless|bottomless|undressed|no clothes|no clothing|without clothes|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|camisola|blusa|meias|meia-cal[cç]a|body|collant|maio|maiô|roupa|roupinha|fantasia|espartilho|colete|casaco|jaqueta|moletom|pijama|ling[eé]rie|fio dental|tanga|microbiqu[iíi]ni|decote|pelada|sem roupa|sem calcinha|sem suti|nu[ao]\b|peladinha|topless/.test(s);
+  const hasOutfit = /wearing|dress|shirt|jeans|bikini|top|skirt|blouse|outfit|coat|jacket|suit|shorts|leggings?|swimsuit|bodysuit|lingerie|bra|pants|trousers|hoodie|sweater|gown|uniform|costume|corset|crop|sneakers|naked|nude|naked|topless|bottomless|undressed|no clothes|no clothing|without clothes|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|camisola|blusa|blusinha|meias|meia-cal[cç]a|body|collant|maio|maiô|roupa|roupinha|fantasia|espartilho|colete|casaco|jaqueta|moletom|pijama|ling[eé]rie|fio dental|tanga|microbiqu[iíi]ni|decote|pelada|sem roupa|sem calcinha|sem suti|nu[ao]\b|peladinha|topless/.test(s);
   let outfit = '';
   if(!hasOutfit){
     if(isShower) outfit = ''; // naturally nude — no outfit for shower/bath
@@ -17536,7 +17559,7 @@ function buildPrompt(englishText, rawPT){
   // ── Dynamic clothing/nudity enforcement ─────────────────────────────────
   // NOTE: standalone 'top' removed — too ambiguous (matches "on top", "top leg", "top down" in pose text).
   // compound forms (crop top, tube top, bikini top) already cover clothing tops.
-  const _clothingRe = /\b(panties|bra|bikini|underwear|lingerie|thong|dress|skirt|shirt|blouse|sports\s+bra|crop\s+top|bodysuit|corset|swimsuit|one-piece|gown|jeans|shorts|leggings|pants|trousers|hoodie|sweater|uniform|costume|outfit|clothed|dressed|stockings?|garter|leotard|suspender|thigh-high|tights|bodystocking|robe|camisole|negligee|bustier|bralette|tankini|jumpsuit|playsuit|fishnet|chemise|teddy|monokini|slip|nightgown|sleepwear|swimwear|beachwear|unitard|catsuit|bodycon|miniskirt|minidress|maxi\s*dress|sundress|wrap\s*dress|tube\s*top|halter|sarong|loincloth|bikini\s*bottom|bikini\s*top)\b/gi;
+  const _clothingRe = /\b(panties|bra|bikini|underwear|lingerie|thong|dress|skirt|shirt|blouse|sports\s+bra|crop\s+top|bodysuit|corset|swimsuit|one-piece|gown|jeans|shorts|leggings?|pants|trousers|hoodie|sweater|uniform|costume|outfit|clothed|dressed|sneakers|stockings?|garter|leotard|suspender|thigh-high|tights|bodystocking|robe|camisole|negligee|bustier|bralette|tankini|jumpsuit|playsuit|fishnet|chemise|teddy|monokini|slip|nightgown|sleepwear|swimwear|beachwear|unitard|catsuit|bodycon|miniskirt|minidress|maxi\s*dress|sundress|wrap\s*dress|tube\s*top|halter|sarong|loincloth|bikini\s*bottom|bikini\s*top)\b/gi;
   // Expanded NSFW detection — nudity + explicit sexual content
   const _nudeRe = /\b(nude|naked|topless|bottomless|undressed|no clothes|no clothing|explicit|nsfw|nipples?|areola|genital|vagina|vulva|penis|cock|pussy|pubic|intercourse|penetration|orgasm|erotic[a-z]*|pornograph[a-z]*|xxx|blowjob|oral\s*sex|cunnilingus|anal\s*sex|masturbat[a-z]*|fingering|squirting|creampie|cumshot|sex\s*position|sex\s*act|adult\s*content|sexually\s*explicit|genitalia)\b/i;
   const _clothingMatches = [...expanded.matchAll(_clothingRe)].map(m => m[0]);
