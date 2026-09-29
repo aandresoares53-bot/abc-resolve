@@ -18281,6 +18281,33 @@ function buildPrompt(englishText, rawPT){
     _QF_S                    // Final quality flags
   ].filter(Boolean);
   let result = parts.join(', ') + _FACE + _HAIR + _BODY + _LIFE + _skinMarksBoost + _tatPiercBoost;
+  // ── Camera angle HARD INJECT — prepend to result with BREAK so it is always
+  // the very first CLIP token group, regardless of parts[] ordering ───────────
+  if(_anguloCamera){
+    const _acH = _anguloCamera.toLowerCase();
+    let _hardAngle = '';
+    if(/from below|upshot|worm/.test(_acH))
+      _hardAngle = '(from below:2.0), (low angle shot:2.0), (upshot:2.0), (worm\'s eye view:2.0)';
+    else if(/bird.s eye|overhead|top.down|directly above/.test(_acH))
+      _hardAngle = '(bird\'s eye view:2.0), (top-down:2.0), (overhead shot:2.0), (directly above:2.0)';
+    else if(/high angle|from above/.test(_acH))
+      _hardAngle = '(high angle:2.0), (from above:2.0), (downward angle:2.0)';
+    else if(/dutch angle|canted/.test(_acH))
+      _hardAngle = '(dutch angle:2.0), (tilted camera:2.0), (canted angle:2.0)';
+    else if(/close.up|tight portrait|head shot/.test(_acH))
+      _hardAngle = '(close-up:2.0), (tight portrait:2.0), (face close-up:2.0)';
+    else if(/full body|head to toe/.test(_acH))
+      _hardAngle = '(full body shot:2.0), (full figure:2.0), (head to toe:2.0)';
+    else if(/medium shot|waist up|half body/.test(_acH))
+      _hardAngle = '(medium shot:2.0), (waist up:2.0), (half body:2.0)';
+    else if(/pov|first person|point of view/.test(_acH) && !/from below|upshot/.test(_acH))
+      _hardAngle = '(pov shot:2.0), (first person view:2.0), (point of view:2.0)';
+    else if(/eye level|straight on/.test(_acH))
+      _hardAngle = '(eye level:2.0), (straight on:2.0), (neutral camera angle:2.0)';
+    else if(/over the shoulder|behind and over/.test(_acH))
+      _hardAngle = '(over the shoulder:2.0), (three-quarter rear view:2.0)';
+    if(_hardAngle) result = _hardAngle + ' BREAK ' + result;
+  }
   // ── Close-up mode injection ────────────────────────────────────
   if(closeupMode && CLOSEUP_MAP[closeupTarget]){
     result = CLOSEUP_MAP[closeupTarget] + ', ' + result;
