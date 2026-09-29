@@ -13772,8 +13772,17 @@ function expandScene(t, skipExpression){
   }
 
   // ── ENVIRONMENT ───────────────────────────────────────────────────────────
-  // hasEnv: true if user already described WHERE the scene takes place (prevents double-adding)
-  const hasEnv = /background|bokeh|atmosphere|scenery|surroundings|setting|in front of|next to|beside|inside|outside|on the|at the|near the|by the|against|facing a|facing the|leaning on|sitting on|standing on|on a|on her|in a|in the|at a|at the|with a/.test(s);
+  // When a specific scene type is detected (gym, beach, etc.) always inject the matching
+  // environment description — the scene keyword IS the location request.
+  // hasEnv only blocks environment injection when NO specific scene type was detected
+  // AND the user already described a generic location via preposition phrases.
+  // This prevents false positives from body-gesture phrases like "hands in the hair"
+  // or "sitting on her knees" from suppressing the environment.
+  const _hasSpecificScene = isShower || isRain || isMirror || isCar || isYoga || isNature ||
+    isBeach || isPool || isRooftop || isSpa || isSnow || isPark || isForest || isCity ||
+    isCafe || isRestaurant || isClub || isWedding || isRunway || isWorkout || isLuxuryHotel;
+  const _envPrepPhrase = /\b(in front of|next to|beside|against the wall|leaning against|background of|set in|located at|atmosphere of|surroundings of|scenery of|background is|setting is)\b/;
+  const hasEnv = !_hasSpecificScene && _envPrepPhrase.test(s);
   let environment = '';
   if(!hasEnv){
     if(isShower)       environment = _pick([
