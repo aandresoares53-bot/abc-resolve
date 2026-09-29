@@ -17837,7 +17837,33 @@ function buildPrompt(englishText, rawPT){
     const _mjEtnia = getEtniaSkinBoost().replace(/\(([^:)]+):[0-9.]+\)/g, '$1');
     const _mjTatPierc = getTatPierc();
     const _mjUserWithEtnia = [_mjUserContent, _mjEtnia ? 'Ethnicity: ' + _mjEtnia : '', _mjTatPierc || ''].filter(Boolean).join(', ');
-    const core = _mjRealPrefix + ' ' + _mjUserWithEtnia + ', ' + _mjAnatomy;
+    // Camera angle FIRST in MJ — MJ is attention-based, earliest tokens dominate
+    const _mjCameraAnglePrefix = (() => {
+      if(!_anguloCamera) return '';
+      const _ac = _anguloCamera.toLowerCase();
+      if(/from below|upshot|worm/.test(_ac))
+        return "low angle shot from below, upshot perspective, camera on floor looking up,";
+      if(/bird.s eye|overhead|top.down|directly above/.test(_ac))
+        return "bird's eye view, top-down overhead, camera directly above,";
+      if(/high angle|from above/.test(_ac))
+        return "high angle shot from above, downward camera angle,";
+      if(/dutch angle|canted/.test(_ac))
+        return "dutch angle, tilted camera, canted angle,";
+      if(/close.up|tight portrait|head shot/.test(_ac))
+        return "extreme close-up, tight portrait, face filling frame,";
+      if(/full body|head to toe/.test(_ac))
+        return "full body shot head to toe, wide frame showing entire figure,";
+      if(/medium shot|waist up|half body/.test(_ac))
+        return "medium shot waist up, half body framing,";
+      if(/pov|first person|point of view/.test(_ac) && !/from below|upshot/.test(_ac))
+        return "pov shot, first person perspective, point of view,";
+      if(/eye level|straight on/.test(_ac))
+        return "eye level shot, straight on neutral angle,";
+      if(/over the shoulder|behind and over/.test(_ac))
+        return "over the shoulder shot, three-quarter rear view,";
+      return '';
+    })();
+    const core = (_mjCameraAnglePrefix ? _mjCameraAnglePrefix + ' ' : '') + _mjRealPrefix + ' ' + _mjUserWithEtnia + ', ' + _mjAnatomy;
     const _ar       = document.getElementById('mj-ar')?.value       || '2:3';
     const _v        = document.getElementById('mj-v')?.value        || '6.1';
     const _stylize  = document.getElementById('mj-stylize')?.value  || '50';
