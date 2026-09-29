@@ -948,7 +948,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="bird's eye view, overhead, top-down, directly above looking down">🐦 Bird's eye</span>
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="pov, first person view, viewer perspective, point of view shot">👁️ POV</span>
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="from below, low angle, upshot, looking up at subject, camera on floor level, upward angle pov">🔥 POV baixo</span>
-          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="extreme pov from below, ground level upward pov, camera on ground looking straight up at subject, extreme upshot pov, viewer lying on floor looking up, body looming overhead from ground pov, extreme low pov angle">💥 POV baixo extremo</span>
+          <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="extreme pov from below, ground level upward pov, camera on ground looking straight up at subject, extreme upshot pov, viewer lying on floor looking up, body looming overhead from ground pov, extreme low pov angle, upward view focused on vulva and crotch area, looking up between legs from below, intimate upshot view of genitals from underneath, camera directly below genitals looking up">💥 POV baixo extremo</span>
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="dutch angle, tilted camera, canted angle">📐 Dutch angle</span>
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="over the shoulder, behind and over shoulder, three-quarter rear view">🤸 Sobre o ombro</span>
           <span class="quick-chip" data-cat="angulo_camera" onclick="toggleQuickChip(this)" data-val="close-up, tight portrait, face close-up, head shot">🔍 Close-up rosto</span>
@@ -17846,7 +17846,7 @@ function buildPrompt(englishText, rawPT){
       if(!_anguloCamera) return '';
       const _ac = _anguloCamera.toLowerCase();
       if(/extreme pov from below|ground level upward pov|camera on ground looking straight up|extreme upshot pov|viewer lying on floor|extreme low pov/.test(_ac))
-        return "extreme pov from ground level, camera lying on floor looking straight up, body looming overhead, extreme upshot perspective, viewer on ground looking up,";
+        return "extreme upshot pov from below, camera directly below looking up between legs, upward view focused on vulva and crotch, body looming overhead, ground level intimate upshot perspective,";
       if(/from below|upshot|worm/.test(_ac))
         return "low angle shot from below, upshot perspective, camera on floor looking up,";
       if(/bird.s eye|overhead|top.down|directly above/.test(_ac))
@@ -18068,7 +18068,7 @@ function buildPrompt(englishText, rawPT){
     // Camera angle chip anchor — BREAK isolates camera angle in its own CLIP chunk for maximum weight
     const _ac = _anguloCamera.toLowerCase();
     if(/extreme pov from below|ground level upward pov|camera on ground looking straight up|extreme upshot pov|viewer lying on floor|extreme low pov/.test(_ac))
-      return '(extreme pov from below:2.0), (camera on ground looking up:2.0), (ground level upshot:2.0), (body looming overhead:2.0), (extreme low angle pov:2.0), BREAK';
+      return '(extreme upshot pov from below:2.0), (camera below looking up between legs:2.0), (upward view of vulva and crotch:2.0), (body looming overhead:2.0), (intimate ground level pov:2.0), BREAK';
     if(/from below|upshot|worm/.test(_ac))
       return '(from below:2.0), (low angle shot:2.0), (upshot:2.0), (camera below subject:2.0), (looking up at subject:2.0), BREAK';
     if(/bird.s eye|overhead|top.down|directly above/.test(_ac))
@@ -18361,7 +18361,7 @@ function buildPrompt(englishText, rawPT){
     const _acH = _anguloCamera.toLowerCase();
     let _hardAngle = '';
     if(/extreme pov from below|ground level upward pov|camera on ground looking straight up|extreme upshot pov|viewer lying on floor|extreme low pov/.test(_acH))
-      _hardAngle = '(extreme pov from below:2.0), (ground level upshot:2.0), (camera on floor looking up:2.0), (body overhead:2.0), (extreme low angle pov:2.0)';
+      _hardAngle = '(extreme upshot pov from below:2.0), (camera below looking up between legs:2.0), (upward view of vulva and crotch:2.0), (body looming overhead:2.0), (intimate ground level pov:2.0)';
     else if(/from below|upshot|worm/.test(_acH))
       _hardAngle = '(from below:2.0), (low angle shot:2.0), (upshot:2.0), (worm\'s eye view:2.0)';
     else if(/bird.s eye|overhead|top.down|directly above/.test(_acH))
