@@ -18046,7 +18046,17 @@ function buildPrompt(englishText, rawPT){
     const _mjQF = (_mjOutfitResolved && !_wantsNSFW)
       ? _mjQFRaw.replace(_mjQFNudeTermsRe, '').replace(/,\s*,/g, ',').replace(/(^,\s*|\s*,\s*$)/g, '').trim()
       : _mjQFRaw;
-    return core + _mjFaceDesc + ', ' + _mjQF + _params;
+    const _mjNudeRealism = _wantsNSFW
+      ? 'natural cellulite texture, natural stretch marks, real feminine weight and softness, authentic imperfect body, natural gravity-pulled skin, skin weight and drape, natural skin laxity, skin fold physics, skin contact deformation'
+      : '';
+    const _mjHumanRealism = [
+      'visible skin pores, skin micro-texture, organic skin texture, natural skin blemishes, skin color variation by body zone, skin translucency, subsurface light scattering on skin',
+      'natural slight facial asymmetry, realistic iris texture with catchlights, eye moisture, real eye whiteness with subtle blood vessels, individual eyelash strands, individual eyebrow hairs, natural lip texture with lip lines, vellus facial hair peach fuzz on cheeks, nose pores visible, tear duct visible, natural nasolabial folds, natural expression lines',
+      'individual hair strands visible, natural flyaways, natural root-to-tip color gradient, real hair roots, natural hair density variation',
+      'natural collarbone definition, hand veins visible, natural nail texture, real feminine body proportions, natural breast weight and gravity',
+      _mjNudeRealism
+    ].filter(Boolean).join(', ');
+    return core + _mjFaceDesc + ', ' + _mjQF + ', ' + _mjHumanRealism + _params;
   }
   if(currentMode === 'gpt'){
     const _gptRealPrefix = _wantsNSFW
