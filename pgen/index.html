@@ -21457,9 +21457,7 @@ async function generateRandom(){
     }
   }
 
-  // ── 4. Clear user description (let pose define the scene) ─────────────
-  const descEl = document.getElementById('user-description');
-  if(descEl) descEl.value = '';
+  // ── 4. Keep user description (preserve character the user set up) ──────
 
   // ── 5. Generate and wait for completion ───────────────────────────────
   const poseLabel = poseData?.label || randomKey;
@@ -22162,33 +22160,42 @@ function checkConflicts(){
 
 // ── 6. RANDOMIZE (quick-chip categories) ────────────────────────────────────
 async function generateAleatorio(){
-  // Clear all quick chips first
-  clearAllQuickChips();
+  // Preserve character chips (only randomize pose, lighting, scene)
+  const CHAR_CATS = new Set(['idade','corpo','cabelo','cor_cabelo','olhos','rosto','labios','tracos']);
+
+  // Clear only non-character chips
+  document.querySelectorAll('.quick-chip.active').forEach(c => {
+    if(!CHAR_CATS.has(c.dataset.cat)) c.click();
+  });
 
   const pickRandom = (cat) => {
     const chips = [...document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`)];
     if(!chips.length) return;
+    // Skip if already has an active chip in this category
+    if(chips.some(c => c.classList.contains('active'))) return;
     const pick = chips[Math.floor(Math.random() * chips.length)];
     pick.click();
   };
 
-  // Pick from each category (not both pose front+back)
-  ['idade','corpo','cabelo','iluminacao'].forEach(cat => pickRandom(cat));
+  // Only randomize non-character categories
+  ['iluminacao','cenario'].forEach(cat => pickRandom(cat));
+
+  // Randomize character cats only if none already selected
+  ['idade','corpo','cabelo'].forEach(cat => pickRandom(cat));
 
   // Pose: pick one, avoid front+back conflict
   const poseChips = [...document.querySelectorAll('.quick-chip[data-cat="pose"]')];
-  if(poseChips.length){
+  const hasActivePose = poseChips.some(c => c.classList.contains('active'));
+  if(!hasActivePose && poseChips.length){
     const pick = poseChips[Math.floor(Math.random() * poseChips.length)];
     pick.click();
   }
 
-  // Check if both front and back got selected (shouldn't happen with single pick, but guard)
-  const active = [...document.querySelectorAll('.quick-chip[data-cat="pose"].active')];
-  if(active.length > 1){
-    active.slice(1).forEach(c => c.click()); // deselect extras
-  }
+  // Guard: deselect extra pose chips if somehow multiple active
+  const activePose = [...document.querySelectorAll('.quick-chip[data-cat="pose"].active')];
+  if(activePose.length > 1) activePose.slice(1).forEach(c => c.click());
 
-  toast('🎲 Chips aleatórios selecionados!');
+  toast('🎲 Pose e cena aleatórias — personagem mantido!');
   await generate();
 }
 
