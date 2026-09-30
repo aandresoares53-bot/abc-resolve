@@ -704,10 +704,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   <!-- MODE TOGGLE -->
   <div class="mode-toggle-wrap">
     <span class="mode-label">Plataforma:</span>
-    <button class="mode-btn active-sd" id="btn-sd" onclick="setMode('sd')">🖼️ SD<br><small style="font-weight:400;font-size:0.85em">Stable Diffusion</small></button>
-    <button class="mode-btn" id="btn-mj" onclick="setMode('mj')">🌌 MJ<br><small style="font-weight:400;font-size:0.85em">Midjourney v6</small></button>
-    <button class="mode-btn" id="btn-flux" onclick="setMode('flux')">⚡ Flux<br><small style="font-weight:400;font-size:0.85em">Sem pesos</small></button>
-    <button class="mode-btn" id="btn-dalle" onclick="setMode('dalle')">🤖 DALL-E<br><small style="font-weight:400;font-size:0.85em">Linguagem natural</small></button>
+    <button class="mode-btn active-mj" id="btn-mj" onclick="setMode('mj')">🌌 MJ<br><small style="font-weight:400;font-size:0.85em">Midjourney v6</small></button>
   </div>
 
   <!-- MJ PARAMS PANEL -->
@@ -2806,8 +2803,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       </div>
     </div>
     <div class="out-actions">
-      <button class="btn-copy" id="btn-copy-sd" onclick="copyForPlatform('sd')" title="Copiar prompt SD (com pesos)">📋 SD</button>
-      <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" id="btn-copy-mj" onclick="copyForPlatform('mj')" title="Copiar prompt MJ">📋 MJ</button>
+      <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" id="btn-copy-mj" onclick="copyForPlatform('mj')" title="Copiar prompt MJ">📋 Copiar</button>
       <button class="btn-copy red" id="btn-copy-neg" onclick="copyForPlatform('neg')" title="Copiar Negative Prompt">📋 Negativo</button>
       <button class="btn-copy" style="background:#0284c7;border-color:#0284c7;" onclick="sharePrompt()" title="Compartilhar prompt via link">🔗</button>
       <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" onclick="useAsBase()" title="Usar como base">♻️</button>
@@ -21935,9 +21931,10 @@ function setMode(mode){
 // Initialize platform — start with SD selected visually, but keep internalMode='mj'
 setTimeout(() => {
   try {
-    selectedPlatform = 'sd';
-    const btn = document.getElementById('btn-sd');
-    if(btn) btn.className = 'mode-btn active-sd';
+    selectedPlatform = 'mj';
+    currentMode = 'mj';
+    const btn = document.getElementById('btn-mj');
+    if(btn) btn.className = 'mode-btn active-mj';
     _updateWeightBadgeVisibility();
   } catch(e){}
 }, 50);
