@@ -399,6 +399,45 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 [data-theme="dark"] .quick-chip.active{background:#1d4ed8;border-color:#1d4ed8;color:#fff;}
 [data-theme="dark"] .quick-chip-label{color:#94a3b8;}
 [data-theme="dark"] .quick-chip-section{border-bottom-color:#1e293b;}
+
+/* ── CHIP WEIGHTS ─────────────────────────────────────────────────────── */
+.chip-weight-badge{position:absolute;top:-6px;right:-6px;background:#1d4ed8;color:#fff;font-size:0.58em;padding:1px 4px;border-radius:8px;font-weight:700;line-height:1.4;pointer-events:none;z-index:2;}
+.quick-chip{position:relative;}
+.chip-weight-popover{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 12px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.15);min-width:160px;display:none;}
+.chip-weight-popover.open{display:block;}
+.chip-weight-popover label{font-size:0.7em;font-weight:700;color:#334155;display:block;margin-bottom:5px;}
+.chip-weight-popover input[type=range]{width:100%;accent-color:#1d4ed8;}
+[data-theme="dark"] .chip-weight-popover{background:#1e293b;border-color:#334155;}
+[data-theme="dark"] .chip-weight-badge{background:#2563eb;}
+
+/* ── SUGGESTED CHIPS ─────────────────────────────────────────────────── */
+.quick-chip.suggested{box-shadow:0 0 0 2px #f59e0b;animation:suggest-pulse 1.5s ease-in-out infinite;}
+@keyframes suggest-pulse{0%,100%{box-shadow:0 0 0 2px #f59e0b;}50%{box-shadow:0 0 0 4px rgba(245,158,11,0.4);}}
+
+/* ── CHARACTER LOCK ─────────────────────────────────────────────────── */
+.char-locked .quick-chip[data-locked]{opacity:0.5;cursor:not-allowed;pointer-events:none;}
+.char-locked .quick-chip[data-locked]::after{content:' 🔒';font-size:0.65em;}
+.btn-char-lock{padding:8px 14px;border:1.5px solid #64748b;border-radius:8px;font-size:0.78em;font-weight:700;cursor:pointer;background:#fff;color:#64748b;transition:all 0.2s;}
+.btn-char-lock.locked{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
+[data-theme="dark"] .btn-char-lock{background:#0f172a;border-color:#475569;color:#94a3b8;}
+[data-theme="dark"] .btn-char-lock.locked{background:#1d4ed8;color:#fff;}
+
+/* ── CHIP GLOBAL FILTER ─────────────────────────────────────────────── */
+.chip-global-filter{width:100%;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:7px 12px;font-size:0.82em;outline:none;color:#1e293b;margin-bottom:10px;transition:border-color 0.2s;box-sizing:border-box;}
+.chip-global-filter:focus{border-color:#1d4ed8;}
+[data-theme="dark"] .chip-global-filter{background:#0f172a;border-color:#334155;color:#e2e8f0;}
+
+/* ── CONFLICT WARNING ───────────────────────────────────────────────── */
+.conflict-warning{background:#fef9c3;border:1.5px solid #fbbf24;border-radius:10px;padding:10px 14px;margin-bottom:12px;}
+.conflict-warning ul{margin:4px 0 0 16px;font-size:0.8em;color:#92400e;}
+
+/* ── PLATFORM BADGE ─────────────────────────────────────────────────── */
+.platform-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.65em;font-weight:700;vertical-align:middle;margin-left:6px;}
+.platform-badge.sd{background:#1d4ed8;color:#fff;}
+.platform-badge.mj{background:#7c3aed;color:#fff;}
+.platform-badge.flux{background:#d97706;color:#fff;}
+.platform-badge.dalle{background:#10a37f;color:#fff;}
+
 /* ── FACE IDENTITY ─────────────────────────────────────────────────────── */
 .face-chip{display:inline-block;padding:5px 11px;border:1.5px solid #e2e8f0;border-radius:20px;background:#f8fafc;color:#475569;font-size:0.75em;cursor:pointer;margin:3px 3px 3px 0;transition:all 0.15s;white-space:nowrap;user-select:none;}
 .face-chip:hover{background:#eff6ff;border-color:#93c5fd;color:#1e40af;}
@@ -666,8 +705,11 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
   </div>
   <!-- MODE TOGGLE -->
   <div class="mode-toggle-wrap">
-    <span class="mode-label">Formato do prompt:</span>
-    <button class="mode-btn active-mj" id="btn-mj" onclick="setMode('mj')">🌌 Midjourney<br><small style="font-weight:400;font-size:0.85em">MJ v6 · 100% Realismo</small></button>
+    <span class="mode-label">Plataforma:</span>
+    <button class="mode-btn active-sd" id="btn-sd" onclick="setMode('sd')">🖼️ SD<br><small style="font-weight:400;font-size:0.85em">Stable Diffusion</small></button>
+    <button class="mode-btn" id="btn-mj" onclick="setMode('mj')">🌌 MJ<br><small style="font-weight:400;font-size:0.85em">Midjourney v6</small></button>
+    <button class="mode-btn" id="btn-flux" onclick="setMode('flux')">⚡ Flux<br><small style="font-weight:400;font-size:0.85em">Sem pesos</small></button>
+    <button class="mode-btn" id="btn-dalle" onclick="setMode('dalle')">🤖 DALL-E<br><small style="font-weight:400;font-size:0.85em">Linguagem natural</small></button>
   </div>
 
   <!-- MJ PARAMS PANEL -->
@@ -869,9 +911,11 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
     <div id="auto-charlock-badge" style="display:none;padding:5px 10px;background:#dcfce7;border:1.5px solid #86efac;border-radius:9px;font-size:0.72em;color:#166534;font-weight:600;margin-bottom:8px;">🔒 Personagem travado — mantido em todas as variações e sequências</div>
 
     <!-- QUICK SELECT — REDESIGNED: numerado, ordenado, simplificado -->
-    <div style="display:flex;justify-content:flex-end;margin-bottom:6px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;">
+      <button class="btn-char-lock" id="btn-char-lock" onclick="toggleCharLock()" title="Travar chips de personagem para variar apenas cena/pose">🔓 Fixar personagem</button>
       <button onclick="clearAllQuickChips()" style="padding:4px 12px;background:transparent;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;font-size:0.8em;color:#64748b;font-weight:600;" title="Zerar todos os filtros de chips">🗑️ Zerar filtros</button>
     </div>
+    <input type="text" class="chip-global-filter" id="chip-global-filter" placeholder="🔍 Filtrar chips..." oninput="filterGlobalChips(this.value)">
     <div class="quick-chips-wrap" id="quick-chips-wrap">
 
       <!-- 1 IDADE -->
@@ -2709,11 +2753,9 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 
   <div class="gen-row" id="section-gen">
     <button class="btn-generate" onclick="generate()">⚡ GERAR PROMPT</button>
-    <button class="btn-montar" onclick="montarPersonagem()" title="Monta personagem completa: etnia, corpo, cabelo e pose aleatórios — e gera o prompt">🎲 Montar</button>
-    <button class="btn-variations" onclick="generateSmartVariations()">✨ Light/Mid/Bold</button>
-    <button class="btn-variations" onclick="generateVariations()">🎲 3 Variações</button>
+    <button class="btn-variations" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-color:#16a34a;" onclick="generateAleatorio()" title="Escolhe chips aleatórios de pose, idade, corpo, cabelo, iluminação e cena, depois gera">🎲 Aleatório</button>
+    <button class="btn-variations" onclick="generateVariations()">🔀 3 Variações</button>
     <button class="btn-random-all" onclick="generateRandom()" title="Escolhe pose aleatória de qualquer categoria e gera o prompt">🎰 Surpresa</button>
-    <button class="btn-variations" onclick="generateSequence()" title="Gera 5 prompts progressivos em sequência narrativa" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border-color:#7c3aed;">🎬 Sequência</button>
   </div>
 
   <!-- CONFLICT WARNING -->
@@ -2766,11 +2808,12 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
       </div>
     </div>
     <div class="out-actions">
-      <button class="btn-copy" onclick="copyPrompt()">📋 Copiar Prompt</button>
-      <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" onclick="useAsBase()" title="Copia o prompt editado para a caixa de descrição">♻️ Usar como base</button>
-      <button class="btn-copy" style="background:#0284c7;border-color:#0284c7;" onclick="sharePrompt()" title="Compartilhar prompt via link">🔗 Compartilhar</button>
-      <button class="btn-copy" style="background:#059669;border-color:#059669;" onclick="copyAsMJ()" title="Copia o prompt limpo (sem pesos SD) com parâmetros Midjourney">🎨 Copiar MJ</button>
-      <button class="btn-clear-out" onclick="clearOutput()">✕ Limpar</button>
+      <button class="btn-copy" id="btn-copy-sd" onclick="copyForPlatform('sd')" title="Copiar prompt SD (com pesos)">📋 SD</button>
+      <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" id="btn-copy-mj" onclick="copyForPlatform('mj')" title="Copiar prompt MJ">📋 MJ</button>
+      <button class="btn-copy red" id="btn-copy-neg" onclick="copyForPlatform('neg')" title="Copiar Negative Prompt">📋 Negativo</button>
+      <button class="btn-copy" style="background:#0284c7;border-color:#0284c7;" onclick="sharePrompt()" title="Compartilhar prompt via link">🔗</button>
+      <button class="btn-copy" style="background:#7c3aed;border-color:#7c3aed;" onclick="useAsBase()" title="Usar como base">♻️</button>
+      <button class="btn-clear-out" onclick="clearOutput()">✕</button>
     </div>
 
     <div class="neg-box" id="neg-box" style="display:none;">
@@ -21866,6 +21909,478 @@ if ('serviceWorker' in navigator) {
 }
 
 // Etnia init removida — etnia começa vazia; a descrição do usuário define o personagem.
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ██  NEW FEATURES v4.0
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── 1. PLATFORM MODE (SD / MJ / Flux / DALL-E) ───────────────────────────────
+let selectedPlatform = 'sd';
+
+function setMode(mode){
+  selectedPlatform = mode;
+  currentMode = mode;
+
+  // Update button styles
+  const platforms = ['sd','mj','flux','dalle'];
+  const activeClasses = { sd:'active-sd', mj:'active-mj', flux:'active-flux', dalle:'active-gpt' };
+  platforms.forEach(p => {
+    const btn = document.getElementById('btn-' + p);
+    if(btn){
+      btn.className = 'mode-btn';
+      if(p === mode) btn.className = 'mode-btn ' + (activeClasses[p] || 'active-sd');
+    }
+  });
+
+  // Show/hide MJ params panel
+  const mjPanel = document.getElementById('mj-params-panel');
+  if(mjPanel) mjPanel.style.display = (mode === 'mj') ? 'block' : 'none';
+
+  // neg-box: always visible
+  const negBox = document.getElementById('neg-box');
+  if(negBox) negBox.style.display = 'block';
+
+  // Hide SD/video/inpaint panels that may exist
+  ['sd-model-panel','video-panel','inpaint-panel','lora-group'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.style.display = 'none';
+  });
+
+  // Update chip weight badge visibility (SD only)
+  _updateWeightBadgeVisibility();
+
+  toast({sd:'🖼️ Stable Diffusion', mj:'🌌 Midjourney', flux:'⚡ Flux', dalle:'🤖 DALL-E'}[mode] || mode);
+}
+
+// Initialize platform on load
+setTimeout(() => {
+  try { setMode('sd'); } catch(e){}
+}, 50);
+
+// ── 2. MULTI-FORMAT COPY ─────────────────────────────────────────────────────
+function copyForPlatform(fmt){
+  let txt = '';
+  if(fmt === 'sd'){
+    const ta = document.getElementById('prompt');
+    txt = ta ? ta.value : '';
+  } else if(fmt === 'mj'){
+    txt = _buildMJPrompt();
+  } else if(fmt === 'neg'){
+    const neg = document.getElementById('neg-text');
+    txt = neg ? (neg.value || neg.textContent || '') : '';
+  }
+  if(!txt){ toast('⚠️ Nenhum conteúdo para copiar'); return; }
+  navigator.clipboard.writeText(txt).then(() => {
+    const ids = { sd:'btn-copy-sd', mj:'btn-copy-mj', neg:'btn-copy-neg' };
+    const btn = document.getElementById(ids[fmt]);
+    if(btn){ const orig = btn.textContent; btn.textContent = '✓'; setTimeout(()=>{ btn.textContent = orig; }, 2000); }
+    toast('📋 Copiado (' + fmt.toUpperCase() + ')!');
+  }).catch(() => { toast('❌ Erro ao copiar'); });
+}
+
+function _buildMJPrompt(){
+  const ta = document.getElementById('prompt');
+  if(!ta || !ta.value) return '';
+  // Strip SD weight syntax (term:weight) → term
+  return ta.value.replace(/\(([^)]+):\d+\.?\d*\)/g, '$1').replace(/\[([^\]]+)\]/g,'$1').trim();
+}
+
+// Keep copyPrompt working
+function copyPrompt(){
+  copyForPlatform('sd');
+}
+function copyAsMJ(){
+  copyForPlatform('mj');
+}
+function copyNegative(){
+  copyForPlatform('neg');
+}
+
+// ── 3. CHIP WEIGHTS (SD only) ────────────────────────────────────────────────
+const chipWeights = new Map(); // Map<element, number>
+let _activeWeightEl = null;
+
+function _updateWeightBadgeVisibility(){
+  document.querySelectorAll('.chip-weight-badge').forEach(b => {
+    b.style.display = (selectedPlatform === 'sd') ? 'block' : 'none';
+  });
+}
+
+function _getOrCreateWeightBadge(el){
+  let badge = el.querySelector('.chip-weight-badge');
+  if(!badge){
+    badge = document.createElement('span');
+    badge.className = 'chip-weight-badge';
+    badge.style.display = 'none';
+    el.appendChild(badge);
+  }
+  return badge;
+}
+
+function _setChipWeight(el, w){
+  chipWeights.set(el, w);
+  const badge = _getOrCreateWeightBadge(el);
+  badge.textContent = w.toFixed(1);
+  badge.style.display = (selectedPlatform === 'sd') ? 'block' : 'none';
+}
+
+// Patch toggleQuickChip to add weight badge
+const _origToggleQuickChipWeights = window.toggleQuickChip;
+window.toggleQuickChip = function(el){
+  _origToggleQuickChipWeights(el);
+  if(el.classList.contains('active')){
+    if(!chipWeights.has(el)) _setChipWeight(el, 1.0);
+    else {
+      const badge = _getOrCreateWeightBadge(el);
+      badge.style.display = (selectedPlatform === 'sd') ? 'block' : 'none';
+    }
+  } else {
+    chipWeights.delete(el);
+    const badge = el.querySelector('.chip-weight-badge');
+    if(badge) badge.style.display = 'none';
+    _closeWeightPopover();
+  }
+};
+
+function _closeWeightPopover(){
+  document.querySelectorAll('.chip-weight-popover').forEach(p => p.remove());
+  _activeWeightEl = null;
+}
+
+function _openWeightPopover(el){
+  _closeWeightPopover();
+  if(!el.classList.contains('active')) return;
+  _activeWeightEl = el;
+  const w = chipWeights.get(el) || 1.0;
+  const pop = document.createElement('div');
+  pop.className = 'chip-weight-popover open';
+  pop.innerHTML = `<label>Peso do chip: <strong id="cwlbl">${w.toFixed(1)}</strong></label>
+    <input type="range" min="0.5" max="1.8" step="0.1" value="${w}"
+      oninput="document.getElementById('cwlbl').textContent=parseFloat(this.value).toFixed(1)"
+      onchange="_setChipWeight(_activeWeightEl,parseFloat(this.value))">
+    <div style="display:flex;justify-content:flex-end;margin-top:6px;">
+      <button onclick="_closeWeightPopover()" style="font-size:0.7em;padding:2px 8px;border-radius:6px;border:1px solid #e2e8f0;cursor:pointer;background:#f8fafc;">✕ Fechar</button>
+    </div>`;
+  el.appendChild(pop);
+  setTimeout(() => document.addEventListener('click', _clickOutsideWeight, {once:true}), 0);
+}
+
+function _clickOutsideWeight(e){
+  if(_activeWeightEl && !_activeWeightEl.contains(e.target)) _closeWeightPopover();
+}
+
+// Attach right-click and long-press to quick-chips
+document.addEventListener('contextmenu', e => {
+  const chip = e.target.closest('.quick-chip');
+  if(chip && chip.classList.contains('active') && selectedPlatform === 'sd'){
+    e.preventDefault();
+    _openWeightPopover(chip);
+  }
+});
+
+// Long-press for mobile
+let _lpTimer = null;
+document.addEventListener('touchstart', e => {
+  const chip = e.target.closest('.quick-chip');
+  if(chip && chip.classList.contains('active') && selectedPlatform === 'sd'){
+    _lpTimer = setTimeout(() => { e.preventDefault(); _openWeightPopover(chip); }, 600);
+  }
+}, { passive: true });
+document.addEventListener('touchend', () => { clearTimeout(_lpTimer); });
+
+// ── 4. GLOBAL CHIP FILTER ────────────────────────────────────────────────────
+function filterGlobalChips(query){
+  const q = query.trim().toLowerCase();
+  document.querySelectorAll('.quick-chip-section').forEach(section => {
+    let anyVisible = false;
+    section.querySelectorAll('.quick-chip').forEach(chip => {
+      const text = chip.textContent.toLowerCase();
+      const match = !q || text.includes(q);
+      chip.style.display = match ? '' : 'none';
+      if(match) anyVisible = true;
+    });
+    // Also check pose-group chips inside this section
+    section.querySelectorAll('.pose-group').forEach(grp => {
+      let grpVisible = false;
+      grp.querySelectorAll('.quick-chip').forEach(chip => {
+        const text = chip.textContent.toLowerCase();
+        const match = !q || text.includes(q);
+        chip.style.display = match ? '' : 'none';
+        if(match) grpVisible = true;
+      });
+      const lbl = grp.querySelector('.pose-group-label');
+      if(lbl) lbl.style.display = (grpVisible || !q) ? '' : 'none';
+    });
+    section.style.display = (anyVisible || !q) ? '' : 'none';
+  });
+}
+
+// ── 5. CONFLICT DETECTOR ─────────────────────────────────────────────────────
+function checkConflicts(){
+  const conflicts = [];
+  const activeChips = [];
+  document.querySelectorAll('.quick-chip.active').forEach(c => {
+    activeChips.push({ cat: c.dataset.cat, val: (c.dataset.val||'').toLowerCase(), text: c.textContent.trim() });
+  });
+
+  // Pose: "De frente" + "De costas"
+  const poseChips = activeChips.filter(c => c.cat === 'pose');
+  const temFrente = poseChips.some(c => c.val.includes('front') || c.text.includes('frente'));
+  const temCostas = poseChips.some(c => c.val.includes('from behind') || c.text.includes('costas'));
+  if(temFrente && temCostas) conflicts.push('Pose: "De frente" + "De costas" simultaneamente');
+
+  // Cenário: beach + snow
+  const cenChips = activeChips.filter(c => c.cat === 'cenario' || c.cat === 'iluminacao');
+  const temPraia = cenChips.some(c => c.val.includes('beach') || c.val.includes('praia'));
+  const temNeve  = cenChips.some(c => c.val.includes('snow') || c.val.includes('neve'));
+  if(temPraia && temNeve) conflicts.push('Cenário: praia + neve são incompatíveis');
+
+  // Multiple poses from different groups
+  if(poseChips.length > 1) conflicts.push('Múltiplas poses selecionadas (' + poseChips.map(c=>c.text).join(', ') + ')');
+
+  const el = document.getElementById('conflict-warning');
+  const list = document.getElementById('conflict-list');
+  if(!el || !list) return;
+  if(conflicts.length){
+    list.innerHTML = conflicts.map(c => '<li>' + c + '</li>').join('');
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// ── 6. RANDOMIZE (quick-chip categories) ────────────────────────────────────
+async function generateAleatorio(){
+  // Clear all quick chips first
+  clearAllQuickChips();
+
+  const pickRandom = (cat) => {
+    const chips = [...document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`)];
+    if(!chips.length) return;
+    const pick = chips[Math.floor(Math.random() * chips.length)];
+    pick.click();
+  };
+
+  // Pick from each category (not both pose front+back)
+  ['idade','corpo','cabelo','iluminacao'].forEach(cat => pickRandom(cat));
+
+  // Pose: pick one, avoid front+back conflict
+  const poseChips = [...document.querySelectorAll('.quick-chip[data-cat="pose"]')];
+  if(poseChips.length){
+    const pick = poseChips[Math.floor(Math.random() * poseChips.length)];
+    pick.click();
+  }
+
+  // Check if both front and back got selected (shouldn't happen with single pick, but guard)
+  const active = [...document.querySelectorAll('.quick-chip[data-cat="pose"].active')];
+  if(active.length > 1){
+    active.slice(1).forEach(c => c.click()); // deselect extras
+  }
+
+  toast('🎲 Chips aleatórios selecionados!');
+  await generate();
+}
+
+// ── 7. CHARACTER LOCK ────────────────────────────────────────────────────────
+let charLocked = false;
+const LOCK_CATS = ['idade','corpo','cabelo','cor_cabelo','olhos','rosto','labios','tracos'];
+
+function toggleCharLock(){
+  charLocked = !charLocked;
+  const btn = document.getElementById('btn-char-lock');
+  if(btn){
+    btn.textContent = charLocked ? '🔒 Personagem fixo' : '🔓 Fixar personagem';
+    btn.className = 'btn-char-lock' + (charLocked ? ' locked' : '');
+  }
+  // Mark chips as locked
+  LOCK_CATS.forEach(cat => {
+    document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => {
+      if(charLocked){
+        c.setAttribute('data-locked','1');
+        c.style.pointerEvents = 'none';
+        c.style.opacity = c.classList.contains('active') ? '0.7' : '0.4';
+      } else {
+        c.removeAttribute('data-locked');
+        c.style.pointerEvents = '';
+        c.style.opacity = '';
+      }
+    });
+    document.querySelectorAll(`.face-chip[data-cat="${cat}"]`).forEach(c => {
+      if(charLocked){ c.style.pointerEvents = 'none'; c.style.opacity = '0.5'; }
+      else { c.style.pointerEvents = ''; c.style.opacity = ''; }
+    });
+  });
+  toast(charLocked ? '🔒 Personagem fixo — apenas pose/cena editáveis' : '🔓 Personagem desbloqueado');
+}
+
+// ── 8. KEYWORD CHIP SUGGESTIONS ─────────────────────────────────────────────
+const KEYWORD_CHIP_MAP = [
+  { keywords: ['academia','gym','fitness','musculação','treino'], cat:'iluminacao', match: 'Academia Fluoresc' },
+  { keywords: ['academia','gym','fitness'], cat:'pose', match: 'academia' },
+  { keywords: ['praia','beach','mar','areia'], cat:'cenario', match: 'praia' },
+  { keywords: ['praia','beach'], cat:'iluminacao', match: 'Golden Hour' },
+  { keywords: ['quarto','bedroom','cama','bed'], cat:'iluminacao', match: 'Low-Key' },
+  { keywords: ['escritório','office','trabalho','work'], cat:'iluminacao', match: 'Natural' },
+  { keywords: ['clube','club','night','boate','balada'], cat:'iluminacao', match: 'Neon' },
+];
+
+let _suggestDebounce = null;
+function onDescriptionInput(val){
+  clearTimeout(_suggestDebounce);
+  _suggestDebounce = setTimeout(() => _suggestChipsFromText(val), 600);
+}
+
+function _suggestChipsFromText(text){
+  // Clear previous suggestions
+  document.querySelectorAll('.quick-chip.suggested').forEach(c => c.classList.remove('suggested'));
+  if(!text.trim()) return;
+  const lower = text.toLowerCase();
+  KEYWORD_CHIP_MAP.forEach(rule => {
+    if(rule.keywords.some(kw => lower.includes(kw))){
+      const chips = [...document.querySelectorAll(`.quick-chip[data-cat="${rule.cat}"]`)];
+      const target = chips.find(c => c.textContent.toLowerCase().includes(rule.match.toLowerCase()));
+      if(target && !target.classList.contains('active')){
+        target.classList.add('suggested');
+      }
+    }
+  });
+}
+
+// Wire up the description textarea
+document.addEventListener('DOMContentLoaded', () => {
+  const desc = document.getElementById('user-description');
+  if(desc) desc.addEventListener('input', e => onDescriptionInput(e.target.value));
+});
+// Also wire inline (in case DOMContentLoaded already fired)
+setTimeout(() => {
+  const desc = document.getElementById('user-description');
+  if(desc && !desc._suggestWired){
+    desc.addEventListener('input', e => onDescriptionInput(e.target.value));
+    desc._suggestWired = true;
+  }
+}, 200);
+
+// ── 9. PATCH generate() TO CHECK CONFLICTS ───────────────────────────────────
+const _origGenerateV4 = window.generate;
+window.generate = async function(){
+  await _origGenerateV4.apply(this, arguments);
+  try { checkConflicts(); } catch(e){}
+  // Save to history with proper format
+  try { _saveToHistory(); } catch(e){}
+};
+
+// ── 10. HISTORY SAVE (pgen_history format with sd/mj/neg/chips) ───────────────
+function _saveToHistory(){
+  const promptEl = document.getElementById('prompt');
+  const negEl = document.getElementById('neg-text');
+  if(!promptEl || !promptEl.value) return;
+
+  const entry = {
+    ts: new Date().toISOString(),
+    sd: promptEl.value,
+    mj: _buildMJPrompt(),
+    neg: negEl ? (negEl.value || negEl.textContent || '') : '',
+    chips: Object.assign({}, quickChipState)
+  };
+
+  try {
+    let hist = JSON.parse(localStorage.getItem('pgen_history') || '[]');
+    hist.unshift(entry);
+    hist = hist.slice(0, 20);
+    localStorage.setItem('pgen_history', JSON.stringify(hist));
+  } catch(e){}
+}
+
+// ── 12. PRESETS SAVE/LOAD ────────────────────────────────────────────────────
+function savePreset(){
+  const name = window.prompt('Nome do preset:');
+  if(!name || !name.trim()) return;
+  const desc = document.getElementById('user-description');
+  const entry = {
+    name: name.trim(),
+    ts: new Date().toISOString(),
+    state: {
+      chips: Object.assign({}, quickChipState),
+      desc: desc ? desc.value : ''
+    }
+  };
+  try {
+    let presets = JSON.parse(localStorage.getItem('pgen_presets') || '[]');
+    presets.push(entry);
+    localStorage.setItem('pgen_presets', JSON.stringify(presets));
+    _renderPresetsPanel();
+    toast('💾 Preset "' + name.trim() + '" salvo!');
+  } catch(e){ toast('❌ Erro ao salvar preset'); }
+}
+
+function _renderPresetsPanel(){
+  try {
+    const presets = JSON.parse(localStorage.getItem('pgen_presets') || '[]');
+    let panel = document.getElementById('pgen-presets-panel');
+    if(!panel){
+      panel = document.createElement('div');
+      panel.id = 'pgen-presets-panel';
+      panel.style.cssText = 'margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;';
+      const genRow = document.getElementById('section-gen');
+      if(genRow) genRow.insertAdjacentElement('afterend', panel);
+    }
+    if(!presets.length){ panel.style.display = 'none'; return; }
+    panel.style.display = 'flex';
+    panel.innerHTML = presets.map((p, i) => `
+      <span style="display:inline-flex;align-items:center;gap:5px;background:#eff6ff;border:1.5px solid #93c5fd;border-radius:20px;padding:4px 10px;font-size:0.72em;color:#1d4ed8;font-weight:600;cursor:pointer;" onclick="_loadPreset(${i})" title="${p.name}">
+        💾 ${p.name}
+        <button onclick="event.stopPropagation();_deletePreset(${i})" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:0.9em;padding:0 2px;">✕</button>
+      </span>`).join('');
+  } catch(e){}
+}
+
+function _loadPreset(i){
+  try {
+    const presets = JSON.parse(localStorage.getItem('pgen_presets') || '[]');
+    const p = presets[i];
+    if(!p) return;
+    clearAllQuickChips();
+    if(p.state && p.state.chips){
+      Object.entries(p.state.chips).forEach(([cat, val]) => {
+        if(!val) return;
+        const chip = document.querySelector(`.quick-chip[data-cat="${cat}"][data-val="${val}"]`);
+        if(chip && !chip.classList.contains('active')) chip.click();
+      });
+    }
+    if(p.state && p.state.desc){
+      const desc = document.getElementById('user-description');
+      if(desc) desc.value = p.state.desc;
+    }
+    toast('📂 Preset "' + p.name + '" carregado!');
+  } catch(e){ toast('❌ Erro ao carregar preset'); }
+}
+
+function _deletePreset(i){
+  try {
+    let presets = JSON.parse(localStorage.getItem('pgen_presets') || '[]');
+    presets.splice(i, 1);
+    localStorage.setItem('pgen_presets', JSON.stringify(presets));
+    _renderPresetsPanel();
+    toast('🗑️ Preset removido');
+  } catch(e){}
+}
+
+// Render presets on load
+setTimeout(() => { try { _renderPresetsPanel(); } catch(e){} }, 400);
+
+// Add "Salvar preset" button near gen area (injected once)
+setTimeout(() => {
+  const genRow = document.getElementById('section-gen');
+  if(genRow && !document.getElementById('btn-save-preset')){
+    const btn = document.createElement('button');
+    btn.id = 'btn-save-preset';
+    btn.className = 'btn-variations';
+    btn.style.cssText = 'background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border-color:#0891b2;';
+    btn.textContent = '💾 Salvar preset';
+    btn.onclick = savePreset;
+    genRow.appendChild(btn);
+  }
+}, 500);
+
 </script>
 </body>
 </html>
