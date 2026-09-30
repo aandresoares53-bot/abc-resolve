@@ -21918,10 +21918,14 @@ if ('serviceWorker' in navigator) {
 let selectedPlatform = 'sd';
 
 function setMode(mode){
+  // selectedPlatform controls copy format; currentMode drives the internal prompt builder.
+  // The builder was built for 'mj' — keep it as 'mj' for sd/flux/dalle so generation works.
+  // Only video/inpaint have builder-level differences, so keep those mapped directly.
   selectedPlatform = mode;
-  currentMode = mode;
+  const internalMode = (mode === 'video' || mode === 'inpaint') ? mode : 'mj';
+  currentMode = internalMode;
 
-  // Update button styles
+  // Update platform button styles (only the 4 platform buttons)
   const platforms = ['sd','mj','flux','dalle'];
   const activeClasses = { sd:'active-sd', mj:'active-mj', flux:'active-flux', dalle:'active-gpt' };
   platforms.forEach(p => {
@@ -21932,7 +21936,7 @@ function setMode(mode){
     }
   });
 
-  // Show/hide MJ params panel
+  // Show MJ params panel for MJ; hide for other platforms
   const mjPanel = document.getElementById('mj-params-panel');
   if(mjPanel) mjPanel.style.display = (mode === 'mj') ? 'block' : 'none';
 
@@ -21940,34 +21944,48 @@ function setMode(mode){
   const negBox = document.getElementById('neg-box');
   if(negBox) negBox.style.display = 'block';
 
-  // Hide SD/video/inpaint panels that may exist
-  ['sd-model-panel','video-panel','inpaint-panel','lora-group'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.style.display = 'none';
-  });
-
   // Update chip weight badge visibility (SD only)
   _updateWeightBadgeVisibility();
 
   toast({sd:'🖼️ Stable Diffusion', mj:'🌌 Midjourney', flux:'⚡ Flux', dalle:'🤖 DALL-E'}[mode] || mode);
 }
 
-// Initialize platform on load
+// Initialize platform — start with SD selected visually, but keep internalMode='mj'
 setTimeout(() => {
-  try { setMode('sd'); } catch(e){}
+  try {
+    selectedPlatform = 'sd';
+    const btn = document.getElementById('btn-sd');
+    if(btn) btn.className = 'mode-btn active-sd';
+  } catch(e){}
 }, 50);
 
 // ── 2. MULTI-FORMAT COPY ─────────────────────────────────────────────────────
 function copyForPlatform(fmt){
+  const ta = document.getElementById('prompt');
+  const rawSD = ta ? ta.value : '';
   let txt = '';
+
   if(fmt === 'sd'){
-    const ta = document.getElementById('prompt');
-    txt = ta ? ta.value : '';
+    // SD: raw prompt with weights
+    txt = rawSD;
   } else if(fmt === 'mj'){
-    txt = _buildMJPrompt();
+    // MJ: strip SD weight syntax
+    txt = rawSD.replace(/\(([^)]+):\d+\.?\d*\)/g,'$1').replace(/\[([^\]]+)\]/g,'$1').trim();
+  } else if(fmt === 'flux'){
+    // Flux: strip all weight syntax, keep clean descriptive terms
+    txt = rawSD.replace(/\(([^)]+):\d+\.?\d*\)/g,'$1').replace(/\[([^\]]+)\]/g,'$1')
+               .replace(/\s*,\s*/g,', ').trim();
+  } else if(fmt === 'dalle'){
+    // DALL-E: natural language, strip technical terms, keep max 400 chars
+    txt = rawSD.replace(/\(([^)]+):\d+\.?\d*\)/g,'$1').replace(/\[([^\]]+)\]/g,'$1')
+               .replace(/\b(masterpiece|best quality|ultra-realistic|photorealistic|RAW photo|DSLR|f\/\d[\d.]*|mm lens|ISO\s*\d+|8k|4k|uhd)\b/gi,'')
+               .replace(/\s*,\s*/g,', ').replace(/,\s*,/g,',').trim();
+    if(txt.length > 400) txt = txt.substring(0,400).replace(/,\s*[^,]*$/,'').trim();
   } else if(fmt === 'neg'){
     const neg = document.getElementById('neg-text');
     txt = neg ? (neg.value || neg.textContent || '') : '';
   }
+
   if(!txt){ toast('⚠️ Nenhum conteúdo para copiar'); return; }
   navigator.clipboard.writeText(txt).then(() => {
     const ids = { sd:'btn-copy-sd', mj:'btn-copy-mj', neg:'btn-copy-neg' };
@@ -21980,8 +21998,7 @@ function copyForPlatform(fmt){
 function _buildMJPrompt(){
   const ta = document.getElementById('prompt');
   if(!ta || !ta.value) return '';
-  // Strip SD weight syntax (term:weight) → term
-  return ta.value.replace(/\(([^)]+):\d+\.?\d*\)/g, '$1').replace(/\[([^\]]+)\]/g,'$1').trim();
+  return ta.value.replace(/\(([^)]+):\d+\.?\d*\)/g,'$1').replace(/\[([^\]]+)\]/g,'$1').trim();
 }
 
 // Keep copyPrompt working
