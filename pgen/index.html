@@ -427,9 +427,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 .chip-global-filter:focus{border-color:#1d4ed8;}
 [data-theme="dark"] .chip-global-filter{background:#0f172a;border-color:#334155;color:#e2e8f0;}
 
-/* ── CONFLICT WARNING ───────────────────────────────────────────────── */
-.conflict-warning{background:#fef9c3;border:1.5px solid #fbbf24;border-radius:10px;padding:10px 14px;margin-bottom:12px;}
-.conflict-warning ul{margin:4px 0 0 16px;font-size:0.8em;color:#92400e;}
+/* ── CONFLICT WARNING (defined below at the v4 block) ─── */
 
 /* ── PLATFORM BADGE ─────────────────────────────────────────────────── */
 .platform-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.65em;font-weight:700;vertical-align:middle;margin-left:6px;}
@@ -12003,21 +12001,7 @@ function setPose(key){
   try{ _updateSelectionPreview(); }catch(e){}
 }
 
-function setMode(mode){
-  // Only MJ mode is active — all other modes remapped to MJ
-  currentMode = 'mj';
-  const btnMj = document.getElementById('btn-mj');
-  if(btnMj) btnMj.className = 'mode-btn active-mj';
-  // MJ params panel: always visible
-  const mjPanel = document.getElementById('mj-params-panel');
-  if(mjPanel) mjPanel.style.display = 'block';
-  // SD/Video/Inpaint/LoRA panels: always hidden (modes removed)
-  const els = ['sd-model-panel','video-panel','inpaint-panel','lora-group'];
-  els.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
-  // neg-box: always visible in MJ mode
-  const negBox = document.getElementById('neg-box');
-  if(negBox) negBox.style.display = 'block';
-}
+// setMode v1 removed — superseded by setMode v4 at bottom of file
 
 // ── SELEÇÃO AUTOMÁTICA DE FORMATO POR POSE ────────────────────────────────
 // Retorna o melhor modo ('sd','mj','flux','video','gpt','inpaint') para a pose
@@ -21956,6 +21940,7 @@ setTimeout(() => {
     selectedPlatform = 'sd';
     const btn = document.getElementById('btn-sd');
     if(btn) btn.className = 'mode-btn active-sd';
+    _updateWeightBadgeVisibility();
   } catch(e){}
 }, 50);
 
@@ -21979,7 +21964,7 @@ function copyForPlatform(fmt){
     // DALL-E: natural language, strip technical terms, keep max 400 chars
     txt = rawSD.replace(/\(([^)]+):\d+\.?\d*\)/g,'$1').replace(/\[([^\]]+)\]/g,'$1')
                .replace(/\b(masterpiece|best quality|ultra-realistic|photorealistic|RAW photo|DSLR|f\/\d[\d.]*|mm lens|ISO\s*\d+|8k|4k|uhd)\b/gi,'')
-               .replace(/\s*,\s*/g,', ').replace(/,\s*,/g,',').trim();
+               .replace(/(,\s*){2,}/g,', ').replace(/^\s*,\s*|\s*,\s*$/g,'').trim();
     if(txt.length > 400) txt = txt.substring(0,400).replace(/,\s*[^,]*$/,'').trim();
   } else if(fmt === 'neg'){
     const neg = document.getElementById('neg-text');
@@ -22126,6 +22111,8 @@ function filterGlobalChips(query){
       });
       const lbl = grp.querySelector('.pose-group-label');
       if(lbl) lbl.style.display = (grpVisible || !q) ? '' : 'none';
+      // Hide the entire group container when no chips match
+      grp.style.display = (grpVisible || !q) ? '' : 'none';
     });
     section.style.display = (anyVisible || !q) ? '' : 'none';
   });
@@ -22153,6 +22140,14 @@ function checkConflicts(){
 
   // Multiple poses from different groups
   if(poseChips.length > 1) conflicts.push('Múltiplas poses selecionadas (' + poseChips.map(c=>c.text).join(', ') + ')');
+
+  // Also include text-based conflicts from the generated prompt
+  const promptText = document.getElementById('prompt')?.value || '';
+  if(promptText && typeof CONFLICT_RULES !== 'undefined'){
+    CONFLICT_RULES.forEach(rule => {
+      if(rule.a.test(promptText) && rule.b.test(promptText)) conflicts.push(rule.msg);
+    });
+  }
 
   const el = document.getElementById('conflict-warning');
   const list = document.getElementById('conflict-list');
