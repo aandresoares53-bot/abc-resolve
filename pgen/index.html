@@ -17634,7 +17634,7 @@ function buildPrompt(englishText, rawPT){
   const _nudeRe = /\b(nude|naked|topless|bottomless|undressed|no clothes|no clothing|explicit|nsfw|nipples?|areola|genital|vagina|vulva|penis|cock|pussy|pubic|intercourse|penetration|orgasm|erotic[a-z]*|pornograph[a-z]*|xxx|blowjob|oral\s*sex|cunnilingus|anal\s*sex|masturbat[a-z]*|fingering|squirting|creampie|cumshot|sex\s*position|sex\s*act|adult\s*content|sexually\s*explicit|genitalia)\b/i;
   const _clothingMatches = [...expanded.matchAll(_clothingRe)].map(m => m[0]);
   // Also check raw Portuguese input for NSFW terms before translation kicks in
-  const _nsfwRawPT = /\b(pelada|nua|seios?\s+(?:de\s+fora|expost[ao]s?)|vagina|pênis|pinto|buceta|xereca|xoxota|cu\b|anal|sexo\s*explícito|pornô|porn[ao]|explícito|safada|gozando|gozada|cuzinho|chupando|xvideos|putaria)\b/i;
+  const _nsfwRawPT = /\b(pelada|nua|seios?\s+(?:de\s+fora|expost[ao]s?)|vagina|pênis|pinto|buceta|xereca|xoxota|cu\b|anal|sexo\s*expl[ií]cito|porn[ôo]|porn[ao]|expl[ií]cito|safada|gozando|gozada|cuzinho|chupando|xvideos|putaria|puta\b|prostitut[ao]|garota\s+de\s+programa|onlyfans|of\s+content|strip(?:per|tease)|acompanhante|escort|cam\s*girl|sex\s*worker|faz[e]ndo\s+programa|conteúdo\s+adulto|conteudo\s+adulto|nsfw|18\s*\+|maior(?:es)?\s+de\s+18)\b/i;
   const _wantsNude = _nudeRe.test(expanded) || _nsfwRawPT.test(rawPT || '');
   const _wantsNSFW = _wantsNude; // alias for NSFW-specific branches
   const _wantsClothing = _clothingMatches.length > 0 && !_wantsNude;
