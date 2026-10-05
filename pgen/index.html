@@ -17985,8 +17985,8 @@ function buildPrompt(englishText, rawPT){
     // --no: always block anatomy errors + AI/render look; remove anti-nude only when NSFW
     const _mjNegBase = [
       pose.neg || '',
-      'extra fingers, fused fingers, missing fingers, bad hands, deformed hands, extra arms, extra limbs',
-      'bad anatomy, deformed face, cross-eyed, uneven eyes, bad eyes, melting face',
+      'extra fingers, fused fingers, missing fingers, bad hands, deformed hands, extra arms, extra limbs, floating hands, disconnected hands, hands growing from wrong place, wrong number of fingers, six fingers, seven fingers, eight fingers, bent fingers unnaturally, fingers fused together, club hands, mitten hands, melted hands, no knuckles, smooth fingers, fingerless',
+      'bad anatomy, deformed face, cross-eyed, uneven eyes, bad eyes, melting face, floating limbs, disconnected body parts, merged body parts, extra body parts, fused limbs, dislocated joints, anatomically impossible pose, extra head, two heads, missing limbs, limbs growing from wrong place, impossible body bend, wrong number of limbs, wrong number of arms, wrong number of legs, detached limbs, severed body parts, morphed body, body distortion, anatomical errors, impossible anatomy, broken spine, impossible joint angle, joint bending wrong direction',
       'plastic skin, airbrushed skin, smooth skin, poreless skin, perfect skin, flawless skin, retouched skin, beauty filter, skin smoothing, silicone skin, rubber skin, synthetic skin, doll face, wax figure, mannequin, barbie look, no pores, smooth complexion, AI skin, ceramic skin, porcelain skin, glass skin, dewy skin filter, soft skin filter, skin blur, skin softening, impossible skin, inhuman skin smoothness, skin texture removed, overly smooth complexion, polished skin, lacquered skin, perfect complexion, flawless complexion, baby skin, doll skin, wax skin, fake skin, CGI skin, digital skin, rendered skin, fantasy skin, dream skin, perfect face, symmetrical face, idealized face',
       'color graded, color grading, Lightroom edited, Photoshopped, digitally manipulated, frequency separation, dodge and burn, AI enhanced, professional retouch, studio portrait look, composite photo, post-processed, over-processed, LUTs applied, color corrected, magazine retouching, commercial retouching, digital airbrush, over-edited, hyperrealistic, ultra realistic render, photorealistic render, octane render, unreal engine render, 3D render, CGI render, digital art look, AI portrait, AI face, AI generated look, synthetic person, virtual human, deepfake',
       (selectedPoseKey && (selectedPoseKey.startsWith('gym-') || selectedPoseKey.startsWith('legging-')))
@@ -18050,10 +18050,12 @@ function buildPrompt(englishText, rawPT){
       ? 'natural cellulite texture, natural stretch marks, real feminine weight and softness, authentic imperfect body, natural gravity-pulled skin, skin weight and drape, natural skin laxity, skin fold physics, skin contact deformation'
       : '';
     const _mjHumanRealism = [
-      'visible skin pores, skin micro-texture, organic skin texture, natural skin blemishes, skin color variation by body zone, skin translucency, subsurface light scattering on skin',
-      'natural slight facial asymmetry, realistic iris texture with catchlights, eye moisture, real eye whiteness with subtle blood vessels, individual eyelash strands, individual eyebrow hairs, natural lip texture with lip lines, vellus facial hair peach fuzz on cheeks, nose pores visible, tear duct visible, natural nasolabial folds, natural expression lines',
-      'individual hair strands visible, natural flyaways, natural root-to-tip color gradient, real hair roots, natural hair density variation',
-      'natural collarbone definition, hand veins visible, natural nail texture, real feminine body proportions, natural breast weight and gravity',
+      // Life signs — NOT duplicated in _mjAnatomyFull
+      'living skin warmth subtle capillary flush on cheeks and chest, skin temperature gradient warmer at core cooler at extremities, subcutaneous fat visible creating soft natural body contours, natural muscle tone visible under skin surface without overdefinition',
+      // Physics — body obeying gravity in the specific pose
+      'skin dimpling and natural deformation where body contacts any surface, natural weight distribution pressing into contact surface, natural body posture relaxed breathing stance, natural soft tissue movement following gravity direction, correct spinal natural curvature for the pose',
+      // Correct anatomy mandates — positive reinforcement of what --no blocks
+      'five correct fingers clearly articulated, correct hand knuckle anatomy visible, correct wrist anatomy, correct elbow joint anatomy, correct knee anatomy, correct foot anatomy, correct number of limbs four, correct number of eyes two aligned, correct number of ears two',
       _mjNudeRealism
     ].filter(Boolean).join(', ');
     return core + _mjFaceDesc + ', ' + _mjQF + ', ' + _mjHumanRealism + _params;
