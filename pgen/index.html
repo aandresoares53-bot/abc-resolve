@@ -18120,6 +18120,23 @@ function buildPrompt(englishText, rawPT){
     const _mjQF = (_mjOutfitResolved && !_wantsNSFW)
       ? _mjQFRaw.replace(_mjQFNudeTermsRe, '').replace(/,\s*,/g, ',').replace(/(^,\s*|\s*,\s*$)/g, '').trim()
       : _mjQFRaw;
+    // RAW prefix — goes FIRST so MJ weights it highest
+    const _mjRawPrefix = [
+      'RAW photograph', 'SOOC unedited', 'analog 35mm film grain',
+      _mjQFFilm, 'shot on ' + _mjQFLens, 'ISO 800',
+      'visible skin pores', 'skin micro-texture', 'skin pore detail',
+      'no retouching', 'no beauty filter', 'no airbrushing', 'not CGI', 'not AI generated'
+    ].join(', ');
+    // Face micro-realism RAW block
+    const _mjFaceRaw = [
+      'peach fuzz vellus facial hair on cheeks and chin',
+      'iris catchlights clearly visible', 'iris texture depth and detail',
+      'eye moisture wetness', 'individual eyelash strands natural thickness',
+      'natural lip lines and lip pore texture', 'lip moisture',
+      'nose pores visible', 'natural nasolabial folds',
+      'natural under-eye skin texture', 'natural skin crease at smile lines',
+      'individual hair strands visible', 'natural hair flyaways', 'real hair roots'
+    ].join(', ');
     const _mjNudeRealism = _wantsNSFW
       ? 'natural cellulite texture, natural stretch marks, real feminine weight and softness, authentic imperfect body, natural gravity-pulled skin, skin weight and drape, natural skin laxity, skin fold physics, skin contact deformation'
       : '';
@@ -18132,7 +18149,7 @@ function buildPrompt(englishText, rawPT){
       'five correct fingers clearly articulated, correct hand knuckle anatomy visible, correct wrist anatomy, correct elbow joint anatomy, correct knee anatomy, correct foot anatomy, correct number of limbs four, correct number of eyes two aligned, correct number of ears two',
       _mjNudeRealism
     ].filter(Boolean).join(', ');
-    return core + _mjFaceDesc + ', ' + _mjQF + ', ' + _mjHumanRealism + _params;
+    return _mjRawPrefix + ', ' + core + _mjFaceDesc + ', ' + _mjFaceRaw + ', ' + _mjQF + ', ' + _mjHumanRealism + _params;
   }
   if(currentMode === 'gpt'){
     const _gptRealPrefix = _wantsNSFW
