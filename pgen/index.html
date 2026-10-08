@@ -3150,6 +3150,49 @@ function semanticPreProcess(text){
   // Pattern: "de [age] anos" → "[age] years old"
   t = t.replace(/\bde\s*(\d{2})\s*anos?\b/gi, (_, age) => `${age} years old`);
 
+  // ── CAMERA ANGLE FROM DESCRIPTION KEYWORDS ───────────────────────────────
+  // Detect camera/framing intent from natural language and inject explicit angle terms
+  const _hasAngleChip = typeof getQuickAnguloCamera === 'function' && getQuickAnguloCamera();
+  if(!_hasAngleChip){
+    if(/\bclose\s*[- ]?up\s*(?:do|no|na|de|no|da)?\s*(?:rosto|face|cara|olhos|lábios|lips)\b|\bclose\s+no\s+rosto\b|\bclose\s+na\s+face\b/i.test(t))
+      t = 'tight portrait close-up, face filling frame, ' + t;
+    else if(/\bclose\s*[- ]?up\s*(?:da|na|no|de)?\s*(?:vagina|vulva|buceta|xoxota|xereca|cuzinho|cu\b|ânus|pênis|rola\b|pau\b|cock|pussy|vulva|genitals?)\b|\bclose\s+na\s+buceta\b|\bclose\s+no\s+pau\b/i.test(t))
+      t = 'extreme macro close-up genital detail, intimate extreme close-up shot, ' + t;
+    else if(/\bcorpo\s+inteiro\b|\bfull\s*body\b|\bda\s+cabeça\s+aos\s+pés\b|\bhead\s+to\s+toe\b/i.test(t))
+      t = 'full body shot head to toe, wide frame showing entire figure, ' + t;
+    else if(/\bmeio\s+corpo\b|\bcintura\s+para\s+cima\b|\bwaist\s+up\b|\bhalf\s+body\b/i.test(t))
+      t = 'medium shot waist up, half body framing, ' + t;
+  }
+
+  // ── EXPLICIT ACT → POSE TERMS ─────────────────────────────────────────────
+  // Map explicit acts to implied pose/position so SD/MJ understand the geometry
+  if(/\bchupando\b|\bboquete\b|\boral\s*sex\b|\bblowjob\b/i.test(t)){
+    if(!/kneeling|de joelhos|all fours|on her knees/.test(t.toLowerCase()))
+      t = t + ', kneeling facing camera, on her knees,';
+  }
+  if(/\bde\s*quatro\b|\ball\s*fours\b|\bdoggy\b|\bdoggy\s*style\b/i.test(t)){
+    if(!/from behind|de costas/.test(t.toLowerCase()))
+      t = t + ', from behind, rear view,';
+  }
+  if(/\bmontando\b|\bcowgirl\b|\bwoman\s+on\s+top\b/i.test(t)){
+    if(!/on top|straddling|riding/.test(t.toLowerCase()))
+      t = t + ', woman on top straddling, riding position, facing camera,';
+  }
+  if(/\breverse\s*cowgirl\b|\bmontando\s*de\s*costas\b/i.test(t)){
+    t = t + ', reverse cowgirl position, woman on top facing away from camera,';
+  }
+  if(/\bmissionary\b|\bmission[aá]rio\b/i.test(t)){
+    t = t + ', lying on back missionary position, legs spread, facing camera,';
+  }
+  if(/\bsex\s+position|sexo\s+anal\b|\banal\s+sex\b|\bde\s+quatro\s+anal\b/i.test(t)){
+    if(!/all fours|de quatro|from behind/.test(t.toLowerCase()))
+      t = t + ', on all fours from behind,';
+  }
+  if(/\bfingering\b|\bse\s+masturbando\b|\bmasturbando\b|\bpunheta\b/i.test(t)){
+    if(!/lying|sitting|deitada|sentada/.test(t.toLowerCase()))
+      t = t + ', lying on back, legs slightly open,';
+  }
+
   return t;
 }
 
@@ -14173,6 +14216,24 @@ function expandScene(t, skipExpression){
   else if(isRain)        atmosphere = 'rain mist in air, rain drops creating atmospheric haze, wet atmospheric depth';
   else if(isRooftop)     atmosphere = 'city atmospheric glow, warm urban light pollution in background, cinematic rooftop depth';
 
+  // ── EXPLICIT SCENE: auto-inject intimate environment when no location detected ──
+  if(isExplicit && !isBeach && !isPool && !isPark && !isForest && !isCity && !isCafe &&
+     !isRestaurant && !isClub && !isShower && !isSpa && !isSnow && !isRooftop && !isNature &&
+     !isIndoor && !isLuxury && !isLuxuryHotel){
+    // No location specified — inject a minimal intimate bedroom context
+    if(!environment) environment = _pick([
+      'intimate private bedroom setting, unmade linen bed visible, soft natural window light filtering through curtains',
+      'private indoor setting, warm low ambient light, soft shadows, intimate private space',
+      'boudoir-style private interior, warm soft light, intimate private atmosphere',
+    ]);
+    if(!lighting) lighting = _pick([
+      'warm low intimate lighting, soft golden ambient light, no harsh shadows, intimate warm glow',
+      'natural soft window light, warm ambient fill, intimate soft illumination',
+      'warm practical lamp light, low-key intimate lighting, soft warm color temperature',
+    ]);
+    if(!atmosphere) atmosphere = 'intimate warm private atmosphere, soft depth of field background blur, warm air quality';
+  }
+
   // ── UNIVERSAL HUMAN-REALISM ANCHOR ────────────────────────────────────────
   // Appended to every expanded scene regardless of type — prevents plastic/AI look
   // in any category (beach, gym, indoor, studio, outdoor, etc.)
@@ -17840,6 +17901,23 @@ function buildPrompt(englishText, rawPT){
   const _autoContactPoints = _poseAutoExtras.contactPoints || '';
   const _autoGazeDirection = _poseAutoExtras.gazeDirection || '';
   const _autoDofSpec       = _poseAutoExtras.dofSpec       || '';
+
+  // ── AGE-APPROPRIATE SKIN TEXTURE ──────────────────────────────────────────
+  const _ageMatch = (rawPT || englishText || '').match(/\b(\d{2})\s*(?:anos?|years?\s*old)\b/i);
+  const _ageNum = _ageMatch ? parseInt(_ageMatch[1]) : 0;
+  let _ageSkinTerms = '';
+  if(_ageNum >= 18 && _ageNum <= 22){
+    _ageSkinTerms = 'youthful smooth skin with natural pores, light natural skin texture, young adult subtle skin imperfections, natural fresh complexion, soft natural skin firmness';
+  } else if(_ageNum >= 23 && _ageNum <= 29){
+    _ageSkinTerms = 'mid-twenties natural skin texture, visible natural pores, subtle natural skin variation, fresh natural complexion with gentle laugh lines beginning, natural young adult skin quality';
+  } else if(_ageNum >= 30 && _ageNum <= 39){
+    _ageSkinTerms = 'thirties natural skin texture, natural pores clearly visible, gentle natural expression lines, natural slight nasolabial fold, natural under-eye texture, real skin quality not airbrushed';
+  } else if(_ageNum >= 40 && _ageNum <= 49){
+    _ageSkinTerms = 'forties natural skin with character, natural expression lines visible, natural skin laxity beginning, visible natural pores, authentic natural skin texture, natural age-appropriate skin quality, not retouched';
+  } else if(_ageNum >= 50){
+    _ageSkinTerms = 'mature natural skin texture, natural expression lines and wrinkles present, natural skin laxity, authentic real skin quality, natural age spots possible, natural skin depth and character, real mature woman skin not filtered';
+  }
+
   // ── Pose-contextual perspiration/skin sheen — uses effective key for scene inference ──
   const _sk_low = _effectivePoseKey.toLowerCase();
   const _autoSweat = (() => {
@@ -17998,7 +18076,8 @@ function buildPrompt(englishText, rawPT){
       _autoContactPoints,
       (!_poseIsBack && _autoGazeDirection) ? _autoGazeDirection : '',
       _autoDofSpec,
-      _mjStripSD(_autoClothPhysics)
+      _mjStripSD(_autoClothPhysics),
+      _ageSkinTerms || ''
     ].filter(Boolean).join(', ');
     // Anatomy block — when clothed, remove nude-body-area terms that push MJ toward rendering bare skin
     const _mjAnatomyFull = 'five fingers on each hand, correct hand anatomy, correct finger count, natural hand position, symmetrical eyes, correct eye anatomy, both eyes same size, no cross-eyed, natural iris texture, detailed iris, visible sclera detail, natural eyelashes individual strands, real eye catchlights, eye moisture and wetness, blood vessels in sclera, natural lip texture, lip lines visible, lip pores visible, natural lip moisture, vellus facial hair, peach fuzz on cheeks, nose pores visible, natural eyelash thickness variation, individual eyebrow hairs visible, natural T-zone slight oiliness, natural tear duct visible, iris depth and texture, natural skin texture on forehead, natural nasolabial folds, natural laugh lines, natural under-eye skin texture, natural facial skin creases, natural expression lines, individual hair strands visible, natural hair flyaways, realistic hair texture, natural hair parting, genuine hair shine, real hair roots, natural root-to-tip color gradient, natural hair density variation, natural skin warmth, living skin glow, natural forearm vein visibility, hand vein definition, natural nail texture, natural cuticle detail, collarbone definition, natural shoulder anatomy, natural body proportions, real feminine body, skin folds and creases, natural skin gravity and weight, skin fold physics, natural skin compression under weight, skin tension lines, skin weight and drape, natural skin elasticity, natural skin contact deformation, natural skin drape over body, natural cellulite texture, natural stretch marks, natural breast weight and gravity, natural breast asymmetry, subcutaneous fat visible, natural thigh skin texture, natural skin pressure marks, skin thickness variation by zone, natural body heat in skin, subtle nostril definition, natural jaw muscle definition, natural neck muscle visibility, not airbrushed, not retouched, no beauty filter, no skin smoothing, not plastic skin, not poreless skin, not silicone skin, not doll face, not synthetic, authentic documentary photograph, real human woman not AI, everyday woman not a model, natural human proportions not idealized, no plastic surgery look, no breast implants appearance, authentic soft feminine belly, natural body weight distribution, real woman curves';
@@ -18539,6 +18618,7 @@ function buildPrompt(englishText, rawPT){
     _faceAnchor,             // Face consistency — weighted, chunk 2-3 fine
     _FACE_REAL,              // Face/eye/lip/pore ultra-realism — all :1.6–2.0, chunk 2-3 fine
     charBoost,               // Character physical terms — :1.8, chunk 3 fine
+    _ageSkinTerms ? `(${_ageSkinTerms}:1.7),` : '',
     _SKIN,                   // Anti-plastic skin detail — all :2.0, effective in chunk 3
     _ANCH,                   // Anatomy (fingers/hands) — all :1.8–2.0, chunk 3 fine
     charPlain,               // Attractiveness terms — lowest priority, end
@@ -18812,6 +18892,43 @@ async function _translateText(text){
   }
 }
 
+// ── AUTO-COMPLETE CHARACTER (SILENT): like _autoCompleteCharacter but does NOT call _autoFillDescription ─
+// Used when user typed explicit content — chips are set but textarea is not overwritten.
+function _autoCompleteCharacterSilent(){
+  const R = arr => arr[Math.floor(Math.random()*arr.length)];
+  const _ETNIA_PREFIXES = [
+    'Brazilian woman','Mexican woman, warm','Colombian woman','Argentine woman',
+    'Italian woman','Spanish woman','French woman, warm fair','Latina woman',
+    'Brazilian woman','Colombian woman',
+  ];
+  const _CORPO_PREFIXES = [
+    'natural average body','hourglass figure','athletic toned body',
+    'petite slim body','pear shaped body','voluptuous curvy body',
+  ];
+  const _CABELO_PREFIXES = [
+    'long straight dark brunette','long straight platinum blonde',
+    'natural curly hair','long red hair, auburn',
+  ];
+  if(!quickChipState.etnia){
+    const _scanVal = 'Scandinavian Nordic woman, very fair pale skin, natural blonde light hair, Nordic pale complexion, high prominent cheekbones, blue or grey eyes';
+    quickChipState.etnia = _scanVal;
+    try{ _applyEtniaProfile(_scanVal); }catch(e){}
+    const _eEl = document.querySelector('.quick-chip[data-cat="etnia"]');
+    if(_eEl){ _eEl.classList.add('active','auto-set'); }
+  }
+  if(!quickChipState.corpo){
+    const _cp = R(_CORPO_PREFIXES);
+    const _cEl = document.querySelector(`.quick-chip[data-cat="corpo"][data-val^="${_cp}"]`);
+    if(_cEl){ document.querySelectorAll('.quick-chip[data-cat="corpo"]').forEach(c=>c.classList.remove('active','auto-set')); _cEl.classList.add('active','auto-set'); quickChipState.corpo = _cEl.dataset.val; }
+  }
+  if(!quickChipState.cabelo){
+    const _hp = R(_CABELO_PREFIXES);
+    const _hEl = document.querySelector(`.quick-chip[data-cat="cabelo"][data-val^="${_hp}"]`);
+    if(_hEl){ document.querySelectorAll('.quick-chip[data-cat="cabelo"]').forEach(c=>c.classList.remove('active','auto-set')); _hEl.classList.add('active','auto-set'); quickChipState.cabelo = _hEl.dataset.val; }
+  }
+  // NOTE: intentionally does NOT call _autoFillDescription() — preserves user's typed text
+}
+
 // ── AUTO-COMPLETE CHARACTER: preenche etnia, corpo, cabelo com valores aleatórios ─
 // Chamado no generate() quando nenhum chip de personagem está ativo.
 // Activa os chips na UI para dar feedback visual ao usuário.
@@ -18884,6 +19001,12 @@ async function generate(){
     // Re-capture after auto-complete — chip state changed, so _quickPre must match
     // what buildPrompt() will see via getQuickPreset(), otherwise _sceneOnly is computed
     // with a higher _quickPreCount than englishText has terms, silently dropping the user scene.
+    _quickPre = getQuickPreset() || _quickPre;
+  }
+
+  // When user typed explicit content but no character chips — auto-fill chips silently
+  if(raw && !quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo){
+    try{ _autoCompleteCharacterSilent(); }catch(e){}
     _quickPre = getQuickPreset() || _quickPre;
   }
 
