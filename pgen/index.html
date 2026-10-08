@@ -19006,7 +19006,11 @@ async function generate(){
 
   // When user typed explicit content but no character chips — auto-fill chips silently
   if(raw && !quickChipState.etnia && !quickChipState.corpo && !quickChipState.cabelo){
+    const _taEl2 = document.getElementById('sceneInput');
+    const _rawBeforeSilent = _taEl2 ? _taEl2.value : '';
     try{ _autoCompleteCharacterSilent(); }catch(e){}
+    // Restore textarea — _applyEtniaProfile may have triggered _autoFillDescription
+    if(_taEl2 && _taEl2.value !== _rawBeforeSilent) _taEl2.value = _rawBeforeSilent;
     _quickPre = getQuickPreset() || _quickPre;
   }
 
