@@ -18926,6 +18926,31 @@ function _autoCompleteCharacterSilent(){
     const _hEl = document.querySelector(`.quick-chip[data-cat="cabelo"][data-val^="${_hp}"]`);
     if(_hEl){ document.querySelectorAll('.quick-chip[data-cat="cabelo"]').forEach(c=>c.classList.remove('active','auto-set')); _hEl.classList.add('active','auto-set'); quickChipState.cabelo = _hEl.dataset.val; }
   }
+  // Auto-set hair color chip matching the selected cabelo style / etnia
+  if(!quickChipState.cor_cabelo){
+    const _cabVal = quickChipState.cabelo || '';
+    const _etVal  = quickChipState.etnia  || '';
+    let _autoHC = 'warm chestnut brown hair, rich warm brown color, chestnut tones';
+    if(/platinum|very light blonde/i.test(_cabVal)||/nordic|scandinavian/i.test(_etVal)) _autoHC = 'platinum blonde hair, icy platinum color, very light blonde';
+    else if(/golden blonde|sun-kissed|honey blonde/i.test(_cabVal)) _autoHC = 'golden blonde hair, warm honey blonde color, sun-kissed golden tones';
+    else if(/auburn|red hair/i.test(_cabVal)) _autoHC = 'vivid auburn red hair, coppery warm red tones, natural red';
+    else if(/dark brunette|dark brown/i.test(_cabVal)) _autoHC = 'rich dark brunette hair, deep dark brown color';
+    else if(/jet black|black/i.test(_cabVal)) _autoHC = 'jet black hair, deep raven black color, glossy black';
+    const _hcEl = document.querySelector(`.quick-chip[data-cat="cor_cabelo"][data-val^="${_autoHC.split(',')[0]}"]`);
+    if(_hcEl){ document.querySelectorAll('.quick-chip[data-cat="cor_cabelo"]').forEach(c=>c.classList.remove('active','auto-set')); _hcEl.classList.add('active','auto-set'); quickChipState.cor_cabelo = _hcEl.dataset.val; }
+  }
+  // Auto-set eye color matching the selected etnia
+  if(typeof faceProfile !== 'undefined' && !faceProfile.olhos){
+    const _et = quickChipState.etnia || '';
+    let _autoEye = 'dark brown deep almond eyes, dark brown irises';
+    if(/nordic|scandinavian/i.test(_et)) _autoEye = 'deep blue round expressive eyes, vivid blue irises';
+    else if(/russian|eastern|slavic|ukrainian|polish/i.test(_et)) _autoEye = 'pale gray eyes, light silvery gray irises, icy gaze';
+    else if(/french|italian|spanish|mediterranean/i.test(_et)) _autoEye = 'dark hazel eyes with amber and green flecks in iris';
+    else if(/blue.*grey|grey.*blue|blue or grey/i.test(_et)) _autoEye = 'deep blue round expressive eyes, vivid blue irises';
+    faceProfile.olhos = _autoEye;
+    const _eyeEl = document.querySelector(`.face-chip[data-cat="olhos"][data-val="${_autoEye}"]`);
+    if(_eyeEl){ document.querySelectorAll('.face-chip[data-cat="olhos"]').forEach(c=>c.classList.remove('active')); _eyeEl.classList.add('active'); }
+  }
   // NOTE: intentionally does NOT call _autoFillDescription() — preserves user's typed text
 }
 
@@ -18972,6 +18997,31 @@ function _autoCompleteCharacter(){
     const _hEl = document.querySelector(`.quick-chip[data-cat="cabelo"][data-val^="${_hp}"]`);
     if(_hEl){ document.querySelectorAll('.quick-chip[data-cat="cabelo"]').forEach(c=>c.classList.remove('active','auto-set')); _hEl.classList.add('active','auto-set'); quickChipState.cabelo = _hEl.dataset.val; }
   }
+  // Auto-set hair color chip matching the selected cabelo style / etnia
+  if(!quickChipState.cor_cabelo){
+    const _cabVal = quickChipState.cabelo || '';
+    const _etVal  = quickChipState.etnia  || '';
+    let _autoHC = 'warm chestnut brown hair, rich warm brown color, chestnut tones';
+    if(/platinum|very light blonde/i.test(_cabVal)||/nordic|scandinavian/i.test(_etVal)) _autoHC = 'platinum blonde hair, icy platinum color, very light blonde';
+    else if(/golden blonde|sun-kissed|honey blonde/i.test(_cabVal)) _autoHC = 'golden blonde hair, warm honey blonde color, sun-kissed golden tones';
+    else if(/auburn|red hair/i.test(_cabVal)) _autoHC = 'vivid auburn red hair, coppery warm red tones, natural red';
+    else if(/dark brunette|dark brown/i.test(_cabVal)) _autoHC = 'rich dark brunette hair, deep dark brown color';
+    else if(/jet black|black/i.test(_cabVal)) _autoHC = 'jet black hair, deep raven black color, glossy black';
+    const _hcEl = document.querySelector(`.quick-chip[data-cat="cor_cabelo"][data-val^="${_autoHC.split(',')[0]}"]`);
+    if(_hcEl){ document.querySelectorAll('.quick-chip[data-cat="cor_cabelo"]').forEach(c=>c.classList.remove('active','auto-set')); _hcEl.classList.add('active','auto-set'); quickChipState.cor_cabelo = _hcEl.dataset.val; }
+  }
+  // Auto-set eye color matching the selected etnia
+  if(typeof faceProfile !== 'undefined' && !faceProfile.olhos){
+    const _et = quickChipState.etnia || '';
+    let _autoEye = 'dark brown deep almond eyes, dark brown irises';
+    if(/nordic|scandinavian/i.test(_et)) _autoEye = 'deep blue round expressive eyes, vivid blue irises';
+    else if(/russian|eastern|slavic|ukrainian|polish/i.test(_et)) _autoEye = 'pale gray eyes, light silvery gray irises, icy gaze';
+    else if(/french|italian|spanish|mediterranean/i.test(_et)) _autoEye = 'dark hazel eyes with amber and green flecks in iris';
+    else if(/blue.*grey|grey.*blue|blue or grey/i.test(_et)) _autoEye = 'deep blue round expressive eyes, vivid blue irises';
+    faceProfile.olhos = _autoEye;
+    const _eyeEl = document.querySelector(`.face-chip[data-cat="olhos"][data-val="${_autoEye}"]`);
+    if(_eyeEl){ document.querySelectorAll('.face-chip[data-cat="olhos"]').forEach(c=>c.classList.remove('active')); _eyeEl.classList.add('active'); }
+  }
   try{ _autoFillDescription(); }catch(e){}
 }
 
@@ -18980,6 +19030,26 @@ async function generate(){
   const raw = (_taEl?.value || '').trim();
   if(raw) detectModelFromText(raw);
   const hasPreset = typeof activePreset !== 'undefined' && activePreset;
+
+  // ── Extract eye/hair color from typed text → populate faceProfile/quickChipState if empty ──
+  if(raw){
+    if(typeof faceProfile !== 'undefined' && !faceProfile.olhos){
+      const _eyePtMatch = raw.match(/olhos?\s*(azuis?|verdes?|castanhos?|pretos?|negros?|mel\b|cinza|âmbar|amber)/i);
+      if(_eyePtMatch){
+        const _eyeColorMap = {azuis:'deep blue round expressive eyes, vivid blue irises',azul:'deep blue round expressive eyes, vivid blue irises',verdes:'green cat-shaped slightly upturned eyes, bright green irises',verde:'green cat-shaped slightly upturned eyes, bright green irises',castanhos:'dark brown deep almond eyes, dark brown irises',castanho:'dark brown deep almond eyes, dark brown irises',pretos:'near-black deep dark eyes, dark almost black irises',preto:'near-black deep dark eyes, dark almost black irises',negros:'near-black deep dark eyes, dark almost black irises',negro:'near-black deep dark eyes, dark almost black irises',mel:'dark hazel eyes with amber and green flecks in iris',cinza:'pale gray eyes, light silvery gray irises, icy gaze',âmbar:'warm amber honey-colored eyes, golden brown irises',amber:'warm amber honey-colored eyes, golden brown irises'};
+        const _eyeKey = _eyePtMatch[1].toLowerCase().replace(/s$/,'');
+        if(_eyeColorMap[_eyeKey]){
+          faceProfile.olhos = _eyeColorMap[_eyeKey];
+          const _eyeEl = document.querySelector(`.face-chip[data-cat="olhos"][data-val="${_eyeColorMap[_eyeKey]}"]`);
+          if(_eyeEl){ document.querySelectorAll('.face-chip[data-cat="olhos"]').forEach(c=>c.classList.remove('active')); _eyeEl.classList.add('active'); }
+        }
+      }
+    }
+    if(!quickChipState.cor_cabelo){
+      const _hcRules = [[/\bplatinada?\b|\bplatinum\s*blonde\b/i,'platinum blonde hair, icy platinum color, very light blonde'],[/\bloira?\s*mel\b|\bhoney\s*blonde\b/i,'golden blonde hair, warm honey blonde color, sun-kissed golden tones'],[/\bloira?\s*(?:dourada?|golden)\b/i,'golden blonde hair, warm honey blonde color, sun-kissed golden tones'],[/\bbalayage\b/i,'balayage hair, natural sun-kissed highlights blending from dark roots to lighter ends, ombre effect'],[/\bruiva?\s*escura\b|\bauburn\b/i,'vivid auburn red hair, coppery warm red tones, natural red'],[/\bruiva?\b|\bredhead\b|\bred hair\b/i,'vivid auburn red hair, coppery warm red tones, natural red'],[/cabelo\s*preto\b|\bblack hair\b/i,'jet black hair, deep raven black color, glossy black'],[/cabelo\s*rosa\b|\bpink hair\b/i,'pastel pink hair, soft bubblegum pink color, fantasy pink tones'],[/\bcastanho\s*claro\b|\blight brown hair\b/i,'warm chestnut brown hair, rich warm brown color, chestnut tones'],[/\bcastanho\s*escuro\b|\bdark brunette\b|\bdark brown hair\b/i,'rich dark brunette hair, deep dark brown color'],[/\bcastanho\b|\bbrunette\b|\bmorena\b|\bmoreno\b/i,'warm chestnut brown hair, rich warm brown color, chestnut tones'],[/\bprata\b|\bgrisalh\b|\bsilver hair\b/i,'silver gray hair, natural silver tones, elegant gray color'],[/\bloira?\b|\bblonde\b/i,'golden blonde hair, warm honey blonde color, sun-kissed golden tones']];
+      for(const [re,val] of _hcRules){ if(re.test(raw)){ quickChipState.cor_cabelo = val; break; } }
+    }
+  }
 
   // Require at least some input — description, preset, character chip, or pose/scene chip
   let _quickPre = getQuickPreset();
