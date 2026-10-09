@@ -18068,7 +18068,11 @@ function buildPrompt(englishText, rawPT){
     const _mjAutoHairStyle = _autoHairStyle;
     const _mjAutoSweat = _autoSweat.replace(/\([^)]+:[0-9.]+\)/g, s => s.replace(/:[0-9.]+\)/, ')')).replace(/\(([^)]+)\)/g, '$1').replace(/,\s*,/g,',').trim();
     const _mjStripSD = s => s.replace(/\(([^:)]+):[0-9.]+\)/g, '$1').replace(/,\s*,/g,',').trim();
+    // Eye/hair color injected FIRST — MJ is attention-based, earliest tokens get most weight
+    const _mjEyeColorTerm = (typeof faceProfile !== 'undefined' && faceProfile.olhos) ? faceProfile.olhos.split(',')[0].trim() : '';
+    const _mjHairColorTerms = quickChipState.cor_cabelo ? quickChipState.cor_cabelo.split(',').slice(0,2).join(', ').trim() : '';
     const _mjUserContent = [
+      _mjEyeColorTerm, _mjHairColorTerms,
       _mjOutfitMid, pose.mj, _expandedMj, _mjChipContent,
       _mjAutoCamera, _mjAutoAccessories, _mjAutoMakeup,
       _mjAutoColorPalette, _mjAutoHairStyle, _mjAutoSweat,
@@ -19049,6 +19053,35 @@ async function generate(){
       const _hcRules = [[/\bplatinada?\b|\bplatinum\s*blonde\b/i,'platinum blonde hair, icy platinum color, very light blonde'],[/\bloira?\s*mel\b|\bhoney\s*blonde\b/i,'golden blonde hair, warm honey blonde color, sun-kissed golden tones'],[/\bloira?\s*(?:dourada?|golden)\b/i,'golden blonde hair, warm honey blonde color, sun-kissed golden tones'],[/\bbalayage\b/i,'balayage hair, natural sun-kissed highlights blending from dark roots to lighter ends, ombre effect'],[/\bruiva?\s*escura\b|\bauburn\b/i,'vivid auburn red hair, coppery warm red tones, natural red'],[/\bruiva?\b|\bredhead\b|\bred hair\b/i,'vivid auburn red hair, coppery warm red tones, natural red'],[/cabelo\s*preto\b|\bblack hair\b/i,'jet black hair, deep raven black color, glossy black'],[/cabelo\s*rosa\b|\bpink hair\b/i,'pastel pink hair, soft bubblegum pink color, fantasy pink tones'],[/\bcastanho\s*claro\b|\blight brown hair\b/i,'warm chestnut brown hair, rich warm brown color, chestnut tones'],[/\bcastanho\s*escuro\b|\bdark brunette\b|\bdark brown hair\b/i,'rich dark brunette hair, deep dark brown color'],[/\bcastanho\b|\bbrunette\b|\bmorena\b|\bmoreno\b/i,'warm chestnut brown hair, rich warm brown color, chestnut tones'],[/\bprata\b|\bgrisalh\b|\bsilver hair\b/i,'silver gray hair, natural silver tones, elegant gray color'],[/\bloira?\b|\bblonde\b/i,'golden blonde hair, warm honey blonde color, sun-kissed golden tones']];
       for(const [re,val] of _hcRules){ if(re.test(raw)){ quickChipState.cor_cabelo = val; break; } }
     }
+  }
+
+  // ── Infer eye/hair color from chip state — runs even when raw is empty ──
+  // Handles case: user selected etnia/cabelo chips but did NOT select cor_cabelo or olhos chip
+  if(!quickChipState.cor_cabelo && (quickChipState.cabelo || quickChipState.etnia)){
+    const _cabV = quickChipState.cabelo || '';
+    const _etV  = quickChipState.etnia  || '';
+    let _inferHC = '';
+    if(/platinum|very light blonde/i.test(_cabV)||/nordic|scandinavian/i.test(_etV)) _inferHC = 'platinum blonde hair, icy platinum color, very light blonde';
+    else if(/golden blonde|sun-kissed/i.test(_cabV)) _inferHC = 'golden blonde hair, warm honey blonde color, sun-kissed golden tones';
+    else if(/ash blonde|cool.*blonde/i.test(_cabV)) _inferHC = 'light ash blonde hair, cool toned blonde, natural ash undertones';
+    else if(/auburn|red hair/i.test(_cabV)) _inferHC = 'vivid auburn red hair, coppery warm red tones, natural red';
+    else if(/dark brunette|dark brown/i.test(_cabV)) _inferHC = 'rich dark brunette hair, deep dark brown color';
+    else if(/jet black|black/i.test(_cabV)) _inferHC = 'jet black hair, deep raven black color, glossy black';
+    else if(/dark/i.test(_cabV)||/brazilian|latina|colombian|mexican|argentina/i.test(_etV)) _inferHC = 'warm chestnut brown hair, rich warm brown color, chestnut tones';
+    else if(/blonde/i.test(_cabV)) _inferHC = 'golden blonde hair, warm honey blonde color, sun-kissed golden tones';
+    else if(/european|french|italian|spanish/i.test(_etV)) _inferHC = 'warm chestnut brown hair, rich warm brown color, chestnut tones';
+    if(_inferHC) quickChipState.cor_cabelo = _inferHC;
+  }
+  if(typeof faceProfile !== 'undefined' && !faceProfile.olhos && quickChipState.etnia){
+    const _et = quickChipState.etnia;
+    let _inferEye = 'dark brown deep almond eyes, dark brown irises';
+    if(/nordic|scandinavian/i.test(_et)) _inferEye = 'deep blue round expressive eyes, vivid blue irises';
+    else if(/russian|eastern|slavic|ukrainian|polish/i.test(_et)) _inferEye = 'pale gray eyes, light silvery gray irises, icy gaze';
+    else if(/french|italian|spanish|mediterranean/i.test(_et)) _inferEye = 'dark hazel eyes with amber and green flecks in iris';
+    else if(/blue.*grey|grey.*blue|blue or grey/i.test(_et)) _inferEye = 'deep blue round expressive eyes, vivid blue irises';
+    faceProfile.olhos = _inferEye;
+    const _eyeEl2 = document.querySelector(`.face-chip[data-cat="olhos"][data-val="${_inferEye}"]`);
+    if(_eyeEl2){ document.querySelectorAll('.face-chip[data-cat="olhos"]').forEach(c=>c.classList.remove('active')); _eyeEl2.classList.add('active'); }
   }
 
   // Require at least some input — description, preset, character chip, or pose/scene chip
