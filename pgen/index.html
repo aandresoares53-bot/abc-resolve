@@ -19406,8 +19406,9 @@ async function generate(){
     let _result;
     if(!_userScene && !hasPreset){
       // All content is English (chips + default pose scene) — no translation needed
+      // rawPT must be '' so _userHasSceneWord doesn't false-positive on chip text
       buildPrompt._userTranslated = '';
-      _result = buildPrompt(rawFull, rawFull);
+      _result = buildPrompt(rawFull, '');
     } else {
       // User typed a complement or has a preset — translate ONLY those parts.
       // Chips (_quickPre) are already English — translating them garbles the output.
@@ -19426,7 +19427,8 @@ async function generate(){
       // Store translated user text so buildPrompt can use it directly for descBoost
       // without slicing off chip terms that may exceed the translation length
       buildPrompt._userTranslated = _translated || '';
-      _result = buildPrompt(englishText, rawFull);
+      // rawPT = only user-typed text (PT) — prevents _userHasSceneWord from matching chip text
+      _result = buildPrompt(englishText, _userScene || '');
     }
     // Handle object returns from video/inpainting modes
     if(_result && typeof _result === 'object' && _result.prompt !== undefined){
