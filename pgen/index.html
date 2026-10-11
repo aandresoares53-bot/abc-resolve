@@ -586,10 +586,25 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
 [data-theme="dark"] .suggest-chip{background:#052e16;border-color:#166534;color:#86efac;}
 
 /* SELECTION PREVIEW BAR */
-.selection-preview-bar{display:none;flex-wrap:wrap;gap:5px;padding:8px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;margin-bottom:10px;}
-[data-theme="dark"] .selection-preview-bar{background:#0c1a27;border-color:#1e3a5f;}
-.sel-prev-item{font-size:0.72em;font-weight:600;color:#0369a1;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:2px 8px;white-space:nowrap;overflow:hidden;max-width:180px;text-overflow:ellipsis;}
-[data-theme="dark"] .sel-prev-item{color:#7dd3fc;background:#0c2a3f;border-color:#1e4b6e;}
+.selection-preview-bar{display:none;flex-direction:column;gap:6px;padding:10px 14px;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1.5px solid #7dd3fc;border-radius:12px;margin-bottom:10px;}
+[data-theme="dark"] .selection-preview-bar{background:linear-gradient(135deg,#0c1a27,#0a2035);border-color:#1e4b6e;}
+.sel-prev-label{font-size:0.65em;font-weight:800;color:#0369a1;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;}
+[data-theme="dark"] .sel-prev-label{color:#38bdf8;}
+.sel-prev-text{font-size:0.78em;color:#0f172a;line-height:1.55;word-break:break-word;}
+[data-theme="dark"] .sel-prev-text{color:#e2e8f0;}
+.sel-prev-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
+.sel-prev-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.71em;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.sel-prev-badge.cat-char{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;}
+.sel-prev-badge.cat-outfit{background:#fce7f3;color:#9d174d;border:1px solid #f9a8d4;}
+.sel-prev-badge.cat-pose{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+.sel-prev-badge.cat-scene{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+.sel-prev-badge.cat-tech{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;}
+[data-theme="dark"] .sel-prev-badge.cat-char{background:#1e3a5f;color:#93c5fd;border-color:#2563eb;}
+[data-theme="dark"] .sel-prev-badge.cat-outfit{background:#4a0026;color:#f9a8d4;border-color:#9d174d;}
+[data-theme="dark"] .sel-prev-badge.cat-pose{background:#052e16;color:#86efac;border-color:#166534;}
+[data-theme="dark"] .sel-prev-badge.cat-scene{background:#3b1f00;color:#fde68a;border-color:#92400e;}
+[data-theme="dark"] .sel-prev-badge.cat-tech{background:#2e1a6e;color:#c4b5fd;border-color:#5b21b6;}
+.sel-prev-sep{color:#94a3b8;font-size:0.7em;}
 
 /* MONTAR button */
 .btn-montar{padding:8px 14px;border:1.5px solid #0891b2;border-radius:8px;font-size:0.8em;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#0891b2,#0369a1);color:#fff;transition:all 0.15s;}
@@ -17940,24 +17955,30 @@ function buildPrompt(englishText, rawPT){
   // EXCEPTION: if the user's typed description already contains a specific location/scene
   // keyword, their text takes priority — the chip is skipped to avoid conflicting scenes.
   const _userHasSceneWord = /\b(bedroom|quarto|praia|beach|pool|piscina|gym|academia|café|cafe|restaurant|restaurante|kitchen|cozinha|bathroom|banheiro|chuveiro|shower|office|escritório|escritorio|park|parque|club|nightclub|boate|hotel|spa|forest|floresta|jungle|selva|rooftop|cobertura|city|cidade|rua|street|snow|neve|cabin|sala|living room|varanda|balcony)\b/i;
+  // Ordem de montagem: [cenário] + [outfit] + [descrição do usuário] + [scene chip] + [expressão]
+  // Cenário injeta primeiro para que expandScene() detecte a localização correta
   if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()) && !_userHasSceneWord.test(rawPT || ''))
     inputText = _cenarioChipFull + ', ' + inputText;
-  if(_sceneChipFull && !inputText.includes(_sceneChipFull.substring(0,15)))
-    inputText = inputText + ', ' + _sceneChipFull;
   if(typeof chipState !== 'undefined'){
-    // Auto-outfit (set by pose selection) bypasses this prepend — goes through Priority 3 with full SD weights
-    // Manual chip outfit (user clicked a chip, _autoOutfitActive=false) still prepends here via Priority 1
-    // Outfit chip (manual selection) overrides auto pose outfit
+    // Outfit chip (seleção manual) override auto pose outfit
     const _outfitChipVal = (typeof getQuickOutfit === 'function' ? getQuickOutfit() : '') || '';
     if(_outfitChipVal){
-      inputText = _outfitChipVal + ', ' + inputText;
+      // Outfit fica DEPOIS do cenário mas ANTES da descrição: cenário, outfit, descrição
+      const _cenPrefix = _cenarioChipFull && inputText.startsWith(_cenarioChipFull.substring(0,15))
+        ? _cenarioChipFull + ', '
+        : '';
+      const _descRest = _cenPrefix ? inputText.slice(_cenPrefix.length) : inputText;
+      inputText = (_cenPrefix ? _cenPrefix : '') + _outfitChipVal + (_descRest ? ', ' + _descRest : '');
       if(_autoOutfitActive){ chipState.outfit = ''; _autoOutfitActive = false; }
     } else if(chipState.outfit && !_autoOutfitActive && !/wearing|dressed|nude|naked|calcinha|suti[aã]|biquini|biquíni|vestido|saia|cal[cç]a|camisa|camiseta|blusa|body|collant|maio|maiô|lingerie|fio dental|tanga|pelada|sem roupa|nua\b/.test(inputText.toLowerCase()))
       inputText = chipState.outfit + ', ' + inputText;
-    // Back poses: face is hidden — expression chips are irrelevant and pollute expandScene detection
+    // Expressão vai no final (após descrição)
     if(chipState.expression && !pose.sup && !_poseIsBack)
       inputText = inputText + ', ' + chipState.expression;
   }
+  // Scene chip vai no final (após tudo)
+  if(_sceneChipFull && !inputText.includes(_sceneChipFull.substring(0,15)))
+    inputText = inputText + ', ' + _sceneChipFull;
 
   // ── Semantic character attribute extraction from PT description ────────────
   // When chips (etnia, idade, corpo) are empty, extract attrs from the raw description
@@ -20039,6 +20060,7 @@ function toggleCenarioChip(el){
     quickChipState.cenario_chip = el.dataset.val || '';
   }
   if(typeof _autoSaveCharDraft === 'function') _autoSaveCharDraft();
+  try{ _updateSelectionPreview(); }catch(e){}
 }
 function toggleOutfitChip(el){
   const isActive = el.classList.contains('active');
@@ -21841,43 +21863,70 @@ function pickBestModeForPose(poseKey, poseData){
 function _updateSelectionPreview(){
   const el = document.getElementById('selection-preview-bar');
   if(!el) return;
-  const parts = [];
 
-  // Etnia — use chip text label (emoji + name)
-  const _eChip = document.querySelector('.quick-chip[data-cat="etnia"].active');
-  if(_eChip) parts.push(_eChip.textContent.trim().substring(0,22));
-
-  // Idade
+  // ── 1. PERSONAGEM ────────────────────────────────────────────────────────────
+  const charParts = [];
+  const _eChip  = document.querySelector('.quick-chip[data-cat="etnia"].active');
   const _idChip = document.querySelector('.quick-chip[data-cat="idade"].active');
-  if(_idChip) parts.push(_idChip.textContent.trim().substring(0,10));
+  const _cChip  = document.querySelector('.quick-chip[data-cat="corpo"].active');
+  const _hChip  = document.querySelector('.quick-chip[data-cat="cabelo"].active');
+  const _hcChip = document.querySelector('.quick-chip[data-cat="cor_cabelo"].active');
+  const _exChip = document.querySelector('.quick-chip[data-cat="expression"].active');
+  if(_eChip)  charParts.push(_eChip.textContent.trim().replace(/\s+/g,' '));
+  if(_idChip) charParts.push(_idChip.textContent.trim());
+  if(_cChip)  charParts.push(_cChip.textContent.trim());
+  if(_hChip)  charParts.push(_hChip.textContent.trim());
+  if(_hcChip) charParts.push(_hcChip.textContent.trim());
+  if(_exChip) charParts.push(_exChip.textContent.trim());
 
-  // Corpo
-  const _cChip = document.querySelector('.quick-chip[data-cat="corpo"].active');
-  if(_cChip) parts.push(_cChip.textContent.trim().substring(0,14));
-
-  // Cabelo
-  const _hChip = document.querySelector('.quick-chip[data-cat="cabelo"].active');
-  if(_hChip) parts.push(_hChip.textContent.trim().substring(0,14));
-
-  // Pose
-  if(typeof selectedPoseKey !== 'undefined' && selectedPoseKey && typeof POSES !== 'undefined' && POSES[selectedPoseKey]){
-    parts.push('🧘 ' + (POSES[selectedPoseKey].label || selectedPoseKey).substring(0,22));
+  // ── 2. VESTUÁRIO ─────────────────────────────────────────────────────────────
+  const outfitParts = [];
+  const _outfitChipEl = document.querySelector('.quick-chip[data-cat="outfit_chip"].active');
+  if(_outfitChipEl) outfitParts.push(_outfitChipEl.textContent.trim());
+  else {
+    const _outfitVal = (typeof chipState !== 'undefined' && chipState.outfit) || (typeof _cachedPoseOutfit !== 'undefined' && _cachedPoseOutfit) || '';
+    if(_outfitVal) outfitParts.push('👗 ' + _outfitVal.split(',')[0].trim());
   }
 
-  // Outfit
-  const _outfitVal = (typeof chipState !== 'undefined' && chipState.outfit) || _cachedPoseOutfit || '';
-  if(_outfitVal) parts.push('👗 ' + _outfitVal.split(',')[0].substring(0,28));
+  // ── 3. POSE ──────────────────────────────────────────────────────────────────
+  const poseParts = [];
+  const _poseChipEl = document.querySelector('.quick-chip[data-cat="pose"].active');
+  if(_poseChipEl) poseParts.push(_poseChipEl.textContent.trim());
+  else if(typeof selectedPoseKey !== 'undefined' && selectedPoseKey && typeof POSES !== 'undefined' && POSES[selectedPoseKey])
+    poseParts.push('🧘 ' + (POSES[selectedPoseKey].label || selectedPoseKey));
+  // Angulo
+  const _angChip = document.querySelector('.quick-chip[data-cat="angulo_camera"].active');
+  if(_angChip) poseParts.push(_angChip.textContent.trim());
 
-  // Scene
-  if(typeof _cachedPoseScene !== 'undefined' && _cachedPoseScene)
-    parts.push('🌍 ' + _cachedPoseScene.substring(0,32));
+  // ── 4. CENÁRIO ───────────────────────────────────────────────────────────────
+  const sceneParts = [];
+  const _cenChipEl = document.querySelector('.quick-chip[data-cat="cenario_chip"].active');
+  if(_cenChipEl) sceneParts.push(_cenChipEl.textContent.trim());
+  else if(typeof _cachedPoseScene !== 'undefined' && _cachedPoseScene)
+    sceneParts.push('🌍 ' + _cachedPoseScene.split(',')[0].trim());
 
-  if(parts.length){
-    el.innerHTML = parts.map(p => `<span class="sel-prev-item">${p}</span>`).join('');
-    el.style.display = 'flex';
-  } else {
-    el.style.display = 'none';
-  }
+  // ── 5. TÉCNICO (iluminação + estilo) ─────────────────────────────────────────
+  const techParts = [];
+  const _ilumChip  = document.querySelector('.quick-chip[data-cat="iluminacao"].active');
+  const _estiloChip= document.querySelector('.quick-chip[data-cat="estilo_foto"].active');
+  if(_ilumChip)   techParts.push(_ilumChip.textContent.trim());
+  if(_estiloChip) techParts.push(_estiloChip.textContent.trim());
+
+  const hasAny = charParts.length || outfitParts.length || poseParts.length || sceneParts.length || techParts.length;
+  if(!hasAny){ el.style.display = 'none'; return; }
+
+  const _badge = (cls, items) =>
+    items.map(t => `<span class="sel-prev-badge ${cls}">${t}</span>`).join(' ');
+
+  const rows = [];
+  if(charParts.length)   rows.push(`<div class="sel-prev-row"><span class="sel-prev-badge cat-char">👤</span>${_badge('cat-char', charParts)}</div>`);
+  if(outfitParts.length) rows.push(`<div class="sel-prev-row"><span class="sel-prev-badge cat-outfit">👗</span>${_badge('cat-outfit', outfitParts)}</div>`);
+  if(poseParts.length)   rows.push(`<div class="sel-prev-row"><span class="sel-prev-badge cat-pose">🧘</span>${_badge('cat-pose', poseParts)}</div>`);
+  if(sceneParts.length)  rows.push(`<div class="sel-prev-row"><span class="sel-prev-badge cat-scene">🌍</span>${_badge('cat-scene', sceneParts)}</div>`);
+  if(techParts.length)   rows.push(`<div class="sel-prev-row"><span class="sel-prev-badge cat-tech">📷</span>${_badge('cat-tech', techParts)}</div>`);
+
+  el.innerHTML = `<div class="sel-prev-label">🔨 Prompt em construção</div>${rows.join('')}`;
+  el.style.display = 'flex';
 }
 
 // ── MONTAR PERSONAGEM COMPLETO ────────────────────────────────────────────────
