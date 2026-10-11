@@ -1054,7 +1054,7 @@ h1{font-size:1.9em;color:#1d4ed8;font-weight:800;letter-spacing:-0.5px;}
             <div class="pose-group-chips">
               <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on back facing up, supine position, lying face up looking toward camera, on her back">🛏️ De costas</span>
               <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on stomach face down, prone position, lying face down on belly, lying down facing downward">🛌 De bruços</span>
-              <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on side, side-lying position, lateral recumbent pose, lying on her side facing camera">🌙 De lado</span>
+              <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on side, side-lying position, lateral recumbent pose, lying on her side, body turned sideways">🌙 De lado</span>
               <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on back with legs spread open, supine legs apart pose, lying face up thighs open, on back legs spread wide">🛏️ Pernas abertas</span>
               <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on stomach propped up on elbows, sphinx pose, chin resting on hands, elbows on surface, chest lifted, relaxed lying position with upper body propped up">😴 Apoiada nos cotovelos</span>
               <span class="quick-chip" data-cat="pose" onclick="toggleQuickChip(this)" data-val="lying on side in fetal position, curled up sideways, knees slightly drawn in, side lying curled body, relaxed intimate position, natural sleeping pose">🌙 Posição fetal</span>
@@ -14774,6 +14774,12 @@ function buildPoseBlock(rawPT){
     sd:  '(looking over her shoulder:1.8), body turned away from camera, face partially visible, three-quarter rear view',
     mj:  'looking over shoulder, body turned away, face partially visible',
     neg: 'fully facing camera',
+    sup: false
+  };
+  if(isDeitada && /lying on (her )?side|side.lying|lateral recumbent|body turned sideways/.test(t)) return {
+    sd:  '(lying on side:1.9), (side-lying position:1.8), (lateral pose:1.7), (body sideways on surface:1.7), (head resting on arm or pillow:1.6), relaxed intimate pose',
+    mj:  'lying on side, side-lying position, body turned sideways, relaxed lateral pose, head resting',
+    neg: 'standing, from behind rear view, face down prone, sitting upright, on back facing up',
     sup: false
   };
   if(isSideView) return {
