@@ -17729,11 +17729,12 @@ function buildPrompt(englishText, rawPT){
       _gestureTerms.push('(hands on body:1.7), (touching her torso:1.6)');
     if(_gestureTerms.length > 0){
       const _gStr = _gestureTerms.join(', ');
+      const _mjGesture = _gestureTerms.map(t => t.replace(/\(([^:]+):[0-9.]+\)/g,'$1')).join(', ');
       pose = {
-        sd:       (pose.sd       || '') + (_gestureTerms.length ? ', ' + _gStr : ''),
-        sd_start: (pose.sd_start || ''),
+        sd:       (pose.sd       || ''),
+        sd_start: (pose.sd_start || pose.sd || '') + ', ' + _gStr,
         sd_end:   (pose.sd_end   || ''),
-        mj:       (pose.mj       || ''),
+        mj:       [(pose.mj || ''), _mjGesture].filter(Boolean).join(', '),
         neg:      (pose.neg      || ''),
         sup:      pose.sup
       };
@@ -17810,7 +17811,7 @@ function buildPrompt(englishText, rawPT){
   // EXCEPTION: if the user's typed description already contains a specific location/scene
   // keyword, their text takes priority — the chip is skipped to avoid conflicting scenes.
   const _userHasSceneWord = /\b(bedroom|quarto|praia|beach|pool|piscina|gym|academia|café|cafe|restaurant|restaurante|kitchen|cozinha|bathroom|banheiro|chuveiro|shower|office|escritório|escritorio|park|parque|club|nightclub|boate|hotel|spa|forest|floresta|jungle|selva|rooftop|cobertura|city|cidade|rua|street|snow|neve|cabin|sala|living room|varanda|balcony)\b/i;
-  if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()) && !_userHasSceneWord.test(inputText))
+  if(_cenarioChipFull && !inputText.toLowerCase().includes(_cenarioChipFull.substring(0,15).toLowerCase()) && !_userHasSceneWord.test(rawPT || ''))
     inputText = _cenarioChipFull + ', ' + inputText;
   if(_sceneChipFull && !inputText.includes(_sceneChipFull.substring(0,15)))
     inputText = inputText + ', ' + _sceneChipFull;
@@ -19250,6 +19251,7 @@ async function generate(){
     let _result;
     if(!_userScene && !hasPreset){
       // All content is English (chips + default pose scene) — no translation needed
+      buildPrompt._userTranslated = '';
       _result = buildPrompt(rawFull, rawFull);
     } else {
       // User typed a complement or has a preset — translate ONLY those parts.
