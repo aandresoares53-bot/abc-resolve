@@ -14994,6 +14994,8 @@ function buildPoseBlock(rawPT){
     neg: 'flat footed, kneeling, sitting, lying down',
     sup: false
   };
+  // Fallback: no pattern matched — use raw chip text directly in the prompt
+  if(rawPT) return { sd: rawPT, mj: rawPT, neg: '', sup: false };
   return { sd: '', mj: '', neg: '', sup: false };
 }
 
