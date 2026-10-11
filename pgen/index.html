@@ -14599,6 +14599,73 @@ function buildPoseBlock(rawPT){
   const isSideView     = /de perfil|perfil|side view|profile/.test(t);
   const isFacingCam    = /de frente|virada para|facing camera|front view/.test(t);
 
+  // \u2500\u2500 New poses \u2500\u2500
+  if(/stretching.*upward|morning stretch|espregui\u00e7ando|arms extended above head|arching torso.*stretch/.test(t)) return {
+    sd:  '(stretching arms upward:1.9), (arms raised overhead:1.8), (morning stretch pose:1.7), (back slightly arched:1.6), (torso elongated:1.6), facing camera, full body',
+    mj:  'stretching arms upward, morning stretch, arms raised overhead, back slightly arched, full body facing camera',
+    neg: 'sitting, lying down, from behind', sup: false
+  };
+  if(/walking toward camera|mid-stride|casual.*walk|caminhando|approaching camera/.test(t)) return {
+    sd:  '(walking toward camera:1.9), (mid-stride:1.8), (one foot forward:1.7), (natural walking motion:1.7), (dynamic movement:1.6), full body front view',
+    mj:  'walking toward camera, mid-stride, natural walk, one foot forward, dynamic movement, full body',
+    neg: 'standing still, sitting, lying, from behind', sup: false
+  };
+  if(/dancing freely|spontaneous dance|dan\u00e7ando|candid dancing|dance movement/.test(t)) return {
+    sd:  '(dancing:1.9), (dance movement:1.8), (arms in motion:1.7), (dynamic body movement:1.8), (hair moving:1.6), (joyful energy:1.6), full body',
+    mj:  'dancing freely, arms in motion, hair moving, spontaneous dance pose, dynamic movement, full body, energy and joy',
+    neg: 'standing still, sitting, lying, rigid pose', sup: false
+  };
+  if(/leaning.*doorframe|doorway lean|encostada na porta/.test(t)) return {
+    sd:  '(leaning against doorframe:1.9), (one shoulder against door:1.8), (relaxed casual pose:1.7), (body against door frame:1.7), full body, facing camera',
+    mj:  'leaning against doorframe, one shoulder on door frame, casual relaxed pose, full body, facing camera',
+    neg: 'from behind, lying, sitting, rigid', sup: false
+  };
+  if(/sitting.*edge.*bed|perched.*bed|borda da cama|bed.*edge.*sitting/.test(t)) return {
+    sd:  '(sitting on edge of bed:1.9), (perched on bed side:1.8), (legs hanging down:1.7), (bedroom setting:1.6), facing camera, authentic bedroom moment',
+    mj:  'sitting on edge of bed, perched on bed side, legs dangling, facing camera, bedroom setting',
+    neg: 'lying down, from behind, standing', sup: false
+  };
+  if(/propped.*elbows|sphinx pose|apoiada.*cotovelos|elbows.*surface|chin.*resting.*hands/.test(t)) return {
+    sd:  '(lying on stomach:1.8), (propped up on elbows:1.9), (sphinx pose:1.7), (elbows on surface:1.8), (chest lifted:1.7), facing camera, relaxed',
+    mj:  'lying on stomach propped on elbows, sphinx pose, chest lifted, elbows on surface, facing camera, relaxed intimate',
+    neg: 'standing, sitting upright, from behind', sup: false
+  };
+  if(/fetal position|posi\u00e7\u00e3o fetal|curled.*sideways|lying.*side.*curled/.test(t)) return {
+    sd:  '(lying on side:1.8), (fetal position:1.8), (curled up sideways:1.7), (knees drawn in:1.6), (side-lying:1.7), relaxed intimate pose',
+    mj:  'lying on side in fetal position, curled up, knees drawn in, side-lying, relaxed intimate',
+    neg: 'standing, from behind, on back, sitting', sup: false
+  };
+  if(/legs? crossed|pernas cruzadas|crossed legs|one knee over/.test(t) && isSitting) return {
+    sd:  '(sitting:1.8), (legs crossed:1.9), (one knee over the other:1.8), (elegant seated:1.7), facing camera, confident posture',
+    mj:  'sitting with legs crossed, one knee over the other, elegant seated pose, facing camera',
+    neg: 'from behind, lying, standing, legs open', sup: false
+  };
+  if(/seiza|japanese sitting|kneeling.*heels|sitting.*knees/.test(t)) return {
+    sd:  '(sitting in seiza:1.9), (kneeling on heels:1.8), (japanese sitting position:1.7), (hands on thighs:1.6), upright body, facing camera',
+    mj:  'sitting in seiza position, kneeling on heels, hands on thighs, upright, facing camera',
+    neg: 'standing, from behind, lying, legs extended', sup: false
+  };
+  if(/legs? extended|pernas estendidas|legs? stretched.*forward|floor.*legs.*front/.test(t) && isSitting) return {
+    sd:  '(sitting on floor:1.8), (legs extended forward:1.9), (legs stretched out:1.8), (upper body upright:1.7), casual seated pose',
+    mj:  'sitting on floor with legs extended forward, legs stretched out, upper body upright, casual seated',
+    neg: 'standing, from behind, lying, legs crossed', sup: false
+  };
+  if(/yoga warrior|warrior pose|lunging.*yoga|yoga.*lunge/.test(t)) return {
+    sd:  '(yoga warrior pose:1.9), (lunging forward:1.8), (one knee bent deep:1.8), (arms extended:1.7), (dynamic yoga stance:1.7), full body',
+    mj:  'yoga warrior pose, deep lunge, one leg forward knee bent, arms extended, dynamic yoga stance, full body',
+    neg: 'standing still, sitting, lying, from behind', sup: false
+  };
+  if(/hands above.*head.*clasped|praying hands.*raised|m\u00e3os acima|palms together.*overhead/.test(t)) return {
+    sd:  '(hands raised above head:1.9), (palms pressed together overhead:1.8), (arms fully extended up:1.8), (looking upward:1.6), standing, full body',
+    mj:  'hands raised above head palms together, arms fully extended upward, looking up, standing full body',
+    neg: 'from behind, sitting, lying, arms down', sup: false
+  };
+  if(/one knee raised|um joelho levantado|knee lifted forward|standing.*one leg|balancing.*one foot/.test(t)) return {
+    sd:  '(standing on one leg:1.8), (one knee raised forward:1.9), (knee lifted at hip level:1.8), (balancing:1.7), full body, facing camera',
+    mj:  'standing on one leg, one knee raised forward at hip level, balancing pose, full body facing camera',
+    neg: 'from behind, sitting, lying, both feet on ground', sup: false
+  };
+
   if(isBehind && isAllFours) return {
     sd_start: '(from behind:2.0), (rear view:2.0), (back to camera:2.0), (face hidden:2.0), (no face visible:2.0),',
     sd:  '(on all fours:2.0), (crawling position:2.0), (tabletop position:1.9), '
