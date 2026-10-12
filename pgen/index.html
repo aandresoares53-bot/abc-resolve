@@ -4,13 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>RAWgen</title>
-<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#e8a020">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="RAWgen">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -32,62 +29,51 @@ body{
   display:flex;flex-direction:column;
   height:100vh;height:100dvh;overflow:hidden;
 }
-
-/* ── Header ── */
 header{
-  flex-shrink:0;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 14px;border-bottom:1px solid var(--bdr);
-  background:var(--bg);z-index:10;gap:8px;
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-bottom:1px solid var(--bdr);background:var(--bg);z-index:10;gap:8px;
 }
 .logo{font-size:1.2em;font-weight:900;letter-spacing:-1px;color:var(--acc);line-height:1;flex-shrink:0;}
-.logo small{color:var(--txt2);font-size:0.45em;font-weight:300;letter-spacing:0;margin-left:4px;vertical-align:middle;}
-.header-btns{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
-.hbtn{background:transparent;border:1px solid var(--bdr);color:var(--txt2);border-radius:var(--r2);padding:5px 9px;cursor:pointer;font-size:0.72em;font-weight:600;transition:all .15s;white-space:nowrap;}
+.logo small{color:var(--txt2);font-size:.45em;font-weight:300;letter-spacing:0;margin-left:4px;vertical-align:middle;}
+.header-btns{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
+.hbtn{background:transparent;border:1px solid var(--bdr);color:var(--txt2);border-radius:var(--r2);padding:5px 8px;cursor:pointer;font-size:.7em;font-weight:600;transition:all .15s;white-space:nowrap;}
 .hbtn:hover{border-color:var(--acc);color:var(--acc);}
 .hbtn.active{border-color:var(--acc);color:var(--acc);background:rgba(232,160,32,.1);}
+.hbtn.purple{border-color:#7c3aed;color:#a78bfa;}
+.hbtn.purple:hover{background:rgba(124,58,237,.1);}
 
-/* ── Progress bar ── */
-#progress-bar{
-  flex-shrink:0;height:3px;background:var(--bdr);
-  transition:none;
-}
+#progress-bar{flex-shrink:0;height:3px;background:var(--bdr);}
 #progress-fill{height:100%;background:var(--acc);width:0%;transition:width .4s ease;}
+#progress-label{flex-shrink:0;font-size:.68em;color:var(--txt3);padding:3px 14px;text-align:right;border-bottom:1px solid var(--bdr);background:var(--bg);}
 
-/* ── Progress label ── */
-#progress-label{
-  flex-shrink:0;
-  font-size:0.68em;color:var(--txt3);
-  padding:3px 14px;text-align:right;
-  border-bottom:1px solid var(--bdr);
-  background:var(--bg);
+/* Live preview */
+#preview-bar{
+  flex-shrink:0;background:rgba(232,160,32,.04);
+  border-bottom:1px solid var(--bdr);padding:5px 14px;
+  font-size:.66em;color:var(--txt2);font-family:monospace;
+  display:none;align-items:center;gap:6px;
 }
+#preview-bar.active{display:flex;}
+#preview-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preview-label{color:var(--acc);font-weight:800;font-family:sans-serif;font-size:.85em;flex-shrink:0;}
 
-/* ── Chat area ── */
-#chat{
-  flex:1;overflow-y:auto;
-  padding:14px 14px 8px;
-  display:flex;flex-direction:column;gap:10px;
-  scroll-behavior:smooth;
-}
+#chat{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
 #chat::-webkit-scrollbar{width:4px;}
 #chat::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px;}
 
-/* messages */
 .msg{display:flex;gap:9px;max-width:84%;animation:fadeUp .25s ease;}
 .msg.bot{align-self:flex-start;}
 .msg.usr{align-self:flex-end;flex-direction:row-reverse;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 
-.avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8em;margin-top:2px;}
+.avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8em;margin-top:2px;}
 .bot .avatar{background:var(--acc);color:#000;font-weight:900;}
 .usr .avatar{background:#333;color:#aaa;}
 
-.bubble{padding:9px 13px;border-radius:var(--r);font-size:0.87em;line-height:1.55;max-width:100%;word-break:break-word;}
+.bubble{padding:9px 13px;border-radius:var(--r);font-size:.87em;line-height:1.55;max-width:100%;word-break:break-word;}
 .bot .bubble{background:var(--bot-bg);border:1px solid var(--bdr);border-bottom-left-radius:4px;}
 .usr .bubble{background:var(--usr-bg);color:#000;font-weight:600;border-bottom-right-radius:4px;}
 
-/* typing */
 .typing .bubble{padding:12px 16px;}
 .dot-row{display:flex;gap:4px;align-items:center;}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--txt3);animation:bounce .9s infinite;}
@@ -95,87 +81,76 @@ header{
 .dot:nth-child(3){animation-delay:.3s;}
 @keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
 
-/* summary card */
-.summary-card{
-  background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r2);
-  padding:10px 13px;margin-top:8px;font-size:0.78em;
-}
+.summary-card{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r2);padding:10px 13px;margin-top:8px;font-size:.78em;}
 .summary-card .sc-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .summary-card .sc-row:last-child{border-bottom:none;}
 .sc-key{color:var(--txt3);font-weight:700;text-transform:uppercase;font-size:.68em;letter-spacing:.05em;flex-shrink:0;margin-right:8px;}
-.sc-val{color:var(--txt);text-align:right;font-size:.85em;word-break:break-word;}
+.sc-val{color:var(--txt);text-align:right;font-size:.85em;word-break:break-word;flex:1;}
 .sc-edit{background:none;border:none;color:var(--acc);cursor:pointer;font-size:.8em;padding:0 0 0 6px;flex-shrink:0;}
 
-/* prompt output */
-.prompt-block{
-  background:var(--bg);border:1px solid var(--acc);border-radius:var(--r2);
-  padding:11px 13px;font-size:0.79em;font-family:monospace;
-  line-height:1.7;word-break:break-word;color:var(--txt);
-  margin-top:6px;cursor:text;user-select:all;
-}
-.neg-block{
-  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r2);
-  padding:9px 13px;font-size:0.74em;font-family:monospace;
-  line-height:1.6;color:#fca5a5;margin-top:6px;user-select:all;
-}
+.prompt-block{background:var(--bg);border:1px solid var(--acc);border-radius:var(--r2);padding:11px 13px;font-size:.79em;font-family:monospace;line-height:1.7;word-break:break-word;color:var(--txt);margin-top:6px;cursor:text;user-select:all;}
+.neg-block{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r2);padding:9px 13px;font-size:.74em;font-family:monospace;line-height:1.6;color:#fca5a5;margin-top:6px;user-select:all;}
 .neg-title{font-size:.68em;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
 
 .btn-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-.copy-btn{
-  display:inline-flex;align-items:center;gap:5px;
-  background:var(--acc);color:#000;border:none;border-radius:var(--r2);
-  padding:7px 13px;cursor:pointer;font-weight:700;font-size:0.77em;transition:all .15s;
-}
+.copy-btn{display:inline-flex;align-items:center;gap:5px;background:var(--acc);color:#000;border:none;border-radius:var(--r2);padding:7px 13px;cursor:pointer;font-weight:700;font-size:.77em;transition:all .15s;}
 .copy-btn:hover{background:var(--acc2);}
 .copy-btn.ok{background:var(--green);color:#fff;}
 .copy-btn.neg{background:#7f1d1d;color:#fca5a5;}
 .copy-btn.neg:hover{background:#991b1b;}
 .copy-btn.neg.ok{background:var(--green);color:#fff;}
-.icon-btn{
-  display:inline-flex;align-items:center;gap:5px;
-  background:transparent;border:1px solid var(--bdr);color:var(--txt3);border-radius:var(--r2);
-  padding:7px 13px;cursor:pointer;font-size:0.77em;font-weight:600;transition:all .15s;
-}
+.icon-btn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--bdr);color:var(--txt3);border-radius:var(--r2);padding:7px 13px;cursor:pointer;font-size:.77em;font-weight:600;transition:all .15s;}
 .icon-btn:hover{border-color:var(--acc);color:var(--acc);}
 
-/* history panel */
-#hist-panel{
-  position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.8);
-  display:none;align-items:flex-end;
-}
+/* LoRA hints */
+.lora-box{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.22);border-radius:var(--r2);padding:8px 12px;margin-top:8px;font-size:.75em;}
+.lora-title{color:#a78bfa;font-weight:800;font-size:.7em;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+.lora-chip{display:inline-block;background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.28);border-radius:12px;padding:2px 9px;margin:2px 3px 2px 0;font-family:monospace;color:#c4b5fd;cursor:pointer;font-size:.9em;transition:background .13s;}
+.lora-chip:hover{background:rgba(124,58,237,.28);}
+.lora-hint{color:var(--txt3);font-size:.85em;margin-top:4px;}
+
+/* History panel */
+#hist-panel{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.8);display:none;align-items:flex-end;}
 #hist-panel.open{display:flex;}
-#hist-box{
-  width:100%;max-height:70dvh;overflow-y:auto;
-  background:var(--bg);border-top:1px solid var(--bdr);
-  padding:14px;display:flex;flex-direction:column;gap:8px;
-}
-.hist-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+#hist-box{width:100%;max-height:75dvh;overflow-y:auto;background:var(--bg);border-top:1px solid var(--bdr);padding:14px;display:flex;flex-direction:column;gap:8px;}
+.hist-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;}
 .hist-title{font-weight:800;font-size:.9em;color:var(--acc);}
 .hist-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:1.3em;line-height:1;}
-.hist-item{
-  background:var(--bot-bg);border:1px solid var(--bdr);border-radius:var(--r2);
-  padding:9px 12px;cursor:pointer;font-size:.75em;font-family:monospace;
-  line-height:1.5;word-break:break-word;color:var(--txt3);
-  transition:border-color .15s;
-}
-.hist-item:hover{border-color:var(--acc);color:var(--txt);}
-.hist-item small{display:block;color:var(--txt2);font-size:.7em;margin-bottom:3px;font-family:sans-serif;}
+.hist-filter{display:flex;gap:6px;margin-bottom:4px;}
+.hist-filter-btn{background:none;border:1px solid var(--bdr);color:var(--txt3);border-radius:20px;padding:3px 10px;font-size:.72em;cursor:pointer;transition:all .13s;}
+.hist-filter-btn.active{border-color:var(--acc);color:var(--acc);}
+.hist-item{background:var(--bot-bg);border:1px solid var(--bdr);border-radius:var(--r2);padding:9px 12px;font-size:.75em;font-family:monospace;line-height:1.5;word-break:break-word;color:var(--txt3);transition:border-color .15s;}
+.hist-item:hover{border-color:var(--acc);}
+.hist-item-header{display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:3px;}
+.hist-meta{color:var(--txt2);font-size:.7em;font-family:sans-serif;display:flex;gap:6px;align-items:center;}
+.hist-tags{display:flex;gap:3px;flex-wrap:wrap;}
+.hist-tag{background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.2);border-radius:10px;padding:1px 6px;font-size:.65em;color:var(--acc);font-family:sans-serif;}
+.hist-actions{display:flex;gap:4px;}
+.fav-btn{background:none;border:none;cursor:pointer;font-size:.95em;padding:2px;line-height:1;opacity:.45;transition:opacity .13s;}
+.fav-btn:hover,.fav-btn.on{opacity:1;}
+.hist-copy-btn{background:none;border:none;cursor:pointer;font-size:.8em;padding:2px 5px;color:var(--txt3);transition:color .13s;line-height:1;}
+.hist-copy-btn:hover{color:var(--acc);}
 .hist-empty{color:var(--txt3);font-size:.85em;text-align:center;padding:20px 0;}
 
-/* ── Quick-reply chips ── */
-#qr-area{
-  flex-shrink:0;padding:7px 12px 9px;
-  border-top:1px solid var(--bdr);
-  display:flex;flex-wrap:wrap;gap:5px;
-  min-height:44px;background:var(--bg);
-  max-height:140px;overflow-y:auto;
-}
-.qr{
-  padding:5px 11px;border:1.5px solid var(--bdr);border-radius:20px;
-  font-size:0.73em;font-weight:600;cursor:pointer;
-  background:var(--bot-bg);color:var(--txt3);
-  transition:all .13s;user-select:none;white-space:nowrap;
-}
+/* Preset panel */
+#preset-panel{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:20px;}
+#preset-panel.open{display:flex;}
+#preset-box{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:8px;}
+.preset-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;}
+.preset-title{font-weight:900;font-size:.95em;color:var(--acc);}
+.preset-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:1.3em;line-height:1;}
+.preset-item{background:var(--bot-bg);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px 14px;cursor:pointer;transition:border-color .13s;}
+.preset-item:hover{border-color:var(--acc);}
+.preset-name{font-weight:700;font-size:.88em;color:var(--txt);}
+.preset-desc{font-size:.73em;color:var(--txt3);margin-top:2px;}
+
+/* SDXL indicator */
+.mode-badge{background:rgba(124,58,237,.18);border:1px solid #7c3aed;color:#a78bfa;font-size:.65em;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:3px;vertical-align:middle;}
+.mode-badge.sd15{background:rgba(232,160,32,.15);border-color:var(--acc);color:var(--acc);}
+
+/* chips */
+#qr-area{flex-shrink:0;padding:7px 12px 9px;border-top:1px solid var(--bdr);display:flex;flex-wrap:wrap;gap:5px;min-height:44px;background:var(--bg);max-height:140px;overflow-y:auto;}
+.qr{padding:5px 11px;border:1.5px solid var(--bdr);border-radius:20px;font-size:.73em;font-weight:600;cursor:pointer;background:var(--bot-bg);color:var(--txt3);transition:all .13s;user-select:none;white-space:nowrap;}
 .qr:hover,.qr:active{border-color:var(--acc);color:var(--txt);}
 .qr.skip{border-style:dashed;font-style:italic;}
 .qr.back{border-color:#555;color:#888;}
@@ -183,27 +158,11 @@ header{
 .qr.rand{border-color:#7c3aed;color:#a78bfa;}
 .qr.rand:hover{background:rgba(124,58,237,.1);}
 
-/* ── Input bar ── */
-#input-bar{
-  flex-shrink:0;display:flex;align-items:flex-end;gap:8px;
-  padding:9px 13px calc(11px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--bdr);background:var(--bg);
-}
-#msg-input{
-  flex:1;background:var(--bot-bg);border:1.5px solid var(--bdr);
-  border-radius:var(--r);color:var(--txt);
-  padding:9px 13px;font-size:0.9em;font-family:inherit;
-  resize:none;outline:none;line-height:1.5;max-height:120px;
-  transition:border-color .2s;
-}
+#input-bar{flex-shrink:0;display:flex;align-items:flex-end;gap:8px;padding:9px 13px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--bdr);background:var(--bg);}
+#msg-input{flex:1;background:var(--bot-bg);border:1.5px solid var(--bdr);border-radius:var(--r);color:var(--txt);padding:9px 13px;font-size:.9em;font-family:inherit;resize:none;outline:none;line-height:1.5;max-height:120px;transition:border-color .2s;}
 #msg-input:focus{border-color:var(--acc);}
 #msg-input::placeholder{color:var(--txt2);}
-#send-btn{
-  background:var(--acc);border:none;border-radius:var(--r);
-  padding:9px 15px;cursor:pointer;font-size:1.1em;
-  flex-shrink:0;transition:all .15s;color:#000;
-  align-self:flex-end;height:41px;display:flex;align-items:center;
-}
+#send-btn{background:var(--acc);border:none;border-radius:var(--r);padding:9px 15px;cursor:pointer;font-size:1.1em;flex-shrink:0;transition:all .15s;color:#000;align-self:flex-end;height:41px;display:flex;align-items:center;}
 #send-btn:hover{background:var(--acc2);}
 #send-btn:disabled{opacity:.4;cursor:default;}
 
@@ -212,40 +171,79 @@ header{
   #qr-area{padding:5px 9px 7px;}
   #input-bar{padding:7px 9px 9px;}
   header{padding:9px 11px;}
+  .hbtn{padding:4px 6px;font-size:.65em;}
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">RAWgen <small>AI prompt assistant</small></div>
+  <div class="logo">RAWgen <small>AI prompt</small></div>
   <div class="header-btns">
-    <button class="hbtn" onclick="randomAll()" title="Sortear tudo aleatoriamente">🎲 Sortear</button>
-    <button class="hbtn" onclick="openHistory()" title="Histórico de prompts">📜 Histórico</button>
+    <button class="hbtn purple" onclick="openPresets()" title="Estilos pré-definidos">🎨 Preset</button>
+    <button class="hbtn" onclick="randomAll()" title="Sortear tudo">🎲 Sortear</button>
+    <button class="hbtn" onclick="openHistory()" title="Histórico">📜 Hist.</button>
+    <button class="hbtn" id="prev-btn" onclick="togglePreview()" title="Preview do prompt">👁 Preview</button>
+    <button class="hbtn" id="sdxl-btn" onclick="toggleSDXL()" title="Alternar modo SDXL/SD1.5">SD1.5</button>
     <button class="hbtn" onclick="restart()">⟳ Novo</button>
     <button class="hbtn" id="tbtn" onclick="toggleTheme()">☀ Claro</button>
   </div>
 </header>
 
 <div id="progress-bar"><div id="progress-fill"></div></div>
-<div id="progress-label">Passo 1 de 15</div>
+<div id="progress-label">Passo 1 de 16</div>
+<div id="preview-bar"><span class="preview-label">PROMPT↗</span><span id="preview-text"></span></div>
 
 <div id="chat"></div>
 <div id="qr-area"></div>
 <div id="input-bar">
-  <textarea id="msg-input" rows="1" placeholder="Digite ou escolha uma opção acima…"
+  <textarea id="msg-input" rows="1" placeholder="Digite ou escolha acima…"
     onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-  <button id="send-btn" onclick="send()" title="Enviar">➤</button>
+  <button id="send-btn" onclick="send()">➤</button>
 </div>
 
 <!-- History panel -->
-<div id="hist-panel" onclick="e=>{ if(e.target===this) closeHistory(); }">
+<div id="hist-panel">
   <div id="hist-box">
     <div class="hist-header">
-      <span class="hist-title">📜 Histórico de prompts</span>
+      <span class="hist-title">📜 Histórico</span>
       <button class="hist-close" onclick="closeHistory()">✕</button>
     </div>
+    <div class="hist-filter">
+      <button class="hist-filter-btn active" id="filt-all" onclick="setHistFilter('all')">Todos</button>
+      <button class="hist-filter-btn" id="filt-fav" onclick="setHistFilter('fav')">⭐ Favoritos</button>
+    </div>
     <div id="hist-list"></div>
+  </div>
+</div>
+
+<!-- Preset panel -->
+<div id="preset-panel">
+  <div id="preset-box">
+    <div class="preset-header">
+      <span class="preset-title">🎨 Estilos rápidos</span>
+      <button class="preset-close" onclick="closePresets()">✕</button>
+    </div>
+    <div class="preset-item" onclick="applyPreset('playful')">
+      <div class="preset-name">☀ Playful — Praia & Verão</div>
+      <div class="preset-desc">Brasileira curvilínea, biquíni, praia tropical, Ektar 100, sorrindo</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('dark')">
+      <div class="preset-name">🖤 Dark — Noite & Neon</div>
+      <div class="preset-desc">Pele pálida, látex, boate neon, Cinestill 800T, expressão intensa</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('artistic')">
+      <div class="preset-name">🎭 Artistic — Estúdio P&B</div>
+      <div class="preset-desc">Mestiça atlética, body transparente, studio, Ilford HP5, glitter</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('cinema')">
+      <div class="preset-name">🎬 Cinema — Hotel de Luxo</div>
+      <div class="preset-desc">Latina curvilínea, vestido fendado, hotel luxury, Portra 800, sedutora</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('boudoir')">
+      <div class="preset-name">🕯 Boudoir — Intimidade</div>
+      <div class="preset-desc">Loira busty, lingerie, boudoir com velas, Fuji 400H, lábio mordido</div>
+    </div>
   </div>
 </div>
 
@@ -276,8 +274,7 @@ const STEPS = [
     free:true, skip:false,
   },
   {
-    id:'idade', label:'Idade',
-    ask:'Qual a faixa etária?',
+    id:'idade', label:'Idade', ask:'Qual a faixa etária?',
     qr:[
       {label:'18-20 anos',val:'18 year old woman, young adult, youthful face'},
       {label:'21-25 anos',val:'21 year old woman, early twenties, fresh young face'},
@@ -291,8 +288,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'etnia', label:'Etnia',
-    ask:'Qual a etnia?',
+    id:'etnia', label:'Etnia', ask:'Qual a etnia?',
     qr:[
       {label:'🇧🇷 Brasileira',val:'beautiful Brazilian woman, olive skin, South American features'},
       {label:'🏳 Caucasiana',val:'beautiful white woman, fair skin, European features'},
@@ -317,8 +313,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'corpo', label:'Corpo',
-    ask:'Como é o corpo?',
+    id:'corpo', label:'Corpo', ask:'Como é o corpo?',
     qr:[
       {label:'Magra/Petite',val:'slim petite body, slender figure, thin waist'},
       {label:'Atlética',val:'athletic toned body, fit figure, muscle definition'},
@@ -340,8 +335,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'cabelo', label:'Cabelo',
-    ask:'E o cabelo?',
+    id:'cabelo', label:'Cabelo', ask:'E o cabelo?',
     qr:[
       {label:'Liso loiro',val:'long straight blonde hair, golden flowing hair'},
       {label:'Liso moreno',val:'long straight brunette hair, dark brown hair'},
@@ -366,8 +360,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'tattoo', label:'Tatuagens',
-    ask:'Tatuagens e piercings?',
+    id:'tattoo', label:'Tatuagens', ask:'Tatuagens e piercings?',
     qr:[
       {label:'Sem tatuagens',val:'no tattoos, clean skin, no body art'},
       {label:'Tattoo no braço',val:'sleeve tattoo on arm, intricate arm tattoo, inked arm'},
@@ -388,8 +381,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'roupa', label:'Roupa',
-    ask:'Roupa ou nudez?',
+    id:'roupa', label:'Roupa', ask:'Roupa ou nudez?',
     qr:[
       {label:'Pelada 🔥',val:'completely nude, fully naked, bare skin, no clothes'},
       {label:'Topless',val:'topless, bare breasts exposed, no top, only bottom'},
@@ -427,12 +419,14 @@ const STEPS = [
       {label:'Cowgirl',val:'wearing cowgirl outfit, denim shorts, plaid shirt, cowboy boots and hat'},
       {label:'Gueixa',val:'wearing geisha kimono, traditional Japanese dress, white makeup, obi belt'},
       {label:'Dominatrix 🖤',val:'wearing dominatrix outfit, black leather corset, thigh boots, whip, mistress look'},
+      {label:'Deusa grega',val:'wearing draped white toga, Greek goddess style, laurel wreath, sandals'},
+      {label:'Pilotos/Aviadora',val:'wearing flight suit jumpsuit, aviation style, unzipped revealing'},
+      {label:'Mecânica sexy',val:'wearing overalls unzipped, grease marks, mechanic costume, workshop'},
     ],
     skip:true,
   },
   {
-    id:'acessorios', label:'Acessórios',
-    ask:'Joias e acessórios?',
+    id:'acessorios', label:'Acessórios', ask:'Joias e acessórios?',
     qr:[
       {label:'Sem acessórios',val:'no accessories, minimal look'},
       {label:'Colar dourado',val:'gold necklace, gold chain, golden jewelry around neck'},
@@ -458,8 +452,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'maquiagem', label:'Maquiagem',
-    ask:'Maquiagem?',
+    id:'maquiagem', label:'Maquiagem', ask:'Maquiagem?',
     qr:[
       {label:'Sem maquiagem',val:'no makeup, bare face, natural skin, makeup free'},
       {label:'Natural/no-makeup',val:'no-makeup makeup look, natural minimal makeup, barely-there makeup, fresh face'},
@@ -481,8 +474,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'expressao', label:'Expressão',
-    ask:'Expressão facial?',
+    id:'expressao', label:'Expressão', ask:'Expressão facial?',
     qr:[
       {label:'Sorrindo',val:'smiling, warm genuine smile, happy expression, teeth showing'},
       {label:'Sorriso leve',val:'subtle smile, soft lips curl, gentle smile, serene expression'},
@@ -504,8 +496,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'detalhes', label:'Detalhes pele',
-    ask:'Detalhes de pele e corpo?',
+    id:'detalhes', label:'Detalhes pele', ask:'Detalhes de pele e corpo?',
     qr:[
       {label:'Pele natural',val:'natural skin, normal skin condition'},
       {label:'Molhada 💧',val:'wet glistening skin, water droplets on skin, dripping wet, shiny wet body'},
@@ -523,31 +514,29 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'nsfw', label:'NSFW',
-    ask:'🔞 Conteúdo explícito (NSFW)?',
+    id:'nsfw', label:'NSFW', ask:'🔞 Conteúdo explícito (NSFW)?\n\n<small style="color:var(--txt3)">🔞 Leve → 🔞🔞 Médio → 🔞🔞🔞 Explícito → 🔞🔞🔞🔞 Extremo</small>',
     qr:[
       {label:'Não (SFW)',val:'',skip:true},
-      {label:'Nudez artística',val:'artistic nude, fine art nude photography, tasteful nudity, elegant nude'},
-      {label:'Seios à mostra',val:'bare breasts fully exposed, nude breasts, nipples visible, topless nude'},
-      {label:'Pelada explícita',val:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography'},
-      {label:'Close íntimo',val:'intimate close-up, explicit detail shot, nude close-up detail, adult photography'},
-      {label:'Masturbando',val:'masturbating, self pleasure, touching herself, explicit self stimulation'},
-      {label:'Oral giving',val:'giving oral sex, performing fellatio, blowjob, oral sex act explicit'},
-      {label:'Oral receiving',val:'receiving oral sex, cunnilingus, oral sex being performed on her, explicit oral'},
-      {label:'Sexo vaginal',val:'vaginal sex, penetration, intercourse, explicit sex act, adult content'},
-      {label:'Sexo anal',val:'anal sex, anal penetration, explicit anal sex act, adult explicit'},
-      {label:'Gangbang',val:'gangbang, multiple men, group sex, multiple penetration, extreme explicit'},
-      {label:'Squirting 💦',val:'squirting, female ejaculation, explicit squirt, wet explicit orgasm'},
-      {label:'Facial 💦',val:'facial cumshot, cum on face, explicit facial, semen on face'},
-      {label:'Creampie',val:'creampie, internal ejaculation, cum inside, explicit creampie'},
-      {label:'BDSM/Bondage',val:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit'},
-      {label:'Dominação',val:'dominatrix, dominant woman, femdom, whip, leather, power dynamic explicit'},
+      {label:'🔞 Nudez artística',val:'artistic nude, fine art nude photography, tasteful nudity, elegant nude'},
+      {label:'🔞 Seios à mostra',val:'bare breasts fully exposed, nude breasts, nipples visible, topless nude'},
+      {label:'🔞🔞 Pelada explícita',val:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography'},
+      {label:'🔞🔞 Close íntimo',val:'intimate close-up, explicit detail shot, nude close-up detail, adult photography'},
+      {label:'🔞🔞🔞 Masturbando',val:'masturbating, self pleasure, touching herself, explicit self stimulation'},
+      {label:'🔞🔞🔞 Oral giving',val:'giving oral sex, performing fellatio, blowjob, oral sex act explicit'},
+      {label:'🔞🔞🔞 Oral receiving',val:'receiving oral sex, cunnilingus, oral sex being performed on her, explicit oral'},
+      {label:'🔞🔞🔞 Sexo vaginal',val:'vaginal sex, penetration, intercourse, explicit sex act, adult content'},
+      {label:'🔞🔞🔞 Sexo anal',val:'anal sex, anal penetration, explicit anal sex act, adult explicit'},
+      {label:'🔞🔞🔞🔞 Gangbang',val:'gangbang, multiple men, group sex, multiple penetration, extreme explicit'},
+      {label:'🔞🔞🔞🔞 Squirting 💦',val:'squirting, female ejaculation, explicit squirt, wet explicit orgasm'},
+      {label:'🔞🔞🔞🔞 Facial 💦',val:'facial cumshot, cum on face, explicit facial, semen on face'},
+      {label:'🔞🔞🔞🔞 Creampie',val:'creampie, internal ejaculation, cum inside, explicit creampie'},
+      {label:'🔞🔞 BDSM/Bondage',val:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit'},
+      {label:'🔞🔞 Dominação',val:'dominatrix, dominant woman, femdom, whip, leather, power dynamic explicit'},
     ],
     skip:true,
   },
   {
-    id:'pose', label:'Pose',
-    ask:'Qual pose?',
+    id:'pose', label:'Pose', ask:'Qual pose?',
     qr:[
       {label:'Em pé frente',val:'standing upright facing camera, full body front view, face visible'},
       {label:'Em pé costas',val:'standing from behind, back to camera, full body rear view, face hidden'},
@@ -583,8 +572,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'cenario', label:'Cenário',
-    ask:'Qual o cenário?',
+    id:'cenario', label:'Cenário', ask:'Qual o cenário?',
     qr:[
       {label:'🛏 Quarto',val:'luxury bedroom, soft natural window light, white silk bedsheets, intimate setting'},
       {label:'🚿 Chuveiro',val:'wet shower, steam, glass door, white tiles, water running down body'},
@@ -615,8 +603,7 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'cam', label:'Câmera',
-    ask:'Câmera e enquadramento?',
+    id:'cam', label:'Câmera', ask:'Câmera e enquadramento?',
     qr:[
       {label:'Corpo inteiro',val:'full body shot, head to toe, entire body visible'},
       {label:'Meio corpo',val:'half body frame, waist up shot'},
@@ -635,13 +622,15 @@ const STEPS = [
       {label:'Closeup costas',val:'close-up back shot, tight crop on upper back and spine'},
       {label:'Closeup pernas',val:'close-up legs shot, tight crop on thighs and legs'},
       {label:'Através de vidro',val:'shot through wet glass, glass partition, voyeuristic framing'},
-      {label:'Drone/aéreo',val:'aerial drone shot from high above, bird\'s eye view, overhead'},
+      {label:'Drone/aéreo',val:"aerial drone shot from high above, bird's eye view, overhead"},
+      {label:'🎬 Dramático cinemático',val:'dramatic low angle shot, 35mm anamorphic lens, chiaroscuro side lighting, volumetric light, cinematic widescreen'},
+      {label:'🎬 Editorial fashion',val:'three-quarter fashion editorial shot, 85mm portrait lens, soft beauty dish lighting, high-key, magazine quality'},
+      {label:'🎬 Voyeur realista',val:'candid voyeuristic shot, 50mm standard lens, natural window light, handheld documentary, unposed'},
     ],
     skip:true,
   },
   {
-    id:'film', label:'Film/Luz',
-    ask:'Film stock e iluminação?',
+    id:'film', label:'Film/Luz', ask:'Film stock e iluminação?',
     qr:[
       {label:'Portra 400 (clássico)',val:'Kodak Portra 400, warm skin tones, fine grain, classic analog'},
       {label:'Fuji 400H (suave)',val:'Fujifilm Pro 400H, soft pastel colors, cool shadows, fine grain'},
@@ -675,6 +664,109 @@ const TOTAL = STEPS.length;
 let step = 0;
 const answers = {};
 let waiting = false;
+let sdxlMode = false;
+let previewVisible = false;
+let histFilter = 'all';
+
+// ─── Style Presets ────────────────────────────────────────────────────────
+const PRESETS = {
+  playful:{
+    etnia:'beautiful Brazilian woman, olive skin, South American features',
+    corpo:'curvy hourglass figure, wide hips, small waist, full figure',
+    roupa:'wearing tiny micro bikini, string bikini, barely there',
+    maquiagem:'no-makeup makeup look, natural minimal makeup, barely-there makeup',
+    expressao:'smiling, warm genuine smile, happy expression, teeth showing',
+    cenario:'tropical beach, ocean waves, white sand, palm trees, golden sunlight',
+    cam:'full body shot, head to toe, entire body visible',
+    film:'Kodak Ektar 100, vivid saturated colors, ultra-fine grain, sharp outdoor',
+  },
+  dark:{
+    etnia:'beautiful white woman, fair skin, European features',
+    corpo:'slim petite body, slender figure, thin waist',
+    roupa:'wearing black latex bodysuit, shiny skin-tight outfit',
+    maquiagem:'gothic makeup, black lipstick, heavy dark eye, pale foundation, dark aesthetic',
+    expressao:'serious intense expression, direct gaze, stern face, powerful look',
+    cenario:'nightclub interior, neon RGB lights, dark smoky atmosphere, LED lights',
+    cam:'three-quarter body shot, from thigh up, three quarter frame',
+    film:'Cinestill 800T, tungsten film, red halation glow, night grain, cinematic',
+  },
+  artistic:{
+    etnia:'beautiful mixed-race woman, mixed heritage, exotic features',
+    corpo:'athletic toned body, fit figure, muscle definition',
+    roupa:'wearing sheer see-through bodysuit, transparent fabric',
+    maquiagem:'glitter eye makeup, festival glitter, sparkle eye shadow, holographic highlight',
+    expressao:'eyes closed, closed eyes, peaceful expression, introspective look',
+    cenario:'professional photo studio, white seamless backdrop, controlled studio lighting',
+    cam:'half body frame, waist up shot',
+    film:'Ilford HP5, black and white monochrome, high contrast grain, dramatic',
+  },
+  cinema:{
+    etnia:'beautiful Latina woman, warm brown skin, Latin features',
+    corpo:'curvy hourglass figure, wide hips, small waist, full figure',
+    roupa:'wearing long slit dress, side slit revealing leg, elegant',
+    maquiagem:'full glam makeup, heavy foundation, dramatic eye, bold lip, contouring, highlight',
+    expressao:'seductive expression, bedroom eyes, sultry look, half-lidded gaze',
+    cenario:'luxury hotel room, king bed, elegant decor, soft warm lighting',
+    cam:'three-quarter body shot, from thigh up, three quarter frame',
+    film:'Kodak Portra 800, pushed film, warm golden grain, high contrast',
+  },
+  boudoir:{
+    etnia:'beautiful white woman, fair skin, European features',
+    corpo:'very large natural breasts, busty, big chest, heavy bosom',
+    roupa:'wearing lace lingerie set, bra and panties, sexy underwear',
+    maquiagem:'no-makeup makeup look, natural minimal makeup, barely-there makeup',
+    expressao:'biting lower lip, lip bite, sensual lip bite expression',
+    cenario:'intimate boudoir, candles, rose petals, sheer curtains, dim warm romantic light',
+    cam:'half body frame, waist up shot',
+    film:'Fujifilm Pro 400H, soft pastel colors, cool shadows, fine grain',
+  },
+};
+
+function openPresets(){ document.getElementById('preset-panel').classList.add('open'); }
+function closePresets(){ document.getElementById('preset-panel').classList.remove('open'); }
+document.getElementById('preset-panel').addEventListener('click',function(e){ if(e.target===this) closePresets(); });
+
+async function applyPreset(name){
+  closePresets();
+  const preset = PRESETS[name];
+  if(!preset) return;
+  restart();
+  await delay(400);
+  Object.assign(answers, preset);
+  step = STEPS.length;
+  updateProgress();
+  clearQR();
+  const names = {playful:'☀ Playful',dark:'🖤 Dark',artistic:'🎭 Artistic',cinema:'🎬 Cinema',boudoir:'🕯 Boudoir'};
+  addMsg('bot',`🎨 <strong>Estilo "${names[name]||name}" aplicado!</strong>`);
+  await delay(500);
+  await showResult();
+}
+
+// ─── SDXL toggle ─────────────────────────────────────────────────────────
+function toggleSDXL(){
+  sdxlMode = !sdxlMode;
+  const btn = document.getElementById('sdxl-btn');
+  btn.textContent = sdxlMode ? 'SDXL ✓' : 'SD1.5';
+  btn.classList.toggle('active', sdxlMode);
+}
+
+// ─── Live preview ─────────────────────────────────────────────────────────
+function togglePreview(){
+  previewVisible = !previewVisible;
+  const bar = document.getElementById('preview-bar');
+  const btn = document.getElementById('prev-btn');
+  bar.classList.toggle('active', previewVisible);
+  btn.classList.toggle('active', previewVisible);
+  if(previewVisible) updatePreview();
+}
+
+function updatePreview(){
+  if(!previewVisible) return;
+  const parts = [];
+  STEPS.slice(0, step).forEach(s => { if(answers[s.id]) parts.push(answers[s.id].split(',')[0].trim()); });
+  const txt = document.getElementById('preview-text');
+  txt.textContent = parts.length ? parts.join(' · ') : '(aguardando respostas…)';
+}
 
 // ─── History (localStorage) ───────────────────────────────────────────────
 function loadHistory(){ try{ return JSON.parse(localStorage.getItem('rawgen_hist')||'[]'); }catch(e){ return []; } }
@@ -685,6 +777,28 @@ function saveToHistory(prompt, neg){
     if(h.length>20) h.length=20;
     localStorage.setItem('rawgen_hist', JSON.stringify(h));
   }catch(e){}
+}
+function loadFavorites(){ try{ return JSON.parse(localStorage.getItem('rawgen_favs')||'[]'); }catch(e){ return []; } }
+function saveFavorites(favs){ try{ localStorage.setItem('rawgen_favs', JSON.stringify(favs)); }catch(e){} }
+function isFavorite(ts){ return loadFavorites().some(f=>f.ts===ts); }
+function toggleFavorite(ts, prompt, neg){
+  const favs = loadFavorites();
+  const idx = favs.findIndex(f=>f.ts===ts);
+  if(idx>=0){ favs.splice(idx,1); saveFavorites(favs); return false; }
+  else{ favs.unshift({ts,prompt,neg}); if(favs.length>50)favs.length=50; saveFavorites(favs); return true; }
+}
+
+function autoTagPrompt(prompt, neg){
+  const tags = [];
+  const p = (prompt||'').toLowerCase();
+  if(/nude|naked|explicit|nsfw/i.test(p)) tags.push('🔞');
+  if(/beach|praia|tropical/i.test(p)) tags.push('🏖');
+  if(/bedroom|boudoir|hotel/i.test(p)) tags.push('🛏');
+  if(/shower|bathroom|wet/i.test(p)) tags.push('🚿');
+  if(/pool|piscin/i.test(p)) tags.push('🏊');
+  if(/tattoo|inked|piercing/i.test(p)) tags.push('🔖');
+  if(/black and white|monochrome/i.test(p)) tags.push('⬛');
+  return tags;
 }
 
 // ─── PT→EN ────────────────────────────────────────────────────────────────
@@ -711,25 +825,19 @@ const MAP=[
   ['magra','slim, slender'],['petite','petite, small frame'],
   ['noite','night'],['dia','daytime'],['com','with'],['sem','without'],['e','and'],
 ];
-function tr(pt){
-  if(!pt) return '';
-  let t=pt.toLowerCase().trim();
-  MAP.forEach(([p,e])=>{ t=t.split(p).join(e); });
-  return t;
-}
+function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach(([p,e])=>{ t=t.split(p).join(e); }); return t; }
 
 // ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
   const p=(answers.pose||'').toLowerCase(), c=(answers.cam||'').toLowerCase();
-  let n='blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, oversharpened, digital art, CGI, render, hypersmooth, fake skin, doll-like, mannequin, wax figure, overly perfect, unrealistic skin, skin texture missing, skin too smooth, poreless skin, artificial lighting, studio fake look, beauty filter, heavy retouching, photoshop filter, skin filter';
+  let n='blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, digital art, CGI, render, hypersmooth, fake skin, doll-like, mannequin, wax figure, overly perfect, unrealistic skin, skin texture missing, skin too smooth, poreless skin';
+  if(sdxlMode) n+=', low resolution, jpeg artifacts, noise, grainy, deformed iris, deformed pupils, semi-realistic, mutated hands, extra fingers';
   if(/from behind|back to camera|rear view|face hidden/.test(p))
     n+=', (front view:2.0), (facing camera:2.0), (face visible:2.0), (looking at viewer:1.9)';
   else if(/facing camera|front view/.test(p))
     n+=', (back view:1.8), (rear view:1.8), (from behind:1.8), (face hidden:1.8)';
-  if(/from below|upshot/.test(c)) n+=",(high angle:2.0),(bird's eye:2.0),(top-down:2.0)";
-  if(/from above|high angle/.test(c)) n+=",(low angle:2.0),(from below:2.0),(worm's eye:2.0)";
-  if(/close.up face|extreme close/.test(c)) n+=',(full body:1.8),(wide shot:1.8)';
-  if(/full body/.test(c)) n+=',(close-up:1.7),(portrait crop:1.7)';
+  if(/from below|upshot/.test(c)) n+=",(high angle:2.0),(bird's eye:2.0)";
+  if(/from above|high angle/.test(c)) n+=",(low angle:2.0),(from below:2.0)";
   return n;
 }
 
@@ -744,23 +852,38 @@ function autoFilm(){
 }
 
 function buildPrompt(){
-  const raw='RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, skin imperfections, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid photography, documentary style realism, sharp focus, depth of field, natural lighting falloff';
-  const quality='real photograph, not AI, not CGI, not 3D render, not painting, not illustration, film grain, lens aberration, natural bokeh';
+  const raw = sdxlMode
+    ? 'RAW photo, photorealistic, 8k uhd, high detail, sharp focus, professional photography, real skin texture, visible pores, subsurface scattering, depth of field, natural lighting, analog film grain'
+    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, skin imperfections, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid photography, documentary style realism, sharp focus, depth of field, natural lighting falloff';
+  const quality = sdxlMode
+    ? 'cinematic quality, real photograph, film grain, lens aberration, bokeh, not AI, not CGI'
+    : 'real photograph, not AI, not CGI, not 3D render, not painting, not illustration, film grain, lens aberration, natural bokeh';
   const parts=[
-    raw,
-    answers.idade,
-    answers.etnia||'beautiful woman',
-    answers.corpo, answers.cabelo,
-    answers.tattoo, answers.roupa, answers.acessorios,
-    answers.maquiagem, answers.expressao,
-    answers.detalhes, answers.nsfw,
-    answers.cenario, answers.pose,
-    tr(answers.desc||''),
-    answers.cam, autoFilm(),
-    quality,
+    raw, answers.idade, answers.etnia||'beautiful woman',
+    answers.corpo, answers.cabelo, answers.tattoo,
+    answers.roupa, answers.acessorios, answers.maquiagem, answers.expressao,
+    answers.detalhes, answers.nsfw, answers.cenario, answers.pose,
+    tr(answers.desc||''), answers.cam, autoFilm(), quality,
   ].filter(Boolean);
   const seen=new Set();
   return parts.filter(p=>{ if(seen.has(p)) return false; seen.add(p); return true; }).join(', ');
+}
+
+// ─── LoRA hints ───────────────────────────────────────────────────────────
+function getLoraHints(){
+  const film=(answers.film||'').toLowerCase();
+  const nsfw=(answers.nsfw||'').toLowerCase();
+  const corpo=(answers.corpo||'').toLowerCase();
+  const hints=[];
+  if(/portra/.test(film)) hints.push('<lora:film_kodak_portra:0.7>');
+  if(/cinestill/.test(film)) hints.push('<lora:cinestill_800t:0.8>');
+  if(/ilford|monochrome|black and white/.test(film)) hints.push('<lora:bw_film_grain:0.7>');
+  if(/velvia/.test(film)) hints.push('<lora:velvia_film:0.8>');
+  if(/lomography/.test(film)) hints.push('<lora:lomography:0.75>');
+  if(/explicit|nude|naked/.test(nsfw)) hints.push('<lora:nsfw_realism:0.6>');
+  if(/bbw|plus size/.test(corpo)) hints.push('<lora:bbw_realistic:0.65>');
+  if(hints.length===0) hints.push('<lora:realistic_skin_v3:0.6>','<lora:analog_film_grain:0.5>');
+  return hints;
 }
 
 // ─── Chat engine ──────────────────────────────────────────────────────────
@@ -771,30 +894,20 @@ const progFill = document.getElementById('progress-fill');
 const progLabel = document.getElementById('progress-label');
 
 function updateProgress(){
-  const pct = step >= TOTAL ? 100 : Math.round((step / TOTAL)*100);
+  const pct = step>=TOTAL ? 100 : Math.round((step/TOTAL)*100);
   progFill.style.width = pct+'%';
-  if(step >= TOTAL){
-    progLabel.textContent = '✅ Concluído!';
-  } else {
-    progLabel.textContent = `Passo ${step+1} de ${TOTAL} — ${STEPS[step].label}`;
-  }
+  progLabel.textContent = step>=TOTAL ? '✅ Concluído!' : `Passo ${step+1} de ${TOTAL} — ${STEPS[step].label}`;
+  updatePreview();
 }
 
 function scrollBottom(){ chat.scrollTop = chat.scrollHeight; }
 
-function addMsg(who, html, extraClass=''){
+function addMsg(who, html){
   const d=document.createElement('div');
-  d.className=`msg ${who} ${extraClass}`;
-  const av=document.createElement('div');
-  av.className='avatar';
-  av.textContent=who==='bot'?'R':'👤';
-  const b=document.createElement('div');
-  b.className='bubble';
-  b.innerHTML=html.replace(/\n/g,'<br>');
-  d.appendChild(av);
-  d.appendChild(b);
-  chat.appendChild(d);
-  scrollBottom();
+  d.className=`msg ${who}`;
+  const av=document.createElement('div'); av.className='avatar'; av.textContent=who==='bot'?'R':'👤';
+  const b=document.createElement('div'); b.className='bubble'; b.innerHTML=html.replace(/\n/g,'<br>');
+  d.appendChild(av); d.appendChild(b); chat.appendChild(d); scrollBottom();
   return b;
 }
 
@@ -820,6 +933,8 @@ function clearQR(){ qrArea.innerHTML=''; }
 
 function handleQR(val, label){
   if(waiting) return;
+  if(val==='__back__'){ addMsg('usr','← Voltar'); goBack(); return; }
+  if(val==='__random__'){ randomAll(); return; }
   addMsg('usr', label);
   processAnswer(val);
 }
@@ -832,54 +947,35 @@ function send(){
   processAnswer(txt);
 }
 
-function handleKey(e){
-  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); }
-}
-
-function autoResize(el){
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,120)+'px';
-}
-
+function handleKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); } }
+function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 async function botSay(html, qrs=[]){
-  waiting=true;
-  showTyping();
+  waiting=true; showTyping();
   await delay(550+Math.random()*250);
-  removeTyping();
-  addMsg('bot', html);
-  setQR(qrs);
-  waiting=false;
-  input.focus();
+  removeTyping(); addMsg('bot', html); setQR(qrs);
+  waiting=false; input.focus();
 }
 
 async function processAnswer(val){
-  const cur=STEPS[step];
-  if(!cur) return;
-  const isSkip=/^(pular|skip|não|nao|-)$/i.test(val.trim()) || val==='';
+  const cur=STEPS[step]; if(!cur) return;
+  const isSkip=/^(pular|skip|não|nao|-)$/i.test(val.trim())||val==='';
   if(!isSkip) answers[cur.id]=val;
-  step++;
-  clearQR();
-  updateProgress();
-  if(step < STEPS.length){
+  step++; clearQR(); updateProgress();
+  if(step<STEPS.length){
     const next=STEPS[step];
     const qrs=next.qr?[...next.qr]:[];
     if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
     if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
     await botSay(next.ask, qrs);
-  } else {
-    await showSummary();
-  }
+  } else { await showSummary(); }
 }
 
 async function goBack(){
   if(step<=0) return;
-  step--;
-  delete answers[STEPS[step].id];
-  clearQR();
-  updateProgress();
+  step--; delete answers[STEPS[step].id]; clearQR(); updateProgress();
   const cur=STEPS[step];
   const qrs=cur.qr?[...cur.qr]:[];
   if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
@@ -887,61 +983,35 @@ async function goBack(){
   await botSay('↩ Voltando — '+cur.ask, qrs);
 }
 
-// ─── Summary before generating ────────────────────────────────────────────
+// ─── Summary ──────────────────────────────────────────────────────────────
 async function showSummary(){
-  waiting=true;
-  showTyping();
-  await delay(700);
-  removeTyping();
-
+  waiting=true; showTyping(); await delay(700); removeTyping();
   const b=addMsg('bot','📋 <strong>Resumo das suas escolhas:</strong>');
-
-  const card=document.createElement('div');
-  card.className='summary-card';
-
+  const card=document.createElement('div'); card.className='summary-card';
   STEPS.forEach(s=>{
-    const val=answers[s.id];
-    if(!val) return;
-    const row=document.createElement('div');
-    row.className='sc-row';
+    const val=answers[s.id]; if(!val) return;
+    const row=document.createElement('div'); row.className='sc-row';
     const short=val.length>60?val.slice(0,57)+'…':val;
     row.innerHTML=`<span class="sc-key">${s.label}</span><span class="sc-val">${escHtml(short)}</span>`;
-    const editBtn=document.createElement('button');
-    editBtn.className='sc-edit';
-    editBtn.textContent='✏';
-    editBtn.title='Editar este passo';
-    editBtn.onclick=()=>jumpTo(s.id);
-    row.appendChild(editBtn);
-    card.appendChild(row);
+    const eb=document.createElement('button'); eb.className='sc-edit'; eb.textContent='✏'; eb.title='Editar';
+    eb.onclick=()=>jumpTo(s.id); row.appendChild(eb); card.appendChild(row);
   });
   b.appendChild(card);
-
-  const genBtn=document.createElement('button');
-  genBtn.className='copy-btn';
-  genBtn.style.marginTop='10px';
-  genBtn.innerHTML='✅ Gerar prompt';
-  genBtn.onclick=()=>{ b.parentElement && chat.removeChild(b.parentElement); clearQR(); showResult(); };
-  b.appendChild(genBtn);
-
-  const editBtn=document.createElement('button');
-  editBtn.className='icon-btn';
-  editBtn.style.marginTop='10px';
-  editBtn.innerHTML='✏ Editar respostas';
-  editBtn.onclick=()=>jumpTo(STEPS[0].id);
-  b.appendChild(editBtn);
-
-  scrollBottom();
+  const br=document.createElement('div'); br.className='btn-row'; br.style.marginTop='10px';
+  const gb=document.createElement('button'); gb.className='copy-btn'; gb.innerHTML='✅ Gerar prompt';
+  gb.onclick=()=>{ b.parentElement&&chat.removeChild(b.parentElement); clearQR(); showResult(); };
+  br.appendChild(gb);
+  const eb2=document.createElement('button'); eb2.className='icon-btn'; eb2.innerHTML='✏ Editar respostas';
+  eb2.onclick=()=>jumpTo(STEPS[0].id); br.appendChild(eb2);
+  b.appendChild(br); scrollBottom();
   setQR([{label:'✅ Gerar prompt',val:'__gen__'}]);
   qrArea.querySelector('.qr').onclick=()=>{ clearQR(); showResult(); };
   waiting=false;
 }
 
 async function jumpTo(id){
-  const idx=STEPS.findIndex(s=>s.id===id);
-  if(idx<0) return;
-  step=idx;
-  clearQR();
-  updateProgress();
+  const idx=STEPS.findIndex(s=>s.id===id); if(idx<0) return;
+  step=idx; clearQR(); updateProgress();
   const cur=STEPS[step];
   const qrs=cur.qr?[...cur.qr]:[];
   if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
@@ -949,213 +1019,147 @@ async function jumpTo(id){
   await botSay('✏ Editando: '+cur.ask, qrs);
 }
 
-// ─── Show result ──────────────────────────────────────────────────────────
+// ─── Result ───────────────────────────────────────────────────────────────
 async function showResult(){
-  waiting=true;
-  showTyping();
-  await delay(800);
-  removeTyping();
-
-  const prompt=buildPrompt();
-  const neg=buildNeg();
-
+  waiting=true; showTyping(); await delay(800); removeTyping();
+  const prompt=buildPrompt(), neg=buildNeg();
   navigator.clipboard.writeText(prompt).catch(()=>{});
   saveToHistory(prompt, neg);
 
-  const b=addMsg('bot','✅ <strong>Prompt copiado automaticamente!</strong> Cole direto no gerador:');
+  const modeTag = sdxlMode ? ' <span style="font-size:.7em;background:rgba(124,58,237,.2);border:1px solid #7c3aed;color:#a78bfa;padding:1px 5px;border-radius:4px;vertical-align:middle;">SDXL</span>' : '';
+  const b=addMsg('bot',`✅ <strong>Prompt copiado automaticamente!</strong>${modeTag}`);
 
-  const pd=document.createElement('div');
-  pd.className='prompt-block';
-  pd.title='Clique para selecionar tudo';
-  pd.textContent=prompt;
+  const pd=document.createElement('div'); pd.className='prompt-block';
+  pd.title='Clique para selecionar'; pd.textContent=prompt;
   pd.onclick=()=>{ const r=document.createRange();r.selectNodeContents(pd);const s=window.getSelection();s.removeAllRanges();s.addRange(r); };
   b.appendChild(pd);
 
-  const btnRow=document.createElement('div');
-  btnRow.className='btn-row';
+  const br1=document.createElement('div'); br1.className='btn-row';
+  const cpBtn=document.createElement('button'); cpBtn.className='copy-btn'; cpBtn.innerHTML='📋 Copiar';
+  cpBtn.onclick=()=>{ navigator.clipboard.writeText(prompt).then(()=>{ cpBtn.textContent='✓ Copiado!'; cpBtn.classList.add('ok'); setTimeout(()=>{ cpBtn.innerHTML='📋 Copiar'; cpBtn.classList.remove('ok'); },2000); }); };
+  br1.appendChild(cpBtn);
 
-  const copyBtn=document.createElement('button');
-  copyBtn.className='copy-btn';
-  copyBtn.innerHTML='📋 Copiar prompt';
-  copyBtn.onclick=()=>{
-    navigator.clipboard.writeText(prompt).then(()=>{
-      copyBtn.textContent='✓ Copiado!'; copyBtn.classList.add('ok');
-      setTimeout(()=>{ copyBtn.innerHTML='📋 Copiar prompt'; copyBtn.classList.remove('ok'); },2000);
-    });
-  };
-  btnRow.appendChild(copyBtn);
+  const dlBtn=document.createElement('button'); dlBtn.className='icon-btn'; dlBtn.innerHTML='💾 .txt';
+  dlBtn.onclick=()=>{ const blob=new Blob([`POSITIVE:\n${prompt}\n\nNEGATIVE:\n${neg}`],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rawgen-prompt.txt'; a.click(); };
+  br1.appendChild(dlBtn);
 
-  const dlBtn=document.createElement('button');
-  dlBtn.className='icon-btn';
-  dlBtn.innerHTML='💾 Baixar .txt';
-  dlBtn.onclick=()=>{
-    const blob=new Blob([`POSITIVE PROMPT:\n${prompt}\n\nNEGATIVE PROMPT:\n${neg}`],{type:'text/plain'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='rawgen-prompt.txt';
-    a.click();
-  };
-  btnRow.appendChild(dlBtn);
+  const shBtn=document.createElement('button'); shBtn.className='icon-btn'; shBtn.innerHTML='🔗 Link';
+  shBtn.onclick=()=>{ const params=new URLSearchParams(); Object.entries(answers).forEach(([k,v])=>v&&params.set(k,v)); const url=location.origin+location.pathname+'?'+params.toString(); navigator.clipboard.writeText(url).then(()=>{ shBtn.textContent='✓ Link copiado!'; setTimeout(()=>{ shBtn.innerHTML='🔗 Link'; },2000); }); };
+  br1.appendChild(shBtn);
+  b.appendChild(br1);
 
-  const shareBtn=document.createElement('button');
-  shareBtn.className='icon-btn';
-  shareBtn.innerHTML='🔗 Link';
-  shareBtn.onclick=()=>{
-    const params=new URLSearchParams();
-    Object.entries(answers).forEach(([k,v])=>v&&params.set(k,v));
-    const url=location.origin+location.pathname+'?'+params.toString();
-    navigator.clipboard.writeText(url).then(()=>{
-      shareBtn.textContent='✓ Link copiado!';
-      setTimeout(()=>{ shareBtn.innerHTML='🔗 Link'; },2000);
-    });
-  };
-  btnRow.appendChild(shareBtn);
+  // LoRA hints
+  const loras=getLoraHints();
+  const lb=document.createElement('div'); lb.className='lora-box';
+  lb.innerHTML=`<div class="lora-title">💡 LoRA sugeridas (clique para copiar)</div>`;
+  loras.forEach(l=>{ const c=document.createElement('span'); c.className='lora-chip'; c.textContent=l; c.onclick=()=>{ navigator.clipboard.writeText(l); c.style.background='rgba(34,197,94,.2)'; setTimeout(()=>{ c.style.background=''; },1200); }; lb.appendChild(c); });
+  const lh=document.createElement('div'); lh.className='lora-hint'; lh.textContent='Adicione no campo de texto do gerador. Peso recomendado já incluso.'; lb.appendChild(lh);
+  b.appendChild(lb);
 
-  b.appendChild(btnRow);
-
-  const nd=document.createElement('div');
-  nd.className='neg-block';
+  const nd=document.createElement('div'); nd.className='neg-block';
   nd.innerHTML='<div class="neg-title">Negative Prompt</div>';
-  const nt=document.createElement('div');
-  nt.textContent=neg;
-  nd.appendChild(nt);
+  const nt=document.createElement('div'); nt.textContent=neg; nd.appendChild(nt);
   b.appendChild(nd);
 
-  const btnRow2=document.createElement('div');
-  btnRow2.className='btn-row';
+  const br2=document.createElement('div'); br2.className='btn-row';
+  const cnBtn=document.createElement('button'); cnBtn.className='copy-btn neg'; cnBtn.innerHTML='🚫 Copiar negativo';
+  cnBtn.onclick=()=>{ navigator.clipboard.writeText(neg).then(()=>{ cnBtn.textContent='✓ Copiado!'; cnBtn.classList.add('ok'); setTimeout(()=>{ cnBtn.innerHTML='🚫 Copiar negativo'; cnBtn.classList.remove('ok'); },2000); }); };
+  br2.appendChild(cnBtn);
+  const rstBtn=document.createElement('button'); rstBtn.className='icon-btn'; rstBtn.innerHTML='⟳ Novo prompt'; rstBtn.onclick=restart;
+  br2.appendChild(rstBtn);
+  b.appendChild(br2);
 
-  const copyNegBtn=document.createElement('button');
-  copyNegBtn.className='copy-btn neg';
-  copyNegBtn.innerHTML='🚫 Copiar negativo';
-  copyNegBtn.onclick=()=>{
-    navigator.clipboard.writeText(neg).then(()=>{
-      copyNegBtn.textContent='✓ Copiado!'; copyNegBtn.classList.add('ok');
-      setTimeout(()=>{ copyNegBtn.innerHTML='🚫 Copiar negativo'; copyNegBtn.classList.remove('ok'); },2000);
-    });
-  };
-  btnRow2.appendChild(copyNegBtn);
-
-  const restBtn=document.createElement('button');
-  restBtn.className='icon-btn';
-  restBtn.innerHTML='⟳ Novo prompt';
-  restBtn.onclick=restart;
-  btnRow2.appendChild(restBtn);
-
-  b.appendChild(btnRow2);
   scrollBottom();
   setQR([{label:'⟳ Criar novo prompt',val:'novo'}]);
   qrArea.querySelector('.qr').onclick=restart;
   waiting=false;
 }
 
-// ─── Random mode ──────────────────────────────────────────────────────────
+// ─── Random ───────────────────────────────────────────────────────────────
 async function randomAll(){
   if(waiting) return;
-  restart();
-  await delay(800);
+  restart(); await delay(800);
   for(let i=0;i<STEPS.length;i++){
-    const s=STEPS[i];
-    if(!s.qr||s.qr.length===0) continue;
+    const s=STEPS[i]; if(!s.qr||!s.qr.length) continue;
     const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
-    if(pool.length===0) continue;
-    const pick=pool[Math.floor(Math.random()*pool.length)];
-    answers[s.id]=pick.val;
+    if(!pool.length) continue;
+    answers[s.id]=pool[Math.floor(Math.random()*pool.length)].val;
   }
-  step=STEPS.length;
-  updateProgress();
-  clearQR();
+  step=STEPS.length; updateProgress(); clearQR();
   addMsg('bot','🎲 <strong>Sorteando tudo aleatoriamente…</strong>');
-  await delay(600);
-  await showResult();
+  await delay(600); await showResult();
 }
 
 // ─── History panel ────────────────────────────────────────────────────────
-function openHistory(){
-  const h=loadHistory();
+function setHistFilter(f){
+  histFilter=f;
+  document.getElementById('filt-all').classList.toggle('active',f==='all');
+  document.getElementById('filt-fav').classList.toggle('active',f==='fav');
+  renderHistList();
+}
+
+function renderHistList(){
+  const allH=loadHistory();
+  const favTs=new Set(loadFavorites().map(f=>f.ts));
+  const items = histFilter==='fav' ? allH.filter(h=>favTs.has(h.ts)) : allH;
   const list=document.getElementById('hist-list');
   list.innerHTML='';
-  if(h.length===0){
-    list.innerHTML='<div class="hist-empty">Nenhum prompt gerado ainda.</div>';
-  } else {
-    h.forEach((item,i)=>{
-      const el=document.createElement('div');
-      el.className='hist-item';
-      const d=new Date(item.ts);
-      el.innerHTML=`<small>${d.toLocaleString('pt-BR')}</small>${escHtml(item.prompt.slice(0,180))}…`;
-      el.onclick=()=>{
-        navigator.clipboard.writeText(item.prompt).catch(()=>{});
-        el.style.borderColor='var(--green)';
-        setTimeout(()=>{ el.style.borderColor=''; },1200);
-      };
-      list.appendChild(el);
-    });
-  }
-  document.getElementById('hist-panel').classList.add('open');
-}
-function closeHistory(){
-  document.getElementById('hist-panel').classList.remove('open');
-}
-document.getElementById('hist-panel').addEventListener('click',function(e){
-  if(e.target===this) closeHistory();
-});
-
-// ─── URL share restore ────────────────────────────────────────────────────
-function restoreFromURL(){
-  const p=new URLSearchParams(location.search);
-  let found=false;
-  STEPS.forEach(s=>{
-    const v=p.get(s.id);
-    if(v){ answers[s.id]=v; found=true; }
+  if(!items.length){ list.innerHTML='<div class="hist-empty">'+(histFilter==='fav'?'Nenhum favorito salvo.':'Nenhum prompt gerado ainda.')+'</div>'; return; }
+  items.forEach(item=>{
+    const el=document.createElement('div'); el.className='hist-item';
+    const d=new Date(item.ts);
+    const tags=autoTagPrompt(item.prompt,'');
+    const isFav=favTs.has(item.ts);
+    const hdr=document.createElement('div'); hdr.className='hist-item-header';
+    const meta=document.createElement('div'); meta.className='hist-meta';
+    meta.innerHTML=`<span>${d.toLocaleString('pt-BR')}</span><span class="hist-tags">${tags.map(t=>`<span class="hist-tag">${t}</span>`).join('')}</span>`;
+    const acts=document.createElement('div'); acts.className='hist-actions';
+    const fb=document.createElement('button'); fb.className='fav-btn'+(isFav?' on':''); fb.textContent=isFav?'⭐':'☆'; fb.title=isFav?'Remover favorito':'Favoritar';
+    fb.onclick=(e)=>{ e.stopPropagation(); const added=toggleFavorite(item.ts,item.prompt,item.neg); fb.textContent=added?'⭐':'☆'; fb.classList.toggle('on',added); favTs[added?'add':'delete'](item.ts); };
+    const cb=document.createElement('button'); cb.className='hist-copy-btn'; cb.textContent='📋'; cb.title='Copiar';
+    cb.onclick=(e)=>{ e.stopPropagation(); navigator.clipboard.writeText(item.prompt).catch(()=>{}); cb.textContent='✓'; setTimeout(()=>{ cb.textContent='📋'; },1200); };
+    acts.appendChild(fb); acts.appendChild(cb);
+    hdr.appendChild(meta); hdr.appendChild(acts); el.appendChild(hdr);
+    const preview=document.createElement('div'); preview.textContent=item.prompt.slice(0,180)+'…'; el.appendChild(preview);
+    el.onclick=()=>{ navigator.clipboard.writeText(item.prompt).catch(()=>{}); el.style.borderColor='var(--green)'; setTimeout(()=>{ el.style.borderColor=''; },1200); };
+    list.appendChild(el);
   });
+}
+
+function openHistory(){ renderHistList(); document.getElementById('hist-panel').classList.add('open'); }
+function closeHistory(){ document.getElementById('hist-panel').classList.remove('open'); }
+document.getElementById('hist-panel').addEventListener('click',function(e){ if(e.target===this) closeHistory(); });
+
+// ─── URL restore ──────────────────────────────────────────────────────────
+function restoreFromURL(){
+  const p=new URLSearchParams(location.search); let found=false;
+  STEPS.forEach(s=>{ const v=p.get(s.id); if(v){ answers[s.id]=v; found=true; } });
   return found;
 }
 
 // ─── Init & restart ───────────────────────────────────────────────────────
 function restart(){
-  step=0;
-  Object.keys(answers).forEach(k=>delete answers[k]);
-  chat.innerHTML='';
-  clearQR();
-  input.value='';
-  waiting=false;
-  updateProgress();
+  step=0; Object.keys(answers).forEach(k=>delete answers[k]);
+  chat.innerHTML=''; clearQR(); input.value=''; waiting=false; updateProgress();
   init();
 }
 
 async function init(){
-  step=0;
-  Object.keys(answers).forEach(k=>delete answers[k]);
-  waiting=false;
-  updateProgress();
+  step=0; Object.keys(answers).forEach(k=>delete answers[k]); waiting=false; updateProgress();
   const shared=restoreFromURL();
   if(shared){
-    step=STEPS.length;
-    updateProgress();
+    step=STEPS.length; updateProgress();
     addMsg('bot','🔗 <strong>Prompt carregado do link compartilhado!</strong>');
-    await delay(400);
-    await showResult();
-    return;
+    await delay(400); await showResult(); return;
   }
   const first=STEPS[0];
-  const qrs=[...first.qr];
-  qrs.push({label:'🎲 Sortear tudo',val:'__random__',cls:'rand'});
+  const qrs=[...first.qr,{label:'🎲 Sortear tudo',val:'__random__',cls:'rand'}];
   await botSay(first.ask, qrs);
-}
-
-// patch handleQR for special values
-const _origHandleQR=handleQR;
-function handleQR(val, label){
-  if(waiting) return;
-  if(val==='__back__'){ addMsg('usr','← Voltar'); goBack(); return; }
-  if(val==='__random__'){ randomAll(); return; }
-  addMsg('usr', label);
-  processAnswer(val);
 }
 
 // ─── Theme ────────────────────────────────────────────────────────────────
 function toggleTheme(){
-  const d=document.documentElement;
-  const dark=d.dataset.theme==='dark';
+  const d=document.documentElement; const dark=d.dataset.theme==='dark';
   d.dataset.theme=dark?'light':'dark';
   document.getElementById('tbtn').textContent=dark?'🌙 Escuro':'☀ Claro';
 }
