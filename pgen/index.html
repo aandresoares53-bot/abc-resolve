@@ -547,25 +547,48 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'detalhes', label:'Detalhes pele', ask:'Detalhes de pele e corpo?',
+    id:'detalhes', label:'Detalhes pele', ask:'Detalhes de pele e acabamento?',
     qr:[
-      {label:'Pele natural',val:'natural skin, normal skin condition'},
+      {label:'Pele natural',val:'natural skin, normal skin condition, unretouched'},
       {label:'Molhada 💧',val:'wet glistening skin, water droplets on skin, dripping wet, shiny wet body'},
-      {label:'Suada',val:'sweaty glistening skin, sweat beads on skin, perspiration, wet with sweat'},
-      {label:'Óleo/brilho',val:'oiled skin, shiny body oil, glossy skin sheen, body oil glistening'},
+      {label:'Suada',val:'sweaty glistening skin, sweat beads on skin, perspiration, wet with sweat, natural body perspiration'},
+      {label:'Óleo/brilho',val:'oiled skin, shiny body oil, glossy skin sheen, body oil glistening, reflecting light'},
       {label:'Glitter no corpo',val:'body glitter, festival glitter on skin, shimmering body sparkles'},
-      {label:'Bronzeada',val:'deep tan skin, tanned body, sun-kissed bronze skin, tan lines'},
-      {label:'Arrepiada',val:'goosebumps on skin, erect nipples, skin raised in arousal'},
-      {label:'Espuma/banho',val:'soapy foam on body, bath foam, shower bubbles on skin'},
+      {label:'Bronzeada',val:'deep tan skin, tanned body, sun-kissed bronze skin, tan lines from swimsuit'},
+      {label:'Arrepiada',val:'goosebumps on skin, erect nipples, skin raised in arousal, body reacting to cold or excitement'},
+      {label:'Espuma/banho',val:'soapy foam on body, bath foam, shower bubbles on skin, covered in lather'},
       {label:'Pintura corporal',val:'body paint artwork, painted skin, artistic body paint design'},
-      {label:'Manchas de bronzeado',val:'bikini tan lines, pale skin where swimsuit was, tan lines visible'},
-      {label:'Pele muito clara',val:'very pale white skin, alabaster skin, porcelain white skin tone'},
-      {label:'Pele muito escura',val:'very dark deep melanin skin, ebony skin tone, deep dark complexion'},
-      {label:'Sardas',val:'freckles on face and body, scattered freckles, natural freckled skin, sun freckles'},
-      {label:'Veias visíveis',val:'visible veins under skin, translucent pale skin with veins, skin so pale veins show'},
-      {label:'Celulite natural',val:'natural cellulite on thighs and buttocks, dimpled skin, realistic non-airbrushed skin texture'},
-      {label:'Estrias naturais',val:'natural stretch marks on skin, striae on hips and breasts, realistic stretch marks, unretouched'},
-      {label:'Pele com textura grossa',val:'rough thick skin texture, coarse skin pores, textured pores highly visible, dermal texture'},
+      {label:'Marcas de bronzeado',val:'clear bikini tan lines, pale skin where swimsuit was covering, contrast tan lines'},
+      {label:'Pele muito clara',val:'very pale white skin, alabaster skin, porcelain white skin tone, pale Nordic complexion'},
+      {label:'Pele muito escura',val:'very dark deep melanin skin, ebony skin tone, deep dark complexion, rich dark skin'},
+    ],
+    skip:true,
+  },
+  {
+    id:'imperfeicoes', label:'Imperfeições', ask:'Imperfeições humanas e realismo de pele?',
+    qr:[
+      {label:'Nenhuma (pele perfeita)',val:'perfect flawless skin, airbrushed smooth skin, idealized beauty'},
+      {label:'Sardas naturais',val:'natural freckles scattered across face nose and cheeks, sun freckles, freckled skin, unretouched'},
+      {label:'Celulite nas coxas 🔥',val:'visible cellulite on thighs and buttocks, dimpled skin texture, natural orange peel skin, realistic non-airbrushed'},
+      {label:'Estrias nas coxas/seios',val:'natural stretch marks striae on hips thighs and breasts, silvery stretch mark lines, realistic skin imperfections'},
+      {label:'Estrias abdômen',val:'stretch marks on lower abdomen and belly, realistic striae lines, unretouched skin, natural marks'},
+      {label:'Acne/espinhas',val:'acne blemishes on skin, pimples, natural acne breakout, unretouched complexion, realistic skin condition'},
+      {label:'Poros dilatados',val:'large visible pores, open pores on nose and cheeks, realistic pore texture, unsmoothed skin detail'},
+      {label:'Dobras abdominais',val:'natural belly rolls when bending, soft tummy folds, realistic abdominal skin rolls, love handles'},
+      {label:'Gordura localizada',val:'natural body fat deposits on hips waist and thighs, realistic soft fat, natural weight distribution'},
+      {label:'Pele flácida',val:'slightly loose skin on inner arms and thighs, natural skin laxity, realistic soft skin without tension'},
+      {label:'Cicatrizes',val:'natural scars on skin, old healed scars, scar tissue on body, realistic skin history marks'},
+      {label:'Pintas e manchas',val:'beauty marks moles on skin, natural skin spots, pigmentation spots, scattered moles, realistic skin'},
+      {label:'Pelos corporais naturais',val:'natural body hair on legs underarms and pubis, unshaved natural hair growth, realistic ungroomed body hair'},
+      {label:'Pelos finos no corpo',val:'fine vellus body hair visible, light peach fuzz on skin, natural fine hair on arms and belly'},
+      {label:'Veias visíveis',val:'visible veins under translucent pale skin, blue veins on wrists breasts and thighs, thin-skinned vascularity'},
+      {label:'Rugas finas',val:'fine expression lines on face, natural wrinkles around eyes and mouth, realistic aging skin texture'},
+      {label:'Vermelhidão/capilares',val:'facial redness, broken capillaries, rosacea patches, natural skin redness on cheeks, blotchy realistic skin'},
+      {label:'Assimetria natural',val:'natural body asymmetry, one breast slightly different size, slightly uneven features, realistic human asymmetry'},
+      {label:'Marcas de roupa',val:'elastic waistband marks pressed into skin, bra strap indentations on shoulders, realistic clothing marks on skin'},
+      {label:'Queloide/cicatriz grossa',val:'raised keloid scar on skin, thick scar tissue, hypertrophic scar, prominent healed wound mark'},
+      {label:'Manchas de nascença',val:'birthmark on skin, port wine stain, natural pigmented birthmark area, realistic birth marking'},
+      {label:'Hiper-realismo total 🔥',val:'hyperrealistic unretouched photography, all natural skin imperfections visible, pores cellulite stretch marks freckles, raw documentary photo style, zero digital skin smoothing'},
     ],
     skip:true,
   },
@@ -990,7 +1013,11 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 // ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
   const p=(answers.pose||'').toLowerCase(), c=(answers.cam||'').toLowerCase();
-  let n='blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, digital art, CGI, render, hypersmooth, fake skin, doll-like, mannequin, wax figure, overly perfect, unrealistic skin, skin texture missing, skin too smooth, poreless skin';
+  const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
+  const skinNeg = hasImperf
+    ? 'plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, hypersmooth, fake skin, doll-like, poreless skin, perfect skin, flawless skin, retouched skin, digital skin smoothing, beauty filter'
+    : 'plastic skin, airbrushed skin, oversmoothed, fake skin, doll-like';
+  let n=`blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, ${skinNeg}, mannequin, wax figure, unrealistic skin, CGI, render, digital art`;
   if(sdxlMode) n+=', low resolution, jpeg artifacts, noise, grainy, deformed iris, deformed pupils, semi-realistic, mutated hands, extra fingers';
   if(/from behind|back to camera|rear view|face hidden/.test(p))
     n+=', (front view:2.0), (facing camera:2.0), (face visible:2.0), (looking at viewer:1.9)';
@@ -1012,17 +1039,21 @@ function autoFilm(){
 }
 
 function buildPrompt(){
+  const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
   const raw = sdxlMode
     ? 'RAW photo, photorealistic, 8k uhd, high detail, sharp focus, professional photography, real skin texture, visible pores, subsurface scattering, depth of field, natural lighting, analog film grain'
-    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, skin imperfections, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid photography, documentary style realism, sharp focus, depth of field, natural lighting falloff';
+    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid documentary photography, sharp focus, depth of field, natural lighting falloff';
+  const realism = hasImperf
+    ? 'unretouched photography, zero airbrushing, natural imperfections preserved, skin not smoothed, raw documentary style, realistic human body, dermal texture detail, macro skin detail'
+    : '';
   const quality = sdxlMode
     ? 'cinematic quality, real photograph, film grain, lens aberration, bokeh, not AI, not CGI'
     : 'real photograph, not AI, not CGI, not 3D render, not painting, not illustration, film grain, lens aberration, natural bokeh';
   const parts=[
-    raw, answers.idade, answers.etnia||'beautiful woman',
+    raw, realism, answers.idade, answers.etnia||'beautiful woman',
     answers.corpo, answers.olhos, answers.cabelo, answers.tattoo,
     answers.roupa, answers.acessorios, answers.maquiagem, answers.expressao,
-    answers.detalhes, answers.nsfw, answers.cenario, answers.pose,
+    answers.detalhes, answers.imperfeicoes, answers.nsfw, answers.cenario, answers.pose,
     tr(answers.desc||''), answers.cam, autoFilm(), quality,
   ].filter(Boolean);
   const seen=new Set();
