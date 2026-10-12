@@ -1074,10 +1074,11 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 function buildNeg(){
   const p=(answers.pose||'').toLowerCase(), c=(answers.cam||'').toLowerCase();
   const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
+  // Always enforce strong anti-plastic realism — extra tags when imperfections chosen
   const skinNeg = hasImperf
-    ? 'plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, hypersmooth, fake skin, doll-like, poreless skin, perfect skin, flawless skin, retouched skin, digital skin smoothing, beauty filter'
-    : 'plastic skin, airbrushed skin, oversmoothed, fake skin, doll-like';
-  let n=`blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, ${skinNeg}, mannequin, wax figure, unrealistic skin, CGI, render, digital art`;
+    ? 'plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, hypersmooth, fake skin, doll-like, poreless skin, perfect skin, flawless skin, retouched skin, digital skin smoothing, beauty filter, skin texture missing, waxy skin, rubber skin, (plastic:1.5), (airbrushed:1.5), (CGI skin:1.5)'
+    : 'plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, hypersmooth, fake skin, doll-like, poreless skin, waxy skin, rubber skin, retouched skin, beauty filter, (plastic:1.4), (airbrushed:1.4)';
+  let n=`blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, ${skinNeg}, mannequin, wax figure, unrealistic skin, CGI, render, digital art, illustration, hypersmooth body, digital painting`;
   if(sdxlMode) n+=', low resolution, jpeg artifacts, noise, grainy, deformed iris, deformed pupils, semi-realistic, mutated hands, extra fingers';
   if(/from behind|back to camera|rear view|face hidden/.test(p))
     n+=', (front view:2.0), (facing camera:2.0), (face visible:2.0), (looking at viewer:1.9)';
@@ -1101,16 +1102,18 @@ function autoFilm(){
 function buildPrompt(){
   const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
   const raw = sdxlMode
-    ? 'RAW photo, photorealistic, 8k uhd, high detail, sharp focus, professional photography, real skin texture, visible pores, subsurface scattering, depth of field, natural lighting, analog film grain'
-    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid documentary photography, sharp focus, depth of field, natural lighting falloff';
-  const realism = hasImperf
-    ? 'unretouched photography, zero airbrushing, natural imperfections preserved, skin not smoothed, raw documentary style, realistic human body, dermal texture detail, macro skin detail'
+    ? 'RAW photo, photorealistic, 8k uhd, high detail, sharp focus, professional photography, real skin texture, visible pores, subsurface scattering, depth of field, natural lighting, analog film grain, NOT plastic skin, NOT airbrushed'
+    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid documentary photography, sharp focus, depth of field, natural lighting falloff, NOT plastic skin, NOT airbrushed';
+  // Always-on realism block (anti-plastic regardless of imperfections)
+  const realismBase = 'real human skin texture, skin pores visible, natural skin tone variation, subsurface scattering, non-airbrushed skin, authentic human body';
+  const realismImperf = hasImperf
+    ? 'unretouched photography, zero airbrushing, natural imperfections preserved, skin not smoothed, raw documentary style, dermal texture detail, macro skin detail'
     : '';
   const quality = sdxlMode
     ? 'cinematic quality, real photograph, film grain, lens aberration, bokeh, not AI, not CGI'
     : 'real photograph, not AI, not CGI, not 3D render, not painting, not illustration, film grain, lens aberration, natural bokeh';
   const parts=[
-    raw, realism, answers.idade, answers.etnia||'beautiful woman',
+    raw, realismBase, realismImperf, answers.idade, answers.etnia||'beautiful woman',
     answers.corpo, answers.olhos, answers.cabelo, answers.tattoo,
     answers.roupa, answers.acessorios, answers.maquiagem, answers.expressao,
     answers.detalhes, answers.imperfeicoes, answers.nsfw, answers.cenario, answers.pose,
