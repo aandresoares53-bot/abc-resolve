@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RAWgen — Gerador de Prompts</title>
+<title>RAWgen</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#e8a020">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,853 +12,403 @@
 <meta name="apple-mobile-web-app-title" content="RAWgen">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-:root {
-  --bg: #0a0a0a;
-  --surface: #141414;
-  --surface2: #1c1c1c;
-  --border: #2a2a2a;
-  --border2: #333;
-  --text: #e2e2e2;
-  --text2: #707070;
-  --text3: #999;
-  --accent: #e8a020;
-  --accent-dark: #b87a10;
-  --accent-light: #f0b840;
-  --red: #ef4444;
-  --green: #22c55e;
-  --r: 10px;
-  --r-sm: 6px;
-  --sp: 14px;
+:root{
+  --bg:#0a0a0a; --sur:#141414; --sur2:#1c1c1c;
+  --bdr:#2a2a2a; --txt:#e0e0e0; --txt2:#666; --txt3:#999;
+  --acc:#e8a020; --acc2:#f0b840; --red:#ef4444; --green:#22c55e;
+  --r:10px; --r2:6px;
+}
+[data-theme="light"]{
+  --bg:#f0ebe0; --sur:#fff; --sur2:#f5f0e6;
+  --bdr:#ddd; --txt:#1a1a1a; --txt2:#555; --txt3:#888;
 }
 
-[data-theme="light"] {
-  --bg: #f2ede4;
-  --surface: #fff;
-  --surface2: #f8f3ea;
-  --border: #e0d8cc;
-  --border2: #ccc;
-  --text: #1a1a1a;
-  --text2: #555;
-  --text3: #888;
-}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;padding:14px;min-height:100vh;}
+.wrap{max-width:820px;margin:0 auto;}
 
-html { scroll-behavior: smooth; }
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--bdr);}
+.logo{font-size:1.7em;font-weight:900;letter-spacing:-1px;color:var(--acc);line-height:1;}
+.logo small{color:var(--txt2);font-size:0.45em;font-weight:300;letter-spacing:0.02em;margin-left:5px;vertical-align:middle;}
+.hbtn{background:var(--sur2);border:1px solid var(--bdr);color:var(--txt3);border-radius:var(--r2);padding:5px 11px;cursor:pointer;font-size:0.76em;font-weight:600;transition:all .15s;}
+.hbtn:hover{border-color:var(--acc);color:var(--acc);}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
-  padding: var(--sp);
-  line-height: 1.5;
-  font-size: 15px;
-}
+/* Description */
+.desc-wrap{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+textarea.desc{width:100%;min-height:64px;background:var(--sur2);border:1.5px solid var(--bdr);border-radius:var(--r2);color:var(--txt);padding:10px 12px;font-size:.92em;font-family:inherit;resize:vertical;outline:none;line-height:1.6;transition:border-color .2s;}
+textarea.desc:focus{border-color:var(--acc);}
+textarea.desc::placeholder{color:var(--txt2);}
+.hint{font-size:.68em;color:var(--txt2);margin-top:5px;}
 
-.wrap { max-width: 880px; margin: 0 auto; }
+/* Section */
+.sec{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;}
+.sec-title{font-size:.68em;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--txt2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.sec-title::before{content:'';display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--acc);flex-shrink:0;}
 
-/* ── Header ─────────────────────────────────────────────────── */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 10px;
-}
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:5px;}
+.chip{padding:5px 11px;border:1.5px solid var(--bdr);border-radius:20px;font-size:.73em;font-weight:600;cursor:pointer;background:var(--sur2);color:var(--txt3);transition:all .13s;user-select:none;white-space:nowrap;}
+.chip:hover{border-color:var(--acc);color:var(--txt);}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#000;font-weight:700;}
 
-.logo {
-  font-size: 1.9em;
-  font-weight: 900;
-  letter-spacing: -1.5px;
-  color: var(--accent);
-  line-height: 1;
-}
+/* Generate */
+.btn-gen{width:100%;background:var(--acc);color:#000;border:none;border-radius:var(--r);padding:15px;font-size:1.05em;font-weight:900;cursor:pointer;margin:12px 0 10px;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .18s;box-shadow:0 4px 18px rgba(232,160,32,.22);}
+.btn-gen:hover{background:var(--acc2);box-shadow:0 6px 24px rgba(232,160,32,.38);transform:translateY(-1px);}
+.btn-gen:active{transform:translateY(0);}
 
-.logo em {
-  color: var(--text2);
-  font-style: normal;
-  font-weight: 300;
-  font-size: 0.48em;
-  letter-spacing: 0.02em;
-  margin-left: 6px;
-  vertical-align: middle;
-}
+/* Output */
+.out{display:none;}
+.out.on{display:block;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;}
+.out-lbl{font-size:.67em;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--acc);margin-bottom:7px;}
+.prompt-ta{width:100%;min-height:150px;background:var(--sur2);border:1.5px solid var(--bdr);border-radius:var(--r2);color:var(--txt);padding:12px;font-size:.82em;font-family:monospace;resize:vertical;line-height:1.7;word-break:break-word;outline:none;}
+.prompt-ta:focus{border-color:var(--acc);}
+.out-btns{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;}
+.bcopy{background:var(--acc);color:#000;border:none;border-radius:var(--r2);padding:8px 16px;cursor:pointer;font-weight:700;font-size:.82em;transition:all .15s;}
+.bcopy:hover{background:var(--acc2);}
+.bcopy.ok{background:var(--green);}
+.bsm{background:var(--sur2);border:1.5px solid var(--bdr);color:var(--txt3);border-radius:var(--r2);padding:8px 13px;cursor:pointer;font-size:.82em;font-weight:600;transition:all .15s;}
+.bsm:hover{border-color:var(--acc);color:var(--acc);}
+.neg-box{margin-top:10px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:var(--r2);padding:10px;}
+.neg-lbl{font-size:.64em;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.neg-ta{width:100%;background:transparent;border:none;color:#fca5a5;font-size:.74em;font-family:monospace;line-height:1.6;resize:none;outline:none;}
 
-.header-right { display: flex; gap: 8px; align-items: center; }
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--acc);color:#000;padding:9px 16px;border-radius:var(--r2);font-weight:700;font-size:.8em;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none;}
+.toast.show{opacity:1;}
 
-.btn-sm {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text3);
-  border-radius: var(--r-sm);
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 0.78em;
-  font-weight: 600;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.btn-sm:hover { border-color: var(--accent); color: var(--accent); }
-
-/* ── Card ────────────────────────────────────────────────────── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  margin-bottom: 10px;
-  overflow: hidden;
-}
-
-.card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 11px 15px;
-  cursor: pointer;
-  user-select: none;
-  gap: 10px;
-  transition: background 0.15s;
-}
-.card-head:hover { background: var(--surface2); }
-
-.card-title {
-  font-size: 0.74em;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text2);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.card-badge {
-  font-size: 0.8em;
-  background: var(--accent);
-  color: #000;
-  border-radius: 20px;
-  padding: 1px 7px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-.card-arrow { color: var(--text2); font-size: 0.65em; transition: transform 0.2s; flex-shrink: 0; }
-.card.collapsed .card-arrow { transform: rotate(-90deg); }
-.card.collapsed .card-body { display: none; }
-
-.card-body {
-  padding: 12px 15px 16px;
-  border-top: 1px solid var(--border);
-}
-
-/* ── Description ─────────────────────────────────────────────── */
-.desc-area {
-  width: 100%;
-  min-height: 72px;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  color: var(--text);
-  padding: 11px 13px;
-  font-size: 0.92em;
-  font-family: inherit;
-  resize: vertical;
-  outline: none;
-  line-height: 1.6;
-  transition: border-color 0.2s;
-}
-.desc-area:focus { border-color: var(--accent); }
-.desc-area::placeholder { color: var(--text2); }
-.hint { font-size: 0.7em; color: var(--text2); margin-top: 5px; }
-
-/* ── Chip sections ───────────────────────────────────────────── */
-.chip-sec { margin-bottom: 13px; }
-.chip-sec:last-child { margin-bottom: 0; }
-
-.chip-lbl {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.67em;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text2);
-  margin-bottom: 7px;
-}
-
-.chip-lbl .dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.chip {
-  padding: 5px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  font-size: 0.74em;
-  font-weight: 600;
-  cursor: pointer;
-  background: var(--surface2);
-  color: var(--text3);
-  transition: all 0.13s;
-  user-select: none;
-  white-space: nowrap;
-  line-height: 1.2;
-}
-.chip:hover { border-color: var(--accent); color: var(--text); }
-.chip.on {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-  font-weight: 700;
-}
-
-/* ── Generate button ─────────────────────────────────────────── */
-.btn-gen {
-  width: 100%;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: var(--r);
-  padding: 16px;
-  font-size: 1.05em;
-  font-weight: 900;
-  cursor: pointer;
-  margin: 14px 0 10px;
-  letter-spacing: 0.03em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.18s;
-  box-shadow: 0 4px 20px rgba(232,160,32,0.25);
-}
-.btn-gen:hover { background: var(--accent-light); box-shadow: 0 6px 26px rgba(232,160,32,0.4); transform: translateY(-1px); }
-.btn-gen:active { transform: translateY(0); }
-
-/* ── Output ──────────────────────────────────────────────────── */
-.out-card { display: none; }
-.out-card.on { display: block; }
-
-.out-lbl {
-  font-size: 0.68em;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.prompt-ta {
-  width: 100%;
-  min-height: 170px;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  color: var(--text);
-  padding: 13px;
-  font-size: 0.83em;
-  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-  resize: vertical;
-  line-height: 1.7;
-  word-break: break-word;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.prompt-ta:focus { border-color: var(--accent); }
-
-.out-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-
-.btn-copy {
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: var(--r-sm);
-  padding: 9px 18px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.83em;
-  transition: all 0.15s;
-}
-.btn-copy:hover { background: var(--accent-light); }
-.btn-copy.copied { background: var(--green); }
-
-.btn-regen {
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  color: var(--text3);
-  border-radius: var(--r-sm);
-  padding: 9px 16px;
-  cursor: pointer;
-  font-size: 0.83em;
-  font-weight: 600;
-  transition: all 0.15s;
-}
-.btn-regen:hover { border-color: var(--accent); color: var(--accent); }
-
-.btn-clr {
-  background: transparent;
-  border: 1.5px solid var(--border);
-  color: var(--text2);
-  border-radius: var(--r-sm);
-  padding: 9px 14px;
-  cursor: pointer;
-  font-size: 0.83em;
-  transition: all 0.15s;
-}
-.btn-clr:hover { border-color: var(--red); color: var(--red); }
-
-/* ── Negative box ────────────────────────────────────────────── */
-.neg-box {
-  margin-top: 12px;
-  background: rgba(239,68,68,0.07);
-  border: 1px solid rgba(239,68,68,0.2);
-  border-radius: var(--r-sm);
-  padding: 12px;
-}
-.neg-lbl { font-size: 0.67em; font-weight: 800; color: #f87171; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
-.neg-ta {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: #fca5a5;
-  font-size: 0.76em;
-  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-  line-height: 1.6;
-  resize: none;
-  outline: none;
-  cursor: text;
-}
-
-/* ── Toast ───────────────────────────────────────────────────── */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--accent);
-  color: #000;
-  padding: 10px 18px;
-  border-radius: var(--r-sm);
-  font-weight: 700;
-  font-size: 0.82em;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 999;
-  pointer-events: none;
-}
-.toast.show { opacity: 1; }
-
-/* ── Responsive ──────────────────────────────────────────────── */
-@media (max-width: 540px) {
-  body { padding: 10px; font-size: 14px; }
-  .logo { font-size: 1.5em; }
-  .btn-gen { font-size: 0.98em; padding: 14px; }
-}
-@media (max-width: 380px) {
-  .chips { gap: 4px; }
-  .chip { font-size: 0.7em; padding: 4px 10px; }
-}
+@media(max-width:500px){body{padding:10px;}  .logo{font-size:1.4em;} .btn-gen{font-size:.97em;padding:13px;}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<!-- ── Header ──────────────────────────────────────────────────────────── -->
 <header>
-  <div class="logo">RAWgen <em>prompt generator</em></div>
-  <div class="header-right">
-    <button class="btn-sm" onclick="clearAll()">⟳ Limpar tudo</button>
-    <button class="btn-sm" id="theme-btn" onclick="toggleTheme()">☀ Claro</button>
+  <div class="logo">RAWgen <small>prompt generator</small></div>
+  <div style="display:flex;gap:7px;">
+    <button class="hbtn" onclick="clearAll()">⟳ Limpar</button>
+    <button class="hbtn" id="tbtn" onclick="toggleTheme()">☀ Claro</button>
   </div>
 </header>
 
-<!-- ── Descrição ──────────────────────────────────────────────────────── -->
-<div class="card">
-  <div class="card-head" onclick="toggle(this)">
-    <span class="card-title"><span>✏</span> Descrição da cena</span>
-    <span class="card-arrow">▼</span>
-  </div>
-  <div class="card-body">
-    <textarea id="desc" class="desc-area" rows="3"
-      placeholder="Descreva em português... ex: mulher loira deitada na cama com luz natural suave"></textarea>
-    <div class="hint">💡 Escreva em português — será traduzido e expandido automaticamente no prompt</div>
+<!-- Descrição -->
+<div class="desc-wrap">
+  <textarea id="desc" class="desc" placeholder="Descreva a cena em português... ex: mulher loira deitada na cama com luz suave" rows="2"></textarea>
+  <div class="hint">💡 Escreva em português — traduzido automaticamente</div>
+</div>
+
+<!-- Etnia -->
+<div class="sec">
+  <div class="sec-title">Etnia</div>
+  <div class="chips" data-g="etnia">
+    <div class="chip" data-v="beautiful Brazilian woman, olive skin, South American features">Brasileira</div>
+    <div class="chip" data-v="beautiful white woman, fair skin, European features">Caucasiana</div>
+    <div class="chip" data-v="beautiful Latina woman, warm brown skin">Latina</div>
+    <div class="chip" data-v="beautiful Asian woman, East Asian features, porcelain skin">Asiática</div>
+    <div class="chip" data-v="beautiful Black woman, dark skin, melanin, African features">Negra</div>
+    <div class="chip" data-v="beautiful mixed-race woman, mixed heritage, exotic features">Mestiça</div>
+    <div class="chip" data-v="beautiful Arab woman, Middle Eastern features, olive warm skin">Árabe</div>
+    <div class="chip" data-v="beautiful Japanese woman, Japanese features, pale skin">Japonesa</div>
   </div>
 </div>
 
-<!-- ── Personagem ─────────────────────────────────────────────────────── -->
-<div class="card">
-  <div class="card-head" onclick="toggle(this)">
-    <span class="card-title"><span>👤</span> Personagem</span>
-    <span class="card-arrow">▼</span>
-  </div>
-  <div class="card-body">
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Etnia</div>
-      <div class="chips" data-g="etnia">
-        <div class="chip" data-v="beautiful Brazilian woman, olive skin, South American features">Brasileira</div>
-        <div class="chip" data-v="beautiful white woman, fair skin, European features">Caucasiana</div>
-        <div class="chip" data-v="beautiful Latina woman, warm brown skin, Latin American features">Latina</div>
-        <div class="chip" data-v="beautiful Asian woman, East Asian features, porcelain skin">Asiática</div>
-        <div class="chip" data-v="beautiful Black woman, dark skin, melanin, African features">Negra</div>
-        <div class="chip" data-v="beautiful mixed-race woman, mixed heritage, exotic features">Mestiça</div>
-        <div class="chip" data-v="beautiful Arab woman, Middle Eastern features, olive warm skin">Árabe</div>
-        <div class="chip" data-v="beautiful Japanese woman, Japanese features, pale skin">Japonesa</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Idade</div>
-      <div class="chips" data-g="idade">
-        <div class="chip" data-v="18 year old, barely legal, young adult, 18yo">18 anos</div>
-        <div class="chip" data-v="20 years old, young woman, early twenties, 20yo">20 anos</div>
-        <div class="chip" data-v="25 years old, woman in mid twenties">25 anos</div>
-        <div class="chip" data-v="30 years old, woman in her thirties">30 anos</div>
-        <div class="chip" data-v="35 years old, mature woman">35 anos</div>
-        <div class="chip" data-v="40 years old, MILF, mature experienced woman, 40s">MILF 40+</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Tipo de Corpo</div>
-      <div class="chips" data-g="corpo">
-        <div class="chip" data-v="slim petite body, slender figure, thin waist, small frame">Magra/Petite</div>
-        <div class="chip" data-v="athletic toned body, fit figure, muscle definition, flat abs">Atlética</div>
-        <div class="chip" data-v="curvy hourglass figure, wide hips, small waist, full figure">Curvilínea</div>
-        <div class="chip" data-v="very large round buttocks, big booty, thick thighs, wide hips, bubble butt">Bunduda</div>
-        <div class="chip" data-v="very large natural breasts, busty, big chest, heavy bosom, large nipples">Busty/Peitudinha</div>
-        <div class="chip" data-v="BBW, plus size, full figured, chubby, thick belly, wide">BBW</div>
-        <div class="chip" data-v="fitness model body, muscular legs, defined gluteus, sculpted body">Fitness</div>
-        <div class="chip" data-v="curvy BBW with large breasts and huge buttocks, ssbbw, massive curves">Gordinha Gostosa</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Cabelo</div>
-      <div class="chips" data-g="cabelo">
-        <div class="chip" data-v="long straight blonde hair, flowing golden hair">Longo liso loiro</div>
-        <div class="chip" data-v="long straight brunette hair, dark brown straight hair">Longo liso moreno</div>
-        <div class="chip" data-v="long straight black hair">Longo liso preto</div>
-        <div class="chip" data-v="long curly brunette hair, voluminous curls">Longo cacheado</div>
-        <div class="chip" data-v="long wavy blonde hair, beach waves, textured waves">Ondulado loiro</div>
-        <div class="chip" data-v="long red auburn hair, redhead">Ruivo</div>
-        <div class="chip" data-v="short pixie cut hair, short bob">Curto</div>
-        <div class="chip" data-v="messy bun hairstyle, hair up in bun">Coque</div>
-        <div class="chip" data-v="ponytail hairstyle, hair tied back">Rabo de cavalo</div>
-        <div class="chip" data-v="platinum blonde hair, bleached blonde">Platinada</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Roupa / Nudez</div>
-      <div class="chips" data-g="roupa">
-        <div class="chip" data-v="completely nude, fully naked, bare skin, no clothes">Pelada</div>
-        <div class="chip" data-v="topless, bare breasts exposed, no top, only bottom">Topless</div>
-        <div class="chip" data-v="wearing skimpy thong panties only, barely covered">Calcinha só</div>
-        <div class="chip" data-v="wearing matching bra and panties, lingerie set, lace underwear">Lingerie</div>
-        <div class="chip" data-v="wearing tiny micro bikini, string bikini, barely there bikini">Biquíni micro</div>
-        <div class="chip" data-v="wearing sheer see-through bodysuit, transparent fabric">Body transparente</div>
-        <div class="chip" data-v="wearing tight mini dress, short bodycon dress, revealing">Mini vestido</div>
-        <div class="chip" data-v="wearing tight leggings and sports bra, gym outfit">Legging academia</div>
-        <div class="chip" data-v="wearing schoolgirl uniform, short skirt, white blouse">Colegial</div>
-        <div class="chip" data-v="wearing latex bodysuit, shiny skin-tight outfit">Látex</div>
-        <div class="chip" data-v="wearing ripped fishnet stockings, mesh top">Fishnet</div>
-        <div class="chip" data-v="wearing nurse costume, white uniform, short dress">Enfermeira</div>
-      </div>
-    </div>
-
+<!-- Idade -->
+<div class="sec">
+  <div class="sec-title">Idade</div>
+  <div class="chips" data-g="idade">
+    <div class="chip" data-v="18 year old, barely legal, young adult">18 anos</div>
+    <div class="chip" data-v="20 years old, young woman, early twenties">20 anos</div>
+    <div class="chip" data-v="25 years old, woman in mid twenties">25 anos</div>
+    <div class="chip" data-v="30 years old, woman in her thirties">30 anos</div>
+    <div class="chip" data-v="40 years old, MILF, mature experienced woman">MILF 40+</div>
   </div>
 </div>
 
-<!-- ── Pose ───────────────────────────────────────────────────────────── -->
-<div class="card">
-  <div class="card-head" onclick="toggle(this)">
-    <span class="card-title"><span>🕴</span> Pose</span>
-    <span class="card-arrow">▼</span>
-  </div>
-  <div class="card-body">
-    <div class="chips" data-g="pose">
-      <div class="chip" data-v="standing upright facing camera, full body front view, face visible, confident stance">Em pé de frente</div>
-      <div class="chip" data-v="standing from behind, back to camera, full body rear view head to toe, face hidden">Em pé de costas</div>
-      <div class="chip" data-v="sitting facing camera, front view, upright seated, face visible">Sentada de frente</div>
-      <div class="chip" data-v="sitting from behind, back to camera, rear view, back fully visible, face hidden">Sentada de costas</div>
-      <div class="chip" data-v="kneeling on both knees facing camera, upright torso, face visible">De joelhos frente</div>
-      <div class="chip" data-v="kneeling from behind on both knees, spine straight, back to camera, rear view, face hidden">De joelhos costas</div>
-      <div class="chip" data-v="on hands and knees from directly behind, buttocks prominently facing camera, torso horizontal, face completely hidden, rear view doggy position">De quatro costas</div>
-      <div class="chip" data-v="on all fours facing camera, head raised looking up at lens, face fully visible, torso horizontal, chest toward camera">De quatro frente</div>
-      <div class="chip" data-v="lying on her back, supine position, facing camera, face visible, full body horizontal">Deitada de frente</div>
-      <div class="chip" data-v="lying face down prone, body flat horizontal, back facing up, buttocks up, face hidden">Deitada de bruços</div>
-      <div class="chip" data-v="lying on her side, body in profile, face partially visible, lateral pose">Deitada de lado</div>
-      <div class="chip" data-v="lying on back with both legs raised vertically high in the air, legs up, supine, face visible">Pernas levantadas</div>
-      <div class="chip" data-v="lying on back, legs spread wide open, thighs apart, knees bent, supine, facing camera, face visible">Deitada pernas abertas</div>
-      <div class="chip" data-v="bent over forward from behind, torso leaning down, spine deeply arched, legs straight, buttocks pushed back toward camera, rear view, face hidden">Dobrada de costas</div>
-      <div class="chip" data-v="standing bent over all the way forward touching toes from behind, legs straight, back parallel to ground, buttocks raised high toward camera, rear view, face hidden downward">Dobrada tocando pés</div>
-      <div class="chip" data-v="deep squat from behind, back to camera, thighs spread, buttocks lowered, rear view, face hidden">Agachada costas</div>
-      <div class="chip" data-v="deep squat facing camera, front view, thighs spread apart, knees bent outward, face visible">Agachada frente</div>
-      <div class="chip" data-v="back resting against wall, leaning stance, front view, face visible, weight on wall">Encostada parede frente</div>
-      <div class="chip" data-v="facing wall from behind, palms on wall, back to camera, rear view, spine slightly arched, face hidden">Encostada parede costas</div>
-      <div class="chip" data-v="standing from behind, legs spread very wide apart, wide stance, back to camera, rear view, back fully visible">Em pé pernas abertas costas</div>
-      <div class="chip" data-v="facing camera, legs spread wide open, front view, thighs apart, face visible">Pernas abertas frente</div>
-      <div class="chip" data-v="side profile, 90 degree camera angle, face in profile, body in profile">De perfil</div>
-      <div class="chip" data-v="body turned away, face partially visible looking over shoulder at camera, three-quarter rear view">Olhando ombro</div>
-      <div class="chip" data-v="extreme arched back, spine deeply curved, buttocks raised and pushed back, sensual arch pose, rear or side view">Arco extremo</div>
-      <div class="chip" data-v="on hands and knees from behind, back deeply arched concave downward, buttocks raised high toward camera, presenting pose, rear view, face hidden">Presenting</div>
-      <div class="chip" data-v="woman on top straddling facing away from camera, back fully visible, spine arched, buttocks toward camera, reverse cowgirl pose, rear view">Montada de costas</div>
-      <div class="chip" data-v="woman on top straddling facing camera, upright torso, front view, face visible, cowgirl riding position">Montada de frente</div>
-      <div class="chip" data-v="both arms raised overhead, facing camera, body stretched upward, face visible">Mãos acima</div>
-      <div class="chip" data-v="standing side profile with back gracefully arched, S-curve silhouette, chest forward, hips back, side view">De lado com arco</div>
-    </div>
+<!-- Corpo -->
+<div class="sec">
+  <div class="sec-title">Corpo</div>
+  <div class="chips" data-g="corpo">
+    <div class="chip" data-v="slim petite body, slender figure, thin waist">Magra/Petite</div>
+    <div class="chip" data-v="athletic toned body, fit figure, muscle definition">Atlética</div>
+    <div class="chip" data-v="curvy hourglass figure, wide hips, small waist">Curvilínea</div>
+    <div class="chip" data-v="very large round buttocks, big booty, thick thighs, bubble butt">Bunduda</div>
+    <div class="chip" data-v="very large natural breasts, busty, big chest, heavy bosom">Busty</div>
+    <div class="chip" data-v="BBW, plus size, full figured, chubby thick body">BBW</div>
+    <div class="chip" data-v="fitness model body, muscular legs, sculpted gluteus">Fitness</div>
   </div>
 </div>
 
-<!-- ── Cenário ────────────────────────────────────────────────────────── -->
-<div class="card">
-  <div class="card-head" onclick="toggle(this)">
-    <span class="card-title"><span>🏙</span> Cenário</span>
-    <span class="card-arrow">▼</span>
-  </div>
-  <div class="card-body">
-    <div class="chips" data-g="cenario">
-      <div class="chip" data-v="luxury bedroom, soft natural window light, white silk bedsheets, pillows, intimate setting">Quarto</div>
-      <div class="chip" data-v="wet shower, steam, glass shower door, white tiles, water running down body">Chuveiro</div>
-      <div class="chip" data-v="luxurious marble bathroom, bathtub, warm light, elegant decor">Banheiro</div>
-      <div class="chip" data-v="professional photo studio, seamless white backdrop, controlled studio lighting">Studio branco</div>
-      <div class="chip" data-v="tropical beach, ocean waves, white sand, palm trees, golden sunlight, crystal clear water">Praia tropical</div>
-      <div class="chip" data-v="luxury hotel room, king bed, elegant decor, city view, soft warm lighting">Hotel</div>
-      <div class="chip" data-v="outdoor nature, golden hour sunlight, green landscape, open field, natural environment">Ao ar livre</div>
-      <div class="chip" data-v="nightclub interior, neon RGB lights, dark ambiance, LED strip lights, smoky atmosphere">Clube noturno/Neon</div>
-      <div class="chip" data-v="modern living room, comfortable couch, natural daylight, contemporary decor">Sala de estar</div>
-      <div class="chip" data-v="modern kitchen, marble countertop, natural light, clean minimalist">Cozinha</div>
-      <div class="chip" data-v="rooftop terrace, city skyline, sunset, urban view, golden hour">Rooftop</div>
-      <div class="chip" data-v="outdoor swimming pool, poolside, turquoise water, sun lounger, summer day">Piscina</div>
-      <div class="chip" data-v="gym fitness center, exercise equipment, mirrors, workout environment">Academia</div>
-      <div class="chip" data-v="dark forest, trees, nature, dappled sunlight through leaves, mysterious mood">Floresta</div>
-      <div class="chip" data-v="city street, urban environment, evening streetlights, gritty realistic setting">Rua/Cidade</div>
-      <div class="chip" data-v="intimate boudoir, sheer curtains, candles, rose petals, romantic sensual atmosphere, dim warm light">Boudoir</div>
-      <div class="chip" data-v="office desk, professional environment, business setting, city view through window">Escritório</div>
-      <div class="chip" data-v="on a bed, lying on white sheets, intimate bedroom moment">Na cama</div>
-      <div class="chip" data-v="yoga studio, wooden floor, mirrors, natural light, zen atmosphere">Studio yoga</div>
-    </div>
+<!-- Cabelo -->
+<div class="sec">
+  <div class="sec-title">Cabelo</div>
+  <div class="chips" data-g="cabelo">
+    <div class="chip" data-v="long straight blonde hair, golden hair">Liso loiro</div>
+    <div class="chip" data-v="long straight brunette hair, dark brown hair">Liso moreno</div>
+    <div class="chip" data-v="long straight black hair">Liso preto</div>
+    <div class="chip" data-v="long curly brunette hair, voluminous curls">Cacheado</div>
+    <div class="chip" data-v="long wavy hair, beach waves">Ondulado</div>
+    <div class="chip" data-v="long red auburn hair, redhead">Ruivo</div>
+    <div class="chip" data-v="short pixie cut, short bob">Curto</div>
+    <div class="chip" data-v="platinum blonde hair, bleached blonde">Platinada</div>
+    <div class="chip" data-v="messy bun hairstyle">Coque</div>
   </div>
 </div>
 
-<!-- ── Câmera ─────────────────────────────────────────────────────────── -->
-<div class="card">
-  <div class="card-head" onclick="toggle(this)">
-    <span class="card-title"><span>📷</span> Câmera & Técnica</span>
-    <span class="card-arrow">▼</span>
-  </div>
-  <div class="card-body">
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Ângulo</div>
-      <div class="chips" data-g="angulo">
-        <div class="chip" data-v="eye level shot, straight on camera angle, neutral perspective">Olhos</div>
-        <div class="chip" data-v="low angle shot from below, upshot, worm's eye view, camera below subject">De baixo</div>
-        <div class="chip" data-v="high angle shot from above, camera above subject">De cima</div>
-        <div class="chip" data-v="bird's eye view, directly overhead, top-down shot, aerial perspective">Aéreo/Top-down</div>
-        <div class="chip" data-v="dutch angle, tilted canted camera, diagonal frame">Dutch angle</div>
-        <div class="chip" data-v="over the shoulder shot, camera positioned behind and beside subject">Sobre o ombro</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Enquadramento</div>
-      <div class="chips" data-g="frame">
-        <div class="chip" data-v="extreme close-up face portrait, face only, tight crop, facial details">Closeup rosto</div>
-        <div class="chip" data-v="close-up waist up shot, half body frame, torso and face">Meio corpo</div>
-        <div class="chip" data-v="full body shot, head to toe, entire body visible, full length">Corpo inteiro</div>
-        <div class="chip" data-v="wide environmental shot, subject and surroundings, scene establishing">Aberto/Ambiente</div>
-        <div class="chip" data-v="close-up buttocks shot, rear detail, tight crop on backside">Closeup bunda</div>
-        <div class="chip" data-v="POV shot, point of view, first person perspective, immersive">POV</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Lente</div>
-      <div class="chips" data-g="lente">
-        <div class="chip" data-v="85mm portrait lens, f/1.8, shallow depth of field, creamy bokeh background">85mm f/1.8</div>
-        <div class="chip" data-v="50mm standard lens, f/1.4, natural field of view, slight bokeh">50mm f/1.4</div>
-        <div class="chip" data-v="35mm wide angle lens, environmental portrait, slight distortion">35mm</div>
-        <div class="chip" data-v="telephoto 200mm lens, compressed perspective, very blurred background, isolated subject">200mm tele</div>
-        <div class="chip" data-v="macro lens, extreme close-up detail, very shallow focus, 1:1 magnification">Macro</div>
-        <div class="chip" data-v="wide aperture f/1.2, extremely creamy bokeh, dreamy out-of-focus background">f/1.2 bokeh</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Film Stock</div>
-      <div class="chips" data-g="film">
-        <div class="chip" data-v="Kodak Portra 400, warm skin tones, fine natural grain, classic analog look">Portra 400</div>
-        <div class="chip" data-v="Kodak Portra 800, pushed film stock, warm shadows, visible grain, rich tones">Portra 800</div>
-        <div class="chip" data-v="Fujifilm Pro 400H, soft pastel colors, cool blue shadows, fine grain">Fuji 400H</div>
-        <div class="chip" data-v="Cinestill 800T, tungsten balanced film, red halation glow, neon city grain, cinematic">Cinestill 800T</div>
-        <div class="chip" data-v="Kodak Ektar 100, vivid saturated colors, ultra-fine grain, sharp, outdoor film">Ektar 100</div>
-        <div class="chip" data-v="Ilford HP5 400, black and white monochrome, high contrast grain, dramatic shadows">P&amp;B Ilford HP5</div>
-        <div class="chip" data-v="Fujifilm Velvia 50, hyper-saturated colors, vivid slide film, ultra-sharp">Velvia 50</div>
-        <div class="chip" data-v="Agfa Vista 400, faded vintage look, shifted colors, light leaks, lo-fi">Agfa Vista</div>
-      </div>
-    </div>
-
-    <div class="chip-sec">
-      <div class="chip-lbl"><span class="dot"></span> Iluminação</div>
-      <div class="chips" data-g="luz">
-        <div class="chip" data-v="soft natural window light, diffused daylight, gentle shadows, natural ambiance">Luz natural suave</div>
-        <div class="chip" data-v="golden hour warm sunlight, long soft shadows, orange glow, magic hour">Golden hour</div>
-        <div class="chip" data-v="professional studio softbox lighting, even illumination, controlled setup">Studio/Softbox</div>
-        <div class="chip" data-v="colorful neon LED lights, pink and blue lighting, cyberpunk glow, colored shadows">Neon LED</div>
-        <div class="chip" data-v="low dim ambient light, moody dark atmosphere, shadow detail, noir feel">Low light/Moody</div>
-        <div class="chip" data-v="hard backlighting, rim light halo, silhouette effect, subject outlined in light">Contre-jour</div>
-        <div class="chip" data-v="warm candlelight, flickering intimate glow, orange warm tones, romantic dim">Velas</div>
-        <div class="chip" data-v="harsh sunlight, high noon, strong shadows, bleached tones, intense light">Sol forte</div>
-        <div class="chip" data-v="overcast soft diffused daylight, no harsh shadows, even flat light, cloudy day">Nublado/Flat</div>
-      </div>
-    </div>
-
+<!-- Roupa -->
+<div class="sec">
+  <div class="sec-title">Roupa / Nudez</div>
+  <div class="chips" data-g="roupa">
+    <div class="chip" data-v="completely nude, fully naked, bare skin, no clothes">Pelada</div>
+    <div class="chip" data-v="topless, bare breasts exposed, no top">Topless</div>
+    <div class="chip" data-v="wearing only thong panties, barely covered">Calcinha só</div>
+    <div class="chip" data-v="wearing lace lingerie set, bra and panties">Lingerie</div>
+    <div class="chip" data-v="wearing tiny micro bikini, string bikini">Biquíni micro</div>
+    <div class="chip" data-v="wearing sheer see-through bodysuit, transparent fabric">Body transparente</div>
+    <div class="chip" data-v="wearing tight mini dress, short bodycon dress">Mini vestido</div>
+    <div class="chip" data-v="wearing tight leggings and sports bra, gym outfit">Legging academia</div>
+    <div class="chip" data-v="wearing schoolgirl uniform, short plaid skirt, white blouse">Colegial</div>
+    <div class="chip" data-v="wearing black latex bodysuit, shiny skin-tight outfit">Látex</div>
+    <div class="chip" data-v="wearing ripped fishnet stockings, mesh bodysuit">Fishnet</div>
   </div>
 </div>
 
-<!-- ── Botão Gerar ─────────────────────────────────────────────────────── -->
-<button class="btn-gen" onclick="generate()">
-  ⚡ GERAR PROMPT RAW
-</button>
-
-<!-- ── Output ─────────────────────────────────────────────────────────── -->
-<div class="card out-card" id="out-card">
-  <div class="card-body">
-    <div class="out-lbl">▸ PROMPT GERADO</div>
-    <textarea id="prompt-out" class="prompt-ta" readonly spellcheck="false"></textarea>
-    <div class="out-actions">
-      <button class="btn-copy" id="btn-copy" onclick="copyPrompt()">📋 Copiar</button>
-      <button class="btn-regen" onclick="generate()">↻ Regerar</button>
-      <button class="btn-clr" onclick="clearOut()">✕ Limpar</button>
-    </div>
-    <div class="neg-box" id="neg-box">
-      <div class="neg-lbl">▸ Negative Prompt</div>
-      <textarea id="neg-out" class="neg-ta" readonly spellcheck="false"></textarea>
-    </div>
+<!-- Pose -->
+<div class="sec">
+  <div class="sec-title">Pose</div>
+  <div class="chips" data-g="pose">
+    <div class="chip" data-v="standing upright facing camera, full body front view, face visible">Em pé frente</div>
+    <div class="chip" data-v="standing from behind, back to camera, full body rear view, face hidden">Em pé costas</div>
+    <div class="chip" data-v="sitting facing camera, front view, face visible">Sentada frente</div>
+    <div class="chip" data-v="sitting from behind, back to camera, back fully visible, face hidden">Sentada costas</div>
+    <div class="chip" data-v="kneeling on both knees facing camera, upright torso, face visible">De joelhos frente</div>
+    <div class="chip" data-v="kneeling from behind, back to camera, rear view, face hidden">De joelhos costas</div>
+    <div class="chip" data-v="on all fours from directly behind, buttocks prominently facing camera, torso horizontal, face hidden">De quatro costas</div>
+    <div class="chip" data-v="on all fours facing camera, head raised looking at lens, face visible, torso horizontal">De quatro frente</div>
+    <div class="chip" data-v="lying on her back, supine, facing camera, face visible">Deitada frente</div>
+    <div class="chip" data-v="lying face down prone, back facing up, buttocks up, face hidden">Deitada bruços</div>
+    <div class="chip" data-v="lying on her side, body in lateral profile">Deitada de lado</div>
+    <div class="chip" data-v="lying on back with both legs raised high in the air, supine, face visible">Pernas levantadas</div>
+    <div class="chip" data-v="lying on back, legs spread wide open, thighs apart, supine, facing camera">Deitada pernas abertas</div>
+    <div class="chip" data-v="bent over forward from behind, torso leaning down, spine arched, buttocks pushed back, rear view, face hidden">Dobrada costas</div>
+    <div class="chip" data-v="standing bent over touching toes from behind, legs straight, buttocks raised high toward camera, rear view, face hidden">Dobrada tocando pés</div>
+    <div class="chip" data-v="deep squat from behind, back to camera, buttocks lowered, rear view, face hidden">Agachada costas</div>
+    <div class="chip" data-v="deep squat facing camera, front view, thighs spread, face visible">Agachada frente</div>
+    <div class="chip" data-v="leaning against wall, back to wall, facing camera, face visible">Encostada parede frente</div>
+    <div class="chip" data-v="facing wall from behind, palms on wall, back to camera, spine arched, rear view">Encostada parede costas</div>
+    <div class="chip" data-v="facing camera, legs spread wide open, front view, face visible">Pernas abertas frente</div>
+    <div class="chip" data-v="side profile, 90 degree angle, face in profile, body in profile">De perfil</div>
+    <div class="chip" data-v="looking over shoulder at camera, body turned away, face partially visible, three-quarter rear view">Olhando ombro</div>
+    <div class="chip" data-v="extreme arched back, spine deeply curved, buttocks raised, sensual arch, rear view">Arco extremo</div>
+    <div class="chip" data-v="on all fours from behind, back deeply arched concave, buttocks raised high toward camera, presenting, rear view">Presenting</div>
+    <div class="chip" data-v="woman on top straddling facing away from camera, back visible, spine arched, reverse cowgirl, rear view">Montada costas</div>
+    <div class="chip" data-v="woman on top straddling facing camera, upright torso, cowgirl position, face visible">Montada frente</div>
   </div>
 </div>
 
-</div><!-- /wrap -->
+<!-- Cenário -->
+<div class="sec">
+  <div class="sec-title">Cenário</div>
+  <div class="chips" data-g="cenario">
+    <div class="chip" data-v="luxury bedroom, soft natural window light, white silk bedsheets, intimate">Quarto</div>
+    <div class="chip" data-v="wet shower, steam, glass door, white tiles, water running down body">Chuveiro</div>
+    <div class="chip" data-v="luxurious marble bathroom, bathtub, warm light">Banheiro</div>
+    <div class="chip" data-v="professional photo studio, white seamless backdrop">Studio</div>
+    <div class="chip" data-v="tropical beach, ocean waves, white sand, palm trees, golden sunlight">Praia</div>
+    <div class="chip" data-v="luxury hotel room, king bed, elegant decor, soft lighting">Hotel</div>
+    <div class="chip" data-v="outdoor nature, golden hour sunlight, green landscape">Ao ar livre</div>
+    <div class="chip" data-v="nightclub interior, neon RGB lights, dark smoky atmosphere">Clube/Neon</div>
+    <div class="chip" data-v="modern living room, couch, natural daylight">Sala</div>
+    <div class="chip" data-v="rooftop terrace, city skyline, sunset, urban view">Rooftop</div>
+    <div class="chip" data-v="outdoor pool, poolside, turquoise water, summer">Piscina</div>
+    <div class="chip" data-v="gym fitness center, mirrors, workout equipment">Academia</div>
+    <div class="chip" data-v="intimate boudoir, candles, rose petals, sheer curtains, dim warm light">Boudoir</div>
+  </div>
+</div>
 
+<!-- Câmera -->
+<div class="sec">
+  <div class="sec-title">Câmera</div>
+  <div class="chips" data-g="cam">
+    <div class="chip" data-v="extreme close-up face portrait, tight crop">Closeup rosto</div>
+    <div class="chip" data-v="close-up waist up, half body frame">Meio corpo</div>
+    <div class="chip" data-v="full body shot, head to toe">Corpo inteiro</div>
+    <div class="chip" data-v="low angle shot from below, upshot, worm's eye view">De baixo</div>
+    <div class="chip" data-v="high angle shot from above, camera above">De cima</div>
+    <div class="chip" data-v="POV shot, first person perspective, immersive">POV</div>
+    <div class="chip" data-v="close-up buttocks shot, tight crop on backside, rear detail">Closeup bunda</div>
+    <div class="chip" data-v="dutch angle, tilted camera, canted frame">Dutch angle</div>
+  </div>
+</div>
+
+<!-- Film & Luz -->
+<div class="sec">
+  <div class="sec-title">Film Stock & Luz</div>
+  <div class="chips" data-g="film">
+    <div class="chip" data-v="Kodak Portra 400, warm skin tones, fine grain, classic analog">Portra 400</div>
+    <div class="chip" data-v="Fujifilm Pro 400H, soft pastel colors, cool shadows, fine grain">Fuji 400H</div>
+    <div class="chip" data-v="Cinestill 800T, tungsten film, halation glow, night grain, cinematic">Cinestill 800T</div>
+    <div class="chip" data-v="Kodak Ektar 100, vivid colors, ultra-fine grain, sharp outdoor film">Ektar 100</div>
+    <div class="chip" data-v="Ilford HP5, black and white, high contrast grain, dramatic monochrome">P&amp;B Ilford</div>
+    <div class="chip" data-v="golden hour warm sunlight, long shadows, magic hour, orange glow">Golden hour</div>
+    <div class="chip" data-v="neon colored LED lights, pink and blue cyberpunk glow, colored shadows">Neon</div>
+    <div class="chip" data-v="soft natural window light, diffused daylight, gentle shadows">Luz natural</div>
+    <div class="chip" data-v="warm candlelight, flickering intimate glow, orange warm tones">Velas</div>
+    <div class="chip" data-v="low dim moody ambient light, dark atmosphere, noir shadows">Low light</div>
+  </div>
+</div>
+
+<!-- Gerar -->
+<button class="btn-gen" onclick="generate()">⚡ GERAR PROMPT RAW</button>
+
+<!-- Output -->
+<div class="out" id="out">
+  <div class="out-lbl">▸ PROMPT</div>
+  <textarea id="ptxt" class="prompt-ta" readonly spellcheck="false"></textarea>
+  <div class="out-btns">
+    <button class="bcopy" id="bcopy" onclick="doCopy()">📋 Copiar</button>
+    <button class="bsm" onclick="generate()">↻ Regerar</button>
+    <button class="bsm" onclick="clearOut()">✕</button>
+  </div>
+  <div class="neg-box">
+    <div class="neg-lbl">Negative Prompt</div>
+    <textarea id="ntxt" class="neg-ta" readonly spellcheck="false"></textarea>
+  </div>
+</div>
+
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── State ────────────────────────────────────────────────────────────────────
 const S = {};
 
-// ─── Chips ───────────────────────────────────────────────────────────────────
+// chips
 document.querySelectorAll('[data-g]').forEach(row => {
   row.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', function() {
+    chip.addEventListener('click', function(){
       const g = row.dataset.g;
       const already = this.classList.contains('on');
       row.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
-      if (!already) {
-        this.classList.add('on');
-        S[g] = this.dataset.v;
-      } else {
-        S[g] = '';
-      }
+      this.classList.toggle('on', !already);
+      S[g] = already ? '' : this.dataset.v;
     });
   });
 });
 
-// ─── Card toggle ─────────────────────────────────────────────────────────────
-function toggle(head) { head.closest('.card').classList.toggle('collapsed'); }
-
-// ─── Theme ───────────────────────────────────────────────────────────────────
-function toggleTheme() {
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
-  document.getElementById('theme-btn').textContent = isDark ? '🌙 Escuro' : '☀ Claro';
+// theme
+function toggleTheme(){
+  const d = document.documentElement;
+  const dark = d.dataset.theme === 'dark';
+  d.dataset.theme = dark ? 'light' : 'dark';
+  document.getElementById('tbtn').textContent = dark ? '🌙 Escuro' : '☀ Claro';
 }
 
-// ─── PT → EN keyword map ─────────────────────────────────────────────────────
-const PTMAP = [
-  // multi-word first (order matters)
-  ['de costas', 'from behind, back to camera'],
-  ['de quatro', 'on all fours'],
-  ['de frente', 'facing camera'],
-  ['de lado', 'side view'],
-  ['em pé', 'standing upright'],
-  ['ao ar livre', 'outdoors, open air'],
-  ['luz natural', 'natural light'],
-  ['olhando para a câmera', 'looking at camera'],
-  ['olhando para câmera', 'looking at camera'],
-  ['golden hour', 'golden hour'],
-  // single words
-  ['mulher', 'woman'], ['garota', 'woman'], ['menina', 'girl'], ['modelo', 'model'],
-  ['loira', 'blonde woman'], ['morena', 'brunette woman'], ['ruiva', 'redhead woman'],
-  ['pelada', 'nude'], ['nua', 'nude, naked'], ['topless', 'topless, bare breasts'],
-  ['calcinha', 'panties'], ['sutiã', 'bra'], ['lingerie', 'lingerie'],
-  ['biquíni', 'bikini'], ['biquini', 'bikini'], ['vestido', 'dress'], ['saia', 'skirt'],
-  ['deitada', 'lying down'], ['sentada', 'sitting'], ['agachada', 'squatting'],
-  ['dobrada', 'bent over'], ['ajoelhada', 'kneeling'],
-  ['seios', 'breasts'], ['peitos', 'breasts'], ['bunda', 'buttocks, booty'],
-  ['pernas', 'legs'], ['cintura', 'waist'], ['quadril', 'hips'],
-  ['cama', 'bed'], ['quarto', 'bedroom'], ['banheiro', 'bathroom'],
-  ['chuveiro', 'shower'], ['praia', 'beach'], ['piscina', 'pool'],
-  ['academia', 'gym'], ['escritório', 'office'], ['cozinha', 'kitchen'],
-  ['sala', 'living room'], ['hotel', 'hotel'], ['floresta', 'forest'],
-  ['rua', 'street'], ['cidade', 'city'], ['estúdio', 'studio'],
-  ['sorrindo', 'smiling, happy expression'], ['olhando', 'looking'],
-  ['molhada', 'wet body, water dripping'], ['suada', 'sweaty, glistening skin'],
-  ['luz', 'light'], ['noite', 'night'], ['dia', 'daytime'],
-  ['sensual', 'sensual, alluring'], ['sexy', 'sexy, seductive'],
-  ['linda', 'beautiful'], ['bonita', 'beautiful'], ['gostosa', 'sexy, gorgeous'],
-  ['cabelo', 'hair'], ['longo', 'long'], ['curto', 'short'],
-  ['cacheado', 'curly'], ['liso', 'straight'], ['ondulado', 'wavy'],
-  ['com', 'with'], ['sem', 'without'], ['na', 'in the'], ['no', 'in the'],
-  ['uma', 'a'], ['um', 'a'], ['e', 'and'],
+// simple PT→EN
+const MAP = [
+  ['de costas','from behind, back to camera'],['de quatro','on all fours'],
+  ['de frente','facing camera'],['de lado','side view'],['em pé','standing'],
+  ['ao ar livre','outdoors'],['luz natural','natural light'],
+  ['olhando para a câmera','looking at camera'],['olhando para câmera','looking at camera'],
+  ['mulher','woman'],['garota','woman'],['loira','blonde woman'],
+  ['morena','brunette woman'],['ruiva','redhead woman'],
+  ['pelada','nude'],['nua','nude, naked'],['topless','topless'],
+  ['calcinha','panties'],['sutiã','bra'],['lingerie','lingerie'],
+  ['biquíni','bikini'],['biquini','bikini'],['vestido','dress'],['saia','skirt'],
+  ['deitada','lying down'],['sentada','sitting'],['agachada','squatting'],
+  ['dobrada','bent over'],['ajoelhada','kneeling'],
+  ['seios','breasts'],['peitos','breasts'],['bunda','buttocks'],
+  ['pernas','legs'],['cintura','waist'],['quadril','hips'],
+  ['cama','bed'],['quarto','bedroom'],['banheiro','bathroom'],
+  ['chuveiro','shower'],['praia','beach'],['piscina','pool'],
+  ['academia','gym'],['cozinha','kitchen'],['sala','living room'],
+  ['hotel','hotel'],['floresta','forest'],['rua','street'],['cidade','city'],
+  ['sorrindo','smiling'],['molhada','wet, water dripping'],['suada','sweaty, glistening'],
+  ['sensual','sensual, alluring'],['sexy','sexy, seductive'],
+  ['linda','beautiful'],['bonita','beautiful'],['gostosa','sexy, gorgeous'],
+  ['cabelo','hair'],['longo','long'],['curto','short'],
+  ['noite','night'],['dia','daytime'],['com','with'],['sem','without'],['e','and'],
 ];
 
-function translate(pt) {
-  if (!pt) return '';
+function tr(pt){
+  if(!pt) return '';
   let t = pt.toLowerCase().trim();
-  for (const [p, e] of PTMAP) t = t.split(p).join(e);
+  MAP.forEach(([p,e]) => { t = t.split(p).join(e); });
   return t;
 }
 
-// ─── Auto film stock ──────────────────────────────────────────────────────────
-function autoFilm() {
-  const c = (S.cenario || '').toLowerCase();
-  const l = (S.luz || '').toLowerCase();
-  if (c.includes('night') || c.includes('neon') || c.includes('club') || l.includes('neon'))
-    return 'Cinestill 800T, tungsten film, halation glow, city night grain';
-  if (c.includes('beach') || c.includes('pool') || c.includes('tropical'))
-    return 'Kodak Ektar 100, vivid outdoor colors, saturated film, fine grain';
-  if (c.includes('boudoir') || c.includes('bedroom') || c.includes('bath') || c.includes('shower'))
-    return 'Fujifilm Pro 400H, soft pastel tones, cool shadows, fine grain';
-  if (l.includes('golden') || c.includes('sunset') || c.includes('rooftop'))
-    return 'Kodak Portra 800, pushed warm tones, golden grain';
-  return 'Kodak Portra 400, warm natural tones, fine grain, classic analog film';
+function autoFilm(){
+  const c = (S.cenario||'').toLowerCase(), f = (S.film||'').toLowerCase();
+  if(S.film) return S.film;
+  if(/night|neon|club/.test(c)||/neon/.test(f)) return 'Cinestill 800T, tungsten film, halation glow, night grain';
+  if(/beach|pool|tropical/.test(c)) return 'Kodak Ektar 100, vivid colors, fine grain, outdoor film';
+  if(/boudoir|bedroom|bath|shower/.test(c)) return 'Fujifilm Pro 400H, soft pastel tones, cool shadows';
+  if(/rooftop|golden/.test(c)) return 'Kodak Portra 800, warm pushed film, golden grain';
+  return 'Kodak Portra 400, warm skin tones, fine grain, analog film';
 }
 
-// ─── Negative prompt ──────────────────────────────────────────────────────────
-function buildNeg() {
-  const pose = (S.pose || '').toLowerCase();
-  let neg = 'blurry, out of focus, bad anatomy, extra limbs, missing limbs, deformed hands, fused fingers, bad proportions, ugly face, disfigured, artifacts, watermark, signature, text, logo, cropped, worst quality, low quality, jpeg artifacts, noise, grain overload, cartoon, 3d render, illustration, painting, drawing, anime, sketch';
-
-  if (/from behind|back to camera|rear view|face hidden/.test(pose)) {
-    neg += ', (front view:2.0), (facing camera:2.0), (face visible:2.0), (looking at viewer:1.9), (face toward camera:2.0), (eye contact:1.9)';
-  } else if (/facing camera|front view/.test(pose)) {
-    neg += ', (back view:1.8), (rear view:1.8), (from behind:1.8), (face hidden:1.8)';
-  } else if (/side view|profile/.test(pose)) {
-    neg += ', (front view:1.7), (back view:1.7), (facing camera directly:1.7)';
-  }
-
-  const frame = (S.frame || '').toLowerCase();
-  if (/close.up face|extreme close/.test(frame))
-    neg += ', (full body:1.8), (wide shot:1.8), (far away:1.8)';
-  if (/full body/.test(frame))
-    neg += ', (close-up:1.7), (portrait crop:1.7), (tight framing:1.7)';
-
-  const ang = (S.angulo || '').toLowerCase();
-  if (/from below|upshot|worm/.test(ang))
-    neg += ", (high angle:2.0), (bird's eye:2.0), (top-down:2.0), (overhead:2.0)";
-  if (/bird.s eye|overhead|top.down/.test(ang))
-    neg += ", (low angle:2.0), (from below:2.0), (worm's eye:2.0)";
-
-  return neg;
+function buildNeg(){
+  const p = (S.pose||'').toLowerCase();
+  let n = 'blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing';
+  if(/from behind|back to camera|rear view|face hidden/.test(p))
+    n += ', (front view:2.0), (facing camera:2.0), (face visible:2.0), (looking at viewer:1.9)';
+  else if(/facing camera|front view/.test(p))
+    n += ', (back view:1.8), (rear view:1.8), (from behind:1.8), (face hidden:1.8)';
+  const c = (S.cam||'').toLowerCase();
+  if(/from below|upshot|worm/.test(c)) n += ", (high angle:2.0), (bird's eye:2.0), (top-down:2.0)";
+  if(/from above|high angle/.test(c)) n += ", (low angle:2.0), (from below:2.0), (worm's eye:2.0)";
+  return n;
 }
 
-// ─── Main generate ────────────────────────────────────────────────────────────
-function generate() {
-  const descPT = (document.getElementById('desc').value || '').trim();
-  const descEN = translate(descPT);
-
-  // Character
-  const char = [
-    S.etnia || 'beautiful woman',
-    S.idade,
-    S.corpo,
-    S.cabelo,
-    S.roupa,
-  ].filter(Boolean).join(', ');
-
-  // RAW base — always present
-  const rawBase = 'RAW photo, analog film photography, photorealistic, ultra-detailed, natural skin texture, pores visible, sharp focus, professional photography, high resolution';
-
-  // Build prompt parts in order
+function generate(){
+  const desc = tr(document.getElementById('desc').value.trim());
+  const raw = 'RAW photo, analog film photography, photorealistic, ultra-detailed, natural skin texture, sharp focus, professional photography';
   const parts = [
-    rawBase,
-    char,
-    S.cenario,
-    S.pose,
-    descEN,
-    S.frame,
-    S.angulo,
-    S.lente,
-    S.film || autoFilm(),
-    S.luz,
-    'masterpiece, best quality, 8k',
+    raw,
+    S.etnia || 'beautiful woman',
+    S.idade, S.corpo, S.cabelo, S.roupa,
+    S.cenario, S.pose, desc,
+    S.cam, autoFilm(), S.film,
+    'masterpiece, best quality, 8k resolution',
   ].filter(Boolean);
 
-  const prompt = parts.join(', ');
-  const neg = buildNeg();
+  // deduplicate film (autoFilm already returns S.film if set)
+  const seen = new Set();
+  const unique = parts.filter(p => { if(seen.has(p)) return false; seen.add(p); return true; });
 
-  document.getElementById('prompt-out').value = prompt;
-  document.getElementById('neg-out').value = neg;
-
-  const card = document.getElementById('out-card');
-  card.classList.add('on');
-  setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  document.getElementById('ptxt').value = unique.join(', ');
+  document.getElementById('ntxt').value = buildNeg();
+  const out = document.getElementById('out');
+  out.classList.add('on');
+  setTimeout(() => out.scrollIntoView({behavior:'smooth',block:'nearest'}), 50);
 }
 
-// ─── Copy ─────────────────────────────────────────────────────────────────────
-function copyPrompt() {
-  const text = document.getElementById('prompt-out').value;
-  if (!text) return;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('btn-copy');
-    btn.textContent = '✓ Copiado!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => {
-    document.getElementById('prompt-out').select();
-    document.execCommand('copy');
-    toast('Copiado!');
+function doCopy(){
+  const t = document.getElementById('ptxt').value;
+  if(!t) return;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b = document.getElementById('bcopy');
+    b.textContent = '✓ Copiado!'; b.classList.add('ok');
+    setTimeout(()=>{ b.textContent='📋 Copiar'; b.classList.remove('ok'); }, 2000);
   });
 }
 
-function clearOut() {
-  document.getElementById('prompt-out').value = '';
-  document.getElementById('neg-out').value = '';
-  document.getElementById('out-card').classList.remove('on');
+function clearOut(){
+  document.getElementById('ptxt').value='';
+  document.getElementById('ntxt').value='';
+  document.getElementById('out').classList.remove('on');
 }
 
-function clearAll() {
-  document.querySelectorAll('.chip.on').forEach(c => c.classList.remove('on'));
-  Object.keys(S).forEach(k => delete S[k]);
-  document.getElementById('desc').value = '';
+function clearAll(){
+  document.querySelectorAll('.chip.on').forEach(c=>c.classList.remove('on'));
+  Object.keys(S).forEach(k=>delete S[k]);
+  document.getElementById('desc').value='';
   clearOut();
 }
 
-// ─── Toast ───────────────────────────────────────────────────────────────────
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
+function showToast(m){
+  const t=document.getElementById('toast');
+  t.textContent=m; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
 }
 </script>
 </body>
