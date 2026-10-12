@@ -335,6 +335,28 @@ const STEPS = [
     skip:true,
   },
   {
+    id:'olhos', label:'Cor dos olhos', ask:'Cor dos olhos?',
+    qr:[
+      {label:'Castanho comum',val:'brown eyes, dark brown irises, warm brown eyes'},
+      {label:'Castanho mel 🍯',val:'honey brown eyes, amber brown irises, golden brown eyes'},
+      {label:'Verde esmeralda',val:'green eyes, emerald green irises, bright green eyes'},
+      {label:'Verde acinzentado',val:'grey-green eyes, sea green irises, hazel green'},
+      {label:'Azul céu',val:'blue eyes, bright blue irises, clear sky blue eyes'},
+      {label:'Azul profundo',val:'deep blue eyes, dark navy blue irises, ocean blue eyes'},
+      {label:'Cinza',val:'grey eyes, silver grey irises, steel grey eyes'},
+      {label:'Avelã/Hazel',val:'hazel eyes, mixed brown green irises, hazel flecked eyes'},
+      {label:'Âmbar/Dourado',val:'amber eyes, golden yellow irises, rare amber coloured eyes'},
+      {label:'Preto',val:'black eyes, very dark brown almost black irises, deep dark eyes'},
+      {label:'Azul acinzentado',val:'blue grey eyes, muted blue irises, grey blue eyes'},
+      {label:'Verde jade',val:'jade green eyes, vivid jade irises, intense green eyes'},
+      {label:'Olhos heterocromáticos',val:'heterochromia eyes, one blue one green eye, different coloured irises'},
+      {label:'Olhos grandes',val:'large wide eyes, big doe eyes, wide open expressive eyes'},
+      {label:'Olhos amendoados',val:'almond shaped eyes, elongated eye shape, cat-like eye shape'},
+      {label:'Olhos puxados',val:'monolid eyes, Asian eye shape, single eyelid, slightly hooded eyes'},
+    ],
+    skip:true,
+  },
+  {
     id:'cabelo', label:'Cabelo', ask:'E o cabelo?',
     qr:[
       {label:'Liso loiro',val:'long straight blonde hair, golden flowing hair'},
@@ -910,7 +932,7 @@ function buildPrompt(){
     : 'real photograph, not AI, not CGI, not 3D render, not painting, not illustration, film grain, lens aberration, natural bokeh';
   const parts=[
     raw, answers.idade, answers.etnia||'beautiful woman',
-    answers.corpo, answers.cabelo, answers.tattoo,
+    answers.corpo, answers.olhos, answers.cabelo, answers.tattoo,
     answers.roupa, answers.acessorios, answers.maquiagem, answers.expressao,
     answers.detalhes, answers.nsfw, answers.cenario, answers.pose,
     tr(answers.desc||''), answers.cam, autoFilm(), quality,
