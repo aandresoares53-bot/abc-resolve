@@ -388,7 +388,7 @@ function tr(pt){
 // ─── Negative ──────────────────────────────────────────────────────────────
 function buildNeg(){
   const p=(answers.pose||'').toLowerCase(), c=(answers.cam||'').toLowerCase();
-  let n='blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting';
+  let n='blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, oversharpened, digital art, CGI, render, hypersmooth, fake skin, doll-like, mannequin, wax figure, overly perfect, unrealistic skin, skin texture missing, skin too smooth, poreless skin, artificial lighting, studio fake look, beauty filter, heavy retouching, photoshop filter, skin filter';
   if(/from behind|back to camera|rear view|face hidden/.test(p))
     n+=', (front view:2.0), (facing camera:2.0), (face visible:2.0), (looking at viewer:1.9)';
   else if(/facing camera|front view/.test(p))
@@ -411,7 +411,8 @@ function autoFilm(){
 }
 
 function buildPrompt(){
-  const raw='RAW photo, analog film photography, photorealistic, ultra-detailed, natural skin texture, pores visible, sharp focus, professional photography';
+  const raw='RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, skin imperfections, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid photography, documentary style realism, sharp focus, depth of field, natural lighting falloff';
+  const quality='real photograph, not AI, not CGI, not 3D render, not painting, not illustration, film grain, lens aberration, natural bokeh';
   const parts=[
     raw,
     answers.etnia||'beautiful woman',
@@ -419,7 +420,7 @@ function buildPrompt(){
     answers.cenario, answers.pose,
     tr(answers.desc||''),
     answers.cam, autoFilm(),
-    'masterpiece, best quality, 8k resolution',
+    quality,
   ].filter(Boolean);
   const seen=new Set();
   return parts.filter(p=>{ if(seen.has(p)) return false; seen.add(p); return true; }).join(', ');
