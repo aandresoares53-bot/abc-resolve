@@ -20023,6 +20023,13 @@ function toggleQuickChip(el){
   const cat = el.dataset.cat;
   const val = el.dataset.val;
   const already = el.classList.contains('active');
+
+  // Preserve cenário state — other chip categories must never affect scene selection
+  const _isCenarioCat = (cat === 'cenario_chip');
+  const _cenChipBefore   = !_isCenarioCat ? quickChipState.cenario_chip : null;
+  const _cenBefore       = !_isCenarioCat ? quickChipState.cenario       : null;
+  const _cenActiveEl     = !_isCenarioCat ? document.querySelector('.quick-chip[data-cat="cenario_chip"].active') : null;
+
   // Remove active + auto-set from all chips in this category (manual click overrides pose default)
   document.querySelectorAll(`.quick-chip[data-cat="${cat}"]`).forEach(c => c.classList.remove('active','auto-set'));
   if(!already){
@@ -20046,6 +20053,17 @@ function toggleQuickChip(el){
       _updateFacePreview();
     }
   }
+
+  // Restore cenário if any side-effect cleared it
+  if(!_isCenarioCat){
+    if(_cenChipBefore && quickChipState.cenario_chip !== _cenChipBefore)
+      quickChipState.cenario_chip = _cenChipBefore;
+    if(_cenBefore && quickChipState.cenario !== _cenBefore)
+      quickChipState.cenario = _cenBefore;
+    if(_cenActiveEl && !_cenActiveEl.classList.contains('active'))
+      _cenActiveEl.classList.add('active');
+  }
+
   _autoSaveCharDraft();
   try{ _updateSelectionPreview(); }catch(e){}
 }
