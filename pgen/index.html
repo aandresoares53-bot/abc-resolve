@@ -2,7 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>RAWgen</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#e8a020">
@@ -25,12 +25,12 @@
   --bot-bg:#fff;--usr-bg:#e8a020;
   --txt:#1a1a1a;--txt2:#555;--txt3:#888;
 }
-html,body{height:100%;}
+html{height:100%;}
 body{
   background:var(--bg);color:var(--txt);
   font-family:'Segoe UI',system-ui,sans-serif;
   display:flex;flex-direction:column;
-  height:100vh;overflow:hidden;
+  height:100vh;height:100dvh;overflow:hidden;
 }
 
 /* ── Header ── */
@@ -137,7 +137,7 @@ header{
 #input-bar{
   flex-shrink:0;
   display:flex;align-items:flex-end;gap:8px;
-  padding:10px 14px 12px;
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
   border-top:1px solid var(--bdr);
   background:var(--bg);
 }
