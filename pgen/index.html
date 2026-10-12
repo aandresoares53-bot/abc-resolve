@@ -37,19 +37,36 @@ body{
 header{
   flex-shrink:0;
   display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;border-bottom:1px solid var(--bdr);
-  background:var(--bg);z-index:10;
+  padding:10px 14px;border-bottom:1px solid var(--bdr);
+  background:var(--bg);z-index:10;gap:8px;
 }
-.logo{font-size:1.3em;font-weight:900;letter-spacing:-1px;color:var(--acc);line-height:1;}
+.logo{font-size:1.2em;font-weight:900;letter-spacing:-1px;color:var(--acc);line-height:1;flex-shrink:0;}
 .logo small{color:var(--txt2);font-size:0.45em;font-weight:300;letter-spacing:0;margin-left:4px;vertical-align:middle;}
-.header-btns{display:flex;gap:7px;}
-.hbtn{background:transparent;border:1px solid var(--bdr);color:var(--txt2);border-radius:var(--r2);padding:5px 11px;cursor:pointer;font-size:0.75em;font-weight:600;transition:all .15s;}
+.header-btns{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+.hbtn{background:transparent;border:1px solid var(--bdr);color:var(--txt2);border-radius:var(--r2);padding:5px 9px;cursor:pointer;font-size:0.72em;font-weight:600;transition:all .15s;white-space:nowrap;}
 .hbtn:hover{border-color:var(--acc);color:var(--acc);}
+.hbtn.active{border-color:var(--acc);color:var(--acc);background:rgba(232,160,32,.1);}
+
+/* ── Progress bar ── */
+#progress-bar{
+  flex-shrink:0;height:3px;background:var(--bdr);
+  transition:none;
+}
+#progress-fill{height:100%;background:var(--acc);width:0%;transition:width .4s ease;}
+
+/* ── Progress label ── */
+#progress-label{
+  flex-shrink:0;
+  font-size:0.68em;color:var(--txt3);
+  padding:3px 14px;text-align:right;
+  border-bottom:1px solid var(--bdr);
+  background:var(--bg);
+}
 
 /* ── Chat area ── */
 #chat{
   flex:1;overflow-y:auto;
-  padding:16px 16px 8px;
+  padding:14px 14px 8px;
   display:flex;flex-direction:column;gap:10px;
   scroll-behavior:smooth;
 }
@@ -57,28 +74,20 @@ header{
 #chat::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px;}
 
 /* messages */
-.msg{display:flex;gap:9px;max-width:82%;animation:fadeUp .25s ease;}
+.msg{display:flex;gap:9px;max-width:84%;animation:fadeUp .25s ease;}
 .msg.bot{align-self:flex-start;}
 .msg.usr{align-self:flex-end;flex-direction:row-reverse;}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 
-.avatar{
-  width:30px;height:30px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:0.85em;margin-top:2px;
-}
+.avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8em;margin-top:2px;}
 .bot .avatar{background:var(--acc);color:#000;font-weight:900;}
 .usr .avatar{background:#333;color:#aaa;}
 
-.bubble{
-  padding:10px 14px;border-radius:var(--r);font-size:0.88em;line-height:1.55;
-  max-width:100%;word-break:break-word;
-}
+.bubble{padding:9px 13px;border-radius:var(--r);font-size:0.87em;line-height:1.55;max-width:100%;word-break:break-word;}
 .bot .bubble{background:var(--bot-bg);border:1px solid var(--bdr);border-bottom-left-radius:4px;}
 .usr .bubble{background:var(--usr-bg);color:#000;font-weight:600;border-bottom-right-radius:4px;}
 
-/* typing indicator */
+/* typing */
 .typing .bubble{padding:12px 16px;}
 .dot-row{display:flex;gap:4px;align-items:center;}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--txt3);animation:bounce .9s infinite;}
@@ -86,65 +95,104 @@ header{
 .dot:nth-child(3){animation-delay:.3s;}
 @keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
 
-/* prompt output in chat */
+/* summary card */
+.summary-card{
+  background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r2);
+  padding:10px 13px;margin-top:8px;font-size:0.78em;
+}
+.summary-card .sc-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.summary-card .sc-row:last-child{border-bottom:none;}
+.sc-key{color:var(--txt3);font-weight:700;text-transform:uppercase;font-size:.68em;letter-spacing:.05em;flex-shrink:0;margin-right:8px;}
+.sc-val{color:var(--txt);text-align:right;font-size:.85em;word-break:break-word;}
+.sc-edit{background:none;border:none;color:var(--acc);cursor:pointer;font-size:.8em;padding:0 0 0 6px;flex-shrink:0;}
+
+/* prompt output */
 .prompt-block{
   background:var(--bg);border:1px solid var(--acc);border-radius:var(--r2);
-  padding:11px 13px;font-size:0.8em;font-family:monospace;
+  padding:11px 13px;font-size:0.79em;font-family:monospace;
   line-height:1.7;word-break:break-word;color:var(--txt);
   margin-top:6px;cursor:text;user-select:all;
 }
 .neg-block{
   background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r2);
-  padding:9px 13px;font-size:0.75em;font-family:monospace;
+  padding:9px 13px;font-size:0.74em;font-family:monospace;
   line-height:1.6;color:#fca5a5;margin-top:6px;user-select:all;
 }
 .neg-title{font-size:.68em;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
+
+.btn-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
 .copy-btn{
   display:inline-flex;align-items:center;gap:5px;
   background:var(--acc);color:#000;border:none;border-radius:var(--r2);
-  padding:7px 14px;cursor:pointer;font-weight:700;font-size:0.78em;
-  margin-top:8px;transition:all .15s;
+  padding:7px 13px;cursor:pointer;font-weight:700;font-size:0.77em;transition:all .15s;
 }
 .copy-btn:hover{background:var(--acc2);}
-.copy-btn.ok{background:var(--green);}
-.restart-btn{
+.copy-btn.ok{background:var(--green);color:#fff;}
+.copy-btn.neg{background:#7f1d1d;color:#fca5a5;}
+.copy-btn.neg:hover{background:#991b1b;}
+.copy-btn.neg.ok{background:var(--green);color:#fff;}
+.icon-btn{
   display:inline-flex;align-items:center;gap:5px;
   background:transparent;border:1px solid var(--bdr);color:var(--txt3);border-radius:var(--r2);
-  padding:7px 14px;cursor:pointer;font-size:0.78em;font-weight:600;
-  margin-top:8px;margin-left:6px;transition:all .15s;
+  padding:7px 13px;cursor:pointer;font-size:0.77em;font-weight:600;transition:all .15s;
 }
-.restart-btn:hover{border-color:var(--acc);color:var(--acc);}
+.icon-btn:hover{border-color:var(--acc);color:var(--acc);}
+
+/* history panel */
+#hist-panel{
+  position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.8);
+  display:none;align-items:flex-end;
+}
+#hist-panel.open{display:flex;}
+#hist-box{
+  width:100%;max-height:70dvh;overflow-y:auto;
+  background:var(--bg);border-top:1px solid var(--bdr);
+  padding:14px;display:flex;flex-direction:column;gap:8px;
+}
+.hist-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.hist-title{font-weight:800;font-size:.9em;color:var(--acc);}
+.hist-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:1.3em;line-height:1;}
+.hist-item{
+  background:var(--bot-bg);border:1px solid var(--bdr);border-radius:var(--r2);
+  padding:9px 12px;cursor:pointer;font-size:.75em;font-family:monospace;
+  line-height:1.5;word-break:break-word;color:var(--txt3);
+  transition:border-color .15s;
+}
+.hist-item:hover{border-color:var(--acc);color:var(--txt);}
+.hist-item small{display:block;color:var(--txt2);font-size:.7em;margin-bottom:3px;font-family:sans-serif;}
+.hist-empty{color:var(--txt3);font-size:.85em;text-align:center;padding:20px 0;}
 
 /* ── Quick-reply chips ── */
 #qr-area{
-  flex-shrink:0;
-  padding:8px 14px 10px;
+  flex-shrink:0;padding:7px 12px 9px;
   border-top:1px solid var(--bdr);
   display:flex;flex-wrap:wrap;gap:5px;
-  min-height:46px;
-  background:var(--bg);
+  min-height:44px;background:var(--bg);
+  max-height:140px;overflow-y:auto;
 }
 .qr{
-  padding:5px 12px;border:1.5px solid var(--bdr);border-radius:20px;
-  font-size:0.74em;font-weight:600;cursor:pointer;
+  padding:5px 11px;border:1.5px solid var(--bdr);border-radius:20px;
+  font-size:0.73em;font-weight:600;cursor:pointer;
   background:var(--bot-bg);color:var(--txt3);
   transition:all .13s;user-select:none;white-space:nowrap;
 }
-.qr:hover{border-color:var(--acc);color:var(--txt);}
+.qr:hover,.qr:active{border-color:var(--acc);color:var(--txt);}
 .qr.skip{border-style:dashed;font-style:italic;}
+.qr.back{border-color:#555;color:#888;}
+.qr.back:hover{border-color:var(--acc);color:var(--acc);}
+.qr.rand{border-color:#7c3aed;color:#a78bfa;}
+.qr.rand:hover{background:rgba(124,58,237,.1);}
 
 /* ── Input bar ── */
 #input-bar{
-  flex-shrink:0;
-  display:flex;align-items:flex-end;gap:8px;
-  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--bdr);
-  background:var(--bg);
+  flex-shrink:0;display:flex;align-items:flex-end;gap:8px;
+  padding:9px 13px calc(11px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--bdr);background:var(--bg);
 }
 #msg-input{
   flex:1;background:var(--bot-bg);border:1.5px solid var(--bdr);
   border-radius:var(--r);color:var(--txt);
-  padding:10px 14px;font-size:0.9em;font-family:inherit;
+  padding:9px 13px;font-size:0.9em;font-family:inherit;
   resize:none;outline:none;line-height:1.5;max-height:120px;
   transition:border-color .2s;
 }
@@ -152,19 +200,18 @@ header{
 #msg-input::placeholder{color:var(--txt2);}
 #send-btn{
   background:var(--acc);border:none;border-radius:var(--r);
-  padding:10px 16px;cursor:pointer;font-size:1.1em;
+  padding:9px 15px;cursor:pointer;font-size:1.1em;
   flex-shrink:0;transition:all .15s;color:#000;
-  align-self:flex-end;height:42px;display:flex;align-items:center;
+  align-self:flex-end;height:41px;display:flex;align-items:center;
 }
 #send-btn:hover{background:var(--acc2);}
 #send-btn:disabled{opacity:.4;cursor:default;}
 
-/* responsive */
 @media(max-width:500px){
-  .msg{max-width:92%;}
-  #qr-area{padding:6px 10px 8px;}
-  #input-bar{padding:8px 10px 10px;}
-  header{padding:10px 12px;}
+  .msg{max-width:93%;}
+  #qr-area{padding:5px 9px 7px;}
+  #input-bar{padding:7px 9px 9px;}
+  header{padding:9px 11px;}
 }
 </style>
 </head>
@@ -173,420 +220,475 @@ header{
 <header>
   <div class="logo">RAWgen <small>AI prompt assistant</small></div>
   <div class="header-btns">
-    <button class="hbtn" onclick="restart()">⟳ Recomeçar</button>
+    <button class="hbtn" onclick="randomAll()" title="Sortear tudo aleatoriamente">🎲 Sortear</button>
+    <button class="hbtn" onclick="openHistory()" title="Histórico de prompts">📜 Histórico</button>
+    <button class="hbtn" onclick="restart()">⟳ Novo</button>
     <button class="hbtn" id="tbtn" onclick="toggleTheme()">☀ Claro</button>
   </div>
 </header>
 
+<div id="progress-bar"><div id="progress-fill"></div></div>
+<div id="progress-label">Passo 1 de 15</div>
+
 <div id="chat"></div>
-
 <div id="qr-area"></div>
-
 <div id="input-bar">
-  <textarea id="msg-input" rows="1" placeholder="Digite aqui ou escolha uma opção acima…"
+  <textarea id="msg-input" rows="1" placeholder="Digite ou escolha uma opção acima…"
     onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
   <button id="send-btn" onclick="send()" title="Enviar">➤</button>
 </div>
 
+<!-- History panel -->
+<div id="hist-panel" onclick="e=>{ if(e.target===this) closeHistory(); }">
+  <div id="hist-box">
+    <div class="hist-header">
+      <span class="hist-title">📜 Histórico de prompts</span>
+      <button class="hist-close" onclick="closeHistory()">✕</button>
+    </div>
+    <div id="hist-list"></div>
+  </div>
+</div>
+
 <script>
-// ─── Flow definition ───────────────────────────────────────────────────────
+// ─── STEPS ────────────────────────────────────────────────────────────────
 const STEPS = [
   {
-    id: 'desc',
-    ask: 'Olá! 👋 Vou montar um prompt <strong>RAW photo</strong> personalizado pra você.\n\nMe descreva a cena ou personagem em português:',
-    qr: [
-      {label:'Mulher loira sensual', val:'mulher loira sensual'},
-      {label:'Morena curvilínea', val:'morena curvilínea gostosa'},
-      {label:'Negra fitness', val:'mulher negra atlética'},
-      {label:'Asiática petite', val:'mulher asiática magra'},
-      {label:'MILF loira', val:'mulher loira madura sensual'},
-      {label:'Ruiva pálida', val:'mulher ruiva pele pálida sensual'},
-      {label:'Indiana exótica', val:'mulher indiana exótica sensual'},
-      {label:'Latina bunduda', val:'mulher latina bunduda curvilínea'},
-      {label:'Loira busty', val:'mulher loira busty corpão'},
-      {label:'Negra bunduda', val:'mulher negra bunduda gostosa'},
-      {label:'Japonesa delicada', val:'mulher japonesa delicada sensual'},
-      {label:'Árabe misteriosa', val:'mulher árabe misteriosa sensual'},
-      {label:'Colombiana peituda', val:'mulher colombiana peituda gostosa'},
-      {label:'BBW gostosa', val:'mulher gorda gostosa bunduda corpulenta'},
-      {label:'Cougar tatuada', val:'mulher madura tatuada sensual MILF'},
-      {label:'Fitness bunduda 🔥', val:'mulher fitness bunduda atlética gostosa'},
+    id:'desc', label:'Descrição',
+    ask:'Olá! 👋 Vou montar um prompt <strong>RAW photo</strong> personalizado.\n\nDescreva a cena ou personagem em português:',
+    qr:[
+      {label:'Mulher loira sensual',val:'mulher loira sensual'},
+      {label:'Morena curvilínea',val:'morena curvilínea gostosa'},
+      {label:'Negra fitness',val:'mulher negra atlética'},
+      {label:'Asiática petite',val:'mulher asiática magra'},
+      {label:'MILF loira',val:'mulher loira madura sensual'},
+      {label:'Ruiva pálida',val:'mulher ruiva pele pálida sensual'},
+      {label:'Indiana exótica',val:'mulher indiana exótica sensual'},
+      {label:'Latina bunduda',val:'mulher latina bunduda curvilínea'},
+      {label:'Loira busty',val:'mulher loira busty corpão'},
+      {label:'Negra bunduda',val:'mulher negra bunduda gostosa'},
+      {label:'Japonesa delicada',val:'mulher japonesa delicada sensual'},
+      {label:'Árabe misteriosa',val:'mulher árabe misteriosa sensual'},
+      {label:'Colombiana peituda',val:'mulher colombiana peituda gostosa'},
+      {label:'BBW gostosa',val:'mulher gorda gostosa bunduda corpulenta'},
+      {label:'Cougar tatuada',val:'mulher madura tatuada sensual MILF'},
+      {label:'Fitness bunduda 🔥',val:'mulher fitness bunduda atlética gostosa'},
     ],
-    free: true,
-    skip: false,
+    free:true, skip:false,
   },
   {
-    id: 'idade',
-    ask: 'Qual a faixa etária da personagem?',
-    qr: [
-      {label:'18-20 anos', val:'18 year old woman, young adult, youthful face'},
-      {label:'21-25 anos', val:'21 year old woman, early twenties, fresh young face'},
-      {label:'25-30 anos', val:'25 year old woman, mid twenties, mature young woman'},
-      {label:'30-35 anos', val:'30 year old woman, early thirties, confident mature look'},
-      {label:'35-40 anos', val:'35 year old woman, mid thirties, experienced mature woman'},
-      {label:'40-45 anos MILF', val:'40 year old MILF, mature woman, forties, experienced seductive look'},
-      {label:'45-50 anos cougar', val:'45 year old cougar, mature experienced woman, late forties'},
-      {label:'50+ anos', val:'50 year old woman, fifties, mature sophisticated woman'},
+    id:'idade', label:'Idade',
+    ask:'Qual a faixa etária?',
+    qr:[
+      {label:'18-20 anos',val:'18 year old woman, young adult, youthful face'},
+      {label:'21-25 anos',val:'21 year old woman, early twenties, fresh young face'},
+      {label:'25-30 anos',val:'25 year old woman, mid twenties, mature young woman'},
+      {label:'30-35 anos',val:'30 year old woman, early thirties, confident mature look'},
+      {label:'35-40 anos',val:'35 year old woman, mid thirties, experienced mature woman'},
+      {label:'40-45 MILF',val:'40 year old MILF, mature woman, forties, experienced seductive look'},
+      {label:'45-50 cougar',val:'45 year old cougar, mature experienced woman, late forties'},
+      {label:'50+ anos',val:'50 year old woman, fifties, mature sophisticated woman'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'etnia',
-    ask: 'Qual a etnia da personagem?',
-    qr: [
-      {label:'🇧🇷 Brasileira', val:'beautiful Brazilian woman, olive skin, South American features'},
-      {label:'🏳 Caucasiana', val:'beautiful white woman, fair skin, European features'},
-      {label:'Latina', val:'beautiful Latina woman, warm brown skin, Latin features'},
-      {label:'Asiática', val:'beautiful Asian woman, East Asian features, porcelain skin'},
-      {label:'Negra', val:'beautiful Black woman, dark melanin skin, African features'},
-      {label:'Mestiça', val:'beautiful mixed-race woman, mixed heritage, exotic features'},
-      {label:'Árabe', val:'beautiful Arab woman, Middle Eastern, olive warm skin'},
-      {label:'Japonesa', val:'beautiful Japanese woman, Japanese features, pale skin'},
-      {label:'Indiana', val:'beautiful Indian woman, South Asian features, warm brown skin'},
-      {label:'Italiana', val:'beautiful Italian woman, Mediterranean features, olive skin'},
-      {label:'Colombiana', val:'beautiful Colombian woman, Latin Caribbean features'},
-      {label:'Russa', val:'beautiful Russian woman, Eastern European features, pale skin'},
-      {label:'Tailandesa', val:'beautiful Thai woman, Southeast Asian features, golden skin'},
-      {label:'Cubana', val:'beautiful Cuban woman, Afro-Caribbean mixed features'},
-      {label:'Venezuelana', val:'beautiful Venezuelan woman, Latin Caribbean features, warm skin'},
-      {label:'Marroquina', val:'beautiful Moroccan woman, North African features, olive bronze skin'},
-      {label:'Filipina', val:'beautiful Filipino woman, Southeast Asian features, tan golden skin'},
-      {label:'Sueca', val:'beautiful Swedish woman, Nordic features, very fair skin, blonde'},
-      {label:'Espanhola', val:'beautiful Spanish woman, Iberian Mediterranean features, olive skin'},
+    id:'etnia', label:'Etnia',
+    ask:'Qual a etnia?',
+    qr:[
+      {label:'🇧🇷 Brasileira',val:'beautiful Brazilian woman, olive skin, South American features'},
+      {label:'🏳 Caucasiana',val:'beautiful white woman, fair skin, European features'},
+      {label:'Latina',val:'beautiful Latina woman, warm brown skin, Latin features'},
+      {label:'Asiática',val:'beautiful Asian woman, East Asian features, porcelain skin'},
+      {label:'Negra',val:'beautiful Black woman, dark melanin skin, African features'},
+      {label:'Mestiça',val:'beautiful mixed-race woman, mixed heritage, exotic features'},
+      {label:'Árabe',val:'beautiful Arab woman, Middle Eastern, olive warm skin'},
+      {label:'Japonesa',val:'beautiful Japanese woman, Japanese features, pale skin'},
+      {label:'Indiana',val:'beautiful Indian woman, South Asian features, warm brown skin'},
+      {label:'Italiana',val:'beautiful Italian woman, Mediterranean features, olive skin'},
+      {label:'Colombiana',val:'beautiful Colombian woman, Latin Caribbean features'},
+      {label:'Russa',val:'beautiful Russian woman, Eastern European features, pale skin'},
+      {label:'Tailandesa',val:'beautiful Thai woman, Southeast Asian features, golden skin'},
+      {label:'Cubana',val:'beautiful Cuban woman, Afro-Caribbean mixed features'},
+      {label:'Venezuelana',val:'beautiful Venezuelan woman, Latin Caribbean features, warm skin'},
+      {label:'Marroquina',val:'beautiful Moroccan woman, North African features, olive bronze skin'},
+      {label:'Filipina',val:'beautiful Filipino woman, Southeast Asian features, tan golden skin'},
+      {label:'Sueca',val:'beautiful Swedish woman, Nordic features, very fair skin, blonde'},
+      {label:'Espanhola',val:'beautiful Spanish woman, Iberian Mediterranean features, olive skin'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'corpo',
-    ask: 'Como é o corpo dela?',
-    qr: [
-      {label:'Magra/Petite', val:'slim petite body, slender figure, thin waist'},
-      {label:'Atlética', val:'athletic toned body, fit figure, muscle definition'},
-      {label:'Curvilínea', val:'curvy hourglass figure, wide hips, small waist, full figure'},
-      {label:'Bunduda 🍑', val:'very large round buttocks, big booty, thick thighs, bubble butt'},
-      {label:'Busty 👙', val:'very large natural breasts, busty, big chest, heavy bosom'},
-      {label:'BBW', val:'BBW, plus size, full figured, chubby, wide thick body'},
-      {label:'Fitness', val:'fitness model body, muscular legs, sculpted gluteus, defined curves'},
-      {label:'Bunduda + Busty 🔥', val:'very large natural breasts, very large round buttocks, big booty, busty, thick hourglass'},
-      {label:'Thicc', val:'thicc body, thick thighs, wide hips, plump buttocks, full figured curves'},
-      {label:'Skinny + Flat', val:'very slim body, flat chest, narrow hips, lean figure, petite frame'},
-      {label:'Peituda magra', val:'slim body with very large natural breasts, skinny waist, busty slender'},
-      {label:'PAWG', val:'PAWG, phat round booty, thick thighs, slim waist, big butt small waist'},
-      {label:'Musculosa', val:'very muscular body, female bodybuilder physique, defined muscles, strong'},
-      {label:'Grávida', val:'pregnant body, baby bump, full rounded belly, maternity'},
-      {label:'Magrinha + bunduda', val:'slim petite body, disproportionately large round buttocks, tiny waist big booty'},
-      {label:'Hourglass extrema', val:'extreme hourglass figure, tiny cinched waist, very wide hips, very large breasts'},
+    id:'corpo', label:'Corpo',
+    ask:'Como é o corpo?',
+    qr:[
+      {label:'Magra/Petite',val:'slim petite body, slender figure, thin waist'},
+      {label:'Atlética',val:'athletic toned body, fit figure, muscle definition'},
+      {label:'Curvilínea',val:'curvy hourglass figure, wide hips, small waist, full figure'},
+      {label:'Bunduda 🍑',val:'very large round buttocks, big booty, thick thighs, bubble butt'},
+      {label:'Busty 👙',val:'very large natural breasts, busty, big chest, heavy bosom'},
+      {label:'BBW',val:'BBW, plus size, full figured, chubby, wide thick body'},
+      {label:'Fitness',val:'fitness model body, muscular legs, sculpted gluteus, defined curves'},
+      {label:'Bunduda + Busty 🔥',val:'very large natural breasts, very large round buttocks, big booty, busty, thick hourglass'},
+      {label:'Thicc',val:'thicc body, thick thighs, wide hips, plump buttocks, full figured curves'},
+      {label:'Skinny + Flat',val:'very slim body, flat chest, narrow hips, lean figure, petite frame'},
+      {label:'Peituda magra',val:'slim body with very large natural breasts, skinny waist, busty slender'},
+      {label:'PAWG',val:'PAWG, phat round booty, thick thighs, slim waist, big butt small waist'},
+      {label:'Musculosa',val:'very muscular body, female bodybuilder physique, defined muscles, strong'},
+      {label:'Grávida',val:'pregnant body, baby bump, full rounded belly, maternity'},
+      {label:'Magrinha + bunduda',val:'slim petite body, disproportionately large round buttocks, tiny waist big booty'},
+      {label:'Hourglass extrema',val:'extreme hourglass figure, tiny cinched waist, very wide hips, very large breasts'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'cabelo',
-    ask: 'E o cabelo?',
-    qr: [
-      {label:'Liso loiro', val:'long straight blonde hair, golden flowing hair'},
-      {label:'Liso moreno', val:'long straight brunette hair, dark brown hair'},
-      {label:'Liso preto', val:'long straight black hair'},
-      {label:'Cacheado', val:'long curly brunette hair, voluminous curls'},
-      {label:'Ondulado', val:'long wavy hair, beach waves'},
-      {label:'Ruivo', val:'long red auburn hair, redhead'},
-      {label:'Curto', val:'short pixie cut hair, bob cut'},
-      {label:'Platinada', val:'platinum blonde hair, bleached blonde'},
-      {label:'Rabo de cavalo', val:'high ponytail, sleek ponytail hairstyle'},
-      {label:'Coque', val:'messy bun, hair up in bun, loose tendrils'},
-      {label:'Trançado', val:'braided hair, long braids, intricate braids'},
-      {label:'Mullet', val:'mullet haircut, short front long back'},
-      {label:'Colorido', val:'dyed colored hair, purple and pink streaks, fantasy hair color'},
-      {label:'Raspado lateral', val:'undercut hairstyle, shaved sides, long top'},
-      {label:'Franja', val:'straight bangs fringe, hair with bangs over forehead'},
-      {label:'Dreads', val:'dreadlocks hair, long thick dreads, natural locks'},
-      {label:'Afro', val:'big natural afro hair, voluminous afro, full round afro'},
-      {label:'Cabelo molhado', val:'wet hair, soaking wet hair strands clinging to skin'},
-      {label:'Longo liso platinado', val:'very long platinum blonde straight hair, ultra long silver hair'},
+    id:'cabelo', label:'Cabelo',
+    ask:'E o cabelo?',
+    qr:[
+      {label:'Liso loiro',val:'long straight blonde hair, golden flowing hair'},
+      {label:'Liso moreno',val:'long straight brunette hair, dark brown hair'},
+      {label:'Liso preto',val:'long straight black hair'},
+      {label:'Cacheado',val:'long curly brunette hair, voluminous curls'},
+      {label:'Ondulado',val:'long wavy hair, beach waves'},
+      {label:'Ruivo',val:'long red auburn hair, redhead'},
+      {label:'Curto',val:'short pixie cut hair, bob cut'},
+      {label:'Platinada',val:'platinum blonde hair, bleached blonde'},
+      {label:'Rabo de cavalo',val:'high ponytail, sleek ponytail hairstyle'},
+      {label:'Coque',val:'messy bun, hair up in bun, loose tendrils'},
+      {label:'Trançado',val:'braided hair, long braids, intricate braids'},
+      {label:'Mullet',val:'mullet haircut, short front long back'},
+      {label:'Colorido',val:'dyed colored hair, purple and pink streaks, fantasy hair color'},
+      {label:'Raspado lateral',val:'undercut hairstyle, shaved sides, long top'},
+      {label:'Franja',val:'straight bangs fringe, hair with bangs over forehead'},
+      {label:'Dreads',val:'dreadlocks hair, long thick dreads, natural locks'},
+      {label:'Afro',val:'big natural afro hair, voluminous afro, full round afro'},
+      {label:'Cabelo molhado',val:'wet hair, soaking wet hair strands clinging to skin'},
+      {label:'Longo platinado',val:'very long platinum blonde straight hair, ultra long silver hair'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'tattoo',
-    ask: 'Tatuagens e piercings?',
-    qr: [
-      {label:'Sem tatuagens', val:'no tattoos, clean skin, no body art'},
-      {label:'Tatuagem no braço', val:'sleeve tattoo on arm, intricate arm tattoo, inked arm'},
-      {label:'Tatuagem nas costas', val:'large back tattoo, full back body art, intricate spine tattoo'},
-      {label:'Tatuagem na coxa', val:'thigh tattoo, leg tattoo, inked thigh'},
-      {label:'Tatuagem no pescoço', val:'neck tattoo, throat tattoo, inked neck'},
-      {label:'Tatuada toda 🔥', val:'heavily tattooed body, full body tattoos, inked all over, tattoo model'},
-      {label:'Tatoo tribal', val:'tribal tattoo pattern, Polynesian tribal design, bold black tattoo'},
-      {label:'Piercing umbigo', val:'belly button piercing, navel ring, midriff piercing jewelry'},
-      {label:'Piercing no lábio', val:'lip piercing, labret piercing, lip ring'},
-      {label:'Piercing no nariz', val:'nose ring piercing, nostril stud, septum ring'},
-      {label:'Piercing mamilos', val:'nipple piercings, nipple jewelry, barbell piercings'},
-      {label:'Vários piercings', val:'multiple piercings, heavily pierced, industrial ear, multiple ear piercings, body jewelry'},
-      {label:'Tattoo + Piercings 🔥', val:'tattooed and pierced body, tattoo model, multiple piercings, alternative style'},
+    id:'tattoo', label:'Tatuagens',
+    ask:'Tatuagens e piercings?',
+    qr:[
+      {label:'Sem tatuagens',val:'no tattoos, clean skin, no body art'},
+      {label:'Tattoo no braço',val:'sleeve tattoo on arm, intricate arm tattoo, inked arm'},
+      {label:'Tattoo nas costas',val:'large back tattoo, full back body art, intricate spine tattoo'},
+      {label:'Tattoo na coxa',val:'thigh tattoo, leg tattoo, inked thigh'},
+      {label:'Tattoo no pescoço',val:'neck tattoo, throat tattoo, inked neck'},
+      {label:'Tattoo no peito',val:'chest tattoo, sternum tattoo, under breast tattoo, inked chest'},
+      {label:'Tatuada toda 🔥',val:'heavily tattooed body, full body tattoos, inked all over, tattoo model'},
+      {label:'Tribal',val:'tribal tattoo pattern, Polynesian tribal design, bold black tattoo'},
+      {label:'Floral delicado',val:'delicate floral tattoos, flower line art tattoo, feminine botanical ink'},
+      {label:'Piercing umbigo',val:'belly button piercing, navel ring, midriff piercing jewelry'},
+      {label:'Piercing lábio',val:'lip piercing, labret piercing, lip ring'},
+      {label:'Piercing nariz',val:'nose ring piercing, nostril stud, septum ring'},
+      {label:'Piercing mamilos',val:'nipple piercings, nipple jewelry, barbell piercings'},
+      {label:'Vários piercings',val:'multiple piercings, heavily pierced, industrial ear, multiple ear piercings, body jewelry'},
+      {label:'Tattoo + Piercings 🔥',val:'tattooed and pierced body, tattoo model, multiple piercings, alternative style'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'roupa',
-    ask: 'Roupa ou nudez?',
-    qr: [
-      {label:'Pelada 🔥', val:'completely nude, fully naked, bare skin, no clothes'},
-      {label:'Topless', val:'topless, bare breasts exposed, no top, only bottom'},
-      {label:'Só calcinha', val:'wearing only thong panties, barely covered, half nude'},
-      {label:'Só sutiã', val:'wearing only bra, bare bottom, topwear only'},
-      {label:'Lingerie', val:'wearing lace lingerie set, bra and panties, sexy underwear'},
-      {label:'Biquíni micro', val:'wearing tiny micro bikini, string bikini, barely there'},
-      {label:'Body transparente', val:'wearing sheer see-through bodysuit, transparent fabric'},
-      {label:'Mini vestido', val:'wearing tight mini dress, short bodycon dress, revealing'},
-      {label:'Legging academia', val:'wearing tight leggings and sports bra, gym outfit'},
-      {label:'Colegial', val:'wearing schoolgirl uniform, short plaid skirt, white blouse'},
-      {label:'Látex', val:'wearing black latex bodysuit, shiny skin-tight outfit'},
-      {label:'Enfermeira', val:'wearing sexy nurse costume, short white dress, red cross'},
-      {label:'Calcinha fio dental', val:'wearing only dental floss thong, g-string, minimal coverage'},
-      {label:'Vestido longo fendado', val:'wearing long slit dress, side slit revealing leg, elegant'},
-      {label:'Camiseta molhada', val:'wearing wet white t-shirt, soaked fabric clinging to body'},
-      {label:'Short jeans', val:'wearing very short denim shorts, daisy dukes, crop top'},
-      {label:'Peito de fora', val:'shirt pulled up exposing bare breasts, no bra, shirt lifted'},
-      {label:'Sarong praia', val:'wearing sheer beach sarong wrap, bikini underneath, tropical'},
-      {label:'Corselete', val:'wearing tight corset, boned bodice, waist cincher, cleavage'},
-      {label:'Meias longas', val:'wearing thigh-high stockings, stay-up stockings, legs covered'},
-      {label:'Camisa aberta', val:'wearing open unbuttoned shirt, no bra underneath, bare chest visible'},
-      {label:'Policial sexy', val:'wearing sexy police officer costume, tight uniform, badge, cap'},
-      {label:'Bombeira', val:'wearing sexy firefighter costume, open jacket, helmet'},
-      {label:'Professora', val:'wearing tight pencil skirt, blouse, glasses, teacher look'},
-      {label:'Secretária', val:'wearing tight business suit, white blouse, pencil skirt, professional'},
-      {label:'Pirata', val:'wearing pirate costume, corset, boots, eye patch, open shirt'},
-      {label:'Cheerleader', val:'wearing cheerleader uniform, short skirt, crop top, pompoms'},
-      {label:'Freira 🔥', val:'wearing nun habit, religious costume, habit dress, rosary'},
-      {label:'Fantasia de coelho', val:'wearing bunny girl costume, bunny ears, fishnet stockings, leotard'},
-      {label:'Cosplay de anime', val:'wearing anime cosplay costume, Japanese anime character outfit'},
-      {label:'Vampira', val:'wearing gothic vampire costume, dark dress, fangs, dramatic makeup'},
-      {label:'Bruxa', val:'wearing witch costume, pointed hat, dark outfit, mysterious'},
+    id:'roupa', label:'Roupa',
+    ask:'Roupa ou nudez?',
+    qr:[
+      {label:'Pelada 🔥',val:'completely nude, fully naked, bare skin, no clothes'},
+      {label:'Topless',val:'topless, bare breasts exposed, no top, only bottom'},
+      {label:'Só calcinha',val:'wearing only thong panties, barely covered, half nude'},
+      {label:'Só sutiã',val:'wearing only bra, bare bottom, topwear only'},
+      {label:'Lingerie',val:'wearing lace lingerie set, bra and panties, sexy underwear'},
+      {label:'Biquíni micro',val:'wearing tiny micro bikini, string bikini, barely there'},
+      {label:'Body transparente',val:'wearing sheer see-through bodysuit, transparent fabric'},
+      {label:'Mini vestido',val:'wearing tight mini dress, short bodycon dress, revealing'},
+      {label:'Legging academia',val:'wearing tight leggings and sports bra, gym outfit'},
+      {label:'Colegial',val:'wearing schoolgirl uniform, short plaid skirt, white blouse'},
+      {label:'Látex',val:'wearing black latex bodysuit, shiny skin-tight outfit'},
+      {label:'Calcinha fio dental',val:'wearing only dental floss thong, g-string, minimal coverage'},
+      {label:'Vestido longo fendado',val:'wearing long slit dress, side slit revealing leg, elegant'},
+      {label:'Camiseta molhada',val:'wearing wet white t-shirt, soaked fabric clinging to body'},
+      {label:'Short jeans',val:'wearing very short denim shorts, daisy dukes, crop top'},
+      {label:'Peito de fora',val:'shirt pulled up exposing bare breasts, no bra, shirt lifted'},
+      {label:'Sarong praia',val:'wearing sheer beach sarong wrap, bikini underneath, tropical'},
+      {label:'Corselete',val:'wearing tight corset, boned bodice, waist cincher, cleavage'},
+      {label:'Meias longas',val:'wearing thigh-high stockings, stay-up stockings, legs covered'},
+      {label:'Camisa aberta',val:'wearing open unbuttoned shirt, no bra underneath, bare chest visible'},
+      {label:'Policial sexy 👮',val:'wearing sexy police officer costume, tight uniform, badge, cap'},
+      {label:'Bombeira',val:'wearing sexy firefighter costume, open jacket, helmet'},
+      {label:'Professora',val:'wearing tight pencil skirt, blouse, glasses, teacher look'},
+      {label:'Secretária',val:'wearing tight business suit, white blouse, pencil skirt, professional'},
+      {label:'Enfermeira 🏥',val:'wearing sexy nurse costume, short white dress, red cross'},
+      {label:'Pirata',val:'wearing pirate costume, corset, boots, eye patch, open shirt'},
+      {label:'Cheerleader',val:'wearing cheerleader uniform, short skirt, crop top, pompoms'},
+      {label:'Freira 🔥',val:'wearing nun habit, religious costume, habit dress, rosary'},
+      {label:'Coelho Playboy 🐰',val:'wearing bunny girl costume, bunny ears, fishnet stockings, leotard'},
+      {label:'Cosplay anime',val:'wearing anime cosplay costume, Japanese anime character outfit'},
+      {label:'Vampira',val:'wearing gothic vampire costume, dark dress, fangs, dramatic makeup'},
+      {label:'Bruxa',val:'wearing witch costume, pointed hat, dark outfit, mysterious'},
+      {label:'Superheroína',val:'wearing tight superhero costume, spandex suit, cape, heroic stance'},
+      {label:'Cowgirl',val:'wearing cowgirl outfit, denim shorts, plaid shirt, cowboy boots and hat'},
+      {label:'Gueixa',val:'wearing geisha kimono, traditional Japanese dress, white makeup, obi belt'},
+      {label:'Dominatrix 🖤',val:'wearing dominatrix outfit, black leather corset, thigh boots, whip, mistress look'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'acessorios',
-    ask: 'Joias e acessórios?',
-    qr: [
-      {label:'Sem acessórios', val:'no accessories, minimal look'},
-      {label:'Colar dourado', val:'gold necklace, gold chain, golden jewelry around neck'},
-      {label:'Brincos grandes', val:'large hoop earrings, statement earrings, big dangly earrings'},
-      {label:'Pulseiras', val:'stacked bracelets, wrist bangles, arm jewelry'},
-      {label:'Anel dourado', val:'gold rings, multiple rings on fingers, hand jewelry'},
-      {label:'Conjunto completo ouro', val:'full gold jewelry set, necklace bracelet rings earrings, gold body jewelry'},
-      {label:'Óculos de sol', val:'wearing stylish sunglasses, designer shades, dark lenses'},
-      {label:'Óculos gatinho', val:'wearing cat-eye glasses, retro cat-eye sunglasses, vintage frames'},
-      {label:'Óculos aviador', val:'wearing aviator sunglasses, mirrored aviator lenses'},
-      {label:'Tiara/coroa', val:'wearing tiara crown, jeweled headpiece, princess crown'},
-      {label:'Chapéu aba larga', val:'wearing wide brim hat, floppy hat, boho hat'},
-      {label:'Luvas longas', val:'wearing long satin gloves, opera gloves, elbow-length gloves'},
-      {label:'Colar de pérolas', val:'wearing pearl necklace, classic pearls, elegant pearl jewelry'},
-      {label:'Body chain', val:'wearing gold body chain jewelry, waist chain, body harness jewelry'},
-      {label:'Tornozeleira', val:'wearing ankle bracelet, ankle chain jewelry, anklet'},
-      {label:'Fone de ouvido', val:'wearing wireless headphones, AirPods style, music aesthetic'},
+    id:'acessorios', label:'Acessórios',
+    ask:'Joias e acessórios?',
+    qr:[
+      {label:'Sem acessórios',val:'no accessories, minimal look'},
+      {label:'Colar dourado',val:'gold necklace, gold chain, golden jewelry around neck'},
+      {label:'Brincos grandes',val:'large hoop earrings, statement earrings, big dangly earrings'},
+      {label:'Pulseiras',val:'stacked bracelets, wrist bangles, arm jewelry'},
+      {label:'Anéis dourados',val:'gold rings, multiple rings on fingers, hand jewelry'},
+      {label:'Set completo ouro',val:'full gold jewelry set, necklace bracelet rings earrings, gold body jewelry'},
+      {label:'Prata/platina',val:'silver jewelry, platinum chain, silver rings, silver accessories'},
+      {label:'Óculos de sol',val:'wearing stylish sunglasses, designer shades, dark lenses'},
+      {label:'Óculos gatinho',val:'wearing cat-eye glasses, retro cat-eye sunglasses, vintage frames'},
+      {label:'Óculos aviador',val:'wearing aviator sunglasses, mirrored aviator lenses'},
+      {label:'Óculos transparente',val:'wearing clear frame glasses, thin transparent eyeglasses'},
+      {label:'Tiara/coroa',val:'wearing tiara crown, jeweled headpiece, princess crown'},
+      {label:'Chapéu aba larga',val:'wearing wide brim hat, floppy hat, boho hat'},
+      {label:'Boné',val:'wearing baseball cap, backwards cap, streetwear style'},
+      {label:'Luvas longas',val:'wearing long satin gloves, opera gloves, elbow-length gloves'},
+      {label:'Colar de pérolas',val:'wearing pearl necklace, classic pearls, elegant pearl jewelry'},
+      {label:'Body chain',val:'wearing gold body chain jewelry, waist chain, body harness jewelry'},
+      {label:'Tornozeleira',val:'wearing ankle bracelet, ankle chain jewelry, anklet'},
+      {label:'Fone de ouvido',val:'wearing wireless headphones, AirPods style, music aesthetic'},
+      {label:'Máscara',val:'wearing masquerade mask, venetian mask, mystery mask'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'maquiagem',
-    ask: 'Maquiagem?',
-    qr: [
-      {label:'Sem maquiagem', val:'no makeup, bare face, natural skin, makeup free'},
-      {label:'Natural/no-makeup', val:'no-makeup makeup look, natural minimal makeup, barely-there makeup, fresh face'},
-      {label:'Batom vermelho', val:'red lipstick, bold red lips, classic red lip makeup'},
-      {label:'Batom nude', val:'nude lipstick, neutral lip color, natural lip tone'},
-      {label:'Gloss labial', val:'glossy lips, lip gloss, shiny plump lips'},
-      {label:'Olho esfumado', val:'smoky eye makeup, dark eye shadow, dramatic smoky eyes, kohl liner'},
-      {label:'Cat eye', val:'cat eye eyeliner, winged liner, sharp flick eyeliner'},
-      {label:'Glam total', val:'full glam makeup, heavy foundation, dramatic eye, bold lip, contouring, highlight'},
-      {label:'Maquiagem coreana', val:'Korean makeup style, glass skin, gradient lips, puppy eye, soft blush'},
-      {label:'Maquiagem gótica', val:'gothic makeup, black lipstick, heavy dark eye, pale foundation, dark aesthetic'},
-      {label:'Olho delineado', val:'heavy black eyeliner, outlined eyes, bold liner, dramatic eye definition'},
-      {label:'Blush pesado', val:'heavy blush, flushed cheeks, rose blush, rosy cheeks makeup'},
-      {label:'Make festa', val:'party makeup, glitter eye shadow, sequin highlight, festive glam look'},
-      {label:'Make praia', val:'beach makeup, bronzer, sun-kissed glow, waterproof natural look'},
+    id:'maquiagem', label:'Maquiagem',
+    ask:'Maquiagem?',
+    qr:[
+      {label:'Sem maquiagem',val:'no makeup, bare face, natural skin, makeup free'},
+      {label:'Natural/no-makeup',val:'no-makeup makeup look, natural minimal makeup, barely-there makeup, fresh face'},
+      {label:'Batom vermelho',val:'red lipstick, bold red lips, classic red lip makeup'},
+      {label:'Batom nude',val:'nude lipstick, neutral lip color, natural lip tone'},
+      {label:'Batom escuro',val:'dark burgundy lipstick, deep wine lip color, dark plum lips'},
+      {label:'Gloss labial',val:'glossy lips, lip gloss, shiny plump lips'},
+      {label:'Olho esfumado',val:'smoky eye makeup, dark eye shadow, dramatic smoky eyes, kohl liner'},
+      {label:'Cat eye',val:'cat eye eyeliner, winged liner, sharp flick eyeliner'},
+      {label:'Glam total',val:'full glam makeup, heavy foundation, dramatic eye, bold lip, contouring, highlight'},
+      {label:'Maquiagem coreana',val:'Korean makeup style, glass skin, gradient lips, puppy eye, soft blush'},
+      {label:'Maquiagem gótica',val:'gothic makeup, black lipstick, heavy dark eye, pale foundation, dark aesthetic'},
+      {label:'Olho delineado',val:'heavy black eyeliner, outlined eyes, bold liner, dramatic eye definition'},
+      {label:'Blush pesado',val:'heavy blush, flushed cheeks, rose blush, rosy cheeks makeup'},
+      {label:'Make festa',val:'party makeup, glitter eye shadow, sequin highlight, festive glam look'},
+      {label:'Make praia',val:'beach makeup, bronzer, sun-kissed glow, waterproof natural look'},
+      {label:'Glitter',val:'glitter eye makeup, festival glitter, sparkle eye shadow, holographic highlight'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'expressao',
-    ask: 'Expressão facial?',
-    qr: [
-      {label:'Sorrindo', val:'smiling, warm genuine smile, happy expression, teeth showing'},
-      {label:'Sorriso leve', val:'subtle smile, soft lips curl, gentle smile, serene expression'},
-      {label:'Séria/intensa', val:'serious intense expression, direct gaze, stern face, powerful look'},
-      {label:'Sedutora', val:'seductive expression, bedroom eyes, sultry look, half-lidded gaze'},
-      {label:'Boca aberta', val:'open mouth, lips parted, slightly open lips, breathless expression'},
-      {label:'Mordendo lábio', val:'biting lower lip, lip bite, sensual lip bite expression'},
-      {label:'Olhando de baixo', val:'looking up at camera from below, submissive upward gaze, eyes looking up'},
-      {label:'Olhar penetrante', val:'piercing direct eye contact, intense stare, confident bold gaze'},
-      {label:'Surpresa', val:'surprised expression, wide eyes, mouth open in surprise, shocked look'},
-      {label:'Tímida', val:'shy expression, bashful look, looking away slightly, demure gaze'},
-      {label:'Provocante', val:'teasing provocative expression, playful smirk, challenging look'},
-      {label:'Língua de fora', val:'tongue out, sticking tongue out, playful expression, tongue showing'},
-      {label:'Gemendo', val:'moaning expression, ecstasy face, pleasure expression, eyes closed head back'},
-      {label:'Olhos fechados', val:'eyes closed, closed eyes, peaceful expression, introspective look'},
+    id:'expressao', label:'Expressão',
+    ask:'Expressão facial?',
+    qr:[
+      {label:'Sorrindo',val:'smiling, warm genuine smile, happy expression, teeth showing'},
+      {label:'Sorriso leve',val:'subtle smile, soft lips curl, gentle smile, serene expression'},
+      {label:'Séria/intensa',val:'serious intense expression, direct gaze, stern face, powerful look'},
+      {label:'Sedutora',val:'seductive expression, bedroom eyes, sultry look, half-lidded gaze'},
+      {label:'Boca aberta',val:'open mouth, lips parted, slightly open lips, breathless expression'},
+      {label:'Mordendo lábio',val:'biting lower lip, lip bite, sensual lip bite expression'},
+      {label:'Olhando de baixo',val:'looking up at camera from below, submissive upward gaze, eyes looking up'},
+      {label:'Olhar penetrante',val:'piercing direct eye contact, intense stare, confident bold gaze'},
+      {label:'Surpresa',val:'surprised expression, wide eyes, mouth open in surprise, shocked look'},
+      {label:'Tímida',val:'shy expression, bashful look, looking away slightly, demure gaze'},
+      {label:'Provocante',val:'teasing provocative expression, playful smirk, challenging look'},
+      {label:'Língua de fora',val:'tongue out, sticking tongue out, playful expression, tongue showing'},
+      {label:'Gemendo',val:'moaning expression, ecstasy face, pleasure expression, eyes closed head back'},
+      {label:'Olhos fechados',val:'eyes closed, closed eyes, peaceful expression, introspective look'},
+      {label:'Orgasmo',val:'orgasm face, climax expression, ecstatic pleasure, head thrown back'},
+      {label:'Chorando de prazer',val:'crying tears of pleasure, overwhelmed ecstatic expression, wet eyes'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'nsfw',
-    ask: '🔞 Conteúdo explícito (NSFW)?',
-    qr: [
-      {label:'Não (SFW)', val:'', skip:true},
-      {label:'Nudez artística', val:'artistic nude, fine art nude photography, tasteful nudity, elegant nude'},
-      {label:'Seios à mostra', val:'bare breasts fully exposed, nude breasts, nipples visible, topless nude'},
-      {label:'Pelada explícita', val:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography'},
-      {label:'Close íntimo', val:'intimate close-up, explicit detail shot, nude close-up detail, adult photography'},
-      {label:'Masturbando', val:'masturbating, self pleasure, touching herself, explicit self stimulation'},
-      {label:'Oral giving', val:'giving oral sex, performing fellatio, blowjob, oral sex act explicit'},
-      {label:'Oral receiving', val:'receiving oral sex, cunnilingus, oral sex being performed on her, explicit oral'},
-      {label:'Sexo vaginal', val:'vaginal sex, penetration, intercourse, explicit sex act, adult content'},
-      {label:'Sexo anal', val:'anal sex, anal penetration, explicit anal sex act, adult explicit'},
-      {label:'Gangbang', val:'gangbang, multiple men, group sex, multiple penetration, extreme explicit'},
-      {label:'Squirting 💦', val:'squirting, female ejaculation, explicit squirt, wet explicit orgasm'},
-      {label:'Facial 💦', val:'facial cumshot, cum on face, explicit facial, semen on face'},
-      {label:'Creampie', val:'creampie, internal ejaculation, cum inside, explicit creampie'},
-      {label:'BDSM/Bondage', val:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit'},
-      {label:'Dominação', val:'dominatrix, dominant woman, femdom, whip, leather, power dynamic explicit'},
+    id:'detalhes', label:'Detalhes pele',
+    ask:'Detalhes de pele e corpo?',
+    qr:[
+      {label:'Pele natural',val:'natural skin, normal skin condition'},
+      {label:'Molhada 💧',val:'wet glistening skin, water droplets on skin, dripping wet, shiny wet body'},
+      {label:'Suada',val:'sweaty glistening skin, sweat beads on skin, perspiration, wet with sweat'},
+      {label:'Óleo/brilho',val:'oiled skin, shiny body oil, glossy skin sheen, body oil glistening'},
+      {label:'Glitter no corpo',val:'body glitter, festival glitter on skin, shimmering body sparkles'},
+      {label:'Bronzeada',val:'deep tan skin, tanned body, sun-kissed bronze skin, tan lines'},
+      {label:'Arrepiada',val:'goosebumps on skin, erect nipples, skin raised in arousal'},
+      {label:'Espuma/banho',val:'soapy foam on body, bath foam, shower bubbles on skin'},
+      {label:'Pintura corporal',val:'body paint artwork, painted skin, artistic body paint design'},
+      {label:'Manchas de bronzeado',val:'bikini tan lines, pale skin where swimsuit was, tan lines visible'},
+      {label:'Pele muito clara',val:'very pale white skin, alabaster skin, porcelain white skin tone'},
+      {label:'Pele muito escura',val:'very dark deep melanin skin, ebony skin tone, deep dark complexion'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'pose',
-    ask: 'Qual pose você quer?',
-    qr: [
-      {label:'Em pé frente', val:'standing upright facing camera, full body front view, face visible'},
-      {label:'Em pé costas', val:'standing from behind, back to camera, full body rear view, face hidden'},
-      {label:'Sentada frente', val:'sitting facing camera, front view, face visible'},
-      {label:'Sentada costas', val:'sitting from behind, back to camera, back visible, face hidden'},
-      {label:'De joelhos frente', val:'kneeling on both knees facing camera, upright torso, face visible'},
-      {label:'De joelhos costas', val:'kneeling from behind, back to camera, rear view, face hidden'},
-      {label:'De quatro costas 🔥', val:'on all fours from directly behind, buttocks prominently facing camera, torso horizontal, face hidden, rear view doggy position'},
-      {label:'De quatro frente', val:'on all fours facing camera, head raised looking at lens, face visible, torso horizontal'},
-      {label:'Deitada frente', val:'lying on her back, supine, facing camera, face visible'},
-      {label:'Deitada bruços', val:'lying face down prone, back facing up, buttocks up, face hidden'},
-      {label:'Deitada de lado', val:'lying on her side, body in lateral profile'},
-      {label:'Pernas levantadas', val:'lying on back with both legs raised high in the air, supine, face visible'},
-      {label:'Pernas abertas 🔥', val:'lying on back, legs spread wide open, thighs apart, supine, facing camera, face visible'},
-      {label:'Dobrada costas', val:'bent over from behind, torso leaning down, spine arched, buttocks pushed back, rear view, face hidden'},
-      {label:'Dobrada tocando pés', val:'standing bent over touching toes from behind, legs straight, buttocks raised high, rear view, face hidden'},
-      {label:'Agachada costas', val:'deep squat from behind, back to camera, buttocks lowered, rear view, face hidden'},
-      {label:'Agachada frente', val:'deep squat facing camera, thighs spread, face visible'},
-      {label:'Presenting 🔥', val:'on all fours from behind, back deeply arched concave, buttocks raised high toward camera, presenting pose, rear view'},
-      {label:'Montada costas', val:'reverse cowgirl position, woman on top facing away from camera, back visible, spine arched, rear view'},
-      {label:'Montada frente', val:'cowgirl position, woman on top straddling facing camera, upright torso, face visible'},
-      {label:'Arco extremo', val:'extreme arched back, spine deeply curved, buttocks raised and pushed back, sensual arch'},
-      {label:'De perfil', val:'side profile, 90 degree angle, face in profile, body in profile'},
-      {label:'Olhando ombro', val:'looking over shoulder at camera, body turned away, face partially visible, three-quarter rear view'},
-      {label:'Encostada parede', val:'leaning against wall, back against wall, relaxed standing pose'},
-      {label:'Sentada chão pernas abertas', val:'sitting on floor legs spread apart, facing camera, thighs open'},
-      {label:'Abraçando joelhos', val:'sitting hugging knees to chest, compact pose, face visible'},
-      {label:'Em pé mão na cabeça', val:'standing, hands behind head, elbows out, chest forward, face visible'},
-      {label:'Dançando', val:'dancing pose, dynamic movement, body in motion, sensual dance'},
-      {label:'Correndo', val:'running pose, body in motion, dynamic athletic movement'},
-      {label:'Lambendo lábios', val:'licking lips seductively, tongue on lips, mouth open slightly, looking at camera'},
-      {label:'Mão no quadril', val:'hand on hip, confident pose, weight shifted, face visible'},
-      {label:'Espreguiçando', val:'stretching arms above head, arched back, sensual stretch, face visible'},
-      {label:'Abraçada ao travesseiro', val:'hugging pillow in bed, lying sideways, sensual bedroom pose'},
-      {label:'Sentada mesa', val:'sitting on table edge, legs dangling, leaning back on hands, facing camera'},
+    id:'nsfw', label:'NSFW',
+    ask:'🔞 Conteúdo explícito (NSFW)?',
+    qr:[
+      {label:'Não (SFW)',val:'',skip:true},
+      {label:'Nudez artística',val:'artistic nude, fine art nude photography, tasteful nudity, elegant nude'},
+      {label:'Seios à mostra',val:'bare breasts fully exposed, nude breasts, nipples visible, topless nude'},
+      {label:'Pelada explícita',val:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography'},
+      {label:'Close íntimo',val:'intimate close-up, explicit detail shot, nude close-up detail, adult photography'},
+      {label:'Masturbando',val:'masturbating, self pleasure, touching herself, explicit self stimulation'},
+      {label:'Oral giving',val:'giving oral sex, performing fellatio, blowjob, oral sex act explicit'},
+      {label:'Oral receiving',val:'receiving oral sex, cunnilingus, oral sex being performed on her, explicit oral'},
+      {label:'Sexo vaginal',val:'vaginal sex, penetration, intercourse, explicit sex act, adult content'},
+      {label:'Sexo anal',val:'anal sex, anal penetration, explicit anal sex act, adult explicit'},
+      {label:'Gangbang',val:'gangbang, multiple men, group sex, multiple penetration, extreme explicit'},
+      {label:'Squirting 💦',val:'squirting, female ejaculation, explicit squirt, wet explicit orgasm'},
+      {label:'Facial 💦',val:'facial cumshot, cum on face, explicit facial, semen on face'},
+      {label:'Creampie',val:'creampie, internal ejaculation, cum inside, explicit creampie'},
+      {label:'BDSM/Bondage',val:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit'},
+      {label:'Dominação',val:'dominatrix, dominant woman, femdom, whip, leather, power dynamic explicit'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'cenario',
-    ask: 'Qual o cenário?',
-    qr: [
-      {label:'🛏 Quarto', val:'luxury bedroom, soft natural window light, white silk bedsheets, intimate setting'},
-      {label:'🚿 Chuveiro', val:'wet shower, steam, glass door, white tiles, water running down body'},
-      {label:'🛁 Banheiro', val:'luxurious marble bathroom, bathtub, warm light, elegant decor'},
-      {label:'📸 Studio', val:'professional photo studio, white seamless backdrop, controlled studio lighting'},
-      {label:'🏖 Praia', val:'tropical beach, ocean waves, white sand, palm trees, golden sunlight'},
-      {label:'🏨 Hotel', val:'luxury hotel room, king bed, elegant decor, soft warm lighting'},
-      {label:'🌿 Ao ar livre', val:'outdoor nature, golden hour sunlight, green landscape, open field'},
-      {label:'🌆 Clube/Neon', val:'nightclub interior, neon RGB lights, dark smoky atmosphere, LED lights'},
-      {label:'🛋 Sala', val:'modern living room, couch, natural daylight, contemporary decor'},
-      {label:'🏙 Rooftop', val:'rooftop terrace, city skyline, sunset, urban golden view'},
-      {label:'🏊 Piscina', val:'outdoor pool, poolside, turquoise water, sun lounger, summer'},
-      {label:'💪 Academia', val:'gym fitness center, mirrors, workout equipment, athletic environment'},
-      {label:'🕯 Boudoir', val:'intimate boudoir, candles, rose petals, sheer curtains, dim warm romantic light'},
-      {label:'🌊 Mar aberto', val:'open sea, floating in ocean water, horizon, blue water'},
-      {label:'🌅 Pôr do sol', val:'sunset on beach, orange sky, warm golden light, silhouette'},
-      {label:'🏔 Natureza selvagem', val:'wild nature, forest, waterfall, rocks, natural outdoor setting'},
-      {label:'🚗 Carro luxo', val:'inside luxury car, leather seat, city lights background, night'},
-      {label:'🛥 Iate', val:'luxury yacht, open sea, sun deck, nautical setting'},
-      {label:'🌃 Rua noturna', val:'night street, city lights, wet pavement reflections, urban night'},
-      {label:'🏡 Varanda', val:'outdoor balcony, sunrise, railing, natural morning light'},
-      {label:'🎭 Palco', val:'theatrical stage, dramatic spotlights, red velvet curtains, performance'},
-      {label:'🍷 Bar/Lounge', val:'upscale bar lounge, dim warm light, leather stools, cocktail atmosphere'},
-      {label:'🌸 Jardim', val:'lush flower garden, rose petals, natural afternoon light, botanical setting'},
-      {label:'❄ Neve', val:'snowy outdoor, winter landscape, snowflakes, cold breath visible'},
-      {label:'🏺 Deserto', val:'desert dunes, arid landscape, harsh sun, sand, golden sky'},
+    id:'pose', label:'Pose',
+    ask:'Qual pose?',
+    qr:[
+      {label:'Em pé frente',val:'standing upright facing camera, full body front view, face visible'},
+      {label:'Em pé costas',val:'standing from behind, back to camera, full body rear view, face hidden'},
+      {label:'Sentada frente',val:'sitting facing camera, front view, face visible'},
+      {label:'Sentada costas',val:'sitting from behind, back to camera, back visible, face hidden'},
+      {label:'De joelhos frente',val:'kneeling on both knees facing camera, upright torso, face visible'},
+      {label:'De joelhos costas',val:'kneeling from behind, back to camera, rear view, face hidden'},
+      {label:'De quatro costas 🔥',val:'on all fours from directly behind, buttocks prominently facing camera, torso horizontal, face hidden, rear view doggy position'},
+      {label:'De quatro frente',val:'on all fours facing camera, head raised looking at lens, face visible, torso horizontal'},
+      {label:'Deitada frente',val:'lying on her back, supine, facing camera, face visible'},
+      {label:'Deitada bruços',val:'lying face down prone, back facing up, buttocks up, face hidden'},
+      {label:'Deitada de lado',val:'lying on her side, body in lateral profile'},
+      {label:'Pernas levantadas',val:'lying on back with both legs raised high in the air, supine, face visible'},
+      {label:'Pernas abertas 🔥',val:'lying on back, legs spread wide open, thighs apart, supine, facing camera, face visible'},
+      {label:'Dobrada costas',val:'bent over from behind, torso leaning down, spine arched, buttocks pushed back, rear view, face hidden'},
+      {label:'Dobrada tocando pés',val:'standing bent over touching toes from behind, legs straight, buttocks raised high, rear view, face hidden'},
+      {label:'Agachada costas',val:'deep squat from behind, back to camera, buttocks lowered, rear view, face hidden'},
+      {label:'Agachada frente',val:'deep squat facing camera, thighs spread, face visible'},
+      {label:'Presenting 🔥',val:'on all fours from behind, back deeply arched concave, buttocks raised high toward camera, presenting pose, rear view'},
+      {label:'Montada costas',val:'reverse cowgirl position, woman on top facing away from camera, back visible, spine arched, rear view'},
+      {label:'Montada frente',val:'cowgirl position, woman on top straddling facing camera, upright torso, face visible'},
+      {label:'Arco extremo',val:'extreme arched back, spine deeply curved, buttocks raised and pushed back, sensual arch'},
+      {label:'De perfil',val:'side profile, 90 degree angle, face in profile, body in profile'},
+      {label:'Olhando ombro',val:'looking over shoulder at camera, body turned away, face partially visible, three-quarter rear view'},
+      {label:'Encostada parede',val:'leaning against wall, back against wall, relaxed standing pose'},
+      {label:'Sentada pernas abertas',val:'sitting on floor legs spread apart, facing camera, thighs open'},
+      {label:'Abraçando joelhos',val:'sitting hugging knees to chest, compact pose, face visible'},
+      {label:'Em pé mão na cabeça',val:'standing, hands behind head, elbows out, chest forward, face visible'},
+      {label:'Dançando',val:'dancing pose, dynamic movement, body in motion, sensual dance'},
+      {label:'Mão no quadril',val:'hand on hip, confident pose, weight shifted, face visible'},
+      {label:'Espreguiçando',val:'stretching arms above head, arched back, sensual stretch, face visible'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'cam',
-    ask: 'Câmera e enquadramento?',
-    qr: [
-      {label:'Corpo inteiro', val:'full body shot, head to toe, entire body visible'},
-      {label:'Meio corpo', val:'half body frame, waist up shot'},
-      {label:'Closeup rosto', val:'extreme close-up face portrait, facial details, tight crop'},
-      {label:'Closeup bunda 🍑', val:'close-up buttocks shot, tight crop on backside, rear detail'},
-      {label:'Closeup seios', val:'close-up chest shot, tight crop on bust area'},
-      {label:'POV', val:'POV shot, first person perspective, immersive point of view'},
-      {label:'De baixo', val:"low angle shot from below, upshot, worm's eye view"},
-      {label:'De cima', val:'high angle shot from above, overhead camera angle'},
-      {label:'Dutch angle', val:'dutch angle, tilted camera, canted frame, dynamic tilt'},
-      {label:'3/4 corpo', val:'three-quarter body shot, from thigh up, three quarter frame'},
-      {label:'Selfie', val:'selfie angle, arm extended holding phone, front camera, close perspective'},
-      {label:'Espelho', val:'mirror reflection shot, full body in mirror, bathroom or bedroom mirror'},
-      {label:'Super teleobjetiva', val:'telephoto lens compression, 200mm, background blur, compressed depth'},
-      {label:'Grande angular', val:'wide angle lens, 24mm, slight distortion, environmental context visible'},
-      {label:'Closeup costas', val:'close-up back shot, tight crop on upper back and spine'},
-      {label:'Closeup pernas', val:'close-up legs shot, tight crop on thighs and legs'},
-      {label:'Split screen', val:'split frame composition, two angles, diptych layout'},
-      {label:'Através de vidro', val:'shot through wet glass, glass partition, voyeuristic framing'},
+    id:'cenario', label:'Cenário',
+    ask:'Qual o cenário?',
+    qr:[
+      {label:'🛏 Quarto',val:'luxury bedroom, soft natural window light, white silk bedsheets, intimate setting'},
+      {label:'🚿 Chuveiro',val:'wet shower, steam, glass door, white tiles, water running down body'},
+      {label:'🛁 Banheiro',val:'luxurious marble bathroom, bathtub, warm light, elegant decor'},
+      {label:'📸 Studio',val:'professional photo studio, white seamless backdrop, controlled studio lighting'},
+      {label:'🏖 Praia',val:'tropical beach, ocean waves, white sand, palm trees, golden sunlight'},
+      {label:'🏨 Hotel',val:'luxury hotel room, king bed, elegant decor, soft warm lighting'},
+      {label:'🌿 Ao ar livre',val:'outdoor nature, golden hour sunlight, green landscape, open field'},
+      {label:'🌆 Clube/Neon',val:'nightclub interior, neon RGB lights, dark smoky atmosphere, LED lights'},
+      {label:'🛋 Sala',val:'modern living room, couch, natural daylight, contemporary decor'},
+      {label:'🏙 Rooftop',val:'rooftop terrace, city skyline, sunset, urban golden view'},
+      {label:'🏊 Piscina',val:'outdoor pool, poolside, turquoise water, sun lounger, summer'},
+      {label:'💪 Academia',val:'gym fitness center, mirrors, workout equipment, athletic environment'},
+      {label:'🕯 Boudoir',val:'intimate boudoir, candles, rose petals, sheer curtains, dim warm romantic light'},
+      {label:'🌊 Mar aberto',val:'open sea, floating in ocean water, horizon, blue water'},
+      {label:'🌅 Pôr do sol',val:'sunset on beach, orange sky, warm golden light, silhouette'},
+      {label:'🏔 Natureza selvagem',val:'wild nature, forest, waterfall, rocks, natural outdoor setting'},
+      {label:'🚗 Carro luxo',val:'inside luxury car, leather seat, city lights background, night'},
+      {label:'🛥 Iate',val:'luxury yacht, open sea, sun deck, nautical setting'},
+      {label:'🌃 Rua noturna',val:'night street, city lights, wet pavement reflections, urban night'},
+      {label:'🏡 Varanda',val:'outdoor balcony, sunrise, railing, natural morning light'},
+      {label:'🎭 Palco',val:'theatrical stage, dramatic spotlights, red velvet curtains, performance'},
+      {label:'🍷 Bar/Lounge',val:'upscale bar lounge, dim warm light, leather stools, cocktail atmosphere'},
+      {label:'🌸 Jardim',val:'lush flower garden, rose petals, natural afternoon light, botanical setting'},
+      {label:'❄ Neve',val:'snowy outdoor, winter landscape, snowflakes, cold breath visible'},
+      {label:'🏺 Deserto',val:'desert dunes, arid landscape, harsh sun, sand, golden sky'},
     ],
-    skip: true,
+    skip:true,
   },
   {
-    id: 'film',
-    ask: 'Film stock e iluminação?',
-    qr: [
-      {label:'Portra 400 (clássico)', val:'Kodak Portra 400, warm skin tones, fine grain, classic analog'},
-      {label:'Fuji 400H (suave)', val:'Fujifilm Pro 400H, soft pastel colors, cool shadows, fine grain'},
-      {label:'Cinestill 800T (neon/noite)', val:'Cinestill 800T, tungsten film, red halation glow, night grain, cinematic'},
-      {label:'Ektar 100 (vívido)', val:'Kodak Ektar 100, vivid saturated colors, ultra-fine grain, sharp outdoor'},
-      {label:'P&B Ilford HP5', val:'Ilford HP5, black and white monochrome, high contrast grain, dramatic'},
-      {label:'P&B Tri-X 400', val:'Kodak Tri-X 400, gritty black and white, heavy grain, street photo'},
-      {label:'Portra 800 (pushed)', val:'Kodak Portra 800, pushed film, warm golden grain, high contrast'},
-      {label:'Superia 400', val:'Fujifilm Superia 400, natural colors, slight green shadow, classic consumer film'},
-      {label:'Golden hour', val:'golden hour warm sunlight, long soft shadows, magic hour, orange glow'},
-      {label:'Neon LED', val:'colorful neon LED lights, pink and blue cyberpunk glow, colored shadows'},
-      {label:'Luz natural suave', val:'soft natural window light, diffused daylight, gentle shadows'},
-      {label:'Velas', val:'warm candlelight, flickering intimate glow, orange warm tones, romantic'},
-      {label:'Low light/Moody', val:'low dim moody ambient light, dark noir atmosphere, shadow detail'},
-      {label:'Ring light', val:'ring light catchlight in eyes, even frontal lighting, beauty light setup'},
-      {label:'Luz lateral dramática', val:'dramatic side lighting, hard shadows, chiaroscuro, one light source'},
-      {label:'Luz de fundo (backlight)', val:'backlit, rim light, halo effect, silhouette glow, contre-jour'},
-      {label:'Velvia (cores pop)', val:'Fujifilm Velvia 50, hyper saturated vivid colors, punch contrast, slide film'},
-      {label:'Lomography', val:'Lomography film, heavy vignette, cross-processed colors, light leaks, lo-fi'},
-      {label:'Flash direto', val:'direct flash photography, harsh flat light, blown highlights, paparazzi style'},
-      {label:'Luz néon rosa', val:'pink neon light, hot pink ambient glow, magenta tones, nighttime'},
-      {label:'Luz ambarina (âmbar)', val:'amber warm tungsten light, orange-brown tones, cozy dim interior'},
+    id:'cam', label:'Câmera',
+    ask:'Câmera e enquadramento?',
+    qr:[
+      {label:'Corpo inteiro',val:'full body shot, head to toe, entire body visible'},
+      {label:'Meio corpo',val:'half body frame, waist up shot'},
+      {label:'Closeup rosto',val:'extreme close-up face portrait, facial details, tight crop'},
+      {label:'Closeup bunda 🍑',val:'close-up buttocks shot, tight crop on backside, rear detail'},
+      {label:'Closeup seios',val:'close-up chest shot, tight crop on bust area'},
+      {label:'POV',val:'POV shot, first person perspective, immersive point of view'},
+      {label:'De baixo',val:"low angle shot from below, upshot, worm's eye view"},
+      {label:'De cima',val:'high angle shot from above, overhead camera angle'},
+      {label:'Dutch angle',val:'dutch angle, tilted camera, canted frame, dynamic tilt'},
+      {label:'3/4 corpo',val:'three-quarter body shot, from thigh up, three quarter frame'},
+      {label:'Selfie',val:'selfie angle, arm extended holding phone, front camera, close perspective'},
+      {label:'Espelho',val:'mirror reflection shot, full body in mirror, bathroom or bedroom mirror'},
+      {label:'Super teleobjetiva',val:'telephoto lens compression, 200mm, background blur, compressed depth'},
+      {label:'Grande angular',val:'wide angle lens, 24mm, slight distortion, environmental context visible'},
+      {label:'Closeup costas',val:'close-up back shot, tight crop on upper back and spine'},
+      {label:'Closeup pernas',val:'close-up legs shot, tight crop on thighs and legs'},
+      {label:'Através de vidro',val:'shot through wet glass, glass partition, voyeuristic framing'},
+      {label:'Drone/aéreo',val:'aerial drone shot from high above, bird\'s eye view, overhead'},
     ],
-    skip: true,
+    skip:true,
+  },
+  {
+    id:'film', label:'Film/Luz',
+    ask:'Film stock e iluminação?',
+    qr:[
+      {label:'Portra 400 (clássico)',val:'Kodak Portra 400, warm skin tones, fine grain, classic analog'},
+      {label:'Fuji 400H (suave)',val:'Fujifilm Pro 400H, soft pastel colors, cool shadows, fine grain'},
+      {label:'Cinestill 800T (neon)',val:'Cinestill 800T, tungsten film, red halation glow, night grain, cinematic'},
+      {label:'Ektar 100 (vívido)',val:'Kodak Ektar 100, vivid saturated colors, ultra-fine grain, sharp outdoor'},
+      {label:'P&B Ilford HP5',val:'Ilford HP5, black and white monochrome, high contrast grain, dramatic'},
+      {label:'P&B Tri-X 400',val:'Kodak Tri-X 400, gritty black and white, heavy grain, street photo'},
+      {label:'Portra 800 (pushed)',val:'Kodak Portra 800, pushed film, warm golden grain, high contrast'},
+      {label:'Superia 400',val:'Fujifilm Superia 400, natural colors, slight green shadow, classic consumer film'},
+      {label:'Golden hour',val:'golden hour warm sunlight, long soft shadows, magic hour, orange glow'},
+      {label:'Neon LED',val:'colorful neon LED lights, pink and blue cyberpunk glow, colored shadows'},
+      {label:'Luz natural suave',val:'soft natural window light, diffused daylight, gentle shadows'},
+      {label:'Velas',val:'warm candlelight, flickering intimate glow, orange warm tones, romantic'},
+      {label:'Low light/Moody',val:'low dim moody ambient light, dark noir atmosphere, shadow detail'},
+      {label:'Ring light',val:'ring light catchlight in eyes, even frontal lighting, beauty light setup'},
+      {label:'Luz lateral dramática',val:'dramatic side lighting, hard shadows, chiaroscuro, one light source'},
+      {label:'Backlight',val:'backlit, rim light, halo effect, silhouette glow, contre-jour'},
+      {label:'Velvia (cores pop)',val:'Fujifilm Velvia 50, hyper saturated vivid colors, punch contrast, slide film'},
+      {label:'Lomography',val:'Lomography film, heavy vignette, cross-processed colors, light leaks, lo-fi'},
+      {label:'Flash direto',val:'direct flash photography, harsh flat light, blown highlights, paparazzi style'},
+      {label:'Neon rosa',val:'pink neon light, hot pink ambient glow, magenta tones, nighttime'},
+      {label:'Luz âmbar',val:'amber warm tungsten light, orange-brown tones, cozy dim interior'},
+    ],
+    skip:true,
   },
 ];
 
-// ─── State ─────────────────────────────────────────────────────────────────
+const TOTAL = STEPS.length;
+
+// ─── State ────────────────────────────────────────────────────────────────
 let step = 0;
 const answers = {};
 let waiting = false;
 
-// ─── PT→EN ─────────────────────────────────────────────────────────────────
-const MAP = [
+// ─── History (localStorage) ───────────────────────────────────────────────
+function loadHistory(){ try{ return JSON.parse(localStorage.getItem('rawgen_hist')||'[]'); }catch(e){ return []; } }
+function saveToHistory(prompt, neg){
+  try{
+    const h = loadHistory();
+    h.unshift({ prompt, neg, ts: Date.now() });
+    if(h.length>20) h.length=20;
+    localStorage.setItem('rawgen_hist', JSON.stringify(h));
+  }catch(e){}
+}
+
+// ─── PT→EN ────────────────────────────────────────────────────────────────
+const MAP=[
   ['de costas','from behind, back to camera'],['de quatro','on all fours'],
   ['de frente','facing camera'],['de lado','side view'],['em pé','standing'],
   ['ao ar livre','outdoors'],['luz natural','natural light'],
@@ -611,12 +713,12 @@ const MAP = [
 ];
 function tr(pt){
   if(!pt) return '';
-  let t = pt.toLowerCase().trim();
+  let t=pt.toLowerCase().trim();
   MAP.forEach(([p,e])=>{ t=t.split(p).join(e); });
   return t;
 }
 
-// ─── Negative ──────────────────────────────────────────────────────────────
+// ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
   const p=(answers.pose||'').toLowerCase(), c=(answers.cam||'').toLowerCase();
   let n='blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, oversharpened, digital art, CGI, render, hypersmooth, fake skin, doll-like, mannequin, wax figure, overly perfect, unrealistic skin, skin texture missing, skin too smooth, poreless skin, artificial lighting, studio fake look, beauty filter, heavy retouching, photoshop filter, skin filter';
@@ -651,7 +753,7 @@ function buildPrompt(){
     answers.corpo, answers.cabelo,
     answers.tattoo, answers.roupa, answers.acessorios,
     answers.maquiagem, answers.expressao,
-    answers.nsfw,
+    answers.detalhes, answers.nsfw,
     answers.cenario, answers.pose,
     tr(answers.desc||''),
     answers.cam, autoFilm(),
@@ -661,22 +763,34 @@ function buildPrompt(){
   return parts.filter(p=>{ if(seen.has(p)) return false; seen.add(p); return true; }).join(', ');
 }
 
-// ─── Chat engine ───────────────────────────────────────────────────────────
+// ─── Chat engine ──────────────────────────────────────────────────────────
 const chat = document.getElementById('chat');
 const qrArea = document.getElementById('qr-area');
 const input = document.getElementById('msg-input');
+const progFill = document.getElementById('progress-fill');
+const progLabel = document.getElementById('progress-label');
+
+function updateProgress(){
+  const pct = step >= TOTAL ? 100 : Math.round((step / TOTAL)*100);
+  progFill.style.width = pct+'%';
+  if(step >= TOTAL){
+    progLabel.textContent = '✅ Concluído!';
+  } else {
+    progLabel.textContent = `Passo ${step+1} de ${TOTAL} — ${STEPS[step].label}`;
+  }
+}
 
 function scrollBottom(){ chat.scrollTop = chat.scrollHeight; }
 
 function addMsg(who, html, extraClass=''){
-  const d = document.createElement('div');
-  d.className = `msg ${who} ${extraClass}`;
-  const av = document.createElement('div');
-  av.className = 'avatar';
-  av.textContent = who==='bot' ? 'R' : '👤';
-  const b = document.createElement('div');
-  b.className = 'bubble';
-  b.innerHTML = html.replace(/\n/g,'<br>');
+  const d=document.createElement('div');
+  d.className=`msg ${who} ${extraClass}`;
+  const av=document.createElement('div');
+  av.className='avatar';
+  av.textContent=who==='bot'?'R':'👤';
+  const b=document.createElement('div');
+  b.className='bubble';
+  b.innerHTML=html.replace(/\n/g,'<br>');
   d.appendChild(av);
   d.appendChild(b);
   chat.appendChild(d);
@@ -685,22 +799,20 @@ function addMsg(who, html, extraClass=''){
 }
 
 function showTyping(){
-  const d = document.createElement('div');
-  d.className = 'msg bot typing';
-  d.id = 'typing';
-  d.innerHTML = '<div class="avatar">R</div><div class="bubble"><div class="dot-row"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
-  chat.appendChild(d);
-  scrollBottom();
+  const d=document.createElement('div');
+  d.className='msg bot typing'; d.id='typing';
+  d.innerHTML='<div class="avatar">R</div><div class="bubble"><div class="dot-row"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  chat.appendChild(d); scrollBottom();
 }
 function removeTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
 
 function setQR(chips){
   qrArea.innerHTML='';
-  chips.forEach(({label,val,skip})=>{
+  chips.forEach(({label,val,skip,cls})=>{
     const btn=document.createElement('button');
-    btn.className='qr'+(skip?' skip':'');
+    btn.className='qr'+(skip?' skip':'')+(cls?' '+cls:'');
     btn.textContent=label;
-    btn.onclick=()=>handleQR(val||label, label);
+    btn.onclick=()=>handleQR(val!=null?val:label, label);
     qrArea.appendChild(btn);
   });
 }
@@ -730,13 +842,12 @@ function autoResize(el){
 }
 
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
 function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 async function botSay(html, qrs=[]){
   waiting=true;
   showTyping();
-  await delay(600+Math.random()*300);
+  await delay(550+Math.random()*250);
   removeTyping();
   addMsg('bot', html);
   setQR(qrs);
@@ -745,60 +856,164 @@ async function botSay(html, qrs=[]){
 }
 
 async function processAnswer(val){
-  const cur = STEPS[step];
+  const cur=STEPS[step];
   if(!cur) return;
-
-  // skip keyword
-  const isSkip = /^(pular|skip|não|nao|-)$/i.test(val.trim());
-  if(!isSkip) answers[cur.id] = val;
-
+  const isSkip=/^(pular|skip|não|nao|-)$/i.test(val.trim()) || val==='';
+  if(!isSkip) answers[cur.id]=val;
   step++;
   clearQR();
-
+  updateProgress();
   if(step < STEPS.length){
     const next=STEPS[step];
-    const qrs = next.qr ? [...next.qr] : [];
-    if(next.skip) qrs.push({label:'Pular →', val:'pular', skip:true});
+    const qrs=next.qr?[...next.qr]:[];
+    if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
+    if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
     await botSay(next.ask, qrs);
   } else {
-    await showResult();
+    await showSummary();
   }
 }
 
+async function goBack(){
+  if(step<=0) return;
+  step--;
+  delete answers[STEPS[step].id];
+  clearQR();
+  updateProgress();
+  const cur=STEPS[step];
+  const qrs=cur.qr?[...cur.qr]:[];
+  if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
+  if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
+  await botSay('↩ Voltando — '+cur.ask, qrs);
+}
+
+// ─── Summary before generating ────────────────────────────────────────────
+async function showSummary(){
+  waiting=true;
+  showTyping();
+  await delay(700);
+  removeTyping();
+
+  const b=addMsg('bot','📋 <strong>Resumo das suas escolhas:</strong>');
+
+  const card=document.createElement('div');
+  card.className='summary-card';
+
+  STEPS.forEach(s=>{
+    const val=answers[s.id];
+    if(!val) return;
+    const row=document.createElement('div');
+    row.className='sc-row';
+    const short=val.length>60?val.slice(0,57)+'…':val;
+    row.innerHTML=`<span class="sc-key">${s.label}</span><span class="sc-val">${escHtml(short)}</span>`;
+    const editBtn=document.createElement('button');
+    editBtn.className='sc-edit';
+    editBtn.textContent='✏';
+    editBtn.title='Editar este passo';
+    editBtn.onclick=()=>jumpTo(s.id);
+    row.appendChild(editBtn);
+    card.appendChild(row);
+  });
+  b.appendChild(card);
+
+  const genBtn=document.createElement('button');
+  genBtn.className='copy-btn';
+  genBtn.style.marginTop='10px';
+  genBtn.innerHTML='✅ Gerar prompt';
+  genBtn.onclick=()=>{ b.parentElement && chat.removeChild(b.parentElement); clearQR(); showResult(); };
+  b.appendChild(genBtn);
+
+  const editBtn=document.createElement('button');
+  editBtn.className='icon-btn';
+  editBtn.style.marginTop='10px';
+  editBtn.innerHTML='✏ Editar respostas';
+  editBtn.onclick=()=>jumpTo(STEPS[0].id);
+  b.appendChild(editBtn);
+
+  scrollBottom();
+  setQR([{label:'✅ Gerar prompt',val:'__gen__'}]);
+  qrArea.querySelector('.qr').onclick=()=>{ clearQR(); showResult(); };
+  waiting=false;
+}
+
+async function jumpTo(id){
+  const idx=STEPS.findIndex(s=>s.id===id);
+  if(idx<0) return;
+  step=idx;
+  clearQR();
+  updateProgress();
+  const cur=STEPS[step];
+  const qrs=cur.qr?[...cur.qr]:[];
+  if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
+  if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
+  await botSay('✏ Editando: '+cur.ask, qrs);
+}
+
+// ─── Show result ──────────────────────────────────────────────────────────
 async function showResult(){
   waiting=true;
   showTyping();
-  await delay(900);
+  await delay(800);
   removeTyping();
 
-  const prompt = buildPrompt();
-  const neg = buildNeg();
+  const prompt=buildPrompt();
+  const neg=buildNeg();
 
-  // auto-copy positive prompt
   navigator.clipboard.writeText(prompt).catch(()=>{});
+  saveToHistory(prompt, neg);
 
-  const b = addMsg('bot', '✅ <strong>Prompt copiado automaticamente!</strong> Cole direto no seu gerador de imagem:');
+  const b=addMsg('bot','✅ <strong>Prompt copiado automaticamente!</strong> Cole direto no gerador:');
 
-  const pd = document.createElement('div');
+  const pd=document.createElement('div');
   pd.className='prompt-block';
   pd.title='Clique para selecionar tudo';
   pd.textContent=prompt;
   pd.onclick=()=>{ const r=document.createRange();r.selectNodeContents(pd);const s=window.getSelection();s.removeAllRanges();s.addRange(r); };
   b.appendChild(pd);
 
+  const btnRow=document.createElement('div');
+  btnRow.className='btn-row';
+
   const copyBtn=document.createElement('button');
   copyBtn.className='copy-btn';
   copyBtn.innerHTML='📋 Copiar prompt';
   copyBtn.onclick=()=>{
     navigator.clipboard.writeText(prompt).then(()=>{
-      copyBtn.textContent='✓ Copiado!';
-      copyBtn.classList.add('ok');
+      copyBtn.textContent='✓ Copiado!'; copyBtn.classList.add('ok');
       setTimeout(()=>{ copyBtn.innerHTML='📋 Copiar prompt'; copyBtn.classList.remove('ok'); },2000);
     });
   };
-  b.appendChild(copyBtn);
+  btnRow.appendChild(copyBtn);
 
-  const nd = document.createElement('div');
+  const dlBtn=document.createElement('button');
+  dlBtn.className='icon-btn';
+  dlBtn.innerHTML='💾 Baixar .txt';
+  dlBtn.onclick=()=>{
+    const blob=new Blob([`POSITIVE PROMPT:\n${prompt}\n\nNEGATIVE PROMPT:\n${neg}`],{type:'text/plain'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='rawgen-prompt.txt';
+    a.click();
+  };
+  btnRow.appendChild(dlBtn);
+
+  const shareBtn=document.createElement('button');
+  shareBtn.className='icon-btn';
+  shareBtn.innerHTML='🔗 Link';
+  shareBtn.onclick=()=>{
+    const params=new URLSearchParams();
+    Object.entries(answers).forEach(([k,v])=>v&&params.set(k,v));
+    const url=location.origin+location.pathname+'?'+params.toString();
+    navigator.clipboard.writeText(url).then(()=>{
+      shareBtn.textContent='✓ Link copiado!';
+      setTimeout(()=>{ shareBtn.innerHTML='🔗 Link'; },2000);
+    });
+  };
+  btnRow.appendChild(shareBtn);
+
+  b.appendChild(btnRow);
+
+  const nd=document.createElement('div');
   nd.className='neg-block';
   nd.innerHTML='<div class="neg-title">Negative Prompt</div>';
   const nt=document.createElement('div');
@@ -806,35 +1021,96 @@ async function showResult(){
   nd.appendChild(nt);
   b.appendChild(nd);
 
+  const btnRow2=document.createElement('div');
+  btnRow2.className='btn-row';
+
   const copyNegBtn=document.createElement('button');
-  copyNegBtn.className='copy-btn';
-  copyNegBtn.style.background='#7f1d1d';
-  copyNegBtn.style.color='#fca5a5';
+  copyNegBtn.className='copy-btn neg';
   copyNegBtn.innerHTML='🚫 Copiar negativo';
   copyNegBtn.onclick=()=>{
     navigator.clipboard.writeText(neg).then(()=>{
-      copyNegBtn.textContent='✓ Negativo copiado!';
-      copyNegBtn.classList.add('ok');
-      setTimeout(()=>{ copyNegBtn.innerHTML='🚫 Copiar negativo'; copyNegBtn.style.background='#7f1d1d'; copyNegBtn.style.color='#fca5a5'; copyNegBtn.classList.remove('ok'); },2000);
+      copyNegBtn.textContent='✓ Copiado!'; copyNegBtn.classList.add('ok');
+      setTimeout(()=>{ copyNegBtn.innerHTML='🚫 Copiar negativo'; copyNegBtn.classList.remove('ok'); },2000);
     });
   };
-  b.appendChild(copyNegBtn);
+  btnRow2.appendChild(copyNegBtn);
 
   const restBtn=document.createElement('button');
-  restBtn.className='restart-btn';
+  restBtn.className='icon-btn';
   restBtn.innerHTML='⟳ Novo prompt';
   restBtn.onclick=restart;
-  b.appendChild(restBtn);
+  btnRow2.appendChild(restBtn);
 
+  b.appendChild(btnRow2);
   scrollBottom();
-
-  setQR([{label:'⟳ Criar novo prompt', val:'novo', skip:false}]);
+  setQR([{label:'⟳ Criar novo prompt',val:'novo'}]);
   qrArea.querySelector('.qr').onclick=restart;
-
   waiting=false;
 }
 
-// ─── Init & restart ────────────────────────────────────────────────────────
+// ─── Random mode ──────────────────────────────────────────────────────────
+async function randomAll(){
+  if(waiting) return;
+  restart();
+  await delay(800);
+  for(let i=0;i<STEPS.length;i++){
+    const s=STEPS[i];
+    if(!s.qr||s.qr.length===0) continue;
+    const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
+    if(pool.length===0) continue;
+    const pick=pool[Math.floor(Math.random()*pool.length)];
+    answers[s.id]=pick.val;
+  }
+  step=STEPS.length;
+  updateProgress();
+  clearQR();
+  addMsg('bot','🎲 <strong>Sorteando tudo aleatoriamente…</strong>');
+  await delay(600);
+  await showResult();
+}
+
+// ─── History panel ────────────────────────────────────────────────────────
+function openHistory(){
+  const h=loadHistory();
+  const list=document.getElementById('hist-list');
+  list.innerHTML='';
+  if(h.length===0){
+    list.innerHTML='<div class="hist-empty">Nenhum prompt gerado ainda.</div>';
+  } else {
+    h.forEach((item,i)=>{
+      const el=document.createElement('div');
+      el.className='hist-item';
+      const d=new Date(item.ts);
+      el.innerHTML=`<small>${d.toLocaleString('pt-BR')}</small>${escHtml(item.prompt.slice(0,180))}…`;
+      el.onclick=()=>{
+        navigator.clipboard.writeText(item.prompt).catch(()=>{});
+        el.style.borderColor='var(--green)';
+        setTimeout(()=>{ el.style.borderColor=''; },1200);
+      };
+      list.appendChild(el);
+    });
+  }
+  document.getElementById('hist-panel').classList.add('open');
+}
+function closeHistory(){
+  document.getElementById('hist-panel').classList.remove('open');
+}
+document.getElementById('hist-panel').addEventListener('click',function(e){
+  if(e.target===this) closeHistory();
+});
+
+// ─── URL share restore ────────────────────────────────────────────────────
+function restoreFromURL(){
+  const p=new URLSearchParams(location.search);
+  let found=false;
+  STEPS.forEach(s=>{
+    const v=p.get(s.id);
+    if(v){ answers[s.id]=v; found=true; }
+  });
+  return found;
+}
+
+// ─── Init & restart ───────────────────────────────────────────────────────
 function restart(){
   step=0;
   Object.keys(answers).forEach(k=>delete answers[k]);
@@ -842,6 +1118,7 @@ function restart(){
   clearQR();
   input.value='';
   waiting=false;
+  updateProgress();
   init();
 }
 
@@ -849,11 +1126,33 @@ async function init(){
   step=0;
   Object.keys(answers).forEach(k=>delete answers[k]);
   waiting=false;
+  updateProgress();
+  const shared=restoreFromURL();
+  if(shared){
+    step=STEPS.length;
+    updateProgress();
+    addMsg('bot','🔗 <strong>Prompt carregado do link compartilhado!</strong>');
+    await delay(400);
+    await showResult();
+    return;
+  }
   const first=STEPS[0];
-  await botSay(first.ask, first.qr||[]);
+  const qrs=[...first.qr];
+  qrs.push({label:'🎲 Sortear tudo',val:'__random__',cls:'rand'});
+  await botSay(first.ask, qrs);
 }
 
-// ─── Theme ─────────────────────────────────────────────────────────────────
+// patch handleQR for special values
+const _origHandleQR=handleQR;
+function handleQR(val, label){
+  if(waiting) return;
+  if(val==='__back__'){ addMsg('usr','← Voltar'); goBack(); return; }
+  if(val==='__random__'){ randomAll(); return; }
+  addMsg('usr', label);
+  processAnswer(val);
+}
+
+// ─── Theme ────────────────────────────────────────────────────────────────
 function toggleTheme(){
   const d=document.documentElement;
   const dark=d.dataset.theme==='dark';
