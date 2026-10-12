@@ -12148,6 +12148,8 @@ function setPose(key){
   selectedPoseKey = key || null;
   _cachedPoseOutfit = ''; // reset cache; will be computed fresh by _showAutoOutfit
   _cachedPoseScene  = ''; // reset scene cache; will be set after outfit is known
+  quickChipState.pose = '';
+  document.querySelectorAll('.quick-chip[data-cat="pose"]').forEach(c => c.classList.remove('active','auto-set'));
   document.querySelectorAll('.pose-btn').forEach(b => b.classList.remove('selected'));
   if(key) {
     const btn = document.querySelector(`.pose-btn[data-pose="${key}"]`);
@@ -20026,6 +20028,11 @@ function toggleQuickChip(el){
   if(!already){
     el.classList.add('active');
     quickChipState[cat] = val;
+    if(cat === 'pose'){
+      selectedPose = null;
+      selectedPoseKey = null;
+      document.querySelectorAll('.pose-btn').forEach(b => b.classList.remove('selected'));
+    }
     // Quando seleciona etnia, preenche automaticamente rosto/olhos/lábios/traços/cabelo
     if(cat === 'etnia') _applyEtniaProfile(val);
   } else {
