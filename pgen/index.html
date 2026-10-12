@@ -159,6 +159,22 @@ header{
 #send-btn:hover{background:var(--acc2);}
 #send-btn:disabled{opacity:.4;cursor:default;}
 
+/* start screen */
+#start-screen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex:1;text-align:center;padding:40px 20px;gap:12px;
+}
+.start-logo{font-size:3.5em;}
+.start-title{font-size:2em;font-weight:900;color:var(--acc);letter-spacing:-1px;}
+.start-sub{font-size:0.9em;color:var(--txt2);max-width:260px;}
+#start-btn{
+  margin-top:12px;
+  background:var(--acc);color:#000;border:none;border-radius:30px;
+  padding:14px 40px;font-size:1.1em;font-weight:800;cursor:pointer;
+  transition:all .15s;letter-spacing:.02em;
+}
+#start-btn:hover{background:var(--acc2);transform:scale(1.04);}
+
 /* responsive */
 @media(max-width:500px){
   .msg{max-width:92%;}
@@ -178,7 +194,14 @@ header{
   </div>
 </header>
 
-<div id="chat"></div>
+<div id="chat">
+  <div id="start-screen">
+    <div class="start-logo">📸</div>
+    <div class="start-title">RAWgen</div>
+    <div class="start-sub">Gerador de prompts RAW fotográficos</div>
+    <button id="start-btn" onclick="startChat()">▶ Começar</button>
+  </div>
+</div>
 
 <div id="qr-area"></div>
 
@@ -584,6 +607,11 @@ async function showResult(){
 }
 
 // ─── Init & restart ────────────────────────────────────────────────────────
+function startChat(){
+  chat.innerHTML='';
+  init();
+}
+
 function restart(){
   step=0;
   Object.keys(answers).forEach(k=>delete answers[k]);
@@ -595,6 +623,9 @@ function restart(){
 }
 
 async function init(){
+  step=0;
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  waiting=false;
   const first=STEPS[0];
   await botSay(first.ask, first.qr||[]);
 }
@@ -607,8 +638,7 @@ function toggleTheme(){
   document.getElementById('tbtn').textContent=dark?'🌙 Escuro':'☀ Claro';
 }
 
-// ─── Start ─────────────────────────────────────────────────────────────────
-init();
+// ─── Start: show splash screen, user clicks to begin ───────────────────────
 </script>
 </body>
 </html>
