@@ -161,19 +161,21 @@ header{
 
 /* start screen */
 #start-screen{
+  position:fixed;inset:0;z-index:100;
+  background:var(--bg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  flex:1;text-align:center;padding:40px 20px;gap:12px;
+  text-align:center;padding:40px 20px;gap:14px;
 }
 .start-logo{font-size:3.5em;}
-.start-title{font-size:2em;font-weight:900;color:var(--acc);letter-spacing:-1px;}
-.start-sub{font-size:0.9em;color:var(--txt2);max-width:260px;}
+.start-title{font-size:2.2em;font-weight:900;color:var(--acc);letter-spacing:-1px;}
+.start-sub{font-size:0.92em;color:var(--txt2);max-width:260px;line-height:1.5;}
 #start-btn{
-  margin-top:12px;
+  margin-top:16px;
   background:var(--acc);color:#000;border:none;border-radius:30px;
-  padding:14px 40px;font-size:1.1em;font-weight:800;cursor:pointer;
-  transition:all .15s;letter-spacing:.02em;
+  padding:16px 48px;font-size:1.15em;font-weight:800;cursor:pointer;
+  transition:all .15s;
 }
-#start-btn:hover{background:var(--acc2);transform:scale(1.04);}
+#start-btn:active{transform:scale(0.97);}
 
 /* responsive */
 @media(max-width:500px){
@@ -194,14 +196,14 @@ header{
   </div>
 </header>
 
-<div id="chat">
-  <div id="start-screen">
-    <div class="start-logo">📸</div>
-    <div class="start-title">RAWgen</div>
-    <div class="start-sub">Gerador de prompts RAW fotográficos</div>
-    <button id="start-btn" onclick="startChat()">▶ Começar</button>
-  </div>
+<div id="start-screen">
+  <div class="start-logo">📸</div>
+  <div class="start-title">RAWgen</div>
+  <div class="start-sub">Gerador de prompts RAW fotográficos</div>
+  <button id="start-btn" onclick="startChat()">▶ Começar</button>
 </div>
+
+<div id="chat"></div>
 
 <div id="qr-area"></div>
 
@@ -608,7 +610,7 @@ async function showResult(){
 
 // ─── Init & restart ────────────────────────────────────────────────────────
 function startChat(){
-  chat.innerHTML='';
+  document.getElementById('start-screen').style.display='none';
   init();
 }
 
