@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal das Sombras — Gerador Chat</title>
+<meta name="description" content="Gere prompts espirituais para Umbanda, Quimbanda e o mundo afro-brasileiro em formato de conversa.">
+<style>
+:root {
+  --bg:      #110A0D;
+  --surface: #1C1018;
+  --card:    #251520;
+  --border:  #3A2030;
+  --border-lit: #7A3A50;
+  --ember:   #C8320A;
+  --gold:    #C9860A;
+  --gold-dim:#7A5206;
+  --violet:  #7B2FBE;
+  --forest:  #1E6B2E;
+  --text:    #EDE0D4;
+  --muted:   #9A7A6A;
+  --dim:     #4A3030;
+  --bot-bg:  #1C1018;
+  --user-bg: #2A1820;
+  --chip-bg: #251520;
+  --chip-border: #5A2A3A;
+  --chip-hover: #3A1E28;
+  --chip-active: #C8320A;
+  --radius: 14px;
+  --r-chip: 24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── Header ── */
+header{text-align:center;padding:28px 16px 16px;border-bottom:1px solid var(--border)}
+.sigil-wrap{width:44px;height:44px;margin:0 auto 10px;opacity:.85}
+header h1{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-size:clamp(1.1rem,4vw,1.6rem);font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--text)}
+header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gold);margin-bottom:4px}
+.header-sub{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin-top:4px}
+
+/* ── Progress bar ── */
+.progress-wrap{padding:10px 16px 0;max-width:700px;margin:0 auto;width:100%}
+.progress-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--ember),var(--gold));border-radius:2px;transition:width .4s ease}
+.progress-label{font-size:.65rem;color:var(--muted);letter-spacing:.15em;text-align:right;margin-top:4px;text-transform:uppercase}
+
+/* ── Chat window ── */
+#chat{flex:1;max-width:700px;width:100%;margin:0 auto;padding:16px 16px 120px;display:flex;flex-direction:column;gap:18px}
+
+/* ── Messages ── */
+.msg{display:flex;gap:10px;align-items:flex-start;animation:fadeUp .3s ease}
+.msg.bot{flex-direction:row}
+.msg.user{flex-direction:row-reverse}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.bot .avatar{background:var(--surface);border:1px solid var(--border-lit)}
+.user .avatar{background:var(--user-bg);border:1px solid var(--dim)}
+
+.bubble{padding:11px 16px;border-radius:var(--radius);font-size:.88rem;line-height:1.55;max-width:88%}
+.bot .bubble{background:var(--bot-bg);border:1px solid var(--border);border-top-left-radius:4px;color:var(--text)}
+.user .bubble{background:var(--user-bg);border:1px solid var(--dim);border-top-right-radius:4px;color:var(--muted)}
+
+/* ── Chips ── */
+.chips-wrap{padding:0 0 0 40px;display:flex;flex-wrap:wrap;gap:8px;animation:fadeUp .3s ease .1s both}
+.chip{padding:7px 16px;background:var(--chip-bg);border:1px solid var(--chip-border);border-radius:var(--r-chip);color:var(--text);font-family:Georgia,serif;font-size:.8rem;cursor:pointer;transition:all .18s;white-space:nowrap;outline:none}
+.chip:hover{background:var(--chip-hover);border-color:var(--border-lit);color:var(--text)}
+.chip.selected{background:var(--ember);border-color:var(--ember);color:#fff}
+.chip.skip{border-color:var(--dim);color:var(--muted)}
+.chip.skip:hover{border-color:var(--border-lit);color:var(--text)}
+
+/* ── Free input ── */
+.free-wrap{padding:0 0 0 40px;display:flex;gap:8px;animation:fadeUp .3s ease .15s both}
+.free-wrap input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-chip);padding:9px 16px;color:var(--text);font-family:Georgia,serif;font-size:.85rem;outline:none}
+.free-wrap input:focus{border-color:var(--border-lit)}
+.free-wrap input::placeholder{color:var(--muted)}
+.free-wrap button{padding:9px 18px;background:var(--ember);border:none;border-radius:var(--r-chip);color:#fff;font-family:Georgia,serif;font-size:.82rem;cursor:pointer}
+
+/* ── Typing indicator ── */
+.typing{display:flex;align-items:center;gap:5px;padding:12px 16px}
+.dot{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bounce .9s infinite}
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* ── Result card ── */
+.result-card{background:var(--surface);border:1px solid var(--border-lit);border-radius:var(--radius);padding:20px;animation:fadeUp .35s ease}
+.result-card h3{font-family:'Palatino Linotype',Georgia,serif;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.result-card .entity-name{font-size:1.1rem;color:var(--text);margin-bottom:16px;font-style:italic}
+.prompt-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.prompt-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.8rem;line-height:1.55;color:var(--text);white-space:pre-wrap;word-break:break-word;margin-bottom:14px}
+.result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.btn-act{padding:8px 16px;border-radius:var(--r-chip);border:1px solid var(--border-lit);background:transparent;color:var(--text);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.btn-act:hover{background:var(--card);border-color:var(--gold)}
+.btn-act.primary{background:var(--ember);border-color:var(--ember);color:#fff}
+.btn-act.primary:hover{opacity:.9}
+.divider-rune{text-align:center;color:var(--dim);font-size:.8rem;letter-spacing:.3em;margin:4px 0}
+
+/* ── Bottom bar ── */
+#bottom-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,var(--bg) 30%);padding:20px 16px 20px;display:flex;justify-content:center;gap:10px;z-index:10}
+.bar-btn{padding:9px 20px;border-radius:var(--r-chip);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.bar-btn:hover{border-color:var(--border-lit);color:var(--text)}
+.bar-btn.danger{border-color:var(--dim)}
+
+/* ── History panel ── */
+#hist-panel{position:fixed;inset:0;background:rgba(10,5,8,.92);z-index:50;display:none;flex-direction:column}
+#hist-panel.open{display:flex}
+.hist-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.hist-header h2{font-family:'Palatino Linotype',Georgia,serif;font-size:1rem;letter-spacing:.15em;text-transform:uppercase;font-weight:400;color:var(--gold)}
+.hist-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px 8px}
+#hist-list{flex:1;overflow-y:auto;padding:16px}
+.hist-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
+.hist-item:hover{border-color:var(--border-lit)}
+.hist-item-name{font-size:.85rem;color:var(--text);margin-bottom:4px}
+.hist-item-meta{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
+.hist-item-preview{font-size:.72rem;color:var(--dim);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-empty{text-align:center;color:var(--muted);font-size:.82rem;padding:40px 0}
+
+/* ── Loading ── */
+#loading{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.load-sigil{font-size:2.5rem;animation:spin 3s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.load-text{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Mobile ── */
+@media(max-width:480px){
+  .bubble{font-size:.85rem}
+  .chip{font-size:.75rem;padding:6px 13px}
+  header h1{font-size:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Loading screen -->
+<div id="loading">
+  <div class="load-sigil">⛧</div>
+  <div class="load-text">Invocando entidades...</div>
+</div>
+
+<header>
+  <div class="sigil-wrap">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="22" cy="22" r="20" stroke="#C9860A" stroke-width="1.2"/>
+      <polygon points="22,4 40,36 4,36" fill="none" stroke="#C8320A" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="22" cy="22" r="4" fill="#C9860A" opacity=".8"/>
+    </svg>
+  </div>
+  <h1><span>Portal das Sombras</span>Gerador Espiritual</h1>
+  <div class="header-sub">Prompts para Umbanda · Quimbanda · Espiritualidade</div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">Etapa 1 de 6</div>
+</div>
+
+<div id="chat"></div>
+
+<div id="bottom-bar">
+  <button class="bar-btn" onclick="openHist()">📜 Histórico</button>
+  <button class="bar-btn danger" onclick="restartFlow()">↺ Recomeçar</button>
+</div>
+
+<!-- History panel -->
+<div id="hist-panel">
+  <div class="hist-header">
+    <h2>⛧ Histórico</h2>
+    <button class="hist-close" onclick="closeHist()">✕</button>
+  </div>
+  <div id="hist-list"></div>
+</div>
+
+<script>
+// ── Entity data store ──────────────────────────────────────────────────
+const BASE_URL = 'https://raw.githubusercontent.com/aandresoares53-bot/abc-resolve/claude/vercel-list-projects-acsxdg/promptespiritual-data';
+const CATS = ["orixa","exu","pombo","bruxa","demonio","egungun","eguns","malandro","baiano","preto","boiadeiro","ere","caboclo","cigano"];
+const CAT_LABELS = {
+  orixa:'Orixá', exu:'Exu', pombo:'Pomba-Gira', bruxa:'Bruxa / Feiticeira',
+  demonio:'Demônio', egungun:'Egungun', eguns:'Egum', malandro:'Malandro',
+  baiano:'Baiano', preto:'Preto-Velho', boiadeiro:'Boiadeiro', ere:'Erê',
+  caboclo:'Caboclo', cigano:'Cigano'
+};
+const CAT_ICONS = {
+  orixa:'🌊', exu:'🔥', pombo:'🌹', bruxa:'🌙', demonio:'⛧', egungun:'💀',
+  eguns:'👁', malandro:'🎩', baiano:'🌺', preto:'🕯', boiadeiro:'🌾',
+  ere:'⭐', caboclo:'🏹', cigano:'🔮'
+};
+let ENTITIES = {};
+let answers = {};
+let currentStep = 0;
+let currentEntity = null;
+let generatedEN = '';
+let generatedPT = '';
+
+// ── Steps definition ───────────────────────────────────────────────────
+const STEPS = [
+  {
+    id: 'categoria',
+    label: 'Categoria',
+    ask: 'Qual categoria de entidade espiritual você quer invocar?',
+    qr: Object.entries(CAT_LABELS).map(([val,label]) => ({label: `${CAT_ICONS[val]} ${label}`, val})),
+    dynamic: false, skip: false
+  },
+  {
+    id: 'entidade',
+    label: 'Entidade',
+    ask: 'Qual entidade específica?',
+    qr: [], // populated after categoria chosen
+    dynamic: true, skip: false
+  },
+  {
+    id: 'estilo',
+    label: 'Estilo',
+    ask: 'Qual o estilo artístico da imagem?',
+    qr: [
+      {label:'📷 Fotografia analógica', val:'analog photography, film grain, 35mm film, photorealistic'},
+      {label:'🎨 Pintura a óleo', val:'oil painting, thick impasto brushwork, classical technique'},
+      {label:'⚙️ Gravura em metal', val:'etching engraving, intaglio printmaking, black and white'},
+      {label:'💧 Aquarela', val:'watercolor painting, transparent washes, soft edges'},
+      {label:'🖥️ Arte digital', val:'digital concept art, detailed matte painting'},
+      {label:'📖 Iluminura medieval', val:'medieval illuminated manuscript, gold leaf ornate borders'},
+      {label:'🪵 Xilogravura', val:'woodblock print, bold graphic lines, high contrast'},
+      {label:'✝️ Arte sacra barroca', val:'baroque religious art, dramatic chiaroscuro, gilded frame'},
+      {label:'🖤 Arte sombria', val:'dark fantasy art, gothic illustration, occult aesthetic'},
+      {label:'🌀 Surrealismo', val:'surrealist painting, dreamlike distortion, symbolic imagery'},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'composicao',
+    label: 'Composição',
+    ask: 'Como deve ser a composição da imagem?',
+    qr: [
+      {label:'👤 Retrato fechado', val:'close-up portrait, face and shoulders'},
+      {label:'🧍 Meio corpo', val:'half body shot, waist up'},
+      {label:'🧍‍♀️ Corpo inteiro', val:'full body standing figure'},
+      {label:'🔭 Vista de baixo', val:'low angle view, looking up at figure, foreshortening'},
+      {label:'👁️ Vista de cima', val:'high angle view, looking down'},
+      {label:'🌑 Silhueta dramática', val:'dramatic silhouette against glowing background'},
+      {label:'🌅 Cena panorâmica', val:'wide establishing shot, figure in full environment'},
+      {label:'🪞 Composição simétrica', val:'symmetrical composition, centered figure, perfect balance'},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'luz',
+    label: 'Iluminação',
+    ask: 'Qual o tipo de iluminação?',
+    qr: [
+      {label:'🕯️ Velas e fogueira', val:'candlelight and bonfire glow, warm flickering orange light'},
+      {label:'🌕 Lua cheia', val:'full moonlight, cool silver lunar glow, night scene'},
+      {label:'🌋 Brasas incandescentes', val:'glowing embers, red-orange incandescent heat glow'},
+      {label:'💡 Contraluz dramático', val:'dramatic backlight, strong rim light, silhouette effect'},
+      {label:'🌫️ Névoa luminosa', val:'glowing ethereal mist, diffused supernatural light'},
+      {label:'⚡ Raios de tempestade', val:'lightning bolt flashes, stormy dramatic electric light'},
+      {label:'☀️ Luz divina', val:'divine light beam from above, god rays, sacred illumination'},
+      {label:'🔵 Bioluminescência', val:'bioluminescent supernatural glow, blue-green spectral light'},
+      {label:'🔴 Luz infernal', val:'hellfire red glow, demonic underworld light'},
+      {label:'🌅 Crepúsculo', val:'twilight golden hour, dusk sunset orange sky'},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'atmosfera',
+    label: 'Atmosfera',
+    ask: 'Qual a atmosfera e o mood da imagem?',
+    qr: [
+      {label:'🖤 Sombria e intensa', val:'dark and intense, brooding ominous atmosphere'},
+      {label:'🌀 Mística e etérea', val:'mystical and ethereal, otherworldly spiritual'},
+      {label:'👑 Majestosa e poderosa', val:'majestic and powerful, commanding divine presence'},
+      {label:'🏛️ Ancestral e sagrada', val:'ancestral and sacred, ancient ritual atmosphere'},
+      {label:'💀 Sinistra e perturbadora', val:'sinister and unsettling, deeply disturbing horror'},
+      {label:'🕊️ Serena e contemplativa', val:'serene and contemplative, peaceful meditative'},
+      {label:'🎊 Festiva e vibrante', val:'festive and vibrant, joyful celebratory energy'},
+      {label:'🌪️ Caótica e apocalíptica', val:'chaotic apocalyptic, world-ending catastrophic energy'},
+      {label:'🧿 Onírica e surreal', val:'dreamlike and surreal, hallucinatory vision'},
+      {label:'⚔️ Guerreira e colérica', val:'warrior fierce and wrathful, battle-ready fury'},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'extra',
+    label: 'Extras',
+    ask: 'Adicionar detalhes extras? (opcional)',
+    qr: [
+      {label:'✗ Pular', val:'__skip__'},
+      {label:'💨 Fumaça e incenso', val:'smoke and incense haze filling the air'},
+      {label:'✨ Símbolos e sigils', val:'mystical symbols sigils and runes surrounding figure'},
+      {label:'🌸 Flores e oferendas', val:'ritual flowers and sacred offerings scattered around'},
+      {label:'🌀 Espirais de energia', val:'spiraling energy vortex emanating from figure'},
+      {label:'🐍 Animais sagrados', val:'sacred animals serpents ravens nearby'},
+      {label:'🚪 Portal dimensional', val:'dimensional portal opening behind figure'},
+      {label:'🌧️ Chuva e tempestade', val:'heavy rain and thunderstorm backdrop'},
+      {label:'🔥 Chamas por toda parte', val:'flames and glowing embers everywhere in scene'},
+      {label:'💀 Ossos e caveiras', val:'bones and skulls ritual objects around figure'},
+      {label:'🌿 Ervas e raízes', val:'ritual herbs roots and magical plants'},
+      {label:'⛓️ Correntes e grilhões', val:'chains and shackles symbolism'},
+    ],
+    skip: true, dynamic: false
+  },
+];
+
+// ── History helpers ────────────────────────────────────────────────────
+const HIST_KEY = 'espiritual_hist';
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; }
+}
+
+function saveHistory(h) {
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,20))); } catch {}
+}
+
+function addToHistory(name, en, pt) {
+  const h = getHistory();
+  h.unshift({ ts: Date.now(), name, en, pt });
+  saveHistory(h);
+}
+
+// ── Chat rendering ─────────────────────────────────────────────────────
+const chat = document.getElementById('chat');
+
+function appendBotMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = `<div class="avatar">⛧</div><div class="bubble">${text}</div>`;
+  chat.appendChild(div);
+  scrollBot();
+}
+
+function appendUserMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="bubble">${text}</div><div class="avatar">👁</div>`;
+  chat.appendChild(div);
+  scrollBot();
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="avatar">⛧</div><div class="bubble"><div class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
+  chat.appendChild(div);
+  scrollBot();
+  return div;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+function scrollBot() {
+  setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 50);
+}
+
+// ── Progress ───────────────────────────────────────────────────────────
+function updateProgress() {
+  const total = STEPS.length;
+  const pct = Math.round((currentStep / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `Etapa ${currentStep + 1} de ${total}`;
+}
+
+// ── Step engine ────────────────────────────────────────────────────────
+function showStep(idx) {
+  if (idx >= STEPS.length) { showResult(); return; }
+  currentStep = idx;
+  updateProgress();
+
+  const step = STEPS[idx];
+  let options = step.qr;
+
+  // Dynamic: populate entity options from loaded data
+  if (step.id === 'entidade') {
+    const cat = answers.categoria;
+    const list = ENTITIES[cat] || [];
+    options = list.map(e => ({ label: e.name, val: e.name }));
+    if (!options.length) {
+      // skip if no entities loaded
+      answers.entidade = 'entidade espiritual';
+      currentEntity = null;
+      showStep(idx + 1);
+      return;
+    }
+  }
+
+  const typing = showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg(step.ask);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'chips-wrap';
+    wrap.id = `chips-${idx}`;
+
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
+      btn.textContent = opt.label;
+      btn.onclick = () => pickOption(idx, opt.label, opt.val, wrap);
+      wrap.appendChild(btn);
+    });
+
+    // Free text for entidade
+    if (step.id === 'entidade' || step.free) {
+      const fw = document.createElement('div');
+      fw.className = 'free-wrap';
+      fw.innerHTML = `<input type="text" placeholder="Digitar nome da entidade..." id="free-${idx}"><button onclick="submitFree(${idx})">→</button>`;
+      chat.appendChild(wrap);
+      chat.appendChild(fw);
+      document.getElementById(`free-${idx}`).addEventListener('keydown', e => {
+        if (e.key === 'Enter') submitFree(idx);
+      });
+    } else {
+      chat.appendChild(wrap);
+    }
+    scrollBot();
+  }, 500);
+}
+
+function submitFree(idx) {
+  const input = document.getElementById(`free-${idx}`);
+  const val = input.value.trim();
+  if (!val) return;
+  pickOption(idx, val, val, document.getElementById(`chips-${idx}`));
+}
+
+function pickOption(idx, label, val, chipsEl) {
+  // Disable all chips
+  if (chipsEl) chipsEl.querySelectorAll('.chip').forEach(c => {
+    c.disabled = true;
+    c.style.opacity = '0.4';
+  });
+  // Disable free input
+  const fw = chipsEl && chipsEl.nextSibling;
+  if (fw && fw.classList && fw.classList.contains('free-wrap')) {
+    fw.querySelectorAll('input,button').forEach(e => e.disabled = true);
+  }
+
+  const step = STEPS[idx];
+
+  if (val === '__skip__') {
+    answers[step.id] = '';
+    appendUserMsg('— Pular —');
+  } else {
+    answers[step.id] = val;
+    appendUserMsg(label);
+
+    // Set currentEntity when entidade chosen
+    if (step.id === 'entidade') {
+      const cat = answers.categoria;
+      currentEntity = (ENTITIES[cat] || []).find(e => e.name === val) || { name: val };
+    }
+  }
+
+  setTimeout(() => showStep(idx + 1), 300);
+}
+
+// ── Prompt builder ─────────────────────────────────────────────────────
+function buildPromptEN() {
+  const ent = currentEntity || {};
+  const parts = [];
+
+  // Entity description
+  const name = ent.name_en || ent.name || answers.entidade || 'spiritual entity';
+  parts.push(name);
+  if (ent.desc_en) parts.push(ent.desc_en);
+  else if (ent.desc) parts.push(ent.desc);
+
+  // Visual choices
+  if (answers.estilo)     parts.push(answers.estilo);
+  if (answers.composicao) parts.push(answers.composicao);
+  if (answers.luz)        parts.push(answers.luz);
+  if (answers.atmosfera)  parts.push(answers.atmosfera);
+  if (answers.extra)      parts.push(answers.extra);
+
+  // Location from entity data
+  if (ent.local_en) parts.push(`set in ${ent.local_en}`);
+
+  parts.push('highly detailed', 'masterpiece quality', '--ar 9:16');
+  return parts.filter(Boolean).join(', ');
+}
+
+function buildPromptPT() {
+  const ent = currentEntity || {};
+  const name = ent.name || answers.entidade || 'entidade espiritual';
+  const cat = CAT_LABELS[answers.categoria] || answers.categoria || '';
+  const estilo = answers.estilo ? `Estilo: ${answers.estilo.split(',')[0]}.` : '';
+  const comp = answers.composicao ? `Composição: ${answers.composicao.split(',')[0]}.` : '';
+  const luz = answers.luz ? `Iluminação: ${answers.luz.split(',')[0]}.` : '';
+  const atm = answers.atmosfera ? `Atmosfera: ${answers.atmosfera.split(',')[0]}.` : '';
+  return `${cat}: ${name}. ${estilo} ${comp} ${luz} ${atm}`.replace(/\s+/g,' ').trim();
+}
+
+// ── Result ─────────────────────────────────────────────────────────────
+function showResult() {
+  updateProgress();
+  const typing = showTyping();
+
+  setTimeout(() => {
+    removeTyping();
+
+    generatedEN = buildPromptEN();
+    generatedPT = buildPromptPT();
+    const entityName = (currentEntity && currentEntity.name) || answers.entidade || 'Entidade';
+    addToHistory(entityName, generatedEN, generatedPT);
+
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <h3>⛧ Prompt Gerado</h3>
+      <div class="entity-name">${CAT_ICONS[answers.categoria] || '⛧'} ${entityName}</div>
+
+      <div class="prompt-label">Prompt em Inglês (SD / Midjourney)</div>
+      <div class="prompt-box" id="box-en">${generatedEN}</div>
+
+      <div class="prompt-label">Resumo em Português</div>
+      <div class="prompt-box" id="box-pt">${generatedPT}</div>
+
+      <div class="result-actions">
+        <button class="btn-act primary" onclick="copyEN()">📋 Copiar EN</button>
+        <button class="btn-act" onclick="copyPT()">📋 Copiar PT</button>
+        <button class="btn-act" onclick="exportTxt()">💾 Exportar .txt</button>
+        <button class="btn-act" onclick="restartFlow()">↺ Novo Prompt</button>
+      </div>
+      <div class="divider-rune" style="margin-top:12px">· ⛧ ·</div>
+    `;
+    chat.appendChild(card);
+    // Auto-copy EN
+    navigator.clipboard.writeText(generatedEN).catch(() => {});
+    scrollBot();
+  }, 600);
+}
+
+function copyEN() {
+  navigator.clipboard.writeText(generatedEN).then(() => flashBtn(event.target, '✓ Copiado!'));
+}
+
+function copyPT() {
+  navigator.clipboard.writeText(generatedPT).then(() => flashBtn(event.target, '✓ Copiado!'));
+}
+
+function flashBtn(btn, msg) {
+  const prev = btn.textContent;
+  btn.textContent = msg;
+  setTimeout(() => btn.textContent = prev, 2000);
+}
+
+function exportTxt() {
+  const content = `PORTAL DAS SOMBRAS — Prompt Espiritual\n${'─'.repeat(50)}\n\n[EN]\n${generatedEN}\n\n[PT]\n${generatedPT}\n\nGerado em: ${new Date().toLocaleString('pt-BR')}`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prompt-espiritual-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── History panel ──────────────────────────────────────────────────────
+function openHist() {
+  renderHistList();
+  document.getElementById('hist-panel').classList.add('open');
+}
+
+function closeHist() {
+  document.getElementById('hist-panel').classList.remove('open');
+}
+
+function renderHistList() {
+  const list = document.getElementById('hist-list');
+  const h = getHistory();
+  if (!h.length) {
+    list.innerHTML = '<div class="hist-empty">Nenhum prompt gerado ainda.</div>';
+    return;
+  }
+  list.innerHTML = h.map((item, i) => `
+    <div class="hist-item" onclick="loadHistItem(${i})">
+      <div class="hist-item-name">⛧ ${item.name}</div>
+      <div class="hist-item-meta">${new Date(item.ts).toLocaleString('pt-BR')}</div>
+      <div class="hist-item-preview">${item.en}</div>
+    </div>
+  `).join('');
+}
+
+function loadHistItem(i) {
+  const h = getHistory();
+  const item = h[i];
+  if (!item) return;
+  generatedEN = item.en;
+  generatedPT = item.pt;
+  closeHist();
+  // Show result card
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `
+    <h3>📜 Do Histórico</h3>
+    <div class="entity-name">⛧ ${item.name}</div>
+    <div class="prompt-label">Prompt EN</div>
+    <div class="prompt-box">${item.en}</div>
+    <div class="prompt-label">Resumo PT</div>
+    <div class="prompt-box">${item.pt}</div>
+    <div class="result-actions">
+      <button class="btn-act primary" onclick="navigator.clipboard.writeText(generatedEN).then(()=>flashBtn(this,'✓'))">📋 Copiar EN</button>
+      <button class="btn-act" onclick="exportTxt()">💾 Exportar</button>
+    </div>
+  `;
+  chat.appendChild(card);
+  scrollBot();
+}
+
+// ── Restart ────────────────────────────────────────────────────────────
+function restartFlow() {
+  answers = {};
+  currentEntity = null;
+  generatedEN = '';
+  generatedPT = '';
+  currentStep = 0;
+  chat.innerHTML = '';
+  startFlow();
+}
+
+// ── Start ──────────────────────────────────────────────────────────────
+function startFlow() {
+  updateProgress();
+  const typing = showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('Bem-vindo ao Portal das Sombras. Vou guiar você na criação de um prompt espiritual poderoso.');
+    setTimeout(() => showStep(0), 600);
+  }, 700);
+}
+
+// ── Load entities and init ─────────────────────────────────────────────
+async function init() {
+  try {
+    await Promise.all(CATS.map(async cat => {
+      try {
+        const r = await fetch(`${BASE_URL}/ent-${cat}.json`);
+        ENTITIES[cat] = r.ok ? await r.json() : [];
+      } catch {
+        ENTITIES[cat] = [];
+      }
+    }));
+  } catch(e) {
+    console.error('Entity load error:', e);
+  }
+  document.getElementById('loading').style.display = 'none';
+  startFlow();
+}
+
+init();
+</script>
+</body>
+</html>
