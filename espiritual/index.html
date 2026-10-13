@@ -88,9 +88,12 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 /* ── Result card ── */
 .result-card{background:var(--surface);border:1px solid var(--border-lit);border-radius:var(--radius);padding:20px;animation:fadeUp .35s ease}
 .result-card h3{font-family:'Palatino Linotype',Georgia,serif;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.result-card .entity-name{font-size:1.25rem;color:var(--text);margin-bottom:4px;font-style:italic;font-family:'Palatino Linotype',Georgia,serif}
-.result-card .entity-name-sub{font-size:.68rem;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
-.assinatura{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);text-align:center;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);font-family:'Palatino Linotype',Georgia,serif}
+.result-card .entity-name{font-size:1.5rem;color:var(--gold);margin-bottom:4px;font-style:italic;font-family:'Palatino Linotype',Georgia,serif;font-weight:700;text-shadow:0 0 12px rgba(201,134,10,.4)}
+.result-card .entity-name-sub{font-size:.7rem;color:var(--text);letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px;opacity:.8}
+.assinatura{margin-top:16px;padding-top:12px;border-top:1px solid var(--border-lit);text-align:center;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-family:'Palatino Linotype',Georgia,serif;font-style:italic}
+/* ── Affinity suggestion chips ── */
+.chip.sugg{border-color:var(--gold);color:var(--gold);background:rgba(201,134,10,.08)}
+.chip.sugg:hover{background:rgba(201,134,10,.18)}
 .prompt-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .prompt-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.8rem;line-height:1.55;color:var(--text);white-space:pre-wrap;word-break:break-word;margin-bottom:14px}
 .result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
@@ -196,6 +199,7 @@ let currentStep = 0;
 let currentEntity = null;
 let generatedEN = '';
 let generatedPT = '';
+let activeTags = new Set();
 
 // ── Steps definition ───────────────────────────────────────────────────
 const STEPS = [
@@ -218,16 +222,16 @@ const STEPS = [
     label: 'Estilo',
     ask: 'Qual o estilo artístico da imagem?',
     qr: [
-      {label:'📷 Fotografia analógica', val:'analog photography, film grain, 35mm film, photorealistic'},
-      {label:'🎨 Pintura a óleo', val:'oil painting, thick impasto brushwork, classical technique'},
-      {label:'⚙️ Gravura em metal', val:'etching engraving, intaglio printmaking, black and white'},
-      {label:'💧 Aquarela', val:'watercolor painting, transparent washes, soft edges'},
-      {label:'🖥️ Arte digital', val:'digital concept art, detailed matte painting'},
-      {label:'📖 Iluminura medieval', val:'medieval illuminated manuscript, gold leaf ornate borders'},
-      {label:'🪵 Xilogravura', val:'woodblock print, bold graphic lines, high contrast'},
-      {label:'✝️ Arte sacra barroca', val:'baroque religious art, dramatic chiaroscuro, gilded frame'},
-      {label:'🖤 Arte sombria', val:'dark fantasy art, gothic illustration, occult aesthetic'},
-      {label:'🌀 Surrealismo', val:'surrealist painting, dreamlike distortion, symbolic imagery'},
+      {label:'📷 Fotografia analógica', val:'analog photography, film grain, 35mm film, photorealistic', tags:['photo','realistic','dark']},
+      {label:'🎨 Pintura a óleo', val:'oil painting, thick impasto brushwork, classical technique', tags:['painting','classic','sacred']},
+      {label:'⚙️ Gravura em metal', val:'etching engraving, intaglio printmaking, black and white', tags:['dark','occult','classic']},
+      {label:'💧 Aquarela', val:'watercolor painting, transparent washes, soft edges', tags:['soft','mystic','nature']},
+      {label:'🖥️ Arte digital', val:'digital concept art, detailed matte painting', tags:['dark','fantasy','mystic']},
+      {label:'📖 Iluminura medieval', val:'medieval illuminated manuscript, gold leaf ornate borders', tags:['sacred','classic','gold']},
+      {label:'🪵 Xilogravura', val:'woodblock print, bold graphic lines, high contrast', tags:['dark','occult','bold']},
+      {label:'✝️ Arte sacra barroca', val:'baroque religious art, dramatic chiaroscuro, gilded frame', tags:['sacred','gold','classic','light']},
+      {label:'🖤 Arte sombria', val:'dark fantasy art, gothic illustration, occult aesthetic', tags:['dark','occult','horror','infernal']},
+      {label:'🌀 Surrealismo', val:'surrealist painting, dreamlike distortion, symbolic imagery', tags:['mystic','dream','fantasy']},
     ],
     dynamic: false, skip: false
   },
@@ -236,14 +240,14 @@ const STEPS = [
     label: 'Composição',
     ask: 'Como deve ser a composição da imagem?',
     qr: [
-      {label:'👤 Retrato fechado', val:'close-up portrait, face and shoulders'},
-      {label:'🧍 Meio corpo', val:'half body shot, waist up'},
-      {label:'🧍‍♀️ Corpo inteiro', val:'full body standing figure'},
-      {label:'🔭 Vista de baixo', val:'low angle view, looking up at figure, foreshortening'},
-      {label:'👁️ Vista de cima', val:'high angle view, looking down'},
-      {label:'🌑 Silhueta dramática', val:'dramatic silhouette against glowing background'},
-      {label:'🌅 Cena panorâmica', val:'wide establishing shot, figure in full environment'},
-      {label:'🪞 Composição simétrica', val:'symmetrical composition, centered figure, perfect balance'},
+      {label:'👤 Retrato fechado', val:'close-up portrait, face and shoulders', tags:['portrait','photo','realistic']},
+      {label:'🧍 Meio corpo', val:'half body shot, waist up', tags:['portrait','classic']},
+      {label:'🧍‍♀️ Corpo inteiro', val:'full body standing figure', tags:['sacred','majestic','nature']},
+      {label:'🔭 Vista de baixo', val:'low angle view, looking up at figure, foreshortening', tags:['majestic','dark','bold']},
+      {label:'👁️ Vista de cima', val:'high angle view, looking down', tags:['mystic','dream','occult']},
+      {label:'🌑 Silhueta dramática', val:'dramatic silhouette against glowing background', tags:['dark','occult','infernal','bold']},
+      {label:'🌅 Cena panorâmica', val:'wide establishing shot, figure in full environment', tags:['nature','sacred','fantasy']},
+      {label:'🪞 Composição simétrica', val:'symmetrical composition, centered figure, perfect balance', tags:['sacred','gold','majestic','classic']},
     ],
     dynamic: false, skip: false
   },
@@ -252,16 +256,16 @@ const STEPS = [
     label: 'Iluminação',
     ask: 'Qual o tipo de iluminação?',
     qr: [
-      {label:'🕯️ Velas e fogueira', val:'candlelight and bonfire glow, warm flickering orange light'},
-      {label:'🌕 Lua cheia', val:'full moonlight, cool silver lunar glow, night scene'},
-      {label:'🌋 Brasas incandescentes', val:'glowing embers, red-orange incandescent heat glow'},
-      {label:'💡 Contraluz dramático', val:'dramatic backlight, strong rim light, silhouette effect'},
-      {label:'🌫️ Névoa luminosa', val:'glowing ethereal mist, diffused supernatural light'},
-      {label:'⚡ Raios de tempestade', val:'lightning bolt flashes, stormy dramatic electric light'},
-      {label:'☀️ Luz divina', val:'divine light beam from above, god rays, sacred illumination'},
-      {label:'🔵 Bioluminescência', val:'bioluminescent supernatural glow, blue-green spectral light'},
-      {label:'🔴 Luz infernal', val:'hellfire red glow, demonic underworld light'},
-      {label:'🌅 Crepúsculo', val:'twilight golden hour, dusk sunset orange sky'},
+      {label:'🕯️ Velas e fogueira', val:'candlelight and bonfire glow, warm flickering orange light', tags:['occult','sacred','ritual','infernal']},
+      {label:'🌕 Lua cheia', val:'full moonlight, cool silver lunar glow, night scene', tags:['mystic','dark','nature','dream']},
+      {label:'🌋 Brasas incandescentes', val:'glowing embers, red-orange incandescent heat glow', tags:['infernal','dark','bold']},
+      {label:'💡 Contraluz dramático', val:'dramatic backlight, strong rim light, silhouette effect', tags:['dark','bold','majestic']},
+      {label:'🌫️ Névoa luminosa', val:'glowing ethereal mist, diffused supernatural light', tags:['mystic','dream','fantasy']},
+      {label:'⚡ Raios de tempestade', val:'lightning bolt flashes, stormy dramatic electric light', tags:['dark','bold','horror','infernal']},
+      {label:'☀️ Luz divina', val:'divine light beam from above, god rays, sacred illumination', tags:['sacred','gold','light','majestic']},
+      {label:'🔵 Bioluminescência', val:'bioluminescent supernatural glow, blue-green spectral light', tags:['mystic','dream','nature','fantasy']},
+      {label:'🔴 Luz infernal', val:'hellfire red glow, demonic underworld light', tags:['infernal','dark','horror','occult']},
+      {label:'🌅 Crepúsculo', val:'twilight golden hour, dusk sunset orange sky', tags:['gold','nature','mystic','soft']},
     ],
     dynamic: false, skip: false
   },
@@ -270,16 +274,16 @@ const STEPS = [
     label: 'Atmosfera',
     ask: 'Qual a atmosfera e o mood da imagem?',
     qr: [
-      {label:'🖤 Sombria e intensa', val:'dark and intense, brooding ominous atmosphere'},
-      {label:'🌀 Mística e etérea', val:'mystical and ethereal, otherworldly spiritual'},
-      {label:'👑 Majestosa e poderosa', val:'majestic and powerful, commanding divine presence'},
-      {label:'🏛️ Ancestral e sagrada', val:'ancestral and sacred, ancient ritual atmosphere'},
-      {label:'💀 Sinistra e perturbadora', val:'sinister and unsettling, deeply disturbing horror'},
-      {label:'🕊️ Serena e contemplativa', val:'serene and contemplative, peaceful meditative'},
-      {label:'🎊 Festiva e vibrante', val:'festive and vibrant, joyful celebratory energy'},
-      {label:'🌪️ Caótica e apocalíptica', val:'chaotic apocalyptic, world-ending catastrophic energy'},
-      {label:'🧿 Onírica e surreal', val:'dreamlike and surreal, hallucinatory vision'},
-      {label:'⚔️ Guerreira e colérica', val:'warrior fierce and wrathful, battle-ready fury'},
+      {label:'🖤 Sombria e intensa', val:'dark and intense, brooding ominous atmosphere', tags:['dark','horror','occult','infernal']},
+      {label:'🌀 Mística e etérea', val:'mystical and ethereal, otherworldly spiritual', tags:['mystic','dream','fantasy','soft']},
+      {label:'👑 Majestosa e poderosa', val:'majestic and powerful, commanding divine presence', tags:['majestic','sacred','gold','bold']},
+      {label:'🏛️ Ancestral e sagrada', val:'ancestral and sacred, ancient ritual atmosphere', tags:['sacred','classic','ritual','occult']},
+      {label:'💀 Sinistra e perturbadora', val:'sinister and unsettling, deeply disturbing horror', tags:['horror','dark','occult','infernal']},
+      {label:'🕊️ Serena e contemplativa', val:'serene and contemplative, peaceful meditative', tags:['soft','nature','mystic','light']},
+      {label:'🎊 Festiva e vibrante', val:'festive and vibrant, joyful celebratory energy', tags:['ritual','nature','bold','gold']},
+      {label:'🌪️ Caótica e apocalíptica', val:'chaotic apocalyptic, world-ending catastrophic energy', tags:['dark','horror','infernal','bold']},
+      {label:'🧿 Onírica e surreal', val:'dreamlike and surreal, hallucinatory vision', tags:['dream','mystic','fantasy','occult']},
+      {label:'⚔️ Guerreira e colérica', val:'warrior fierce and wrathful, battle-ready fury', tags:['majestic','bold','dark','infernal']},
     ],
     dynamic: false, skip: false
   },
@@ -289,21 +293,42 @@ const STEPS = [
     ask: 'Adicionar detalhes extras? (opcional)',
     qr: [
       {label:'✗ Pular', val:'__skip__'},
-      {label:'💨 Fumaça e incenso', val:'smoke and incense haze filling the air'},
-      {label:'✨ Símbolos e sigils', val:'mystical symbols sigils and runes surrounding figure'},
-      {label:'🌸 Flores e oferendas', val:'ritual flowers and sacred offerings scattered around'},
-      {label:'🌀 Espirais de energia', val:'spiraling energy vortex emanating from figure'},
-      {label:'🐍 Animais sagrados', val:'sacred animals serpents ravens nearby'},
-      {label:'🚪 Portal dimensional', val:'dimensional portal opening behind figure'},
-      {label:'🌧️ Chuva e tempestade', val:'heavy rain and thunderstorm backdrop'},
-      {label:'🔥 Chamas por toda parte', val:'flames and glowing embers everywhere in scene'},
-      {label:'💀 Ossos e caveiras', val:'bones and skulls ritual objects around figure'},
-      {label:'🌿 Ervas e raízes', val:'ritual herbs roots and magical plants'},
-      {label:'⛓️ Correntes e grilhões', val:'chains and shackles symbolism'},
+      {label:'💨 Fumaça e incenso', val:'smoke and incense haze filling the air', tags:['ritual','occult','mystic']},
+      {label:'✨ Símbolos e sigils', val:'mystical symbols sigils and runes surrounding figure', tags:['occult','mystic','dark']},
+      {label:'🌸 Flores e oferendas', val:'ritual flowers and sacred offerings scattered around', tags:['ritual','nature','sacred','soft']},
+      {label:'🌀 Espirais de energia', val:'spiraling energy vortex emanating from figure', tags:['mystic','fantasy','dream']},
+      {label:'🐍 Animais sagrados', val:'sacred animals serpents ravens nearby', tags:['sacred','nature','occult','dark']},
+      {label:'🚪 Portal dimensional', val:'dimensional portal opening behind figure', tags:['fantasy','mystic','dream','occult']},
+      {label:'🌧️ Chuva e tempestade', val:'heavy rain and thunderstorm backdrop', tags:['dark','bold','nature','horror']},
+      {label:'🔥 Chamas por toda parte', val:'flames and glowing embers everywhere in scene', tags:['infernal','dark','bold','ritual']},
+      {label:'💀 Ossos e caveiras', val:'bones and skulls ritual objects around figure', tags:['horror','dark','occult','ritual']},
+      {label:'🌿 Ervas e raízes', val:'ritual herbs roots and magical plants', tags:['nature','ritual','sacred','soft']},
+      {label:'⛓️ Correntes e grilhões', val:'chains and shackles symbolism', tags:['dark','horror','occult','bold']},
     ],
     skip: true, dynamic: false
   },
 ];
+
+// ── Affinity / suggestion system ──────────────────────────────────────
+function extractTags(opt) {
+  if (opt && opt.tags) opt.tags.forEach(t => activeTags.add(t));
+}
+
+function scoreOption(opt) {
+  if (!opt.tags || !activeTags.size) return 0;
+  return opt.tags.filter(t => activeTags.has(t)).length;
+}
+
+function withSuggestions(opts) {
+  if (!activeTags.size) return opts;
+  const scored = opts.map(o => ({ o, s: scoreOption(o) }));
+  const sugg = scored.filter(x => x.s > 0).sort((a,b) => b.s - a.s);
+  const rest  = scored.filter(x => x.s === 0);
+  return [
+    ...sugg.map(x => ({ ...x.o, label: '✦ ' + x.o.label, _sugg: true })),
+    ...rest.map(x => x.o)
+  ];
+}
 
 // ── History helpers ────────────────────────────────────────────────────
 const HIST_KEY = 'espiritual_hist';
@@ -391,6 +416,11 @@ function showStep(idx) {
     }
   }
 
+  // Apply affinity suggestions for non-structural steps
+  if (step.id !== 'categoria' && step.id !== 'entidade') {
+    options = withSuggestions(options);
+  }
+
   const typing = showTyping();
   setTimeout(() => {
     removeTyping();
@@ -402,9 +432,9 @@ function showStep(idx) {
 
     options.forEach(opt => {
       const btn = document.createElement('button');
-      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
+      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '') + (opt._sugg ? ' sugg' : '');
       btn.textContent = opt.label;
-      btn.onclick = () => pickOption(idx, opt.label, opt.val, wrap);
+      btn.onclick = () => pickOption(idx, opt.label, opt.val, wrap, opt);
       wrap.appendChild(btn);
     });
 
@@ -432,7 +462,7 @@ function submitFree(idx) {
   pickOption(idx, val, val, document.getElementById(`chips-${idx}`));
 }
 
-function pickOption(idx, label, val, chipsEl) {
+function pickOption(idx, label, val, chipsEl, opt) {
   // Disable all chips
   if (chipsEl) chipsEl.querySelectorAll('.chip').forEach(c => {
     c.disabled = true;
@@ -451,7 +481,11 @@ function pickOption(idx, label, val, chipsEl) {
     appendUserMsg('— Pular —');
   } else {
     answers[step.id] = val;
-    appendUserMsg(label);
+    // Strip suggestion prefix for user message
+    appendUserMsg(label.replace(/^✦ /, ''));
+
+    // Extract tags for affinity system
+    if (opt) extractTags(opt);
 
     // Set currentEntity when entidade chosen
     if (step.id === 'entidade') {
@@ -630,6 +664,7 @@ function restartFlow() {
   generatedEN = '';
   generatedPT = '';
   currentStep = 0;
+  activeTags.clear();
   chat.innerHTML = '';
   startFlow();
 }
