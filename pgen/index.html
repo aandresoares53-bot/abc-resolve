@@ -167,9 +167,7 @@ header{
 .qr.back:hover{border-color:var(--acc);color:var(--acc);}
 .qr.rand{border-color:#7c3aed;color:#a78bfa;}
 .qr.rand:hover{background:rgba(124,58,237,.1);}
-.qr.sugg{border-color:#d97706;color:#fbbf24;background:rgba(217,119,6,.08);}
-.qr.sugg:hover{background:rgba(217,119,6,.18);border-color:#fbbf24;}
-.sugg-sep{font-size:.6em;color:#6b5a30;padding:2px 4px;align-self:center;white-space:nowrap;letter-spacing:.05em;}
+
 
 #input-bar{flex-shrink:0;display:flex;align-items:flex-end;gap:8px;padding:9px 13px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--bdr);background:var(--bg);}
 #msg-input{flex:1;background:var(--bot-bg);border:1.5px solid var(--bdr);border-radius:var(--r);color:var(--txt);padding:9px 13px;font-size:.9em;font-family:inherit;resize:none;outline:none;line-height:1.5;max-height:120px;transition:border-color .2s;}
@@ -980,31 +978,6 @@ const TOTAL = STEPS.length;
 let step = 0;
 const answers = {};
 let waiting = false;
-let activeTags = new Set(); // affinity tags accumulated from choices
-
-// ─── Affinity system ─────────────────────────────────────────────────────
-function scoreOption(opt){
-  if(!opt.tags||!activeTags.size) return 0;
-  return opt.tags.filter(t=>activeTags.has(t)).length;
-}
-
-function withSuggestions(qrs){
-  // Separate special chips (back/skip/rand/gen)
-  const special = qrs.filter(q=>q.cls==='back'||q.cls==='rand'||q.val==='__gen__'||q.val==='pular');
-  const normal  = qrs.filter(q=>!special.includes(q));
-  if(!activeTags.size) return qrs;
-
-  const scored = normal.map(q=>({...q, _sc: scoreOption(q)}));
-  const sugg   = scored.filter(q=>q._sc>0).sort((a,b)=>b._sc-a._sc).slice(0,5)
-                        .map(q=>({...q, cls:(q.cls||'')+' sugg', label:'✦ '+q.label}));
-  const rest   = scored.filter(q=>q._sc===0);
-  if(!sugg.length) return qrs;
-  return [...sugg, ...rest, ...special];
-}
-
-function extractTags(qrOpt){
-  if(qrOpt&&qrOpt.tags) qrOpt.tags.forEach(t=>activeTags.add(t));
-}
 let sdxlMode = false;
 let previewVisible = false;
 let histFilter = 'all';
@@ -1505,9 +1478,6 @@ async function processAnswer(val){
   const isSkip=/^(pular|skip|não|nao|-)$/i.test(val.trim())||val==='';
   if(!isSkip){
     answers[cur.id]=val;
-    // Extract affinity tags from the chosen option
-    const chosen=cur.qr&&cur.qr.find(q=>q.val===val);
-    extractTags(chosen);
   }
   step++; clearQR(); updateProgress();
   if(step<STEPS.length){
@@ -1515,7 +1485,6 @@ async function processAnswer(val){
     let qrs=next.qr?[...next.qr]:[];
     if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
     if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
-    qrs=withSuggestions(qrs);
     await botSay(next.ask, qrs);
   } else { await showSummary(); }
 }
@@ -1527,7 +1496,6 @@ async function goBack(){
   let qrs=cur.qr?[...cur.qr]:[];
   if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
   if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
-  qrs=withSuggestions(qrs);
   await botSay('↩ Voltando — '+cur.ask, qrs);
 }
 
@@ -1712,13 +1680,12 @@ function restoreFromURL(){
 // ─── Init & restart ───────────────────────────────────────────────────────
 function restart(){
   step=0; Object.keys(answers).forEach(k=>delete answers[k]);
-  activeTags.clear();
   chat.innerHTML=''; clearQR(); input.value=''; waiting=false; updateProgress();
   init();
 }
 
 async function init(){
-  step=0; Object.keys(answers).forEach(k=>delete answers[k]); activeTags.clear(); waiting=false; updateProgress();
+  step=0; Object.keys(answers).forEach(k=>delete answers[k]); waiting=false; updateProgress();
   const shared=restoreFromURL();
   if(shared){
     step=STEPS.length; updateProgress();
