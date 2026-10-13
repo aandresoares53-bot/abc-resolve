@@ -1391,16 +1391,16 @@ function autoFilm(){
 function buildPrompt(){
   const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
   const raw = sdxlMode
-    ? 'RAW photo, photorealistic, 8k uhd, high detail, sharp focus, professional photography, real skin texture, visible pores, subsurface scattering, depth of field, natural lighting, analog film grain, NOT plastic skin, NOT airbrushed'
-    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic human skin, real skin texture, visible pores, natural skin blemishes, subcutaneous fat visible, soft skin subsurface scattering, real human body, no retouching, unedited raw capture, candid documentary photography, sharp focus, depth of field, natural lighting falloff, NOT plastic skin, NOT airbrushed';
-  // Always-on realism block (anti-plastic regardless of imperfections)
-  const realismBase = 'real human skin texture, skin pores visible, natural skin tone variation, subsurface scattering, non-airbrushed skin, authentic human body';
+    ? 'RAW photo, 8k uhd, photorealistic, hyperrealistic, ultra-detailed human skin, real skin texture, visible pores, subsurface scattering, depth of field, natural lighting, analog film grain, 100% real human, NOT plastic skin, NOT airbrushed, NOT CGI, NOT AI generated, NOT illustration'
+    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic, 100% real human being, ultra-detailed human skin texture, visible pores, natural skin imperfections, subcutaneous fat visible, soft skin subsurface scattering, real human body anatomy, no retouching, unedited raw capture, candid documentary photography, sharp focus, depth of field, natural lighting falloff, NOT plastic skin, NOT airbrushed, NOT AI art, NOT CGI, NOT 3D render, NOT illustration, NOT anime, NOT cartoon';
+  // Always-on realism block
+  const realismBase = 'real human skin texture, skin pores visible, natural skin tone variation, subsurface scattering, non-airbrushed skin, authentic human body, 100% photorealistic person, natural human proportions, real human face features';
   const realismImperf = hasImperf
     ? 'unretouched photography, zero airbrushing, natural imperfections preserved, skin not smoothed, raw documentary style, dermal texture detail, macro skin detail'
     : '';
   const quality = sdxlMode
-    ? 'cinematic quality, real photograph, film grain, lens aberration, bokeh, not AI, not CGI'
-    : 'real photograph, not AI, not CGI, not 3D render, not painting, not illustration, film grain, lens aberration, natural bokeh';
+    ? 'cinematic quality, real photograph, analog film grain, lens aberration, natural bokeh, ultra-sharp, not AI, not CGI, not illustration'
+    : 'real photograph, ultra-sharp, ultra-detailed, not AI, not CGI, not 3D render, not painting, not illustration, not anime, analog film grain, lens aberration, natural bokeh, professional photography lighting';
   const parts=[
     raw, realismBase, realismImperf, answers.idade, answers.etnia||'beautiful woman',
     answers.corpo, answers.olhos, answers.cabelo, answers.tattoo,
