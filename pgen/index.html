@@ -1397,24 +1397,31 @@ function autoFilm(){
 
 function buildPrompt(){
   const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
-  // SD quality header — these ALWAYS anchor the prompt to photorealism
+  // SD format: SUBJECT FIRST, then quality/realism tokens
+  // Subject anchor — person description at the very top
+  const subject = `(${answers.etnia||'beautiful woman'}:1.3), (${answers.idade||'young adult woman'}:1.1)`;
+  // Quality/realism header — comes right after subject
   const qualityHeader = sdxlMode
     ? '(masterpiece:1.4), (best quality:1.4), (photorealistic:1.5), (ultra realistic:1.4), (RAW photo:1.3), (8k uhd:1.2), (sharp focus:1.2)'
     : '(masterpiece:1.4), (best quality:1.4), (photorealistic:1.5), (ultra realistic:1.4), (RAW photo:1.3), (35mm analog film:1.2), (shot on Canon EOS R5:1.1), (sharp focus:1.2), (depth of field:1.1)';
-  // Human realism — always present, always high weight
-  const humanRealism = '(real human being:1.5), (100% human:1.4), (real person:1.4), (natural human face:1.3), (authentic human body:1.3), (real human anatomy:1.2), (natural human proportions:1.2)';
-  // Skin realism block
+  // Human realism block
+  const humanRealism = '(real human being:1.5), (100% real human:1.4), (real person photography:1.4), (natural human face:1.3), (real human skin:1.3), (authentic human body:1.2)';
+  // Skin realism
   const skinRealism = hasImperf
-    ? '(real skin texture:1.4), (skin pores visible:1.3), (subsurface scattering:1.3), (natural skin imperfections:1.3), (unretouched photography:1.3), (dermal texture detail:1.2), (natural skin tone variation:1.2), (film grain:1.1)'
-    : '(real skin texture:1.3), (skin pores visible:1.2), (subsurface scattering:1.2), (natural skin tone variation:1.2), (film grain:1.1)';
-  const realism = `${humanRealism}, ${skinRealism}`;
+    ? '(real skin texture:1.4), (skin pores visible:1.3), (subsurface scattering:1.3), (natural skin imperfections:1.3), (unretouched:1.3), (dermal texture:1.2), (film grain:1.1)'
+    : '(real skin texture:1.3), (skin pores visible:1.2), (subsurface scattering:1.2), (natural skin tone:1.2), (film grain:1.1)';
   const parts=[
-    qualityHeader, realism,
-    answers.idade, answers.etnia||'beautiful woman',
+    // Subject first (SD convention)
+    subject,
+    // Quality + realism anchors
+    qualityHeader, humanRealism, skinRealism,
+    // Character details
     answers.corpo, answers.olhos, answers.cabelo, answers.tattoo,
     answers.roupa, answers.acessorios, answers.maquiagem, answers.expressao,
-    answers.detalhes, answers.imperfeicoes, answers.nsfw, answers.cenario, answers.pose,
-    tr(answers.desc||''), answers.estilo_foto, answers.cam, autoFilm(),
+    answers.detalhes, answers.imperfeicoes, answers.nsfw,
+    // Scene + style
+    answers.cenario, answers.pose, tr(answers.desc||''),
+    answers.estilo_foto, answers.cam, autoFilm(),
   ].filter(Boolean);
   const seen=new Set();
   return parts.filter(p=>{ if(seen.has(p)) return false; seen.add(p); return true; }).join(', ');
