@@ -527,11 +527,14 @@ function buildPromptEN() {
   const ent = currentEntity || {};
   const parts = [];
 
-  // Entity description
+  // Entity name — weighted so the model prioritizes rendering it
   const name = ent.name_en || ent.name || answers.entidade || 'spiritual entity';
-  parts.push(name);
+  const nameSafe = name.replace(/[(),]/g, '');
+  parts.push(`(${nameSafe}:1.5)`);
   if (ent.desc_en) parts.push(ent.desc_en);
   else if (ent.desc) parts.push(ent.desc);
+  // Text overlay instruction so the name appears written in the image
+  parts.push(`ornate calligraphic text inscription "${nameSafe}" visible in image`, `elegant gothic lettering "Artes Espirituais" as signature`);
 
   // Visual choices
   if (answers.estilo)     parts.push(answers.estilo);
