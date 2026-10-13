@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import ChatWidget from './lib/ChatWidget';
 
 const services = [
   { emoji: '🔧', label: 'Encanador' },
@@ -129,6 +130,81 @@ export default function Home() {
         </div>
       </section>
 
+      {/* PLANOS / PRICING */}
+      <section style={{ background: '#f9fafb', padding: '80px 24px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div style={{ display: 'inline-block', background: '#eff6ff', color: '#2563eb', borderRadius: 999, padding: '5px 16px', fontSize: 13, fontWeight: 600, marginBottom: 14 }}>
+              Para Profissionais
+            </div>
+            <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, color: '#111', margin: '0 0 12px' }}>Planos para Prestadores</h2>
+            <p style={{ fontSize: 16, color: '#6b7280', maxWidth: 520, margin: '0 auto' }}>
+              Escolha o plano ideal e comece a receber clientes. Cancele quando quiser, sem fidelidade.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 24 }}>
+            {/* Básico */}
+            <div style={{ background: '#fff', borderRadius: 20, padding: '36px 28px', border: '1px solid #e5e7eb', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', textAlign: 'center' }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#6b7280', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Básico</div>
+              <div style={{ fontSize: 48, fontWeight: 800, color: '#111', lineHeight: 1 }}>Grátis</div>
+              <div style={{ fontSize: 14, color: '#9ca3af', marginBottom: 28, marginTop: 4 }}>para sempre</div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {['Perfil básico na plataforma', 'Aparece nas buscas gerais', 'Até 5 contatos/mês', 'Suporte por e-mail'].map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#374151' }}>
+                    <span style={{ color: '#10b981', fontWeight: 700, fontSize: 16 }}>✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register?type=provider&plan=basic" style={{ display: 'block', background: '#f3f4f6', color: '#374151', padding: '13px', borderRadius: 12, fontWeight: 600, fontSize: 15, textDecoration: 'none', textAlign: 'center' }}>
+                Começar grátis
+              </Link>
+            </div>
+
+            {/* Profissional — destaque */}
+            <div style={{ background: 'linear-gradient(135deg,#1d4ed8,#2563eb)', borderRadius: 20, padding: '36px 28px', boxShadow: '0 8px 32px rgba(37,99,235,0.35)', textAlign: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: '#fbbf24', color: '#111', borderRadius: 999, padding: '4px 18px', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                MAIS POPULAR
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.7)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Profissional</div>
+              <div style={{ fontSize: 48, fontWeight: 800, color: '#fff', lineHeight: 1 }}>R$ 89</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 28, marginTop: 4 }}>por mês</div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {['Destaque nas buscas', 'Contato direto ilimitado', 'Avaliações verificadas', 'Perfil com fotos e vídeos', 'Badge "Profissional Verificado"', 'Suporte prioritário'].map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'rgba(255,255,255,0.9)' }}>
+                    <span style={{ color: '#4ade80', fontWeight: 700, fontSize: 16 }}>✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register?type=provider&plan=pro" style={{ display: 'block', background: '#fbbf24', color: '#111', padding: '13px', borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: 'none', textAlign: 'center' }}>
+                Assinar agora
+              </Link>
+            </div>
+
+            {/* Premium */}
+            <div style={{ background: '#fff', borderRadius: 20, padding: '36px 28px', border: '2px solid #111', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', textAlign: 'center' }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#6b7280', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Premium</div>
+              <div style={{ fontSize: 48, fontWeight: 800, color: '#111', lineHeight: 1 }}>R$ 179</div>
+              <div style={{ fontSize: 14, color: '#9ca3af', marginBottom: 28, marginTop: 4 }}>por mês</div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {['Topo absoluto das buscas', 'Anúncios no chatbot IA', 'Relatórios de leads', 'Integração WhatsApp Business', 'Gerente de conta dedicado', 'API de agendamento'].map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#374151' }}>
+                    <span style={{ color: '#10b981', fontWeight: 700, fontSize: 16 }}>✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register?type=provider&plan=premium" style={{ display: 'block', background: '#111', color: '#fff', padding: '13px', borderRadius: 12, fontWeight: 700, fontSize: 15, textDecoration: 'none', textAlign: 'center' }}>
+                Assinar Premium
+              </Link>
+            </div>
+          </div>
+
+          <p style={{ textAlign: 'center', marginTop: 28, fontSize: 13, color: '#9ca3af' }}>
+            Pagamento seguro via PIX, cartão ou boleto. Cancele quando quiser.
+          </p>
+        </div>
+      </section>
+
       {/* CTA PRESTADOR */}
       <section style={{ background: 'linear-gradient(135deg,#059669,#047857)', padding: '80px 24px', color: '#fff', textAlign: 'center' }}>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
@@ -147,6 +223,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* CHATBOT WIDGET */}
+      <ChatWidget />
 
       {/* FOOTER */}
       <footer style={{ background: '#111', color: '#9ca3af', padding: '40px 24px', textAlign: 'center' }}>
