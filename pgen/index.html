@@ -167,6 +167,8 @@ header{
 .qr.back:hover{border-color:var(--acc);color:var(--acc);}
 .qr.rand{border-color:#7c3aed;color:#a78bfa;}
 .qr.rand:hover{background:rgba(124,58,237,.1);}
+.qr.sugg{border-color:#f59e0b;color:#fbbf24;background:rgba(245,158,11,.08);}
+.qr.sugg:hover{background:rgba(245,158,11,.18);}
 
 
 #input-bar{flex-shrink:0;display:flex;align-items:flex-end;gap:8px;padding:9px 13px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--bdr);background:var(--bg);}
@@ -551,19 +553,69 @@ const STEPS = [
       {label:'Dançarina ventre - topless',val:'wearing belly dancer hip scarf coin belt, harem pants, bare breasts exposed, topless belly dancer, bare midriff, jeweled coin skirt only, no top'},
       {label:'Fantasia harém sultana',val:'wearing harem fantasy costume, embroidered crop top, sheer silk harem pants, jeweled belt, bare belly, silky flowing fabric, jeweled headpiece, Arabian Nights aesthetic'},
       {label:'Odalisca - conjunto dourado',val:'wearing gold metallic belly dance costume, gold bra top with fringe, gold sequined hip skirt over harem pants, elaborate golden jewelry, headdress, bare midriff, luxurious gold fabric'},
-      {label:'Véu de noiva árabe',val:'wearing sheer silk veil only across chest, transparent gauze draping, pearl jewelry, nothing underneath, barely covered by translucent veil, harem fantasy'},
-      {label:'Dançarina ventre completa',val:'wearing full professional belly dance costume, heavily sequined bra top with fringe, matching sequined skirt with slit, coin hip belt, flowing chiffon sleeves, ornate jewelry, stage performance outfit'},
+      {label:'Véu de noiva árabe',val:'wearing sheer silk veil only across chest, transparent gauze draping, pearl jewelry, nothing underneath, barely covered by translucent veil, harem fantasy',tags:['oriental','arab','boudoir','nude']},
+      {label:'Dançarina ventre completa',val:'wearing full professional belly dance costume, heavily sequined bra top with fringe, matching sequined skirt with slit, coin hip belt, flowing chiffon sleeves, ornate jewelry, stage performance outfit',tags:['oriental','arab','studio','night']},
       // Conjuntos combinados completos
-      {label:'Colegial completa',val:'wearing complete schoolgirl outfit, white button-up blouse tied at waist, plaid mini skirt, white knee-high socks, mary jane shoes, pigtails, young student aesthetic'},
-      {label:'Academia completa',val:'wearing matching athletic set, sports bra and high-waist leggings same color, running shoes, sweat on skin, gym ready outfit, athletic complete look'},
-      {label:'Praia completa',val:'wearing matching bikini set, tied top and bottoms, beach coverup sarong, flip flops, sun hat, beach bag, tropical summer complete look'},
-      {label:'Club night completo',val:'wearing sexy club outfit, sparkly crop top, mini skirt, platform heels, small purse, nightclub ready complete look, going out outfit'},
-      {label:'Noite elegante completa',val:'wearing elegant evening gown, floor length fitted dress with slit, strappy heels, clutch bag, diamond earrings, formal evening complete look'},
-      {label:'Lingerie + kimono aberto',val:'wearing black lace lingerie bra and thong, sheer kimono robe open draping off shoulders, stiletto heels, elegant boudoir look, robe partially on'},
-      {label:'Cowgirl completa',val:'wearing complete cowgirl outfit, denim short shorts, plaid tied crop shirt, cowboy boots, cowboy hat, leather belt, Western complete look'},
-      {label:'Moto girl completa',val:'wearing motorcycle biker girl outfit, leather jacket open, tight leather pants, biker boots, gloves, helmet in hand, badass biker complete look'},
-      {label:'Bailarina completa',val:'wearing complete ballet dancer costume, white tutu skirt, corset bodice, ballet slipper pointe shoes, hair in bun, dance company look'},
-      {label:'Dançarina pole completa',val:'wearing pole dance performance outfit, strappy sports bra, high-waist bottoms, platform clear heels, pole dance stage look, athletic sexy outfit'},
+      {label:'Colegial completa',val:'wearing complete schoolgirl outfit, white button-up blouse tied at waist, plaid mini skirt, white knee-high socks, mary jane shoes, pigtails, young student aesthetic',tags:['fantasy','indoor','studio']},
+      {label:'Academia completa',val:'wearing matching athletic set, sports bra and high-waist leggings same color, running shoes, sweat on skin, gym ready outfit, athletic complete look',tags:['athletic','studio','outdoor']},
+      {label:'Praia completa',val:'wearing matching bikini set, tied top and bottoms, beach coverup sarong, flip flops, sun hat, beach bag, tropical summer complete look',tags:['beach','outdoor','latina']},
+      {label:'Club night completo',val:'wearing sexy club outfit, sparkly crop top, mini skirt, platform heels, small purse, nightclub ready complete look, going out outfit',tags:['night','club','latina']},
+      {label:'Noite elegante completa',val:'wearing elegant evening gown, floor length fitted dress with slit, strappy heels, clutch bag, diamond earrings, formal evening complete look',tags:['luxury','night','fashion']},
+      {label:'Lingerie + kimono aberto',val:'wearing black lace lingerie bra and thong, sheer kimono robe open draping off shoulders, stiletto heels, elegant boudoir look, robe partially on',tags:['boudoir','nude','busty']},
+      {label:'Cowgirl completa',val:'wearing complete cowgirl outfit, denim short shorts, plaid tied crop shirt, cowboy boots, cowboy hat, leather belt, Western complete look',tags:['outdoor','nature','casual']},
+      {label:'Moto girl completa',val:'wearing motorcycle biker girl outfit, leather jacket open, tight leather pants, biker boots, gloves, helmet in hand, badass biker complete look',tags:['outdoor','dark','night']},
+      {label:'Bailarina completa',val:'wearing complete ballet dancer costume, white tutu skirt, corset bodice, ballet slipper pointe shoes, hair in bun, dance company look',tags:['studio','luxury','fashion']},
+      {label:'Dançarina pole completa',val:'wearing pole dance performance outfit, strappy sports bra, high-waist bottoms, platform clear heels, pole dance stage look, athletic sexy outfit',tags:['athletic','studio','night']},
+      // ── CASUAL DIÁRIO ──────────────────────────────────────────────────────
+      {label:'Jeans + blusa casual',val:'wearing blue denim jeans and casual fitted top, sneakers, everyday casual outfit, relaxed fit, real street style',tags:['casual','outdoor','latina']},
+      {label:'Vestido floral casual',val:'wearing light floral sundress, summer casual dress, flat sandals, airy feminine daily look, cotton fabric',tags:['casual','outdoor','nature','latina']},
+      {label:'Jeans rasgado + cropped',val:'wearing ripped distressed jeans, cropped fitted t-shirt, white sneakers, casual youthful streetwear look',tags:['casual','outdoor','latina']},
+      {label:'Moletom + legging',val:'wearing oversized hoodie sweatshirt with fitted leggings, cozy athleisure, sneakers, comfortable everyday look',tags:['casual','outdoor','athletic']},
+      {label:'Mini saia + top',val:'wearing short mini skirt and fitted top, sandals, playful feminine casual outfit, young casual summer',tags:['casual','outdoor','latina','beach']},
+      {label:'Vestido de linho',val:'wearing elegant linen wrap dress, nude sandals, simple chic minimal look, breathable summer fabric, relaxed elegance',tags:['casual','outdoor','nature','nordic']},
+      {label:'Jeans skinny + camisa',val:'wearing skinny jeans, tucked-in button shirt, loafers, smart casual everyday look, neat and put-together',tags:['casual','outdoor','luxury']},
+      {label:'Shorts + crop top',val:'wearing high-waist shorts and cropped top, summer casual, platform sandals, effortlessly casual summer style',tags:['casual','outdoor','beach','latina']},
+      // ── PRAIA / PISCINA ────────────────────────────────────────────────────
+      {label:'Biquíni triângulo',val:'wearing classic triangle bikini top and bottom, beach style, tropical, summer swimwear look',tags:['beach','outdoor','wet']},
+      {label:'Biquíni esportivo',val:'wearing sporty athletic bikini, racerback top and high-waist bottom, active beach look, surf style',tags:['beach','outdoor','athletic','wet']},
+      {label:'Maiô tropical',val:'wearing colorful tropical print one-piece swimsuit, beach fashion, summery vibrant pattern, resort look',tags:['beach','outdoor','latina']},
+      {label:'Vestido praia + biquíni',val:'wearing sheer crochet beach dress over bikini, beach coverup, flip flops, sun hat, complete beach day look',tags:['beach','outdoor','latina']},
+      {label:'Biquíni + saída de praia',val:'wearing colorful bikini set with matching crocheted coverup, beach accessories, Brazilian beach style',tags:['beach','outdoor','latina']},
+      {label:'Roupa de surf',val:'wearing surf rashguard and bikini bottoms, surfboard nearby, active ocean lifestyle, surfer girl look',tags:['beach','outdoor','athletic']},
+      // ── ESPORTIVO / FITNESS ────────────────────────────────────────────────
+      {label:'Set fitness colorido',val:'wearing color-block matching gym set, high-waist leggings and sports bra, athletic sneakers, fitness ready look',tags:['athletic','outdoor','studio']},
+      {label:'Running completo',val:'wearing running outfit, fitted shorts, athletic top, running shoes, sport watch, runner ready, dynamic athletic',tags:['athletic','outdoor','nature']},
+      {label:'Yoga completo',val:'wearing yoga outfit, fitted crop top and high-waist yoga pants, bare feet or yoga socks, zen athletic look',tags:['athletic','studio','outdoor']},
+      {label:'Crossfit look',val:'wearing crossfit gym wear, athletic shorts and compression sports bra, training shoes, gym-ready intense look',tags:['athletic','studio']},
+      {label:'Tenista',val:'wearing tennis outfit, white pleated mini tennis skirt, athletic polo shirt, tennis shoes, visor, sporty elegant',tags:['athletic','outdoor','luxury']},
+      {label:'Ciclista/Bike',val:'wearing cycling kit, fitted padded cycling shorts and jersey, cycling shoes, sporty athletic aerodynamic look',tags:['athletic','outdoor','nature']},
+      // ── TRABALHO / CORPORATIVO ─────────────────────────────────────────────
+      {label:'Executiva clássica',val:'wearing formal business suit, fitted blazer and matching trousers, silk blouse, heels, professional executive look',tags:['luxury','studio','corporate']},
+      {label:'Saia lápis + blaser',val:'wearing fitted pencil skirt and structured blazer, button blouse, court heels, polished office professional look',tags:['luxury','studio','corporate']},
+      {label:'Business casual elegante',val:'wearing business casual look, tailored trousers and smart blouse, loafers, smart professional yet relaxed',tags:['studio','casual','luxury']},
+      {label:'Vestido executivo',val:'wearing elegant sheath dress, knee-length fitted professional dress, heels, minimal jewelry, office chic',tags:['luxury','studio','corporate']},
+      {label:'Terno feminino',val:'wearing women\'s power suit, tailored two-piece suit with wide leg trousers, strong shoulder blazer, commanding presence',tags:['luxury','studio','corporate']},
+      // ── NOITE / FESTA / BALADA ─────────────────────────────────────────────
+      {label:'Vestido cocktail',val:'wearing elegant cocktail dress, knee-length fitted dress, strappy heels, clutch, party ready evening look',tags:['night','luxury','latina']},
+      {label:'Top + calça social',val:'wearing silk cami top tucked into tailored dress trousers, strappy heels, going-out elegant night look',tags:['night','luxury']},
+      {label:'Vestido sequin',val:'wearing shimmery sequined mini dress, metallic fabric, sparkly party dress, platform heels, nightclub glam',tags:['night','club','luxury']},
+      {label:'Conjunto two-piece festa',val:'wearing two-piece party set, crop top and matching mini skirt, rhinestone details, nightclub ready set',tags:['night','club','latina']},
+      {label:'Jumpsuit elegante',val:'wearing elegant wide-leg jumpsuit, satin fabric, plunging neckline, strappy sandals, sophisticated evening',tags:['night','luxury']},
+      {label:'Vestido de cetim',val:'wearing satin slip dress, bias-cut silky fabric, thin straps, minimalist evening elegance, luxurious fabric',tags:['night','luxury','fashion']},
+      // ── GALA / CASAMENTO / FORMAL ──────────────────────────────────────────
+      {label:'Vestido de noite longo',val:'wearing floor-length formal evening gown, structured bodice, flowing skirt, elbow gloves, diamond jewelry, gala ready',tags:['luxury','night','fashion']},
+      {label:'Vestido de noiva',val:'wearing white bridal wedding gown, lace detail, fitted bodice, full skirt, veil, bridal elegance',tags:['luxury','outdoor','nature','nordic']},
+      {label:'Dama de honra',val:'wearing bridesmaid dress, elegant midi dress, bouquet of flowers, formal wedding guest look, coordinated elegance',tags:['luxury','outdoor','nature']},
+      {label:'Vestido de debutante',val:'wearing princess ball gown, full tulle skirt, fitted bodice, gloves, tiara, quinceañera/debutante celebration',tags:['luxury','night','latina']},
+      {label:'Madame chique',val:'wearing high fashion couture look, dramatic structured gown, artistic silhouette, avant-garde fashion statement',tags:['luxury','fashion','studio']},
+      // ── EDITORIAL / FASHION ─────────────────────────────────────────────────
+      {label:'Look editorial monocromático',val:'wearing all-white or all-black editorial outfit, monochromatic fashion look, structured pieces, model editorial pose',tags:['fashion','studio','luxury']},
+      {label:'Estilo Y2K',val:'wearing Y2K 2000s fashion, low-rise jeans, butterfly clips, rhinestone accessories, crop top, early 2000s nostalgia',tags:['fashion','casual','outdoor']},
+      {label:'Grunge alternativo',val:'wearing grunge alternative fashion, ripped fishnet, band tee, leather jacket, chunky boots, dark alternative',tags:['dark','outdoor','casual']},
+      {label:'Estilo coreano streetwear',val:'wearing Korean streetwear fashion, oversized pastel puffer, cargo pants, platform sneakers, K-fashion aesthetic',tags:['fashion','casual','outdoor','asian']},
+      {label:'Boho chique',val:'wearing bohemian chic style, flowy maxi dress, layered jewelry, headband, fringed bag, free-spirited boho look',tags:['outdoor','nature','casual','latina']},
+      {label:'Estilo vintage anos 50',val:'wearing 1950s vintage fashion, full circle skirt, fitted top, cat-eye glasses, hair pinned up, retro 50s glamour',tags:['fashion','studio','casual']},
+      {label:'Moda de rua japonesa',val:'wearing Harajuku Japanese street fashion, layered eclectic outfit, statement accessories, Tokyo fashion unique look',tags:['fashion','outdoor','asian']},
     ],
     skip:true,
   },
@@ -813,9 +865,9 @@ const STEPS = [
       {label:'📸 Studio',val:'professional photo studio, white seamless backdrop, controlled studio lighting',tags:['studio','boudoir']},
       {label:'🏖 Praia',val:'tropical beach, ocean waves, white sand, palm trees, golden sunlight',tags:['beach','outdoor','latina']},
       {label:'🏨 Hotel',val:'luxury hotel room, king bed, elegant decor, soft warm lighting',tags:['boudoir','luxury','night']},
-      {label:'🌿 Ao ar livre',val:'outdoor nature, golden hour sunlight, green landscape, open field',tags:['outdoor','nature','athletic']},
+      {label:'🌿 Ao ar livre',val:'outdoor nature, golden hour sunlight, green landscape, open field',tags:['outdoor','nature','athletic','casual']},
       {label:'🌆 Clube/Neon',val:'nightclub interior, neon RGB lights, dark smoky atmosphere, LED lights',tags:['night','dark','latina']},
-      {label:'🛋 Sala',val:'modern living room, couch, natural daylight, contemporary decor',tags:['boudoir','studio']},
+      {label:'🛋 Sala',val:'modern living room, couch, natural daylight, contemporary decor',tags:['boudoir','studio','casual']},
       {label:'🏙 Rooftop',val:'rooftop terrace, city skyline, sunset, urban golden view',tags:['night','luxury','fashion']},
       {label:'🏊 Piscina',val:'outdoor pool, poolside, turquoise water, sun lounger, summer',tags:['beach','outdoor','wet']},
       {label:'💪 Academia',val:'gym fitness center, mirrors, workout equipment, athletic environment',tags:['athletic','studio']},
@@ -829,7 +881,7 @@ const STEPS = [
       {label:'🏡 Varanda',val:'outdoor balcony, sunrise, railing, natural morning light',tags:['outdoor','nature']},
       {label:'🎭 Palco',val:'theatrical stage, dramatic spotlights, red velvet curtains, performance',tags:['night','luxury','fantasy']},
       {label:'🍷 Bar/Lounge',val:'upscale bar lounge, dim warm light, leather stools, cocktail atmosphere',tags:['night','dark','luxury']},
-      {label:'🌸 Jardim',val:'lush flower garden, rose petals, natural afternoon light, botanical setting',tags:['nature','outdoor','boudoir']},
+      {label:'🌸 Jardim',val:'lush flower garden, rose petals, natural afternoon light, botanical setting',tags:['nature','outdoor','boudoir','casual']},
       {label:'❄ Neve',val:'snowy outdoor, winter landscape, snowflakes, cold breath visible',tags:['outdoor','nature','nordic']},
       {label:'🏺 Deserto',val:'desert dunes, arid landscape, harsh sun, sand, golden sky',tags:['outdoor','arab','oriental']},
       {label:'🚿 Chuva exterior',val:'standing in rain outdoors, soaking wet from rain, wet clothes clinging, natural rain shower, night rain street',tags:['wet','outdoor','night']},
@@ -852,7 +904,7 @@ const STEPS = [
       {label:'🎨 Ateliê artístico',val:'artist studio atelier, canvases, easels, paint smell, warm creative light, art studio',tags:['studio','nude']},
       {label:'🍽 Jantar íntimo',val:'intimate candlelit dinner table, restaurant fine dining, wine glasses, tablecloth, warm ambient',tags:['luxury','boudoir','night']},
       {label:'🛏 Quarto vintage',val:'vintage retro bedroom, antique furniture, warm lamp, aged wallpaper, nostalgic intimate setting',tags:['boudoir','nude','studio']},
-      {label:'🪑 Escritório corporativo',val:'corporate office, glass desk, city window view, business setting, executive suite',tags:['luxury','fashion']},
+      {label:'🪑 Escritório corporativo',val:'corporate office, glass desk, city window view, business setting, executive suite',tags:['luxury','fashion','corporate','studio']},
       {label:'🧖 Spa luxo',val:'luxury spa, massage table, candles, towels, zen ambiance, serene wellness setting',tags:['boudoir','nude','oriental']},
       {label:'🍳 Cozinha rústica',val:'rustic farmhouse kitchen, wood beams, stone counters, natural morning light, cozy domestic',tags:['studio','nature']},
       {label:'🎙 Estúdio de música',val:'recording studio, microphone, sound panels, dim mood lighting, headphones, creative space',tags:['dark','studio','night']},
@@ -919,24 +971,24 @@ const STEPS = [
   {
     id:'estilo_foto', label:'Estilo foto', ask:'Qual estilo fotográfico?',
     qr:[
-      {label:'📷 Candid / Espontâneo',val:'candid unposed photography, spontaneous natural moment, documentary style, unaware subject, real life capture, photojournalism aesthetic'},
-      {label:'📸 Editorial de moda',val:'high fashion editorial photography, magazine quality, styled shoot, fashion story, editorial lighting, Vogue aesthetic'},
-      {label:'🎞 Analógico vintage',val:'analog film photography, vintage grain, slightly faded colors, nostalgic film look, 35mm film stock, analog camera aesthetic'},
-      {label:'📰 Documental realista',val:'documentary photography, raw realistic capture, social realism, no glamour, authentic moment, unretouched journalistic photo'},
-      {label:'🌟 Glamour clássico',val:'classic glamour photography, Hollywood studio lighting, beauty lighting, portrait glamour, polished but natural'},
-      {label:'💼 Retrato corporativo',val:'corporate portrait, professional headshot, clean background, business professional look, studio executive portrait'},
-      {label:'🎨 Fine art nude',val:'fine art nude photography, artistic body, gallery quality, tasteful artistic nude, museum-worthy composition'},
-      {label:'📱 Selfie realista',val:'realistic selfie photo, phone camera quality, natural lighting, candid self-portrait, authentic casual snapshot'},
-      {label:'🔍 Macro / Detalhe',val:'macro photography, extreme close-up detail shot, shallow depth of field, texture focus, ultra-detailed macro lens'},
-      {label:'🌅 Lifestyle ao ar livre',val:'outdoor lifestyle photography, natural environment, golden hour, authentic outdoor life, adventure photography style'},
-      {label:'🏃 Ação / Movimento',val:'action photography, motion blur, freeze frame moment, dynamic movement, sports photography style, fast shutter action'},
-      {label:'🌃 Street photography',val:'urban street photography, candid city scene, available light, Leica aesthetic, decisive moment, gritty real world'},
-      {label:'💡 High-key clean',val:'high-key photography, bright white tones, overexposed clean look, minimal shadows, bright airy feel, commercial clean aesthetic'},
-      {label:'🌑 Low-key noir',val:'low-key noir photography, deep dark shadows, chiaroscuro contrast, mystery, dark dramatic atmosphere, film noir style'},
-      {label:'🎭 Retrato íntimo',val:'intimate portrait photography, close connection, personal space, warm natural light, candid emotional portrait, human connection'},
-      {label:'💍 Boudoir íntimo',val:'intimate boudoir photography, soft sensual lighting, personal space, bedroom aesthetic, warm and intimate portraiture'},
-      {label:'🏋 Fitness/Sports',val:'fitness photography, athletic action, gym or outdoor sport, dynamic athletic pose, sportswear editorial'},
-      {label:'🔦 Chiaroscuro dramático',val:'dramatic chiaroscuro lighting, strong shadow contrast, Rembrandt light, half-face shadow, oil painting light quality'},
+      {label:'📷 Candid / Espontâneo',val:'candid unposed photography, spontaneous natural moment, documentary style, unaware subject, real life capture, photojournalism aesthetic',tags:['casual','outdoor','beach','athletic','latina']},
+      {label:'📸 Editorial de moda',val:'high fashion editorial photography, magazine quality, styled shoot, fashion story, editorial lighting, Vogue aesthetic',tags:['fashion','luxury','studio','night','club']},
+      {label:'🎞 Analógico vintage',val:'analog film photography, vintage grain, slightly faded colors, nostalgic film look, 35mm film stock, analog camera aesthetic',tags:['outdoor','casual','beach','nature','nordic']},
+      {label:'📰 Documental realista',val:'documentary photography, raw realistic capture, social realism, no glamour, authentic moment, unretouched journalistic photo',tags:['outdoor','athletic','casual','latina']},
+      {label:'🌟 Glamour clássico',val:'classic glamour photography, Hollywood studio lighting, beauty lighting, portrait glamour, polished but natural',tags:['boudoir','luxury','night','studio','fashion']},
+      {label:'💼 Retrato corporativo',val:'corporate portrait, professional headshot, clean background, business professional look, studio executive portrait',tags:['studio','luxury','corporate']},
+      {label:'🎨 Fine art nude',val:'fine art nude photography, artistic body, gallery quality, tasteful artistic nude, museum-worthy composition',tags:['nude','boudoir','studio','art']},
+      {label:'📱 Selfie realista',val:'realistic selfie photo, phone camera quality, natural lighting, candid self-portrait, authentic casual snapshot',tags:['casual','outdoor','beach','athletic','boudoir']},
+      {label:'🔍 Macro / Detalhe',val:'macro photography, extreme close-up detail shot, shallow depth of field, texture focus, ultra-detailed macro lens',tags:['studio','boudoir','nude']},
+      {label:'🌅 Lifestyle ao ar livre',val:'outdoor lifestyle photography, natural environment, golden hour, authentic outdoor life, adventure photography style',tags:['outdoor','beach','athletic','nature','latina']},
+      {label:'🏃 Ação / Movimento',val:'action photography, motion blur, freeze frame moment, dynamic movement, sports photography style, fast shutter action',tags:['athletic','outdoor','beach']},
+      {label:'🌃 Street photography',val:'urban street photography, candid city scene, available light, Leica aesthetic, decisive moment, gritty real world',tags:['night','dark','outdoor','casual']},
+      {label:'💡 High-key clean',val:'high-key photography, bright white tones, overexposed clean look, minimal shadows, bright airy feel, commercial clean aesthetic',tags:['studio','fashion','boudoir','luxury']},
+      {label:'🌑 Low-key noir',val:'low-key noir photography, deep dark shadows, chiaroscuro contrast, mystery, dark dramatic atmosphere, film noir style',tags:['dark','night','bdsm','fantasy']},
+      {label:'🎭 Retrato íntimo',val:'intimate portrait photography, close connection, personal space, warm natural light, candid emotional portrait, human connection',tags:['boudoir','nude','nsfw','casual']},
+      {label:'💍 Boudoir íntimo',val:'intimate boudoir photography, soft sensual lighting, personal space, bedroom aesthetic, warm and intimate portraiture',tags:['boudoir','nude','nsfw','busty']},
+      {label:'🏋 Fitness/Sports',val:'fitness photography, athletic action, gym or outdoor sport, dynamic athletic pose, sportswear editorial',tags:['athletic','outdoor','beach']},
+      {label:'🔦 Chiaroscuro dramático',val:'dramatic chiaroscuro lighting, strong shadow contrast, Rembrandt light, half-face shadow, oil painting light quality',tags:['dark','fantasy','luxury','night','oriental']},
     ],
     skip:true,
   },
@@ -1513,6 +1565,20 @@ async function botSay(html, qrs=[]){
   waiting=false; input.focus();
 }
 
+function applyRoupasugg(stepId, qrs){
+  if(stepId!=='cenario'&&stepId!=='estilo_foto') return qrs;
+  if(!answers.roupa) return qrs;
+  const roupaStep=STEPS.find(s=>s.id==='roupa');
+  if(!roupaStep) return qrs;
+  const sel=roupaStep.qr.find(q=>q.val===answers.roupa);
+  const tags=sel&&sel.tags;
+  if(!tags||!tags.length) return qrs;
+  const sugg=[], rest=[];
+  qrs.forEach(q=>{ if(q.tags&&q.tags.some(t=>tags.includes(t))) sugg.push(q); else rest.push(q); });
+  if(!sugg.length) return qrs;
+  return [...sugg.map(q=>({...q,label:'✦ '+q.label,cls:(q.cls||'')+' sugg'})),...rest];
+}
+
 async function processAnswer(val){
   const cur=STEPS[step]; if(!cur) return;
   const isSkip=/^(pular|skip|não|nao|-)$/i.test(val.trim())||val==='';
@@ -1523,6 +1589,7 @@ async function processAnswer(val){
   if(step<STEPS.length){
     const next=STEPS[step];
     let qrs=next.qr?[...next.qr]:[];
+    qrs=applyRoupasugg(next.id, qrs);
     if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
     if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
     await botSay(next.ask, qrs);
@@ -1534,6 +1601,7 @@ async function goBack(){
   step--; delete answers[STEPS[step].id]; clearQR(); updateProgress();
   const cur=STEPS[step];
   let qrs=cur.qr?[...cur.qr]:[];
+  qrs=applyRoupasugg(cur.id, qrs);
   if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
   if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
   await botSay('↩ Voltando — '+cur.ask, qrs);
