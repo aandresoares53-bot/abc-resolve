@@ -112,6 +112,25 @@ header{
 .icon-btn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--bdr);color:var(--txt3);border-radius:var(--r2);padding:7px 13px;cursor:pointer;font-size:.77em;font-weight:600;transition:all .15s;}
 .icon-btn:hover{border-color:var(--acc);color:var(--acc);}
 
+/* ── Flux Image Generator ── */
+.flux-box{margin-top:10px;border:1px solid var(--acc);border-radius:var(--r2);overflow:hidden;background:var(--bg);}
+.flux-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(250,204,21,.07);border-bottom:1px solid var(--acc);}
+.flux-title{font-size:.72em;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--acc);}
+.flux-badge{font-size:.62em;background:rgba(250,204,21,.15);border:1px solid var(--acc);border-radius:10px;padding:1px 7px;color:var(--acc);}
+.flux-img-wrap{position:relative;width:100%;background:#0a0a0a;min-height:180px;display:flex;align-items:center;justify-content:center;}
+.flux-img-wrap img{width:100%;display:block;border-radius:0;}
+.flux-loading{display:flex;flex-direction:column;align-items:center;gap:10px;padding:32px 0;color:var(--txt3);}
+.flux-spinner{width:36px;height:36px;border:3px solid rgba(250,204,21,.15);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.flux-loading-text{font-size:.75em;letter-spacing:.06em;}
+.flux-actions{display:flex;gap:6px;padding:8px 10px;flex-wrap:wrap;}
+.flux-btn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--bdr);color:var(--txt3);border-radius:var(--r2);padding:6px 12px;cursor:pointer;font-size:.74em;font-weight:600;transition:all .15s;}
+.flux-btn:hover{border-color:var(--acc);color:var(--acc);}
+.flux-btn.primary{background:var(--acc);color:#000;border-color:var(--acc);font-weight:800;}
+.flux-btn.primary:hover{background:var(--acc2);}
+.flux-btn:disabled{opacity:.4;cursor:not-allowed;}
+.flux-error{padding:16px;text-align:center;color:#f87171;font-size:.78em;}
+
 /* LoRA hints */
 .lora-box{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.22);border-radius:var(--r2);padding:8px 12px;margin-top:8px;font-size:.75em;}
 .lora-title{color:#a78bfa;font-weight:800;font-size:.7em;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
@@ -2438,6 +2457,28 @@ async function jumpTo(id){
 }
 
 // ─── Result ───────────────────────────────────────────────────────────────
+function generateFluxImage(prompt, box){
+  const seed=Math.floor(Math.random()*999999);
+  const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=832&height=1216&model=flux-realism&nologo=true&seed=${seed}`;
+  const wrap=box.querySelector('[id^="flux-wrap"]');
+  const dlBtn=box.querySelector('[id^="flux-dl"]');
+  const regenBtn=box.querySelector('[id^="flux-regen"]');
+  const img=new Image();
+  img.style.cssText='width:100%;display:block;';
+  img.onload=()=>{
+    wrap.innerHTML=''; wrap.appendChild(img);
+    dlBtn.disabled=false;
+    dlBtn.onclick=()=>{ const a=document.createElement('a'); a.href=url; a.download=`flux-${seed}.jpg`; a.click(); };
+  };
+  img.onerror=()=>{ wrap.innerHTML='<div class="flux-error">Erro ao gerar imagem. Tente novamente.</div>'; };
+  img.src=url;
+  regenBtn.onclick=()=>{
+    wrap.innerHTML='<div class="flux-loading"><div class="flux-spinner"></div><div class="flux-loading-text">Gerando imagem realista...</div></div>';
+    dlBtn.disabled=true;
+    generateFluxImage(prompt, box);
+  };
+}
+
 async function showResult(){
   waiting=true; showTyping(); await delay(800); removeTyping();
   const prompt=buildPrompt(), neg=buildNeg();
@@ -2465,6 +2506,12 @@ async function showResult(){
   shBtn.onclick=()=>{ const params=new URLSearchParams(); Object.entries(answers).forEach(([k,v])=>v&&params.set(k,v)); const url=location.origin+location.pathname+'?'+params.toString(); navigator.clipboard.writeText(url).then(()=>{ shBtn.textContent='✓ Link copiado!'; setTimeout(()=>{ shBtn.innerHTML='🔗 Link'; },2000); }); };
   br1.appendChild(shBtn);
   b.appendChild(br1);
+
+  // ── Flux Realism auto-generate ──────────────────────────────────────────
+  const fluxBox=document.createElement('div'); fluxBox.className='flux-box';
+  fluxBox.innerHTML=`<div class="flux-header"><span class="flux-title">⚡ Flux Realism</span><span class="flux-badge">Gerado automaticamente</span></div><div class="flux-img-wrap" id="flux-wrap-${Date.now()}"><div class="flux-loading"><div class="flux-spinner"></div><div class="flux-loading-text">Gerando imagem realista...</div></div></div><div class="flux-actions"><button class="flux-btn primary" id="flux-dl-${Date.now()}" disabled>⬇ Baixar</button><button class="flux-btn" id="flux-regen-${Date.now()}">🔄 Gerar outra</button></div>`;
+  b.appendChild(fluxBox);
+  generateFluxImage(prompt, fluxBox);
 
   // LoRA hints
   const loras=getLoraHints();
