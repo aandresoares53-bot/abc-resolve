@@ -167,6 +167,9 @@ header{
 .qr.back:hover{border-color:var(--acc);color:var(--acc);}
 .qr.rand{border-color:#7c3aed;color:#a78bfa;}
 .qr.rand:hover{background:rgba(124,58,237,.1);}
+.qr.sugg{border-color:#d97706;color:#fbbf24;background:rgba(217,119,6,.08);}
+.qr.sugg:hover{background:rgba(217,119,6,.18);border-color:#fbbf24;}
+.sugg-sep{font-size:.6em;color:#6b5a30;padding:2px 4px;align-self:center;white-space:nowrap;letter-spacing:.05em;}
 
 #input-bar{flex-shrink:0;display:flex;align-items:flex-end;gap:8px;padding:9px 13px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--bdr);background:var(--bg);}
 #msg-input{flex:1;background:var(--bot-bg);border:1.5px solid var(--bdr);border-radius:var(--r);color:var(--txt);padding:9px 13px;font-size:.9em;font-family:inherit;resize:none;outline:none;line-height:1.5;max-height:120px;transition:border-color .2s;}
@@ -254,6 +257,34 @@ header{
       <div class="preset-name">🕯 Boudoir — Intimidade</div>
       <div class="preset-desc">Loira busty, lingerie, boudoir com velas, Fuji 400H, lábio mordido</div>
     </div>
+    <div class="preset-item" onclick="applyPreset('blonde_nude')">
+      <div class="preset-name">🔞 Loira — Nudez Artística</div>
+      <div class="preset-desc">Loira busty 19 anos, pelada artística, quarto íntimo, Portra 400, olhar sedutor</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('blonde_explicit')">
+      <div class="preset-name">🔞🔞 Loira — Explícita</div>
+      <div class="preset-desc">Loira 19 anos, pelada explícita, pernas abertas, estúdio, expressão submissa</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('blonde_bdsm')">
+      <div class="preset-name">🔞🔞 Loira — BDSM Dark</div>
+      <div class="preset-desc">Loira pálida, bondage, boate escura neon, Cinestill 800T, dominada</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('blonde_oral')">
+      <div class="preset-name">🔞🔞🔞 Loira — Oral</div>
+      <div class="preset-desc">Loira jovem, oral explícito, quarto de hotel, expressão submissa</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('blonde_pool')">
+      <div class="preset-name">🌊 Loira — Piscina NSFW</div>
+      <div class="preset-desc">Loira fitness, topless biquíni, piscina, Ektar 100, verão sensual</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('blonde_odalisca')">
+      <div class="preset-name">🌙 Loira — Odalisca NSFW</div>
+      <div class="preset-desc">Loira 19 anos, fantasia odalisca nude, câmara do harém, iluminação árabe</div>
+    </div>
+    <div class="preset-item" onclick="applyPreset('blonde_cowgirl')">
+      <div class="preset-name">🔞🔞🔞 Loira — Cowgirl</div>
+      <div class="preset-desc">Loira curvilínea, montada frente pelada, quarto luxo, Portra 800</div>
+    </div>
   </div>
 </div>
 
@@ -300,40 +331,40 @@ const STEPS = [
   {
     id:'etnia', label:'Etnia', ask:'Qual a etnia?',
     qr:[
-      {label:'🇧🇷 Brasileira',val:'beautiful Brazilian woman, olive skin, South American features'},
-      {label:'🏳 Caucasiana',val:'beautiful white woman, fair skin, European features'},
-      {label:'Latina',val:'beautiful Latina woman, warm brown skin, Latin features'},
-      {label:'Asiática',val:'beautiful Asian woman, East Asian features, porcelain skin'},
-      {label:'Negra',val:'beautiful Black woman, dark melanin skin, African features'},
-      {label:'Mestiça',val:'beautiful mixed-race woman, mixed heritage, exotic features'},
-      {label:'Árabe',val:'beautiful Arab woman, Middle Eastern, olive warm skin'},
-      {label:'Japonesa',val:'beautiful Japanese woman, Japanese features, pale skin'},
-      {label:'Indiana',val:'beautiful Indian woman, South Asian features, warm brown skin'},
-      {label:'Italiana',val:'beautiful Italian woman, Mediterranean features, olive skin'},
-      {label:'Colombiana',val:'beautiful Colombian woman, Latin Caribbean features'},
-      {label:'Russa',val:'beautiful Russian woman, Eastern European features, pale skin'},
-      {label:'Tailandesa',val:'beautiful Thai woman, Southeast Asian features, golden skin'},
-      {label:'Cubana',val:'beautiful Cuban woman, Afro-Caribbean mixed features'},
-      {label:'Venezuelana',val:'beautiful Venezuelan woman, Latin Caribbean features, warm skin'},
-      {label:'Marroquina',val:'beautiful Moroccan woman, North African features, olive bronze skin'},
-      {label:'Filipina',val:'beautiful Filipino woman, Southeast Asian features, tan golden skin'},
-      {label:'Sueca',val:'beautiful Swedish woman, Nordic features, very fair skin, blonde'},
-      {label:'Espanhola',val:'beautiful Spanish woman, Iberian Mediterranean features, olive skin'},
+      {label:'🇧🇷 Brasileira',val:'beautiful Brazilian woman, olive skin, South American features',tags:['latina','beach']},
+      {label:'🏳 Caucasiana',val:'beautiful white woman, fair skin, European features',tags:['nordic','boudoir']},
+      {label:'Latina',val:'beautiful Latina woman, warm brown skin, Latin features',tags:['latina','beach']},
+      {label:'Asiática',val:'beautiful Asian woman, East Asian features, porcelain skin',tags:['asian','studio']},
+      {label:'Negra',val:'beautiful Black woman, dark melanin skin, African features',tags:['melanin']},
+      {label:'Mestiça',val:'beautiful mixed-race woman, mixed heritage, exotic features',tags:['latina']},
+      {label:'Árabe',val:'beautiful Arab woman, Middle Eastern, olive warm skin',tags:['oriental','arab']},
+      {label:'Japonesa',val:'beautiful Japanese woman, Japanese features, pale skin',tags:['asian','studio']},
+      {label:'Indiana',val:'beautiful Indian woman, South Asian features, warm brown skin',tags:['oriental','arab']},
+      {label:'Italiana',val:'beautiful Italian woman, Mediterranean features, olive skin',tags:['boudoir']},
+      {label:'Colombiana',val:'beautiful Colombian woman, Latin Caribbean features',tags:['latina','beach']},
+      {label:'Russa',val:'beautiful Russian woman, Eastern European features, pale skin',tags:['nordic','boudoir']},
+      {label:'Tailandesa',val:'beautiful Thai woman, Southeast Asian features, golden skin',tags:['asian','beach']},
+      {label:'Cubana',val:'beautiful Cuban woman, Afro-Caribbean mixed features',tags:['latina','beach']},
+      {label:'Venezuelana',val:'beautiful Venezuelan woman, Latin Caribbean features, warm skin',tags:['latina','beach']},
+      {label:'Marroquina',val:'beautiful Moroccan woman, North African features, olive bronze skin',tags:['oriental','arab']},
+      {label:'Filipina',val:'beautiful Filipino woman, Southeast Asian features, tan golden skin',tags:['asian','beach']},
+      {label:'Sueca',val:'beautiful Swedish woman, Nordic features, very fair skin, blonde',tags:['nordic','boudoir']},
+      {label:'Espanhola',val:'beautiful Spanish woman, Iberian Mediterranean features, olive skin',tags:['latina']},
     ],
     skip:true,
   },
   {
     id:'corpo', label:'Corpo', ask:'Como é o corpo?',
     qr:[
-      {label:'Magra/Petite',val:'slim petite body, slender figure, thin waist'},
-      {label:'Atlética',val:'athletic toned body, fit figure, muscle definition'},
-      {label:'Curvilínea',val:'curvy hourglass figure, wide hips, small waist, full figure'},
-      {label:'Bunduda 🍑',val:'very large round buttocks, big booty, thick thighs, bubble butt'},
-      {label:'Busty 👙',val:'very large natural breasts, busty, big chest, heavy bosom'},
-      {label:'BBW',val:'BBW, plus size, full figured, chubby, wide thick body'},
-      {label:'Fitness',val:'fitness model body, muscular legs, sculpted gluteus, defined curves'},
-      {label:'Bunduda + Busty 🔥',val:'very large natural breasts, very large round buttocks, big booty, busty, thick hourglass'},
-      {label:'Thicc',val:'thicc body, thick thighs, wide hips, plump buttocks, full figured curves'},
+      {label:'Magra/Petite',val:'slim petite body, slender figure, thin waist',tags:['petite','studio','asian']},
+      {label:'Atlética',val:'athletic toned body, fit figure, muscle definition',tags:['athletic','outdoor','beach']},
+      {label:'Curvilínea',val:'curvy hourglass figure, wide hips, small waist, full figure',tags:['curvy','boudoir','latina']},
+      {label:'Bunduda 🍑',val:'very large round buttocks, big booty, thick thighs, bubble butt',tags:['curvy','booty','latina']},
+      {label:'Busty 👙',val:'very large natural breasts, busty, big chest, heavy bosom',tags:['curvy','boudoir','busty']},
+      {label:'BBW',val:'BBW, plus size, full figured, chubby, wide thick body',tags:['curvy','bbw']},
+      {label:'Fitness',val:'fitness model body, muscular legs, sculpted gluteus, defined curves',tags:['athletic','outdoor','beach']},
+      {label:'Bunduda + Busty 🔥',val:'very large natural breasts, very large round buttocks, big booty, busty, thick hourglass',tags:['curvy','busty','booty','boudoir']},
+      {label:'Thicc',val:'thicc body, thick thighs, wide hips, plump buttocks, full figured curves',tags:['curvy','booty']},
       {label:'Skinny + Flat',val:'very slim body, flat chest, narrow hips, lean figure, petite frame'},
       {label:'Peituda magra',val:'slim body with very large natural breasts, skinny waist, busty slender'},
       {label:'PAWG',val:'PAWG, phat round booty, thick thighs, slim waist, big butt small waist'},
@@ -430,45 +461,45 @@ const STEPS = [
   {
     id:'roupa', label:'Roupa', ask:'Roupa ou nudez?',
     qr:[
-      {label:'Pelada 🔥',val:'completely nude, fully naked, bare skin, no clothes'},
-      {label:'Topless',val:'topless, bare breasts exposed, no top, only bottom'},
-      {label:'Só calcinha',val:'wearing only thong panties, barely covered, half nude'},
-      {label:'Só sutiã',val:'wearing only bra, bare bottom, topwear only'},
-      {label:'Lingerie',val:'wearing lace lingerie set, bra and panties, sexy underwear'},
-      {label:'Biquíni micro',val:'wearing tiny micro bikini, string bikini, barely there'},
-      {label:'Body transparente',val:'wearing sheer see-through bodysuit, transparent fabric'},
-      {label:'Mini vestido',val:'wearing tight mini dress, short bodycon dress, revealing'},
-      {label:'Legging academia',val:'wearing tight leggings and sports bra, gym outfit'},
-      {label:'Colegial',val:'wearing schoolgirl uniform, short plaid skirt, white blouse'},
-      {label:'Látex',val:'wearing black latex bodysuit, shiny skin-tight outfit'},
-      {label:'Calcinha fio dental',val:'wearing only dental floss thong, g-string, minimal coverage'},
-      {label:'Vestido longo fendado',val:'wearing long slit dress, side slit revealing leg, elegant'},
-      {label:'Camiseta molhada',val:'wearing wet white t-shirt, soaked fabric clinging to body'},
-      {label:'Short jeans',val:'wearing very short denim shorts, daisy dukes, crop top'},
-      {label:'Peito de fora',val:'shirt pulled up exposing bare breasts, no bra, shirt lifted'},
-      {label:'Sarong praia',val:'wearing sheer beach sarong wrap, bikini underneath, tropical'},
-      {label:'Corselete',val:'wearing tight corset, boned bodice, waist cincher, cleavage'},
-      {label:'Meias longas',val:'wearing thigh-high stockings, stay-up stockings, legs covered'},
-      {label:'Camisa aberta',val:'wearing open unbuttoned shirt, no bra underneath, bare chest visible'},
-      {label:'Policial sexy 👮',val:'wearing sexy police officer costume, tight uniform, badge, cap'},
-      {label:'Bombeira',val:'wearing sexy firefighter costume, open jacket, helmet'},
-      {label:'Professora',val:'wearing tight pencil skirt, blouse, glasses, teacher look'},
-      {label:'Secretária',val:'wearing tight business suit, white blouse, pencil skirt, professional'},
-      {label:'Enfermeira 🏥',val:'wearing sexy nurse costume, short white dress, red cross'},
-      {label:'Pirata',val:'wearing pirate costume, corset, boots, eye patch, open shirt'},
-      {label:'Cheerleader',val:'wearing cheerleader uniform, short skirt, crop top, pompoms'},
-      {label:'Freira 🔥',val:'wearing nun habit, religious costume, habit dress, rosary'},
-      {label:'Coelho Playboy 🐰',val:'wearing bunny girl costume, bunny ears, fishnet stockings, leotard'},
-      {label:'Cosplay anime',val:'wearing anime cosplay costume, Japanese anime character outfit'},
-      {label:'Vampira',val:'wearing gothic vampire costume, dark dress, fangs, dramatic makeup'},
-      {label:'Bruxa',val:'wearing witch costume, pointed hat, dark outfit, mysterious'},
-      {label:'Superheroína',val:'wearing tight superhero costume, spandex suit, cape, heroic stance'},
-      {label:'Cowgirl',val:'wearing cowgirl outfit, denim shorts, plaid shirt, cowboy boots and hat'},
-      {label:'Gueixa',val:'wearing geisha kimono, traditional Japanese dress, white makeup, obi belt'},
-      {label:'Dominatrix 🖤',val:'wearing dominatrix outfit, black leather corset, thigh boots, whip, mistress look'},
-      {label:'Deusa grega',val:'wearing draped white toga, Greek goddess style, laurel wreath, sandals'},
-      {label:'Pilotos/Aviadora',val:'wearing flight suit jumpsuit, aviation style, unzipped revealing'},
-      {label:'Mecânica sexy',val:'wearing overalls unzipped, grease marks, mechanic costume, workshop'},
+      {label:'Pelada 🔥',val:'completely nude, fully naked, bare skin, no clothes',tags:['nude','boudoir','nsfw']},
+      {label:'Topless',val:'topless, bare breasts exposed, no top, only bottom',tags:['nude','boudoir','busty']},
+      {label:'Só calcinha',val:'wearing only thong panties, barely covered, half nude',tags:['boudoir','nude']},
+      {label:'Só sutiã',val:'wearing only bra, bare bottom, topwear only',tags:['boudoir']},
+      {label:'Lingerie',val:'wearing lace lingerie set, bra and panties, sexy underwear',tags:['boudoir','busty']},
+      {label:'Biquíni micro',val:'wearing tiny micro bikini, string bikini, barely there',tags:['beach','outdoor']},
+      {label:'Body transparente',val:'wearing sheer see-through bodysuit, transparent fabric',tags:['studio','boudoir']},
+      {label:'Mini vestido',val:'wearing tight mini dress, short bodycon dress, revealing',tags:['night','club']},
+      {label:'Legging academia',val:'wearing tight leggings and sports bra, gym outfit',tags:['athletic','outdoor']},
+      {label:'Colegial',val:'wearing schoolgirl uniform, short plaid skirt, white blouse',tags:['fantasy','indoor']},
+      {label:'Látex',val:'wearing black latex bodysuit, shiny skin-tight outfit',tags:['dark','night','bdsm']},
+      {label:'Calcinha fio dental',val:'wearing only dental floss thong, g-string, minimal coverage',tags:['boudoir','nude','beach']},
+      {label:'Vestido longo fendado',val:'wearing long slit dress, side slit revealing leg, elegant',tags:['luxury','night','latina']},
+      {label:'Camiseta molhada',val:'wearing wet white t-shirt, soaked fabric clinging to body',tags:['beach','outdoor','athletic']},
+      {label:'Short jeans',val:'wearing very short denim shorts, daisy dukes, crop top',tags:['outdoor','beach','athletic']},
+      {label:'Peito de fora',val:'shirt pulled up exposing bare breasts, no bra, shirt lifted',tags:['nude','boudoir','busty']},
+      {label:'Sarong praia',val:'wearing sheer beach sarong wrap, bikini underneath, tropical',tags:['beach','outdoor','latina']},
+      {label:'Corselete',val:'wearing tight corset, boned bodice, waist cincher, cleavage',tags:['boudoir','busty','luxury']},
+      {label:'Meias longas',val:'wearing thigh-high stockings, stay-up stockings, legs covered',tags:['boudoir','fantasy']},
+      {label:'Camisa aberta',val:'wearing open unbuttoned shirt, no bra underneath, bare chest visible',tags:['boudoir','indoor']},
+      {label:'Policial sexy 👮',val:'wearing sexy police officer costume, tight uniform, badge, cap',tags:['fantasy','indoor']},
+      {label:'Bombeira',val:'wearing sexy firefighter costume, open jacket, helmet',tags:['fantasy','outdoor']},
+      {label:'Professora',val:'wearing tight pencil skirt, blouse, glasses, teacher look',tags:['fantasy','indoor','studio']},
+      {label:'Secretária',val:'wearing tight business suit, white blouse, pencil skirt, professional',tags:['fantasy','indoor','luxury']},
+      {label:'Enfermeira 🏥',val:'wearing sexy nurse costume, short white dress, red cross',tags:['fantasy','indoor']},
+      {label:'Pirata',val:'wearing pirate costume, corset, boots, eye patch, open shirt',tags:['fantasy','outdoor','beach']},
+      {label:'Cheerleader',val:'wearing cheerleader uniform, short skirt, crop top, pompoms',tags:['fantasy','outdoor','athletic']},
+      {label:'Freira 🔥',val:'wearing nun habit, religious costume, habit dress, rosary',tags:['fantasy','dark','indoor']},
+      {label:'Coelho Playboy 🐰',val:'wearing bunny girl costume, bunny ears, fishnet stockings, leotard',tags:['fantasy','boudoir','night']},
+      {label:'Cosplay anime',val:'wearing anime cosplay costume, Japanese anime character outfit',tags:['fantasy','asian','studio']},
+      {label:'Vampira',val:'wearing gothic vampire costume, dark dress, fangs, dramatic makeup',tags:['dark','fantasy','night']},
+      {label:'Bruxa',val:'wearing witch costume, pointed hat, dark outfit, mysterious',tags:['dark','fantasy','night']},
+      {label:'Superheroína',val:'wearing tight superhero costume, spandex suit, cape, heroic stance',tags:['fantasy','outdoor','athletic']},
+      {label:'Cowgirl',val:'wearing cowgirl outfit, denim shorts, plaid shirt, cowboy boots and hat',tags:['outdoor','nature','latina']},
+      {label:'Gueixa',val:'wearing geisha kimono, traditional Japanese dress, white makeup, obi belt',tags:['asian','oriental','fantasy','studio']},
+      {label:'Dominatrix 🖤',val:'wearing dominatrix outfit, black leather corset, thigh boots, whip, mistress look',tags:['dark','bdsm','boudoir','indoor']},
+      {label:'Deusa grega',val:'wearing draped white toga, Greek goddess style, laurel wreath, sandals',tags:['fantasy','outdoor','luxury']},
+      {label:'Pilotos/Aviadora',val:'wearing flight suit jumpsuit, aviation style, unzipped revealing',tags:['outdoor','fantasy']},
+      {label:'Mecânica sexy',val:'wearing overalls unzipped, grease marks, mechanic costume, workshop',tags:['fantasy','indoor','outdoor']},
       {label:'Legging sem calcinha 🔥',val:'wearing very tight leggings with no underwear underneath, visible camel toe through fabric, commando, tight fabric pressing against vulva, clear labia outline through leggings'},
       {label:'Short sem calcinha',val:'wearing tight denim shorts with no underwear, fabric pressing against vulva, commando no panties, camel toe through shorts'},
       {label:'Biquíni apertado 🔞',val:'wearing extremely tight micro bikini bottom, fabric wedged between labia, camel toe bikini, vulva outline clearly visible through fabric'},
@@ -655,230 +686,230 @@ const STEPS = [
     id:'nsfw', label:'NSFW', ask:'🔞 Conteúdo explícito (NSFW)?\n\n<small style="color:var(--txt3)">🔞 Leve → 🔞🔞 Médio → 🔞🔞🔞 Explícito → 🔞🔞🔞🔞 Extremo</small>',
     qr:[
       {label:'Não (SFW)',val:'',skip:true},
-      {label:'🔞 Nudez artística',val:'artistic nude, fine art nude photography, tasteful nudity, elegant nude'},
-      {label:'🔞 Seios à mostra',val:'bare breasts fully exposed, nude breasts, nipples visible, topless nude'},
-      {label:'🔞🔞 Pelada explícita',val:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography'},
-      {label:'🔞🔞 Close íntimo',val:'intimate close-up, explicit detail shot, nude close-up detail, adult photography'},
-      {label:'🔞🔞🔞 Masturbando',val:'masturbating, self pleasure, touching herself, explicit self stimulation'},
-      {label:'🔞🔞🔞 Oral giving',val:'giving oral sex, performing fellatio, blowjob, oral sex act explicit'},
-      {label:'🔞🔞🔞 Oral receiving',val:'receiving oral sex, cunnilingus, oral sex being performed on her, explicit oral'},
-      {label:'🔞🔞🔞 Sexo vaginal',val:'vaginal sex, penetration, intercourse, explicit sex act, adult content'},
-      {label:'🔞🔞🔞 Sexo anal',val:'anal sex, anal penetration, explicit anal sex act, adult explicit'},
-      {label:'🔞🔞🔞🔞 Gangbang',val:'gangbang, multiple men, group sex, multiple penetration, extreme explicit'},
-      {label:'🔞🔞🔞🔞 Squirting 💦',val:'squirting, female ejaculation, explicit squirt, wet explicit orgasm'},
-      {label:'🔞🔞🔞🔞 Facial 💦',val:'facial cumshot, cum on face, explicit facial, semen on face'},
-      {label:'🔞🔞🔞🔞 Creampie',val:'creampie, internal ejaculation, cum inside, explicit creampie'},
-      {label:'🔞🔞 BDSM/Bondage',val:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit'},
-      {label:'🔞🔞 Dominação',val:'dominatrix, dominant woman, femdom, whip, leather, power dynamic explicit'},
+      {label:'🔞 Nudez artística',val:'artistic nude, fine art nude photography, tasteful nudity, elegant nude',tags:['nude','boudoir','studio']},
+      {label:'🔞 Seios à mostra',val:'bare breasts fully exposed, nude breasts, nipples visible, topless nude',tags:['nude','boudoir','beach','nsfw']},
+      {label:'🔞🔞 Pelada explícita',val:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography',tags:['nude','nsfw','boudoir']},
+      {label:'🔞🔞 Close íntimo',val:'intimate close-up, explicit detail shot, nude close-up detail, adult photography',tags:['nsfw','boudoir','nude']},
+      {label:'🔞🔞🔞 Masturbando',val:'masturbating, self pleasure, touching herself, explicit self stimulation',tags:['nsfw','boudoir','nude']},
+      {label:'🔞🔞🔞 Oral giving',val:'giving oral sex, performing fellatio, blowjob, oral sex act explicit',tags:['nsfw','nude']},
+      {label:'🔞🔞🔞 Oral receiving',val:'receiving oral sex, cunnilingus, oral sex being performed on her, explicit oral',tags:['nsfw','nude']},
+      {label:'🔞🔞🔞 Sexo vaginal',val:'vaginal sex, penetration, intercourse, explicit sex act, adult content',tags:['nsfw','nude']},
+      {label:'🔞🔞🔞 Sexo anal',val:'anal sex, anal penetration, explicit anal sex act, adult explicit',tags:['nsfw','nude']},
+      {label:'🔞🔞🔞🔞 Gangbang',val:'gangbang, multiple men, group sex, multiple penetration, extreme explicit',tags:['nsfw','nude']},
+      {label:'🔞🔞🔞🔞 Squirting 💦',val:'squirting, female ejaculation, explicit squirt, wet explicit orgasm',tags:['nsfw','nude','wet']},
+      {label:'🔞🔞🔞🔞 Facial 💦',val:'facial cumshot, cum on face, explicit facial, semen on face',tags:['nsfw','nude']},
+      {label:'🔞🔞🔞🔞 Creampie',val:'creampie, internal ejaculation, cum inside, explicit creampie',tags:['nsfw','nude']},
+      {label:'🔞🔞 BDSM/Bondage',val:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit',tags:['nsfw','bdsm','dark']},
+      {label:'🔞🔞 Dominação',val:'dominatrix, dominant woman, femdom, whip, leather, power dynamic explicit',tags:['nsfw','bdsm','dark']},
     ],
     skip:true,
   },
   {
     id:'pose', label:'Pose', ask:'Qual pose?',
     qr:[
-      {label:'Em pé frente',val:'standing upright facing camera, full body front view, face visible'},
-      {label:'Em pé costas',val:'standing from behind, back to camera, full body rear view, face hidden'},
-      {label:'Sentada frente',val:'sitting facing camera, front view, face visible'},
-      {label:'Sentada costas',val:'sitting from behind, back to camera, back visible, face hidden'},
-      {label:'De joelhos frente',val:'kneeling on both knees facing camera, upright torso, face visible'},
-      {label:'De joelhos costas',val:'kneeling from behind, back to camera, rear view, face hidden'},
-      {label:'De quatro costas 🔥',val:'on all fours from directly behind, buttocks prominently facing camera, torso horizontal, face hidden, rear view doggy position'},
-      {label:'De quatro frente',val:'on all fours facing camera, head raised looking at lens, face visible, torso horizontal'},
-      {label:'Deitada frente',val:'lying on her back, supine, facing camera, face visible'},
-      {label:'Deitada bruços',val:'lying face down prone, back facing up, buttocks up, face hidden'},
-      {label:'Deitada de lado',val:'lying on her side, body in lateral profile'},
-      {label:'Pernas levantadas',val:'lying on back with both legs raised high in the air, supine, face visible'},
-      {label:'Pernas abertas 🔥',val:'lying on back, legs spread wide open, thighs apart, supine, facing camera, face visible'},
-      {label:'Dobrada costas 🔥',val:'standing bent over 90 degrees from behind, hands touching floor, legs straight, buttocks pushed back and up, prominent rear view, face hidden between legs'},
-      {label:'Dobrada tocando pés',val:'standing bent over forward touching toes, legs straight, maximum forward bend, buttocks raised high toward camera, rear view, face hidden'},
-      {label:'Agachada costas 🔥',val:'deep squat from behind, knees bent wide, back to camera, buttocks lowered close to floor, heels flat, rear view, face hidden'},
-      {label:'Agachada frente',val:'deep squat facing camera, knees spread wide apart, thighs open, low squat position, face visible, feet flat on floor'},
-      {label:'Presenting 🔥',val:'on all fours, back arched downward concave, spine dipped, buttocks raised high toward camera, presenting arch pose, rear view, face hidden'},
-      {label:'Montada costas 🔥',val:'reverse cowgirl straddling position, woman on top facing away, back fully visible, spine arched, buttocks toward camera, rear view'},
-      {label:'Montada frente',val:'cowgirl straddling position, woman on top facing forward, upright torso, hands on chest, face visible, facing camera directly'},
-      {label:'Arco extremo 🔥',val:'extreme spine arch, back bent into deep C curve, chest forward and up, head thrown back, buttocks pushed far back, standing arched pose'},
-      {label:'De perfil',val:'pure side profile view, 90 degree lateral angle, face in exact profile, full body side silhouette visible'},
-      {label:'Olhando ombro 🔥',val:'standing back to camera, torso rotating over shoulder, eyes looking directly into lens over shoulder, three-quarter rear twist, face partially visible'},
-      {label:'Encostada parede costas',val:'back pressed flat against wall, facing camera, head tilted, arms at sides or above head, full frontal against wall'},
-      {label:'Sentada pernas abertas 🔥',val:'sitting on floor facing camera directly, legs spread wide apart, knees bent outward, thighs fully open, face visible, explicit sitting spread'},
-      {label:'Abraçando joelhos',val:'sitting on floor, both knees hugged tightly to chest, arms wrapped around shins, compact ball pose, chin resting on knees, face visible'},
-      {label:'Mãos na cabeça',val:'standing facing camera, both hands laced behind head, elbows flared out wide, chest pushed forward, confident display pose, face visible'},
-      {label:'Dançando',val:'mid-dance dynamic pose, one hip swung out, arm raised, weight shifted, sensual rhythmic movement, body in motion, face visible'},
-      {label:'Mão no quadril',val:'one hand on hip, contrapposto stance, weight on one leg, slight hip tilt, confident relaxed pose, face visible'},
-      {label:'Espreguiçando',val:'full body stretch, both arms raised high above head, back arched, ribcage lifted, tip-toe stance, elongated sensual stretch, face visible'},
-      {label:'Sentada beira cama costas',val:'seated on mattress edge from behind, legs slightly apart hanging down, spine arched, buttocks on bed, back and rear fully visible, face hidden'},
-      {label:'Recostada cama frente',val:'sitting on bed leaning back, weight on both hands behind, chest lifted, legs apart in front, facing camera directly, face visible'},
-      {label:'Deitada lateral perna levantada',val:'lying on side, bottom leg straight, top leg raised high toward ceiling, lateral profile view, body in elegant curved line, side view'},
-      {label:'Em pé espelho costas',val:'standing with back to camera in front of mirror, rear view directly visible plus face reflection in mirror, double angle simultaneous view'},
-      {label:'Ajoelhada oferecendo 🔥',val:'kneeling upright from behind, pelvis tilted forward pushing buttocks back and up maximally, straight spine, arms at sides, submissive offering rear view, face hidden'},
-      {label:'Dobrada de lado',val:'standing bent forward at waist from exact side profile, torso horizontal parallel to floor, 90 degree bend, arms hanging or hands on knees, lateral view, face in profile'},
-      {label:'Sentada pernas cruzadas',val:'sitting cross-legged on floor, lotus style, full frontal facing camera, back straight, hands on knees, face visible'},
-      {label:'Deitada bruços busto levantado',val:'lying face down prone, forearms on floor, chest and head raised looking at camera, spine curved upward, buttocks visible behind, face directly at lens'},
-      {label:'Gatinhando frente',val:'crawling on hands and knees directly toward camera, head raised, eyes looking up at lens from below, slow seductive crawl approach, face visible'},
-      {label:'Gatinhando costas 🔥',val:'crawling away from camera on hands and knees, rear view, buttocks prominently raised with each crawl step, back arched, face completely hidden'},
-      {label:'Em pé perna levantada',val:'standing on one leg, other leg raised high to side or front at 90+ degrees, arms for balance, standing split pose, flexible display, face visible'},
-      {label:'Splits frente',val:'full 180 degree splits on floor facing camera directly, legs flat on ground in opposite directions, upright torso, face visible, extreme flexibility'},
-      {label:'Splits costas',val:'full splits on floor with back to camera, rear view, legs spread flat in splits, buttocks at center of frame, face hidden'},
-      {label:'Inclinada frente em pé',val:'standing leaning torso forward toward camera, hands resting on thighs or knees, upper body bent at 45 degrees, chest and cleavage visible, face looking at lens'},
-      {label:'Deitada aberta vista de cima 🔥',val:'lying on back, legs spread wide open, viewed from directly above overhead camera angle, top-down bird eye perspective, full body spread visible'},
-      {label:'POV baixo extremo 🔥',val:"extreme low angle upshot from below, worm's eye view, camera positioned at floor level looking straight up, figure standing above camera, shot from between legs upward, dramatic foreshortening"},
-      {label:'Costas parede empurrando 🔥',val:'pressed face-first against wall from behind, hands flat on wall surface, back arched pushing buttocks outward toward camera, rear view, face turned to side against wall'},
-      {label:'De joelhos arco extremo',val:'kneeling on both knees, extreme back arch, spine bent into deep backward curve, head thrown back toward floor, chest thrust upward, dramatic kneeling arch'},
-      {label:'Sentada mesa pernas abertas',val:'sitting on table or desk edge, legs dangling open apart, leaning back on both hands, facing camera, thighs exposed, face visible'},
-      {label:'Quatro patas oblíqua 🔥',val:'on all fours at three-quarter diagonal angle, rear-side combined view, buttocks angled toward camera, head turned to look over shoulder at lens, face partially visible'},
-      {label:'Dobrada sobre mesa costas 🔥',val:'bent over table or desk from behind, torso flat on surface, buttocks pushed up and back, rear view, face hidden, legs straight, bent over furniture'},
-      {label:'Dobrada sobre mesa de lado',val:'bent over table from side profile, 90 degree bend at waist, torso horizontal on table surface, lateral view, side profile, face in profile, buttocks raised'},
-      {label:'Dobrada sobre cadeira costas 🔥',val:'bent over back of chair from behind, hands gripping chair top, buttocks arched back toward camera, rear view, face hidden, legs straight'},
-      {label:'Dobrada sobre cadeira de lado',val:'bent over back of chair from side view, lateral profile, torso horizontal over chair back, face in profile, buttocks raised to side'},
-      {label:'Dobrada sobre cama costas',val:'bent over bed edge from behind, upper body lying flat on mattress, legs hanging off edge, buttocks pushed back, rear view, face hidden'},
-      {label:'Dobrada sobre cama de lado',val:'bent over bed edge from side profile, lateral view, torso flat on mattress, legs on floor, face in profile, buttocks raised sideways'},
-      {label:'Dobrada sobre bancada costas',val:'bent over kitchen or bathroom counter from behind, hands flat on countertop, buttocks pushed back, rear view, face hidden'},
-      {label:'Dobrada sobre carro costas',val:'bent over car hood from behind, hands on car roof, buttocks pushed back, outdoor rear view, face hidden'},
-      {label:'Apoiada parede frente dobrada',val:'standing bent forward hands flat on wall, 90 degree torso bend, facing wall, buttocks pushed back toward camera, rear view, face hidden'},
-      {label:'Apoiada parede de lado dobrada',val:'standing bent forward hands on wall, lateral side profile view, 90 degree bend, buttocks pushed back, face in profile'},
-      {label:'Deitada bruços perna dobrada',val:'lying face down, one knee bent up to side, revealing buttocks, prone lying with bent leg, rear view'},
-      {label:'Sentada de lado perna aberta',val:'sitting sideways on surface, one leg extended one bent, side profile, lateral body view'},
-      {label:'Em pé costas joelho dobrado',val:'standing from behind one knee slightly bent, weight shifted, contrapposto rear view, back to camera'},
-      {label:'Recostada sofa de lado',val:'lounging on sofa from side view, lateral profile, one arm on back of sofa, legs extended, relaxed sensual side pose'},
+      {label:'Em pé frente',val:'standing upright facing camera, full body front view, face visible',tags:['studio','boudoir']},
+      {label:'Em pé costas',val:'standing from behind, back to camera, full body rear view, face hidden',tags:['boudoir','nsfw']},
+      {label:'Sentada frente',val:'sitting facing camera, front view, face visible',tags:['studio','boudoir']},
+      {label:'Sentada costas',val:'sitting from behind, back to camera, back visible, face hidden',tags:['boudoir','nsfw']},
+      {label:'De joelhos frente',val:'kneeling on both knees facing camera, upright torso, face visible',tags:['boudoir','nude']},
+      {label:'De joelhos costas',val:'kneeling from behind, back to camera, rear view, face hidden',tags:['boudoir','nsfw','nude']},
+      {label:'De quatro costas 🔥',val:'on all fours from directly behind, buttocks prominently facing camera, torso horizontal, face hidden, rear view doggy position',tags:['nsfw','nude','boudoir']},
+      {label:'De quatro frente',val:'on all fours facing camera, head raised looking at lens, face visible, torso horizontal',tags:['nsfw','boudoir']},
+      {label:'Deitada frente',val:'lying on her back, supine, facing camera, face visible',tags:['boudoir','nude']},
+      {label:'Deitada bruços',val:'lying face down prone, back facing up, buttocks up, face hidden',tags:['boudoir','nsfw']},
+      {label:'Deitada de lado',val:'lying on her side, body in lateral profile',tags:['boudoir','nude']},
+      {label:'Pernas levantadas',val:'lying on back with both legs raised high in the air, supine, face visible',tags:['nsfw','boudoir','nude']},
+      {label:'Pernas abertas 🔥',val:'lying on back, legs spread wide open, thighs apart, supine, facing camera, face visible',tags:['nsfw','nude','boudoir']},
+      {label:'Dobrada costas 🔥',val:'standing bent over 90 degrees from behind, hands touching floor, legs straight, buttocks pushed back and up, prominent rear view, face hidden between legs',tags:['nsfw','nude','boudoir']},
+      {label:'Dobrada tocando pés',val:'standing bent over forward touching toes, legs straight, maximum forward bend, buttocks raised high toward camera, rear view, face hidden',tags:['nsfw','athletic','boudoir']},
+      {label:'Agachada costas 🔥',val:'deep squat from behind, knees bent wide, back to camera, buttocks lowered close to floor, heels flat, rear view, face hidden',tags:['nsfw','athletic','boudoir']},
+      {label:'Agachada frente',val:'deep squat facing camera, knees spread wide apart, thighs open, low squat position, face visible, feet flat on floor',tags:['athletic','boudoir']},
+      {label:'Presenting 🔥',val:'on all fours, back arched downward concave, spine dipped, buttocks raised high toward camera, presenting arch pose, rear view, face hidden',tags:['nsfw','nude','boudoir']},
+      {label:'Montada costas 🔥',val:'reverse cowgirl straddling position, woman on top facing away, back fully visible, spine arched, buttocks toward camera, rear view',tags:['nsfw','nude','boudoir']},
+      {label:'Montada frente',val:'cowgirl straddling position, woman on top facing forward, upright torso, hands on chest, face visible, facing camera directly',tags:['nsfw','nude','boudoir']},
+      {label:'Arco extremo 🔥',val:'extreme spine arch, back bent into deep C curve, chest forward and up, head thrown back, buttocks pushed far back, standing arched pose',tags:['boudoir','nsfw','oriental']},
+      {label:'De perfil',val:'pure side profile view, 90 degree lateral angle, face in exact profile, full body side silhouette visible',tags:['studio','boudoir','fashion']},
+      {label:'Olhando ombro 🔥',val:'standing back to camera, torso rotating over shoulder, eyes looking directly into lens over shoulder, three-quarter rear twist, face partially visible',tags:['boudoir','nsfw','fashion']},
+      {label:'Encostada parede costas',val:'back pressed flat against wall, facing camera, head tilted, arms at sides or above head, full frontal against wall',tags:['boudoir','dark','night']},
+      {label:'Sentada pernas abertas 🔥',val:'sitting on floor facing camera directly, legs spread wide apart, knees bent outward, thighs fully open, face visible, explicit sitting spread',tags:['nsfw','nude','boudoir']},
+      {label:'Abraçando joelhos',val:'sitting on floor, both knees hugged tightly to chest, arms wrapped around shins, compact ball pose, chin resting on knees, face visible',tags:['boudoir','studio']},
+      {label:'Mãos na cabeça',val:'standing facing camera, both hands laced behind head, elbows flared out wide, chest pushed forward, confident display pose, face visible',tags:['boudoir','studio','fashion']},
+      {label:'Dançando',val:'mid-dance dynamic pose, one hip swung out, arm raised, weight shifted, sensual rhythmic movement, body in motion, face visible',tags:['oriental','latina','night','boudoir']},
+      {label:'Mão no quadril',val:'one hand on hip, contrapposto stance, weight on one leg, slight hip tilt, confident relaxed pose, face visible',tags:['studio','boudoir','fashion']},
+      {label:'Espreguiçando',val:'full body stretch, both arms raised high above head, back arched, ribcage lifted, tip-toe stance, elongated sensual stretch, face visible',tags:['boudoir','nude','studio']},
+      {label:'Sentada beira cama costas',val:'seated on mattress edge from behind, legs slightly apart hanging down, spine arched, buttocks on bed, back and rear fully visible, face hidden',tags:['boudoir','nsfw']},
+      {label:'Recostada cama frente',val:'sitting on bed leaning back, weight on both hands behind, chest lifted, legs apart in front, facing camera directly, face visible',tags:['boudoir','nude']},
+      {label:'Deitada lateral perna levantada',val:'lying on side, bottom leg straight, top leg raised high toward ceiling, lateral profile view, body in elegant curved line, side view',tags:['boudoir','nude','studio']},
+      {label:'Em pé espelho costas',val:'standing with back to camera in front of mirror, rear view directly visible plus face reflection in mirror, double angle simultaneous view',tags:['boudoir','nsfw']},
+      {label:'Ajoelhada oferecendo 🔥',val:'kneeling upright from behind, pelvis tilted forward pushing buttocks back and up maximally, straight spine, arms at sides, submissive offering rear view, face hidden',tags:['nsfw','nude','bdsm']},
+      {label:'Dobrada de lado',val:'standing bent forward at waist from exact side profile, torso horizontal parallel to floor, 90 degree bend, arms hanging or hands on knees, lateral view, face in profile',tags:['boudoir','nsfw']},
+      {label:'Sentada pernas cruzadas',val:'sitting cross-legged on floor, lotus style, full frontal facing camera, back straight, hands on knees, face visible',tags:['studio','boudoir','oriental']},
+      {label:'Deitada bruços busto levantado',val:'lying face down prone, forearms on floor, chest and head raised looking at camera, spine curved upward, buttocks visible behind, face directly at lens',tags:['boudoir','nsfw','nude']},
+      {label:'Gatinhando frente',val:'crawling on hands and knees directly toward camera, head raised, eyes looking up at lens from below, slow seductive crawl approach, face visible',tags:['nsfw','boudoir','bdsm']},
+      {label:'Gatinhando costas 🔥',val:'crawling away from camera on hands and knees, rear view, buttocks prominently raised with each crawl step, back arched, face completely hidden',tags:['nsfw','nude','bdsm']},
+      {label:'Em pé perna levantada',val:'standing on one leg, other leg raised high to side or front at 90+ degrees, arms for balance, standing split pose, flexible display, face visible',tags:['athletic','studio','oriental']},
+      {label:'Splits frente',val:'full 180 degree splits on floor facing camera directly, legs flat on ground in opposite directions, upright torso, face visible, extreme flexibility',tags:['athletic','studio','boudoir']},
+      {label:'Splits costas',val:'full splits on floor with back to camera, rear view, legs spread flat in splits, buttocks at center of frame, face hidden',tags:['athletic','nsfw','boudoir']},
+      {label:'Inclinada frente em pé',val:'standing leaning torso forward toward camera, hands resting on thighs or knees, upper body bent at 45 degrees, chest and cleavage visible, face looking at lens',tags:['boudoir','nsfw']},
+      {label:'Deitada aberta vista de cima 🔥',val:'lying on back, legs spread wide open, viewed from directly above overhead camera angle, top-down bird eye perspective, full body spread visible',tags:['nsfw','nude','boudoir']},
+      {label:'POV baixo extremo 🔥',val:"extreme low angle upshot from below, worm's eye view, camera positioned at floor level looking straight up, figure standing above camera, shot from between legs upward, dramatic foreshortening",tags:['nsfw','nude']},
+      {label:'Costas parede empurrando 🔥',val:'pressed face-first against wall from behind, hands flat on wall surface, back arched pushing buttocks outward toward camera, rear view, face turned to side against wall',tags:['nsfw','boudoir','dark']},
+      {label:'De joelhos arco extremo',val:'kneeling on both knees, extreme back arch, spine bent into deep backward curve, head thrown back toward floor, chest thrust upward, dramatic kneeling arch',tags:['boudoir','nude','oriental']},
+      {label:'Sentada mesa pernas abertas',val:'sitting on table or desk edge, legs dangling open apart, leaning back on both hands, facing camera, thighs exposed, face visible',tags:['nsfw','boudoir']},
+      {label:'Quatro patas oblíqua 🔥',val:'on all fours at three-quarter diagonal angle, rear-side combined view, buttocks angled toward camera, head turned to look over shoulder at lens, face partially visible',tags:['nsfw','nude','boudoir']},
+      {label:'Dobrada sobre mesa costas 🔥',val:'bent over table or desk from behind, torso flat on surface, buttocks pushed up and back, rear view, face hidden, legs straight, bent over furniture',tags:['nsfw','nude','boudoir']},
+      {label:'Dobrada sobre mesa de lado',val:'bent over table from side profile, 90 degree bend at waist, torso horizontal on table surface, lateral view, side profile, face in profile, buttocks raised',tags:['nsfw','boudoir']},
+      {label:'Dobrada sobre cadeira costas 🔥',val:'bent over back of chair from behind, hands gripping chair top, buttocks arched back toward camera, rear view, face hidden, legs straight',tags:['nsfw','nude','boudoir']},
+      {label:'Dobrada sobre cadeira de lado',val:'bent over back of chair from side view, lateral profile, torso horizontal over chair back, face in profile, buttocks raised to side',tags:['nsfw','boudoir']},
+      {label:'Dobrada sobre cama costas',val:'bent over bed edge from behind, upper body lying flat on mattress, legs hanging off edge, buttocks pushed back, rear view, face hidden',tags:['nsfw','nude','boudoir']},
+      {label:'Dobrada sobre cama de lado',val:'bent over bed edge from side profile, lateral view, torso flat on mattress, legs on floor, face in profile, buttocks raised sideways',tags:['nsfw','boudoir']},
+      {label:'Dobrada sobre bancada costas',val:'bent over kitchen or bathroom counter from behind, hands flat on countertop, buttocks pushed back, rear view, face hidden',tags:['nsfw','nude']},
+      {label:'Dobrada sobre carro costas',val:'bent over car hood from behind, hands on car roof, buttocks pushed back, outdoor rear view, face hidden',tags:['nsfw','outdoor','night']},
+      {label:'Apoiada parede frente dobrada',val:'standing bent forward hands flat on wall, 90 degree torso bend, facing wall, buttocks pushed back toward camera, rear view, face hidden',tags:['nsfw','boudoir','dark']},
+      {label:'Apoiada parede de lado dobrada',val:'standing bent forward hands on wall, lateral side profile view, 90 degree bend, buttocks pushed back, face in profile',tags:['nsfw','boudoir']},
+      {label:'Deitada bruços perna dobrada',val:'lying face down, one knee bent up to side, revealing buttocks, prone lying with bent leg, rear view',tags:['boudoir','nsfw','nude']},
+      {label:'Sentada de lado perna aberta',val:'sitting sideways on surface, one leg extended one bent, side profile, lateral body view',tags:['boudoir','studio']},
+      {label:'Em pé costas joelho dobrado',val:'standing from behind one knee slightly bent, weight shifted, contrapposto rear view, back to camera',tags:['boudoir','nsfw']},
+      {label:'Recostada sofa de lado',val:'lounging on sofa from side view, lateral profile, one arm on back of sofa, legs extended, relaxed sensual side pose',tags:['boudoir','studio','nude']},
     ],
     skip:true,
   },
   {
     id:'cenario', label:'Cenário', ask:'Qual o cenário?',
     qr:[
-      {label:'🛏 Quarto',val:'luxury bedroom, soft natural window light, white silk bedsheets, intimate setting'},
-      {label:'🚿 Chuveiro',val:'wet shower, steam, glass door, white tiles, water running down body'},
-      {label:'🛁 Banheiro',val:'luxurious marble bathroom, bathtub, warm light, elegant decor'},
-      {label:'📸 Studio',val:'professional photo studio, white seamless backdrop, controlled studio lighting'},
-      {label:'🏖 Praia',val:'tropical beach, ocean waves, white sand, palm trees, golden sunlight'},
-      {label:'🏨 Hotel',val:'luxury hotel room, king bed, elegant decor, soft warm lighting'},
-      {label:'🌿 Ao ar livre',val:'outdoor nature, golden hour sunlight, green landscape, open field'},
-      {label:'🌆 Clube/Neon',val:'nightclub interior, neon RGB lights, dark smoky atmosphere, LED lights'},
-      {label:'🛋 Sala',val:'modern living room, couch, natural daylight, contemporary decor'},
-      {label:'🏙 Rooftop',val:'rooftop terrace, city skyline, sunset, urban golden view'},
-      {label:'🏊 Piscina',val:'outdoor pool, poolside, turquoise water, sun lounger, summer'},
-      {label:'💪 Academia',val:'gym fitness center, mirrors, workout equipment, athletic environment'},
-      {label:'🕯 Boudoir',val:'intimate boudoir, candles, rose petals, sheer curtains, dim warm romantic light'},
-      {label:'🌊 Mar aberto',val:'open sea, floating in ocean water, horizon, blue water'},
-      {label:'🌅 Pôr do sol',val:'sunset on beach, orange sky, warm golden light, silhouette'},
-      {label:'🏔 Natureza selvagem',val:'wild nature, forest, waterfall, rocks, natural outdoor setting'},
-      {label:'🚗 Carro luxo',val:'inside luxury car, leather seat, city lights background, night'},
-      {label:'🛥 Iate',val:'luxury yacht, open sea, sun deck, nautical setting'},
-      {label:'🌃 Rua noturna',val:'night street, city lights, wet pavement reflections, urban night'},
-      {label:'🏡 Varanda',val:'outdoor balcony, sunrise, railing, natural morning light'},
-      {label:'🎭 Palco',val:'theatrical stage, dramatic spotlights, red velvet curtains, performance'},
-      {label:'🍷 Bar/Lounge',val:'upscale bar lounge, dim warm light, leather stools, cocktail atmosphere'},
-      {label:'🌸 Jardim',val:'lush flower garden, rose petals, natural afternoon light, botanical setting'},
-      {label:'❄ Neve',val:'snowy outdoor, winter landscape, snowflakes, cold breath visible'},
-      {label:'🏺 Deserto',val:'desert dunes, arid landscape, harsh sun, sand, golden sky'},
-      {label:'🚿 Chuva exterior',val:'standing in rain outdoors, soaking wet from rain, wet clothes clinging, natural rain shower, night rain street'},
-      {label:'🌊 Cachoeira',val:'standing under waterfall, tropical waterfall, natural pool, jungle nature, water pouring over body'},
-      {label:'🏠 Cozinha',val:'kitchen setting, marble countertop, modern kitchen, natural morning light, domestic intimate'},
-      {label:'📚 Biblioteca',val:'luxury library setting, bookshelves, wooden desk, warm lamp light, intellectual atmosphere'},
-      {label:'🎹 Piano bar',val:'grand piano, jazz bar, candlelight, elegant evening, evening gown setting'},
-      {label:'🌙 Quarto escuro',val:'dark bedroom, only moonlight through window, dim blue ambient, sheets visible, mysterious night'},
-      {label:'🏋 Vestiário',val:'gym locker room, mirrors, benches, post-workout setting, athletic candid'},
-      {label:'🌃 Varanda noturna',val:'night balcony, city lights below, railing, warm apartment glow from window, urban night'},
-      {label:'🛋 Sofá luxo',val:'luxury velvet sofa, fur rug, fireplace, warm amber glow, opulent living room'},
-      {label:'🚁 Heliponto',val:'rooftop helipad, city skyline at night, helicopter pad markings, windy dramatic, urban drama'},
-      {label:'🎡 Parque lua de mel',val:'amusement park at night, ferris wheel lights, carnival atmosphere, colorful bokeh'},
-      {label:'🌿 Estufa botânica',val:'botanical greenhouse, tropical plants, glass ceiling, filtered green light, lush botanical'},
-      {label:'🏚 Armazém industrial',val:'industrial warehouse, brick walls, metal beams, dramatic window light, urban decay aesthetic'},
-      {label:'🛳 Cruzeiro',val:'cruise ship deck, ocean view, luxury cruise, sunset at sea, nautical atmosphere'},
-      {label:'🎬 Set de filmagem',val:'movie film set, studio lights, director chair, behind the scenes, production equipment'},
-      {label:'💈 Salão de beleza',val:'beauty salon, styling chair, vanity mirrors, warm salon lights, makeup setting'},
+      {label:'🛏 Quarto',val:'luxury bedroom, soft natural window light, white silk bedsheets, intimate setting',tags:['boudoir','nude','studio']},
+      {label:'🚿 Chuveiro',val:'wet shower, steam, glass door, white tiles, water running down body',tags:['wet','nude','nsfw']},
+      {label:'🛁 Banheiro',val:'luxurious marble bathroom, bathtub, warm light, elegant decor',tags:['boudoir','nude','wet']},
+      {label:'📸 Studio',val:'professional photo studio, white seamless backdrop, controlled studio lighting',tags:['studio','boudoir']},
+      {label:'🏖 Praia',val:'tropical beach, ocean waves, white sand, palm trees, golden sunlight',tags:['beach','outdoor','latina']},
+      {label:'🏨 Hotel',val:'luxury hotel room, king bed, elegant decor, soft warm lighting',tags:['boudoir','luxury','night']},
+      {label:'🌿 Ao ar livre',val:'outdoor nature, golden hour sunlight, green landscape, open field',tags:['outdoor','nature','athletic']},
+      {label:'🌆 Clube/Neon',val:'nightclub interior, neon RGB lights, dark smoky atmosphere, LED lights',tags:['night','dark','latina']},
+      {label:'🛋 Sala',val:'modern living room, couch, natural daylight, contemporary decor',tags:['boudoir','studio']},
+      {label:'🏙 Rooftop',val:'rooftop terrace, city skyline, sunset, urban golden view',tags:['night','luxury','fashion']},
+      {label:'🏊 Piscina',val:'outdoor pool, poolside, turquoise water, sun lounger, summer',tags:['beach','outdoor','wet']},
+      {label:'💪 Academia',val:'gym fitness center, mirrors, workout equipment, athletic environment',tags:['athletic','studio']},
+      {label:'🕯 Boudoir',val:'intimate boudoir, candles, rose petals, sheer curtains, dim warm romantic light',tags:['boudoir','nude','nsfw']},
+      {label:'🌊 Mar aberto',val:'open sea, floating in ocean water, horizon, blue water',tags:['beach','outdoor','wet']},
+      {label:'🌅 Pôr do sol',val:'sunset on beach, orange sky, warm golden light, silhouette',tags:['beach','outdoor','nature']},
+      {label:'🏔 Natureza selvagem',val:'wild nature, forest, waterfall, rocks, natural outdoor setting',tags:['nature','outdoor']},
+      {label:'🚗 Carro luxo',val:'inside luxury car, leather seat, city lights background, night',tags:['night','luxury','dark']},
+      {label:'🛥 Iate',val:'luxury yacht, open sea, sun deck, nautical setting',tags:['beach','outdoor','luxury']},
+      {label:'🌃 Rua noturna',val:'night street, city lights, wet pavement reflections, urban night',tags:['night','dark','wet']},
+      {label:'🏡 Varanda',val:'outdoor balcony, sunrise, railing, natural morning light',tags:['outdoor','nature']},
+      {label:'🎭 Palco',val:'theatrical stage, dramatic spotlights, red velvet curtains, performance',tags:['night','luxury','fantasy']},
+      {label:'🍷 Bar/Lounge',val:'upscale bar lounge, dim warm light, leather stools, cocktail atmosphere',tags:['night','dark','luxury']},
+      {label:'🌸 Jardim',val:'lush flower garden, rose petals, natural afternoon light, botanical setting',tags:['nature','outdoor','boudoir']},
+      {label:'❄ Neve',val:'snowy outdoor, winter landscape, snowflakes, cold breath visible',tags:['outdoor','nature','nordic']},
+      {label:'🏺 Deserto',val:'desert dunes, arid landscape, harsh sun, sand, golden sky',tags:['outdoor','arab','oriental']},
+      {label:'🚿 Chuva exterior',val:'standing in rain outdoors, soaking wet from rain, wet clothes clinging, natural rain shower, night rain street',tags:['wet','outdoor','night']},
+      {label:'🌊 Cachoeira',val:'standing under waterfall, tropical waterfall, natural pool, jungle nature, water pouring over body',tags:['wet','outdoor','nature','beach']},
+      {label:'🏠 Cozinha',val:'kitchen setting, marble countertop, modern kitchen, natural morning light, domestic intimate',tags:['studio','boudoir']},
+      {label:'📚 Biblioteca',val:'luxury library setting, bookshelves, wooden desk, warm lamp light, intellectual atmosphere',tags:['luxury','studio']},
+      {label:'🎹 Piano bar',val:'grand piano, jazz bar, candlelight, elegant evening, evening gown setting',tags:['night','luxury','dark']},
+      {label:'🌙 Quarto escuro',val:'dark bedroom, only moonlight through window, dim blue ambient, sheets visible, mysterious night',tags:['dark','night','boudoir','nsfw']},
+      {label:'🏋 Vestiário',val:'gym locker room, mirrors, benches, post-workout setting, athletic candid',tags:['athletic','nsfw','wet']},
+      {label:'🌃 Varanda noturna',val:'night balcony, city lights below, railing, warm apartment glow from window, urban night',tags:['night','luxury']},
+      {label:'🛋 Sofá luxo',val:'luxury velvet sofa, fur rug, fireplace, warm amber glow, opulent living room',tags:['boudoir','luxury','nsfw']},
+      {label:'🚁 Heliponto',val:'rooftop helipad, city skyline at night, helicopter pad markings, windy dramatic, urban drama',tags:['night','luxury','dark']},
+      {label:'🎡 Parque lua de mel',val:'amusement park at night, ferris wheel lights, carnival atmosphere, colorful bokeh',tags:['night','latina']},
+      {label:'🌿 Estufa botânica',val:'botanical greenhouse, tropical plants, glass ceiling, filtered green light, lush botanical',tags:['nature','outdoor']},
+      {label:'🏚 Armazém industrial',val:'industrial warehouse, brick walls, metal beams, dramatic window light, urban decay aesthetic',tags:['dark','night','bdsm']},
+      {label:'🛳 Cruzeiro',val:'cruise ship deck, ocean view, luxury cruise, sunset at sea, nautical atmosphere',tags:['beach','outdoor','luxury']},
+      {label:'🎬 Set de filmagem',val:'movie film set, studio lights, director chair, behind the scenes, production equipment',tags:['studio','fashion']},
+      {label:'💈 Salão de beleza',val:'beauty salon, styling chair, vanity mirrors, warm salon lights, makeup setting',tags:['studio','fashion']},
       // Internos
-      {label:'🎨 Ateliê artístico',val:'artist studio atelier, canvases, easels, paint smell, warm creative light, art studio'},
-      {label:'🍽 Jantar íntimo',val:'intimate candlelit dinner table, restaurant fine dining, wine glasses, tablecloth, warm ambient'},
-      {label:'🛏 Quarto vintage',val:'vintage retro bedroom, antique furniture, warm lamp, aged wallpaper, nostalgic intimate setting'},
-      {label:'🪑 Escritório corporativo',val:'corporate office, glass desk, city window view, business setting, executive suite'},
-      {label:'🧖 Spa luxo',val:'luxury spa, massage table, candles, towels, zen ambiance, serene wellness setting'},
-      {label:'🍳 Cozinha rústica',val:'rustic farmhouse kitchen, wood beams, stone counters, natural morning light, cozy domestic'},
-      {label:'🎙 Estúdio de música',val:'recording studio, microphone, sound panels, dim mood lighting, headphones, creative space'},
-      {label:'🎭 Camarote de teatro',val:'backstage dressing room, vanity mirror with bulb lights, costumes, theatrical glamour'},
-      {label:'🏰 Castelo / Mansão',val:'grand castle hallway, ornate chandeliers, stone walls, aristocratic opulent manor, royalty setting'},
-      {label:'⛪ Igreja abandonada',val:'abandoned church interior, broken stained glass, dust rays, decayed pews, gothic ruin atmosphere'},
-      {label:'🌡 Sauna finlandesa',val:'wooden sauna room, steam, hot rocks, towel wrapped, cedar walls, intense heat atmosphere'},
-      {label:'🎰 Cassino',val:'luxury casino floor, slot machines, neon signs, gambling atmosphere, Vegas-style opulence'},
-      {label:'🛋 Apartamento Tokyo',val:'small Japanese apartment, tatami mat, paper screens, urban Asian aesthetic, city night view'},
-      {label:'🏛 Museu / Galeria',val:'art museum gallery, white walls, exhibition lighting, marble floors, cultural setting'},
-      {label:'🛒 Mercado público',val:'bustling public market, produce stalls, colorful textiles, Mediterranean market, lively chaos'},
+      {label:'🎨 Ateliê artístico',val:'artist studio atelier, canvases, easels, paint smell, warm creative light, art studio',tags:['studio','nude']},
+      {label:'🍽 Jantar íntimo',val:'intimate candlelit dinner table, restaurant fine dining, wine glasses, tablecloth, warm ambient',tags:['luxury','boudoir','night']},
+      {label:'🛏 Quarto vintage',val:'vintage retro bedroom, antique furniture, warm lamp, aged wallpaper, nostalgic intimate setting',tags:['boudoir','nude','studio']},
+      {label:'🪑 Escritório corporativo',val:'corporate office, glass desk, city window view, business setting, executive suite',tags:['luxury','fashion']},
+      {label:'🧖 Spa luxo',val:'luxury spa, massage table, candles, towels, zen ambiance, serene wellness setting',tags:['boudoir','nude','oriental']},
+      {label:'🍳 Cozinha rústica',val:'rustic farmhouse kitchen, wood beams, stone counters, natural morning light, cozy domestic',tags:['studio','nature']},
+      {label:'🎙 Estúdio de música',val:'recording studio, microphone, sound panels, dim mood lighting, headphones, creative space',tags:['dark','studio','night']},
+      {label:'🎭 Camarote de teatro',val:'backstage dressing room, vanity mirror with bulb lights, costumes, theatrical glamour',tags:['fashion','studio','luxury']},
+      {label:'🏰 Castelo / Mansão',val:'grand castle hallway, ornate chandeliers, stone walls, aristocratic opulent manor, royalty setting',tags:['luxury','fantasy','nordic']},
+      {label:'⛪ Igreja abandonada',val:'abandoned church interior, broken stained glass, dust rays, decayed pews, gothic ruin atmosphere',tags:['dark','fantasy','bdsm']},
+      {label:'🌡 Sauna finlandesa',val:'wooden sauna room, steam, hot rocks, towel wrapped, cedar walls, intense heat atmosphere',tags:['nude','wet','nordic']},
+      {label:'🎰 Cassino',val:'luxury casino floor, slot machines, neon signs, gambling atmosphere, Vegas-style opulence',tags:['night','luxury','dark']},
+      {label:'🛋 Apartamento Tokyo',val:'small Japanese apartment, tatami mat, paper screens, urban Asian aesthetic, city night view',tags:['asian','night','studio']},
+      {label:'🏛 Museu / Galeria',val:'art museum gallery, white walls, exhibition lighting, marble floors, cultural setting',tags:['studio','fashion','luxury']},
+      {label:'🛒 Mercado público',val:'bustling public market, produce stalls, colorful textiles, Mediterranean market, lively chaos',tags:['outdoor','arab','oriental']},
       // Externos urbanos
-      {label:'🌉 Ponte noturna',val:'bridge at night, city lights reflected in water, fog, dramatic urban night, steel bridge structure'},
-      {label:'🚇 Metrô',val:'subway metro station, tiled walls, platform, urban grit, fluorescent light, commuter aesthetic'},
-      {label:'🚕 Táxi amarelo',val:'inside yellow taxi cab, city street outside window, night city blur, urban taxi driver aesthetic'},
-      {label:'🏢 Terraço empresarial',val:'corporate building terrace, skyscraper views, windy, glass railings, business district skyline'},
-      {label:'🌇 Bairro de luxo',val:'upscale residential neighborhood, manicured lawns, luxury cars parked, golden hour suburb'},
-      {label:'🎆 Carnaval',val:'carnival celebration street, confetti, masks, vibrant colors, festival crowd, samba energy'},
-      {label:'💃 Rua de boate',val:'nightlife entertainment district, neon signs, clubs, bar street, Friday night energy, night street'},
-      {label:'🏪 Vitrine de loja',val:'store front window display, glass reflection, shopping street, urban fashion district'},
-      {label:'✈ Aeroporto',val:'modern international airport, terminal, floor-to-ceiling windows, travel atmosphere, sunlight'},
-      {label:'🌃 Paris à noite',val:'Paris street at night, Eiffel Tower in background, cobblestone, French café, romantic city lights'},
-      {label:'🌆 Nova York',val:'New York City, Times Square lights, skyscrapers, iconic urban American cityscape'},
-      {label:'🌴 Miami Beach',val:'Miami Ocean Drive, art deco buildings, palm trees, pastel colors, beach city atmosphere'},
-      {label:'🗽 Telhado Manhattan',val:'Manhattan rooftop penthouse, Empire State Building visible, helicopter view, luxury urban'},
-      {label:'🌸 Japão - sakura',val:'Japan cherry blossom park, pink sakura trees, soft petals falling, serene Japanese spring'},
+      {label:'🌉 Ponte noturna',val:'bridge at night, city lights reflected in water, fog, dramatic urban night, steel bridge structure',tags:['night','dark']},
+      {label:'🚇 Metrô',val:'subway metro station, tiled walls, platform, urban grit, fluorescent light, commuter aesthetic',tags:['dark','night']},
+      {label:'🚕 Táxi amarelo',val:'inside yellow taxi cab, city street outside window, night city blur, urban taxi driver aesthetic',tags:['night','dark']},
+      {label:'🏢 Terraço empresarial',val:'corporate building terrace, skyscraper views, windy, glass railings, business district skyline',tags:['luxury','night','fashion']},
+      {label:'🌇 Bairro de luxo',val:'upscale residential neighborhood, manicured lawns, luxury cars parked, golden hour suburb',tags:['luxury','outdoor']},
+      {label:'🎆 Carnaval',val:'carnival celebration street, confetti, masks, vibrant colors, festival crowd, samba energy',tags:['latina','outdoor','night']},
+      {label:'💃 Rua de boate',val:'nightlife entertainment district, neon signs, clubs, bar street, Friday night energy, night street',tags:['night','dark','latina']},
+      {label:'🏪 Vitrine de loja',val:'store front window display, glass reflection, shopping street, urban fashion district',tags:['fashion','studio']},
+      {label:'✈ Aeroporto',val:'modern international airport, terminal, floor-to-ceiling windows, travel atmosphere, sunlight',tags:['fashion','studio']},
+      {label:'🌃 Paris à noite',val:'Paris street at night, Eiffel Tower in background, cobblestone, French café, romantic city lights',tags:['night','luxury','nordic']},
+      {label:'🌆 Nova York',val:'New York City, Times Square lights, skyscrapers, iconic urban American cityscape',tags:['night','luxury','dark']},
+      {label:'🌴 Miami Beach',val:'Miami Ocean Drive, art deco buildings, palm trees, pastel colors, beach city atmosphere',tags:['beach','outdoor','latina']},
+      {label:'🗽 Telhado Manhattan',val:'Manhattan rooftop penthouse, Empire State Building visible, helicopter view, luxury urban',tags:['luxury','night']},
+      {label:'🌸 Japão - sakura',val:'Japan cherry blossom park, pink sakura trees, soft petals falling, serene Japanese spring',tags:['asian','outdoor','nature']},
       // Externos natureza
-      {label:'🌋 Vulcão / Lava',val:'volcanic landscape, lava flow glow, dramatic rocky terrain, volcanic heat haze, raw nature power'},
-      {label:'🧊 Iceberg',val:'arctic iceberg, glacier blue ice, freezing water, polar landscape, ice cave'},
-      {label:'🌪 Tempestade no deserto',val:'desert sandstorm, orange dust cloud, dramatic sky, extreme weather, raw elements'},
-      {label:'🌊 Praia rochosa',val:'rocky coastal cliff, dramatic ocean waves crashing, wild seaside, rugged coastal landscape'},
-      {label:'🌿 Selva amazônica',val:'dense Amazon rainforest, tropical jungle canopy, humid green, exotic flora, wild nature'},
-      {label:'🏕 Camping ao relento',val:'outdoor camping, bonfire, starry night sky, tent, wilderness, cozy campfire warmth'},
-      {label:'⛰ Pico de montanha',val:'mountain summit peak, panoramic view, fresh air, dramatic altitude, alpine landscape'},
-      {label:'🌾 Campo de trigo',val:'wheat field at golden hour, rolling hills, warm country light, pastoral landscape'},
-      {label:'🌊 Cachoeira gelada',val:'icy cold waterfall, misty spray, mossy rocks, pristine wilderness, crystal clear water'},
-      {label:'🌺 Jardim japonês',val:'Japanese zen garden, stone lanterns, koi pond, maple trees, raked gravel, serene tranquility'},
-      {label:'🏖 Ilha privada',val:'private island, crystal water, white sand, hammock, tropical paradise, exclusive remote beach'},
-      {label:'🌌 Campo aberto noturno',val:'open field under Milky Way, infinite star sky, fireflies, night nature, cosmic backdrop'},
-      {label:'🌲 Floresta de pinheiros',val:'dense pine forest, fog between trees, mystical forest floor, ethereal green light filtering'},
-      {label:'🌅 Lavanda',val:'lavender field in Provence, purple flowers, golden light, French countryside, romantic floral'},
-      {label:'🏜 Salar de sal',val:'salt flat desert, mirror reflection, endless white flat, surreal landscape, blue sky reflection'},
+      {label:'🌋 Vulcão / Lava',val:'volcanic landscape, lava flow glow, dramatic rocky terrain, volcanic heat haze, raw nature power',tags:['outdoor','nature','dark']},
+      {label:'🧊 Iceberg',val:'arctic iceberg, glacier blue ice, freezing water, polar landscape, ice cave',tags:['outdoor','nature','nordic']},
+      {label:'🌪 Tempestade no deserto',val:'desert sandstorm, orange dust cloud, dramatic sky, extreme weather, raw elements',tags:['outdoor','arab','dark']},
+      {label:'🌊 Praia rochosa',val:'rocky coastal cliff, dramatic ocean waves crashing, wild seaside, rugged coastal landscape',tags:['beach','outdoor','nature']},
+      {label:'🌿 Selva amazônica',val:'dense Amazon rainforest, tropical jungle canopy, humid green, exotic flora, wild nature',tags:['nature','outdoor','latina']},
+      {label:'🏕 Camping ao relento',val:'outdoor camping, bonfire, starry night sky, tent, wilderness, cozy campfire warmth',tags:['outdoor','nature','night']},
+      {label:'⛰ Pico de montanha',val:'mountain summit peak, panoramic view, fresh air, dramatic altitude, alpine landscape',tags:['outdoor','nature','athletic']},
+      {label:'🌾 Campo de trigo',val:'wheat field at golden hour, rolling hills, warm country light, pastoral landscape',tags:['outdoor','nature','nordic']},
+      {label:'🌊 Cachoeira gelada',val:'icy cold waterfall, misty spray, mossy rocks, pristine wilderness, crystal clear water',tags:['outdoor','nature','wet']},
+      {label:'🌺 Jardim japonês',val:'Japanese zen garden, stone lanterns, koi pond, maple trees, raked gravel, serene tranquility',tags:['asian','outdoor','nature','oriental']},
+      {label:'🏖 Ilha privada',val:'private island, crystal water, white sand, hammock, tropical paradise, exclusive remote beach',tags:['beach','outdoor','luxury']},
+      {label:'🌌 Campo aberto noturno',val:'open field under Milky Way, infinite star sky, fireflies, night nature, cosmic backdrop',tags:['outdoor','nature','night']},
+      {label:'🌲 Floresta de pinheiros',val:'dense pine forest, fog between trees, mystical forest floor, ethereal green light filtering',tags:['nature','outdoor','dark']},
+      {label:'🌅 Lavanda',val:'lavender field in Provence, purple flowers, golden light, French countryside, romantic floral',tags:['outdoor','nature','nordic']},
+      {label:'🏜 Salar de sal',val:'salt flat desert, mirror reflection, endless white flat, surreal landscape, blue sky reflection',tags:['outdoor','arab','fantasy']},
       // Temáticos / fantasiosos
-      {label:'🔮 Witch cottage',val:'witchy cottage interior, herbs drying, crystal balls, dark wood, candles, magical feminine space'},
-      {label:'🧜 Praia paradisíaca submarina',val:'underwater scene, coral reef, tropical fish, sunlight through water, ethereal underwater world'},
-      {label:'🪐 Cenário sci-fi',val:'science fiction futuristic space station, neon hologram, metallic surfaces, cyberpunk aesthetic'},
-      {label:'🏯 Japão feudal',val:'feudal Japan setting, traditional pagoda, cherry blossoms, samurai era, historic Japanese backdrop'},
-      {label:'🧙 Taverna medieval',val:'medieval tavern interior, stone walls, fire torches, wooden tables, fantasy RPG aesthetic'},
-      {label:'🌙 Limbo surrealista',val:'surreal dreamscape, impossible architecture, floating objects, pastel void, dreamlike unreality'},
+      {label:'🔮 Witch cottage',val:'witchy cottage interior, herbs drying, crystal balls, dark wood, candles, magical feminine space',tags:['dark','fantasy','bdsm']},
+      {label:'🧜 Praia paradisíaca submarina',val:'underwater scene, coral reef, tropical fish, sunlight through water, ethereal underwater world',tags:['beach','fantasy','wet']},
+      {label:'🪐 Cenário sci-fi',val:'science fiction futuristic space station, neon hologram, metallic surfaces, cyberpunk aesthetic',tags:['dark','night','fantasy']},
+      {label:'🏯 Japão feudal',val:'feudal Japan setting, traditional pagoda, cherry blossoms, samurai era, historic Japanese backdrop',tags:['asian','oriental','fantasy']},
+      {label:'🧙 Taverna medieval',val:'medieval tavern interior, stone walls, fire torches, wooden tables, fantasy RPG aesthetic',tags:['dark','fantasy','night']},
+      {label:'🌙 Limbo surrealista',val:'surreal dreamscape, impossible architecture, floating objects, pastel void, dreamlike unreality',tags:['fantasy','dark']},
       // Harém / Oriente Médio
-      {label:'🌙 Câmara do harém',val:'opulent harem chamber interior, silk curtains draped from ceiling, Persian rugs on marble floor, large cushioned daybed with gold tassels, incense smoke curling in air, ornate lanterns casting warm glow, Middle Eastern palace room'},
-      {label:'🏛 Palácio árabe luxuoso',val:'luxurious Arabian palace interior, arched Moorish doorways, intricate geometric tilework on walls, alabaster columns, golden chandeliers, richly decorated floors, ornate Islamic architecture, Arabian Nights palace'},
-      {label:'🕌 Banheiro do harém hammam',val:'traditional hammam bath house, marble steam room, warm mist and steam, mosaic tile walls and floor, copper bowls, soft flickering candles, Turkish bath aesthetic, hammam basin fountain, misty warm light'},
-      {label:'🌙 Terraço à noite Oriente Médio',val:'rooftop terrace at night, Moroccan architecture, city of minarets and domes below, crescent moon and stars sky, lanterns and candles, low cushioned seating, ornate carved railing, warm ambient night light, Arabian night panorama'},
-      {label:'🏺 Tent beduíno luxuoso',val:'luxurious Bedouin desert tent interior, richly patterned carpets and cushions, silk fabric walls, gold lanterns, low tables with fruit and wine, desert dunes visible through open tent flap, nomadic luxury aesthetic'},
-      {label:'🌺 Jardim do harém',val:'enclosed Persian garden, fountain courtyard with mosaic pool, orange and pomegranate trees, rose bushes, latticed garden walls with climbing jasmine, dappled sunlight, romantic private garden, Islamic garden aesthetic'},
-      {label:'🏺 Sala dos tesouros',val:'treasure chamber of an Arabian palace, gold coins piled on floor, jewels and gems scattered, ornate chests overflowing with riches, oil lamp flickering, silk fabric draped, opulent fantasy treasure room'},
-      {label:'🌊 Oásis no deserto',val:'desert oasis scene, clear blue pool surrounded by palm trees, golden sand dunes, turquoise water reflection, lush tropical plants in arid desert, paradise oasis, warm desert light'},
-      {label:'🕌 Mesquita de mármore',val:'marble mosque interior architecture, ornate carved marble columns, geometric patterned floor, filtered light through latticed windows, vaulted ceiling, Islamic geometric tile art, no people, architectural beauty'},
-      {label:'🌙 Alcova secreta do sultão',val:'sultan secret alcove chamber, velvet draped walls, low opulent bed with gold posts, silk pillows and cushions piled high, sheer curtain canopy, incense burners, intimate luxurious secret chamber, dim amber light'},
+      {label:'🌙 Câmara do harém',val:'opulent harem chamber interior, silk curtains draped from ceiling, Persian rugs on marble floor, large cushioned daybed with gold tassels, incense smoke curling in air, ornate lanterns casting warm glow, Middle Eastern palace room',tags:['oriental','arab','boudoir','nsfw','luxury']},
+      {label:'🏛 Palácio árabe luxuoso',val:'luxurious Arabian palace interior, arched Moorish doorways, intricate geometric tilework on walls, alabaster columns, golden chandeliers, richly decorated floors, ornate Islamic architecture, Arabian Nights palace',tags:['oriental','arab','luxury','fantasy']},
+      {label:'🕌 Banheiro do harém hammam',val:'traditional hammam bath house, marble steam room, warm mist and steam, mosaic tile walls and floor, copper bowls, soft flickering candles, Turkish bath aesthetic, hammam basin fountain, misty warm light',tags:['oriental','arab','wet','nude','boudoir']},
+      {label:'🌙 Terraço à noite Oriente Médio',val:'rooftop terrace at night, Moroccan architecture, city of minarets and domes below, crescent moon and stars sky, lanterns and candles, low cushioned seating, ornate carved railing, warm ambient night light, Arabian night panorama',tags:['oriental','arab','night','luxury']},
+      {label:'🏺 Tent beduíno luxuoso',val:'luxurious Bedouin desert tent interior, richly patterned carpets and cushions, silk fabric walls, gold lanterns, low tables with fruit and wine, desert dunes visible through open tent flap, nomadic luxury aesthetic',tags:['oriental','arab','outdoor','luxury']},
+      {label:'🌺 Jardim do harém',val:'enclosed Persian garden, fountain courtyard with mosaic pool, orange and pomegranate trees, rose bushes, latticed garden walls with climbing jasmine, dappled sunlight, romantic private garden, Islamic garden aesthetic',tags:['oriental','arab','nature','boudoir']},
+      {label:'🏺 Sala dos tesouros',val:'treasure chamber of an Arabian palace, gold coins piled on floor, jewels and gems scattered, ornate chests overflowing with riches, oil lamp flickering, silk fabric draped, opulent fantasy treasure room',tags:['oriental','arab','luxury','fantasy']},
+      {label:'🌊 Oásis no deserto',val:'desert oasis scene, clear blue pool surrounded by palm trees, golden sand dunes, turquoise water reflection, lush tropical plants in arid desert, paradise oasis, warm desert light',tags:['arab','outdoor','beach','nature']},
+      {label:'🕌 Mesquita de mármore',val:'marble mosque interior architecture, ornate carved marble columns, geometric patterned floor, filtered light through latticed windows, vaulted ceiling, Islamic geometric tile art, no people, architectural beauty',tags:['oriental','arab','luxury']},
+      {label:'🌙 Alcova secreta do sultão',val:'sultan secret alcove chamber, velvet draped walls, low opulent bed with gold posts, silk pillows and cushions piled high, sheer curtain canopy, incense burners, intimate luxurious secret chamber, dim amber light',tags:['oriental','arab','boudoir','nsfw','luxury']},
     ],
     skip:true,
   },
   {
     id:'cam', label:'Câmera', ask:'Câmera e enquadramento?',
     qr:[
-      {label:'Corpo inteiro',val:'full body shot, head to toe, entire body visible'},
-      {label:'Meio corpo',val:'half body frame, waist up shot'},
-      {label:'Closeup rosto',val:'extreme close-up face portrait, facial details, tight crop'},
-      {label:'Closeup bunda 🍑',val:'close-up buttocks shot, tight crop on backside, rear detail'},
-      {label:'Closeup seios',val:'close-up chest shot, tight crop on bust area'},
-      {label:'POV',val:'POV shot, first person perspective, immersive point of view'},
-      {label:'De baixo',val:"low angle shot from below, upshot, worm's eye view"},
-      {label:'De cima',val:'high angle shot from above, overhead camera angle'},
-      {label:'Dutch angle',val:'dutch angle, tilted camera, canted frame, dynamic tilt'},
-      {label:'3/4 corpo',val:'three-quarter body shot, from thigh up, three quarter frame'},
-      {label:'Selfie',val:'selfie angle, arm extended holding phone, front camera, close perspective'},
-      {label:'Espelho',val:'mirror reflection shot, full body in mirror, bathroom or bedroom mirror'},
-      {label:'Super teleobjetiva',val:'telephoto lens compression, 200mm, background blur, compressed depth'},
-      {label:'Grande angular',val:'wide angle lens, 24mm, slight distortion, environmental context visible'},
-      {label:'Closeup costas',val:'close-up back shot, tight crop on upper back and spine'},
-      {label:'Closeup pernas',val:'close-up legs shot, tight crop on thighs and legs'},
-      {label:'Através de vidro',val:'shot through wet glass, glass partition, voyeuristic framing'},
-      {label:'Drone/aéreo',val:"aerial drone shot from high above, bird's eye view, overhead"},
-      {label:'🎬 Dramático cinemático',val:'dramatic low angle shot, 35mm anamorphic lens, chiaroscuro side lighting, volumetric light, cinematic widescreen'},
-      {label:'🎬 Editorial fashion',val:'three-quarter fashion editorial shot, 85mm portrait lens, soft beauty dish lighting, high-key, magazine quality'},
-      {label:'🎬 Voyeur realista',val:'candid voyeuristic shot, 50mm standard lens, natural window light, handheld documentary, unposed'},
+      {label:'Corpo inteiro',val:'full body shot, head to toe, entire body visible',tags:['boudoir','beach','studio','outdoor']},
+      {label:'Meio corpo',val:'half body frame, waist up shot',tags:['boudoir','studio','fashion']},
+      {label:'Closeup rosto',val:'extreme close-up face portrait, facial details, tight crop',tags:['studio','fashion','boudoir']},
+      {label:'Closeup bunda 🍑',val:'close-up buttocks shot, tight crop on backside, rear detail',tags:['nsfw','boudoir','nude']},
+      {label:'Closeup seios',val:'close-up chest shot, tight crop on bust area',tags:['nsfw','boudoir','nude']},
+      {label:'POV',val:'POV shot, first person perspective, immersive point of view',tags:['nsfw','nude','boudoir']},
+      {label:'De baixo',val:"low angle shot from below, upshot, worm's eye view",tags:['nsfw','boudoir','studio']},
+      {label:'De cima',val:'high angle shot from above, overhead camera angle',tags:['nsfw','boudoir','outdoor']},
+      {label:'Dutch angle',val:'dutch angle, tilted camera, canted frame, dynamic tilt',tags:['dark','night','fashion']},
+      {label:'3/4 corpo',val:'three-quarter body shot, from thigh up, three quarter frame',tags:['boudoir','studio','fashion']},
+      {label:'Selfie',val:'selfie angle, arm extended holding phone, front camera, close perspective',tags:['boudoir','beach','outdoor']},
+      {label:'Espelho',val:'mirror reflection shot, full body in mirror, bathroom or bedroom mirror',tags:['boudoir','nude','nsfw']},
+      {label:'Super teleobjetiva',val:'telephoto lens compression, 200mm, background blur, compressed depth',tags:['outdoor','beach','nature']},
+      {label:'Grande angular',val:'wide angle lens, 24mm, slight distortion, environmental context visible',tags:['outdoor','beach','studio']},
+      {label:'Closeup costas',val:'close-up back shot, tight crop on upper back and spine',tags:['boudoir','nsfw','nude']},
+      {label:'Closeup pernas',val:'close-up legs shot, tight crop on thighs and legs',tags:['boudoir','nsfw']},
+      {label:'Através de vidro',val:'shot through wet glass, glass partition, voyeuristic framing',tags:['nsfw','dark','wet']},
+      {label:'Drone/aéreo',val:"aerial drone shot from high above, bird's eye view, overhead",tags:['outdoor','beach','nature']},
+      {label:'🎬 Dramático cinemático',val:'dramatic low angle shot, 35mm anamorphic lens, chiaroscuro side lighting, volumetric light, cinematic widescreen',tags:['dark','night','luxury']},
+      {label:'🎬 Editorial fashion',val:'three-quarter fashion editorial shot, 85mm portrait lens, soft beauty dish lighting, high-key, magazine quality',tags:['fashion','studio','luxury']},
+      {label:'🎬 Voyeur realista',val:'candid voyeuristic shot, 50mm standard lens, natural window light, handheld documentary, unposed',tags:['nsfw','boudoir','nude']},
     ],
     skip:true,
   },
@@ -917,6 +948,31 @@ const TOTAL = STEPS.length;
 let step = 0;
 const answers = {};
 let waiting = false;
+let activeTags = new Set(); // affinity tags accumulated from choices
+
+// ─── Affinity system ─────────────────────────────────────────────────────
+function scoreOption(opt){
+  if(!opt.tags||!activeTags.size) return 0;
+  return opt.tags.filter(t=>activeTags.has(t)).length;
+}
+
+function withSuggestions(qrs){
+  // Separate special chips (back/skip/rand/gen)
+  const special = qrs.filter(q=>q.cls==='back'||q.cls==='rand'||q.val==='__gen__'||q.val==='pular');
+  const normal  = qrs.filter(q=>!special.includes(q));
+  if(!activeTags.size) return qrs;
+
+  const scored = normal.map(q=>({...q, _sc: scoreOption(q)}));
+  const sugg   = scored.filter(q=>q._sc>0).sort((a,b)=>b._sc-a._sc).slice(0,5)
+                        .map(q=>({...q, cls:(q.cls||'')+' sugg', label:'✦ '+q.label}));
+  const rest   = scored.filter(q=>q._sc===0);
+  if(!sugg.length) return qrs;
+  return [...sugg, ...rest, ...special];
+}
+
+function extractTags(qrOpt){
+  if(qrOpt&&qrOpt.tags) qrOpt.tags.forEach(t=>activeTags.add(t));
+}
 let sdxlMode = false;
 let previewVisible = false;
 let histFilter = 'all';
@@ -973,6 +1029,94 @@ const PRESETS = {
     cam:'half body frame, waist up shot',
     film:'Fujifilm Pro 400H, soft pastel colors, cool shadows, fine grain',
   },
+  blonde_nude:{
+    idade:'19 year old woman, young adult',
+    etnia:'beautiful white woman, blonde hair, fair skin, European features',
+    corpo:'very large natural breasts, busty, big chest, heavy bosom',
+    roupa:'artistic nude, fine art nude photography, tasteful nudity, elegant nude',
+    maquiagem:'no-makeup makeup look, natural minimal makeup, barely-there makeup',
+    expressao:'seductive expression, bedroom eyes, sultry look, half-lidded gaze',
+    cenario:'luxury bedroom, soft natural window light, white silk bedsheets, intimate setting',
+    pose:'lying on her back, supine, facing camera, face visible',
+    cam:'full body shot, head to toe, entire body visible',
+    film:'Kodak Portra 400, warm skin tones, fine grain, classic analog',
+  },
+  blonde_explicit:{
+    idade:'19 year old woman, young adult',
+    etnia:'beautiful white woman, blonde hair, fair skin, European features',
+    corpo:'curvy hourglass figure, wide hips, small waist, full figure',
+    roupa:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography',
+    nsfw:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography',
+    maquiagem:'no-makeup makeup look, natural minimal makeup, barely-there makeup',
+    expressao:'submissive expression, innocent pleading eyes, shy submissive look',
+    cenario:'professional photo studio, white seamless backdrop, controlled studio lighting',
+    pose:'lying on back, legs spread wide open, thighs apart, supine, facing camera, face visible',
+    cam:'full body shot, head to toe, entire body visible',
+    film:'Kodak Portra 400, warm skin tones, fine grain, classic analog',
+  },
+  blonde_bdsm:{
+    idade:'19 year old woman, young adult',
+    etnia:'beautiful white woman, blonde hair, fair skin, pale skin, European features',
+    corpo:'slim petite body, slender figure, thin waist',
+    roupa:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit',
+    nsfw:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit',
+    maquiagem:'gothic makeup, black lipstick, heavy dark eye, pale foundation, dark aesthetic',
+    expressao:'submissive expression, innocent pleading eyes, shy submissive look',
+    cenario:'nightclub interior, neon RGB lights, dark smoky atmosphere, LED lights',
+    cam:'three-quarter body shot, from thigh up, three quarter frame',
+    film:'Cinestill 800T, tungsten film, red halation glow, night grain, cinematic',
+  },
+  blonde_oral:{
+    idade:'19 year old woman, young adult',
+    etnia:'beautiful white woman, blonde hair, fair skin, European features',
+    corpo:'very large natural breasts, busty, big chest, heavy bosom',
+    roupa:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography',
+    nsfw:'giving oral sex, performing fellatio, blowjob, oral sex act explicit',
+    maquiagem:'no-makeup makeup look, natural minimal makeup, barely-there makeup',
+    expressao:'submissive expression, innocent pleading eyes, shy submissive look',
+    cenario:'luxury hotel room, king bed, elegant decor, soft warm lighting',
+    cam:'half body frame, waist up shot',
+    film:'Kodak Portra 800, pushed film, warm golden grain, high contrast',
+  },
+  blonde_pool:{
+    idade:'19 year old woman, young adult',
+    etnia:'beautiful white woman, blonde hair, fair skin, European features',
+    corpo:'athletic toned body, fit figure, muscle definition',
+    roupa:'wearing tiny micro bikini top only, topless, bare breasts, bikini bottoms',
+    nsfw:'bare breasts fully exposed, nude breasts, nipples visible, topless nude',
+    maquiagem:'no-makeup makeup look, natural minimal makeup, barely-there makeup',
+    expressao:'smiling, warm genuine smile, happy expression, teeth showing',
+    cenario:'outdoor pool, poolside, turquoise water, sun lounger, summer',
+    pose:'standing upright facing camera, full body front view, face visible',
+    cam:'full body shot, head to toe, entire body visible',
+    film:'Kodak Ektar 100, vivid saturated colors, ultra-fine grain, sharp outdoor',
+  },
+  blonde_odalisca:{
+    idade:'19 year old woman, young adult',
+    etnia:'beautiful white woman, blonde hair, fair skin, European features',
+    corpo:'very large natural breasts, busty, big chest, heavy bosom',
+    roupa:'artistic nude, fine art nude photography, tasteful nudity, elegant nude',
+    nsfw:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography',
+    maquiagem:'Arabic kohl eye makeup, heavy black kohl liner, dramatic almond eye, dark smoky arab eye, kohled eyes',
+    expressao:'seductive expression, bedroom eyes, sultry look, half-lidded gaze',
+    cenario:'opulent harem chamber interior, silk curtains draped from ceiling, Persian rugs on marble floor, large cushioned daybed with gold tassels, incense smoke curling in air, ornate lanterns casting warm glow, Middle Eastern palace room',
+    pose:'lying on her side, body in lateral profile',
+    cam:'full body shot, head to toe, entire body visible',
+    film:'warm candlelight, flickering intimate glow, orange warm tones, romantic',
+  },
+  blonde_cowgirl:{
+    idade:'19 year old woman, young adult',
+    etnia:'beautiful white woman, blonde hair, fair skin, European features',
+    corpo:'curvy hourglass figure, wide hips, small waist, full figure',
+    roupa:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography',
+    nsfw:'cowgirl straddling position, woman on top facing forward, upright torso, hands on chest, face visible, facing camera directly',
+    maquiagem:'full glam makeup, heavy foundation, dramatic eye, bold lip, contouring, highlight',
+    expressao:'seductive expression, bedroom eyes, sultry look, half-lidded gaze',
+    cenario:'luxury bedroom, soft natural window light, white silk bedsheets, intimate setting',
+    pose:'cowgirl straddling position, woman on top facing forward, upright torso, hands on chest, face visible, facing camera directly',
+    cam:'three-quarter body shot, from thigh up, three quarter frame',
+    film:'Kodak Portra 800, pushed film, warm golden grain, high contrast',
+  },
 };
 
 function openPresets(){ document.getElementById('preset-panel').classList.add('open'); }
@@ -989,7 +1133,7 @@ async function applyPreset(name){
   step = STEPS.length;
   updateProgress();
   clearQR();
-  const names = {playful:'☀ Playful',dark:'🖤 Dark',artistic:'🎭 Artistic',cinema:'🎬 Cinema',boudoir:'🕯 Boudoir'};
+  const names = {playful:'☀ Playful',dark:'🖤 Dark',artistic:'🎭 Artistic',cinema:'🎬 Cinema',boudoir:'🕯 Boudoir',blonde_nude:'🔞 Loira Nudez',blonde_explicit:'🔞🔞 Loira Explícita',blonde_bdsm:'🔞🔞 Loira BDSM',blonde_oral:'🔞🔞🔞 Loira Oral',blonde_pool:'🌊 Loira Piscina',blonde_odalisca:'🌙 Loira Odalisca',blonde_cowgirl:'🔞🔞🔞 Loira Cowgirl'};
   addMsg('bot',`🎨 <strong>Estilo "${names[name]||name}" aplicado!</strong>`);
   await delay(500);
   await showResult();
@@ -1226,13 +1370,19 @@ async function botSay(html, qrs=[]){
 async function processAnswer(val){
   const cur=STEPS[step]; if(!cur) return;
   const isSkip=/^(pular|skip|não|nao|-)$/i.test(val.trim())||val==='';
-  if(!isSkip) answers[cur.id]=val;
+  if(!isSkip){
+    answers[cur.id]=val;
+    // Extract affinity tags from the chosen option
+    const chosen=cur.qr&&cur.qr.find(q=>q.val===val);
+    extractTags(chosen);
+  }
   step++; clearQR(); updateProgress();
   if(step<STEPS.length){
     const next=STEPS[step];
-    const qrs=next.qr?[...next.qr]:[];
+    let qrs=next.qr?[...next.qr]:[];
     if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
     if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
+    qrs=withSuggestions(qrs);
     await botSay(next.ask, qrs);
   } else { await showSummary(); }
 }
@@ -1241,9 +1391,10 @@ async function goBack(){
   if(step<=0) return;
   step--; delete answers[STEPS[step].id]; clearQR(); updateProgress();
   const cur=STEPS[step];
-  const qrs=cur.qr?[...cur.qr]:[];
+  let qrs=cur.qr?[...cur.qr]:[];
   if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
   if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
+  qrs=withSuggestions(qrs);
   await botSay('↩ Voltando — '+cur.ask, qrs);
 }
 
@@ -1428,12 +1579,13 @@ function restoreFromURL(){
 // ─── Init & restart ───────────────────────────────────────────────────────
 function restart(){
   step=0; Object.keys(answers).forEach(k=>delete answers[k]);
+  activeTags.clear();
   chat.innerHTML=''; clearQR(); input.value=''; waiting=false; updateProgress();
   init();
 }
 
 async function init(){
-  step=0; Object.keys(answers).forEach(k=>delete answers[k]); waiting=false; updateProgress();
+  step=0; Object.keys(answers).forEach(k=>delete answers[k]); activeTags.clear(); waiting=false; updateProgress();
   const shared=restoreFromURL();
   if(shared){
     step=STEPS.length; updateProgress();
