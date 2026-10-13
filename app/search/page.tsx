@@ -19,22 +19,116 @@ const MOCK_PROVIDERS: Provider[] = [
   { id: 3, name: 'Pedro Costa', service: 'Pintor', city: 'Diadema', rating: 4.5, reviews: 15, phone: '(11) 97654-3210' },
 ];
 
+interface RatingModalProps {
+  provider: Provider;
+  onClose: () => void;
+  onSubmit: (providerId: number, rating: number, comment: string) => void;
+}
+
+function RatingModal({ provider, onClose, onSubmit }: RatingModalProps) {
+  const [selected, setSelected] = useState(0);
+  const [hovered, setHovered] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = () => {
+    if (selected === 0) return;
+    onSubmit(provider.id, selected, comment);
+    setSubmitted(true);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+        {submitted ? (
+          <div className="text-center py-6">
+            <div className="text-5xl mb-3">🎉</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Avaliação enviada!</h3>
+            <p className="text-gray-600 mb-6">Obrigado por avaliar {provider.name}.</p>
+            <button
+              onClick={onClose}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
+            >
+              Fechar
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Avaliar prestador</h3>
+                <p className="text-blue-600 font-semibold">{provider.name} · {provider.service}</p>
+              </div>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+            </div>
+
+            <div className="flex justify-center gap-2 my-6">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onMouseEnter={() => setHovered(star)}
+                  onMouseLeave={() => setHovered(0)}
+                  onClick={() => setSelected(star)}
+                  className="text-4xl transition-transform hover:scale-110"
+                >
+                  <span className={(hovered || selected) >= star ? 'text-yellow-400' : 'text-gray-300'}>
+                    ★
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {selected > 0 && (
+              <p className="text-center text-sm font-semibold text-gray-700 mb-4">
+                {['', 'Péssimo', 'Ruim', 'Regular', 'Bom', 'Excelente!'][selected]}
+              </p>
+            )}
+
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Conte como foi a experiência (opcional)..."
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              rows={3}
+            />
+
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={onClose}
+                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition font-semibold"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={selected === 0}
+                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Enviar avaliação
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function SearchPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ service: '', city: '' });
-  const [providers] = useState<Provider[]>(MOCK_PROVIDERS);
+  const [providers, setProviders] = useState<Provider[]>(MOCK_PROVIDERS);
   const [filteredProviders, setFilteredProviders] = useState<Provider[]>(MOCK_PROVIDERS);
+  const [ratingTarget, setRatingTarget] = useState<Provider | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login?type=consumer');
       return;
     }
-
     setLoading(false);
   }, [router]);
 
@@ -65,12 +159,31 @@ export default function SearchPage() {
     router.push('/');
   };
 
+  const handleRatingSubmit = (providerId: number, rating: number, _comment: string) => {
+    setProviders((prev) =>
+      prev.map((p) => {
+        if (p.id !== providerId) return p;
+        const newReviews = p.reviews + 1;
+        const newRating = Math.round(((p.rating * p.reviews + rating) / newReviews) * 10) / 10;
+        return { ...p, rating: newRating, reviews: newReviews };
+      })
+    );
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Carregando...</div>;
   }
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {ratingTarget && (
+        <RatingModal
+          provider={ratingTarget}
+          onClose={() => setRatingTarget(null)}
+          onSubmit={handleRatingSubmit}
+        />
+      )}
+
       <header className="bg-white shadow">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
@@ -184,6 +297,12 @@ export default function SearchPage() {
                       >
                         💬 Enviar Mensagem
                       </a>
+                      <button
+                        onClick={() => setRatingTarget(provider)}
+                        className="w-full bg-yellow-400 text-gray-900 font-semibold py-2 rounded-lg hover:bg-yellow-500 transition"
+                      >
+                        ⭐ Avaliar Prestador
+                      </button>
                     </div>
                   </div>
                 </div>
