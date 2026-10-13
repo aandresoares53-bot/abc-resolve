@@ -176,12 +176,14 @@ export default function SearchPage() {
                       >
                         ☎️ {provider.phone}
                       </a>
-                      <button
-                        onClick={() => alert('Funcionalidade de mensagens em breve!')}
-                        className="w-full bg-gray-200 text-gray-900 font-semibold py-2 rounded-lg hover:bg-gray-300 transition"
+                      <a
+                        href={`https://wa.me/55${provider.phone.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-green-500 text-white text-center font-semibold py-2 rounded-lg hover:bg-green-600 transition"
                       >
-                        Enviar Mensagem
-                      </button>
+                        💬 Enviar Mensagem
+                      </a>
                     </div>
                   </div>
                 </div>
