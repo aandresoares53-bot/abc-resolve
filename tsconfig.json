@@ -25,10 +25,7 @@
     },
     "allowJs": true,
     "incremental": true,
-    "types": [
-      "@cloudflare/workers-types"
-    ],
-    "plugins": [
+"plugins": [
       {
         "name": "next"
       }
@@ -42,6 +39,7 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "open-next.config.ts"
   ]
 }
