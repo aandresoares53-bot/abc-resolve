@@ -1,26 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import type { CloudflareEnv, User } from '@/lib/db';
+import { sql, ensureSchema } from '@/lib/postgres';
+import type { User } from '@/lib/db';
 
-
-interface AdminEnv extends CloudflareEnv {
-  ADMIN_SECRET: string;
-}
-
-function isAuthorized(request: NextRequest, adminSecret: string): boolean {
+function isAuthorized(request: NextRequest): boolean {
+  const adminSecret = process.env.ADMIN_SECRET ?? '';
   return request.headers.get('Authorization') === `Bearer ${adminSecret}`;
 }
 
 export async function GET(request: NextRequest) {
-  const { env } = (await getCloudflareContext()) as unknown as { env: AdminEnv };
-
-  if (!isAuthorized(request, env.ADMIN_SECRET)) {
+  if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  const result = await env.DB
-    .prepare(`SELECT id, name, email, phone, service, city, created_at FROM users WHERE type = 'provider' ORDER BY created_at DESC`)
-    .all<Omit<User, 'password_hash' | 'updated_at' | 'type'>>();
+  await ensureSchema();
 
-  return NextResponse.json({ providers: result.results });
+  const result = await sql<Omit<User, 'password_hash' | 'updated_at' | 'type'>>`
+    SELECT id, name, email, phone, service, city, created_at
+    FROM users
+    WHERE type = 'provider'
+    ORDER BY created_at DESC
+  `;
+
+  return NextResponse.json({ providers: result.rows });
 }

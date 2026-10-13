@@ -1,8 +1,3 @@
-export interface CloudflareEnv extends Record<string, unknown> {
-  DB: D1Database;
-  JWT_SECRET: string;
-}
-
 export interface User {
   id: string;
   name: string;
@@ -26,7 +21,7 @@ export interface Service {
   created_at: string;
 }
 
-// Hashing com PBKDF2 + salt aleatório — seguro contra rainbow tables e brute-force
+// Hashing com PBKDF2 + salt aleatório
 export async function hashPassword(password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const keyMaterial = await crypto.subtle.importKey(
@@ -70,7 +65,6 @@ export async function verifyPassword(password: string, stored: string): Promise<
   return derivedHex === expectedHex;
 }
 
-// JWT mínimo assinado com HMAC-SHA256
 export async function signToken(
   payload: Record<string, unknown>,
   secret: string

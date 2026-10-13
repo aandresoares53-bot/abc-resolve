@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { verifyPassword, signToken, type User, type CloudflareEnv } from '@/lib/db';
-
+import { verifyPassword, signToken, type User } from '@/lib/db';
+import { sql, ensureSchema } from '@/lib/postgres';
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,12 +20,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Senha deve ter pelo menos 6 caracteres' }, { status: 400 });
     }
 
-    const { env } = (await getCloudflareContext()) as unknown as { env: CloudflareEnv };
+    await ensureSchema();
 
-    const user = await env.DB
-      .prepare('SELECT * FROM users WHERE email = ?')
-      .bind(email)
-      .first<User>();
+    const result = await sql<User>`SELECT * FROM users WHERE email = ${email} LIMIT 1`;
+    const user = result.rows[0];
 
     if (!user) {
       return NextResponse.json({ error: 'Email ou senha incorretos' }, { status: 401 });
@@ -41,10 +38,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email ou senha incorretos' }, { status: 401 });
     }
 
-    const token = await signToken(
-      { id: user.id, email: user.email, type: user.type },
-      env.JWT_SECRET
-    );
+    const jwtSecret = process.env.JWT_SECRET ?? 'dev-secret';
+    const token = await signToken({ id: user.id, email: user.email, type: user.type }, jwtSecret);
 
     const { password_hash: _, ...safeUser } = user;
 

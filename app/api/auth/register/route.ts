@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { hashPassword, signToken, type User, type CloudflareEnv } from '@/lib/db';
-
+import { hashPassword, signToken, type User } from '@/lib/db';
+import { sql, ensureSchema } from '@/lib/postgres';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,14 +40,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { env } = (await getCloudflareContext()) as unknown as { env: CloudflareEnv };
+    await ensureSchema();
 
-    const existing = await env.DB
-      .prepare('SELECT id FROM users WHERE email = ?')
-      .bind(email)
-      .first<{ id: string }>();
-
-    if (existing) {
+    const existing = await sql`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
+    if (existing.rows.length > 0) {
       return NextResponse.json({ error: 'Email já cadastrado' }, { status: 409 });
     }
 
@@ -56,27 +51,21 @@ export async function POST(request: NextRequest) {
     const password_hash = await hashPassword(password);
     const now = new Date().toISOString();
 
-    await env.DB
-      .prepare(
-        `INSERT INTO users (id, name, email, password_hash, phone, type, service, city, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      )
-      .bind(id, name, email, password_hash, phone, userType, service ?? null, city ?? null, now, now)
-      .run();
+    await sql`
+      INSERT INTO users (id, name, email, password_hash, phone, type, service, city, created_at, updated_at)
+      VALUES (${id}, ${name}, ${email}, ${password_hash}, ${phone}, ${userType},
+              ${service ?? null}, ${city ?? null}, ${now}, ${now})
+    `;
 
-    const user = await env.DB
-      .prepare('SELECT * FROM users WHERE id = ?')
-      .bind(id)
-      .first<User>();
+    const result = await sql<User>`SELECT * FROM users WHERE id = ${id} LIMIT 1`;
+    const user = result.rows[0];
 
     if (!user) {
       return NextResponse.json({ error: 'Erro ao criar conta' }, { status: 500 });
     }
 
-    const token = await signToken(
-      { id: user.id, email: user.email, type: user.type },
-      env.JWT_SECRET
-    );
+    const jwtSecret = process.env.JWT_SECRET ?? 'dev-secret';
+    const token = await signToken({ id: user.id, email: user.email, type: user.type }, jwtSecret);
 
     const { password_hash: _, ...safeUser } = user;
 
