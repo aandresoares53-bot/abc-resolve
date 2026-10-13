@@ -1363,12 +1363,11 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 function buildNeg(){
   const p=(answers.pose||'').toLowerCase(), c=(answers.cam||'').toLowerCase();
   const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
-  // Always enforce strong anti-plastic realism — extra tags when imperfections chosen
   const skinNeg = hasImperf
-    ? 'plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, hypersmooth, fake skin, doll-like, poreless skin, perfect skin, flawless skin, retouched skin, digital skin smoothing, beauty filter, skin texture missing, waxy skin, rubber skin, (plastic:1.5), (airbrushed:1.5), (CGI skin:1.5)'
-    : 'plastic skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, hypersmooth, fake skin, doll-like, poreless skin, waxy skin, rubber skin, retouched skin, beauty filter, (plastic:1.4), (airbrushed:1.4)';
-  let n=`blurry, out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, worst quality, low quality, cartoon, 3d render, anime, drawing, painting, ${skinNeg}, mannequin, wax figure, unrealistic skin, CGI, render, digital art, illustration, hypersmooth body, digital painting`;
-  if(sdxlMode) n+=', low resolution, jpeg artifacts, noise, grainy, deformed iris, deformed pupils, semi-realistic, mutated hands, extra fingers';
+    ? '(plastic skin:1.6), (airbrushed skin:1.6), (smooth skin:1.5), (poreless skin:1.5), (perfect skin:1.5), (retouched skin:1.5), (beauty filter:1.5), (waxy skin:1.5), (rubber skin:1.5), (doll-like:1.4), (glossy skin:1.4), oversmoothed, hypersmooth, digital skin smoothing, skin texture missing'
+    : '(plastic skin:1.5), (airbrushed:1.5), (waxy skin:1.4), (poreless skin:1.4), (doll-like:1.4), (glossy skin:1.3), oversmoothed, retouched skin, beauty filter';
+  let n=`(worst quality:1.4), (low quality:1.4), (normal quality:1.3), (blurry:1.3), out of focus, bad anatomy, extra limbs, deformed hands, bad proportions, ugly, disfigured, artifacts, watermark, text, logo, (cartoon:1.5), (3d render:1.5), (CGI:1.5), (anime:1.5), (drawing:1.4), (painting:1.4), (illustration:1.4), (digital art:1.4), (render:1.4), (not photorealistic:1.5), mannequin, wax figure, unrealistic skin, hypersmooth body, ${skinNeg}`;
+  if(sdxlMode) n+=', low resolution, jpeg artifacts, deformed iris, deformed pupils, semi-realistic, mutated hands, extra fingers';
   if(/from behind|back to camera|rear view|face hidden/.test(p))
     n+=', (front view:2.0), (facing camera:2.0), (face visible:2.0), (looking at viewer:1.9)';
   else if(/facing camera|front view/.test(p))
@@ -1390,23 +1389,22 @@ function autoFilm(){
 
 function buildPrompt(){
   const hasImperf = answers.imperfeicoes && !answers.imperfeicoes.includes('perfect flawless');
-  const raw = sdxlMode
-    ? 'RAW photo, 8k uhd, photorealistic, hyperrealistic, ultra-detailed human skin, real skin texture, visible pores, subsurface scattering, depth of field, natural lighting, analog film grain, 100% real human, NOT plastic skin, NOT airbrushed, NOT CGI, NOT AI generated, NOT illustration'
-    : 'RAW photo, 35mm analog film, shot on Canon EOS R5, photorealistic, hyperrealistic, 100% real human being, ultra-detailed human skin texture, visible pores, natural skin imperfections, subcutaneous fat visible, soft skin subsurface scattering, real human body anatomy, no retouching, unedited raw capture, candid documentary photography, sharp focus, depth of field, natural lighting falloff, NOT plastic skin, NOT airbrushed, NOT AI art, NOT CGI, NOT 3D render, NOT illustration, NOT anime, NOT cartoon';
-  // Always-on realism block
-  const realismBase = 'real human skin texture, skin pores visible, natural skin tone variation, subsurface scattering, non-airbrushed skin, authentic human body, 100% photorealistic person, natural human proportions, real human face features';
-  const realismImperf = hasImperf
-    ? 'unretouched photography, zero airbrushing, natural imperfections preserved, skin not smoothed, raw documentary style, dermal texture detail, macro skin detail'
-    : '';
-  const quality = sdxlMode
-    ? 'cinematic quality, real photograph, analog film grain, lens aberration, natural bokeh, ultra-sharp, not AI, not CGI, not illustration'
-    : 'real photograph, ultra-sharp, ultra-detailed, not AI, not CGI, not 3D render, not painting, not illustration, not anime, analog film grain, lens aberration, natural bokeh, professional photography lighting';
+  // SD quality header — parenthetical weights for maximum effect
+  const qualityHeader = sdxlMode
+    ? '(masterpiece:1.4), (best quality:1.4), (photorealistic:1.5), (ultra realistic:1.4), (RAW photo:1.3), (8k uhd:1.2), (sharp focus:1.2)'
+    : '(masterpiece:1.4), (best quality:1.4), (photorealistic:1.5), (ultra realistic:1.4), (RAW photo:1.3), (35mm analog film:1.2), (shot on Canon EOS R5:1.1), (sharp focus:1.2), (depth of field:1.1)';
+  // Realism skin block
+  const skinRealism = hasImperf
+    ? '(real skin texture:1.4), (skin pores visible:1.3), (subsurface scattering:1.3), (natural skin imperfections:1.3), (unretouched photography:1.3), (dermal texture detail:1.2), (natural skin tone variation:1.2), (film grain:1.1)'
+    : '(real skin texture:1.3), (skin pores visible:1.2), (subsurface scattering:1.2), (natural skin tone variation:1.2), (film grain:1.1)';
+  const realism = `(authentic human anatomy:1.2), (real human face:1.2), (natural human proportions:1.1), ${skinRealism}`;
   const parts=[
-    raw, realismBase, realismImperf, answers.idade, answers.etnia||'beautiful woman',
+    qualityHeader, realism,
+    answers.idade, answers.etnia||'beautiful woman',
     answers.corpo, answers.olhos, answers.cabelo, answers.tattoo,
     answers.roupa, answers.acessorios, answers.maquiagem, answers.expressao,
     answers.detalhes, answers.imperfeicoes, answers.nsfw, answers.cenario, answers.pose,
-    tr(answers.desc||''), answers.cam, autoFilm(), quality,
+    tr(answers.desc||''), answers.cam, autoFilm(),
   ].filter(Boolean);
   const seen=new Set();
   return parts.filter(p=>{ if(seen.has(p)) return false; seen.add(p); return true; }).join(', ');
