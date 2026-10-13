@@ -88,6 +88,16 @@ header{
 .sc-val{color:var(--txt);text-align:right;font-size:.85em;word-break:break-word;flex:1;}
 .sc-edit{background:none;border:none;color:var(--acc);cursor:pointer;font-size:.8em;padding:0 0 0 6px;flex-shrink:0;}
 
+/* Edit choices card (shown after result) */
+.edit-choices-card{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r2);padding:10px 13px;margin-top:10px;font-size:.78em;}
+.ec-title{color:var(--txt3);font-weight:700;font-size:.72em;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,.06);}
+.ec-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ec-row:last-child{border-bottom:none;}
+.ec-key{color:var(--txt3);font-weight:700;text-transform:uppercase;font-size:.68em;letter-spacing:.05em;flex-shrink:0;margin-right:8px;}
+.ec-val{color:var(--txt);text-align:right;font-size:.85em;word-break:break-word;flex:1;}
+.ec-edit{background:none;border:none;color:var(--acc);cursor:pointer;font-size:.85em;padding:2px 0 2px 6px;flex-shrink:0;transition:color .15s;}
+.ec-edit:hover{color:#fff;}
+
 .prompt-block{background:var(--bg);border:1px solid var(--acc);border-radius:var(--r2);padding:11px 13px;font-size:.79em;font-family:monospace;line-height:1.7;word-break:break-word;color:var(--txt);margin-top:6px;cursor:text;user-select:all;}
 .neg-block{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r2);padding:9px 13px;font-size:.74em;font-family:monospace;line-height:1.6;color:#fca5a5;margin-top:6px;user-select:all;}
 .neg-title{font-size:.68em;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
@@ -1323,6 +1333,20 @@ async function showResult(){
   br2.appendChild(rstBtn);
   b.appendChild(br2);
 
+  // ── Botão editar escolhas ──────────────────────────────────────────────
+  const editCard=document.createElement('div'); editCard.className='edit-choices-card';
+  editCard.innerHTML='<div class="ec-title">✏ Editar escolhas anteriores</div>';
+  STEPS.forEach(s=>{
+    const val=answers[s.id]; if(!val) return;
+    const row=document.createElement('div'); row.className='ec-row';
+    const short=val.length>55?val.slice(0,52)+'…':val;
+    row.innerHTML=`<span class="ec-key">${s.label}</span><span class="ec-val">${escHtml(short)}</span>`;
+    const eb=document.createElement('button'); eb.className='ec-edit'; eb.title='Editar '+s.label;
+    eb.innerHTML='✏'; eb.onclick=()=>{ clearQR(); jumpTo(s.id); }; row.appendChild(eb);
+    editCard.appendChild(row);
+  });
+  b.appendChild(editCard);
+
   scrollBottom();
   setQR([{label:'⟳ Criar novo prompt',val:'novo'}]);
   qrArea.querySelector('.qr').onclick=restart;
@@ -1333,14 +1357,24 @@ async function showResult(){
 async function randomAll(){
   if(waiting) return;
   restart(); await delay(800);
+  // Base fixa: loira sensual de 19 anos
+  const BASE = {
+    idade: '19 year old woman, young adult',
+    etnia: 'beautiful white woman, blonde hair, fair skin, European features',
+    expressao: 'seductive expression, bedroom eyes, sultry look, half-lidded gaze',
+  };
+  Object.assign(answers, BASE);
+  // Sorteia os demais steps aleatoriamente
   for(let i=0;i<STEPS.length;i++){
-    const s=STEPS[i]; if(!s.qr||!s.qr.length) continue;
+    const s=STEPS[i];
+    if(BASE[s.id]) continue; // já definido na base
+    if(!s.qr||!s.qr.length) continue;
     const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
     if(!pool.length) continue;
     answers[s.id]=pool[Math.floor(Math.random()*pool.length)].val;
   }
   step=STEPS.length; updateProgress(); clearQR();
-  addMsg('bot','🎲 <strong>Sorteando tudo aleatoriamente…</strong>');
+  addMsg('bot','🎲 <strong>Sorteando… loira sensual, 19 anos como base!</strong>');
   await delay(600); await showResult();
 }
 
