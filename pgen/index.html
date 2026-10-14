@@ -2001,11 +2001,6 @@ async function showResult(){
   br1.appendChild(shBtn);
   b.appendChild(br1);
 
-  // ── Flux Realism auto-generate ──────────────────────────────────────────
-  const fluxBox=document.createElement('div'); fluxBox.className='flux-box';
-  fluxBox.innerHTML=`<div class="flux-header"><span class="flux-title">⚡ Flux Realism</span><span class="flux-badge">Gerado automaticamente</span></div><div class="flux-img-wrap" id="flux-wrap-${Date.now()}"><div class="flux-loading"><div class="flux-spinner"></div><div class="flux-loading-text">Gerando imagem realista...</div></div></div><div class="flux-actions"><button class="flux-btn primary" id="flux-dl-${Date.now()}" disabled>⬇ Baixar</button><button class="flux-btn" id="flux-regen-${Date.now()}">🔄 Gerar outra</button></div>`;
-  b.appendChild(fluxBox);
-  generateFluxImage(prompt, fluxBox);
 
   // LoRA hints
   const loras=getLoraHints();
