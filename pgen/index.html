@@ -1834,7 +1834,7 @@ async function jumpTo(id){
 // ─── Result ───────────────────────────────────────────────────────────────
 function generateFluxImage(prompt, box){
   const seed=Math.floor(Math.random()*999999);
-  const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=832&height=1216&model=flux-realism&nologo=true&seed=${seed}`;
+  const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=896&height=1152&model=flux&nologo=true&enhance=false&seed=${seed}`;
   const wrap=box.querySelector('[id^="flux-wrap"]');
   const dlBtn=box.querySelector('[id^="flux-dl"]');
   const regenBtn=box.querySelector('[id^="flux-regen"]');
