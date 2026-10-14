@@ -562,6 +562,22 @@ const STEPS = [
     skip:true,
   },
   {
+    id:'imperfeicoes', label:'Imperfeições', ask:'Imperfeições do corpo? (deixa mais humana)',
+    qr:[
+      {label:'Pele natural com poros',val:'visible skin pores, natural skin texture, subtle skin imperfections, real human skin'},
+      {label:'Estrias e celulite',val:'natural stretch marks on thighs and buttocks, subtle cellulite, real body texture'},
+      {label:'Barriga levemente saliente',val:'slight natural belly, soft tummy, relaxed stomach, natural body shape'},
+      {label:'Sardas e manchas',val:'freckles across nose and cheeks, natural skin spots, beauty marks, sun freckles'},
+      {label:'Marcas de bronzeado',val:'tan lines, bikini tan marks, sun-kissed uneven tan, natural tan lines'},
+      {label:'Celulite natural',val:'natural cellulite on thighs and buttocks, dimpled skin texture, real body imperfections'},
+      {label:'Cicatrizes leves',val:'faint stretch marks, subtle body scars, natural skin marks, healed skin'},
+      {label:'Veias visíveis',val:'faint visible veins under skin, translucent skin, natural vein patterns'},
+      {label:'Pele com brilho natural',val:'natural skin sheen, slight sweat glow, dewy skin, no makeup natural look'},
+      {label:'Corpo real sem filtro',val:'unretouched body, raw unfiltered real body, no photoshop, natural imperfect body'},
+    ],
+    skip:true,
+  },
+  {
     id:'cabelo', label:'Cabelo', ask:'Estilo de cabelo?',
     qr:[
       {label:'Liso loiro longo',val:'long straight golden blonde hair, flowing silky hair'},
@@ -1632,12 +1648,12 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 
 // ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
-  return 'ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, cartoon, anime, 3d render, cgi, painting, drawing, illustration, digital art, plastic skin, artificial skin, fake, wax figure, mannequin, oversmoothed skin, airbrushed, unnatural glow, inhuman eyes, bad proportions, disfigured, low quality, worst quality';
+  return 'ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, cartoon, anime, 3d render, cgi, painting, drawing, illustration, digital art, plastic skin, artificial skin, fake, wax figure, mannequin, oversmoothed skin, airbrushed, flawless perfect skin, studio strobe lighting, overlit, beauty retouched, photoshop smooth, unnatural glow, inhuman eyes, bad proportions, disfigured, low quality, worst quality, perfect body, symmetrical perfect face';
 }
 
 function buildPrompt(){
-  // Flux usa linguagem natural — sem parênteses nem pesos SD
-  const qualityHeader = 'photorealistic photograph, natural skin texture, realistic human, 35mm film photo';
+  const qualityHeader = 'Kodak Portra 400 film photograph, slight film grain, natural skin pores and texture, realistic human imperfections, soft window light';
+  const imperfections = answers.imperfeicoes || '';
   // suporte a campos novos e campos legados de presets
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
   const estilo = answers.estilo || answers.estilo_foto || answers.film;
@@ -1646,6 +1662,7 @@ function buildPrompt(){
     qualityHeader,
     personagem,
     answers.corpo,
+    imperfections,
     answers.cabelo,
     answers.roupa,
     answers.pose,
