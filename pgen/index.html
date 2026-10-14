@@ -173,9 +173,6 @@ header{
 .preset-name{font-weight:700;font-size:.88em;color:var(--txt);}
 .preset-desc{font-size:.73em;color:var(--txt3);margin-top:2px;}
 
-/* SDXL indicator */
-.mode-badge{background:rgba(124,58,237,.18);border:1px solid #7c3aed;color:#a78bfa;font-size:.65em;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:3px;vertical-align:middle;}
-.mode-badge.sd15{background:rgba(232,160,32,.15);border-color:var(--acc);color:var(--acc);}
 
 /* chips */
 #qr-area{flex-shrink:0;padding:9px 12px 11px;border-top:1px solid var(--bdr);display:flex;flex-wrap:wrap;gap:7px;min-height:52px;background:var(--bg);max-height:200px;overflow-y:auto;}
@@ -216,7 +213,6 @@ header{
     <button class="hbtn" onclick="randomAll()" title="Sortear tudo">🎲 Sortear</button>
     <button class="hbtn" onclick="openHistory()" title="Histórico">📜 Hist.</button>
     <button class="hbtn" id="prev-btn" onclick="togglePreview()" title="Preview do prompt">👁 Preview</button>
-    <button class="hbtn" id="sdxl-btn" onclick="toggleSDXL()" title="Alternar modo SDXL/SD1.5">SD1.5</button>
     <button class="hbtn" onclick="restart()">⟳ Novo</button>
     <button class="hbtn" id="tbtn" onclick="toggleTheme()">☀ Claro</button>
   </div>
@@ -698,7 +694,6 @@ const TOTAL = STEPS.length;
 let step = 0;
 const answers = {};
 let waiting = false;
-let sdxlMode = false;
 let previewVisible = false;
 let histFilter = 'all';
 
@@ -1557,13 +1552,6 @@ async function applyPreset(name){
   await showResult();
 }
 
-// ─── SDXL toggle ─────────────────────────────────────────────────────────
-function toggleSDXL(){
-  sdxlMode = !sdxlMode;
-  const btn = document.getElementById('sdxl-btn');
-  btn.textContent = sdxlMode ? 'SDXL ✓' : 'SD1.5';
-  btn.classList.toggle('active', sdxlMode);
-}
 
 // ─── Live preview ─────────────────────────────────────────────────────────
 function togglePreview(){
@@ -1872,7 +1860,7 @@ async function showResult(){
   navigator.clipboard.writeText(prompt).catch(()=>{});
   saveToHistory(prompt, neg);
 
-  const modeTag = sdxlMode ? ' <span style="font-size:.7em;background:rgba(124,58,237,.2);border:1px solid #7c3aed;color:#a78bfa;padding:1px 5px;border-radius:4px;vertical-align:middle;">SDXL</span>' : '';
+  const modeTag = '';
   const b=addMsg('bot',`✅ <strong>Prompt copiado automaticamente!</strong>${modeTag}`);
 
   const pd=document.createElement('div'); pd.className='prompt-block';
