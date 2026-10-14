@@ -650,6 +650,24 @@ const STEPS = [
     skip:true,
   },
   {
+    id:'angulo', label:'Ângulo câmera', ask:'Ângulo e enquadramento da câmera?',
+    qr:[
+      {label:'Corpo inteiro frontal',val:'full body shot, front view, standing full length, 35mm lens'},
+      {label:'Meio corpo (busto)',val:'half body shot, waist up, upper body frame, portrait crop'},
+      {label:'Close rosto',val:'close-up portrait, face close-up, head shot, 85mm portrait lens'},
+      {label:'De costas corpo inteiro',val:'full body rear view, back shot, showing back and buttocks, from behind'},
+      {label:'De cima (plano zenital)',val:'top-down shot, overhead angle, bird\'s eye view, shot from above'},
+      {label:'De baixo (contra-plongée)',val:'low angle shot, shot from below, looking up at subject, dominant angle'},
+      {label:'Ângulo 3/4',val:'three quarter angle, 45 degree angle shot, diagonal composition'},
+      {label:'Close bumbum',val:'close-up buttocks shot, booty close-up, rear detail shot'},
+      {label:'Close peitos',val:'close-up chest shot, breasts close-up, cleavage detail shot, chest framing'},
+      {label:'Câmera mão (íntimo)',val:'handheld camera feel, point of view shot, intimate camera angle, voyeur perspective'},
+      {label:'Plano americano',val:'medium shot, waist to head, cowboy shot framing, mid-range composition'},
+      {label:'Grande angular',val:'wide angle lens, wide shot showing full environment, 24mm wide, environmental portrait'},
+    ],
+    skip:true,
+  },
+  {
     id:'nsfw', label:'NSFW', ask:'🔞 Conteúdo explícito (NSFW)?\n\n<small style="color:var(--txt3)">🔞 Leve → 🔞🔞 Médio → 🔞🔞🔞 Explícito → 🔞🔞🔞🔞 Extremo</small>',
     qr:[
       {label:'Não (SFW)',val:'',skip:true},
@@ -1630,14 +1648,15 @@ function buildNeg(){
 }
 
 function buildPrompt(){
-  const qualityHeader = '(masterpiece:1.4), (best quality:1.4), (photorealistic:1.5), (ultra realistic:1.4), (RAW photo:1.3), (sharp focus:1.2), (8k uhd:1.2)';
-  const humanRealism = '(real human:1.5), (real skin:1.4), (skin pores:1.3), (subsurface scattering:1.3), (natural proportions:1.2)';
+  const qualityHeader = '(masterpiece:1.4), (best quality:1.4), (photorealistic:1.5), (ultra realistic:1.4), (RAW photo:1.3), (sharp focus:1.2), (8k uhd:1.2), DSLR photo, professional photography';
+  const humanRealism = '(real human skin:1.5), (photorealistic face:1.5), (real skin texture:1.4), (skin pores:1.3), (subsurface scattering:1.3), (natural body proportions:1.3), (realistic eyes:1.3), (detailed face:1.3), (natural lighting on skin:1.2)';
   const parts = [
     answers.personagem,
     answers.corpo,
     answers.cabelo,
     answers.roupa,
     answers.pose,
+    answers.angulo,
     answers.cenario,
     answers.estilo,
     answers.nsfw,
