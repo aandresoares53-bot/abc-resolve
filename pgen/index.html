@@ -2285,7 +2285,10 @@ function buildPrompt(){
     answers.estilo_foto, answers.cam, autoFilm(),
   ].filter(Boolean);
   const seen=new Set();
-  return parts.filter(p=>{ if(seen.has(p)) return false; seen.add(p); return true; }).join(', ');
+  const deduped = parts.filter(p=>{ if(seen.has(p)) return false; seen.add(p); return true; });
+  const seed = Math.floor(Math.random() * 999999999);
+  deduped.push(`seed:${seed}`);
+  return deduped.join(', ');
 }
 
 // ─── LoRA hints ───────────────────────────────────────────────────────────
