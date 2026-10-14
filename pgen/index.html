@@ -1637,13 +1637,13 @@ function buildNeg(){
 
 function buildPrompt(){
   // Flux usa linguagem natural — sem parênteses nem pesos SD
-  const qualityHeader = 'RAW photo, shot on Canon EOS R5, 85mm lens, f/1.8 aperture, natural light, ultra sharp focus, 8K resolution, professional photography';
-  const humanRealism = 'real human being, photorealistic skin texture, visible skin pores, natural skin imperfections, realistic human anatomy, lifelike facial features, natural eye detail, subsurface skin scattering, genuine human proportions, not artificial, not CGI, not rendered';
+  const qualityHeader = 'photorealistic photograph, natural skin texture, realistic human, 35mm film photo';
   // suporte a campos novos e campos legados de presets
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
   const estilo = answers.estilo || answers.estilo_foto || answers.film;
   const angulo = answers.angulo || answers.cam;
   const parts = [
+    qualityHeader,
     personagem,
     answers.corpo,
     answers.cabelo,
@@ -1653,8 +1653,6 @@ function buildPrompt(){
     answers.cenario,
     estilo,
     answers.nsfw,
-    qualityHeader,
-    humanRealism,
   ].filter(Boolean);
   const seen = new Set();
   const deduped = parts.filter(p => { if(seen.has(p)) return false; seen.add(p); return true; });
@@ -1834,7 +1832,7 @@ async function jumpTo(id){
 // ─── Result ───────────────────────────────────────────────────────────────
 function generateFluxImage(prompt, box){
   const seed=Math.floor(Math.random()*999999);
-  const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=896&height=1152&model=flux&nologo=true&enhance=false&seed=${seed}`;
+  const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=896&height=1152&model=flux-pro&nologo=true&seed=${seed}`;
   const wrap=box.querySelector('[id^="flux-wrap"]');
   const dlBtn=box.querySelector('[id^="flux-dl"]');
   const regenBtn=box.querySelector('[id^="flux-regen"]');
