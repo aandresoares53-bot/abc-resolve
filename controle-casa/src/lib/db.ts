@@ -60,4 +60,5 @@ export async function setupDb() {
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
   `
+  await sql`ALTER TABLE cc_config ADD COLUMN IF NOT EXISTS orcamento NUMERIC(10,2) DEFAULT 0`
 }

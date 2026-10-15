@@ -72,16 +72,25 @@ export default function Home() {
 
   const loadData = useCallback(async (m: string) => {
     setLoading(true)
-    const [uRes, gRes, pRes, oRes] = await Promise.all([
-      fetch('/api/auth/me'),
-      fetch(`/api/gastos?mes=${encodeURIComponent(m)}`),
-      fetch('/api/previsoes'),
-      fetch('/api/orcamento'),
-    ])
-    if (!uRes.ok) { router.push('/login'); return }
-    const [u, g, p, o] = await Promise.all([uRes.json(), gRes.json(), pRes.json(), oRes.json()])
-    setUser(u); setGastos(g); setPrevisoes(p); setOrcamento(o.orcamento || 0)
-    setLoading(false)
+    try {
+      const [uRes, gRes, pRes, oRes] = await Promise.all([
+        fetch('/api/auth/me'),
+        fetch(`/api/gastos?mes=${encodeURIComponent(m)}`),
+        fetch('/api/previsoes'),
+        fetch('/api/orcamento'),
+      ])
+      if (!uRes.ok) { setLoading(false); router.push('/login'); return }
+      const u = await uRes.json()
+      const g = gRes.ok ? await gRes.json() : []
+      const p = pRes.ok ? await pRes.json() : []
+      const o = oRes.ok ? await oRes.json() : {}
+      setUser(u); setGastos(g); setPrevisoes(p); setOrcamento(o.orcamento || 0)
+    } catch (e) {
+      console.error('loadData error', e)
+      router.push('/login')
+    } finally {
+      setLoading(false)
+    }
   }, [router])
 
   useEffect(() => { loadData(mes) }, [mes, loadData])
