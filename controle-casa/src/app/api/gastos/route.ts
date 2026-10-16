@@ -27,6 +27,19 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(rows[0])
 }
 
+export async function PUT(req: NextRequest) {
+  const session = await getSession()
+  if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+  await setupDb()
+  const { id, descricao, cat, val, data } = await req.json()
+  if (!id || !descricao || !cat || !val) return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  const rows = await sql`
+    UPDATE cc_gastos SET descricao=${descricao}, cat=${cat}, val=${val}, data=${data||null}
+    WHERE id=${id} AND user_id=${session.id} RETURNING *
+  `
+  return NextResponse.json(rows[0])
+}
+
 export async function DELETE(req: NextRequest) {
   const session = await getSession()
   if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
