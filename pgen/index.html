@@ -98,6 +98,9 @@ header{
 .ec-edit{background:none;border:none;color:var(--acc);cursor:pointer;font-size:.85em;padding:2px 0 2px 6px;flex-shrink:0;transition:color .15s;}
 .ec-edit:hover{color:#fff;}
 .ec-row.active{background:rgba(99,102,241,.08);border-radius:4px;}
+.qr.multi-chip{opacity:.75;border-style:dashed;}
+.qr.multi-chip.multi-sel{opacity:1;background:rgba(99,102,241,.3);border-color:var(--acc);border-style:solid;font-weight:600;}
+.qr.multi-confirm{background:var(--acc);color:#fff;font-weight:700;width:100%;margin-top:4px;}
 .qe-panel{background:var(--bg2);border:1px solid var(--acc);border-radius:var(--r2);padding:10px;margin:4px 0 8px;animation:fadeIn .15s ease;}
 .qe-free-wrap{display:flex;gap:6px;margin-bottom:8px;}
 .qe-input{flex:1;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);padding:5px 8px;font-size:.82em;outline:none;}
@@ -1170,6 +1173,37 @@ const STEPS = [
       {label:'Mordendo lábio',val:'biting lower lip, lip bite, biting lip seductively'},
       {label:'Olhar submisso',val:'submissive downward gaze, looking down submissively, eyes low, shy submissive look'},
       {label:'Cara de prazer extremo',val:'extreme pleasure face, ahegao expression, overwhelmed with pleasure, intense orgasm face'},
+    ],
+    skip:true,
+  },
+  {
+    id:'joias', label:'Joias & Acessórios', ask:'Joias e acessórios? (pode escolher vários)',
+    multi:true,
+    qr:[
+      {label:'💍 Anel solitário',val:'wearing diamond solitaire ring, elegant engagement ring, sparkling ring on finger'},
+      {label:'💍 Anéis empilhados',val:'multiple stacked rings on fingers, rings stacking, layered rings both hands'},
+      {label:'📿 Colar fino dourado',val:'delicate gold chain necklace, thin gold necklace, dainty gold chain around neck'},
+      {label:'📿 Colar grosso dourado',val:'thick gold chain necklace, chunky gold chain, bold gold statement necklace'},
+      {label:'📿 Colar de pérolas',val:'pearl necklace, classic pearl strand, elegant pearl choker necklace'},
+      {label:'📿 Colar choker',val:'black choker necklace, velvet choker around neck, thin choker necklace'},
+      {label:'📿 Colar body chain',val:'gold body chain jewelry, decorative body chain across torso, belly chain'},
+      {label:'💎 Brincos argola',val:'large gold hoop earrings, big hoop earrings, statement hoop earrings'},
+      {label:'💎 Brincos pingente',val:'dangling drop earrings, long pendant earrings, chandelier earrings'},
+      {label:'💎 Brincos studs',val:'small stud earrings, diamond stud earrings, simple elegant studs'},
+      {label:'⌚ Relógio luxo',val:'luxury watch on wrist, designer watch, gold watch, elegant timepiece'},
+      {label:'💛 Pulseira dourada',val:'gold bracelet on wrist, delicate gold bangle, thin gold wrist bracelet'},
+      {label:'💛 Pulseiras empilhadas',val:'multiple stacked bracelets, layered bangles and bracelets, arm candy stack'},
+      {label:'👓 Óculos grau fashion',val:'wearing stylish prescription glasses, fashion eyeglasses, chic eyewear frames'},
+      {label:'🕶 Óculos de sol aviador',val:'wearing aviator sunglasses, gold aviator shades, classic aviator frames'},
+      {label:'🕶 Óculos de sol gatinho',val:'wearing cat-eye sunglasses, retro cat-eye shades, vintage cat-eye frames'},
+      {label:'🕶 Óculos de sol oversized',val:'wearing oversized sunglasses, large glamorous shades, big fashion sunglasses'},
+      {label:'🕶 Óculos de sol redondo',val:'wearing round sunglasses, circular retro shades, small round frames'},
+      {label:'👒 Chapéu de aba larga',val:'wearing wide-brim hat, floppy sun hat, elegant large brim hat'},
+      {label:'🎩 Boné',val:'wearing baseball cap, casual cap on head, fitted cap, streetwear cap'},
+      {label:'💄 Cinto fininho',val:'thin gold chain belt at waist, delicate waist chain belt, hip belt'},
+      {label:'🌸 Flor no cabelo',val:'flower in hair, floral hair accessory, tropical flower tucked in hair'},
+      {label:'💎 Piercing umbigo',val:'belly button piercing, navel piercing jewelry, belly ring'},
+      {label:'💎 Piercing nariz',val:'nose piercing stud, small nose ring, delicate nose jewelry'},
     ],
     skip:true,
   },
@@ -2942,6 +2976,7 @@ function buildPrompt(){
     imperfections,
     answers.cabelo,
     answers.roupa,
+    answers.joias,
     answers.acessorios,
     answers.pose,
     answers.expressao,
@@ -3008,15 +3043,52 @@ function showTyping(){
 }
 function removeTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
 
-function setQR(chips){
+function setQR(chips, multiMode=false){
   qrArea.innerHTML='';
-  chips.forEach(({label,val,skip,cls})=>{
-    const btn=document.createElement('button');
-    btn.className='qr'+(skip?' skip':'')+(cls?' '+cls:'');
-    btn.textContent=label;
-    btn.onclick=()=>handleQR(val!=null?val:label, label);
-    qrArea.appendChild(btn);
-  });
+  if(multiMode){
+    // estado de seleções múltiplas
+    const selected=new Set();
+    // chips toggleáveis
+    chips.forEach(({label,val,skip,cls})=>{
+      if(skip&&val==='pular') return; // pular vira confirmar abaixo
+      if(val==='__back__'){
+        const bb=document.createElement('button');
+        bb.className='qr back'; bb.textContent=label;
+        bb.onclick=()=>{ if(waiting) return; addMsg('usr','← Voltar'); goBack(); };
+        qrArea.appendChild(bb); return;
+      }
+      const btn=document.createElement('button');
+      btn.className='qr multi-chip'+(cls?' '+cls:'');
+      btn.textContent=label;
+      btn.dataset.val=val;
+      btn.onclick=()=>{
+        if(waiting) return;
+        if(selected.has(val)){ selected.delete(val); btn.classList.remove('multi-sel'); }
+        else { selected.add(val); btn.classList.add('multi-sel'); }
+        confirmBtn.textContent=selected.size>0?`✓ Confirmar (${selected.size} selecionados)`:'Pular →';
+      };
+      qrArea.appendChild(btn);
+    });
+    // botão confirmar
+    const confirmBtn=document.createElement('button');
+    confirmBtn.className='qr multi-confirm'; confirmBtn.textContent='Pular →';
+    confirmBtn.onclick=()=>{
+      if(waiting) return;
+      const joined=[...selected].join(', ');
+      const labels=[...qrArea.querySelectorAll('.multi-chip.multi-sel')].map(b=>b.textContent).join(', ');
+      if(joined) addMsg('usr', labels); else addMsg('usr','Pular');
+      processAnswer(joined||'pular');
+    };
+    qrArea.appendChild(confirmBtn);
+  } else {
+    chips.forEach(({label,val,skip,cls})=>{
+      const btn=document.createElement('button');
+      btn.className='qr'+(skip?' skip':'')+(cls?' '+cls:'');
+      btn.textContent=label;
+      btn.onclick=()=>handleQR(val!=null?val:label, label);
+      qrArea.appendChild(btn);
+    });
+  }
 }
 function clearQR(){ qrArea.innerHTML=''; }
 
@@ -3041,10 +3113,10 @@ function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scr
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
-async function botSay(html, qrs=[]){
+async function botSay(html, qrs=[], multiMode=false){
   waiting=true; showTyping();
   await delay(550+Math.random()*250);
-  removeTyping(); addMsg('bot', html); setQR(qrs);
+  removeTyping(); addMsg('bot', html); setQR(qrs, multiMode);
   waiting=false; input.focus();
 }
 
@@ -3075,7 +3147,7 @@ async function processAnswer(val){
     qrs=applyRoupasugg(next.id, qrs);
     if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
     if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
-    await botSay(next.ask, qrs);
+    await botSay(next.ask, qrs, next.multi);
   } else { await showSummary(); }
 }
 
@@ -3087,7 +3159,7 @@ async function goBack(){
   qrs=applyRoupasugg(cur.id, qrs);
   if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
   if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
-  await botSay('↩ Voltando — '+cur.ask, qrs);
+  await botSay('↩ Voltando — '+cur.ask, qrs, cur.multi);
 }
 
 // ─── Summary ──────────────────────────────────────────────────────────────
@@ -3123,7 +3195,7 @@ async function jumpTo(id){
   const qrs=cur.qr?[...cur.qr]:[];
   if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
   if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
-  await botSay('✏ Editando: '+cur.ask, qrs);
+  await botSay('✏ Editando: '+cur.ask, qrs, cur.multi);
 }
 
 // ─── Result ───────────────────────────────────────────────────────────────
