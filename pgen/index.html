@@ -97,6 +97,21 @@ header{
 .ec-val{color:var(--txt);text-align:right;font-size:.85em;word-break:break-word;flex:1;}
 .ec-edit{background:none;border:none;color:var(--acc);cursor:pointer;font-size:.85em;padding:2px 0 2px 6px;flex-shrink:0;transition:color .15s;}
 .ec-edit:hover{color:#fff;}
+.ec-row.active{background:rgba(99,102,241,.08);border-radius:4px;}
+.qe-panel{background:var(--bg2);border:1px solid var(--acc);border-radius:var(--r2);padding:10px;margin:4px 0 8px;animation:fadeIn .15s ease;}
+.qe-free-wrap{display:flex;gap:6px;margin-bottom:8px;}
+.qe-input{flex:1;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);padding:5px 8px;font-size:.82em;outline:none;}
+.qe-input:focus{border-color:var(--acc);}
+.qe-apply{background:var(--acc);border:none;border-radius:6px;color:#fff;padding:5px 10px;font-size:.8em;cursor:pointer;white-space:nowrap;}
+.qe-apply:hover{opacity:.85;}
+.qe-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;max-height:180px;overflow-y:auto;}
+.qe-chip{background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:20px;color:var(--txt);padding:3px 9px;font-size:.75em;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.qe-chip:hover{background:rgba(99,102,241,.25);border-color:var(--acc);}
+.qe-chip.selected{background:rgba(99,102,241,.35);border-color:var(--acc);color:#fff;font-weight:600;}
+.qe-chip.qe-remove{color:#f87171;border-color:#f87171;background:rgba(248,113,113,.08);}
+.qe-chip.qe-remove:hover{background:rgba(248,113,113,.2);}
+.qe-cancel{background:none;border:none;color:var(--txt3);font-size:.75em;cursor:pointer;padding:2px 4px;}
+.qe-cancel:hover{color:var(--txt);}
 
 .prompt-block{background:var(--bg);border:1px solid var(--acc);border-radius:var(--r2);padding:11px 13px;font-size:.79em;font-family:monospace;line-height:1.7;word-break:break-word;color:var(--txt);margin-top:6px;cursor:text;user-select:all;}
 .neg-block{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r2);padding:9px 13px;font-size:.74em;font-family:monospace;line-height:1.6;color:#fca5a5;margin-top:6px;user-select:all;}
@@ -3155,16 +3170,79 @@ async function showResult(){
   br2.appendChild(rstBtn);
   b.appendChild(br2);
 
-  // ── Botão editar escolhas ──────────────────────────────────────────────
+  // ── Quick Edit inline ─────────────────────────────────────────────────
   const editCard=document.createElement('div'); editCard.className='edit-choices-card';
-  editCard.innerHTML='<div class="ec-title">✏ Editar escolhas anteriores</div>';
+  editCard.innerHTML='<div class="ec-title">✏ Editar escolhas · gera prompt instantaneamente</div>';
+
+  function openQuickEdit(s, row){
+    // fecha qualquer painel aberto
+    editCard.querySelectorAll('.qe-panel').forEach(p=>p.remove());
+    editCard.querySelectorAll('.ec-row.active').forEach(r=>r.classList.remove('active'));
+    row.classList.add('active');
+
+    const panel=document.createElement('div'); panel.className='qe-panel';
+
+    // campo de texto livre
+    const freeWrap=document.createElement('div'); freeWrap.className='qe-free-wrap';
+    const freeInput=document.createElement('input'); freeInput.className='qe-input';
+    freeInput.placeholder='Digite um valor personalizado…';
+    freeInput.value=answers[s.id]||'';
+    const freeBtn=document.createElement('button'); freeBtn.className='qe-apply'; freeBtn.textContent='✓ Aplicar';
+    freeBtn.onclick=async()=>{
+      if(freeInput.value.trim()){ answers[s.id]=freeInput.value.trim(); panel.remove(); row.classList.remove('active'); await applyQuickEdit(); }
+    };
+    freeInput.addEventListener('keydown',e=>{ if(e.key==='Enter') freeBtn.click(); });
+    freeWrap.appendChild(freeInput); freeWrap.appendChild(freeBtn);
+    panel.appendChild(freeWrap);
+
+    // opções do step como chips
+    if(s.qr&&s.qr.length){
+      const grid=document.createElement('div'); grid.className='qe-grid';
+      s.qr.forEach(opt=>{
+        if(!opt.val||opt.val==='pular') return;
+        const chip=document.createElement('button'); chip.className='qe-chip';
+        if(answers[s.id]===opt.val) chip.classList.add('selected');
+        chip.textContent=opt.label;
+        chip.title=opt.val.slice(0,120);
+        chip.onclick=async()=>{
+          answers[s.id]=opt.val; panel.remove(); row.classList.remove('active');
+          await applyQuickEdit();
+        };
+        grid.appendChild(chip);
+      });
+      // opção "remover"
+      if(answers[s.id]){
+        const rem=document.createElement('button'); rem.className='qe-chip qe-remove';
+        rem.textContent='✕ Remover'; rem.onclick=async()=>{ delete answers[s.id]; panel.remove(); row.classList.remove('active'); await applyQuickEdit(); };
+        grid.appendChild(rem);
+      }
+      panel.appendChild(grid);
+    }
+
+    const cancelBtn=document.createElement('button'); cancelBtn.className='qe-cancel'; cancelBtn.textContent='Cancelar';
+    cancelBtn.onclick=()=>{ panel.remove(); row.classList.remove('active'); };
+    panel.appendChild(cancelBtn);
+
+    row.insertAdjacentElement('afterend', panel);
+    freeInput.focus();
+  }
+
+  async function applyQuickEdit(){
+    // scroll suave para o topo do bloco de resultado e regenera
+    b.scrollIntoView({behavior:'smooth', block:'start'});
+    await delay(300);
+    // remove o bloco atual e regenera no lugar
+    if(b.parentElement) b.parentElement.removeChild(b);
+    await showResult();
+  }
+
   STEPS.forEach(s=>{
     const val=answers[s.id]; if(!val) return;
     const row=document.createElement('div'); row.className='ec-row';
     const short=val.length>55?val.slice(0,52)+'…':val;
     row.innerHTML=`<span class="ec-key">${s.label}</span><span class="ec-val">${escHtml(short)}</span>`;
     const eb=document.createElement('button'); eb.className='ec-edit'; eb.title='Editar '+s.label;
-    eb.innerHTML='✏'; eb.onclick=()=>{ clearQR(); jumpTo(s.id); }; row.appendChild(eb);
+    eb.innerHTML='✏'; eb.onclick=()=>openQuickEdit(s, row); row.appendChild(eb);
     editCard.appendChild(row);
   });
   b.appendChild(editCard);
