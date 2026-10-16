@@ -802,6 +802,22 @@ const STEPS = [
     skip:true,
   },
   {
+    id:'realismo', label:'Realismo', ask:'Nível de realismo fotográfico?',
+    qr:[
+      {label:'Fotografia analógica',val:'analog film photograph, Kodak Portra 800, heavy film grain, light leaks, vintage film look, real human skin texture, natural imperfections, shot on Canon AE-1'},
+      {label:'DSLR profissional',val:'RAW photograph, Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, tack-sharp eyes, creamy bokeh, subsurface skin scattering, visible skin pores, DSLR professional photography'},
+      {label:'Câmera de rua (candid)',val:'candid street photography, Sony A7IV, 35mm lens, natural ambient light, documentary style, unposed real moment, slight motion blur background, real human proportions'},
+      {label:'Hiper-realismo pele',val:'hyperrealistic skin texture, visible pores, fine skin hairs, subsurface light scattering, micro skin details, capillaries visible, real human dermis texture, anatomically accurate skin'},
+      {label:'Luz natural difusa',val:'soft diffused natural light, overcast sky lighting, no harsh shadows, even skin illumination, true-to-life colors, no color grading, raw natural look'},
+      {label:'Luz dramática realista',val:'dramatic side window light, realistic shadows, chiaroscuro natural light, strong directional light from window, realistic skin tones in shadow and highlight'},
+      {label:'Paparazzi / foto real',val:'paparazzi style candid photo, telephoto 200mm lens, real life caught on camera, unposed natural moment, grain and noise, real person feeling'},
+      {label:'Medium format 120mm',val:'medium format photograph, Hasselblad X2D, 80mm lens, extreme detail and sharpness, tonal depth, three-dimensional skin rendering, professional medium format quality'},
+      {label:'Luz de hora dourada',val:'golden hour natural sunlight, warm backlighting, rim light on skin, real outdoor conditions, slight lens flare, true sunlight color temperature 3200K'},
+      {label:'Sem filtro / brutal honesto',val:'brutally honest raw photo, zero retouching, no beauty filter, no post-processing, real unfiltered human skin, natural body without photoshop, documentary truth'},
+    ],
+    skip:true,
+  },
+  {
     id:'imperfeicoes', label:'Imperfeições', ask:'Imperfeições do corpo? (deixa mais humana)',
     qr:[
       {label:'Pele natural com poros',val:'visible skin pores, natural skin texture, subtle skin imperfections, real human skin'},
@@ -2862,11 +2878,13 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 
 // ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
-  return 'ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, cartoon, anime, 3d render, cgi, painting, drawing, illustration, digital art, plastic skin, artificial skin, fake, wax figure, mannequin, oversmoothed skin, airbrushed, flawless perfect skin, studio strobe lighting, overlit, beauty retouched, photoshop smooth, unnatural glow, inhuman eyes, bad proportions, disfigured, low quality, worst quality, perfect body, symmetrical perfect face';
+  return 'ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, cartoon, anime, 3d render, cgi, painting, drawing, illustration, digital art, plastic skin, artificial skin, fake, wax figure, mannequin, oversmoothed skin, airbrushed, flawless perfect skin, studio strobe lighting, overlit, beauty retouched, photoshop smooth, unnatural glow, inhuman eyes, bad proportions, disfigured, low quality, worst quality, perfect body, symmetrical perfect face, uncanny valley, doll-like face, ai generated look, rendered skin, glossy plastic texture, hyper-smooth skin, no pores, porcelain skin, perfect symmetry, overly sharp, oversaturated, neon colors, fluorescent skin, digital noise, jpeg artifacts, cropped limbs, floating limbs, duplicate features, clone stamp, body horror, extra fingers, six fingers, abnormal hands, disproportionate body, impossible pose, unrealistic proportions, tiling, repetitive pattern';
 }
 
 function buildPrompt(){
-  const qualityHeader = 'Kodak Portra 400 film photograph, slight film grain, natural skin pores and texture, realistic human imperfections, soft window light';
+  const realismo = answers.realismo || '';
+  const qualityHeader = realismo ||
+    'RAW photograph, Kodak Portra 400 film, 85mm f/1.8 lens, slight film grain, subsurface skin scattering, visible skin pores, natural skin texture, realistic human imperfections, anatomically correct, photorealistic, hyperrealistic skin, soft diffused natural window light, shallow depth of field, sharp eyes, soft bokeh background, shot on DSLR Canon EOS R5';
   const imperfections = answers.imperfeicoes || '';
   // suporte a campos novos e campos legados de presets
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
