@@ -83,9 +83,9 @@ export default function Home() {
         uRes.json(),
         gRes.ok ? gRes.json() : [],
         pRes.ok ? pRes.json() : [],
-        oRes.ok ? oRes.json() : {},
+        oRes.ok ? oRes.json() : { orcamento: 0 },
       ])
-      setUser(u); setGastos(g); setPrevisoes(p); setOrcamento(o.orcamento || 0)
+      setUser(u); setGastos(g); setPrevisoes(p); setOrcamento((o as { orcamento?: number }).orcamento || 0)
     } catch { router.push('/login') }
     finally { setLoading(false) }
   }, [router])
