@@ -2969,13 +2969,17 @@ function buildPrompt(){
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
   const estilo = answers.estilo || answers.estilo_foto || answers.film;
   const angulo = answers.angulo || answers.cam;
+  const roupaVal = answers.roupa || '';
+  const isNude = /nude|naked|nua\b|pelada|sem roupa|topless|sem calcinha|sem sutiã|lingerie only/i.test(roupaVal);
+  const underwear = isNude ? '' : 'wearing matching lace bra and panties underneath';
   const parts = [
     qualityHeader,
     personagem,
     answers.corpo,
     imperfections,
     answers.cabelo,
-    answers.roupa,
+    roupaVal,
+    underwear,
     answers.joias,
     answers.acessorios,
     answers.pose,
