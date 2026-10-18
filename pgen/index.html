@@ -3382,6 +3382,12 @@ async function randomAll(){
     if(!pool.length) continue;
     answers[s.id]=pool[Math.floor(Math.random()*pool.length)].val;
   }
+  // Realismo padrão: fotografia analógica
+  const analogStep=STEPS.find(s=>s.id==='realismo');
+  if(analogStep){
+    const analogOpt=analogStep.qr.find(q=>q.label==='Fotografia analógica');
+    if(analogOpt) answers.realismo=analogOpt.val;
+  }
   step=STEPS.length; updateProgress(); clearQR();
   addMsg('bot','🎲 <strong>Sorteando prompt aleatório!</strong>');
   await delay(600); await showResult();
