@@ -1269,63 +1269,6 @@ const STEPS = [
     ],
     skip:true,
   },
-  {
-    id:'acessorios', label:'Acessórios', ask:'Acessórios eróticos?',
-    qr:[
-      {label:'Coleira',val:'wearing leather collar around neck, choker collar, submissive collar, pet collar'},
-      {label:'Algemas',val:'wearing handcuffs, wrists bound with handcuffs, restrained wrists, metal cuffs'},
-      {label:'Corda/amarrada',val:'tied with rope, rope bondage, bound with ropes, kinbaku rope restraints'},
-      {label:'Vibrador',val:'holding vibrator, vibrator toy, handheld vibrator against body, sex toy'},
-      {label:'Dildo',val:'holding dildo, large dildo toy, penetrated by dildo, sex toy insertion'},
-      {label:'Plug anal',val:'anal plug inserted, butt plug visible, anal toy, plugged'},
-      {label:'Mordaça',val:'wearing ball gag, gagged mouth, ball gag in mouth, mouth gag'},
-      {label:'Venda nos olhos',val:'blindfolded, black blindfold over eyes, eyes covered, sensory deprivation'},
-      {label:'Chicote',val:'holding riding crop, leather whip, crop in hand, dominatrix accessory'},
-      {label:'Máscara',val:'wearing bondage mask, latex mask, face mask, masquerade mask, fetish mask'},
-      {label:'Meias de renda',val:'wearing lace stockings, thigh-high lace stockings, stay-up stockings, garter belt'},
-      {label:'Salto altíssimo',val:'wearing extremely high stiletto heels, sky-high heels, platform pumps, towering heels'},
-    ],
-    skip:true,
-  },
-  {
-    id:'liquidos', label:'Líquidos', ask:'Líquidos no corpo?',
-    qr:[
-      {label:'Não',val:'',skip:true},
-      {label:'💦 Molhada suor',val:'glistening with sweat, sweaty shiny skin, drenched in sweat, wet glistening body'},
-      {label:'💦 Corpo molhado',val:'soaking wet body, drenched wet, dripping water all over body, completely wet'},
-      {label:'💦 Óleo corporal',val:'oiled body, shiny body oil, glistening oil all over skin, wet oiled skin'},
-      {label:'💦 Gozada rosto (facial)',val:'cum on face, facial cumshot, semen dripping down face, covered in cum on face'},
-      {label:'💦 Gozada seios',val:'cum on breasts, semen on chest and boobs, cumshot on tits, cum dripping from nipples'},
-      {label:'💦 Gozada corpo inteiro',val:'cum all over body, covered in semen, full body cumshot, dripping cum everywhere'},
-      {label:'💦 Gozada boca',val:'cum in mouth, semen in open mouth, cum dripping from lips, mouthful of cum'},
-      {label:'💦 Creampie',val:'creampie dripping out, cum dripping from pussy, internal cum leaking out, creampie visible'},
-      {label:'💦 Squirting',val:'female squirting, squirt gushing, female ejaculation, squirt spray explicit'},
-      {label:'💦 Banhada leite',val:'covered in milk, milk poured over body, dripping with milk, milk bath'},
-    ],
-    skip:true,
-  },
-  {
-    id:'nsfw', label:'NSFW', ask:'🔞 Conteúdo explícito (NSFW)?\n\n<small style="color:var(--txt3)">🔞 Leve → 🔞🔞 Médio → 🔞🔞🔞 Explícito → 🔞🔞🔞🔞 Extremo</small>',
-    qr:[
-      {label:'Não (SFW)',val:'',skip:true},
-      {label:'🔞 Nudez artística',val:'artistic nude, fine art nude photography, tasteful nudity, elegant nude'},
-      {label:'🔞 Seios à mostra',val:'bare breasts fully exposed, nude breasts, nipples visible, topless nude'},
-      {label:'🔞🔞 Pelada explícita',val:'fully nude explicit, completely naked, all body parts exposed, nude explicit photography'},
-      {label:'🔞🔞 Close íntimo',val:'intimate close-up, explicit detail shot, nude close-up detail, adult photography'},
-      {label:'🔞🔞🔞 Masturbando',val:'masturbating, self pleasure, touching herself, explicit self stimulation'},
-      {label:'🔞🔞🔞 Oral giving',val:'giving oral sex, performing fellatio, blowjob, oral sex act explicit'},
-      {label:'🔞🔞🔞 Oral receiving',val:'receiving oral sex, cunnilingus, oral sex being performed on her, explicit oral'},
-      {label:'🔞🔞🔞 Sexo vaginal',val:'vaginal sex, penetration, intercourse, explicit sex act, adult content'},
-      {label:'🔞🔞🔞 Sexo anal',val:'anal sex, anal penetration, explicit anal sex act, adult explicit'},
-      {label:'🔞🔞🔞🔞 Gangbang',val:'gangbang, multiple men, group sex, multiple penetration, extreme explicit'},
-      {label:'🔞🔞🔞🔞 Squirting 💦',val:'squirting, female ejaculation, explicit squirt, wet explicit orgasm'},
-      {label:'🔞🔞🔞🔞 Facial 💦',val:'facial cumshot, cum on face, explicit facial, semen on face'},
-      {label:'🔞🔞🔞🔞 Creampie',val:'creampie, internal ejaculation, cum inside, explicit creampie'},
-      {label:'🔞🔞 BDSM/Bondage',val:'BDSM bondage, tied up restrained, rope bondage, kinbaku, submissive restrained explicit'},
-      {label:'🔞🔞 Dominação',val:'dominatrix, dominant woman, femdom, whip, leather, power dynamic explicit'},
-    ],
-    skip:true,
-  },
 ];
 
 
@@ -3043,14 +2986,11 @@ function buildPrompt(){
     roupaVal,
     underwear,
     answers.joias,
-    answers.acessorios,
     answers.pose,
     answers.expressao,
     angulo,
     answers.cenario,
     estilo,
-    answers.liquidos,
-    answers.nsfw,
   ].filter(Boolean);
   const seen = new Set();
   const deduped = parts.filter(p => { if(seen.has(p)) return false; seen.add(p); return true; });
@@ -3062,7 +3002,6 @@ function buildPrompt(){
 // ─── LoRA hints ───────────────────────────────────────────────────────────
 function getLoraHints(){
   const film=(answers.film||'').toLowerCase();
-  const nsfw=(answers.nsfw||'').toLowerCase();
   const corpo=(answers.corpo||'').toLowerCase();
   const hints=[];
   if(/portra/.test(film)) hints.push('<lora:film_kodak_portra:0.7>');
@@ -3070,7 +3009,6 @@ function getLoraHints(){
   if(/ilford|monochrome|black and white/.test(film)) hints.push('<lora:bw_film_grain:0.7>');
   if(/velvia/.test(film)) hints.push('<lora:velvia_film:0.8>');
   if(/lomography/.test(film)) hints.push('<lora:lomography:0.75>');
-  if(/explicit|nude|naked/.test(nsfw)) hints.push('<lora:nsfw_realism:0.6>');
   if(/bbw|plus size/.test(corpo)) hints.push('<lora:bbw_realistic:0.65>');
   if(hints.length===0) hints.push('<lora:realistic_skin_v3:0.6>','<lora:analog_film_grain:0.5>');
   return hints;
