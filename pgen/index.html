@@ -192,8 +192,19 @@ header{
 .preset-desc{font-size:.73em;color:var(--txt3);margin-top:2px;}
 
 
+/* category header above chips */
+#cat-header{
+  flex-shrink:0;padding:6px 12px 5px;background:var(--bg);
+  border-top:1px solid var(--bdr);
+  display:none;align-items:center;gap:6px;
+}
+#cat-header.visible{display:flex;}
+.cat-parent{font-size:.72em;font-weight:800;color:var(--acc);letter-spacing:.03em;text-transform:uppercase;}
+.cat-sep{font-size:.7em;color:var(--txt3);}
+.cat-child{font-size:.78em;font-weight:700;color:var(--txt);}
+
 /* chips */
-#qr-area{flex-shrink:0;padding:8px 10px 10px;border-top:1px solid var(--bdr);display:grid;grid-template-columns:repeat(2,1fr);gap:6px;min-height:52px;background:var(--bg);max-height:50dvh;overflow-y:auto;}
+#qr-area{flex-shrink:0;padding:8px 10px 10px;border-top:none;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;min-height:52px;background:var(--bg);max-height:50dvh;overflow-y:auto;}
 .qr{padding:11px 10px;border:1.5px solid var(--bdr);border-radius:12px;font-size:.84em;font-weight:600;cursor:pointer;background:var(--bot-bg);color:var(--txt3);transition:all .13s;user-select:none;white-space:normal;text-align:center;line-height:1.3;min-height:44px;display:flex;align-items:center;justify-content:center;}
 .qr:hover,.qr:active{border-color:var(--acc);color:var(--txt);background:rgba(232,160,32,.06);}
 .qr.skip{border-style:dashed;font-style:italic;grid-column:span 2;}
@@ -243,6 +254,11 @@ header{
 <div id="preview-bar"><span class="preview-label">PROMPT↗</span><span id="preview-text"></span></div>
 
 <div id="chat"></div>
+<div id="cat-header">
+  <span class="cat-parent" id="cat-parent"></span>
+  <span class="cat-sep" id="cat-sep">›</span>
+  <span class="cat-child" id="cat-child"></span>
+</div>
 <div id="qr-area"></div>
 <div id="input-bar">
   <textarea id="msg-input" rows="1" placeholder="Digite ou escolha acima…"
@@ -3148,11 +3164,42 @@ const qrArea = document.getElementById('qr-area');
 const input = document.getElementById('msg-input');
 const progFill = document.getElementById('progress-fill');
 const progLabel = document.getElementById('progress-label');
+const catHeader = document.getElementById('cat-header');
+const catParentEl = document.getElementById('cat-parent');
+const catSepEl = document.getElementById('cat-sep');
+const catChildEl = document.getElementById('cat-child');
+
+const CATEGORY_PARENT = {
+  roupa_nudez:'Roupa', roupa_lingerie:'Roupa', roupa_vestido:'Roupa',
+  roupa_calcas:'Roupa', roupa_esporte:'Roupa', roupa_praia:'Roupa', roupa_casual:'Roupa',
+  pose_pe:'Pose', pose_deitada:'Pose', pose_sentada:'Pose', pose_ajoelhada:'Pose',
+  pose_cama:'Pose', pose_sofa:'Pose', pose_agua:'Pose', pose_cozinha:'Pose',
+  cenario_casa:'Cenário', cenario_hotel:'Cenário', cenario_piscina:'Cenário',
+  cenario_natureza:'Cenário', cenario_cidade:'Cenário', cenario_noturno:'Cenário',
+};
 
 function updateProgress(){
   const pct = step>=TOTAL ? 100 : Math.round((step/TOTAL)*100);
   progFill.style.width = pct+'%';
-  progLabel.textContent = step>=TOTAL ? '✅ Concluído!' : `Passo ${step+1} de ${TOTAL} — ${STEPS[step].label}`;
+  if(step>=TOTAL){
+    progLabel.textContent = '✅ Concluído!';
+    catHeader.classList.remove('visible');
+  } else {
+    const cur = STEPS[step];
+    progLabel.textContent = `Passo ${step+1} de ${TOTAL} — ${cur.label}`;
+    const parent = CATEGORY_PARENT[cur.id];
+    if(parent){
+      catParentEl.textContent = parent;
+      catChildEl.textContent = cur.label;
+      catSepEl.style.display = '';
+      catHeader.classList.add('visible');
+    } else {
+      catParentEl.textContent = cur.label;
+      catChildEl.textContent = '';
+      catSepEl.style.display = 'none';
+      catHeader.classList.add('visible');
+    }
+  }
   updatePreview();
 }
 
@@ -3222,7 +3269,7 @@ function setQR(chips, multiMode=false){
     });
   }
 }
-function clearQR(){ qrArea.innerHTML=''; }
+function clearQR(){ qrArea.innerHTML=''; catHeader.classList.remove('visible'); }
 
 function handleQR(val, label){
   if(waiting) return;
