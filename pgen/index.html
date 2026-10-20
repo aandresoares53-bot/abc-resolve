@@ -3489,14 +3489,38 @@ async function showResult(){
 async function randomAll(){
   if(waiting) return;
   restart(); await delay(800);
-  // Sorteia todos os steps aleatoriamente
+
+  // Grupos exclusivos: sorteia apenas UM sub-step de cada grupo
+  const GROUPS = [
+    ['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'],
+    ['pose_pe','pose_deitada','pose_sentada','pose_ajoelhada','pose_cama','pose_sofa','pose_agua','pose_cozinha'],
+    ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
+  ];
+  const skipIds = new Set(GROUPS.flat());
+
+  // Sorteia steps normais (fora dos grupos)
   for(let i=0;i<STEPS.length;i++){
     const s=STEPS[i];
+    if(skipIds.has(s.id)) continue;
     if(!s.qr||!s.qr.length) continue;
     const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
     if(!pool.length) continue;
     answers[s.id]=pool[Math.floor(Math.random()*pool.length)].val;
   }
+
+  // Para cada grupo, sorteia apenas UM sub-step e UMA opção dele
+  for(const group of GROUPS){
+    const candidates = group.filter(id=>{
+      const s=STEPS.find(s=>s.id===id);
+      return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0;
+    });
+    if(!candidates.length) continue;
+    const chosenId = candidates[Math.floor(Math.random()*candidates.length)];
+    const s = STEPS.find(s=>s.id===chosenId);
+    const pool = s.qr.filter(q=>q.val!==''&&!q.skip);
+    answers[chosenId] = pool[Math.floor(Math.random()*pool.length)].val;
+  }
+
   // Realismo padrão: fotografia analógica
   const analogStep=STEPS.find(s=>s.id==='realismo');
   if(analogStep){
