@@ -3319,6 +3319,16 @@ async function processAnswer(val){
   if(!isSkip){
     answers[cur.id]=val;
   }
+  // Se a resposta foi dada (não pulo) e o step pertence a um grupo,
+  // pula os demais sub-steps do mesmo grupo
+  if(!isSkip){
+    const answeredGroup = CATEGORY_PARENT[cur.id];
+    if(answeredGroup){
+      while(step+1 < STEPS.length && CATEGORY_PARENT[STEPS[step+1].id] === answeredGroup){
+        step++;
+      }
+    }
+  }
   step++; clearQR(); updateProgress();
   if(step<STEPS.length){
     const next=STEPS[step];
