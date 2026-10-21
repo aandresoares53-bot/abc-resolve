@@ -3158,7 +3158,7 @@ function autoFillResto(){
     }
   });
   const analogStep=STEPS.find(s=>s.id==='realismo');
-  if(analogStep&&!answers.realismo){ const opt=analogStep.qr.find(q=>q.label==='Fotografia analógica'); if(opt) answers.realismo=opt.val; }
+  if(analogStep){ const opt=analogStep.qr.find(q=>q.label==='Fotografia analógica'); if(opt) answers.realismo=opt.val; }
 }
 
 // ─── Feature 4: Auto Variações ────────────────────────────────────────────
