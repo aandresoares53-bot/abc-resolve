@@ -840,12 +840,12 @@ const STEPS = [
   {
     id:'realismo', label:'Realismo', ask:'Nível de realismo humano?',
     qr:[
-      {label:'Hiper-realismo pele',val:'hyperrealistic skin texture, visible pores, fine skin hairs, subsurface light scattering, micro skin details, capillaries faintly visible under skin, real human dermis texture, anatomically accurate skin, three-dimensional skin depth, no airbrushing, no smoothing'},
+      {label:'Hiper-realismo pele',val:'hyperdetailed skin texture, visible pores, fine skin hairs, micro skin details, capillaries faintly visible under skin, real human dermis texture, natural skin depth, no airbrushing, no smoothing'},
       {label:'Sem filtro / brutal honesto',val:'brutally honest raw photo, zero retouching, no beauty filter, no post-processing, real unfiltered human skin, natural body without photoshop, documentary truth, real person authenticity, visible natural imperfections'},
       {label:'Paparazzi / foto real',val:'paparazzi style candid photo, telephoto 200mm lens, real life caught on camera, unposed natural moment, authentic grain and noise, real person feeling, no studio lighting, caught in public, genuine human presence'},
       {label:'Fotografia analógica',val:'analog film photograph, Kodak Portra 800, heavy film grain, light leaks, real human skin texture, natural color rendering, no digital perfection, organic film imperfections, shot on Canon AE-1, genuine film look'},
       {label:'Câmera de rua (candid)',val:'candid street photography, Sony A7IV, 35mm lens, natural ambient light, documentary style, unposed real moment, authentic human proportions, real person on the street, no posing no studio'},
-      {label:'DSLR máximo detalhe',val:'RAW photograph, Canon EOS R5, 85mm f/1.4 lens, subsurface skin scattering, every pore visible, micro skin texture razor sharp, tack-sharp eyes, real skin in extreme detail, no retouching, maximum sensor resolution skin detail'},
+      {label:'DSLR máximo detalhe',val:'RAW photograph, Canon EOS R5, 85mm f/1.4 lens, every pore visible, micro skin texture sharp, tack-sharp eyes, real skin in extreme detail, no retouching, high resolution skin detail'},
     ],
     skip:true,
   },
@@ -3097,13 +3097,13 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 
 // ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
-  return 'ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, cartoon, anime, 3d render, cgi, painting, drawing, illustration, digital art, plastic skin, artificial skin, fake, wax figure, mannequin, oversmoothed skin, airbrushed, flawless perfect skin, studio strobe lighting, overlit, beauty retouched, photoshop smooth, unnatural glow, inhuman eyes, bad proportions, disfigured, low quality, worst quality, perfect body, symmetrical perfect face, uncanny valley, doll-like face, ai generated look, rendered skin, glossy plastic texture, hyper-smooth skin, no pores, porcelain skin, perfect symmetry, overly sharp, oversaturated, neon colors, fluorescent skin, digital noise, jpeg artifacts, cropped limbs, floating limbs, duplicate features, clone stamp, body horror, extra fingers, six fingers, abnormal hands, disproportionate body, impossible pose, unrealistic proportions, tiling, repetitive pattern';
+  return 'ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, cartoon, anime, 3d render, cgi, painting, drawing, illustration, digital art, plastic skin, artificial skin, fake, wax figure, mannequin, oversmoothed skin, airbrushed, flawless perfect skin, studio strobe lighting, overlit, beauty retouched, photoshop smooth, unnatural glow, inhuman eyes, bad proportions, disfigured, low quality, worst quality, perfect body, symmetrical perfect face, uncanny valley, doll-like face, ai generated look, rendered skin, glossy plastic texture, hyper-smooth skin, no pores, porcelain skin, perfect symmetry, overly sharp, oversaturated, neon colors, fluorescent skin, digital noise, jpeg artifacts, cropped limbs, floating limbs, duplicate features, clone stamp, body horror, extra fingers, six fingers, abnormal hands, disproportionate body, impossible pose, unrealistic proportions, tiling, repetitive pattern, AI artwork, artificial intelligence generated, neural network art, diffusion model artifact, stable diffusion style, midjourney style, machine learning artifact, synthetic image';
 }
 
 function buildPrompt(){
   const realismo = answers.realismo || '';
   const qualityHeader = realismo ||
-    'RAW photograph, Kodak Portra 400 film, 85mm f/1.8 lens, slight film grain, subsurface skin scattering, visible skin pores, natural skin texture, realistic human imperfections, anatomically correct, photorealistic, hyperrealistic skin, soft diffused natural window light, shallow depth of field, sharp eyes, soft bokeh background, shot on DSLR Canon EOS R5';
+    'RAW photograph, Kodak Portra 400 film, 85mm f/1.8 lens, slight film grain, visible skin pores, natural skin texture, real human imperfections, no retouching, no filters, soft diffused natural window light, shallow depth of field, sharp eyes, soft bokeh background, shot on DSLR Canon EOS R5, candid photography';
   const imperfections = answers.imperfeicoes || '';
   // suporte a campos novos e campos legados de presets
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
