@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const orcamento = Number(body.orcamento)
     if (isNaN(orcamento)) return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
+    await sql`ALTER TABLE cc_config ALTER COLUMN chave DROP NOT NULL`.catch(() => {})
     await sql`
       INSERT INTO cc_config (user_id, orcamento) VALUES (${session.id}, ${orcamento})
       ON CONFLICT (user_id) DO UPDATE SET orcamento = EXCLUDED.orcamento, updated_at = NOW()
