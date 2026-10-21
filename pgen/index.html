@@ -3106,7 +3106,7 @@ function applyCompat(stepId, qrs){
 
 // ─── Feature 3: Modo Rápido ────────────────────────────────────────────────
 let modoRapidoAtivo = false;
-const QUICK_STEPS = ['personagem','roupa','pose'];
+const QUICK_STEPS = ['personagem','corpo','realismo','imperfeicoes','cabelo'];
 
 async function modoRapido(){
   if(waiting) return;
@@ -3117,7 +3117,7 @@ async function modoRapido(){
   if(firstIdx<0){ modoRapidoAtivo=false; return; }
   step = firstIdx;
   updateProgress(); clearQR();
-  addMsg('bot','⚡ <strong>Modo Rápido!</strong> Apenas 3 escolhas e o prompt está pronto.');
+  addMsg('bot','⚡ <strong>Modo Rápido!</strong> Apenas 5 escolhas e o prompt está pronto.');
   await delay(400);
   const cur=STEPS[step];
   let qrs=cur.qr?[...cur.qr]:[];
@@ -3526,7 +3526,7 @@ async function processAnswer(val, label=''){
       modoRapidoAtivo=false;
       autoFillResto();
       step=STEPS.length; updateProgress(); clearQR();
-      addMsg('bot','⚡ <strong>Auto-preenchendo o restante…</strong>');
+      addMsg('bot','⚡ <strong>Roupa, pose, cenário e estilo sendo sorteados automaticamente…</strong>');
       await delay(500); await showResult(); return;
     }
   }
