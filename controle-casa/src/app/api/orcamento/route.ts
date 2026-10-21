@@ -28,37 +28,23 @@ export async function POST(req: NextRequest) {
     const orcamento = Number(body.orcamento)
     if (isNaN(orcamento)) return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
 
-    // Ensure schema is ready
+    // Fix legacy schema
     try { await sql`ALTER TABLE cc_config ALTER COLUMN chave DROP NOT NULL` } catch {}
     try { await sql`ALTER TABLE cc_config ALTER COLUMN chave SET DEFAULT ''` } catch {}
-    try { await sql`ALTER TABLE cc_config ADD CONSTRAINT cc_config_user_id_unique UNIQUE (user_id)` } catch {}
 
-    // Try upsert with chave='' fallback for legacy NOT NULL column
-    let saved = false
-    try {
-      await sql`
-        INSERT INTO cc_config (user_id, orcamento, chave) VALUES (${session.id}, ${orcamento}, '')
-        ON CONFLICT (user_id) DO UPDATE SET orcamento = EXCLUDED.orcamento, updated_at = NOW()
-      `
-      saved = true
-    } catch {}
+    // Check if row exists for this user
+    const existing = await sql`SELECT id FROM cc_config WHERE user_id = ${session.id}` as any[]
 
-    if (!saved) {
-      try {
-        await sql`UPDATE cc_config SET orcamento = ${orcamento}, updated_at = NOW() WHERE user_id = ${session.id}`
-        saved = true
-      } catch {}
-    }
-
-    if (!saved) {
+    if (existing.length > 0) {
+      // Row exists — just update
+      await sql`UPDATE cc_config SET orcamento = ${orcamento}, updated_at = NOW() WHERE user_id = ${session.id}`
+    } else {
+      // No row — insert, try with chave first (legacy table), then without
       try {
         await sql`INSERT INTO cc_config (user_id, orcamento, chave) VALUES (${session.id}, ${orcamento}, '')`
-        saved = true
-      } catch {}
-    }
-
-    if (!saved) {
-      return NextResponse.json({ error: 'Não foi possível salvar o orçamento no banco de dados' }, { status: 500 })
+      } catch {
+        await sql`INSERT INTO cc_config (user_id, orcamento) VALUES (${session.id}, ${orcamento})`
+      }
     }
 
     const rows = await sql`SELECT orcamento FROM cc_config WHERE user_id = ${session.id}` as any[]
