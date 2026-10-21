@@ -3110,6 +3110,21 @@ const QUICK_STEPS = ['personagem','corpo','realismo','imperfeicoes','cabelo'];
 
 async function modoRapido(){
   if(waiting) return;
+  const hasManual = Object.keys(answers).length > 0;
+  if(hasManual){
+    // Already have manual answers — auto-pick one option for each unanswered QUICK_STEP, then fill rest
+    modoRapidoAtivo = false;
+    QUICK_STEPS.forEach(id=>{
+      if(answers[id]) return;
+      const s=STEPS.find(s=>s.id===id); if(!s||!s.qr) return;
+      const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
+      if(pool.length) answers[id]=pool[Math.floor(Math.random()*pool.length)].val;
+    });
+    autoFillResto();
+    step=STEPS.length; updateProgress(); clearQR();
+    addMsg('bot','⚡ <strong>Completando automaticamente com base nas suas escolhas…</strong>');
+    await delay(500); await showResult(); return;
+  }
   modoRapidoAtivo = true;
   restart(); await delay(600);
   // find first quick step
