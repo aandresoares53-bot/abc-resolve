@@ -857,12 +857,12 @@ const STEPS = [
   {
     id:'realismo', label:'Realismo', ask:'Nível de realismo humano?',
     qr:[
-      {label:'Hiper-realismo pele',val:'extreme skin detail, every pore visible, fine skin hairs, micro capillaries visible, real dermis texture, uneven skin tone, natural blemishes, no airbrushing, no smoothing filter, raw human skin'},
-      {label:'Sem filtro / brutal honesto',val:'zero retouching, no beauty filter, no post-processing, unedited raw photo, real unfiltered skin, natural body imperfections, no photoshop, documentary authenticity, real person, visible natural flaws'},
-      {label:'Paparazzi / foto real',val:'paparazzi candid capture, telephoto 200mm, motion blur on background, real life unposed, authentic image noise and grain, no studio lighting, caught off guard, genuine unstaged human moment, natural asymmetry'},
-      {label:'Fotografia analógica',val:'scanned analog film, Kodak Portra 800, strong film grain, color shifts, light leak artifacts, real human skin rendering, organic imperfections, no digital processing, shot on Canon AE-1, genuine vintage film look'},
-      {label:'Câmera de rua (candid)',val:'street documentary photo, Sony A7IV 35mm f/2.8, natural window or ambient light, unposed real moment, natural posture, real human body proportions, no makeup artist, no studio backdrop, genuine candid feel'},
-      {label:'DSLR máximo detalhe',val:'RAW unedited, Canon EOS R5 85mm f/1.4, ISO 400, every skin pore in focus, micro texture sharp, real eye detail with blood vessels, no retouching, real unsmoothed skin, authentic human detail'},
+      {label:'Hiper-realismo pele',val:'photograph, subsurface skin scattering, translucent skin, visible capillaries, skin pores, fine vellus hair on skin, uneven pigmentation, micro skin texture, natural blemishes, real dermis depth'},
+      {label:'Sem filtro / brutal honesto',val:'snapshot photograph, handheld, ISO 3200, grain, real skin unretouched, natural skin imperfections, uneven complexion, raw unedited photo, documentary photography'},
+      {label:'Paparazzi / foto real',val:'paparazzi photograph, telephoto 300mm, compressed depth of field, motion grain, ambient street light, unposed candid, natural human proportions, authentic unstaged moment'},
+      {label:'Fotografia analógica',val:'Kodak Portra 800 film scan, 35mm grain, film halation, natural color shift, analog warmth, real skin tones on film, organic texture, no digital sharpening, shot on Nikon F3'},
+      {label:'Câmera de rua (candid)',val:'candid street photograph, 35mm f/2.8, natural light only, unposed authentic moment, real human body proportions, slight motion, environmental context, photojournalism style'},
+      {label:'DSLR máximo detalhe',val:'RAW photograph, Canon 5D Mark IV 85mm f/1.8, ISO 800, skin pores sharp, eye capillaries visible, unretouched skin texture, natural skin subsurface translucency, authentic portrait'},
     ],
     skip:true,
   },
@@ -3296,16 +3296,16 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 
 // ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
-  return 'ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, cartoon, anime, 3d render, cgi, painting, drawing, illustration, digital art, plastic skin, artificial skin, fake, wax figure, mannequin, oversmoothed skin, airbrushed, flawless perfect skin, studio strobe lighting, overlit, beauty retouched, photoshop smooth, unnatural glow, inhuman eyes, bad proportions, disfigured, low quality, worst quality, perfect body, symmetrical perfect face, uncanny valley, doll-like face, ai generated look, rendered skin, glossy plastic texture, hyper-smooth skin, no pores, porcelain skin, perfect symmetry, overly sharp, oversaturated, neon colors, fluorescent skin, digital noise, jpeg artifacts, cropped limbs, floating limbs, duplicate features, clone stamp, body horror, extra fingers, six fingers, abnormal hands, disproportionate body, impossible pose, unrealistic proportions, tiling, repetitive pattern, AI artwork, artificial intelligence generated, neural network art, diffusion model artifact, stable diffusion style, midjourney style, machine learning artifact, synthetic image';
+  return 'plastic skin, rubber skin, silicone skin, waxy skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, porcelain skin, flawless skin, perfect skin, no pores, skin filter, beauty filter, beauty mode, photoshop skin, retouched, skin retouching, instagram filter, facetune, doll face, mannequin, wax figure, uncanny valley, inhuman face, perfect symmetry, overly symmetrical, studio strobe, overlit, blown out highlights, artificial lighting, rendered, 3d render, cgi, cartoon, anime, illustration, painting, drawing, digital art, ai generated, ai art, midjourney, stable diffusion artifacts, ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, bad proportions, disfigured, low quality, worst quality, oversaturated, neon colors, fluorescent skin, cropped limbs, floating limbs, clone stamp, body horror, extra fingers, abnormal hands, impossible pose, tiling, repetitive pattern';
 }
 
 function buildPrompt(){
   const realismo = answers.realismo || '';
   const qualityHeader = realismo ||
-    'documentary photo, shot on Sony A7IV, 50mm f/2 lens, natural ambient light, no studio setup, ISO 800, slight digital noise, real human skin texture, visible pores, no retouching, no beauty filter, no post-processing, candid unposed moment, authentic human proportions';
-  const imperfections = answers.imperfeicoes || 'visible skin pores, natural skin texture, real human imperfections, not airbrushed';
-  // bloco anti-IA fixo — combate renderização artificial
-  const antiAI = 'not AI generated, not CGI, not 3D render, not plastic skin, not overly smooth, not symmetrical perfection, genuine human, real person, photographic authenticity, natural asymmetry, real body proportions';
+    'snapshot photo, handheld camera, Sony A7III 50mm f/2.2, ISO 1600, natural window light, slight motion blur, authentic grain, real skin subsurface scattering, uneven skin tone, candid unposed moment, amateur photography feel';
+  const imperfections = answers.imperfeicoes || 'visible skin pores, uneven skin pigmentation, natural skin texture, translucent skin with subsurface redness, real human imperfections';
+  // ancoragem fotográfica — força o modelo para espaço fotográfico real
+  const antiAI = 'photograph, photorealistic, real person, film photography, documentary style, subsurface skin scattering, natural skin translucency, authentic human proportions, candid moment';
   // suporte a campos novos e campos legados de presets
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
   const estilo = answers.estilo || answers.estilo_foto || answers.film;
