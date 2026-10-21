@@ -68,6 +68,7 @@ export default function Home() {
 
   const pieRef = useRef<HTMLCanvasElement>(null)
   const barRef = useRef<HTMLCanvasElement>(null)
+  const paretoRef = useRef<HTMLCanvasElement>(null)
 
   const loadData = useCallback(async (m: string) => {
     setLoading(true)
@@ -100,6 +101,7 @@ export default function Home() {
   useEffect(() => {
     if (tab === 'visao') {
       drawPie()
+      drawPareto()
       if (!hist.length) loadHist()
     }
   }, [tab, gastos])
@@ -117,22 +119,124 @@ export default function Home() {
     gastos.forEach(g => { bycat[g.cat] = (bycat[g.cat] || 0) + Number(g.val) })
     const entries = Object.entries(bycat).filter(([, v]) => v > 0)
     const W = canvas.width, H = canvas.height
-    const cx = W/2, cy = H/2, r = Math.min(cx,cy) - 20
+    const cx = W/2, cy = H/2, r = Math.min(cx,cy) - 24
     ctx.clearRect(0,0,W,H)
     if (!entries.length) { ctx.fillStyle='#334155'; ctx.font='13px Inter,system-ui'; ctx.textAlign='center'; ctx.fillText('Sem gastos', cx, cy); return }
     const total = entries.reduce((s,[,v])=>s+v,0)
     let angle = -Math.PI/2
     entries.forEach(([c,v]) => {
       const slice = (v/total)*Math.PI*2
+      // shadow glow
+      ctx.shadowColor = CATS[c]?.color || '#64748b'
+      ctx.shadowBlur = 8
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,angle,angle+slice)
       ctx.fillStyle = CATS[c]?.color || '#64748b'; ctx.fill()
+      ctx.shadowBlur = 0
+      // percentage label on slice if large enough
+      if (slice > 0.3) {
+        const midAngle = angle + slice/2
+        const lx = cx + Math.cos(midAngle) * r * 0.75
+        const ly = cy + Math.sin(midAngle) * r * 0.75
+        ctx.fillStyle = 'rgba(255,255,255,0.9)'
+        ctx.font = 'bold 11px Inter,system-ui'
+        ctx.textAlign = 'center'
+        ctx.fillText(`${(v/total*100).toFixed(0)}%`, lx, ly+4)
+      }
       angle += slice
     })
-    ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,Math.PI*2); ctx.fillStyle='#1e293b'; ctx.fill()
-    ctx.fillStyle='#f1f5f9'; ctx.font='bold 14px Inter,system-ui'; ctx.textAlign='center'
-    ctx.fillText('Total', cx, cy-6)
-    ctx.font='bold 12px Inter,system-ui'; ctx.fillStyle='#94a3b8'
-    ctx.fillText(fmt(total), cx, cy+12)
+    // inner ring
+    ctx.beginPath(); ctx.arc(cx,cy,r*0.54,0,Math.PI*2)
+    const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,r*0.54)
+    grad.addColorStop(0,'#0f172a'); grad.addColorStop(1,'#1e293b')
+    ctx.fillStyle = grad; ctx.fill()
+    // center text
+    ctx.fillStyle='#f1f5f9'; ctx.font='bold 13px Inter,system-ui'; ctx.textAlign='center'
+    ctx.fillText('Total', cx, cy-7)
+    ctx.font='bold 11px Inter,system-ui'; ctx.fillStyle='#94a3b8'
+    ctx.fillText(fmt(total), cx, cy+10)
+  }
+
+  function drawPareto() {
+    const canvas = paretoRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const bycat: Record<string, number> = {}
+    gastos.forEach(g => { bycat[g.cat] = (bycat[g.cat] || 0) + Number(g.val) })
+    const entries = Object.entries(bycat).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1])
+    const W = canvas.width, H = canvas.height
+    ctx.clearRect(0,0,W,H)
+    if (!entries.length) {
+      ctx.fillStyle='#334155'; ctx.font='13px Inter,system-ui'; ctx.textAlign='center'
+      ctx.fillText('Sem dados para o Pareto', W/2, H/2); return
+    }
+    const total = entries.reduce((s,[,v])=>s+v,0)
+    const pad = { top:24, bottom:58, left:10, right:50 }
+    const chartW = W - pad.left - pad.right
+    const chartH = H - pad.top - pad.bottom
+    const bw = chartW / entries.length
+    const maxVal = entries[0][1]
+
+    // grid lines (% axis right side)
+    ;[0,25,50,75,100].forEach(pct => {
+      const yy = pad.top + chartH*(1-pct/100)
+      ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1; ctx.setLineDash([])
+      ctx.beginPath(); ctx.moveTo(pad.left,yy); ctx.lineTo(W-pad.right,yy); ctx.stroke()
+      ctx.fillStyle='#475569'; ctx.font='9px Inter,system-ui'; ctx.textAlign='left'
+      ctx.fillText(`${pct}%`, W-pad.right+4, yy+3)
+    })
+
+    // 80% dashed reference line
+    const y80 = pad.top + chartH*0.2
+    ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(239,68,68,0.45)'; ctx.lineWidth=1
+    ctx.beginPath(); ctx.moveTo(pad.left,y80); ctx.lineTo(W-pad.right,y80); ctx.stroke()
+    ctx.setLineDash([])
+    ctx.fillStyle='rgba(239,68,68,0.7)'; ctx.font='bold 9px Inter,system-ui'; ctx.textAlign='right'
+    ctx.fillText('80%', W-pad.right-2, y80-3)
+
+    // bars
+    entries.forEach(([c,v],i) => {
+      const bh = (v/maxVal)*chartH
+      const x = pad.left + i*bw + 5
+      const y = pad.top + chartH - bh
+      const w = bw - 10
+      const color = CATS[c]?.color || '#6366f1'
+      const grad = ctx.createLinearGradient(0,y,0,pad.top+chartH)
+      grad.addColorStop(0, color)
+      grad.addColorStop(1, color+'44')
+      ctx.fillStyle = grad
+      ctx.beginPath(); ctx.roundRect(x,y,w,bh,[5,5,0,0]); ctx.fill()
+      // value
+      if (v > 0) {
+        ctx.fillStyle='#94a3b8'; ctx.font='bold 9px Inter,system-ui'; ctx.textAlign='center'
+        const vLabel = v >= 1000 ? `${(v/1000).toFixed(1)}k` : Math.round(v).toString()
+        ctx.fillText(vLabel, x+w/2, y-5)
+      }
+      // icon + label
+      ctx.font='14px Inter,system-ui'; ctx.fillStyle='#94a3b8'; ctx.textAlign='center'
+      ctx.fillText(CATS[c]?.icon||'', x+w/2, H-pad.bottom+16)
+      ctx.font='9px Inter,system-ui'; ctx.fillStyle='#475569'
+      const lbl = (CATS[c]?.label||c); ctx.fillText(lbl.slice(0,7), x+w/2, H-pad.bottom+30)
+    })
+
+    // cumulative % line
+    let cumPct = 0
+    ctx.lineWidth=2; ctx.strokeStyle='#f59e0b'
+    const pts: {x:number,y:number,pct:number}[] = []
+    entries.forEach(([,v],i) => {
+      cumPct += v/total*100
+      const x = pad.left + i*bw + bw/2
+      const y = pad.top + chartH*(1-cumPct/100)
+      pts.push({x,y,pct:cumPct})
+    })
+    ctx.beginPath()
+    pts.forEach((p,i) => { if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y) })
+    ctx.stroke()
+    pts.forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fillStyle='#f59e0b'; ctx.fill()
+      ctx.fillStyle='#fbbf24'; ctx.font='bold 10px Inter,system-ui'; ctx.textAlign='center'
+      ctx.fillText(`${p.pct.toFixed(0)}%`, p.x, p.y-9)
+    })
   }
 
   function drawBar() {
@@ -249,30 +353,98 @@ export default function Home() {
   }
 
   function gerarPDF() {
-    const lines = [
-      `RELATÓRIO DE GASTOS — ${mesLabel(mes)}`,
-      `Usuário: ${user?.name} | Gerado em: ${new Date().toLocaleDateString('pt-BR')}`,
-      '',
-      'RESUMO',
-      `Orçamento: ${fmt(orcamento)}`,
-      `Total Gasto: ${fmt(totalGasto)}`,
-      `Saldo: ${fmt(saldo)}`,
-      `Saldo Projetado (c/ previsões): ${fmt(saldoProjetado)}`,
-      '',
-      'CATEGORIAS',
-      ...Object.entries(CATS).map(([k,c]) => {
-        const v = gastos.filter(g=>g.cat===k).reduce((s,g)=>s+Number(g.val),0)
-        return v > 0 ? `  ${c.icon} ${c.label}: ${fmt(v)}` : null
-      }).filter(Boolean) as string[],
-      '',
-      'LANÇAMENTOS',
-      ...gastosFiltered.map(g => `  ${g.data||''} | ${CATS[g.cat]?.icon||''} ${CATS[g.cat]?.label||g.cat} | ${g.descricao} | ${fmt(Number(g.val))}`),
-    ]
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `relatorio-${mes.replace('/','-')}.txt`
-    a.click()
+    const win = window.open('', '_blank', 'width=900,height=700')
+    if (!win) return
+    const catRows = Object.entries(CATS).map(([k,c]) => {
+      const v = gastos.filter(g=>g.cat===k).reduce((s,g)=>s+Number(g.val),0)
+      if (!v) return ''
+      const pct2 = totalGasto > 0 ? (v/totalGasto*100).toFixed(1) : '0'
+      return `<tr><td>${c.icon} ${c.label}</td><td style="text-align:right;font-weight:700;color:#1e293b">${fmt(v)}</td><td style="text-align:right;color:#64748b">${pct2}%</td></tr>`
+    }).join('')
+    const gastoRows = gastosFiltered.map(g =>
+      `<tr><td>${g.data ? new Date(g.data+'T00:00:00').toLocaleDateString('pt-BR') : '—'}</td><td>${CATS[g.cat]?.icon||''} ${CATS[g.cat]?.label||g.cat}</td><td>${g.descricao}</td><td style="text-align:right;font-weight:700">${fmt(Number(g.val))}</td></tr>`
+    ).join('')
+    const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Relatório ${mesLabel(mes)}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', Arial, sans-serif; color: #1e293b; background: #f8fafc; }
+    .page { max-width: 820px; margin: 0 auto; padding: 48px 40px; background: #fff; min-height: 100vh; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; padding-bottom: 24px; border-bottom: 3px solid #6366f1; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg,#6366f1,#8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .logo-text h1 { font-size: 18px; font-weight: 800; color: #1e293b; }
+    .logo-text p { font-size: 12px; color: #94a3b8; }
+    .header-meta { text-align: right; font-size: 12px; color: #94a3b8; line-height: 1.6; }
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+    .summary-box { border-radius: 12px; padding: 20px; border-left: 4px solid; }
+    .summary-box .lbl { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+    .summary-box .val { font-size: 22px; font-weight: 800; margin-top: 6px; }
+    h2 { font-size: 15px; font-weight: 700; color: #374151; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px; }
+    .section { margin-bottom: 32px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead { background: #f8fafc; }
+    th { padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; font-weight: 600; border-bottom: 2px solid #f1f5f9; }
+    td { padding: 10px 12px; border-bottom: 1px solid #f8fafc; }
+    tr:last-child td { border-bottom: none; }
+    .print-btn { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #6366f1; border: none; color: #fff; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    @media print { .print-btn { display: none; } body { background: #fff; } .page { padding: 24px; } }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar PDF</button>
+  <div class="page">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">🏠</div>
+        <div class="logo-text"><h1>Controle Casa</h1><p>Gestão de Gastos Domésticos</p></div>
+      </div>
+      <div class="header-meta">
+        <div>${mesLabel(mes)}</div>
+        <div>Usuário: ${user?.name}</div>
+        <div>Gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-box" style="background:#fef2f2;border-color:#ef4444">
+        <div class="lbl">Total Gasto</div>
+        <div class="val" style="color:#ef4444">${fmt(totalGasto)}</div>
+      </div>
+      <div class="summary-box" style="background:#f0f9ff;border-color:#6366f1">
+        <div class="lbl">Orçamento</div>
+        <div class="val" style="color:#6366f1">${fmt(orcamento)}</div>
+      </div>
+      <div class="summary-box" style="background:${saldo>=0?'#f0fdf4':'#fef2f2'};border-color:${saldo>=0?'#10b981':'#ef4444'}">
+        <div class="lbl">Saldo</div>
+        <div class="val" style="color:${saldo>=0?'#10b981':'#ef4444'}">${fmt(saldo)}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📊 Por Categoria</h2>
+      <table>
+        <thead><tr><th>Categoria</th><th style="text-align:right">Valor</th><th style="text-align:right">%</th></tr></thead>
+        <tbody>${catRows}</tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>📋 Lançamentos — ${gastosFiltered.length} item${gastosFiltered.length!==1?'s':''}</h2>
+      <table>
+        <thead><tr><th>Data</th><th>Categoria</th><th>Descrição</th><th style="text-align:right">Valor</th></tr></thead>
+        <tbody>${gastoRows}</tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`
+    win.document.write(html)
+    win.document.close()
   }
 
   const totalGasto = gastos.reduce((s,g) => s + Number(g.val), 0)
@@ -514,7 +686,7 @@ export default function Home() {
         {/* actions */}
         <div className="top-actions">
           <button className="btn-orc" onClick={() => { setOrcInput(String(orcamento)); setShowOrc(true) }}>🎯 Orçamento</button>
-          <button className="btn-pdf" onClick={gerarPDF}>📄 Relatório TXT</button>
+          <button className="btn-pdf" onClick={gerarPDF}>📄 Exportar PDF</button>
           <button className="btn-csv" onClick={exportCSV}>📊 Exportar CSV</button>
         </div>
 
@@ -712,9 +884,22 @@ export default function Home() {
               </div>
             </div>
 
+            {/* pareto chart */}
+            <div className="panel">
+              <div className="panel-title">📊 Gráfico de Pareto — Por Categoria</div>
+              <div style={{ display:'flex', justifyContent:'center', marginBottom:8 }}>
+                <canvas ref={paretoRef} width={640} height={240} style={{ maxWidth:'100%' }} />
+              </div>
+              <div style={{ display:'flex', alignItems:'center', gap:16, fontSize:11, color:'#475569', flexWrap:'wrap', justifyContent:'center' }}>
+                <span style={{ display:'flex', alignItems:'center', gap:5 }}><span style={{ width:12, height:3, background:'#f59e0b', display:'inline-block', borderRadius:2 }} />Linha acumulada</span>
+                <span style={{ display:'flex', alignItems:'center', gap:5 }}><span style={{ width:12, height:2, borderTop:'2px dashed rgba(239,68,68,0.5)', display:'inline-block' }} />80% referência</span>
+                <span style={{ color:'#64748b' }}>Barras ordenadas por valor decrescente</span>
+              </div>
+            </div>
+
             {/* bar chart - 6 months */}
             <div className="panel">
-              <div className="panel-title">📊 Histórico — Últimos 6 Meses</div>
+              <div className="panel-title">📈 Histórico — Últimos 6 Meses</div>
               {hist.length === 0 ? (
                 <div className="empty-state">Carregando histórico...</div>
               ) : (
