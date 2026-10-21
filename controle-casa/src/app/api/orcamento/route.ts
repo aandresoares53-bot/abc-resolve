@@ -3,11 +3,20 @@ import { getSession } from '@/lib/auth'
 import { sql, setupDb } from '@/lib/db'
 
 export async function GET() {
-  const session = await getSession()
-  if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-  await setupDb()
-  const rows = await sql`SELECT orcamento FROM cc_config WHERE user_id = ${session.id}` as any[]
-  return NextResponse.json({ orcamento: rows[0]?.orcamento || 0 })
+  try {
+    const session = await getSession()
+    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    try {
+      const rows = await sql`SELECT orcamento FROM cc_config WHERE user_id = ${session.id}` as any[]
+      return NextResponse.json({ orcamento: Number(rows[0]?.orcamento) || 0 })
+    } catch {
+      // Table might not exist yet or missing columns — return 0 gracefully
+      return NextResponse.json({ orcamento: 0 })
+    }
+  } catch (e) {
+    console.error('GET /api/orcamento error:', e)
+    return NextResponse.json({ orcamento: 0 })
+  }
 }
 
 export async function POST(req: NextRequest) {
