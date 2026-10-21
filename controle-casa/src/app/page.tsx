@@ -316,9 +316,17 @@ export default function Home() {
   async function saveOrcamento() {
     const v = parseFloat(orcInput.replace(',', '.'))
     if (isNaN(v) || v < 0) return
-    const res = await fetch('/api/orcamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orcamento: v }) })
-    const data = await res.json()
-    setOrcamento(data.orcamento ?? v)
+    try {
+      const res = await fetch('/api/orcamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orcamento: v }) })
+      if (res.ok) {
+        const data = await res.json()
+        setOrcamento(Number(data.orcamento) || v)
+      } else {
+        setOrcamento(v)
+      }
+    } catch {
+      setOrcamento(v)
+    }
     setShowOrc(false)
   }
 
