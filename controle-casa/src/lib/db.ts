@@ -60,6 +60,7 @@ export async function setupDb() {
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
   `
+  await sql`ALTER TABLE cc_config ADD COLUMN IF NOT EXISTS user_id INT REFERENCES cc_users(id) ON DELETE CASCADE`
   await sql`ALTER TABLE cc_config ADD COLUMN IF NOT EXISTS orcamento NUMERIC(10,2) DEFAULT 0`
   await sql`CREATE UNIQUE INDEX IF NOT EXISTS cc_config_user_id_idx ON cc_config (user_id)`
 }
