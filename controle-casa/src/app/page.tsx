@@ -314,10 +314,12 @@ export default function Home() {
   }
 
   async function saveOrcamento() {
-    const v = parseFloat(orcInput)
-    if (isNaN(v)) return
-    await fetch('/api/orcamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orcamento: v }) })
-    setOrcamento(v); setShowOrc(false)
+    const v = parseFloat(orcInput.replace(',', '.'))
+    if (isNaN(v) || v < 0) return
+    const res = await fetch('/api/orcamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orcamento: v }) })
+    const data = await res.json()
+    setOrcamento(data.orcamento ?? v)
+    setShowOrc(false)
   }
 
   async function addPrevisao() {

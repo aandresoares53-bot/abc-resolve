@@ -14,10 +14,23 @@ export async function POST(req: NextRequest) {
   const session = await getSession()
   if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   await setupDb()
-  const { orcamento } = await req.json()
-  await sql`
-    INSERT INTO cc_config (user_id, orcamento) VALUES (${session.id}, ${orcamento})
-    ON CONFLICT (user_id) DO UPDATE SET orcamento = ${orcamento}, updated_at = NOW()
-  `
-  return NextResponse.json({ ok: true })
+  const body = await req.json()
+  const orcamento = Number(body.orcamento)
+  if (isNaN(orcamento)) return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
+  // ensure unique constraint exists
+  await sql`ALTER TABLE cc_config ADD COLUMN IF NOT EXISTS orcamento NUMERIC(10,2) DEFAULT 0`
+  try {
+    await sql`
+      INSERT INTO cc_config (user_id, orcamento) VALUES (${session.id}, ${orcamento})
+      ON CONFLICT (user_id) DO UPDATE SET orcamento = ${orcamento}, updated_at = NOW()
+    `
+  } catch {
+    // fallback: try direct update then insert
+    const updated = await sql`UPDATE cc_config SET orcamento = ${orcamento}, updated_at = NOW() WHERE user_id = ${session.id}` as any[]
+    if (!updated.length) {
+      await sql`INSERT INTO cc_config (user_id, orcamento) VALUES (${session.id}, ${orcamento})`
+    }
+  }
+  const rows = await sql`SELECT orcamento FROM cc_config WHERE user_id = ${session.id}` as any[]
+  return NextResponse.json({ ok: true, orcamento: rows[0]?.orcamento || 0 })
 }
