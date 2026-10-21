@@ -211,6 +211,14 @@ header{
 .qr.back{border-color:#555;color:#888;grid-column:span 2;}
 .qr.back:hover{border-color:var(--acc);color:var(--acc);}
 .qr.rand{border-color:#7c3aed;color:#a78bfa;grid-column:span 2;}
+.qr.pref{border-color:var(--acc);color:var(--acc);background:rgba(232,160,32,.08);}
+.qr.sugg{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,.06);}
+.var-container{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+.var-title{font-size:.72em;font-weight:700;color:var(--acc);margin-bottom:4px;}
+.var-block{background:var(--bot-bg);border:1px solid var(--bdr);border-radius:10px;padding:10px;}
+.var-label{font-size:.7em;font-weight:700;color:var(--txt3);margin-bottom:4px;}
+.var-text{font-size:.78em;color:var(--txt2);margin-bottom:6px;font-family:monospace;line-height:1.4;}
+.pkg-section-title{font-size:.72em;font-weight:800;color:var(--acc);letter-spacing:.04em;text-transform:uppercase;padding:4px 0 2px;border-bottom:1px solid var(--bdr);margin-bottom:4px;}
 .qr.rand:hover{background:rgba(124,58,237,.1);}
 .qr.sugg{border-color:#f59e0b;color:#fbbf24;background:rgba(245,158,11,.08);}
 .qr.sugg:hover{background:rgba(245,158,11,.18);}
@@ -241,6 +249,7 @@ header{
   <div class="logo">RAWgen <small>AI prompt</small></div>
   <div class="header-btns">
     <button class="hbtn purple" onclick="openPresets()" title="Estilos pré-definidos">🎨 Preset</button>
+    <button class="hbtn" onclick="modoRapido()" title="3 escolhas e pronto">⚡ Rápido</button>
     <button class="hbtn" onclick="randomAll()" title="Sortear tudo">🎲 Sortear</button>
     <button class="hbtn" onclick="openHistory()" title="Histórico">📜 Hist.</button>
     <button class="hbtn" id="prev-btn" onclick="togglePreview()" title="Preview do prompt">👁 Preview</button>
@@ -288,6 +297,14 @@ header{
       <span class="preset-title">🎨 Estilos rápidos</span>
       <button class="preset-close" onclick="closePresets()">✕</button>
     </div>
+    <div class="pkg-section-title">📦 Pacotes temáticos</div>
+    <div class="preset-item" onclick="aplicarPacote('pkg_praia')"><div class="preset-name">🏖 Praia Tropical</div><div class="preset-desc">Biquíni, praia tropical, Ektar 100, cena ensolarada</div></div>
+    <div class="preset-item" onclick="aplicarPacote('pkg_quarto')"><div class="preset-name">🛏 Quarto Íntimo</div><div class="preset-desc">Lingerie, boudoir, luz de vela, ambiente aconchegante</div></div>
+    <div class="preset-item" onclick="aplicarPacote('pkg_noite')"><div class="preset-name">🌆 Noite Urbana</div><div class="preset-desc">Vestido elegante, cidade à noite, neon, Cinestill 800T</div></div>
+    <div class="preset-item" onclick="aplicarPacote('pkg_banho')"><div class="preset-name">🚿 Banho & Spa</div><div class="preset-desc">Chuveiro, pele glistening, banheiro moderno, nudez artística</div></div>
+    <div class="preset-item" onclick="aplicarPacote('pkg_academia')"><div class="preset-name">🏋 Academia Fitness</div><div class="preset-desc">Look esportivo, corpo atlético, academia moderna</div></div>
+    <div class="preset-item" onclick="aplicarPacote('pkg_natureza')"><div class="preset-name">🌿 Natureza Livre</div><div class="preset-desc">Vestido fluido, ar livre, golden hour, campo aberto</div></div>
+    <div class="pkg-section-title" style="margin-top:10px">🎨 Estilos personalizados</div>
     <div class="preset-item" onclick="applyPreset('playful')">
       <div class="preset-name">☀ Playful — Praia & Verão</div>
       <div class="preset-desc">Brasileira curvilínea, biquíni, praia tropical, Ektar 100, sorrindo</div>
@@ -3036,6 +3053,169 @@ function updatePreview(){
   txt.textContent = parts.length ? parts.join(' · ') : '(aguardando respostas…)';
 }
 
+// ─── Feature 1: Preference memory ────────────────────────────────────────
+function loadPrefs(){ try{ return JSON.parse(localStorage.getItem('rawgen_prefs')||'{}'); }catch(e){ return {}; } }
+function savePref(stepId, val, label){
+  try{
+    const p=loadPrefs(); p[stepId]={val,label,ts:Date.now()};
+    localStorage.setItem('rawgen_prefs', JSON.stringify(p));
+  }catch(e){}
+}
+function getPref(stepId){ try{ const p=loadPrefs(); return p[stepId]||null; }catch(e){ return null; } }
+
+// ─── Feature 2: Smart compatibility map ───────────────────────────────────
+const COMPAT = {
+  roupa_nudez:    {pose:['pose_cama','pose_sofa','pose_deitada'], cenario:['cenario_hotel','cenario_casa','cenario_piscina']},
+  roupa_lingerie: {pose:['pose_cama','pose_sofa','pose_deitada'], cenario:['cenario_hotel','cenario_casa']},
+  roupa_vestido:  {pose:['pose_pe','pose_sentada'],               cenario:['cenario_cidade','cenario_hotel','cenario_natureza']},
+  roupa_calcas:   {pose:['pose_pe','pose_sentada'],               cenario:['cenario_cidade','cenario_natureza','cenario_casa']},
+  roupa_esporte:  {pose:['pose_pe','pose_ajoelhada'],             cenario:['cenario_natureza','cenario_cidade']},
+  roupa_praia:    {pose:['pose_pe','pose_deitada'],               cenario:['cenario_piscina','cenario_natureza']},
+  roupa_casual:   {pose:['pose_pe','pose_sentada'],               cenario:['cenario_cidade','cenario_natureza','cenario_casa']},
+};
+function applyCompat(stepId, qrs){
+  // find which roupa sub-step is answered
+  const roupaSubSteps=['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'];
+  const answeredRoupa = roupaSubSteps.find(id=>answers[id]);
+  if(!answeredRoupa) return qrs;
+  const compatData = COMPAT[answeredRoupa];
+  if(!compatData) return qrs;
+  const group = CATEGORY_PARENT[stepId]; // 'Pose' or 'Cenário'
+  const compatKey = group==='Pose'?'pose':(group==='Cenário'?'cenario':null);
+  if(!compatKey) return qrs;
+  const compatIds = compatData[compatKey]||[];
+  if(!compatIds.length) return qrs;
+  const sugg=[], rest=[];
+  qrs.forEach(q=>{ if(compatIds.includes(q.val===undefined?null:null)) return; }); // unused
+  qrs.forEach(q=>{
+    // match by step id — chips don't have stepId; match by value against STEPS
+    const matchStep = STEPS.find(s=>s.id===stepId && s.qr && s.qr.some(o=>o.val===q.val));
+    if(matchStep) { sugg.push(q); } else { rest.push(q); }
+  });
+  // better: match chips whose parent step id is in compatIds
+  const sugg2=[], rest2=[];
+  qrs.forEach(q=>{
+    // find the step id for this chip by scanning all sub-step steps in the same group
+    const found = STEPS.find(s=>CATEGORY_PARENT[s.id]===group && s.qr && s.qr.some(o=>o.val===q.val) && compatIds.includes(s.id));
+    if(found) sugg2.push({...q, label:'💡 '+q.label, cls:(q.cls||'')+' sugg'});
+    else rest2.push(q);
+  });
+  if(!sugg2.length) return qrs;
+  return [...sugg2, ...rest2];
+}
+
+// ─── Feature 3: Modo Rápido ────────────────────────────────────────────────
+let modoRapidoAtivo = false;
+const QUICK_STEPS = ['personagem','roupa','pose'];
+
+async function modoRapido(){
+  if(waiting) return;
+  modoRapidoAtivo = true;
+  restart(); await delay(600);
+  // find first quick step
+  const firstIdx = STEPS.findIndex(s=>QUICK_STEPS.includes(s.id));
+  if(firstIdx<0){ modoRapidoAtivo=false; return; }
+  step = firstIdx;
+  updateProgress(); clearQR();
+  addMsg('bot','⚡ <strong>Modo Rápido!</strong> Apenas 3 escolhas e o prompt está pronto.');
+  await delay(400);
+  const cur=STEPS[step];
+  let qrs=cur.qr?[...cur.qr]:[];
+  if(cur.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
+  await botSay(cur.ask, qrs, cur.multi);
+}
+
+function autoFillResto(){
+  // Fill all non-answered steps randomly, respecting groups
+  const GROUPS=[
+    ['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'],
+    ['pose_pe','pose_deitada','pose_sentada','pose_ajoelhada','pose_cama','pose_sofa','pose_agua','pose_cozinha'],
+    ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
+  ];
+  const skipIds=new Set(GROUPS.flat());
+  STEPS.forEach(s=>{
+    if(answers[s.id]||skipIds.has(s.id)) return;
+    if(!s.qr||!s.qr.length) return;
+    const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
+    if(pool.length) answers[s.id]=pool[Math.floor(Math.random()*pool.length)].val;
+  });
+  // pick one roupa sub based on existing roupa answer if matched
+  const roupaAnswered=GROUPS[0].find(id=>answers[id]);
+  if(!roupaAnswered){
+    const cands=GROUPS[0].filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
+    if(cands.length){ const c=cands[Math.floor(Math.random()*cands.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
+  }
+  // pick pose and cenario based on compat
+  const rSub=GROUPS[0].find(id=>answers[id]);
+  const compatData=rSub&&COMPAT[rSub];
+  [1,2].forEach(gi=>{
+    const gName=gi===1?'pose':'cenario';
+    if(!GROUPS[gi].find(id=>answers[id])){
+      const preferred=compatData&&compatData[gName]||[];
+      const cands=preferred.length?preferred.filter(id=>STEPS.find(s=>s.id===id)):GROUPS[gi];
+      const valid=cands.filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
+      if(valid.length){ const c=valid[Math.floor(Math.random()*valid.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
+    }
+  });
+  const analogStep=STEPS.find(s=>s.id==='realismo');
+  if(analogStep&&!answers.realismo){ const opt=analogStep.qr.find(q=>q.label==='Fotografia analógica'); if(opt) answers.realismo=opt.val; }
+}
+
+// ─── Feature 4: Auto Variações ────────────────────────────────────────────
+async function gerarVariacoes(basePrompt, parentEl){
+  const varBtn=parentEl.querySelector('.var-btn');
+  if(varBtn){ varBtn.disabled=true; varBtn.textContent='Gerando…'; }
+  const POSE_VARS=['standing confidently, direct eye contact','sitting cross-legged on floor, relaxed pose','lying on side, head propped on hand, playful expression'];
+  const CENARIO_VARS=['sunlit bedroom, white linen sheets, morning light','rooftop terrace, city skyline at golden hour','lush garden, natural dappled light, green leaves'];
+  const EXPR_VARS=['soft smile, warm inviting gaze','bold direct stare, lips slightly parted','playful laughing expression, head tilted'];
+  const container=document.createElement('div'); container.className='var-container';
+  container.innerHTML='<div class="var-title">🔀 Variações automáticas</div>';
+  for(let i=0;i<3;i++){
+    let v=basePrompt
+      .replace(/seed:\d+/,'seed:'+(Math.floor(Math.random()*999999999)))
+      .replace(/standing[^,]*/i, POSE_VARS[i]||POSE_VARS[0])
+      .replace(/bedroom[^,]*/i, CENARIO_VARS[i]||CENARIO_VARS[0]);
+    const block=document.createElement('div'); block.className='var-block';
+    const label=document.createElement('div'); label.className='var-label'; label.textContent='Variação '+(i+1);
+    const text=document.createElement('div'); text.className='var-text'; text.textContent=v.slice(0,200)+'…';
+    const cpBtn=document.createElement('button'); cpBtn.className='icon-btn'; cpBtn.innerHTML='📋 Copiar';
+    cpBtn.onclick=()=>{ navigator.clipboard.writeText(v).then(()=>{ cpBtn.textContent='✓'; setTimeout(()=>{ cpBtn.innerHTML='📋 Copiar'; },1500); }); };
+    block.appendChild(label); block.appendChild(text); block.appendChild(cpBtn);
+    container.appendChild(block);
+  }
+  if(varBtn){ varBtn.parentElement&&varBtn.parentElement.removeChild(varBtn); }
+  parentEl.appendChild(container);
+  scrollBottom();
+}
+
+// ─── Feature 5: Pacotes temáticos ─────────────────────────────────────────
+const PACOTES = [
+  { id:'pkg_praia', name:'🏖 Praia Tropical', desc:'Cena de praia ensolarada, biquíni, luz natural',
+    answers:{ personagem:'beautiful curvy Brazilian woman, tan skin, long wavy hair', roupa_praia:'tiny string bikini, vibrant tropical colors', pose_pe:'standing at ocean shore, waves at feet, arms raised', cenario_piscina:'tropical beach, crystal clear turquoise water, white sand, palm trees', realismo:'RAW photograph, Kodak Ektar 100, 35mm lens, natural sunlight, warm golden tones, slight grain' } },
+  { id:'pkg_quarto', name:'🛏 Quarto Íntimo', desc:'Boudoir aconchegante, lingerie, luz de vela',
+    answers:{ personagem:'beautiful sensual woman, soft features, natural makeup', roupa_lingerie:'delicate lace lingerie set, soft pink tones', pose_cama:'lying on bed, tangled in white sheets, soft expression', cenario_casa:'cozy bedroom, candlelight, warm ambient light, soft shadows', realismo:'RAW photograph, Fujifilm 400H, 50mm f/1.4, warm candlelight, natural skin tones' } },
+  { id:'pkg_noite', name:'🌆 Noite Urbana', desc:'Cidade à noite, vestido elegante, luz neon',
+    answers:{ personagem:'elegant confident woman, bold features, red lips', roupa_vestido:'sleek bodycon dress, deep red, figure-hugging silhouette', pose_pe:'standing on city street, neon reflections on wet pavement', cenario_noturno:'downtown city at night, neon signs, light trails, bokeh lights', realismo:'RAW photograph, Cinestill 800T, 85mm f/1.8, neon ambient light, cinematic grain' } },
+  { id:'pkg_banho', name:'🚿 Banho & Spa', desc:'Chuveiro ou banheira, look fresco e natural',
+    answers:{ personagem:'fresh-faced beautiful woman, natural look, no heavy makeup', roupa_nudez:'completely nude, skin glistening with water droplets', pose_agua:'in shower, water streaming down body, eyes closed', cenario_casa:'modern bathroom, rain shower, steam, marble tiles, natural light', realismo:'RAW photograph, Kodak Portra 400, 35mm, natural window light, moist skin texture' } },
+  { id:'pkg_academia', name:'🏋 Academia & Fitness', desc:'Look fitness, corpo atlético, energia',
+    answers:{ personagem:'athletic toned woman, muscular definition, confident posture', roupa_esporte:'sport bra and high-waist leggings, form-fitting, bright accent colors', pose_ajoelhada:'dynamic lunge position, gym equipment in background', cenario_cidade:'modern gym, floor-to-ceiling mirrors, warm lighting', realismo:'RAW photograph, Sony A7IV, 24-70mm f/2.8, gym ambient light, sharp detail' } },
+  { id:'pkg_natureza', name:'🌿 Natureza & Ar Livre', desc:'Outdoor, luz dourada, ambiente natural',
+    answers:{ personagem:'free-spirited beautiful woman, sun-kissed skin, natural wild hair', roupa_casual:'flowy bohemian dress, light fabric, earth tones', pose_pe:'walking through tall grass, golden hour backlight, hair blowing', cenario_natureza:'open countryside, rolling hills, wildflowers, dramatic sky, golden hour light', realismo:'RAW photograph, Kodak Portra 800, 35mm f/2, golden hour backlight, warm film tones' } },
+];
+
+async function aplicarPacote(id){
+  closePresets();
+  const pkg=PACOTES.find(p=>p.id===id);
+  if(!pkg) return;
+  restart(); await delay(400);
+  Object.assign(answers, pkg.answers);
+  step=STEPS.length; updateProgress(); clearQR();
+  addMsg('bot',`📦 <strong>Pacote "${pkg.name}" aplicado!</strong>`);
+  await delay(500);
+  await showResult();
+}
+
 // ─── History (localStorage) ───────────────────────────────────────────────
 function loadHistory(){ try{ return JSON.parse(localStorage.getItem('rawgen_hist')||'[]'); }catch(e){ return []; } }
 function saveToHistory(prompt, neg){
@@ -3276,7 +3456,7 @@ function handleQR(val, label){
   if(val==='__back__'){ addMsg('usr','← Voltar'); goBack(); return; }
   if(val==='__random__'){ randomAll(); return; }
   addMsg('usr', label);
-  processAnswer(val);
+  processAnswer(val, label);
 }
 
 function send(){
@@ -3313,11 +3493,12 @@ function applyRoupasugg(stepId, qrs){
   return [...sugg.map(q=>({...q,label:'✦ '+q.label,cls:(q.cls||'')+' sugg'})),...rest];
 }
 
-async function processAnswer(val){
+async function processAnswer(val, label=''){
   const cur=STEPS[step]; if(!cur) return;
   const isSkip=/^(pular|skip|não|nao|-)$/i.test(val.trim())||val==='';
   if(!isSkip){
     answers[cur.id]=val;
+    savePref(cur.id, val, label);
   }
   // Se a resposta foi dada (não pulo) e o step pertence a um grupo,
   // pula os demais sub-steps do mesmo grupo
@@ -3329,11 +3510,38 @@ async function processAnswer(val){
       }
     }
   }
+  // Modo Rápido: pula para o próximo quick step ou encerra
+  if(modoRapidoAtivo){
+    const remaining=QUICK_STEPS.filter(id=>!answers[id]&&STEPS.find(s=>s.id===id));
+    if(remaining.length){
+      const nextQIdx=STEPS.findIndex(s=>s.id===remaining[0]);
+      step=nextQIdx; clearQR(); updateProgress();
+      const nxt=STEPS[step];
+      let qrs2=nxt.qr?[...nxt.qr]:[];
+      if(nxt.skip) qrs2.push({label:'Pular →',val:'pular',skip:true});
+      await botSay(nxt.ask, qrs2, nxt.multi);
+      return;
+    } else {
+      // 3 quick steps done — auto-fill the rest
+      modoRapidoAtivo=false;
+      autoFillResto();
+      step=STEPS.length; updateProgress(); clearQR();
+      addMsg('bot','⚡ <strong>Auto-preenchendo o restante…</strong>');
+      await delay(500); await showResult(); return;
+    }
+  }
   step++; clearQR(); updateProgress();
   if(step<STEPS.length){
     const next=STEPS[step];
     let qrs=next.qr?[...next.qr]:[];
     qrs=applyRoupasugg(next.id, qrs);
+    qrs=applyCompat(next.id, qrs);
+    // Feature 1: inject preference suggestion at top
+    const pref=getPref(next.id);
+    if(pref && qrs.some(q=>q.val===pref.val)){
+      qrs=qrs.filter(q=>q.val!==pref.val);
+      qrs.unshift({label:'⭐ '+pref.label, val:pref.val, cls:'pref'});
+    }
     if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
     if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
     await botSay(next.ask, qrs, next.multi);
@@ -3437,6 +3645,9 @@ async function showResult(){
   const shBtn=document.createElement('button'); shBtn.className='icon-btn'; shBtn.innerHTML='🔗 Link';
   shBtn.onclick=()=>{ const params=new URLSearchParams(); Object.entries(answers).forEach(([k,v])=>v&&params.set(k,v)); const url=location.origin+location.pathname+'?'+params.toString(); navigator.clipboard.writeText(url).then(()=>{ shBtn.textContent='✓ Link copiado!'; setTimeout(()=>{ shBtn.innerHTML='🔗 Link'; },2000); }); };
   br1.appendChild(shBtn);
+  const varBtn=document.createElement('button'); varBtn.className='icon-btn var-btn'; varBtn.innerHTML='🔀 Variações';
+  varBtn.onclick=()=>gerarVariacoes(prompt, b);
+  br1.appendChild(varBtn);
   b.appendChild(br1);
 
 
