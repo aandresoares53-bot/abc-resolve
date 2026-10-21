@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     try { await sql`ALTER TABLE cc_config ALTER COLUMN chave SET DEFAULT ''` } catch {}
 
     // Check if row exists for this user
-    const existing = await sql`SELECT id FROM cc_config WHERE user_id = ${session.id}` as any[]
+    const existing = await sql`SELECT 1 FROM cc_config WHERE user_id = ${session.id} LIMIT 1` as any[]
 
     if (existing.length > 0) {
       // Row exists — just update
