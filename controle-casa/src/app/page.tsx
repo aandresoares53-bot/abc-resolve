@@ -318,13 +318,15 @@ export default function Home() {
     if (isNaN(v) || v < 0) return
     try {
       const res = await fetch('/api/orcamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orcamento: v }) })
+      const data = await res.json()
       if (res.ok) {
-        const data = await res.json()
         setOrcamento(Number(data.orcamento) || v)
       } else {
+        alert('Erro ao salvar orçamento: ' + (data.error || res.status))
         setOrcamento(v)
       }
-    } catch {
+    } catch (e) {
+      alert('Erro de conexão: ' + e)
       setOrcamento(v)
     }
     setShowOrc(false)
