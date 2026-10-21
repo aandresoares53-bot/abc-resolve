@@ -3148,11 +3148,10 @@ function autoFillResto(){
     ['pose_pe','pose_deitada','pose_sentada','pose_ajoelhada','pose_cama','pose_sofa','pose_agua','pose_cozinha'],
     ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
   ];
-  // fantasia é mutuamente exclusivo com roupa/nudez
+  // fantasia é mutuamente exclusivo com roupa/nudez — sempre excluir do loop geral
   const roupaJaDefinida = ROUPA_IDS.some(id=>answers[id]);
   const fantasiaJaDefinida = !!answers['fantasia'];
-  const skipIds=new Set(GROUPS.flat());
-  if(roupaJaDefinida || fantasiaJaDefinida) skipIds.add('fantasia');
+  const skipIds=new Set([...GROUPS.flat(), 'fantasia']); // fantasia sempre fora do loop geral
   STEPS.forEach(s=>{
     if(answers[s.id]||skipIds.has(s.id)) return;
     if(!s.qr||!s.qr.length) return;
@@ -3161,7 +3160,7 @@ function autoFillResto(){
   });
   // pick one roupa sub based on existing roupa answer if matched
   const roupaAnswered=GROUPS[0].find(id=>answers[id]);
-  if(!roupaAnswered && !answers['fantasia']){
+  if(!roupaAnswered && !fantasiaJaDefinida){
     const cands=GROUPS[0].filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
     if(cands.length){ const c=cands[Math.floor(Math.random()*cands.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
   }
@@ -3788,10 +3787,12 @@ async function randomAll(){
     ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
   ];
   const skipIds = new Set(GROUPS.flat());
-  // fantasia é mutuamente exclusivo com roupa/nudez — adiciona ao skip se já existe roupa
+  // fantasia sempre excluída do loop genérico — tratada explicitamente no bloco final
+  skipIds.add('fantasia');
   const temRoupa2 = ROUPA_IDS2.some(id=>answers[id]);
   const temFantasia2 = !!answers['fantasia'];
-  if(temRoupa2 || temFantasia2) skipIds.add('fantasia');
+  // Se já tem fantasia mas não roupa, limpa fantasia para o bloco final decidir aleatoriamente
+  if(temFantasia2 && !temRoupa2){ delete answers['fantasia']; }
 
   // Sorteia steps normais (fora dos grupos)
   for(let i=0;i<STEPS.length;i++){
