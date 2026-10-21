@@ -3142,12 +3142,17 @@ async function modoRapido(){
 
 function autoFillResto(){
   // Fill all non-answered steps randomly, respecting groups
+  const ROUPA_IDS=['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'];
   const GROUPS=[
-    ['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'],
+    ROUPA_IDS,
     ['pose_pe','pose_deitada','pose_sentada','pose_ajoelhada','pose_cama','pose_sofa','pose_agua','pose_cozinha'],
     ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
   ];
+  // fantasia é mutuamente exclusivo com roupa/nudez
+  const roupaJaDefinida = ROUPA_IDS.some(id=>answers[id]);
+  const fantasiaJaDefinida = !!answers['fantasia'];
   const skipIds=new Set(GROUPS.flat());
+  if(roupaJaDefinida || fantasiaJaDefinida) skipIds.add('fantasia');
   STEPS.forEach(s=>{
     if(answers[s.id]||skipIds.has(s.id)) return;
     if(!s.qr||!s.qr.length) return;
@@ -3156,7 +3161,7 @@ function autoFillResto(){
   });
   // pick one roupa sub based on existing roupa answer if matched
   const roupaAnswered=GROUPS[0].find(id=>answers[id]);
-  if(!roupaAnswered){
+  if(!roupaAnswered && !answers['fantasia']){
     const cands=GROUPS[0].filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
     if(cands.length){ const c=cands[Math.floor(Math.random()*cands.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
   }
@@ -3776,12 +3781,17 @@ async function randomAll(){
   restart(); await delay(800);
 
   // Grupos exclusivos: sorteia apenas UM sub-step de cada grupo
+  const ROUPA_IDS2 = ['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'];
   const GROUPS = [
-    ['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'],
+    ROUPA_IDS2,
     ['pose_pe','pose_deitada','pose_sentada','pose_ajoelhada','pose_cama','pose_sofa','pose_agua','pose_cozinha'],
     ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
   ];
   const skipIds = new Set(GROUPS.flat());
+  // fantasia é mutuamente exclusivo com roupa/nudez — adiciona ao skip se já existe roupa
+  const temRoupa2 = ROUPA_IDS2.some(id=>answers[id]);
+  const temFantasia2 = !!answers['fantasia'];
+  if(temRoupa2 || temFantasia2) skipIds.add('fantasia');
 
   // Sorteia steps normais (fora dos grupos)
   for(let i=0;i<STEPS.length;i++){
@@ -3794,7 +3804,12 @@ async function randomAll(){
   }
 
   // Para cada grupo, sorteia apenas UM sub-step e UMA opção dele
+  // Se roupa já definida, pula o grupo de roupas; se fantasia já definida, idem
   for(const group of GROUPS){
+    // Skip roupa group if fantasia already answered, and vice-versa
+    if(group === ROUPA_IDS2 && (temFantasia2 || answers['fantasia'])) continue;
+    // Skip group if any member already answered
+    if(group.some(id=>answers[id])) continue;
     const candidates = group.filter(id=>{
       const s=STEPS.find(s=>s.id===id);
       return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0;
@@ -3804,6 +3819,16 @@ async function randomAll(){
     const s = STEPS.find(s=>s.id===chosenId);
     const pool = s.qr.filter(q=>q.val!==''&&!q.skip);
     answers[chosenId] = pool[Math.floor(Math.random()*pool.length)].val;
+  }
+  // If neither roupa nor fantasia answered, pick one of the two randomly
+  const anyRoupa = ROUPA_IDS2.some(id=>answers[id]);
+  if(!anyRoupa && !answers['fantasia']){
+    if(Math.random()<0.7){ // 70% chance roupa, 30% fantasia
+      const cands=ROUPA_IDS2.filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
+      if(cands.length){ const c=cands[Math.floor(Math.random()*cands.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
+    } else {
+      const fs=STEPS.find(s=>s.id==='fantasia'); if(fs){ const pool=fs.qr.filter(q=>q.val!==''&&!q.skip); if(pool.length) answers['fantasia']=pool[Math.floor(Math.random()*pool.length)].val; }
+    }
   }
 
   // Realismo padrão: fotografia analógica
