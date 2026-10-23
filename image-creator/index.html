@@ -49,14 +49,14 @@
     header h1 { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; }
 
     header .badge {
-      margin-left: 8px;
-      background: rgba(124,106,247,0.15);
-      border: 1px solid rgba(124,106,247,0.3);
+      background: rgba(76,175,130,0.15);
+      border: 1px solid rgba(76,175,130,0.35);
       border-radius: 20px;
-      color: var(--accent2);
+      color: var(--success);
       font-size: 0.7rem;
       padding: 2px 10px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.03em;
     }
 
     main {
@@ -95,39 +95,6 @@
       margin-bottom: 7px;
     }
 
-    .api-key-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .api-key-row input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 0.85rem;
-      padding: 9px 12px;
-      font-family: monospace;
-      transition: border-color 0.2s;
-    }
-
-    .api-key-row input:focus { outline: none; border-color: var(--accent); }
-
-    .btn-sm {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text2);
-      font-size: 0.8rem;
-      padding: 9px 12px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .btn-sm:hover { border-color: var(--accent); color: var(--accent2); }
-
     textarea {
       width: 100%;
       background: var(--surface);
@@ -154,7 +121,7 @@
 
     .field { display: flex; flex-direction: column; }
 
-    select {
+    select, input[type=number] {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -167,8 +134,23 @@
       cursor: pointer;
     }
 
-    select:focus { outline: none; border-color: var(--accent); }
+    select:focus, input[type=number]:focus { outline: none; border-color: var(--accent); }
     select option { background: var(--surface2); }
+
+    .seed-row { display: flex; gap: 6px; }
+    .seed-row input { flex: 1; }
+
+    .btn-sm {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text2);
+      font-size: 0.88rem;
+      padding: 9px 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-sm:hover { border-color: var(--accent); color: var(--accent2); }
 
     .btn-generate {
       width: 100%;
@@ -191,11 +173,7 @@
     .btn-generate:active { transform: scale(0.98); }
     .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
-    .image-wrap {
-      width: 100%;
-      max-width: 560px;
-      position: relative;
-    }
+    .image-wrap { width: 100%; max-width: 560px; }
 
     .image-area {
       width: 100%;
@@ -215,7 +193,7 @@
     }
 
     .image-area.landscape { aspect-ratio: 16/9; }
-    .image-area.portrait { aspect-ratio: 9/16; }
+    .image-area.portrait  { aspect-ratio: 9/16; }
     .image-area.generating { border-color: var(--accent); border-style: solid; }
 
     .image-area img {
@@ -238,7 +216,14 @@
       display: none;
     }
 
+    .gen-status {
+      font-size: 0.82rem;
+      color: var(--accent2);
+      display: none;
+    }
+
     .image-area.generating .spinner { display: block; }
+    .image-area.generating .gen-status { display: block; }
     .image-area.generating .placeholder-icon,
     .image-area.generating .placeholder-text { display: none; }
 
@@ -248,6 +233,7 @@
       display: none;
       gap: 8px;
       margin-top: 12px;
+      flex-wrap: wrap;
       justify-content: center;
     }
 
@@ -262,7 +248,6 @@
       padding: 8px 14px;
       cursor: pointer;
       transition: all 0.2s;
-      display: flex; align-items: center; gap: 6px;
     }
 
     .btn-tool:hover { border-color: var(--accent); color: var(--accent2); }
@@ -280,17 +265,11 @@
 
     .error-msg.visible { display: block; }
 
-    .credits-note {
-      font-size: 0.75rem;
+    .free-note {
+      font-size: 0.74rem;
       color: var(--text2);
       text-align: center;
-    }
-
-    .credits-note a { color: var(--accent2); }
-
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
+      line-height: 1.6;
     }
 
     @media (max-width: 680px) {
@@ -304,33 +283,34 @@
 <header>
   <div class="logo">🎨</div>
   <h1>Image Creator</h1>
-  <span class="badge">Stability AI</span>
+  <span class="badge">✦ GRÁTIS</span>
 </header>
 
 <main>
   <div class="panel-left">
 
     <div class="field">
-      <label>Chave de API <a href="https://platform.stability.ai/account/keys" target="_blank" style="color:var(--accent2);font-size:0.7rem;text-transform:none;font-weight:400;letter-spacing:0">Obter chave ↗</a></label>
-      <div class="api-key-row">
-        <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off">
-        <button class="btn-sm" onclick="saveKey()">Salvar</button>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <div class="field">
       <label>Prompt</label>
-      <textarea id="prompt" placeholder="Descreva a imagem...&#10;Ex: beautiful woman, sunset beach, golden hour, 8k, photorealistic"></textarea>
+      <textarea id="prompt" placeholder="Descreva a imagem...&#10;Ex: beautiful woman, beach sunset, golden hour, photorealistic, 8k"></textarea>
     </div>
 
     <div class="field">
       <label>Prompt Negativo</label>
-      <textarea id="negPrompt" style="min-height:70px" placeholder="O que evitar...&#10;Ex: blurry, deformed, ugly, bad anatomy"></textarea>
+      <textarea id="negPrompt" style="min-height:65px" placeholder="O que evitar...&#10;Ex: blurry, deformed, ugly, watermark"></textarea>
     </div>
 
     <div class="settings-grid">
+      <div class="field">
+        <label>Modelo</label>
+        <select id="model">
+          <option value="flux">Flux (recomendado)</option>
+          <option value="flux-realism">Flux Realism</option>
+          <option value="flux-anime">Flux Anime</option>
+          <option value="flux-3d">Flux 3D</option>
+          <option value="any-dark">Any Dark</option>
+          <option value="turbo">Turbo (rápido)</option>
+        </select>
+      </div>
       <div class="field">
         <label>Proporção</label>
         <select id="ratio" onchange="updateRatio()">
@@ -341,35 +321,13 @@
           <option value="832x1216">2:3 Foto vert.</option>
         </select>
       </div>
-      <div class="field">
-        <label>Modelo</label>
-        <select id="model">
-          <option value="core">SD Core</option>
-          <option value="ultra">SD Ultra</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Estilo</label>
-        <select id="style">
-          <option value="">Nenhum</option>
-          <option value="photographic">Fotográfico</option>
-          <option value="cinematic">Cinematográfico</option>
-          <option value="analog-film">Filme analógico</option>
-          <option value="anime">Anime</option>
-          <option value="digital-art">Arte digital</option>
-          <option value="fantasy-art">Fantasia</option>
-          <option value="neon-punk">Neon punk</option>
-          <option value="3d-model">3D</option>
-          <option value="pixel-art">Pixel art</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Seed</label>
-        <div style="display:flex;gap:6px">
-          <input type="number" id="seed" value="0" min="0" max="4294967295"
-            style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.88rem;padding:9px 12px;">
-          <button class="btn-sm" onclick="randomSeed()" title="Aleatório">🎲</button>
-        </div>
+    </div>
+
+    <div class="field">
+      <label>Seed <span style="font-weight:400;text-transform:none;font-size:0.7rem">(0 = aleatório)</span></label>
+      <div class="seed-row">
+        <input type="number" id="seed" value="0" min="0">
+        <button class="btn-sm" onclick="randomSeed()" title="Seed aleatório">🎲</button>
       </div>
     </div>
 
@@ -380,8 +338,9 @@
       <span id="btnText">Gerar Imagem</span>
     </button>
 
-    <p class="credits-note">
-      Powered by <a href="https://stability.ai" target="_blank">Stability AI</a> · SD Core ~$0.003/imagem · Ultra ~$0.008/imagem
+    <p class="free-note">
+      Powered by <strong>Pollinations.ai</strong><br>
+      100% gratuito · sem cadastro · sem limite
     </p>
 
   </div>
@@ -390,57 +349,42 @@
     <div class="image-wrap">
       <div class="image-area" id="imageArea">
         <div class="spinner"></div>
+        <div class="gen-status" id="genStatus">Gerando, aguarde...</div>
         <div class="placeholder-icon">🖼️</div>
         <div class="placeholder-text">A imagem aparece aqui</div>
       </div>
       <div class="image-toolbar" id="imageToolbar">
-        <button class="btn-tool" onclick="downloadImage()">⬇ Salvar PNG</button>
+        <button class="btn-tool" onclick="downloadImage()">⬇ Salvar</button>
         <button class="btn-tool" onclick="copyPrompt()">📋 Copiar prompt</button>
-        <button class="btn-tool" onclick="generateVariation()">🔀 Variação</button>
+        <button class="btn-tool" onclick="variation()">🔀 Variação</button>
+        <button class="btn-tool" onclick="openFull()">🔍 Ver completa</button>
       </div>
     </div>
   </div>
 </main>
 
 <script>
-  let lastImageUrl = null;
+  let lastImgUrl = null;
   let lastPromptUsed = '';
   let generating = false;
-
-  // load saved key
-  try {
-    const saved = localStorage.getItem('stability_api_key');
-    if (saved) document.getElementById('apiKey').value = saved;
-  } catch {}
-
-  function saveKey() {
-    try {
-      localStorage.setItem('stability_api_key', document.getElementById('apiKey').value.trim());
-    } catch {}
-    const btn = event.target;
-    btn.textContent = '✓ Salvo';
-    setTimeout(() => btn.textContent = 'Salvar', 1500);
-  }
-
-  function randomSeed() {
-    document.getElementById('seed').value = Math.floor(Math.random() * 4294967295);
-  }
+  let elapsed = 0;
+  let timer = null;
 
   function updateRatio() {
     const area = document.getElementById('imageArea');
     const val = document.getElementById('ratio').value;
     const [w, h] = val.split('x').map(Number);
-    area.className = 'image-area';
+    area.className = 'image-area' + (generating ? ' generating' : '');
     if (w > h) area.classList.add('landscape');
     else if (h > w) area.classList.add('portrait');
-    if (area.classList.contains('generating')) area.classList.add('generating');
+  }
+
+  function randomSeed() {
+    document.getElementById('seed').value = Math.floor(Math.random() * 999999999);
   }
 
   async function generate() {
     if (generating) return;
-
-    const apiKey = document.getElementById('apiKey').value.trim();
-    if (!apiKey) { showError('Cole sua chave de API da Stability AI antes de gerar.'); return; }
 
     const prompt = document.getElementById('prompt').value.trim();
     if (!prompt) { showError('Digite um prompt antes de gerar.'); return; }
@@ -452,7 +396,6 @@
     const btn = document.getElementById('btnGenerate');
     btn.disabled = true;
     document.getElementById('btnIcon').textContent = '⏳';
-    document.getElementById('btnText').textContent = 'Gerando...';
 
     const area = document.getElementById('imageArea');
     area.classList.add('generating');
@@ -460,61 +403,55 @@
     if (prev) prev.remove();
     document.getElementById('imageToolbar').classList.remove('visible');
 
-    const model = document.getElementById('model').value;
-    const ratio = document.getElementById('ratio').value;
-    const [width, height] = ratio.split('x');
-    const style = document.getElementById('style').value;
-    const seed = parseInt(document.getElementById('seed').value) || 0;
-    const negPrompt = document.getElementById('negPrompt').value.trim();
+    // elapsed timer
+    elapsed = 0;
+    const statusEl = document.getElementById('genStatus');
+    clearInterval(timer);
+    timer = setInterval(() => {
+      elapsed++;
+      statusEl.textContent = `Gerando... ${elapsed}s`;
+      document.getElementById('btnText').textContent = `Gerando... ${elapsed}s`;
+    }, 1000);
 
-    const formData = new FormData();
-    formData.append('prompt', prompt);
-    formData.append('output_format', 'png');
-    formData.append('width', width);
-    formData.append('height', height);
-    formData.append('seed', seed);
-    if (negPrompt) formData.append('negative_prompt', negPrompt);
-    if (style) formData.append('style_preset', style);
+    const model   = document.getElementById('model').value;
+    const ratio   = document.getElementById('ratio').value;
+    const [w, h]  = ratio.split('x');
+    const seed    = parseInt(document.getElementById('seed').value) || 0;
+    const neg     = document.getElementById('negPrompt').value.trim();
 
-    const endpoint = model === 'ultra'
-      ? 'https://api.stability.ai/v2beta/stable-image/generate/ultra'
-      : 'https://api.stability.ai/v2beta/stable-image/generate/core';
+    const params = new URLSearchParams({
+      width: w,
+      height: h,
+      model: model,
+      seed: seed,
+      nologo: 'true',
+      enhance: 'false',
+    });
+
+    if (neg) params.set('negative_prompt', neg);
+
+    const encodedPrompt = encodeURIComponent(prompt);
+    const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?${params.toString()}`;
 
     try {
-      const r = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + apiKey,
-          'Accept': 'image/*',
-        },
-        body: formData,
-      });
-
-      if (!r.ok) {
-        const err = await r.json().catch(() => ({}));
-        const msg = err?.errors?.[0] || err?.message || `HTTP ${r.status}`;
-        if (r.status === 401) throw new Error('Chave de API inválida ou expirada.');
-        if (r.status === 402) throw new Error('Créditos insuficientes na conta Stability AI.');
-        throw new Error(msg);
-      }
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`Erro HTTP ${r.status}`);
 
       const blob = await r.blob();
-      if (lastImageUrl) URL.revokeObjectURL(lastImageUrl);
-      lastImageUrl = URL.createObjectURL(blob);
+      if (!blob.type.startsWith('image/')) throw new Error('Resposta inválida do servidor.');
+
+      if (lastImgUrl) URL.revokeObjectURL(lastImgUrl);
+      lastImgUrl = URL.createObjectURL(blob);
 
       const img = document.createElement('img');
-      img.src = lastImageUrl;
+      img.src = lastImgUrl;
       area.appendChild(img);
       document.getElementById('imageToolbar').classList.add('visible');
 
-      // update seed from response header if available
-      const finishReason = r.headers.get('finish-reason');
-      const returnedSeed = r.headers.get('seed');
-      if (returnedSeed) document.getElementById('seed').value = returnedSeed;
-
     } catch (e) {
-      showError('Erro: ' + e.message);
+      showError('Erro ao gerar: ' + e.message);
     } finally {
+      clearInterval(timer);
       area.classList.remove('generating');
       generating = false;
       btn.disabled = false;
@@ -524,9 +461,9 @@
   }
 
   function downloadImage() {
-    if (!lastImageUrl) return;
+    if (!lastImgUrl) return;
     const a = document.createElement('a');
-    a.href = lastImageUrl;
+    a.href = lastImgUrl;
     a.download = 'image-creator-' + Date.now() + '.png';
     a.click();
   }
@@ -535,14 +472,19 @@
     if (!lastPromptUsed) return;
     navigator.clipboard.writeText(lastPromptUsed).then(() => {
       const btn = event.target;
+      const orig = btn.textContent;
       btn.textContent = '✓ Copiado';
-      setTimeout(() => btn.textContent = '📋 Copiar prompt', 1500);
+      setTimeout(() => btn.textContent = orig, 1500);
     });
   }
 
-  function generateVariation() {
+  function variation() {
     randomSeed();
     generate();
+  }
+
+  function openFull() {
+    if (lastImgUrl) window.open(lastImgUrl, '_blank');
   }
 
   function showError(msg) {
