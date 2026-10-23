@@ -899,419 +899,184 @@ const STEPS = [
     skip:true,
   },
   {
-    id:'roupa_nudez', label:'Nudez', ask:'Nudez?',
+    id:'roupa', label:'Roupa', ask:'Roupa ou visual?',
     qr:[
-      {label:'Pelada',val:'completely nude, fully naked, bare skin all over, no clothing'},
-      {label:'Topless',val:'topless, bare breasts exposed, wearing only panties on bottom'},
-      {label:'Só calcinha',val:'wearing only thong panties, topless bare breasts, half nude'},
-      {label:'🔥 Só avental',val:'wearing only kitchen apron, naked under apron, bare back and sides, just an apron'},
-      {label:'Só toalha',val:'wearing only a bath towel wrapped around body, towel barely covering, just out of shower'},
+      {label:'🔞 Nudez — Pelada',val:'completely nude, fully naked, bare skin all over, no clothing'},
+      {label:'🔞 Nudez — Topless',val:'topless, bare breasts exposed, wearing only panties on bottom'},
+      {label:'🔞 Nudez — Só calcinha',val:'wearing only thong panties, topless bare breasts, half nude'},
+      {label:'🔞 Nudez — Só avental',val:'wearing only kitchen apron, naked under apron, bare back and sides, just an apron'},
+      {label:'🔞 Nudez — Só toalha',val:'wearing only a bath towel wrapped around body, towel barely covering, just out of shower'},
+      {label:'👙 Lingerie — Rendada',val:'wearing lace lingerie set, bra and thong panties, delicate sexy underwear'},
+      {label:'👙 Lingerie — Transparente',val:'wearing sheer transparent lace bra and panties, nipples and body visible through fabric'},
+      {label:'👙 Lingerie — Babydoll',val:'wearing babydoll sheer lingerie nightgown, delicate lace trim, intimate sleepwear'},
+      {label:'👙 Lingerie — Corsete',val:'wearing tight corset, waist cinching corset, boned bodice, lace-up back, Victorian style'},
+      {label:'👙 Lingerie — Body sensual',val:'wearing tight bodysuit, one-piece body, snap crotch bodysuit, form fitting'},
+      {label:'👙 Lingerie — Camisola seda',val:'wearing silk satin nightgown, flowy satin slip dress, thin straps, elegant sleepwear'},
+      {label:'👙 Lingerie — Meias arrastão',val:'wearing fishnet stockings, thigh-high fishnet tights, garter belt, stockings'},
+      {label:'👙 Lingerie — Roupão aberto',val:'wearing open silk robe, robe falling open, partially exposed body, loungewear'},
+      {label:'👙 Lingerie — Pijama de seda',val:'wearing silk pajama set, satin pajama shorts and top, luxury sleepwear, button-front pajamas'},
+      {label:'👙 Lingerie — + salto alto',val:'wearing lace lingerie set with high heel stilettos, lingerie and heels only, sexy boudoir combination'},
+      {label:'👙 Lingerie — Alças calcinha aparecendo',val:'panty straps visible on hips above waistband, underwear straps showing on sides of body, high-rise panties straps exposed above low-rise bottoms, visible elastic waistband straps on both hips, sexy underwear straps framing hips'},
+      {label:'👙 Lingerie — Calcinha + crop top',val:'wearing only matching panties and crop top, underwear as outerwear style, minimalist sexy'},
+      {label:'👙 Lingerie — Meia-calça rasgada',val:'wearing ripped fishnet tights with bodysuit, torn stockings, edgy sexy look'},
+      {label:'👙 Lingerie — Corsete + saia longa',val:'wearing tight corset top with flowy maxi skirt, waist cinched, romantic sensual combination'},
+      {label:'👗 Vestido — Mini vestido',val:'wearing tight bodycon mini dress, short revealing bodycon dress'},
+      {label:'👗 Vestido — Decotado',val:'wearing low-cut V-neck dress, deep cleavage dress, plunging neckline gown'},
+      {label:'👗 Vestido — Longo elegante',val:'wearing elegant floor-length evening gown, formal slit dress, red carpet look'},
+      {label:'👗 Vestido — Floral',val:'wearing floral sundress, light summer dress, flowing floral print dress'},
+      {label:'👗 Vestido — Tubinho',val:'wearing fitted pencil dress, bodycon knee-length sheath dress, professional sexy'},
+      {label:'👗 Vestido — Transparente',val:'wearing sheer see-through dress, transparent chiffon dress, body visible underneath'},
+      {label:'👗 Vestido — Noite fendado',val:'wearing black evening gown with high thigh slit, side slit formal dress, elegant and sexy'},
+      {label:'👗 Vestido — Molhado',val:'wearing soaking wet dress clinging to body, wet fabric see-through, curves fully visible through wet cloth'},
+      {label:'👗 Vestido — Sundress leve',val:'wearing light floral sundress, thin spaghetti straps, flowing skirt above knee, backless summer dress, casual feminine look, breezy cotton dress'},
+      {label:'👗 Vestido — + salto agulha',val:'wearing tight bodycon dress with stiletto heels, strappy high heels, form-fitting evening dress and pointed toe pumps, complete elegant sexy look'},
+      {label:'👖 Calças — Shorts jeans curto',val:'wearing very short denim cut-off shorts, daisy dukes, tiny jean shorts'},
+      {label:'👖 Calças — Casual jeans',val:'wearing fitted blue jeans and casual white top, everyday street style, relaxed fit'},
+      {label:'👖 Calças — Jeans rasgado',val:'wearing ripped skinny jeans, distressed torn denim, tight ripped jeans and crop top'},
+      {label:'👖 Calças — Mini saia + top',val:'wearing mini skirt and crop top, midriff bare, short skirt outfit'},
+      {label:'👖 Calças — Saia com fenda',val:'wearing high-waist midi skirt with deep thigh slit, asymmetric slit skirt, slit revealing entire leg, fitted waist flared hem casual chic'},
+      {label:'👖 Calças — Shorts + top',val:'wearing very short denim cutoff shorts and tied crop top, midriff exposed, casual sexy summer street style, high-waist shorts showing leg'},
+      {label:'🏃 Esporte — Legging academia',val:'wearing tight high-waist leggings and sports bra, gym outfit, activewear'},
+      {label:'🏃 Esporte — Shorts esportivo',val:'wearing athletic shorts and sports bra, running shorts, workout outfit'},
+      {label:'🏃 Esporte — Conjunto esportivo sexy',val:'wearing matching sports bra and biker shorts, athleisure outfit, tight workout set'},
+      {label:'🏃 Esporte — Legging + cropped sem calcinha',val:'wearing tight leggings and cropped top, no underwear no bra, braless and pantyless gym outfit, very tight spandex leggings, thin crop top'},
+      {label:'🏃 Esporte — Calça yoga branca',val:'wearing white yoga pants, no underwear, thin white fabric leggings, very tight fit, no panty lines'},
+      {label:'🏃 Esporte — Regata dry-fit sem sutiã',val:'wearing dry-fit tank top without bra, braless workout tank, tight thin sport top, no bra underneath'},
+      {label:'🏃 Esporte — Body fitness transparente',val:'wearing sheer transparent fitness bodysuit, no bra no underwear, see-through mesh athletic one-piece, body visible through fabric'},
+      {label:'🏖 Praia — Biquíni micro',val:'wearing tiny micro bikini, string bikini barely covering nipples and crotch'},
+      {label:'🏖 Praia — Biquíni fio dental',val:'wearing thong bikini, G-string bikini bottom, barely-there bikini top'},
+      {label:'🏖 Praia — Vestido praia',val:'wearing beach coverup dress, sarong wrap dress, light cotton beach dress'},
+      {label:'🏖 Praia — Saída de praia + biquíni',val:'wearing crochet beach coverup over micro bikini, see-through knit cover-up, bikini visible underneath, beach goddess look'},
+      {label:'🏖 Praia — Biquíni + shorts aberto',val:'wearing bikini top with unbuttoned denim shorts, beach casual sexy, shorts falling off hips'},
+      {label:'👕 Casual — Blazer sem blusa',val:'wearing oversized blazer only, no top underneath, blazer as dress, power suit style'},
+      {label:'👕 Casual — Camisa social aberta',val:'wearing open button-down shirt, unbuttoned shirt with nothing underneath, sexy casual'},
+      {label:'👕 Casual — Camiseta branca molhada',val:'wearing wet white t-shirt, soaked white shirt see-through, wet fabric clinging to body'},
+      {label:'👕 Casual — Macacão',val:'wearing fitted jumpsuit, one-piece overall outfit, tight romper, full body suit'},
+      {label:'👕 Casual — Regata sem sutiã',val:'wearing thin tank top without bra, nipples visible through fabric, tight spaghetti strap top'},
+      {label:'👕 Casual — Roupa de couro',val:'wearing leather jacket and leather pants, biker leather outfit, full leather look'},
+      {label:'👕 Casual — Bodysuit casual',val:'wearing black sleeveless bodysuit tucked into jeans, form-fitting one-piece top, casual chic bodysuit outfit, no bra needed built-in, snap closure at crotch'},
+      {label:'👕 Casual — Tomara que caia',val:'wearing strapless tube top and high-waist jeans, bandeau top, no straps, off-shoulder top threatening to fall, casual summer sexy'},
+      {label:'👕 Casual — Camisa do namorado',val:'wearing only oversized men\'s dress shirt, unbuttoned shirt barely covering, no pants, intimate morning look'},
+      {label:'👕 Casual — Minissaia couro + top decotado',val:'wearing black leather mini skirt and deep V plunging crop top, biker girl street style, edgy sexy combination, ankle boots'},
+      {label:'👕 Casual — Salto alto stiletto',val:'wearing extremely high stiletto heels, pointed-toe pumps, thin spike heel, sexy high heels, legs elongated by heels, strappy stiletto sandals'},
+      {label:'🎭 Fantasia — Policial',val:'wearing sexy police officer costume, tight uniform, handcuffs, cap'},
+      {label:'🎭 Fantasia — Enfermeira',val:'wearing sexy nurse costume, short white dress, red cross symbol, nurse cap'},
+      {label:'🎭 Fantasia — Professora',val:'wearing sexy teacher outfit, glasses, pencil skirt, button blouse tied'},
+      {label:'🎭 Fantasia — Gatinha',val:'wearing sexy cat costume, cat ears headband, black bodysuit, long tail, paw gloves'},
+      {label:'🎭 Fantasia — Coelhinha',val:'wearing Playboy bunny costume, strapless bodysuit, bunny ears, cotton tail, bow tie'},
+      {label:'🎭 Fantasia — Cheerleader',val:'wearing cheerleader outfit, short pleated skirt, crop top, pom-poms, sporty sexy'},
+      {label:'🎭 Fantasia — Cowgirl',val:'wearing cowgirl outfit, denim short shorts, plaid crop shirt, cowboy boots and hat'},
+      {label:'🎭 Fantasia — Colegial',val:'wearing schoolgirl uniform, white blouse tied at waist, plaid mini skirt, knee-high socks'},
+      {label:'🎭 Fantasia — Maid francesa',val:'wearing French maid costume, black mini dress, white apron, lace headband'},
+      {label:'🎭 Fantasia — Quimono japonês',val:'wearing open Japanese kimono robe, silk kimono partially open, obi sash loosened'},
+      {label:'🎭 Fantasia — Latex/PVC',val:'wearing shiny latex catsuit, PVC tight outfit, glossy black latex bodysuit'},
+      {label:'🎭 Fantasia — Pirata',val:'wearing sexy pirate costume, corsair open blouse, mini skirt, tricorn hat, thigh-high boots, sword'},
+      {label:'🎭 Fantasia — Diaba',val:'wearing sexy devil costume, red mini dress, devil horns headband, pointed tail, red corset'},
+      {label:'🎭 Fantasia — Vampira',val:'wearing vampire costume, dark gothic dress, fangs, dramatic dark makeup, cape'},
+      {label:'🎭 Fantasia — Anjo',val:'wearing angel costume, white lingerie with wings, halo headband, feathery white outfit'},
+      {label:'🎭 Fantasia — Bailarina',val:'wearing ballet dancer costume, tutu skirt, pointe shoes, ballerina bun, graceful'},
+      {label:'🎭 Fantasia — Secretária',val:'wearing sexy secretary outfit, tight pencil skirt, white blouse unbuttoned, glasses'},
+      {label:'🎭 Fantasia — Gladiadora',val:'wearing gladiator costume, leather armor, sandal straps up legs, warrior woman look'},
+      {label:'🎭 Fantasia — Odalisca',val:'wearing odalisque harem costume, sheer harem pants, jeweled bra top, belly exposed, veil'},
+      {label:'🎭 Fantasia — Sereia',val:'wearing mermaid costume, iridescent tail skirt, seashell top, ocean fantasy outfit'},
+      {label:'🎭 Fantasia — Elfa',val:'wearing elf fantasy costume, pointed ears, forest green leather armor, elvish jewelry'},
+      {label:'🎭 Fantasia — Pin-up retro',val:'wearing 1950s pin-up costume, polka dot halter dress, red lips, victory rolls hair, high heels, retro bombshell look'},
     ],
     skip:true,
   },
   {
-    id:'roupa_lingerie', label:'Lingerie', ask:'Lingerie ou íntimo?',
+    id:'pose', label:'Pose', ask:'Pose ou posição?',
     qr:[
-      {label:'Lingerie rendada',val:'wearing lace lingerie set, bra and thong panties, delicate sexy underwear'},
-      {label:'Lingerie transparente',val:'wearing sheer transparent lace bra and panties, nipples and body visible through fabric'},
-      {label:'Babydoll',val:'wearing babydoll sheer lingerie nightgown, delicate lace trim, intimate sleepwear'},
-      {label:'Corsete',val:'wearing tight corset, waist cinching corset, boned bodice, lace-up back, Victorian style'},
-      {label:'Body sensual',val:'wearing tight bodysuit, one-piece body, snap crotch bodysuit, form fitting'},
-      {label:'Camisola seda',val:'wearing silk satin nightgown, flowy satin slip dress, thin straps, elegant sleepwear'},
-      {label:'Meias arrastão',val:'wearing fishnet stockings, thigh-high fishnet tights, garter belt, stockings'},
-      {label:'Roupão aberto',val:'wearing open silk robe, robe falling open, partially exposed body, loungewear'},
-      {label:'Pijama de seda',val:'wearing silk pajama set, satin pajama shorts and top, luxury sleepwear, button-front pajamas'},
-      {label:'🔥 Lingerie + salto alto',val:'wearing lace lingerie set with high heel stilettos, lingerie and heels only, sexy boudoir combination'},
-      {label:'🔥 Conjunto açougue lingerie',val:'wearing matching strappy harness lingerie set, body harness with bra and panties, bondage-inspired strappy lingerie'},
-      {label:'🩲 Alças calcinha aparecendo',val:'panty straps visible on hips above waistband, underwear straps showing on sides of body, high-rise panties straps exposed above low-rise bottoms, visible elastic waistband straps on both hips, sexy underwear straps framing hips'},
-      {label:'🔥 Alças calcinha + salto + renda',val:'sheer lace bralette and high-rise lace panties with straps visible on hips, wearing only lace lingerie set with thin straps framing hips, paired with towering stiletto heels, legs elongated, delicate lace against skin'},
-      {label:'🔥 Calcinha + crop top',val:'wearing only matching panties and crop top, underwear as outerwear style, minimalist sexy'},
-      {label:'🔥 Meia-calça rasgada',val:'wearing ripped fishnet tights with bodysuit, torn stockings, edgy sexy look'},
-      {label:'🔥 Corsete + saia longa',val:'wearing tight corset top with flowy maxi skirt, waist cinched, romantic sensual combination'},
-      {label:'🌙 Conjunto pijama aberto',val:'wearing silk pajama set falling open, satin shorts and button shirt open revealing lingerie, bedroom morning look'},
-      {label:'🧥 Trench coat + lingerie',val:'wearing long trench coat open revealing lingerie underneath, coat falling off shoulders, detective chic meets boudoir'},
-      {label:'🌸 Blusinha de renda',val:'wearing delicate lace blouse, sheer lace top, see-through lace fabric, intricate floral lace pattern, fitted lace top with visible bra underneath, romantic feminine lace shirt'},
-      {label:'🌸 Blusinha renda + calça cintura alta',val:'wearing sheer lace crop blouse with high-waist fitted trousers, lace top tucked in, midriff lace fabric, elegant yet sensual combination, visible bra under lace'},
+      {label:'🧍 Em Pé — Frontal',val:'standing facing forward, full body shot, upright confident pose, hands on hips'},
+      {label:'🧍 Em Pé — Perfil lateral',val:'standing side profile, full body lateral view, facing sideways, side silhouette, showing curves from the side'},
+      {label:'🧍 Em Pé — De costas',val:'standing facing away, back view, showing back and buttocks, rear view pose'},
+      {label:'🧍 Em Pé — Pernas abertas',val:'standing legs spread wide apart, wide stance, facing camera'},
+      {label:'🧍 Em Pé — Olhando sobre ombro',val:'looking over shoulder seductively, back turned, glancing back'},
+      {label:'🧍 Em Pé — Arqueada',val:'standing with extreme back arch, chest pushed forward, hips thrust back, S-curve body pose'},
+      {label:'🧍 Em Pé — Encostada parede',val:'leaning against wall, back against wall, one leg raised, sensual lean'},
+      {label:'🧍 Em Pé — Mãos na parede',val:'hands pressed against wall, facing wall, arching back, rear pose against wall'},
+      {label:'🧍 Em Pé — Inclinada pra câmera',val:'leaning body forward directly toward camera, chest hanging forward, deep cleavage toward lens'},
+      {label:'🧍 Em Pé — Puxando roupa',val:'pulling clothing down off shoulders, outfit sliding off, partially undressing, teasing reveal pose'},
+      {label:'🛌 Deitada — De costas',val:'lying on back on bed, legs slightly apart, reclining pose, face up'},
+      {label:'🛌 Deitada — De bruços bumbum empinado',val:'lying face down facing camera, chest on bed, hips raised, big buttocks arched up towards camera, booty up prone pose, looking at camera'},
+      {label:'🛌 Deitada — De lado',val:'lying on side, side view, curves visible, one leg forward, reclining sideways'},
+      {label:'🛌 Deitada — Pernas levantadas abertas',val:'lying on back, legs raised and spread apart in the air, V-shape legs up pose'},
+      {label:'🛌 Deitada — Abrindo pernas',val:'lying on back, legs spread wide open, open legs pose, facing camera'},
+      {label:'🪑 Sentada — Pernas abertas',val:'sitting with legs spread wide open, seated legs apart, open seated pose facing camera'},
+      {label:'🪑 Sentada — Cadeira',val:'sitting on chair, legs spread open, seated pose'},
+      {label:'🪑 Sentada — Chão pernas abertas',val:'sitting on floor with legs spread wide, floor seated open legs'},
+      {label:'🪑 Sentada — Montada',val:'straddling position, sitting astride, riding position on top, cowgirl position'},
+      {label:'🪑 Sentada — De cócoras',val:'squatting down, deep squat pose, thighs wide open, balance squat'},
+      {label:'🙇 Ajoelhada — Submissa',val:'kneeling pose, down on knees, submissive kneeling, looking up'},
+      {label:'🙇 Ajoelhada — De joelhos arqueada',val:'kneeling with back arched, chest pushed forward, thighs spread, submissive arch pose'},
+      {label:'🙇 Ajoelhada — Quatro apoios',val:'on all fours, hands and knees position, back arched, buttocks raised'},
+      {label:'🙇 Ajoelhada — De frente',val:'kneeling facing camera, legs apart, hands on thighs, submissive frontal kneeling, looking up at camera'},
+      {label:'🙇 Ajoelhada — De quatro frente câmera',val:'on hands and knees facing camera directly, crawling toward camera, chest hanging, eye contact'},
+      {label:'🙇 Ajoelhada — Tocando o corpo',val:'hands sliding slowly down own body, self-touching pose, hands exploring curves, sensual self-caress'},
+      {label:'🙇 Ajoelhada — Puxando calcinha',val:'thumbs hooked in panties pulling down, underwear being removed, teasing undressing'},
+      {label:'🛏 Cama — Deitada joelhos dobrados',val:'lying on back on bed, knees bent up, feet flat on mattress, arched back, intimate bedroom reclining pose'},
+      {label:'🛏 Cama — De joelhos na cama',val:'kneeling on bed, upright on knees, thighs apart, hands on thighs, kneeling submissive bed pose'},
+      {label:'🛏 Cama — Ajoelhada de quatro',val:'on hands and knees on bed, doggy position on mattress, back arched, buttocks raised toward camera, sheets beneath'},
+      {label:'🛏 Cama — Deitada lençol cobrindo',val:'lying in bed with thin sheet draped loosely over body, sheet barely covering, sensual bed sheet pose'},
+      {label:'🛏 Cama — Arqueada bridge',val:'lying on back on bed, hips raised high in bridge pose, back arched off mattress, feet and shoulders on bed only'},
+      {label:'🛋 Sofá — Sentada pernas abertas',val:'sitting on sofa with legs spread wide open, seated on couch legs apart, leaning back on cushions'},
+      {label:'🛋 Sofá — Deitada de bruços',val:'lying face down on sofa, prone on couch, hips raised, buttocks up, face turned sideways on armrest'},
+      {label:'🛋 Sofá — Encostada braço sofá',val:'draped over sofa armrest, belly over armrest, rear raised toward camera, hanging over couch arm'},
+      {label:'🚿 Água — Em pé chuveiro olhando câmera',val:'standing in shower facing camera, water streaming down body, hands against shower wall, wet hair, steam, eye contact'},
+      {label:'🚿 Água — De costas chuveiro',val:'standing in shower back to camera, water running down back and buttocks, rear view in shower, wet skin glistening'},
+      {label:'🚿 Água — Sentada no chão chuveiro',val:'sitting on shower floor, knees up, water raining down from above, curled on shower floor, wet intimate pose'},
+      {label:'🚿 Água — Na borda da piscina',val:'sitting on pool edge, legs in water, leaning back on hands, poolside seated pose, wet legs in pool'},
+      {label:'🚿 Água — Saindo da piscina',val:'climbing out of pool, body wet glistening, arms pushing up on pool edge, emerging from water pose'},
+      {label:'🍳 Cozinha — Encostada bancada',val:'leaning against kitchen counter, elbows on counter edge, back arched, casual sexy kitchen pose'},
+      {label:'🍳 Cozinha — Sentada bancada',val:'sitting on kitchen counter top, legs dangling, hands on counter, casual seated on kitchen surface'},
+      {label:'🍳 Cozinha — De costas',val:'standing at kitchen counter from behind, back to camera, bending slightly forward over counter, rear view in kitchen'},
     ],
     skip:true,
   },
   {
-    id:'roupa_vestido', label:'Vestidos', ask:'Vestido?',
+    id:'cenario', label:'Cenário', ask:'Cenário e ambiente?',
     qr:[
-      {label:'Mini vestido',val:'wearing tight bodycon mini dress, short revealing bodycon dress'},
-      {label:'Vestido decotado',val:'wearing low-cut V-neck dress, deep cleavage dress, plunging neckline gown'},
-      {label:'Vestido longo elegante',val:'wearing elegant floor-length evening gown, formal slit dress, red carpet look'},
-      {label:'Vestido floral',val:'wearing floral sundress, light summer dress, flowing floral print dress'},
-      {label:'Vestido tubinho',val:'wearing fitted pencil dress, bodycon knee-length sheath dress, professional sexy'},
-      {label:'Vestido transparente',val:'wearing sheer see-through dress, transparent chiffon dress, body visible underneath'},
-      {label:'Vestido de noite fendado',val:'wearing black evening gown with high thigh slit, side slit formal dress, elegant and sexy'},
-      {label:'Vestido bandagem',val:'wearing bandage bodycon dress, wrapped stripes dress, figure-hugging bandage outfit'},
-      {label:'Vestido praia',val:'wearing beach coverup dress, sarong wrap dress, light cotton beach dress'},
-      {label:'🔥 Vestido molhado',val:'wearing soaking wet dress clinging to body, wet fabric see-through, curves fully visible through wet cloth'},
-      {label:'👗 Mini vestido casual',val:'wearing ultra short bodycon mini dress, skin-tight bandage dress barely covering thighs, plunging neckline, deep V-cut, no bra visible, strappy heels, revealing tight fit'},
-      {label:'🌸 Sundress leve',val:'wearing light floral sundress, thin spaghetti straps, flowing skirt above knee, backless summer dress, casual feminine look, breezy cotton dress'},
-      {label:'👠 Vestido + salto agulha',val:'wearing tight bodycon dress with stiletto heels, strappy high heels, form-fitting evening dress and pointed toe pumps, complete elegant sexy look'},
-      {label:'💎 Vestido festa longo + fenda alta',val:'wearing floor-length fitted gala dress with extreme thigh slit, side slit up to hip, backless formal gown, shoulder straps'},
-      {label:'🔥 Vestido ombro único',val:'wearing one-shoulder asymmetric mini dress, single strap dress, one shoulder revealed, asymmetric neckline bodycon'},
-    ],
-    skip:true,
-  },
-  {
-    id:'roupa_calcas', label:'Calças & Shorts', ask:'Calças ou shorts?',
-    qr:[
-      {label:'Shorts jeans curto',val:'wearing very short denim cut-off shorts, daisy dukes, tiny jean shorts'},
-      {label:'Casual jeans',val:'wearing fitted blue jeans and casual white top, everyday street style, relaxed fit'},
-      {label:'Jeans rasgado',val:'wearing ripped skinny jeans, distressed torn denim, tight ripped jeans and crop top'},
-      {label:'Calça social',val:'wearing tailored dress pants, high-waist trousers, fitted slacks and blouse, office style'},
-      {label:'Mini saia + top',val:'wearing mini skirt and crop top, midriff bare, short skirt outfit'},
-      {label:'Saia lápis + blusa',val:'wearing tight pencil skirt and fitted blouse, secretary look, office outfit'},
-      {label:'💃 Saia com fenda',val:'wearing high-waist midi skirt with deep thigh slit, asymmetric slit skirt, slit revealing entire leg, fitted waist flared hem casual chic'},
-      {label:'🔥 Top + saia fendada',val:'wearing tiny crop top and long slit maxi skirt, thigh exposed through slit, sexy casual combination'},
-      {label:'👖 Jeans cropped',val:'wearing high-waist skinny jeans and cropped bustier top, tight jeans showing midriff, fitted denim and crop top casual look, belt at waist, casual sexy everyday outfit'},
-      {label:'🎀 Blusa ombro a ombro + saia midi',val:'wearing off-shoulder ruffled top and midi satin skirt, elegant feminine combination, romantic date night outfit'},
-      {label:'🔥 Shorts + top amarrado',val:'wearing tiny cut-off shorts and tied crop top, midriff bare, casual sexy summer outfit'},
-      {label:'☀️ Shorts + top',val:'wearing very short denim cutoff shorts and tied crop top, midriff exposed, casual sexy summer street style, high-waist shorts showing leg'},
-    ],
-    skip:true,
-  },
-  {
-    id:'roupa_esporte', label:'Esportivo', ask:'Roupa esportiva?',
-    qr:[
-      {label:'Legging academia',val:'wearing tight high-waist leggings and sports bra, gym outfit, activewear'},
-      {label:'Shorts esportivo',val:'wearing athletic shorts and sports bra, running shorts, workout outfit'},
-      {label:'Conjunto esportivo sexy',val:'wearing matching sports bra and biker shorts, athleisure outfit, tight workout set'},
-      {label:'Legging + cropped sem calcinha/sutiã',val:'wearing tight leggings and cropped top, no underwear no bra, braless and pantyless gym outfit, very tight spandex leggings, thin crop top'},
-      {label:'Shorts ciclismo sem calcinha',val:'wearing tight cycling shorts, no underwear underneath, sports bra top, braless tight spandex shorts'},
-      {label:'Body fitness transparente',val:'wearing sheer transparent fitness bodysuit, no bra no underwear, see-through mesh athletic one-piece, body visible through fabric'},
-      {label:'Top esportivo + shorts mini',val:'wearing only sports bra and tiny micro shorts, no underwear, extreme midriff, side of buttocks exposed, braless sports bra'},
-      {label:'Calça yoga branca sem calcinha',val:'wearing white yoga pants, no underwear, thin white fabric leggings, very tight fit, no panty lines'},
-      {label:'Regata dry-fit sem sutiã',val:'wearing dry-fit tank top without bra, braless workout tank, tight thin sport top, no bra underneath'},
-      {label:'Shorts runner + top sem sutiã',val:'wearing runner shorts and thin crop top, no bra, shorts barely covering buttocks, underwear-free running outfit, inner thigh exposed'},
-      {label:'Macacão fitness recortado',val:'wearing cut-out fitness jumpsuit, strategic cutouts exposing sides and midriff, no underwear underneath, revealing athletic one-piece'},
-      {label:'Biquíni de academia',val:'wearing minimalist athletic bikini, tiny triangles barely covering, micro bottoms, gym bikini set, maximum skin exposure workout wear'},
-      {label:'Macacão branco academia (longo)',val:'wearing white tight long athletic jumpsuit, full-length white gym jumpsuit, fitted white bodysuit with legs, white spandex one-piece, clingy white workout overall'},
-      {label:'Macacão branco academia (curto)',val:'wearing white tight short athletic jumpsuit, short white gym romper, fitted white bodysuit romper, white spandex short one-piece, clingy white workout romper showing legs'},
-      {label:'🧘 Yoga pants',val:'wearing tight high-waist yoga pants and sports bra, form-fitting athletic leggings, yoga activewear, fitted workout clothes, curves accentuated, gym casual look'},
-    ],
-    skip:true,
-  },
-  {
-    id:'roupa_praia', label:'Praia & Verão', ask:'Roupa de praia?',
-    qr:[
-      {label:'Biquíni micro',val:'wearing tiny micro bikini, string bikini barely covering nipples and crotch'},
-      {label:'Biquíni fio dental',val:'wearing thong bikini, G-string bikini bottom, barely-there bikini top'},
-      {label:'Vestido praia',val:'wearing beach coverup dress, sarong wrap dress, light cotton beach dress'},
-      {label:'🏖 Saída de praia + biquíni',val:'wearing crochet beach coverup over micro bikini, see-through knit cover-up, bikini visible underneath, beach goddess look'},
-      {label:'🔥 Biquíni + shorts aberto',val:'wearing bikini top with unbuttoned denim shorts, beach casual sexy, shorts falling off hips'},
-    ],
-    skip:true,
-  },
-  {
-    id:'roupa_casual', label:'Casual & Tops', ask:'Roupa casual?',
-    qr:[
-      {label:'Conjunto moletom',val:'wearing matching sweatsuit set, cozy hoodie and sweatpants, loungewear set'},
-      {label:'Blazer sem blusa',val:'wearing oversized blazer only, no top underneath, blazer as dress, power suit style'},
-      {label:'Camisa social aberta',val:'wearing open button-down shirt, unbuttoned shirt with nothing underneath, sexy casual'},
-      {label:'Camiseta branca molhada',val:'wearing wet white t-shirt, soaked white shirt see-through, wet fabric clinging to body'},
-      {label:'Macacão',val:'wearing fitted jumpsuit, one-piece overall outfit, tight romper, full body suit'},
-      {label:'Conjunto cropped',val:'wearing matching crop top and high-waist skirt set, coordinated two-piece outfit'},
-      {label:'Suéter oversized',val:'wearing only oversized knit sweater, long sweater barely covering hips, no pants underneath, cozy sexy'},
-      {label:'Regata sem sutiã',val:'wearing thin tank top without bra, nipples visible through fabric, tight spaghetti strap top'},
-      {label:'Roupa de couro',val:'wearing leather jacket and leather pants, biker leather outfit, full leather look'},
-      {label:'🖤 Bodysuit casual',val:'wearing black sleeveless bodysuit tucked into jeans, form-fitting one-piece top, casual chic bodysuit outfit, no bra needed built-in, snap closure at crotch'},
-      {label:'👔 Camisa oversized',val:'wearing oversized boyfriend shirt unbuttoned revealing chest and midriff, long sleeves rolled up, just a shirt as dress, no pants, intimate morning casual look'},
-      {label:'🔥 Tomara que caia',val:'wearing strapless tube top and high-waist jeans, bandeau top, no straps, off-shoulder top threatening to fall, casual summer sexy'},
-      {label:'⚫ Latex casual',val:'wearing casual latex mini skirt and fitted top, matte black latex skirt everyday look, latex pencil skirt street style, edgy casual with latex piece'},
-      {label:'🔥 Camisa do namorado',val:'wearing only oversized men\'s dress shirt, unbuttoned shirt barely covering, no pants, intimate morning look'},
-      {label:'🔥 Minissaia couro + top decotado',val:'wearing black leather mini skirt and deep V plunging crop top, biker girl street style, edgy sexy combination, ankle boots'},
-      {label:'👠 Salto alto stiletto',val:'wearing extremely high stiletto heels, pointed-toe pumps, thin spike heel, sexy high heels, legs elongated by heels, strappy stiletto sandals'},
-      {label:'👠 Salto plataforma',val:'wearing platform high heels, thick platform sole with stiletto heel, ankle strap platform shoes, dramatic heel height, bold platform pumps'},
-      {label:'👠 Bota de salto coxa',val:'wearing thigh-high heeled boots, over-the-knee boots with heel, stiletto knee-high boots, provocative leg-covering boots with high heel'},
-    ],
-    skip:true,
-  },
-  {
-    id:'fantasia', label:'Fantasia', ask:'Fantasia ou roupa temática?',
-    qr:[
-      {label:'Policial',val:'wearing sexy police officer costume, tight uniform, handcuffs, cap'},
-      {label:'Enfermeira',val:'wearing sexy nurse costume, short white dress, red cross symbol, nurse cap'},
-      {label:'Professora',val:'wearing sexy teacher outfit, glasses, pencil skirt, button blouse tied'},
-      {label:'Gatinha',val:'wearing sexy cat costume, cat ears headband, black bodysuit, long tail, paw gloves'},
-      {label:'Coelhinha',val:'wearing Playboy bunny costume, strapless bodysuit, bunny ears, cotton tail, bow tie'},
-      {label:'Cheerleader',val:'wearing cheerleader outfit, short pleated skirt, crop top, pom-poms, sporty sexy'},
-      {label:'Cowgirl',val:'wearing cowgirl outfit, denim short shorts, plaid crop shirt, cowboy boots and hat'},
-      {label:'Colegial',val:'wearing schoolgirl uniform, white blouse tied at waist, plaid mini skirt, knee-high socks'},
-      {label:'Maid francesa',val:'wearing French maid costume, black mini dress, white apron, lace headband'},
-      {label:'Quimono japonês',val:'wearing open Japanese kimono robe, silk kimono partially open, obi sash loosened'},
-      {label:'Sari indiano',val:'wearing colorful Indian saree, draped sari fabric, midriff exposed, traditional dress'},
-      {label:'Latex/PVC',val:'wearing shiny latex catsuit, PVC tight outfit, glossy black latex bodysuit'},
-      {label:'Pirata',val:'wearing sexy pirate costume, corsair open blouse, mini skirt, tricorn hat, thigh-high boots, sword'},
-      {label:'Diaba',val:'wearing sexy devil costume, red mini dress, devil horns headband, pointed tail, red corset'},
-      {label:'Vampira',val:'wearing vampire costume, dark gothic dress, fangs, dramatic dark makeup, cape'},
-      {label:'Anjo',val:'wearing angel costume, white lingerie with wings, halo headband, feathery white outfit'},
-      {label:'Fada',val:'wearing fairy costume, tiny shimmery dress, glitter wings, pastel colors, magical look'},
-      {label:'Bruxa',val:'wearing sexy witch costume, short black dress, pointed hat, fishnet stockings'},
-      {label:'Super-heroína',val:'wearing superhero costume, tight bodysuit with cape, masked hero outfit, powerful pose'},
-      {label:'Rainha',val:'wearing queen costume, royal crown, luxurious gown with décolleté, regal sexy look'},
-      {label:'Gladiadora',val:'wearing gladiator costume, leather armor, sandal straps up legs, warrior woman look'},
-      {label:'Amazona',val:'wearing Amazon warrior outfit, leather breastplate, short skirt, arm guards, fierce look'},
-      {label:'Odalisca',val:'wearing odalisque harem costume, sheer harem pants, jeweled bra top, belly exposed, veil'},
-      {label:'Geisha',val:'wearing geisha kimono, white face makeup, red lips, traditional Japanese courtesan costume'},
-      {label:'Elfa',val:'wearing elf fantasy costume, pointed ears, forest green leather armor, elvish jewelry'},
-      {label:'Sereia',val:'wearing mermaid costume, iridescent tail skirt, seashell top, ocean fantasy outfit'},
-      {label:'Bailarina',val:'wearing ballet dancer costume, tutu skirt, pointe shoes, ballerina bun, graceful'},
-      {label:'Secretária',val:'wearing sexy secretary outfit, tight pencil skirt, white blouse unbuttoned, glasses'},
-      {label:'Mecânica',val:'wearing sexy mechanic outfit, overalls unzipped to waist, grease smudge, tool belt'},
-      {label:'Bombeira',val:'wearing sexy firefighter costume, suspender pants, open jacket, fire hat'},
-      {label:'Marinheira',val:'wearing sailor costume, navy mini dress, sailor collar, white cap, nautical look'},
-      {label:'Frentista',val:'wearing sexy gas station attendant costume, tight fitted jumpsuit unzipped low, name tag, grease stains, form-fitting mechanic coverall, curves visible'},
-      {label:'Indiana',val:'wearing sexy Native American costume, fringed leather mini dress, feather headband, moccasin boots, tribal jewelry, bare midriff'},
-      {label:'Cigana',val:'wearing gypsy costume, layered colorful skirt, off-shoulder blouse, coin belt, golden jewelry, bohemian fortune teller look'},
-      {label:'Deusa grega',val:'wearing Greek goddess toga, white draped fabric, golden laurel crown, sandal straps up leg, one shoulder draped gown'},
-      {label:'Ninja',val:'wearing sexy female ninja costume, tight black bodysuit, katana, face mask, split-toe boots, stealthy warrior look'},
-      {label:'Samurai',val:'wearing female samurai armor, kimono with armor plates, katana, warrior maiden outfit, Japanese warrior woman'},
-      {label:'Valquíria',val:'wearing Valkyrie armor costume, winged helmet, Norse warrior breastplate, cape, shield and spear, Viking warrior woman'},
-      {label:'Rainha egípcia',val:'wearing Egyptian queen Cleopatra costume, white linen draped dress, gold collar necklace, kohl eye makeup, ankh jewelry, pharaoh headpiece'},
-      {label:'Biker couro',val:'wearing biker girl leather costume, leather jacket, leather shorts, biker boots, fingerless gloves, edgy motorcycle queen'},
-      {label:'Pin-up retro',val:'wearing 1950s pin-up costume, polka dot halter dress, red lips, victory rolls hair, high heels, retro bombshell look'},
-      {label:'Astronauta',val:'wearing sexy space astronaut costume, silver bodysuit, NASA patch, helmet under arm, futuristic space girl'},
-      {label:'Robô futurista',val:'wearing futuristic robot girl costume, silver metallic bodysuit, circuit pattern, LED accents, sci-fi android aesthetic'},
-      {label:'Loba',val:'wearing wolf girl fantasy costume, animal ears, faux fur trim bodysuit, tail, paw gloves, wild creature transformation'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_pe', label:'Pose em Pé', ask:'Pose em pé?',
-    qr:[
-      {label:'Em pé frontal',val:'standing facing forward, full body shot, upright confident pose, hands on hips'},
-      {label:'Perfil lateral',val:'standing side profile, full body lateral view, facing sideways, side silhouette, showing curves from the side'},
-      {label:'De costas',val:'standing facing away, back view, showing back and buttocks, rear view pose'},
-      {label:'Pernas abertas em pé',val:'standing legs spread wide apart, wide stance, facing camera'},
-      {label:'Olhando sobre ombro',val:'looking over shoulder seductively, back turned, glancing back'},
-      {label:'Em pé arqueada',val:'standing with extreme back arch, chest pushed forward, hips thrust back, S-curve body pose'},
-      {label:'Encostada parede',val:'leaning against wall, back against wall, one leg raised, sensual lean'},
-      {label:'Mãos na parede',val:'hands pressed against wall, facing wall, arching back, rear pose against wall'},
-      {label:'Perna levantada parede',val:'standing with one leg raised against wall, leg up on wall, standing split against wall'},
-      {label:'Abraçando coluna/poste',val:'hugging a pole or column, arms wrapped around pole, body pressed against it, seductive'},
-      {label:'Em pé espelho',val:'standing in front of full-length mirror, mirror selfie pose, reflection shot'},
-      {label:'Dançando',val:'dancing pose, moving body, mid-dance, expressive movement, sensual dance'},
-      {label:'Caminhando',val:'walking pose, mid-stride, natural movement, confident walk, caught in motion'},
-      {label:'Espreguiçando',val:'stretching pose, arms overhead stretch, body elongated, cat stretch, legs apart'},
-      {label:'Arqueada de costas',val:'arched back from behind, spine curved deeply, pushing buttocks out towards camera'},
-      {label:'Encurvada pra frente',val:'bending forward deeply, bent over, rear facing camera'},
-      {label:'Abraçando a si mesma',val:'arms wrapped around own body, self-hug pose, hands on own shoulders'},
-      {label:'🔥 De costas olhando câmera',val:'standing back to camera, turning head to look over shoulder directly at camera, sultry rear look'},
-      {label:'🔥 Puxando roupa pra baixo',val:'pulling clothing down off shoulders, outfit sliding off, partially undressing, teasing reveal pose'},
-      {label:'🔥 Inclinada pra câmera',val:'leaning body forward directly toward camera, chest hanging forward, deep cleavage toward lens'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_deitada', label:'Pose Deitada', ask:'Pose deitada?',
-    qr:[
-      {label:'Deitada de costas',val:'lying on back on bed, legs slightly apart, reclining pose, face up'},
-      {label:'Deitada de bruços',val:'lying face down on bed, showing back and buttocks from behind, prone rear view'},
-      {label:'De bruços bumbum empinado',val:'lying face down facing camera, chest on bed, hips raised, big buttocks arched up towards camera, booty up prone pose, looking at camera'},
-      {label:'Deitada de lado',val:'lying on side, side view, curves visible, one leg forward, reclining sideways'},
-      {label:'Deitada pernas cruzadas',val:'lying on back, legs crossed at ankles, relaxed elegant reclining'},
-      {label:'Pernas levantadas',val:'lying on back with legs raised high up, legs in air, feet up pose'},
-      {label:'Abrindo pernas deitada',val:'lying on back, legs spread wide open, open legs pose, facing camera'},
-      {label:'Joelhos no peito',val:'lying on back, knees pulled to chest, legs folded up, hips raised'},
-      {label:'Pernas no ar abertas',val:'lying on back, legs raised and spread apart in the air, V-shape legs up pose'},
-      {label:'Abraçando travesseiro',val:'lying hugging a pillow, arms wrapped around pillow, side lying cuddle pose'},
-      {label:'Deitada areia praia',val:'lying on beach sand, waves nearby, beach reclining, sun-kissed body on sand'},
-      {label:'Deitada banheira',val:'lying in bathtub, water surrounding body, bath reclining pose, wet and relaxed'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_sentada', label:'Pose Sentada', ask:'Pose sentada?',
-    qr:[
-      {label:'Sentada pernas abertas',val:'sitting with legs spread wide open, seated legs apart, open seated pose facing camera'},
-      {label:'Sentada de lado',val:'sitting sideways, legs together side, elegant seated side profile'},
-      {label:'Sentada cadeira',val:'sitting on chair, legs spread open, seated pose'},
-      {label:'Sentada no chão pernas abertas',val:'sitting on floor with legs spread wide, floor seated open legs'},
-      {label:'Sentada chão costas parede',val:'sitting on floor back against wall, knees up or legs extended, floor seated wall pose'},
-      {label:'Sentada escada',val:'sitting on stairs, legs spread or crossed, staircase sitting pose'},
-      {label:'Sentada espelho',val:'sitting in front of mirror, reflection visible, mirror pose, double view of body'},
-      {label:'Montada',val:'straddling position, sitting astride, riding position on top, cowgirl position'},
-      {label:'De cócoras',val:'squatting down, deep squat pose, thighs wide open, balance squat'},
-      {label:'Inclinada pra frente sentada',val:'sitting leaning far forward, bent over seated, rear elevated'},
-      {label:'🔥 Abertura de pernas sentada',val:'seated on edge with legs spreading wide open slowly, explicit seated split, full frontal open'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_ajoelhada', label:'Pose Ajoelhada', ask:'Pose ajoelhada ou de quatro?',
-    qr:[
-      {label:'Ajoelhada submissa',val:'kneeling pose, down on knees, submissive kneeling, looking up'},
-      {label:'De joelhos arqueada',val:'kneeling with back arched, chest pushed forward, thighs spread, submissive arch pose'},
-      {label:'Quatro apoios',val:'on all fours, hands and knees position, back arched, buttocks raised'},
-      {label:'Segurando seios',val:'hands cupping and holding breasts, covering chest with hands, topless hands over breasts'},
-      {label:'Mãos no bumbum',val:'hands grabbing own buttocks, hands on ass, squeezing cheeks'},
-      {label:'🔥 Ajoelhada de frente',val:'kneeling facing camera, legs apart, hands on thighs, submissive frontal kneeling, looking up at camera'},
-      {label:'🔥 De quatro frente câmera',val:'on hands and knees facing camera directly, crawling toward camera, chest hanging, eye contact'},
-      {label:'🔥 Arrastando-se no chão',val:'crawling on all fours on floor, body low, sensual floor crawl toward camera'},
-      {label:'🔥 Lambendo lábios sensual',val:'licking lips seductively, tongue on lips, mouth open slightly, direct eye contact, sultry expression'},
-      {label:'🔥 Tocando o corpo',val:'hands sliding slowly down own body, self-touching pose, hands exploring curves, sensual self-caress'},
-      {label:'🔥 Puxando calcinha',val:'thumbs hooked in panties pulling down, underwear being removed, teasing undressing'},
-      {label:'Inclinada bancada',val:'leaning on counter or table edge, elbows on surface, bent forward, rear view'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_cama', label:'🛏 Pose na Cama', ask:'Pose na cama?',
-    qr:[
-      {label:'🛏 Deitada cama joelhos dobrados',val:'lying on back on bed, knees bent up, feet flat on mattress, arched back, intimate bedroom reclining pose'},
-      {label:'🛏 De joelhos na cama',val:'kneeling on bed, upright on knees, thighs apart, hands on thighs, kneeling submissive bed pose'},
-      {label:'🛏 Sentada cama pernas cruzadas',val:'sitting cross-legged on bed, relaxed meditation pose on mattress, casual intimate seated on bed'},
-      {label:'🛏 Deitada diagonal cama',val:'lying diagonally across bed, sprawled on mattress, limbs spread, disheveled sheets around body'},
-      {label:'🛏 Encostada cabeceira',val:'sitting up in bed leaning against headboard, legs extended forward, back against headboard, intimate bedroom sitting'},
-      {label:'🛏 Ajoelhada de quatro na cama',val:'on hands and knees on bed, doggy position on mattress, back arched, buttocks raised toward camera, sheets beneath'},
-      {label:'🛏 Deitada lateral beira cama',val:'lying on side at bed edge, body hanging slightly off mattress edge, one arm dangling, side reclining on bed border'},
-      {label:'🛏 De bruços abraçando travesseiro',val:'lying face down hugging pillow between legs, prone on bed gripping pillow, chest down buttocks up slightly'},
-      {label:'🛏 Sentada pernas penduradas beira',val:'sitting on bed edge, legs hanging off side, hands gripping mattress edge, feet off floor'},
-      {label:'🛏 Deitada lençol cobrindo',val:'lying in bed with thin sheet draped loosely over body, sheet barely covering, sensual bed sheet pose'},
-      {label:'🛏 Arqueada cama de costas',val:'lying on back on bed, hips raised high in bridge pose, back arched off mattress, feet and shoulders on bed only'},
-      {label:'🛏 De quatro olhando câmera',val:'on all fours on bed facing camera directly, crawling toward camera on mattress, chest hanging, direct eye contact'},
-      {label:'Sentada beira cama',val:'sitting on edge of bed, feet on floor, hands on knees, casual intimate seated pose'},
-      {label:'🔥 Encostada cama de bruços',val:'leaning over edge of bed on elbows, chest on mattress edge, hips up, rear elevated toward camera'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_sofa', label:'🛋 Pose no Sofá', ask:'Pose no sofá?',
-    qr:[
-      {label:'🛋 Deitada sofá de lado',val:'lying on sofa on side, reclining sideways on couch, one arm propped up, legs curled, side profile on sofa'},
-      {label:'🛋 Sentada sofá pernas abertas',val:'sitting on sofa with legs spread wide open, seated on couch legs apart, leaning back on cushions'},
-      {label:'🛋 Deitada sofá de bruços',val:'lying face down on sofa, prone on couch, hips raised, buttocks up, face turned sideways on armrest'},
-      {label:'🛋 Encostada braço sofá',val:'draped over sofa armrest, belly over armrest, rear raised toward camera, hanging over couch arm'},
-      {label:'Deitada sofá',val:'lying stretched out on sofa, relaxed on couch, legs dangling off edge, casual reclining'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_agua', label:'🚿 Chuveiro & Piscina', ask:'Pose no chuveiro ou piscina?',
-    qr:[
-      {label:'🚿 Em pé chuveiro olhando câmera',val:'standing in shower facing camera, water streaming down body, hands against shower wall, wet hair, steam, eye contact'},
-      {label:'🚿 De costas chuveiro',val:'standing in shower back to camera, water running down back and buttocks, rear view in shower, wet skin glistening'},
-      {label:'🚿 Encostada parede chuveiro',val:'back against shower wall, hands above head, water streaming, shower wall pose, wet and steamy'},
-      {label:'🚿 Sentada no chão chuveiro',val:'sitting on shower floor, knees up, water raining down from above, curled on shower floor, wet intimate pose'},
-      {label:'Em pé chuveiro',val:'standing in shower, water running over body, shower standing pose, wet hair'},
-      {label:'🏊 Na borda da piscina',val:'sitting on pool edge, legs in water, leaning back on hands, poolside seated pose, wet legs in pool'},
-      {label:'🏊 Saindo da piscina',val:'climbing out of pool, body wet glistening, arms pushing up on pool edge, emerging from water pose'},
-      {label:'🏊 Flutuando na piscina',val:'floating on back in pool, arms spread wide, floating on water surface, aerial view of floating body in pool'},
-      {label:'🏊 Mergulhada na piscina',val:'submerged underwater in pool, body visible through clear water, underwater pool pose, wet hair floating'},
-      {label:'Deitada banheira',val:'lying in bathtub, water surrounding body, bath reclining pose, wet and relaxed'},
-    ],
-    skip:true,
-  },
-  {
-    id:'pose_cozinha', label:'🍳 Pose na Cozinha', ask:'Pose na cozinha?',
-    qr:[
-      {label:'🍳 Encostada bancada cozinha',val:'leaning against kitchen counter, elbows on counter edge, back arched, casual sexy kitchen pose'},
-      {label:'🍳 Sentada bancada cozinha',val:'sitting on kitchen counter top, legs dangling, hands on counter, casual seated on kitchen surface'},
-      {label:'🍳 De costas cozinha',val:'standing at kitchen counter from behind, back to camera, bending slightly forward over counter, rear view in kitchen'},
-    ],
-    skip:true,
-  },
-  {
-    id:'cenario_casa', label:'🏠 Casa & Quarto', ask:'Cenário em casa?',
-    qr:[
-      {label:'Quarto boudoir',val:'luxurious bedroom, silk sheets, dim intimate lighting, boudoir setting'},
-      {label:'Quarto simples',val:'simple cozy bedroom, natural daylight, white walls, unmade bed, casual home'},
-      {label:'Cama king size',val:'large king size bed, rumpled white sheets, pillows everywhere, morning light bedroom'},
-      {label:'Banheiro luxuoso',val:'luxury marble bathroom, elegant tiles, natural light from window, large mirror'},
-      {label:'Chuveiro/ducha',val:'inside shower, water dripping, glass shower door, steam, wet tiles, shower scene'},
-      {label:'Banheira',val:'bathtub with bubbles, relaxing in bath, bubble bath, clawfoot tub, candles around'},
-      {label:'Espelho corpo inteiro',val:'in front of full-length mirror, mirror reflection, bedroom mirror selfie angle'},
-      {label:'Cozinha moderna',val:'modern kitchen, marble countertops, natural kitchen light, home cooking scene'},
-      {label:'Sala de estar',val:'living room sofa, cozy home interior, warm living room light, domestic setting'},
-      {label:'Varanda/sacada',val:'apartment balcony, city view behind, railing, outdoor terrace, urban backdrop'},
-      {label:'Apartamento moderno',val:'modern upscale apartment, floor-to-ceiling windows, city view, contemporary interior'},
-      {label:'Mansão',val:'luxury mansion interior, grand staircase, marble floors, opulent mansion decor'},
-    ],
-    skip:true,
-  },
-  {
-    id:'cenario_hotel', label:'🏨 Hotel & Luxo', ask:'Cenário de hotel ou luxo?',
-    qr:[
-      {label:'Hotel de luxo',val:'five-star luxury hotel suite, opulent decor, soft lighting, premium interior'},
-      {label:'Hotel boutique',val:'boutique hotel room, designer decor, chic hotel interior, stylish accommodation'},
-      {label:'Suíte presidencial',val:'presidential suite hotel, ultra luxury suite, panoramic city view, opulent hotel room'},
-      {label:'Corredor de hotel',val:'hotel corridor, wallpapered hallway, hotel door, elegant hotel passage'},
-      {label:'Iate de luxo',val:'luxury yacht deck, ocean horizon, boat deck, superyacht, sea breeze, open ocean'},
-      {label:'Cabine de avião',val:'private jet interior, leather seats, luxury aircraft cabin, first class jet'},
-      {label:'Spa de luxo',val:'luxury spa treatment room, massage table, orchids, candles, serene spa atmosphere'},
-      {label:'Sauna finlandesa',val:'Finnish sauna, wooden sauna interior, steam, hot rocks, dim warm sauna light'},
-      {label:'Sauna a vapor',val:'steam room, foggy steam, white tiles, misty steam bath, tropical humidity'},
-      {label:'Escritório executivo',val:'executive office, leather chair, mahogany desk, corporate luxury setting, office building view'},
-      {label:'Restaurante',val:'elegant restaurant, candlelit dinner table, restaurant interior, fine dining ambiance'},
-      {label:'Carro de luxo',val:'inside luxury car, car interior, back seat of sports car, leather seats, night drive'},
-    ],
-    skip:true,
-  },
-  {
-    id:'cenario_piscina', label:'🏊 Piscina & Água', ask:'Cenário de piscina ou água?',
-    qr:[
-      {label:'Piscina externa',val:'outdoor swimming pool, sun-drenched, tropical garden, pool deck, sunlight on water'},
-      {label:'Beira da piscina',val:'sitting at pool edge, feet in water, poolside lounging, pool tiles, water reflections'},
-      {label:'Piscina privada',val:'private infinity pool, luxury villa pool, crystal water, poolside paradise, exclusive private pool'},
-      {label:'Piscina coberta',val:'indoor private pool, glass ceiling, calm indoor pool, luxury spa pool setting'},
-      {label:'Jacuzzi/hidro',val:'in jacuzzi hot tub, bubbling spa water, outdoor hot tub, evening steam'},
-      {label:'Cachoeira/rio',val:'natural waterfall, river rocks, lush jungle, tropical waterfall, nature water scene'},
-    ],
-    skip:true,
-  },
-  {
-    id:'cenario_natureza', label:'🌿 Natureza & Praia', ask:'Cenário ao ar livre?',
-    qr:[
-      {label:'Praia tropical',val:'tropical beach, white sand, crystal blue ocean, golden sunlight, palm trees'},
-      {label:'Praia ao pôr do sol',val:'beach at golden sunset, orange sky, waves, silhouette light, warm beach tones'},
-      {label:'Natureza/floresta',val:'lush green nature, forest clearing, dappled sunlight through trees, outdoor wilderness'},
-      {label:'Campo aberto',val:'open field of grass, wildflowers meadow, blue sky, countryside, outdoor natural light'},
-      {label:'Cachoeira/rio',val:'natural waterfall, river rocks, lush jungle, tropical waterfall, nature water scene'},
-      {label:'Montanha/neve',val:'snowy mountain landscape, snow scene, cozy winter, fur coat, alpine scenery'},
-      {label:'Dunas de areia',val:'sandy desert dunes, harsh sunlight, golden sand dunes, desert landscape'},
-      {label:'Deserto ao pôr do sol',val:'desert at sunset, orange pink sky, sand dunes, dramatic desert sunset colors'},
-      {label:'Penhasco/falésia',val:'cliffside ocean view, rocky cliffs, dramatic sea below, outdoor cliff location'},
-    ],
-    skip:true,
-  },
-  {
-    id:'cenario_cidade', label:'🌆 Cidade & Urbano', ask:'Cenário urbano?',
-    qr:[
-      {label:'Rua da cidade',val:'city street, urban sidewalk, street photography, city buildings backdrop, street scene'},
-      {label:'Telhado urbano',val:'rooftop with city skyline, urban rooftop, city lights at night, building rooftop'},
-      {label:'Academia',val:'gym interior, weight room, exercise equipment, fitness studio, gym lighting'},
-      {label:'Pista de dança',val:'dance floor, disco lights, nightclub dance floor, colored lights, party scene'},
-      {label:'Bar/balada',val:'upscale nightclub interior, neon lights, bar atmosphere, night venue, club scene'},
-      {label:'Clube noturno VIP',val:'VIP nightclub lounge, exclusive club, velvet booths, bottle service, elite club ambiance'},
-      {label:'Posto de gasolina',val:'gas station setting, fuel pumps, convenience store, neon gas station signs, night gas station, asphalt, fuel pump backdrop'},
-      {label:'Escritório',val:'office setting, desk, office chair, business environment, professional workspace'},
-      {label:'Estúdio fundo branco',val:'clean white studio background, professional photo studio, seamless white backdrop'},
-      {label:'Estúdio fundo preto',val:'black studio background, dramatic dark backdrop, professional photography'},
-      {label:'Fundo gradiente',val:'colorful gradient background, studio gradient backdrop, pink purple gradient'},
-    ],
-    skip:true,
-  },
-  {
-    id:'cenario_noturno', label:'🌙 Noturno & Luzes', ask:'Cenário noturno?',
-    qr:[
-      {label:'🌃 Rua noturna neon',val:'urban night street, neon signs glowing, wet asphalt reflecting neon lights, night city street, rain-soaked road, cinematic night alley, colorful neon reflections'},
-      {label:'🌆 Vista noturna arranha-céus',val:'night cityscape, skyscrapers with city lights, floor-to-ceiling window overlooking lit city at night, dramatic night skyline view, high-rise night view'},
-      {label:'🎆 Rooftop à noite',val:'rooftop at night, city lights spread below, night sky above, urban rooftop night party, downtown night rooftop, twinkling lights backdrop'},
-      {label:'🍸 Bar noturno íntimo',val:'intimate dark bar at night, moody bar lighting, amber bar light, cocktail bar interior, low-lit bar counter, speakeasy atmosphere, dim bar ambiance'},
-      {label:'💃 Balada/nightclub',val:'nightclub interior at night, strobe lights, smoke machine, dance floor lights, club atmosphere, pulsing colored lights, night club scene'},
-      {label:'🌙 Praia à noite',val:'beach at night, moonlight on water, moonlit beach, stars above ocean, dark sand, waves in moonlight, night beach atmosphere'},
-      {label:'🚗 Carro à noite / drive',val:'inside car at night, city lights passing, night drive, dashboard glow, headlights on dark road, late night driving, car window city lights'},
-      {label:'🏨 Quarto de hotel à noite',val:'hotel room at night, city lights through window, dark hotel room, only city glow lighting, night city view from hotel bed, intimate hotel night'},
-      {label:'🌉 Ponte à noite',val:'bridge at night, river reflection of city lights, night bridge, iron bridge with lights, urban night bridge scene, reflected city in water below'},
-      {label:'🔴 Luz vermelha / red room',val:'red light room, crimson ambient lighting, moody red photography light, deep red light illuminating skin, dramatic red lit scene, red neon room'},
-      {label:'💜 Luz neon púrpura',val:'purple neon lighting, violet neon glow on skin, neon purple ambient light, cyberpunk purple glow, neon purple room, ultraviolet atmosphere'},
-      {label:'🌸 Luz rosa neon',val:'pink neon lighting, rose neon glow, pink ambient night light, neon pink room, hot pink light on skin, pink-lit interior at night'},
-      {label:'🌿 Jardim à noite',val:'night garden, outdoor garden at night, fairy lights in garden, lanterns in garden, moonlit garden, stars visible, romantic outdoor night setting'},
-      {label:'⭐ Campo aberto à noite',val:'open field at night, stars and milky way visible, night sky full of stars, rural night, grassland under starry sky, astrophotography setting'},
+      {label:'🏠 Casa — Quarto boudoir',val:'luxurious bedroom, silk sheets, dim intimate lighting, boudoir setting'},
+      {label:'🏠 Casa — Quarto simples',val:'simple cozy bedroom, natural daylight, white walls, unmade bed, casual home'},
+      {label:'🏠 Casa — Banheiro luxuoso',val:'luxury marble bathroom, elegant tiles, natural light from window, large mirror'},
+      {label:'🏠 Casa — Chuveiro/ducha',val:'inside shower, water dripping, glass shower door, steam, wet tiles, shower scene'},
+      {label:'🏠 Casa — Banheira',val:'bathtub with bubbles, relaxing in bath, bubble bath, clawfoot tub, candles around'},
+      {label:'🏠 Casa — Cozinha moderna',val:'modern kitchen, marble countertops, natural kitchen light, home cooking scene'},
+      {label:'🏠 Casa — Sala de estar',val:'living room sofa, cozy home interior, warm living room light, domestic setting'},
+      {label:'🏠 Casa — Apartamento moderno',val:'modern upscale apartment, floor-to-ceiling windows, city view, contemporary interior'},
+      {label:'🏨 Hotel — Hotel de luxo',val:'five-star luxury hotel suite, opulent decor, soft lighting, premium interior'},
+      {label:'🏨 Hotel — Suíte presidencial',val:'presidential suite hotel, ultra luxury suite, panoramic city view, opulent hotel room'},
+      {label:'🏨 Hotel — Iate de luxo',val:'luxury yacht deck, ocean horizon, boat deck, superyacht, sea breeze, open ocean'},
+      {label:'🏨 Hotel — Spa de luxo',val:'luxury spa treatment room, massage table, orchids, candles, serene spa atmosphere'},
+      {label:'🏨 Hotel — Sauna finlandesa',val:'Finnish sauna, wooden sauna interior, steam, hot rocks, dim warm sauna light'},
+      {label:'🏨 Hotel — Sauna a vapor',val:'steam room, foggy steam, white tiles, misty steam bath, tropical humidity'},
+      {label:'🏊 Piscina — Externa tropical',val:'outdoor swimming pool, sun-drenched, tropical garden, pool deck, sunlight on water'},
+      {label:'🏊 Piscina — Privada infinity',val:'private infinity pool, luxury villa pool, crystal water, poolside paradise, exclusive private pool'},
+      {label:'🏊 Piscina — Jacuzzi/hidro',val:'in jacuzzi hot tub, bubbling spa water, outdoor hot tub, evening steam'},
+      {label:'🏊 Piscina — Cachoeira/rio',val:'natural waterfall, river rocks, lush jungle, tropical waterfall, nature water scene'},
+      {label:'🌿 Natureza — Praia tropical',val:'tropical beach, white sand, crystal blue ocean, golden sunlight, palm trees'},
+      {label:'🌿 Natureza — Praia ao pôr do sol',val:'beach at golden sunset, orange sky, waves, silhouette light, warm beach tones'},
+      {label:'🌿 Natureza — Floresta',val:'lush green nature, forest clearing, dappled sunlight through trees, outdoor wilderness'},
+      {label:'🌿 Natureza — Campo aberto',val:'open field of grass, wildflowers meadow, blue sky, countryside, outdoor natural light'},
+      {label:'🌿 Natureza — Montanha/neve',val:'snowy mountain landscape, snow scene, cozy winter, fur coat, alpine scenery'},
+      {label:'🌿 Natureza — Penhasco/falésia',val:'cliffside ocean view, rocky cliffs, dramatic sea below, outdoor cliff location'},
+      {label:'🌆 Cidade — Rua da cidade',val:'city street, urban sidewalk, street photography, city buildings backdrop, street scene'},
+      {label:'🌆 Cidade — Telhado urbano',val:'rooftop with city skyline, urban rooftop, city lights at night, building rooftop'},
+      {label:'🌆 Cidade — Academia/gym',val:'gym interior, weight room, exercise equipment, fitness studio, gym lighting'},
+      {label:'🌆 Cidade — Bar/balada',val:'upscale nightclub interior, neon lights, bar atmosphere, night venue, club scene'},
+      {label:'🌆 Cidade — Posto de gasolina',val:'gas station setting, fuel pumps, convenience store, neon gas station signs, night gas station, asphalt, fuel pump backdrop'},
+      {label:'🌆 Cidade — Estúdio fundo branco',val:'clean white studio background, professional photo studio, seamless white backdrop'},
+      {label:'🌆 Cidade — Estúdio fundo preto',val:'black studio background, dramatic dark backdrop, professional photography'},
+      {label:'🌙 Noturno — Rua neon',val:'urban night street, neon signs glowing, wet asphalt reflecting neon lights, night city street, rain-soaked road, cinematic night alley, colorful neon reflections'},
+      {label:'🌙 Noturno — Vista arranha-céus',val:'night cityscape, skyscrapers with city lights, floor-to-ceiling window overlooking lit city at night, dramatic night skyline view, high-rise night view'},
+      {label:'🌙 Noturno — Rooftop à noite',val:'rooftop at night, city lights spread below, night sky above, urban rooftop night party, downtown night rooftop, twinkling lights backdrop'},
+      {label:'🌙 Noturno — Bar íntimo',val:'intimate dark bar at night, moody bar lighting, amber bar light, cocktail bar interior, low-lit bar counter, speakeasy atmosphere, dim bar ambiance'},
+      {label:'🌙 Noturno — Balada/nightclub',val:'nightclub interior at night, strobe lights, smoke machine, dance floor lights, club atmosphere, pulsing colored lights, night club scene'},
+      {label:'🌙 Noturno — Praia à noite',val:'beach at night, moonlight on water, moonlit beach, stars above ocean, dark sand, waves in moonlight, night beach atmosphere'},
+      {label:'🌙 Noturno — Carro à noite',val:'inside car at night, city lights passing, night drive, dashboard glow, headlights on dark road, late night driving, car window city lights'},
+      {label:'🌙 Noturno — Luz vermelha / red room',val:'red light room, crimson ambient lighting, moody red photography light, deep red light illuminating skin, dramatic red lit scene, red neon room'},
+      {label:'🌙 Noturno — Luz neon púrpura',val:'purple neon lighting, violet neon glow on skin, neon purple ambient light, cyberpunk purple glow, neon purple room, ultraviolet atmosphere'},
+      {label:'🌙 Noturno — Luz rosa neon',val:'pink neon lighting, rose neon glow, pink ambient night light, neon pink room, hot pink light on skin, pink-lit interior at night'},
     ],
     skip:true,
   },
@@ -3064,50 +2829,12 @@ function savePref(stepId, val, label){
 }
 function getPref(stepId){ try{ const p=loadPrefs(); return p[stepId]||null; }catch(e){ return null; } }
 
-// ─── Feature 2: Smart compatibility map ───────────────────────────────────
-const COMPAT = {
-  roupa_nudez:    {pose:['pose_cama','pose_sofa','pose_deitada'], cenario:['cenario_hotel','cenario_casa','cenario_piscina']},
-  roupa_lingerie: {pose:['pose_cama','pose_sofa','pose_deitada'], cenario:['cenario_hotel','cenario_casa']},
-  roupa_vestido:  {pose:['pose_pe','pose_sentada'],               cenario:['cenario_cidade','cenario_hotel','cenario_natureza']},
-  roupa_calcas:   {pose:['pose_pe','pose_sentada'],               cenario:['cenario_cidade','cenario_natureza','cenario_casa']},
-  roupa_esporte:  {pose:['pose_pe','pose_ajoelhada'],             cenario:['cenario_natureza','cenario_cidade']},
-  roupa_praia:    {pose:['pose_pe','pose_deitada'],               cenario:['cenario_piscina','cenario_natureza']},
-  roupa_casual:   {pose:['pose_pe','pose_sentada'],               cenario:['cenario_cidade','cenario_natureza','cenario_casa']},
-};
-function applyCompat(stepId, qrs){
-  // find which roupa sub-step is answered
-  const roupaSubSteps=['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'];
-  const answeredRoupa = roupaSubSteps.find(id=>answers[id]);
-  if(!answeredRoupa) return qrs;
-  const compatData = COMPAT[answeredRoupa];
-  if(!compatData) return qrs;
-  const group = CATEGORY_PARENT[stepId]; // 'Pose' or 'Cenário'
-  const compatKey = group==='Pose'?'pose':(group==='Cenário'?'cenario':null);
-  if(!compatKey) return qrs;
-  const compatIds = compatData[compatKey]||[];
-  if(!compatIds.length) return qrs;
-  const sugg=[], rest=[];
-  qrs.forEach(q=>{ if(compatIds.includes(q.val===undefined?null:null)) return; }); // unused
-  qrs.forEach(q=>{
-    // match by step id — chips don't have stepId; match by value against STEPS
-    const matchStep = STEPS.find(s=>s.id===stepId && s.qr && s.qr.some(o=>o.val===q.val));
-    if(matchStep) { sugg.push(q); } else { rest.push(q); }
-  });
-  // better: match chips whose parent step id is in compatIds
-  const sugg2=[], rest2=[];
-  qrs.forEach(q=>{
-    // find the step id for this chip by scanning all sub-step steps in the same group
-    const found = STEPS.find(s=>CATEGORY_PARENT[s.id]===group && s.qr && s.qr.some(o=>o.val===q.val) && compatIds.includes(s.id));
-    if(found) sugg2.push({...q, label:'💡 '+q.label, cls:(q.cls||'')+' sugg'});
-    else rest2.push(q);
-  });
-  if(!sugg2.length) return qrs;
-  return [...sugg2, ...rest2];
-}
+// ─── Feature 2: Smart compatibility (noop with merged steps) ─────────────
+function applyCompat(stepId, qrs){ return qrs; }
 
 // ─── Feature 3: Modo Rápido ────────────────────────────────────────────────
 let modoRapidoAtivo = false;
-const QUICK_STEPS = ['personagem','corpo','realismo','imperfeicoes','cabelo'];
+const QUICK_STEPS = ['personagem','corpo','roupa','pose','cenario'];
 
 async function modoRapido(){
   if(waiting) return;
@@ -3133,7 +2860,7 @@ async function modoRapido(){
   if(firstIdx<0){ modoRapidoAtivo=false; return; }
   step = firstIdx;
   updateProgress(); clearQR();
-  addMsg('bot','⚡ <strong>Modo Rápido!</strong> Apenas 5 escolhas e o prompt está pronto.');
+  addMsg('bot','⚡ <strong>Modo Rápido!</strong> Apenas 5 escolhas e o prompt está pronto — personagem, corpo, roupa, pose e cenário.');
   await delay(400);
   const cur=STEPS[step];
   let qrs=cur.qr?[...cur.qr]:[];
@@ -3142,40 +2869,12 @@ async function modoRapido(){
 }
 
 function autoFillResto(){
-  // Fill all non-answered steps randomly, respecting groups
-  const ROUPA_IDS=['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'];
-  const GROUPS=[
-    ROUPA_IDS,
-    ['pose_pe','pose_deitada','pose_sentada','pose_ajoelhada','pose_cama','pose_sofa','pose_agua','pose_cozinha'],
-    ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
-  ];
-  // fantasia é mutuamente exclusivo com roupa/nudez — sempre excluir do loop geral
-  const roupaJaDefinida = ROUPA_IDS.some(id=>answers[id]);
-  const fantasiaJaDefinida = !!answers['fantasia'];
-  const skipIds=new Set([...GROUPS.flat(), 'fantasia']); // fantasia sempre fora do loop geral
+  // Fill all non-answered steps randomly
   STEPS.forEach(s=>{
-    if(answers[s.id]||skipIds.has(s.id)) return;
+    if(answers[s.id]) return;
     if(!s.qr||!s.qr.length) return;
     const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
     if(pool.length) answers[s.id]=pool[Math.floor(Math.random()*pool.length)].val;
-  });
-  // pick one roupa sub based on existing roupa answer if matched
-  const roupaAnswered=GROUPS[0].find(id=>answers[id]);
-  if(!roupaAnswered && !fantasiaJaDefinida){
-    const cands=GROUPS[0].filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
-    if(cands.length){ const c=cands[Math.floor(Math.random()*cands.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
-  }
-  // pick pose and cenario based on compat
-  const rSub=GROUPS[0].find(id=>answers[id]);
-  const compatData=rSub&&COMPAT[rSub];
-  [1,2].forEach(gi=>{
-    const gName=gi===1?'pose':'cenario';
-    if(!GROUPS[gi].find(id=>answers[id])){
-      const preferred=compatData&&compatData[gName]||[];
-      const cands=preferred.length?preferred.filter(id=>STEPS.find(s=>s.id===id)):GROUPS[gi];
-      const valid=cands.filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
-      if(valid.length){ const c=valid[Math.floor(Math.random()*valid.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
-    }
   });
   const analogStep=STEPS.find(s=>s.id==='realismo');
   if(analogStep){ const opt=analogStep.qr.find(q=>q.label==='Fotografia analógica'); if(opt) answers.realismo=opt.val; }
@@ -3211,17 +2910,17 @@ async function gerarVariacoes(basePrompt, parentEl){
 // ─── Feature 5: Pacotes temáticos ─────────────────────────────────────────
 const PACOTES = [
   { id:'pkg_praia', name:'🏖 Praia Tropical', desc:'Cena de praia ensolarada, biquíni, luz natural',
-    answers:{ personagem:'beautiful curvy Brazilian woman, tan skin, long wavy hair', roupa_praia:'tiny string bikini, vibrant tropical colors', pose_pe:'standing at ocean shore, waves at feet, arms raised', cenario_piscina:'tropical beach, crystal clear turquoise water, white sand, palm trees', realismo:'RAW photograph, Kodak Ektar 100, 35mm lens, natural sunlight, warm golden tones, slight grain' } },
+    answers:{ personagem:'beautiful curvy Brazilian woman, tan skin, long wavy hair', roupa:'wearing tiny string bikini, vibrant tropical colors', pose:'standing at ocean shore, waves at feet, arms raised', cenario:'tropical beach, crystal clear turquoise water, white sand, palm trees', realismo:'RAW photograph, Kodak Ektar 100, 35mm lens, natural sunlight, warm golden tones, slight grain' } },
   { id:'pkg_quarto', name:'🛏 Quarto Íntimo', desc:'Boudoir aconchegante, lingerie, luz de vela',
-    answers:{ personagem:'beautiful sensual woman, soft features, natural makeup', roupa_lingerie:'delicate lace lingerie set, soft pink tones', pose_cama:'lying on bed, tangled in white sheets, soft expression', cenario_casa:'cozy bedroom, candlelight, warm ambient light, soft shadows', realismo:'RAW photograph, Fujifilm 400H, 50mm f/1.4, warm candlelight, natural skin tones' } },
+    answers:{ personagem:'beautiful sensual woman, soft features, natural makeup', roupa:'wearing delicate lace lingerie set, soft pink tones', pose:'lying on bed, tangled in white sheets, soft expression', cenario:'cozy bedroom, candlelight, warm ambient light, soft shadows', realismo:'RAW photograph, Fujifilm 400H, 50mm f/1.4, warm candlelight, natural skin tones' } },
   { id:'pkg_noite', name:'🌆 Noite Urbana', desc:'Cidade à noite, vestido elegante, luz neon',
-    answers:{ personagem:'elegant confident woman, bold features, red lips', roupa_vestido:'sleek bodycon dress, deep red, figure-hugging silhouette', pose_pe:'standing on city street, neon reflections on wet pavement', cenario_noturno:'downtown city at night, neon signs, light trails, bokeh lights', realismo:'RAW photograph, Cinestill 800T, 85mm f/1.8, neon ambient light, cinematic grain' } },
+    answers:{ personagem:'elegant confident woman, bold features, red lips', roupa:'wearing sleek bodycon dress, deep red, figure-hugging silhouette', pose:'standing on city street, neon reflections on wet pavement', cenario:'downtown city at night, neon signs, light trails, bokeh lights', realismo:'RAW photograph, Cinestill 800T, 85mm f/1.8, neon ambient light, cinematic grain' } },
   { id:'pkg_banho', name:'🚿 Banho & Spa', desc:'Chuveiro ou banheira, look fresco e natural',
-    answers:{ personagem:'fresh-faced beautiful woman, natural look, no heavy makeup', roupa_nudez:'completely nude, skin glistening with water droplets', pose_agua:'in shower, water streaming down body, eyes closed', cenario_casa:'modern bathroom, rain shower, steam, marble tiles, natural light', realismo:'RAW photograph, Kodak Portra 400, 35mm, natural window light, moist skin texture' } },
+    answers:{ personagem:'fresh-faced beautiful woman, natural look, no heavy makeup', roupa:'completely nude, skin glistening with water droplets', pose:'in shower, water streaming down body, eyes closed', cenario:'modern bathroom, rain shower, steam, marble tiles, natural light', realismo:'RAW photograph, Kodak Portra 400, 35mm, natural window light, moist skin texture' } },
   { id:'pkg_academia', name:'🏋 Academia & Fitness', desc:'Look fitness, corpo atlético, energia',
-    answers:{ personagem:'athletic toned woman, muscular definition, confident posture', roupa_esporte:'sport bra and high-waist leggings, form-fitting, bright accent colors', pose_ajoelhada:'dynamic lunge position, gym equipment in background', cenario_cidade:'modern gym, floor-to-ceiling mirrors, warm lighting', realismo:'RAW photograph, Sony A7IV, 24-70mm f/2.8, gym ambient light, sharp detail' } },
+    answers:{ personagem:'athletic toned woman, muscular definition, confident posture', roupa:'wearing sport bra and high-waist leggings, form-fitting, bright accent colors', pose:'dynamic lunge position, gym equipment in background', cenario:'modern gym, floor-to-ceiling mirrors, warm lighting', realismo:'RAW photograph, Sony A7IV, 24-70mm f/2.8, gym ambient light, sharp detail' } },
   { id:'pkg_natureza', name:'🌿 Natureza & Ar Livre', desc:'Outdoor, luz dourada, ambiente natural',
-    answers:{ personagem:'free-spirited beautiful woman, sun-kissed skin, natural wild hair', roupa_casual:'flowy bohemian dress, light fabric, earth tones', pose_pe:'walking through tall grass, golden hour backlight, hair blowing', cenario_natureza:'open countryside, rolling hills, wildflowers, dramatic sky, golden hour light', realismo:'RAW photograph, Kodak Portra 800, 35mm f/2, golden hour backlight, warm film tones' } },
+    answers:{ personagem:'free-spirited beautiful woman, sun-kissed skin, natural wild hair', roupa:'wearing flowy bohemian dress, light fabric, earth tones', pose:'walking through tall grass, golden hour backlight, hair blowing', cenario:'open countryside, rolling hills, wildflowers, dramatic sky, golden hour light', realismo:'RAW photograph, Kodak Portra 800, 35mm f/2, golden hour backlight, warm film tones' } },
 ];
 
 async function aplicarPacote(id){
@@ -3311,11 +3010,7 @@ function buildPrompt(){
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
   const estilo = answers.estilo || answers.estilo_foto || answers.film;
   const angulo = answers.angulo || answers.cam;
-  const roupaVal = [
-    answers.roupa, answers.roupa_nudez, answers.roupa_lingerie, answers.roupa_vestido,
-    answers.roupa_calcas, answers.roupa_esporte, answers.roupa_praia,
-    answers.roupa_casual,
-  ].filter(Boolean).join(', ');
+  const roupaVal = answers.roupa || '';
   const isNude = /nude|naked|nua\b|pelada|sem roupa|topless|sem calcinha|sem sutiã|lingerie only/i.test(roupaVal);
   const underwear = isNude ? '' : 'wearing matching lace bra and panties underneath';
   const parts = [
@@ -3328,15 +3023,10 @@ function buildPrompt(){
     roupaVal,
     underwear,
     answers.joias,
-    answers.fantasia,
-    answers.pose, answers.pose_pe, answers.pose_deitada, answers.pose_sentada,
-    answers.pose_ajoelhada, answers.pose_cama, answers.pose_sofa,
-    answers.pose_agua, answers.pose_cozinha,
+    answers.pose,
     answers.expressao,
     angulo,
-    answers.cenario, answers.cenario_casa, answers.cenario_hotel,
-    answers.cenario_piscina, answers.cenario_natureza, answers.cenario_cidade,
-    answers.cenario_noturno,
+    answers.cenario,
     estilo,
   ].filter(Boolean);
   const seen = new Set();
@@ -3372,14 +3062,7 @@ const catParentEl = document.getElementById('cat-parent');
 const catSepEl = document.getElementById('cat-sep');
 const catChildEl = document.getElementById('cat-child');
 
-const CATEGORY_PARENT = {
-  roupa_nudez:'Roupa', roupa_lingerie:'Roupa', roupa_vestido:'Roupa',
-  roupa_calcas:'Roupa', roupa_esporte:'Roupa', roupa_praia:'Roupa', roupa_casual:'Roupa',
-  pose_pe:'Pose', pose_deitada:'Pose', pose_sentada:'Pose', pose_ajoelhada:'Pose',
-  pose_cama:'Pose', pose_sofa:'Pose', pose_agua:'Pose', pose_cozinha:'Pose',
-  cenario_casa:'Cenário', cenario_hotel:'Cenário', cenario_piscina:'Cenário',
-  cenario_natureza:'Cenário', cenario_cidade:'Cenário', cenario_noturno:'Cenário',
-};
+const CATEGORY_PARENT = {};
 
 function updateProgress(){
   const pct = step>=TOTAL ? 100 : Math.round((step/TOTAL)*100);
@@ -3783,57 +3466,12 @@ async function randomAll(){
   if(waiting) return;
   restart(); await delay(800);
 
-  // Grupos exclusivos: sorteia apenas UM sub-step de cada grupo
-  const ROUPA_IDS2 = ['roupa_nudez','roupa_lingerie','roupa_vestido','roupa_calcas','roupa_esporte','roupa_praia','roupa_casual'];
-  const GROUPS = [
-    ROUPA_IDS2,
-    ['pose_pe','pose_deitada','pose_sentada','pose_ajoelhada','pose_cama','pose_sofa','pose_agua','pose_cozinha'],
-    ['cenario_casa','cenario_hotel','cenario_piscina','cenario_natureza','cenario_cidade','cenario_noturno'],
-  ];
-  const skipIds = new Set(GROUPS.flat());
-  // fantasia sempre excluída do loop genérico — tratada explicitamente no bloco final
-  skipIds.add('fantasia');
-  const temRoupa2 = ROUPA_IDS2.some(id=>answers[id]);
-  const temFantasia2 = !!answers['fantasia'];
-  // Se já tem fantasia mas não roupa, limpa fantasia para o bloco final decidir aleatoriamente
-  if(temFantasia2 && !temRoupa2){ delete answers['fantasia']; }
-
-  // Sorteia steps normais (fora dos grupos)
-  for(let i=0;i<STEPS.length;i++){
-    const s=STEPS[i];
-    if(skipIds.has(s.id)) continue;
+  // Sorteia todos os steps aleatoriamente
+  for(const s of STEPS){
     if(!s.qr||!s.qr.length) continue;
     const pool=s.qr.filter(q=>q.val!==''&&!q.skip);
     if(!pool.length) continue;
     answers[s.id]=pool[Math.floor(Math.random()*pool.length)].val;
-  }
-
-  // Para cada grupo, sorteia apenas UM sub-step e UMA opção dele
-  // Se roupa já definida, pula o grupo de roupas; se fantasia já definida, idem
-  for(const group of GROUPS){
-    // Skip roupa group if fantasia already answered, and vice-versa
-    if(group === ROUPA_IDS2 && (temFantasia2 || answers['fantasia'])) continue;
-    // Skip group if any member already answered
-    if(group.some(id=>answers[id])) continue;
-    const candidates = group.filter(id=>{
-      const s=STEPS.find(s=>s.id===id);
-      return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0;
-    });
-    if(!candidates.length) continue;
-    const chosenId = candidates[Math.floor(Math.random()*candidates.length)];
-    const s = STEPS.find(s=>s.id===chosenId);
-    const pool = s.qr.filter(q=>q.val!==''&&!q.skip);
-    answers[chosenId] = pool[Math.floor(Math.random()*pool.length)].val;
-  }
-  // If neither roupa nor fantasia answered, pick one of the two randomly
-  const anyRoupa = ROUPA_IDS2.some(id=>answers[id]);
-  if(!anyRoupa && !answers['fantasia']){
-    if(Math.random()<0.7){ // 70% chance roupa, 30% fantasia
-      const cands=ROUPA_IDS2.filter(id=>{ const s=STEPS.find(s=>s.id===id); return s&&s.qr&&s.qr.filter(q=>q.val!==''&&!q.skip).length>0; });
-      if(cands.length){ const c=cands[Math.floor(Math.random()*cands.length)]; const s=STEPS.find(s=>s.id===c); const pool=s.qr.filter(q=>q.val!==''&&!q.skip); answers[c]=pool[Math.floor(Math.random()*pool.length)].val; }
-    } else {
-      const fs=STEPS.find(s=>s.id==='fantasia'); if(fs){ const pool=fs.qr.filter(q=>q.val!==''&&!q.skip); if(pool.length) answers['fantasia']=pool[Math.floor(Math.random()*pool.length)].val; }
-    }
   }
 
   // Realismo padrão: fotografia analógica
