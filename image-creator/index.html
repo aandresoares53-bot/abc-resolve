@@ -303,12 +303,12 @@
       <div class="field">
         <label>Modelo</label>
         <select id="model">
-          <option value="stable-diffusion">Stable Diffusion</option>
-          <option value="turbo">SD XL Turbo</option>
-          <option value="flux">Flux (recomendado)</option>
-          <option value="flux-realism">Flux Realism</option>
+          <option value="flux-realism">Flux Realism ⭐</option>
+          <option value="flux">Flux</option>
           <option value="flux-anime">Flux Anime</option>
           <option value="flux-3d">Flux 3D</option>
+          <option value="turbo">SD XL Turbo</option>
+          <option value="stable-diffusion">Stable Diffusion</option>
           <option value="any-dark">Any Dark</option>
         </select>
       </div>
@@ -322,6 +322,15 @@
           <option value="832x1216">2:3 Foto vert.</option>
         </select>
       </div>
+    </div>
+
+    <div class="field">
+      <label>Steps <span style="font-weight:400;text-transform:none;font-size:0.7rem">(qualidade)</span></label>
+      <select id="steps">
+        <option value="20">20 — Rápido</option>
+        <option value="30" selected>30 — Balanceado</option>
+        <option value="50">50 — Alta qualidade</option>
+      </select>
     </div>
 
     <div class="field">
@@ -419,14 +428,16 @@
     const [w, h]  = ratio.split('x');
     const seed    = parseInt(document.getElementById('seed').value) || 0;
     const neg     = document.getElementById('negPrompt').value.trim();
+    const steps   = parseInt(document.getElementById('steps').value);
 
     const params = new URLSearchParams({
       width: w,
       height: h,
       model: model,
       seed: seed,
+      steps: steps,
       nologo: 'true',
-      enhance: 'false',
+      enhance: 'true',
     });
 
     if (neg) params.set('negative_prompt', neg);
