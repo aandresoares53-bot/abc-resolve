@@ -31,17 +31,11 @@
     }
 
     header {
-      padding: 20px 24px;
+      padding: 18px 24px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 12px;
-    }
-
-    header h1 {
-      font-size: 1.3rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
     }
 
     header .logo {
@@ -52,57 +46,87 @@
       font-size: 1rem;
     }
 
-    header .status-dot {
-      margin-left: auto;
-      display: flex; align-items: center; gap: 8px;
-      font-size: 0.8rem;
-      color: var(--text2);
-    }
+    header h1 { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; }
 
-    header .status-dot span {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--border);
-      transition: background 0.3s;
+    header .badge {
+      margin-left: 8px;
+      background: rgba(124,106,247,0.15);
+      border: 1px solid rgba(124,106,247,0.3);
+      border-radius: 20px;
+      color: var(--accent2);
+      font-size: 0.7rem;
+      padding: 2px 10px;
+      font-weight: 600;
     }
-
-    header .status-dot.online span { background: var(--success); }
-    header .status-dot.offline span { background: var(--danger); }
 
     main {
       display: flex;
       flex: 1;
-      gap: 0;
     }
 
     .panel-left {
-      width: 380px;
-      min-width: 320px;
+      width: 360px;
+      min-width: 300px;
       border-right: 1px solid var(--border);
-      padding: 24px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
+      overflow-y: auto;
     }
 
     .panel-right {
       flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 24px;
-      position: relative;
+      gap: 16px;
     }
 
     label {
-      font-size: 0.78rem;
-      font-weight: 600;
+      font-size: 0.73rem;
+      font-weight: 700;
       color: var(--text2);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
     }
+
+    .api-key-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .api-key-row input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.85rem;
+      padding: 9px 12px;
+      font-family: monospace;
+      transition: border-color 0.2s;
+    }
+
+    .api-key-row input:focus { outline: none; border-color: var(--accent); }
+
+    .btn-sm {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text2);
+      font-size: 0.8rem;
+      padding: 9px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .btn-sm:hover { border-color: var(--accent); color: var(--accent2); }
 
     textarea {
       width: 100%;
@@ -110,113 +134,71 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       color: var(--text);
-      font-size: 0.92rem;
-      line-height: 1.5;
-      padding: 12px 14px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      padding: 11px 13px;
       resize: vertical;
-      min-height: 110px;
+      min-height: 100px;
       transition: border-color 0.2s;
       font-family: inherit;
     }
 
-    textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
+    textarea:focus { outline: none; border-color: var(--accent); }
     textarea::placeholder { color: var(--text2); }
 
     .settings-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-    }
+    .field { display: flex; flex-direction: column; }
 
-    input[type=number], select {
+    select {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--text);
-      font-size: 0.9rem;
-      padding: 10px 12px;
+      font-size: 0.88rem;
+      padding: 9px 12px;
       width: 100%;
       font-family: inherit;
       transition: border-color 0.2s;
-    }
-
-    input[type=number]:focus, select:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    select option { background: var(--surface2); }
-
-    .url-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .url-row input[type=text] {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 0.85rem;
-      padding: 8px 12px;
-      font-family: monospace;
-    }
-
-    .url-row input[type=text]:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .btn-ping {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text2);
-      font-size: 0.8rem;
-      padding: 8px 12px;
       cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
     }
 
-    .btn-ping:hover { border-color: var(--accent); color: var(--accent); }
+    select:focus { outline: none; border-color: var(--accent); }
+    select option { background: var(--surface2); }
 
     .btn-generate {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       background: linear-gradient(135deg, var(--accent), #c084fc);
       border: none;
       border-radius: var(--radius);
       color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 0.98rem;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       transition: opacity 0.2s, transform 0.1s;
-      margin-top: auto;
     }
 
-    .btn-generate:hover { opacity: 0.9; }
+    .btn-generate:hover { opacity: 0.88; }
     .btn-generate:active { transform: scale(0.98); }
-    .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    .image-wrap {
+      width: 100%;
+      max-width: 560px;
+      position: relative;
+    }
 
     .image-area {
       width: 100%;
-      max-width: 600px;
       aspect-ratio: 1;
       background: var(--surface);
       border: 2px dashed var(--border);
@@ -227,11 +209,13 @@
       justify-content: center;
       gap: 12px;
       color: var(--text2);
-      position: relative;
       overflow: hidden;
       transition: border-color 0.3s;
+      position: relative;
     }
 
+    .image-area.landscape { aspect-ratio: 16/9; }
+    .image-area.portrait { aspect-ratio: 9/16; }
     .image-area.generating { border-color: var(--accent); border-style: solid; }
 
     .image-area img {
@@ -242,51 +226,11 @@
       border-radius: 14px;
     }
 
-    .image-area .placeholder-icon { font-size: 3rem; }
-    .image-area .placeholder-text { font-size: 0.9rem; }
-
-    .progress-bar-wrap {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 4px;
-      background: var(--border);
-      display: none;
-    }
-
-    .progress-bar-wrap.active { display: block; }
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), #c084fc);
-      width: 0%;
-      transition: width 0.3s;
-    }
-
-    .image-actions {
-      position: absolute;
-      top: 12px; right: 12px;
-      display: none;
-      gap: 8px;
-    }
-
-    .image-area:has(img) .image-actions { display: flex; }
-
-    .btn-action {
-      background: rgba(0,0,0,0.7);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 0.8rem;
-      padding: 6px 10px;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      transition: background 0.2s;
-    }
-
-    .btn-action:hover { background: rgba(124,106,247,0.8); }
+    .placeholder-icon { font-size: 2.5rem; }
+    .placeholder-text { font-size: 0.85rem; }
 
     .spinner {
-      width: 40px; height: 40px;
+      width: 36px; height: 36px;
       border: 3px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -300,36 +244,56 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .error-msg {
-      background: rgba(247,76,106,0.1);
-      border: 1px solid rgba(247,76,106,0.3);
-      border-radius: 8px;
-      color: #f47;
-      font-size: 0.82rem;
-      padding: 10px 14px;
+    .image-toolbar {
       display: none;
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: center;
     }
 
-    .error-msg.visible { display: block; }
+    .image-toolbar.visible { display: flex; }
 
-    .seed-row {
-      display: flex; gap: 8px; align-items: flex-end;
-    }
-    .seed-row .field { flex: 1; }
-    .btn-random {
+    .btn-tool {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--text2);
-      padding: 10px 12px;
+      font-size: 0.82rem;
+      padding: 8px 14px;
       cursor: pointer;
-      font-size: 1rem;
       transition: all 0.2s;
-      margin-bottom: 0;
+      display: flex; align-items: center; gap: 6px;
     }
-    .btn-random:hover { border-color: var(--accent); color: var(--accent); }
 
-    @media (max-width: 700px) {
+    .btn-tool:hover { border-color: var(--accent); color: var(--accent2); }
+
+    .error-msg {
+      background: rgba(247,76,106,0.1);
+      border: 1px solid rgba(247,76,106,0.3);
+      border-radius: 8px;
+      color: #f88;
+      font-size: 0.82rem;
+      padding: 10px 14px;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .error-msg.visible { display: block; }
+
+    .credits-note {
+      font-size: 0.75rem;
+      color: var(--text2);
+      text-align: center;
+    }
+
+    .credits-note a { color: var(--accent2); }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 680px) {
       main { flex-direction: column; }
       .panel-left { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
     }
@@ -340,58 +304,73 @@
 <header>
   <div class="logo">🎨</div>
   <h1>Image Creator</h1>
-  <div class="status-dot" id="statusDot">
-    <span></span>
-    <span id="statusLabel">verificando...</span>
-  </div>
+  <span class="badge">Stability AI</span>
 </header>
 
 <main>
   <div class="panel-left">
 
     <div class="field">
-      <label>Servidor AUTOMATIC1111</label>
-      <div class="url-row">
-        <input type="text" id="serverUrl" value="http://localhost:7860" placeholder="http://localhost:7860">
-        <button class="btn-ping" onclick="ping()">Testar</button>
+      <label>Chave de API <a href="https://platform.stability.ai/account/keys" target="_blank" style="color:var(--accent2);font-size:0.7rem;text-transform:none;font-weight:400;letter-spacing:0">Obter chave ↗</a></label>
+      <div class="api-key-row">
+        <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off">
+        <button class="btn-sm" onclick="saveKey()">Salvar</button>
       </div>
     </div>
 
+    <hr class="divider">
+
     <div class="field">
       <label>Prompt</label>
-      <textarea id="prompt" placeholder="Descreva a imagem que quer gerar...&#10;Ex: beautiful woman, beach sunset, golden hour, 8k"></textarea>
+      <textarea id="prompt" placeholder="Descreva a imagem...&#10;Ex: beautiful woman, sunset beach, golden hour, 8k, photorealistic"></textarea>
     </div>
 
     <div class="field">
       <label>Prompt Negativo</label>
-      <textarea id="negPrompt" style="min-height:70px" placeholder="O que evitar...&#10;Ex: blurry, bad anatomy, deformed"></textarea>
+      <textarea id="negPrompt" style="min-height:70px" placeholder="O que evitar...&#10;Ex: blurry, deformed, ugly, bad anatomy"></textarea>
     </div>
 
     <div class="settings-grid">
       <div class="field">
-        <label>Largura</label>
-        <input type="number" id="width" value="512" min="64" max="2048" step="64">
+        <label>Proporção</label>
+        <select id="ratio" onchange="updateRatio()">
+          <option value="1024x1024">1:1 Quadrado</option>
+          <option value="1344x768">16:9 Paisagem</option>
+          <option value="768x1344">9:16 Retrato</option>
+          <option value="1216x832">3:2 Foto</option>
+          <option value="832x1216">2:3 Foto vert.</option>
+        </select>
       </div>
       <div class="field">
-        <label>Altura</label>
-        <input type="number" id="height" value="512" min="64" max="2048" step="64">
+        <label>Modelo</label>
+        <select id="model">
+          <option value="core">SD Core</option>
+          <option value="ultra">SD Ultra</option>
+        </select>
       </div>
       <div class="field">
-        <label>Steps</label>
-        <input type="number" id="steps" value="20" min="1" max="150">
+        <label>Estilo</label>
+        <select id="style">
+          <option value="">Nenhum</option>
+          <option value="photographic">Fotográfico</option>
+          <option value="cinematic">Cinematográfico</option>
+          <option value="analog-film">Filme analógico</option>
+          <option value="anime">Anime</option>
+          <option value="digital-art">Arte digital</option>
+          <option value="fantasy-art">Fantasia</option>
+          <option value="neon-punk">Neon punk</option>
+          <option value="3d-model">3D</option>
+          <option value="pixel-art">Pixel art</option>
+        </select>
       </div>
-      <div class="field">
-        <label>CFG Scale</label>
-        <input type="number" id="cfg" value="7" min="1" max="30" step="0.5">
-      </div>
-    </div>
-
-    <div class="seed-row">
       <div class="field">
         <label>Seed</label>
-        <input type="number" id="seed" value="-1" min="-1">
+        <div style="display:flex;gap:6px">
+          <input type="number" id="seed" value="0" min="0" max="4294967295"
+            style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.88rem;padding:9px 12px;">
+          <button class="btn-sm" onclick="randomSeed()" title="Aleatório">🎲</button>
+        </div>
       </div>
-      <button class="btn-random" title="Seed aleatório" onclick="document.getElementById('seed').value=-1">🎲</button>
     </div>
 
     <div class="error-msg" id="errorMsg"></div>
@@ -401,168 +380,169 @@
       <span id="btnText">Gerar Imagem</span>
     </button>
 
+    <p class="credits-note">
+      Powered by <a href="https://stability.ai" target="_blank">Stability AI</a> · SD Core ~$0.003/imagem · Ultra ~$0.008/imagem
+    </p>
+
   </div>
 
   <div class="panel-right">
-    <div class="image-area" id="imageArea">
-      <div class="spinner"></div>
-      <div class="placeholder-icon">🖼️</div>
-      <div class="placeholder-text">A imagem aparece aqui</div>
-      <div class="progress-bar-wrap" id="progressWrap">
-        <div class="progress-bar" id="progressBar"></div>
+    <div class="image-wrap">
+      <div class="image-area" id="imageArea">
+        <div class="spinner"></div>
+        <div class="placeholder-icon">🖼️</div>
+        <div class="placeholder-text">A imagem aparece aqui</div>
       </div>
-      <div class="image-actions">
-        <button class="btn-action" onclick="downloadImage()">⬇ Salvar</button>
-        <button class="btn-action" onclick="copyPromptFromMeta()">📋 Copiar prompt</button>
+      <div class="image-toolbar" id="imageToolbar">
+        <button class="btn-tool" onclick="downloadImage()">⬇ Salvar PNG</button>
+        <button class="btn-tool" onclick="copyPrompt()">📋 Copiar prompt</button>
+        <button class="btn-tool" onclick="generateVariation()">🔀 Variação</button>
       </div>
     </div>
   </div>
 </main>
 
 <script>
-  let lastImageB64 = null;
+  let lastImageUrl = null;
   let lastPromptUsed = '';
   let generating = false;
-  let progressInterval = null;
 
-  function getUrl() {
-    return document.getElementById('serverUrl').value.replace(/\/$/, '');
-  }
+  // load saved key
+  try {
+    const saved = localStorage.getItem('stability_api_key');
+    if (saved) document.getElementById('apiKey').value = saved;
+  } catch {}
 
-  async function ping() {
-    const dot = document.getElementById('statusDot');
-    const label = document.getElementById('statusLabel');
-    dot.className = 'status-dot';
-    label.textContent = 'verificando...';
+  function saveKey() {
     try {
-      const r = await fetch(getUrl() + '/sdapi/v1/sd-models', { signal: AbortSignal.timeout(5000) });
-      if (r.ok) {
-        dot.className = 'status-dot online';
-        label.textContent = 'online';
-      } else {
-        throw new Error();
-      }
-    } catch {
-      dot.className = 'status-dot offline';
-      label.textContent = 'offline';
-    }
-  }
-
-  async function pollProgress() {
-    try {
-      const r = await fetch(getUrl() + '/sdapi/v1/progress', { signal: AbortSignal.timeout(3000) });
-      if (!r.ok) return;
-      const data = await r.json();
-      const pct = Math.round((data.progress || 0) * 100);
-      document.getElementById('progressBar').style.width = pct + '%';
+      localStorage.setItem('stability_api_key', document.getElementById('apiKey').value.trim());
     } catch {}
+    const btn = event.target;
+    btn.textContent = '✓ Salvo';
+    setTimeout(() => btn.textContent = 'Salvar', 1500);
+  }
+
+  function randomSeed() {
+    document.getElementById('seed').value = Math.floor(Math.random() * 4294967295);
+  }
+
+  function updateRatio() {
+    const area = document.getElementById('imageArea');
+    const val = document.getElementById('ratio').value;
+    const [w, h] = val.split('x').map(Number);
+    area.className = 'image-area';
+    if (w > h) area.classList.add('landscape');
+    else if (h > w) area.classList.add('portrait');
+    if (area.classList.contains('generating')) area.classList.add('generating');
   }
 
   async function generate() {
     if (generating) return;
 
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) { showError('Cole sua chave de API da Stability AI antes de gerar.'); return; }
+
     const prompt = document.getElementById('prompt').value.trim();
-    if (!prompt) {
-      showError('Digite um prompt antes de gerar.');
-      return;
-    }
+    if (!prompt) { showError('Digite um prompt antes de gerar.'); return; }
 
     hideError();
     generating = true;
+    lastPromptUsed = prompt;
 
     const btn = document.getElementById('btnGenerate');
-    const btnText = document.getElementById('btnText');
-    const btnIcon = document.getElementById('btnIcon');
     btn.disabled = true;
-    btnIcon.textContent = '⏳';
-    btnText.textContent = 'Gerando...';
+    document.getElementById('btnIcon').textContent = '⏳';
+    document.getElementById('btnText').textContent = 'Gerando...';
 
     const area = document.getElementById('imageArea');
     area.classList.add('generating');
-
-    // remove previous image
     const prev = area.querySelector('img');
     if (prev) prev.remove();
+    document.getElementById('imageToolbar').classList.remove('visible');
 
-    const progressWrap = document.getElementById('progressWrap');
-    progressWrap.classList.add('active');
-    document.getElementById('progressBar').style.width = '0%';
-    progressInterval = setInterval(pollProgress, 800);
+    const model = document.getElementById('model').value;
+    const ratio = document.getElementById('ratio').value;
+    const [width, height] = ratio.split('x');
+    const style = document.getElementById('style').value;
+    const seed = parseInt(document.getElementById('seed').value) || 0;
+    const negPrompt = document.getElementById('negPrompt').value.trim();
 
-    const payload = {
-      prompt: document.getElementById('prompt').value,
-      negative_prompt: document.getElementById('negPrompt').value,
-      width: parseInt(document.getElementById('width').value),
-      height: parseInt(document.getElementById('height').value),
-      steps: parseInt(document.getElementById('steps').value),
-      cfg_scale: parseFloat(document.getElementById('cfg').value),
-      seed: parseInt(document.getElementById('seed').value),
-      sampler_name: 'Euler a',
-      batch_size: 1,
-      n_iter: 1,
-    };
+    const formData = new FormData();
+    formData.append('prompt', prompt);
+    formData.append('output_format', 'png');
+    formData.append('width', width);
+    formData.append('height', height);
+    formData.append('seed', seed);
+    if (negPrompt) formData.append('negative_prompt', negPrompt);
+    if (style) formData.append('style_preset', style);
 
-    lastPromptUsed = payload.prompt;
+    const endpoint = model === 'ultra'
+      ? 'https://api.stability.ai/v2beta/stable-image/generate/ultra'
+      : 'https://api.stability.ai/v2beta/stable-image/generate/core';
 
     try {
-      const r = await fetch(getUrl() + '/sdapi/v1/txt2img', {
+      const r = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        headers: {
+          'Authorization': 'Bearer ' + apiKey,
+          'Accept': 'image/*',
+        },
+        body: formData,
       });
 
       if (!r.ok) {
-        const err = await r.text();
-        throw new Error(err || `HTTP ${r.status}`);
+        const err = await r.json().catch(() => ({}));
+        const msg = err?.errors?.[0] || err?.message || `HTTP ${r.status}`;
+        if (r.status === 401) throw new Error('Chave de API inválida ou expirada.');
+        if (r.status === 402) throw new Error('Créditos insuficientes na conta Stability AI.');
+        throw new Error(msg);
       }
 
-      const data = await r.json();
-      const b64 = data.images?.[0];
-      if (!b64) throw new Error('Nenhuma imagem retornada pelo servidor.');
-
-      lastImageB64 = b64;
+      const blob = await r.blob();
+      if (lastImageUrl) URL.revokeObjectURL(lastImageUrl);
+      lastImageUrl = URL.createObjectURL(blob);
 
       const img = document.createElement('img');
-      img.src = 'data:image/png;base64,' + b64;
+      img.src = lastImageUrl;
       area.appendChild(img);
+      document.getElementById('imageToolbar').classList.add('visible');
 
-      // update seed if server returned one
-      try {
-        const info = JSON.parse(data.info || '{}');
-        if (info.seed !== undefined && info.seed !== -1) {
-          document.getElementById('seed').value = info.seed;
-        }
-      } catch {}
+      // update seed from response header if available
+      const finishReason = r.headers.get('finish-reason');
+      const returnedSeed = r.headers.get('seed');
+      if (returnedSeed) document.getElementById('seed').value = returnedSeed;
 
     } catch (e) {
-      showError('Erro ao gerar: ' + e.message + '\n\nVerifique se o AUTOMATIC1111 está rodando e com --api ativado.');
+      showError('Erro: ' + e.message);
     } finally {
-      clearInterval(progressInterval);
-      document.getElementById('progressBar').style.width = '100%';
-      setTimeout(() => {
-        progressWrap.classList.remove('active');
-        document.getElementById('progressBar').style.width = '0%';
-      }, 400);
-
       area.classList.remove('generating');
       generating = false;
       btn.disabled = false;
-      btnIcon.textContent = '✨';
-      btnText.textContent = 'Gerar Imagem';
+      document.getElementById('btnIcon').textContent = '✨';
+      document.getElementById('btnText').textContent = 'Gerar Imagem';
     }
   }
 
   function downloadImage() {
-    if (!lastImageB64) return;
+    if (!lastImageUrl) return;
     const a = document.createElement('a');
-    a.href = 'data:image/png;base64,' + lastImageB64;
+    a.href = lastImageUrl;
     a.download = 'image-creator-' + Date.now() + '.png';
     a.click();
   }
 
-  function copyPromptFromMeta() {
+  function copyPrompt() {
     if (!lastPromptUsed) return;
-    navigator.clipboard.writeText(lastPromptUsed).catch(() => {});
+    navigator.clipboard.writeText(lastPromptUsed).then(() => {
+      const btn = event.target;
+      btn.textContent = '✓ Copiado';
+      setTimeout(() => btn.textContent = '📋 Copiar prompt', 1500);
+    });
+  }
+
+  function generateVariation() {
+    randomSeed();
+    generate();
   }
 
   function showError(msg) {
@@ -575,10 +555,6 @@
     document.getElementById('errorMsg').classList.remove('visible');
   }
 
-  // check on load
-  ping();
-
-  // allow Ctrl+Enter to generate
   document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generate();
   });
