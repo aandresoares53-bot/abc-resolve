@@ -852,18 +852,18 @@ const STEPS = [
       {label:'PAWG',val:'PAWG body, phat round booty, thick thighs, slim waist, big butt small waist contrast'},
       {label:'Shortstack',val:'shortstack body, petite height but very curvy, compact hourglass, small but thick'},
     ],
-    skip:true,
-  },
-  {
-    id:'realismo', label:'Realismo', ask:'Nível de realismo humano?',
-    qr:[
-      {label:'Hiper-realismo pele',val:'photograph, subsurface skin scattering, translucent skin, visible capillaries, skin pores, fine vellus hair on skin, uneven pigmentation, micro skin texture, natural blemishes, real dermis depth'},
-      {label:'Sem filtro / brutal honesto',val:'snapshot photograph, handheld, ISO 3200, grain, real skin unretouched, natural skin imperfections, uneven complexion, raw unedited photo, documentary photography'},
-      {label:'Paparazzi / foto real',val:'paparazzi photograph, telephoto 300mm, compressed depth of field, motion grain, ambient street light, unposed candid, natural human proportions, authentic unstaged moment'},
-      {label:'Fotografia analógica',val:'Kodak Portra 800 film scan, 35mm grain, film halation, natural color shift, analog warmth, real skin tones on film, organic texture, no digital sharpening, shot on Nikon F3'},
-      {label:'Câmera de rua (candid)',val:'candid street photograph, 35mm f/2.8, natural light only, unposed authentic moment, real human body proportions, slight motion, environmental context, photojournalism style'},
-      {label:'DSLR máximo detalhe',val:'RAW photograph, Canon 5D Mark IV 85mm f/1.8, ISO 800, skin pores sharp, eye capillaries visible, unretouched skin texture, natural skin subsurface translucency, authentic portrait'},
-    ],
+    subGroup:{ label:'Imperfeições (opcional, multi)', opts:[
+      {label:'Pele natural com poros',val:'clearly visible skin pores, uneven skin texture, natural skin variations, small blemishes, real human skin tone, not smooth not airbrushed'},
+      {label:'Estrias e celulite',val:'visible stretch marks on thighs hips and buttocks, natural cellulite dimples, real body texture, marks from weight changes, authentic skin'},
+      {label:'Barriga levemente saliente',val:'slight natural belly pouch, soft relaxed stomach, natural body shape when sitting or standing, real human midsection'},
+      {label:'Sardas e manchas',val:'natural freckles across nose cheeks and shoulders, uneven skin pigmentation, beauty marks, sun spots, natural skin variations'},
+      {label:'Marcas de bronzeado',val:'uneven tan lines, bikini marks, sun-kissed patchy tan, pale vs tan skin contrast, real outdoor tanning'},
+      {label:'Celulite natural',val:'pronounced natural cellulite on thighs and buttocks, dimpled skin surface, visible orange-peel texture, real body imperfections'},
+      {label:'Cicatrizes leves',val:'faint healed stretch marks, subtle body scars, natural skin irregularities, marks from life, authentic skin history'},
+      {label:'Veias visíveis',val:'faint blue veins visible under skin, translucent natural skin, vein patterns on hands breasts inner thighs, real human body'},
+      {label:'Pele com brilho natural',val:'natural skin oiliness, slight sweat sheen, dewy unfiltered skin, no powder no filters, real skin in natural light'},
+      {label:'Corpo real sem filtro',val:'completely unretouched, zero post-processing, no body morphing, natural human body with all its imperfections, brutally honest real photography'},
+    ]},
     skip:true,
   },
   {
@@ -1106,6 +1106,12 @@ const STEPS = [
   {
     id:'estilo', label:'Estilo/Luz', ask:'Estilo e iluminação?',
     qr:[
+      {label:'📷 Hiper-realismo pele',val:'photograph, subsurface skin scattering, translucent skin, visible capillaries, skin pores, fine vellus hair on skin, uneven pigmentation, micro skin texture, natural blemishes, real dermis depth',cls:'realismo-opt'},
+      {label:'📷 Sem filtro brutal',val:'snapshot photograph, handheld, ISO 3200, grain, real skin unretouched, natural skin imperfections, uneven complexion, raw unedited photo, documentary photography',cls:'realismo-opt'},
+      {label:'📷 Paparazzi / foto real',val:'paparazzi photograph, telephoto 300mm, compressed depth of field, motion grain, ambient street light, unposed candid, natural human proportions, authentic unstaged moment',cls:'realismo-opt'},
+      {label:'📷 Fotografia analógica',val:'Kodak Portra 800 film scan, 35mm grain, film halation, natural color shift, analog warmth, real skin tones on film, organic texture, no digital sharpening, shot on Nikon F3',cls:'realismo-opt'},
+      {label:'📷 Câmera de rua candid',val:'candid street photograph, 35mm f/2.8, natural light only, unposed authentic moment, real human body proportions, slight motion, environmental context, photojournalism style',cls:'realismo-opt'},
+      {label:'📷 DSLR máximo detalhe',val:'RAW photograph, Canon 5D Mark IV 85mm f/1.8, ISO 800, skin pores sharp, eye capillaries visible, unretouched skin texture, natural skin subsurface translucency, authentic portrait',cls:'realismo-opt'},
       {label:'RAW foto natural',val:'RAW photo, natural daylight photography, candid realistic style, no filter'},
       {label:'Estúdio profissional',val:'professional studio photography, dramatic studio lighting, Rembrandt light, DSLR shot'},
       {label:'Luz dourada sunset',val:'golden hour photography, warm sunset backlight, glowing skin, magic hour light'},
@@ -1176,37 +1182,6 @@ const STEPS = [
       {label:'Mordendo lábio',val:'lightly biting lower lip, natural nervous habit, genuine subtle expression'},
       {label:'Olhar pensativo',val:'contemplative distant gaze, natural thoughtful look, candid unfocused stare, real human moment'},
       {label:'Cara de prazer',val:'pleasure expression, authentic aroused face, real human emotional response, natural intensity'},
-    ],
-    skip:true,
-  },
-  {
-    id:'joias', label:'Joias & Acessórios', ask:'Joias e acessórios? (pode escolher vários)',
-    multi:true,
-    qr:[
-      {label:'💍 Anel solitário',val:'wearing diamond solitaire ring, elegant engagement ring, sparkling ring on finger'},
-      {label:'💍 Anéis empilhados',val:'multiple stacked rings on fingers, rings stacking, layered rings both hands'},
-      {label:'📿 Colar fino dourado',val:'delicate gold chain necklace, thin gold necklace, dainty gold chain around neck'},
-      {label:'📿 Colar grosso dourado',val:'thick gold chain necklace, chunky gold chain, bold gold statement necklace'},
-      {label:'📿 Colar de pérolas',val:'pearl necklace, classic pearl strand, elegant pearl choker necklace'},
-      {label:'📿 Colar choker',val:'black choker necklace, velvet choker around neck, thin choker necklace'},
-      {label:'📿 Colar body chain',val:'gold body chain jewelry, decorative body chain across torso, belly chain'},
-      {label:'💎 Brincos argola',val:'large gold hoop earrings, big hoop earrings, statement hoop earrings'},
-      {label:'💎 Brincos pingente',val:'dangling drop earrings, long pendant earrings, chandelier earrings'},
-      {label:'💎 Brincos studs',val:'small stud earrings, diamond stud earrings, simple elegant studs'},
-      {label:'⌚ Relógio luxo',val:'luxury watch on wrist, designer watch, gold watch, elegant timepiece'},
-      {label:'💛 Pulseira dourada',val:'gold bracelet on wrist, delicate gold bangle, thin gold wrist bracelet'},
-      {label:'💛 Pulseiras empilhadas',val:'multiple stacked bracelets, layered bangles and bracelets, arm candy stack'},
-      {label:'👓 Óculos grau fashion',val:'wearing stylish prescription glasses, fashion eyeglasses, chic eyewear frames'},
-      {label:'🕶 Óculos de sol aviador',val:'wearing aviator sunglasses, gold aviator shades, classic aviator frames'},
-      {label:'🕶 Óculos de sol gatinho',val:'wearing cat-eye sunglasses, retro cat-eye shades, vintage cat-eye frames'},
-      {label:'🕶 Óculos de sol oversized',val:'wearing oversized sunglasses, large glamorous shades, big fashion sunglasses'},
-      {label:'🕶 Óculos de sol redondo',val:'wearing round sunglasses, circular retro shades, small round frames'},
-      {label:'👒 Chapéu de aba larga',val:'wearing wide-brim hat, floppy sun hat, elegant large brim hat'},
-      {label:'🎩 Boné',val:'wearing baseball cap, casual cap on head, fitted cap, streetwear cap'},
-      {label:'💄 Cinto fininho',val:'thin gold chain belt at waist, delicate waist chain belt, hip belt'},
-      {label:'🌸 Flor no cabelo',val:'flower in hair, floral hair accessory, tropical flower tucked in hair'},
-      {label:'💎 Piercing umbigo',val:'belly button piercing, navel piercing jewelry, belly ring'},
-      {label:'💎 Piercing nariz',val:'nose piercing stud, small nose ring, delicate nose jewelry'},
     ],
     skip:true,
   },
@@ -3022,16 +2997,27 @@ function buildNeg(){
   return 'plastic skin, rubber skin, silicone skin, waxy skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, porcelain skin, flawless skin, perfect skin, no pores, skin filter, beauty filter, beauty mode, photoshop skin, retouched, skin retouching, instagram filter, facetune, doll face, mannequin, wax figure, uncanny valley, inhuman face, perfect symmetry, overly symmetrical, studio strobe, overlit, blown out highlights, artificial lighting, rendered, 3d render, cgi, cartoon, anime, illustration, painting, drawing, digital art, ai generated, ai art, midjourney, stable diffusion artifacts, ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, bad proportions, disfigured, low quality, worst quality, oversaturated, neon colors, fluorescent skin, cropped limbs, floating limbs, clone stamp, body horror, extra fingers, abnormal hands, impossible pose, tiling, repetitive pattern';
 }
 
+// vals from the realismo-opt entries merged into estilo step
+const REALISMO_VALS = new Set([
+  'photograph, subsurface skin scattering, translucent skin, visible capillaries, skin pores, fine vellus hair on skin, uneven pigmentation, micro skin texture, natural blemishes, real dermis depth',
+  'snapshot photograph, handheld, ISO 3200, grain, real skin unretouched, natural skin imperfections, uneven complexion, raw unedited photo, documentary photography',
+  'paparazzi photograph, telephoto 300mm, compressed depth of field, motion grain, ambient street light, unposed candid, natural human proportions, authentic unstaged moment',
+  'Kodak Portra 800 film scan, 35mm grain, film halation, natural color shift, analog warmth, real skin tones on film, organic texture, no digital sharpening, shot on Nikon F3',
+  'candid street photograph, 35mm f/2.8, natural light only, unposed authentic moment, real human body proportions, slight motion, environmental context, photojournalism style',
+  'RAW photograph, Canon 5D Mark IV 85mm f/1.8, ISO 800, skin pores sharp, eye capillaries visible, unretouched skin texture, natural skin subsurface translucency, authentic portrait',
+]);
+
 function buildPrompt(){
-  const realismo = answers.realismo || '';
-  const qualityHeader = realismo ||
-    'snapshot photo, handheld camera, Sony A7III 50mm f/2.2, ISO 1600, natural window light, slight motion blur, authentic grain, real skin subsurface scattering, uneven skin tone, candid unposed moment, amateur photography feel';
+  const estiloVal = answers.estilo || answers.estilo_foto || answers.film || '';
+  const isRealismoEstilo = REALISMO_VALS.has(estiloVal);
+  const qualityHeader = isRealismoEstilo ? estiloVal :
+    (answers.realismo || 'snapshot photo, handheld camera, Sony A7III 50mm f/2.2, ISO 1600, natural window light, slight motion blur, authentic grain, real skin subsurface scattering, uneven skin tone, candid unposed moment, amateur photography feel');
   const imperfections = answers.imperfeicoes || 'visible skin pores, uneven skin pigmentation, natural skin texture, translucent skin with subsurface redness, real human imperfections';
   // ancoragem fotográfica — força o modelo para espaço fotográfico real
   const antiAI = 'photograph, photorealistic, real person, film photography, documentary style, subsurface skin scattering, natural skin translucency, authentic human proportions, candid moment';
   // suporte a campos novos e campos legados de presets
   const personagem = answers.personagem || [answers.etnia, answers.idade].filter(Boolean).join(', ');
-  const estilo = answers.estilo || answers.estilo_foto || answers.film;
+  const estilo = isRealismoEstilo ? null : (answers.estilo || answers.estilo_foto || answers.film);
   const angulo = answers.angulo || answers.cam;
   const roupaVal = answers.roupa || '';
   const isNude = /nude|naked|nua\b|pelada|sem roupa|topless|sem calcinha|sem sutiã|lingerie only/i.test(roupaVal);
@@ -3045,7 +3031,6 @@ function buildPrompt(){
     answers.cabelo,
     roupaVal,
     underwear,
-    answers.joias,
     answers.pose,
     answers.expressao,
     angulo,
@@ -3131,7 +3116,7 @@ function showTyping(){
 }
 function removeTyping(){ const t=document.getElementById('typing'); if(t) t.remove(); }
 
-function setQR(chips, multiMode=false){
+function setQR(chips, multiMode=false, subGroup=null){
   qrArea.innerHTML='';
   if(multiMode){
     // estado de seleções múltiplas
@@ -3177,6 +3162,32 @@ function setQR(chips, multiMode=false){
       qrArea.appendChild(btn);
     });
   }
+  // subGroup: optional multi-select section shown below main chips (e.g. imperfeicoes inside corpo)
+  if(subGroup){
+    const sgSel=new Set();
+    const div=document.createElement('div');
+    div.style.cssText='width:100%;border-top:1px solid var(--brd,#333);margin-top:8px;padding-top:8px;';
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-size:.7rem;font-weight:700;color:var(--txt2,#888);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;';
+    lbl.textContent=subGroup.label;
+    div.appendChild(lbl);
+    subGroup.opts.forEach(({label,val})=>{
+      const btn=document.createElement('button');
+      btn.className='qr multi-chip';
+      btn.style.fontSize='.78rem';
+      btn.textContent=label;
+      btn.dataset.val=val;
+      btn.onclick=()=>{
+        if(waiting) return;
+        if(sgSel.has(val)){ sgSel.delete(val); btn.classList.remove('multi-sel'); }
+        else { sgSel.add(val); btn.classList.add('multi-sel'); }
+        answers.imperfeicoes=sgSel.size>0?[...sgSel].join(', '):'';
+        updatePreview&&updatePreview();
+      };
+      div.appendChild(btn);
+    });
+    qrArea.appendChild(div);
+  }
 }
 function clearQR(){ qrArea.innerHTML=''; catHeader.classList.remove('visible'); }
 
@@ -3201,10 +3212,10 @@ function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scr
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
-async function botSay(html, qrs=[], multiMode=false){
+async function botSay(html, qrs=[], multiMode=false, subGroup=null){
   waiting=true; showTyping();
   await delay(550+Math.random()*250);
-  removeTyping(); addMsg('bot', html); setQR(qrs, multiMode);
+  removeTyping(); addMsg('bot', html); setQR(qrs, multiMode, subGroup);
   waiting=false; input.focus();
 }
 
@@ -3273,7 +3284,7 @@ async function processAnswer(val, label=''){
     }
     if(next.skip) qrs.push({label:'Pular →',val:'pular',skip:true});
     if(step>0) qrs.push({label:'← Voltar',val:'__back__',cls:'back'});
-    await botSay(next.ask, qrs, next.multi);
+    await botSay(next.ask, qrs, next.multi, next.subGroup||null);
   } else { await showSummary(); }
 }
 
