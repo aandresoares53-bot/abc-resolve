@@ -159,6 +159,14 @@ header{
   text-shadow:0 0 12px var(--acc-glow);}
 .result-body{padding:12px 16px;display:grid;gap:10px;}
 .result-label{font-size:.65rem;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.edit-fields{background:var(--surface2);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;display:grid;gap:8px;}
+.edit-field{display:grid;gap:4px;}
+.edit-label{font-size:.65rem;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;}
+.edit-input{background:var(--bg);border:1px solid var(--bdr2);border-radius:var(--r2);color:var(--txt);padding:8px 10px;font-size:.78rem;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;}
+.edit-input:focus{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc-glow);}
+.edit-input::placeholder{color:var(--txt3);}
+.btn-apply{background:var(--surface3);border:1px solid var(--bdr2);border-radius:var(--r2);color:var(--acc);font-size:.75rem;font-weight:700;padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s;width:fit-content;}
+.btn-apply:hover{background:var(--acc);color:#000;border-color:var(--acc);}
 .result-ta{
   width:100%;background:var(--bg);border:1px solid var(--bdr);
   border-radius:var(--r2);color:var(--txt);padding:10px 12px;
@@ -235,6 +243,17 @@ header{
         <button class="btn-close-result" onclick="closeResult()">✕ Fechar</button>
       </div>
       <div class="result-body">
+        <div class="edit-fields">
+          <div class="edit-field">
+            <label class="edit-label">🕺 Pose</label>
+            <input class="edit-input" id="edit-pose" type="text" placeholder="ex: leaning against wall, looking back over shoulder">
+          </div>
+          <div class="edit-field">
+            <label class="edit-label">📷 Ângulo de câmera</label>
+            <input class="edit-input" id="edit-cam" type="text" placeholder="ex: low angle, close-up from below">
+          </div>
+          <button class="btn-apply" onclick="applyEdits()">↻ Aplicar ao Prompt</button>
+        </div>
         <div>
           <div class="result-label">Positive Prompt</div>
           <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
@@ -275,6 +294,7 @@ function buildBlondePrompt(p){
   if(p.roupa) parts.push('('+p.roupa+':1.1)');
   if(p.nsfw)  parts.push(p.nsfw);
   if(p.pose)  parts.push('('+p.pose+':1.15)');
+  if(p.cam)   parts.push('('+p.cam+':1.1)');
   if(p.expressao) parts.push(p.expressao);
   if(p.cenario) parts.push(p.cenario);
   if(p.film)  parts.push(p.film);
@@ -1757,9 +1777,26 @@ function selectPreset(key){
   document.getElementById('result-title').textContent = '✅ '+p.name;
   document.getElementById('result-prompt').value = prompt;
   document.getElementById('result-neg').value = neg;
+  document.getElementById('edit-pose').value = p.pose||'';
+  document.getElementById('edit-cam').value = p.cam||'';
   const panel = document.getElementById('result-panel');
   panel.classList.add('open');
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function applyEdits(){
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  if(!p) return;
+  const overridePose = document.getElementById('edit-pose').value.trim();
+  const overrideCam  = document.getElementById('edit-cam').value.trim();
+  const merged = Object.assign({}, p,
+    overridePose ? {pose: overridePose} : {},
+    overrideCam  ? {cam:  overrideCam}  : {}
+  );
+  document.getElementById('result-prompt').value = buildBlondePrompt(merged);
+  const btn = document.querySelector('.btn-apply');
+  btn.textContent='✓ Aplicado!'; btn.style.background='var(--acc)'; btn.style.color='#000';
+  setTimeout(()=>{ btn.textContent='↻ Aplicar ao Prompt'; btn.style.background=''; btn.style.color=''; },1800);
 }
 
 function closeResult(){
