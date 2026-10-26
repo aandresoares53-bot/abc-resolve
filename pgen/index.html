@@ -362,6 +362,7 @@ header{
           <button class="btn-action" id="btn-copy-neg" onclick="copyNeg()">🚫 Copiar Negativo</button>
           <button class="btn-action" onclick="downloadTxt()">💾 .txt</button>
           <button class="btn-action" onclick="variation()">🔀 Variação</button>
+          <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
         </div>
       </div>
     </div>
@@ -1990,6 +1991,12 @@ function toggleTheme(){
   const dark=html.getAttribute('data-theme')==='dark';
   html.setAttribute('data-theme',dark?'light':'dark');
   document.getElementById('theme-btn').textContent=dark?'🌙 Escuro':'☀ Claro';
+}
+
+function randomPreset(){
+  const keys = PRESETS_RAW.map(p=>p.key);
+  const key = keys[Math.floor(Math.random()*keys.length)];
+  selectPreset(key);
 }
 
 // ── START ──────────────────────────────────────────────────────────────────
