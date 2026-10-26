@@ -219,6 +219,8 @@ header{
 .var-label{font-size:.7em;font-weight:700;color:var(--txt3);margin-bottom:4px;}
 .var-text{font-size:.78em;color:var(--txt2);margin-bottom:6px;font-family:monospace;line-height:1.4;}
 .pkg-section-title{font-size:.72em;font-weight:800;color:var(--acc);letter-spacing:.04em;text-transform:uppercase;padding:4px 0 2px;border-bottom:1px solid var(--bdr);margin-bottom:4px;}
+.preset-tab{background:var(--bot-bg);border:1px solid var(--bdr);border-radius:20px;color:var(--txt2);font-size:.72em;font-weight:700;padding:4px 10px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.preset-tab:hover,.preset-tab.active{border-color:var(--acc);color:var(--acc);background:rgba(232,160,32,.1);}
 .qr.rand:hover{background:rgba(124,58,237,.1);}
 .qr.sugg{border-color:#f59e0b;color:#fbbf24;background:rgba(245,158,11,.08);}
 .qr.sugg:hover{background:rgba(245,158,11,.18);}
@@ -253,7 +255,8 @@ header{
     <button class="hbtn" onclick="randomAll()" title="Sortear tudo">🎲 Sortear</button>
     <button class="hbtn" onclick="openHistory()" title="Histórico">📜 Hist.</button>
     <button class="hbtn" id="prev-btn" onclick="togglePreview()" title="Preview do prompt">👁 Preview</button>
-    <button class="hbtn" onclick="restart()">⟳ Novo</button>
+    <button class="hbtn" id="hcopy-btn" onclick="copyCurrentPrompt()" title="Copiar prompt atual">📋 Copiar</button>
+    <button class="hbtn" onclick="confirmRestart()">🔄 Reiniciar</button>
     <button class="hbtn" id="tbtn" onclick="toggleTheme()">☀ Claro</button>
   </div>
 </header>
@@ -297,6 +300,15 @@ header{
       <span class="preset-title">🎨 Estilos rápidos</span>
       <button class="preset-close" onclick="closePresets()">✕</button>
     </div>
+    <input type="text" id="preset-search" placeholder="🔍 Buscar preset..." oninput="filterPresets(this.value)"
+      style="width:100%;background:var(--bot-bg);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);padding:8px 11px;font-size:.85em;font-family:inherit;outline:none;margin-bottom:4px;">
+    <div style="display:flex;gap:6px;margin-bottom:6px;">
+      <button class="preset-tab active" id="tab-all" onclick="setPresetTab('all')">Todos</button>
+      <button class="preset-tab" id="tab-sfw" onclick="setPresetTab('sfw')">☀ Casual</button>
+      <button class="preset-tab" id="tab-sensual" onclick="setPresetTab('sensual')">🔞 Sensual</button>
+      <button class="preset-tab" id="tab-explicit" onclick="setPresetTab('explicit')">🔞🔞 Explícito</button>
+    </div>
+    <div id="preset-no-results" style="display:none;text-align:center;color:var(--txt3);font-size:.82em;padding:16px 0;">Nenhum preset encontrado</div>
     <div class="pkg-section-title">📦 Pacotes temáticos</div>
     <div class="preset-item" onclick="aplicarPacote('pkg_praia')"><div class="preset-name">🏖 Praia Tropical</div><div class="preset-desc">Biquíni, praia tropical, Ektar 100, cena ensolarada</div></div>
     <div class="preset-item" onclick="aplicarPacote('pkg_quarto')"><div class="preset-name">🛏 Quarto Íntimo</div><div class="preset-desc">Lingerie, boudoir, luz de vela, ambiente aconchegante</div></div>
@@ -2782,6 +2794,58 @@ function openPresets(){ document.getElementById('preset-panel').classList.add('o
 function closePresets(){ document.getElementById('preset-panel').classList.remove('open'); }
 document.getElementById('preset-panel').addEventListener('click',function(e){ if(e.target===this) closePresets(); });
 
+let _presetTab='all';
+function setPresetTab(tab){
+  _presetTab=tab;
+  document.querySelectorAll('.preset-tab').forEach(b=>b.classList.toggle('active',b.id==='tab-'+tab));
+  filterPresets(document.getElementById('preset-search').value);
+}
+function filterPresets(q){
+  q=(q||'').toLowerCase().trim();
+  let visible=0;
+  document.querySelectorAll('#preset-box .preset-item').forEach(item=>{
+    const name=(item.querySelector('.preset-name')||item).textContent;
+    const desc=(item.querySelector('.preset-desc')||{textContent:''}).textContent;
+    const explicit3=/🔞🔞🔞|🔞🔞🔞🔞/.test(name);
+    const explicit2=/🔞🔞/.test(name);
+    const sensual1=/🔞/.test(name) || /nsfw|nudez|boudoir|nu de|pelada|lingerie/i.test(name+desc);
+    let cat='sfw';
+    if(explicit3) cat='explicit';
+    else if(explicit2) cat='explicit';
+    else if(sensual1) cat='sensual';
+    const tabOk = _presetTab==='all' || _presetTab===cat;
+    const txtOk = !q || (name+' '+desc).toLowerCase().includes(q);
+    const show = tabOk && txtOk;
+    item.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  document.querySelectorAll('#preset-box .pkg-section-title').forEach(title=>{
+    let next=title.nextElementSibling;
+    let any=false;
+    while(next && !next.classList.contains('pkg-section-title')){
+      if(next.classList.contains('preset-item') && next.style.display!=='none') any=true;
+      next=next.nextElementSibling;
+    }
+    title.style.display=any?'':'none';
+  });
+  document.getElementById('preset-no-results').style.display=visible===0?'':'none';
+}
+
+function copyCurrentPrompt(){
+  const prompt=buildPrompt();
+  if(!prompt) return;
+  navigator.clipboard.writeText(prompt).then(()=>{
+    const btn=document.getElementById('hcopy-btn');
+    btn.textContent='✓ Copiado!'; btn.classList.add('active');
+    setTimeout(()=>{ btn.innerHTML='📋 Copiar'; btn.classList.remove('active'); },2000);
+  });
+}
+
+function confirmRestart(){
+  if(step===0 || !Object.keys(answers).length){ restart(); return; }
+  if(confirm('Reiniciar do zero? Suas respostas serão perdidas.')) restart();
+}
+
 async function applyPreset(name){
   closePresets();
   const preset = PRESETS[name];
@@ -2994,7 +3058,21 @@ function tr(pt){ if(!pt) return ''; let t=pt.toLowerCase().trim(); MAP.forEach((
 
 // ─── Build prompts ────────────────────────────────────────────────────────
 function buildNeg(){
-  return 'plastic skin, rubber skin, silicone skin, waxy skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, porcelain skin, flawless skin, perfect skin, no pores, skin filter, beauty filter, beauty mode, photoshop skin, retouched, skin retouching, instagram filter, facetune, doll face, mannequin, wax figure, uncanny valley, inhuman face, perfect symmetry, overly symmetrical, studio strobe, overlit, blown out highlights, artificial lighting, rendered, 3d render, cgi, cartoon, anime, illustration, painting, drawing, digital art, ai generated, ai art, midjourney, stable diffusion artifacts, ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, bad proportions, disfigured, low quality, worst quality, oversaturated, neon colors, fluorescent skin, cropped limbs, floating limbs, clone stamp, body horror, extra fingers, abnormal hands, impossible pose, tiling, repetitive pattern';
+  const base='plastic skin, rubber skin, silicone skin, waxy skin, glossy skin, airbrushed skin, smooth skin, oversmoothed, porcelain skin, flawless skin, perfect skin, no pores, skin filter, beauty filter, beauty mode, photoshop skin, retouched, skin retouching, instagram filter, facetune, doll face, mannequin, wax figure, uncanny valley, inhuman face, perfect symmetry, overly symmetrical, studio strobe, overlit, blown out highlights, artificial lighting, rendered, 3d render, cgi, cartoon, anime, illustration, painting, drawing, digital art, ai generated, ai art, midjourney, stable diffusion artifacts, ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, bad proportions, disfigured, low quality, worst quality, oversaturated, neon colors, fluorescent skin, cropped limbs, floating limbs, clone stamp, body horror, extra fingers, abnormal hands, impossible pose, tiling, repetitive pattern';
+  const extras=[];
+  const roupa=answers.roupa||'';
+  const cenario=answers.cenario||'';
+  const corpo=answers.corpo||'';
+  const pose=answers.pose||'';
+  if(/nude|naked|pelada|sem roupa|topless/i.test(roupa)) extras.push('clothing, dressed, fabric on body, covered, inappropriate censorship');
+  if(/praia|beach|ocean|pool|piscina|água|water/i.test(cenario)) extras.push('indoor, studio background, plain background, grey backdrop');
+  if(/outdoor|natureza|nature|forest|floresta/i.test(cenario)) extras.push('indoor studio, white background, seamless backdrop');
+  if(/bbw|plus.?size|gordinha/i.test(corpo)) extras.push('skinny, thin, underweight');
+  if(/atlética|muscular|fitness|fit/i.test(corpo)) extras.push('flabby, soft, out of shape');
+  if(/boudoir|quarto|íntimo|velas/i.test(cenario)) extras.push('harsh flash, daylight, overexposed');
+  if(/preto.e.branco|monochrome|black and white|ilford/i.test(answers.estilo||answers.film||'')) extras.push('color, saturated colors, tinted');
+  if(/cinestill|noite|night|neon/i.test(answers.estilo||answers.film||answers.cenario||'')) extras.push('daylight, bright ambient, overexposed, washed out');
+  return extras.length ? base+', '+extras.join(', ') : base;
 }
 
 // vals from the realismo-opt entries merged into estilo step
@@ -3022,6 +3100,8 @@ function buildPrompt(){
   const roupaVal = answers.roupa || '';
   const isNude = /nude|naked|nua\b|pelada|sem roupa|topless|sem calcinha|sem sutiã|lingerie only/i.test(roupaVal);
   const underwear = isNude ? '' : 'wearing matching lace bra and panties underneath';
+  const poseEmphasis = answers.pose ? `(${answers.pose}:1.15)` : '';
+  const roupaEmphasis = roupaVal ? `(${roupaVal}:1.1)` : '';
   const parts = [
     qualityHeader,
     antiAI,
@@ -3029,9 +3109,8 @@ function buildPrompt(){
     answers.corpo,
     imperfections,
     answers.cabelo,
-    roupaVal,
-    underwear,
-    answers.pose,
+    roupaEmphasis || underwear,
+    poseEmphasis,
     answers.expressao,
     angulo,
     answers.cenario,
@@ -3368,10 +3447,16 @@ async function showResult(){
   const modeTag = '';
   const b=addMsg('bot',`✅ <strong>Prompt copiado automaticamente!</strong>${modeTag}`);
 
-  const pd=document.createElement('div'); pd.className='prompt-block';
-  pd.title='Clique para selecionar'; pd.textContent=prompt;
-  pd.onclick=()=>{ const r=document.createRange();r.selectNodeContents(pd);const s=window.getSelection();s.removeAllRanges();s.addRange(r); };
+  const pd=document.createElement('textarea'); pd.className='prompt-block prompt-edit';
+  pd.value=prompt; pd.rows=5;
+  pd.style.cssText='width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);padding:9px 12px;font-size:.78em;font-family:monospace;line-height:1.5;resize:vertical;outline:none;margin-top:8px;';
+  pd.addEventListener('focus',()=>pd.style.borderColor='var(--acc)');
+  pd.addEventListener('blur',()=>pd.style.borderColor='var(--bdr)');
   b.appendChild(pd);
+  const regenBtn=document.createElement('button'); regenBtn.className='icon-btn'; regenBtn.innerHTML='🔄 Regenerar com edição';
+  regenBtn.style.cssText='margin-top:4px;margin-bottom:4px;';
+  regenBtn.onclick=()=>{ navigator.clipboard.writeText(pd.value).then(()=>{ regenBtn.textContent='✓ Copiado!'; setTimeout(()=>{ regenBtn.innerHTML='🔄 Regenerar com edição'; },1800); }); };
+  b.appendChild(regenBtn);
 
   const br1=document.createElement('div'); br1.className='btn-row';
   const cpBtn=document.createElement('button'); cpBtn.className='copy-btn'; cpBtn.innerHTML='📋 Copiar';
