@@ -374,6 +374,7 @@ const BASE = 'analog film photograph, 35mm film, shot on Kodak Portra 400, Canon
 
 function buildBlondePrompt(p){
   const parts=[BASE];
+  if(p.partner) parts.push(p.partner);
   if(p.corpo) parts.push(p.corpo);
   if(p.roupa) parts.push('('+p.roupa+':1.1)');
   if(p.nsfw)  parts.push(p.nsfw);
