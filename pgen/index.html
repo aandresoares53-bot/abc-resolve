@@ -1766,6 +1766,37 @@ function renderGrid(presets){
   });
 }
 
+const DEFAULT_POSES = {
+  casual:   'standing relaxed, weight on one hip, arms loose',
+  praia:    'lying on towel, legs slightly bent, looking at camera',
+  academia: 'mid-exercise, dynamic stance, muscles engaged',
+  lingerie: 'sitting on edge of bed, legs crossed, looking over shoulder',
+  banheiro: 'leaning against wall, towel loosely wrapped, steam around',
+  boudoir:  'lying on side, head resting on hand, seductive look',
+  nude:     'standing, arms above head, back slightly arched',
+  fantasia: 'confident pose in costume, hands on hips',
+  locais:   'leaning on wall or railing, relaxed and candid',
+  explicito_suave: 'lying back, legs slightly open, hands on body',
+  posicoes: 'on all fours, looking back at camera',
+  extremo:  'submissive position, body fully exposed',
+};
+const DEFAULT_CAMS = {
+  casual:   'eye level, 50mm, slight candid tilt',
+  praia:    'low angle from sand level, wide shot',
+  academia: 'side profile, 35mm, dynamic angle',
+  lingerie: 'low angle POV, looking up at subject',
+  banheiro: 'over-the-shoulder, mirror reflection, steamy',
+  boudoir:  'top-down bird\'s eye, soft focus edges',
+  nude:     'side silhouette, backlit, wide shot',
+  fantasia: 'Dutch angle, dramatic low angle',
+  locais:   'wide establishing shot, subject in foreground',
+  explicito_suave: 'between-the-legs POV, low angle',
+  posicoes: 'from behind, low angle close-up',
+  extremo:  'extreme close-up POV, immersive angle',
+};
+function defaultPose(p){ return DEFAULT_POSES[p.cat] || 'natural standing pose, relaxed'; }
+function defaultCam(p){  return DEFAULT_CAMS[p.cat]  || 'eye level, 50mm, natural framing'; }
+
 function selectPreset(key){
   selectedKey = key;
   // update card highlight
@@ -1777,8 +1808,8 @@ function selectPreset(key){
   document.getElementById('result-title').textContent = '✅ '+p.name;
   document.getElementById('result-prompt').value = prompt;
   document.getElementById('result-neg').value = neg;
-  document.getElementById('edit-pose').value = p.pose||'';
-  document.getElementById('edit-cam').value = p.cam||'';
+  document.getElementById('edit-pose').value = p.pose || defaultPose(p);
+  document.getElementById('edit-cam').value  = p.cam  || defaultCam(p);
   const panel = document.getElementById('result-panel');
   panel.classList.add('open');
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});
