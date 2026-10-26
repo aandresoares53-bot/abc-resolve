@@ -164,7 +164,11 @@ header{
 .edit-fields{background:var(--surface2);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;display:grid;gap:8px;}
 .edit-field{display:grid;gap:4px;}
 .edit-label{font-size:.65rem;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;}
-.edit-select{background:var(--bg);border:1px solid var(--bdr2);border-radius:var(--r2);color:var(--txt);padding:8px 10px;font-size:.78rem;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;width:100%;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a8a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+.chip-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.chip{background:var(--surface2);border:1px solid var(--bdr2);border-radius:20px;color:var(--txt2);padding:4px 10px;font-size:.72rem;font-family:inherit;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.chip:hover{border-color:var(--acc);color:var(--acc);}
+.chip.active{background:var(--acc);border-color:var(--acc);color:#000;font-weight:700;}
+.chip-section{font-size:.65rem;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;width:100%;margin-top:4px;}
 .edit-select:focus{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc-glow);}
 .edit-select option,.edit-select optgroup{background:var(--surface2);color:var(--txt);}
 .btn-apply{background:var(--surface3);border:1px solid var(--bdr2);border-radius:var(--r2);color:var(--acc);font-size:.75rem;font-weight:700;padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s;width:fit-content;}
@@ -249,116 +253,84 @@ header{
         <div class="edit-fields">
           <div class="edit-field">
             <label class="edit-label">🕺 Pose</label>
-            <select class="edit-select" id="edit-pose">
-              <optgroup label="— Em pé —">
-                <option value="standing relaxed, weight on one hip, arms loose">Em pé relaxada, quadril deslocado</option>
-                <option value="standing, back arched, chest forward, confident">Em pé, costas arqueadas, peito para frente</option>
-                <option value="standing, hands on hips, power pose">Em pé, mãos no quadril</option>
-                <option value="standing, arms above head, stretching, midriff exposed">Em pé, braços acima da cabeça, alongando</option>
-                <option value="standing, leaning against wall, one leg bent">Encostada na parede, uma perna dobrada</option>
-                <option value="standing, looking back over shoulder seductively">Em pé, olhando por cima do ombro</option>
-                <option value="standing, walking toward camera, confident strut">Caminhando em direção à câmera</option>
-                <option value="standing in doorway, arms raised on frame">No batente da porta, braços levantados</option>
-              </optgroup>
-              <optgroup label="— Sentada —">
-                <option value="sitting on edge of bed, legs crossed, hands on knees">Sentada na beira da cama, pernas cruzadas</option>
-                <option value="sitting cross-legged on floor, relaxed">Sentada no chão, pernas cruzadas</option>
-                <option value="sitting on chair, legs slightly open, leaning forward">Sentada na cadeira, inclinada para frente</option>
-                <option value="sitting on counter, legs dangling, leaning back on hands">Sentada no balcão, pernas balançando</option>
-                <option value="sitting with knees to chest, arms wrapped around legs">Sentada abraçando os joelhos</option>
-                <option value="perched on edge of chair, back arched, looking at camera">No bico da cadeira, costas arqueadas</option>
-              </optgroup>
-              <optgroup label="— Deitada —">
-                <option value="lying on back, arms above head, legs slightly apart">Deitada de costas, braços acima da cabeça</option>
-                <option value="lying on stomach, chin resting on hands, feet up">Deitada de bruços, queixo nas mãos</option>
-                <option value="lying on side, head resting on hand, top leg bent">Deitada de lado, cabeça na mão</option>
-                <option value="lying on back, one knee raised, back arched">Deitada, um joelho levantado, costas arqueadas</option>
-                <option value="sprawled on bed, hair spread out, relaxed">Espalhada na cama, cabelo solto</option>
-                <option value="lying on side, body curved in S shape">Deitada de lado, corpo em curva-S</option>
-              </optgroup>
-              <optgroup label="— De joelhos / agachada —">
-                <option value="kneeling on floor, sitting back on heels, hands on thighs">Ajoelhada no chão, mãos nas coxas</option>
-                <option value="kneeling, leaning forward, hands on floor, cat pose">De quatro, posição de gato</option>
-                <option value="kneeling, arching back, hands behind head">Ajoelhada, costas arqueadas, mãos atrás da cabeça</option>
-                <option value="squatting low, knees wide, arms between legs">Agachada, joelhos abertos</option>
-                <option value="on all fours, looking back at camera seductively">De quatro, olhando para a câmera</option>
-              </optgroup>
-              <optgroup label="— Curvada / inclinada —">
-                <option value="bending forward at waist, hands on knees, looking at camera">Inclinada para frente, mãos nos joelhos</option>
-                <option value="bent over, hands on surface, back arched, looking back">Curvada, mãos na superfície, olhando para trás</option>
-                <option value="leaning over a surface, elbows on table, cleavage visible">Debruçada sobre superfície, cotovelos na mesa</option>
-                <option value="arching back dramatically, head thrown back, eyes closed">Arqueando as costas dramaticamente, cabeça jogada para trás</option>
-              </optgroup>
-              <optgroup label="— Pernas abertas —">
-                <option value="lying on back, legs spread wide open, explicit, full view">Deitada, pernas abertas (frontal)</option>
-                <option value="sitting, legs spread wide, leaning back on hands, explicit">Sentada, pernas abertas, inclinada para trás</option>
-                <option value="lying back, knees bent and spread apart, feet flat, explicit">Deitada, joelhos dobrados e abertos</option>
-                <option value="standing, legs wide apart, hands on thighs, explicit stance">Em pé, pernas bem abertas, mãos nas coxas</option>
-                <option value="lying on back, legs raised and spread in V shape, explicit">Deitada, pernas levantadas em V aberto</option>
-                <option value="sitting on edge, legs hanging open each side, explicit">Sentada na beira, pernas penduradas abertas</option>
-                <option value="on back, legs pulled back toward shoulders, fully exposed, explicit">Deitada, pernas puxadas para os ombros</option>
-                <option value="kneeling, knees spread wide, sitting open, explicit">Ajoelhada, joelhos bem abertos, exposta</option>
-              </optgroup>
-            </select>
+            <div class="chip-group" id="chips-pose">
+              <span class="chip-section">Em pé</span>
+              <button class="chip" data-group="pose" data-val="standing relaxed, weight on one hip, arms loose">Relaxada</button>
+              <button class="chip" data-group="pose" data-val="standing, back arched, chest forward, confident">Costas arqueadas</button>
+              <button class="chip" data-group="pose" data-val="standing, hands on hips, power pose">Mãos no quadril</button>
+              <button class="chip" data-group="pose" data-val="standing, arms above head, stretching, midriff exposed">Braços acima</button>
+              <button class="chip" data-group="pose" data-val="standing, leaning against wall, one leg bent">Encostada na parede</button>
+              <button class="chip" data-group="pose" data-val="standing, looking back over shoulder seductively">Olhar sobre ombro</button>
+              <button class="chip" data-group="pose" data-val="standing, walking toward camera, confident strut">Caminhando</button>
+              <span class="chip-section">Sentada</span>
+              <button class="chip" data-group="pose" data-val="sitting on edge of bed, legs crossed, hands on knees">Beira da cama</button>
+              <button class="chip" data-group="pose" data-val="sitting on chair, legs slightly open, leaning forward">Cadeira, inclinada</button>
+              <button class="chip" data-group="pose" data-val="perched on edge of chair, back arched, looking at camera">Bico da cadeira</button>
+              <button class="chip" data-group="pose" data-val="sitting cross-legged on floor, relaxed">Chão, pernas cruzadas</button>
+              <span class="chip-section">Deitada</span>
+              <button class="chip" data-group="pose" data-val="lying on back, arms above head, legs slightly apart">De costas, braços acima</button>
+              <button class="chip" data-group="pose" data-val="lying on side, head resting on hand, top leg bent">De lado, cabeça na mão</button>
+              <button class="chip" data-group="pose" data-val="lying on back, one knee raised, back arched">Joelho levantado</button>
+              <button class="chip" data-group="pose" data-val="sprawled on bed, hair spread out, relaxed">Espalhada na cama</button>
+              <button class="chip" data-group="pose" data-val="lying on stomach, chin resting on hands, feet up">De bruços</button>
+              <span class="chip-section">De joelhos</span>
+              <button class="chip" data-group="pose" data-val="kneeling on floor, sitting back on heels, hands on thighs">Ajoelhada, mãos nas coxas</button>
+              <button class="chip" data-group="pose" data-val="on all fours, looking back at camera seductively">De quatro, olhando para câmera</button>
+              <button class="chip" data-group="pose" data-val="kneeling, arching back, hands behind head">Ajoelhada, arqueada</button>
+              <button class="chip" data-group="pose" data-val="squatting low, knees wide, arms between legs">Agachada, joelhos abertos</button>
+              <span class="chip-section">Curvada</span>
+              <button class="chip" data-group="pose" data-val="bent over, hands on surface, back arched, looking back">Curvada, olhando para trás</button>
+              <button class="chip" data-group="pose" data-val="bending forward at waist, hands on knees, looking at camera">Inclinada para frente</button>
+              <button class="chip" data-group="pose" data-val="arching back dramatically, head thrown back, eyes closed">Arco dramático</button>
+              <span class="chip-section">Pernas abertas</span>
+              <button class="chip" data-group="pose" data-val="lying on back, legs spread wide open, explicit, full view">Deitada, abertas (frontal)</button>
+              <button class="chip" data-group="pose" data-val="sitting, legs spread wide, leaning back on hands, explicit">Sentada, pernas abertas</button>
+              <button class="chip" data-group="pose" data-val="lying back, knees bent and spread apart, feet flat, explicit">Joelhos dobrados, abertos</button>
+              <button class="chip" data-group="pose" data-val="lying on back, legs raised and spread in V shape, explicit">Pernas em V aberto</button>
+              <button class="chip" data-group="pose" data-val="on back, legs pulled back toward shoulders, fully exposed, explicit">Pernas puxadas p/ ombros</button>
+              <button class="chip" data-group="pose" data-val="kneeling, knees spread wide, sitting open, explicit">Ajoelhada, joelhos abertos</button>
+            </div>
+            <input type="hidden" id="edit-pose" value="">
           </div>
           <div class="edit-field">
-            <label class="edit-label">📷 Ângulo de câmera</label>
-            <select class="edit-select" id="edit-cam">
-              <optgroup label="— Nível do olho —">
-                <option value="eye level, 50mm, natural framing, slight candid tilt">Nível do olho, natural (50mm)</option>
-                <option value="eye level, portrait framing, 85mm, shallow depth of field">Retrato, 85mm, fundo desfocado</option>
-                <option value="eye level, wide shot, 35mm, full body visible">Wide shot, corpo inteiro (35mm)</option>
-              </optgroup>
-              <optgroup label="— Baixo ângulo —">
-                <option value="low angle, camera at knee level looking up, dominant">Baixo ângulo, câmera no nível do joelho</option>
-                <option value="extreme low angle, camera on floor looking up, legs prominent">Ângulo extremo do chão olhando para cima</option>
-                <option value="low angle POV, looking up at subject from below">POV de baixo para cima</option>
-                <option value="worm's eye view, ultra low angle, towering figure">Vista de minhoca, ângulo ultra baixo</option>
-              </optgroup>
-              <optgroup label="— Alto ângulo —">
-                <option value="high angle, camera above looking down, vulnerable feel">Alto ângulo, câmera acima olhando para baixo</option>
-                <option value="bird's eye view, top-down, camera directly above">Vista aérea, câmera diretamente acima</option>
-                <option value="slightly elevated angle, 3/4 view from above">Levemente elevado, visão 3/4 de cima</option>
-              </optgroup>
-              <optgroup label="— POV —">
-                <option value="POV shot, first person perspective, intimate and direct">POV, perspectiva em primeira pessoa</option>
-                <option value="over-the-shoulder POV, looking past shoulder at reflection">Por cima do ombro, reflexo no espelho</option>
-                <option value="POV from behind, following close, voyeur angle">POV por trás, ângulo voyeur</option>
-              </optgroup>
-              <optgroup label="— Close-up —">
-                <option value="extreme close-up, face and eyes filling frame">Close extremo no rosto e olhos</option>
-                <option value="close-up on lips and jawline, sensual detail">Close nos lábios e mandíbula</option>
-                <option value="close-up on curves, abstract body landscape">Close nas curvas do corpo</option>
-                <option value="medium close-up, chest and face, intimate framing">Meio close, peito e rosto</option>
-              </optgroup>
-              <optgroup label="— Perfil / Silhueta —">
-                <option value="side profile, silhouette against bright background">Perfil lateral, silhueta contra fundo claro</option>
-                <option value="3/4 profile, dramatic side lighting, chiaroscuro">Perfil 3/4, iluminação lateral dramática</option>
-                <option value="backlit silhouette, rim lighting, against window">Silhueta contraluz, janela ao fundo</option>
-              </optgroup>
-              <optgroup label="— Espelho / Reflexo —">
-                <option value="mirror reflection shot, dual perspective, bathroom mirror">Reflexo no espelho, perspectiva dupla</option>
-                <option value="full length mirror, subject facing away, reflection faces camera">Espelho de corpo inteiro, sujeito de costas</option>
-                <option value="mirror selfie angle, phone visible, candid feel">Ângulo de selfie no espelho</option>
-              </optgroup>
-              <optgroup label="— Dutch / Dinâmico —">
-                <option value="Dutch angle, camera tilted 25 degrees, dramatic tension">Dutch angle, câmera inclinada 25°</option>
-                <option value="dynamic diagonal composition, energetic framing">Composição diagonal dinâmica</option>
-                <option value="through doorway or window frame, voyeur framing">Através da moldura da porta / janela</option>
-              </optgroup>
-              <optgroup label="— Explícito / Adulto —">
-                <option value="extreme close-up of ass, low angle from below, butt filling frame, explicit detail">Close extremo bunda, de baixo para cima</option>
-                <option value="extreme close-up of vagina from below, upward angle, vulva detail, explicit">Close extremo vulva, ângulo de baixo para cima</option>
-                <option value="between legs POV, camera between thighs looking up, explicit upshot">POV entre as pernas, olhando para cima</option>
-                <option value="rear view close-up, ass and pussy from behind, low angle, explicit detail">Vista traseira close, bunda e vulva por trás</option>
-                <option value="missionary POV, camera below looking up at body and face during sex">POV missionário, câmera de baixo durante sexo</option>
-                <option value="doggy style POV from behind, close on penetration, explicit rear angle">POV doggy, ângulo traseiro explícito</option>
-                <option value="cowgirl POV looking up, camera below facing upward at riding woman">POV cowgirl, câmera abaixo olhando para cima</option>
-                <option value="split-screen angle, simultaneous face and genitals, dual close-up explicit">Ângulo duplo: rosto e genitais simultâneos</option>
-                <option value="over-shoulder voyeur angle, watching from behind during sex, implicit POV">Por cima do ombro, voyeur durante sexo</option>
-                <option value="extreme close-up on penetration detail, macro lens, explicit insert shot">Close macro penetração, detalhe explícito</option>
-              </optgroup>
-            </select>
+            <label class="edit-label">📷 Câmera</label>
+            <div class="chip-group" id="chips-cam">
+              <span class="chip-section">Nível do olho</span>
+              <button class="chip" data-group="cam" data-val="eye level, 50mm, natural framing, slight candid tilt">Natural 50mm</button>
+              <button class="chip" data-group="cam" data-val="eye level, portrait framing, 85mm, shallow depth of field">Retrato 85mm</button>
+              <button class="chip" data-group="cam" data-val="eye level, wide shot, 35mm, full body visible">Wide 35mm</button>
+              <span class="chip-section">Baixo ângulo</span>
+              <button class="chip" data-group="cam" data-val="low angle, camera at knee level looking up, dominant">Nível do joelho</button>
+              <button class="chip" data-group="cam" data-val="low angle POV, looking up at subject from below">POV de baixo</button>
+              <button class="chip" data-group="cam" data-val="worm's eye view, ultra low angle, towering figure">Vista de minhoca</button>
+              <span class="chip-section">Alto ângulo</span>
+              <button class="chip" data-group="cam" data-val="high angle, camera above looking down, vulnerable feel">Alto ângulo</button>
+              <button class="chip" data-group="cam" data-val="bird's eye view, top-down, camera directly above">Vista aérea</button>
+              <span class="chip-section">POV</span>
+              <button class="chip" data-group="cam" data-val="POV shot, first person perspective, intimate and direct">POV 1ª pessoa</button>
+              <button class="chip" data-group="cam" data-val="POV from behind, following close, voyeur angle">POV por trás</button>
+              <button class="chip" data-group="cam" data-val="over-the-shoulder POV, looking past shoulder at reflection">Por cima do ombro</button>
+              <span class="chip-section">Close-up</span>
+              <button class="chip" data-group="cam" data-val="extreme close-up, face and eyes filling frame">Close rosto</button>
+              <button class="chip" data-group="cam" data-val="close-up on lips and jawline, sensual detail">Close lábios</button>
+              <button class="chip" data-group="cam" data-val="close-up on curves, abstract body landscape">Close curvas</button>
+              <button class="chip" data-group="cam" data-val="medium close-up, chest and face, intimate framing">Meio close</button>
+              <span class="chip-section">Perfil</span>
+              <button class="chip" data-group="cam" data-val="side profile, silhouette against bright background">Perfil lateral</button>
+              <button class="chip" data-group="cam" data-val="backlit silhouette, rim lighting, against window">Silhueta contraluz</button>
+              <span class="chip-section">Espelho</span>
+              <button class="chip" data-group="cam" data-val="mirror reflection shot, dual perspective, bathroom mirror">Reflexo espelho</button>
+              <button class="chip" data-group="cam" data-val="full length mirror, subject facing away, reflection faces camera">Espelho corpo inteiro</button>
+              <span class="chip-section">Explícito</span>
+              <button class="chip" data-group="cam" data-val="extreme close-up of ass, low angle from below, butt filling frame, explicit detail">Close bunda</button>
+              <button class="chip" data-group="cam" data-val="extreme close-up of vagina from below, upward angle, vulva detail, explicit">Close vulva</button>
+              <button class="chip" data-group="cam" data-val="between legs POV, camera between thighs looking up, explicit upshot">POV entre pernas</button>
+              <button class="chip" data-group="cam" data-val="rear view close-up, ass and pussy from behind, low angle, explicit detail">Vista traseira close</button>
+              <button class="chip" data-group="cam" data-val="missionary POV, camera below looking up at body and face during sex">POV missionário</button>
+              <button class="chip" data-group="cam" data-val="doggy style POV from behind, close on penetration, explicit rear angle">POV doggy</button>
+              <button class="chip" data-group="cam" data-val="cowgirl POV looking up, camera below facing upward at riding woman">POV cowgirl</button>
+            </div>
+            <input type="hidden" id="edit-cam" value="">
           </div>
           <button class="btn-apply" onclick="applyEdits()">↻ Aplicar ao Prompt</button>
         </div>
@@ -2029,16 +2001,25 @@ const DEFAULT_CAMS = {
 };
 function defaultPose(p){ return DEFAULT_POSES[p.cat] || 'natural standing pose, relaxed'; }
 function defaultCam(p){  return DEFAULT_CAMS[p.cat]  || 'eye level, 50mm, natural framing'; }
-function setSelectClosest(id, val){
-  const sel = document.getElementById(id);
-  if(!val){ sel.selectedIndex=0; return; }
-  // try exact match first
-  for(let i=0;i<sel.options.length;i++){
-    if(sel.options[i].value===val){ sel.selectedIndex=i; return; }
-  }
-  // fallback: pick first option
-  sel.selectedIndex=0;
+function selectChip(group, val){
+  document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(c=>{
+    c.classList.toggle('active', c.dataset.val===val);
+  });
+  const inp = document.getElementById('edit-'+group);
+  if(inp) inp.value = val||'';
 }
+function setSelectClosest(id, val){
+  const group = id.replace('edit-','');
+  selectChip(group, val||'');
+}
+// chip click handler (delegated)
+document.addEventListener('click', e=>{
+  const c = e.target.closest('.chip[data-group]');
+  if(!c) return;
+  const group = c.dataset.group;
+  const already = c.classList.contains('active');
+  selectChip(group, already ? '' : c.dataset.val);
+});
 
 function selectPreset(key){
   selectedKey = key;
