@@ -2112,6 +2112,12 @@ function randomPreset(){
   const keys = PRESETS_RAW.map(p=>p.key);
   const key = keys[Math.floor(Math.random()*keys.length)];
   selectPreset(key);
+  setTimeout(()=>{
+    const text = document.getElementById('result-prompt').value;
+    if(text) navigator.clipboard.writeText(text).catch(()=>{});
+    const btn = document.querySelector('.hbtn-random');
+    if(btn){ const orig=btn.textContent; btn.textContent='✓ Copiado!'; setTimeout(()=>btn.textContent=orig,1500); }
+  }, 50);
 }
 
 // ── START ──────────────────────────────────────────────────────────────────
