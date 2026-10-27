@@ -478,6 +478,7 @@ header{
             </div>
             <input type="hidden" id="edit-cam" value="">
           </div>
+          <button class="btn-apply" style="background:var(--surface2);color:var(--txt3);margin-bottom:4px" onclick="clearAllChips()">✕ Zerar Tudo</button>
           <button class="btn-apply" onclick="applyEdits()">↻ Aplicar ao Prompt</button>
         </div>
         <div>
@@ -3894,6 +3895,16 @@ function selectPreset(key){
   showToast('✓ Copiado automaticamente');
   // Save to history
   saveHistory(p.key, p.name, prompt);
+}
+
+function clearAllChips(){
+  document.querySelectorAll('.chip.active').forEach(c=>c.classList.remove('active'));
+  ['edit-pose','edit-cam','edit-style','edit-luz','edit-filmstock'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  const btn = document.querySelector('[onclick="clearAllChips()"]');
+  if(btn){ btn.textContent='✓ Zerado!'; setTimeout(()=>{ btn.textContent='✕ Zerar Tudo'; },1200); }
 }
 
 function applyEdits(){
