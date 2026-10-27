@@ -511,7 +511,7 @@ const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, 
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = 'real photograph of a woman, 19 years old, blonde hair, blue eyes, curvy body, large breasts, wide hips, thick thighs, hourglass figure, skin with visible pores, skin texture, slight blemishes, redness on cheeks, natural skin imperfections, uneven skin tone, realistic human skin, NOT retouched, NOT airbrushed, authentic candid person';
+const MJ_SUBJECT = 'real photograph of a woman, 19 years old, blonde hair, blue eyes, fit athletic body, toned abs, medium perky breasts, round firm ass, shapely hips, slim waist, toned thighs, fitness model physique, skin with visible pores, slight blemishes, natural skin imperfections, realistic human skin, NOT retouched, NOT airbrushed, authentic candid person';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -545,7 +545,7 @@ function buildBlondePrompt(p, seedOverride){
   desc.push(MJ_SUBJECT);
   if(p.partner) desc.push(p.partner);
   // always enforce curvy body regardless of preset corpo field
-  const CORPO_BASE = 'extremely curvy figure, large natural breasts, big round ass, wide hips, thick thighs, narrow waist, sexy voluptuous hourglass body';
+  const CORPO_BASE = 'fit athletic figure, toned abs, medium perky natural breasts, round firm ass, shapely hips, slim toned waist, fit thighs, fitness body';
   desc.push(p.corpo ? CORPO_BASE + ', ' + p.corpo : CORPO_BASE);
   if(p.roupa)   desc.push(p.roupa);
   if(p.nsfw)    desc.push(p.nsfw);
