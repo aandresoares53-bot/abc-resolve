@@ -431,11 +431,11 @@ function buildBlondePrompt(p, seedOverride){
 
   // Build Midjourney prompt: realism anchors first (MJ weights earlier tokens more)
   const desc = [];
-  desc.push('unretouched analog snapshot, raw skin texture, imperfect real skin, visible pores on face, natural blemishes, NOT smooth skin, NOT airbrushed, Nan Goldin style, Larry Clark photography');
+  desc.push('unretouched candid photograph, raw human skin texture, visible skin pores and imperfections, natural blemishes, slight skin unevenness, NOT smooth skin, NOT airbrushed, NOT retouched, Nan Goldin style, Larry Clark documentary photography, Wolfgang Tillmans intimacy');
   if(styleOverride) desc.push(styleOverride);
-  desc.push('shot on 35mm ' + film + ', ISO 800 grain, heavy visible grain on skin, grain on shadows, film halation, color fringing, slight vignette' + (isMonochrome ? ', monochrome' : ''));
+  desc.push('Canon 5D Mark II, 50mm f/1.8 lens, f/2.0 aperture, 1/80s shutter, ISO 1600, handheld, slight camera shake, natural available light only, no flash, no artificial lighting, ' + film + ', heavy film grain on skin and shadows, film halation, color fringing, lens aberration, slight vignette' + (isMonochrome ? ', monochrome' : ''));
   if(luzOverride) desc.push(luzOverride);
-  desc.push('Canon AE-1 handheld, grainy imperfect exposure, warm analog tones, raw unedited negative scan, no post-processing whatsoever');
+  desc.push('raw unedited scan, no color grading, no post-processing, slightly underexposed or overexposed, imperfect exposure, authentic snapshot aesthetic, documentary realism');
   desc.push(MJ_SUBJECT);
   if(p.partner) desc.push(p.partner);
   // always enforce curvy body regardless of preset corpo field
