@@ -292,6 +292,7 @@ header{
   <button class="hbtn" onclick="toggleHistorico()" id="hist-btn">📜 Histórico</button>
   <button class="hbtn hbtn-roulette" onclick="toggleRoulette()" id="roulette-btn">🎰 Roulette</button>
   <input class="header-search" id="global-search" placeholder="🔍 Buscar preset…" oninput="filterPresets()" autocomplete="off">
+  <button class="hbtn" onclick="reiniciarTudo()" title="Limpa busca, categoria, pose, câmera e fecha o painel">↺ Reiniciar</button>
   <button class="hbtn" onclick="toggleTheme()" id="theme-btn">☀ Claro</button>
 </header>
 
@@ -3985,6 +3986,38 @@ function closeResult(){
   document.getElementById('result-panel').classList.remove('open');
   selectedKey=null;
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+}
+
+function reiniciarTudo(){
+  // Fecha painel
+  closeResult();
+  // Limpa busca
+  const s=document.getElementById('global-search');
+  if(s) s.value='';
+  // Volta categoria para "todos"
+  currentCat='todos';
+  currentLevel='todos';
+  ['todos','sfw','sensual','explicit'].forEach(l=>{
+    const el=document.getElementById('pill-'+l);
+    if(el) el.classList.toggle('active',l==='todos');
+  });
+  // Limpa quick-picks (pose e câmera)
+  document.querySelectorAll('.qpick').forEach(b=>{
+    b.classList.toggle('active', b.dataset.val==='');
+  });
+  // Limpa campos ocultos
+  ['edit-pose','edit-cam','edit-style','edit-luz','edit-filmstock'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value = id==='edit-filmstock' ? 'Kodak Ultramax 800' : '';
+  });
+  // Limpa cref
+  const cref=document.getElementById('cref-url');
+  if(cref) cref.value='';
+  // Limpa favoritos selecionados
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+  renderSidebar();
+  filterPresets();
+  showToast('↺ Reiniciado!');
 }
 
 function setLevel(lv){
