@@ -516,7 +516,7 @@ header{
 
 <script>
 // ── MIDJOURNEY CONFIG ───────────────────────────────────────────────────────
-const DEFAULT_SEED = 128966260;
+const DEFAULT_SEED = 419528731;
 
 // Midjourney --no (negative) base
 const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch, makeup, cosmetics, lipstick, eyeshadow, foundation, blush, mascara, beauty product, perfect body, idealized body, fashion model, supermodel, flawless body, perfect symmetry, symmetrical face, perfect proportions, editorial, high fashion, vogue, magazine shoot, model pose, model body, goddess, perfect figure';
@@ -525,7 +525,7 @@ const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, 
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, same face always: small straight nose, full lips, light blue eyes, defined cheekbones, heart-shaped face, fit athletic body, toned abs, medium natural breasts, round firm buttocks, shapely hips, slim waist, toned thighs, skin with visible pores, slight blemishes, natural skin imperfections, realistic human skin, NOT retouched, NOT airbrushed, authentic candid person';
+const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, slight natural blemishes, realistic human skin texture, NOT retouched, NOT airbrushed, authentic candid person';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -535,7 +535,7 @@ function buildNeg(p){
 
 function buildBlondePrompt(p, seedOverride){
   // Dynamic seed each call; caller can pass a fixed seed (for applyEdits)
-  const seed = seedOverride !== undefined ? seedOverride : Math.floor(Math.random()*999999999);
+  const seed = seedOverride !== undefined ? seedOverride : DEFAULT_SEED;
   const crefUrl = document.getElementById('cref-url')?.value.trim();
   const crefCw  = document.getElementById('cref-cw')?.value || '100';
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
