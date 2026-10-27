@@ -335,16 +335,11 @@ header{
           <button class="btn-apply" onclick="applyEdits()">↻ Aplicar ao Prompt</button>
         </div>
         <div>
-          <div class="result-label">Positive Prompt</div>
-          <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
-        </div>
-        <div>
-          <div class="result-label">Negative Prompt</div>
-          <textarea class="result-ta neg" id="result-neg" rows="3"></textarea>
+          <div class="result-label">🎨 Midjourney Prompt <span style="font-size:11px;opacity:.6;font-weight:400">— cole no /imagine do Discord</span></div>
+          <textarea class="result-ta" id="result-prompt" rows="6"></textarea>
         </div>
         <div class="btn-row">
           <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar Prompt</button>
-          <button class="btn-action" id="btn-copy-neg" onclick="copyNeg()">🚫 Copiar Negativo</button>
           <button class="btn-action" onclick="downloadTxt()">💾 .txt</button>
           <button class="btn-action" onclick="variation()">🔀 Variação</button>
           <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
@@ -355,44 +350,46 @@ header{
 </div>
 
 <script>
-// ── NEGATIVE PROMPT ────────────────────────────────────────────────────────
-const BASE_NEG = '(digital photography:1.5), (digital camera:1.4), (DSLR:1.3), (mirrorless camera:1.3), (digital look:1.5), (digital skin:1.5), (CGI:1.5), (3D render:1.5), (rendered:1.5), (artificial:1.5), (AI generated:1.5), (AI art:1.5), midjourney, (plastic skin:1.5), (rubber skin:1.5), (silicone skin:1.5), (waxy skin:1.5), (glossy skin:1.5), (airbrushed skin:1.5), (oversmoothed skin:1.5), (porcelain skin:1.5), (flawless skin:1.5), (perfect skin:1.5), (no pores:1.5), (smooth skin:1.5), (skin without texture:1.5), (skin without pores:1.5), (fake skin:1.5), (synthetic skin:1.5), (plastic look:1.5), (unnatural skin:1.5), (virtual skin:1.5), (inhuman smoothness:1.5), skin filter, beauty filter, beauty mode, photoshop skin, retouched, skin retouching, instagram filter, facetune, skin softening, beauty app, (doll face:1.4), mannequin, wax figure, uncanny valley, perfect symmetry, studio strobe, overlit, blown out highlights, overly sharp, hyper detailed unnatural, cartoon, anime, illustration, painting, drawing, ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, watermark, text, signature, bad proportions, disfigured, low quality, worst quality, oversaturated, neon colors, (model retouching:1.5), heavy foundation, painted skin, filtered face, beauty enhancement, (CGI body:1.5), (artificial body:1.5)';
+// ── MIDJOURNEY CONFIG ───────────────────────────────────────────────────────
+const DEFAULT_SEED = 128966260;
+
+// Midjourney --no (negative) base
+const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs';
+
+// Midjourney suffix parameters
+const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --q 2 --seed ' + DEFAULT_SEED;
+
+// Subject base (Midjourney plain language, no weights)
+const MJ_SUBJECT = '19 year old woman, blonde hair, blue eyes, curvy figure, large breasts, full hips, thick thighs, fair skin, natural body, European features, visible skin pores, natural skin texture, skin imperfections, uneven skin tone';
 
 function buildNeg(p){
-  const extras=[];
-  if(p && /nude|naked|pelada|sem roupa|topless/i.test(p.roupa||'')) extras.push('clothing, dressed, fabric on body, covered');
-  if(p && /praia|beach|ocean|piscina|pool/i.test(p.cenario||'')) extras.push('indoor, studio background, plain background');
-  if(p && /outdoor|natureza|nature|forest/i.test(p.cenario||'')) extras.push('indoor studio, white background, seamless backdrop');
-  return extras.length ? BASE_NEG+', '+extras.join(', ') : BASE_NEG;
+  let neg = MJ_NO;
+  if(p && /nude|naked|pelada|sem roupa|topless/i.test(p.roupa||'')) neg += ', clothed, dressed';
+  return neg;
 }
 
-// ── BASE PROMPT ────────────────────────────────────────────────────────────
-const DEFAULT_SEED = 128966260;
-const ANALOG_BASE = 'analog film photo, shot on 35mm film, Kodak Portra 400, Canon AE-1 Program, photographic grain, film halation, color cast, slight vignette, underexposed shadows, warm analog tones, developed C-41 process, scanned negative, (grainy:1.3), (film texture:1.4), (analog:1.5)';
-const SKIN_REAL = '(visible pores:1.5), (skin texture:1.5), (natural skin imperfections:1.4), (uneven skin tone:1.3), subsurface scattering, (real human skin:1.5), (skin not airbrushed:1.5), (raw unedited skin:1.4), (natural blemishes:1.2), (skin without filter:1.5)';
-const BASE = ANALOG_BASE + ', ' + SKIN_REAL + ', 19 year old woman, blonde hair, blue eyes, curvy body, large breasts, full hips, thick thighs, fair skin, European features, (natural body:1.3), (real woman:1.4), candid photo, amateur snapshot';
-
 function buildBlondePrompt(p){
-  const film = p.film || 'Kodak Portra 400, 35mm film, analog grain';
-  // analog keywords first — highest weight at start of prompt
-  const parts=[
-    'analog film photograph',
-    '(shot on 35mm film:1.5)',
-    '('+film+':1.4)',
-    '(film grain visible:1.4)',
-    '(not digital:1.3)',
-    BASE
-  ];
-  if(p.partner) parts.push(p.partner);
-  if(p.corpo) parts.push(p.corpo);
-  if(p.roupa) parts.push('('+p.roupa+':1.1)');
-  if(p.nsfw)  parts.push(p.nsfw);
-  if(p.pose)  parts.push('('+p.pose+':1.15)');
-  if(p.cam)   parts.push('('+p.cam+':1.1)');
-  if(p.expressao) parts.push(p.expressao);
-  if(p.cenario) parts.push(p.cenario);
-  parts.push('seed:'+DEFAULT_SEED);
-  return parts.filter(Boolean).join(', ');
+  const film = p.film
+    ? p.film.replace(/Cinestill|Kodak|Fuji|Ilford/gi, s => s)
+    : 'Kodak Portra 400, 35mm film';
+
+  // Build Midjourney prompt: description first, film/camera, then --no, then params
+  const desc = [];
+  desc.push('analog film photograph');
+  desc.push('shot on 35mm film, ' + film);
+  desc.push('Canon AE-1 camera, natural film grain, slight vignette, film halation, warm analog tones');
+  desc.push(MJ_SUBJECT);
+  if(p.partner) desc.push(p.partner);
+  if(p.corpo)   desc.push(p.corpo);
+  if(p.roupa)   desc.push(p.roupa);
+  if(p.nsfw)    desc.push(p.nsfw);
+  if(p.pose)    desc.push(p.pose);
+  if(p.cam)     desc.push(p.cam);
+  if(p.expressao) desc.push(p.expressao);
+  if(p.cenario)   desc.push(p.cenario);
+
+  const neg = buildNeg(p);
+  return desc.filter(Boolean).join(', ') + ' --no ' + neg + ' ' + MJ_PARAMS;
 }
 
 // ── CATEGORIES ─────────────────────────────────────────────────────────────
@@ -2699,7 +2696,6 @@ function selectPreset(key){
   const neg = buildNeg(p);
   document.getElementById('result-title').textContent = '✅ '+p.name;
   document.getElementById('result-prompt').value = prompt;
-  document.getElementById('result-neg').value = neg;
   setSelectClosest('edit-pose', p.pose || defaultPose(p));
   setSelectClosest('edit-cam',  p.cam  || defaultCam(p));
   const panel = document.getElementById('result-panel');
@@ -2746,27 +2742,19 @@ function copyPrompt(){
     setTimeout(()=>{ btn.innerHTML='📋 Copiar Prompt'; btn.classList.remove('ok'); },2000);
   });
 }
-function copyNeg(){
-  const ta=document.getElementById('result-neg');
-  navigator.clipboard.writeText(ta.value).then(()=>{
-    const btn=document.getElementById('btn-copy-neg');
-    btn.textContent='✓ Copiado!'; btn.classList.add('ok');
-    setTimeout(()=>{ btn.innerHTML='🚫 Copiar Negativo'; btn.classList.remove('ok'); },2000);
-  });
-}
 function downloadTxt(){
   const pos=document.getElementById('result-prompt').value;
-  const neg=document.getElementById('result-neg').value;
-  const name=selectedKey||'rawgen';
-  const blob=new Blob([`POSITIVE:\n${pos}\n\nNEGATIVE:\n${neg}`],{type:'text/plain'});
+  const name=selectedKey||'mjprompt';
+  const blob=new Blob([pos],{type:'text/plain'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download=`${name}.txt`; a.click();
 }
 function variation(){
   const ta=document.getElementById('result-prompt');
   const seed=Math.floor(Math.random()*999999999);
-  let v=ta.value.replace(/,\s*seed:\d+/,'');
-  ta.value=v+', seed:'+seed;
+  // replace --seed XXXXXX with new seed
+  let v=ta.value.replace(/--seed\s+\d+/,'--seed '+seed);
+  ta.value=v;
   navigator.clipboard.writeText(ta.value);
 }
 function toggleTheme(){
