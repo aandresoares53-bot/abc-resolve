@@ -200,6 +200,61 @@ header{
 }
 .btn-close-result:hover{border-color:var(--red);color:var(--red);}
 
+/* ── FAV BTN ── */
+.fav-btn{
+  position:absolute;top:8px;right:8px;background:none;border:none;
+  font-size:.95rem;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s;
+  padding:2px;line-height:1;
+}
+.fav-btn:hover{opacity:1;transform:scale(1.2);}
+.fav-btn.active{opacity:1;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--surface);border:1px solid var(--bdr);border-radius:var(--r);
+  width:min(560px,95vw);max-height:80vh;display:flex;flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+}
+.modal-header{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  border-bottom:1px solid var(--bdr);flex-shrink:0;
+}
+.modal-header h3{flex:1;font-size:.9rem;font-weight:700;color:var(--acc);}
+.modal-close{background:none;border:1px solid var(--bdr);border-radius:6px;
+  color:var(--txt3);padding:3px 8px;cursor:pointer;font-size:.8rem;}
+.modal-close:hover{border-color:var(--red);color:var(--red);}
+.modal-body{overflow-y:auto;padding:10px 14px;display:grid;gap:6px;}
+.modal-body::-webkit-scrollbar{width:3px;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+.hist-item{
+  background:var(--surface2);border:1px solid var(--bdr);border-radius:var(--r2);
+  padding:9px 12px;display:flex;align-items:center;gap:8px;
+}
+.hist-info{flex:1;min-width:0;}
+.hist-name{font-size:.75rem;font-weight:700;color:var(--acc);margin-bottom:2px;}
+.hist-text{font-size:.68rem;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-copy{background:var(--surface3);border:1px solid var(--bdr2);border-radius:6px;
+  color:var(--txt2);padding:4px 9px;cursor:pointer;font-size:.7rem;white-space:nowrap;flex-shrink:0;}
+.hist-copy:hover{border-color:var(--acc);color:var(--acc);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--acc);color:#000;font-weight:700;font-size:.78rem;
+  padding:8px 20px;border-radius:20px;pointer-events:none;
+  opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── ROULETTE BTN ── */
+.hbtn-roulette.active{background:var(--red);border-color:var(--red);color:#fff;}
+
 @media(max-width:680px){
   .sidebar{width:220px;min-width:220px;}
   .grid{grid-template-columns:1fr 1fr;}
@@ -223,9 +278,25 @@ header{
 <header>
   <div class="logo">RAWgen Loiras <span>🔞 preset browser</span></div>
   <button class="hbtn hbtn-random" onclick="randomPreset()">🎲 Aleatório</button>
+  <button class="hbtn" onclick="toggleHistorico()" id="hist-btn">📜 Histórico</button>
+  <button class="hbtn hbtn-roulette" onclick="toggleRoulette()" id="roulette-btn">🎰 Roulette</button>
   <input class="header-search" id="global-search" placeholder="🔍 Buscar preset…" oninput="filterPresets()" autocomplete="off">
   <button class="hbtn" onclick="toggleTheme()" id="theme-btn">☀ Claro</button>
 </header>
+
+<!-- Modal Histórico -->
+<div class="modal-overlay" id="modal-hist" onclick="e=>e.target===this&&toggleHistorico()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📜 Histórico de Prompts</h3>
+      <button class="modal-close" onclick="toggleHistorico()">✕ Fechar</button>
+    </div>
+    <div class="modal-body" id="modal-hist-body"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <div class="app-body">
   <!-- Sidebar -->
@@ -251,6 +322,50 @@ header{
       </div>
       <div class="result-body">
         <div class="edit-fields">
+          <div class="edit-field">
+            <label class="edit-label">📸 Estilo Fotográfico</label>
+            <div class="chip-group" id="chips-style">
+              <button class="chip" data-group="style" data-val="Nan Goldin style, intimate documentary, raw emotional photography">Nan Goldin</button>
+              <button class="chip" data-group="style" data-val="Larry Clark style, gritty teen documentary, real life candid">Larry Clark</button>
+              <button class="chip" data-group="style" data-val="Terry Richardson style, direct flash, raw party photography, snapshot aesthetic">Terry Richardson</button>
+              <button class="chip" data-group="style" data-val="Richard Kern style, underground erotic photography, raw downtown NYC">Richard Kern</button>
+              <button class="chip" data-group="style" data-val="Helmut Newton style, powerful glamour, black and white elegance">Helmut Newton</button>
+              <button class="chip" data-group="style" data-val="Ryan McGinley style, youth freedom, soft light, natural joy">Ryan McGinley</button>
+              <button class="chip" data-group="style" data-val="Wolfgang Tillmans style, casual intimate, everyday life photography">Tillmans</button>
+              <button class="chip" data-group="style" data-val="editorial fashion photography, Vogue aesthetic, high fashion">Editorial</button>
+              <button class="chip" data-group="style" data-val="Playboy magazine 1970s style, soft focus, warm tones, vintage glamour">Playboy 70s</button>
+              <button class="chip" data-group="style" data-val="amateur candid snapshot, phone camera, low quality real, authentic">Amador/Caseiro</button>
+            </div>
+            <input type="hidden" id="edit-style" value="">
+          </div>
+          <div class="edit-field">
+            <label class="edit-label">💡 Iluminação</label>
+            <div class="chip-group" id="chips-luz">
+              <button class="chip" data-group="luz" data-val="natural window light, soft diffused daylight, golden hour">Luz natural janela</button>
+              <button class="chip" data-group="luz" data-val="harsh direct flash, paparazzi flash, blown highlights">Flash direto</button>
+              <button class="chip" data-group="luz" data-val="candlelight, warm orange glow, intimate low light">Luz de vela</button>
+              <button class="chip" data-group="luz" data-val="neon lights, colored artificial light, urban night scene">Néon</button>
+              <button class="chip" data-group="luz" data-val="backlight, rim lighting, silhouette against bright background">Contraluz</button>
+              <button class="chip" data-group="luz" data-val="bathroom fluorescent, harsh overhead, clinical white light">Fluorescente</button>
+              <button class="chip" data-group="luz" data-val="golden hour sunlight, warm sunset rays, magic hour">Hora dourada</button>
+              <button class="chip" data-group="luz" data-val="overcast soft light, flat even illumination, outdoor cloudy">Dia nublado</button>
+              <button class="chip" data-group="luz" data-val="strobe flash, dramatic shadows, editorial lighting">Strobe</button>
+            </div>
+            <input type="hidden" id="edit-luz" value="">
+          </div>
+          <div class="edit-field">
+            <label class="edit-label">🎞 Filme</label>
+            <div class="chip-group" id="chips-filmstock">
+              <button class="chip active" data-group="filmstock" data-val="Kodak Ultramax 800, ISO 800, chunky warm grain">Kodak 800</button>
+              <button class="chip" data-group="filmstock" data-val="Kodak Portra 400, fine grain, natural skin tones">Portra 400</button>
+              <button class="chip" data-group="filmstock" data-val="Kodak Gold 200, warm yellow tones, vintage look">Gold 200</button>
+              <button class="chip" data-group="filmstock" data-val="Cinestill 800T, tungsten film, red halation, night scene">Cinestill 800T</button>
+              <button class="chip" data-group="filmstock" data-val="Fujifilm Superia 400, cool tones, fine grain, Japanese aesthetic">Fuji 400</button>
+              <button class="chip" data-group="filmstock" data-val="Ilford HP5, ISO 400, black and white film, monochrome, classic B&W grain">Ilford HP5 B&W</button>
+              <button class="chip" data-group="filmstock" data-val="Lomography 800, cross-processed, vivid saturated colors, lo-fi">Lomo 800</button>
+            </div>
+            <input type="hidden" id="edit-filmstock" value="Kodak Ultramax 800, ISO 800, chunky warm grain">
+          </div>
           <div class="edit-field">
             <label class="edit-label">🕺 Pose</label>
             <div class="chip-group" id="chips-pose">
@@ -398,14 +513,28 @@ function buildNeg(p){
   return neg;
 }
 
-function buildBlondePrompt(p){
-  // Always Kodak 800 — high ISO grain breaks plastic skin
-  const film = 'Kodak Ultramax 800';
+function buildBlondePrompt(p, seedOverride){
+  // Dynamic seed each call; caller can pass a fixed seed (for applyEdits)
+  const seed = seedOverride !== undefined ? seedOverride : Math.floor(Math.random()*999999999);
+  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --q 2 --seed ' + seed;
+
+  // Read chip overrides from UI (safe — inputs exist once DOM is ready)
+  const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
+    ? document.getElementById('edit-filmstock').value.trim() : '';
+  const styleOverride = (typeof document !== 'undefined' && document.getElementById('edit-style'))
+    ? document.getElementById('edit-style').value.trim() : '';
+  const luzOverride   = (typeof document !== 'undefined' && document.getElementById('edit-luz'))
+    ? document.getElementById('edit-luz').value.trim() : '';
+
+  const film = filmOverride || 'Kodak Ultramax 800, ISO 800, chunky warm grain';
+  const isMonochrome = /ilford|black and white|monochrome/i.test(film);
 
   // Build Midjourney prompt: realism anchors first (MJ weights earlier tokens more)
   const desc = [];
   desc.push('candid analog film photograph, Nan Goldin style, Larry Clark photography, documentary realism');
-  desc.push('shot on 35mm ' + film + ', ISO 800, heavy chunky grain, grain visible on skin and shadows, film halation, color bleeding, slight vignette');
+  if(styleOverride) desc.push(styleOverride);
+  desc.push('shot on 35mm ' + film + ', heavy grain, grain visible on skin and shadows, film halation, color bleeding, slight vignette' + (isMonochrome ? ', monochrome' : ''));
+  if(luzOverride) desc.push(luzOverride);
   desc.push('Canon AE-1 camera, handheld, slightly unsteady, warm saturated tones, slightly underexposed, raw unedited scan, no post-processing');
   desc.push(MJ_SUBJECT);
   if(p.partner) desc.push(p.partner);
@@ -418,12 +547,13 @@ function buildBlondePrompt(p){
   if(p.cenario)   desc.push(p.cenario);
 
   const neg = buildNeg(p);
-  return desc.filter(Boolean).join(', ') + ' --no ' + neg + ' ' + MJ_PARAMS;
+  return desc.filter(Boolean).join(', ') + ' --no ' + neg + ' ' + MJ_PARAMS_DYN;
 }
 
 // ── CATEGORIES ─────────────────────────────────────────────────────────────
 const CATS = [
-  {key:'todos',   icon:'⭐', name:'Todos'},
+  {key:'todos',      icon:'⭐', name:'Todos'},
+  {key:'favoritos',  icon:'❤', name:'Favoritos'},
   {key:'casual',  icon:'☀', name:'Casual & Lifestyle'},
   {key:'praia',   icon:'👙', name:'Praia & Piscina'},
   {key:'academia',icon:'🏋', name:'Academia & Fitness'},
@@ -2592,11 +2722,13 @@ const PRESETS_RAW = [
 let currentCat = 'todos';
 let currentLevel = 'todos';
 let selectedKey = null;
+// FAVS initialized early so getCount can use it
+let FAVS = (()=>{ try{ return JSON.parse(localStorage.getItem('pgen_favs')||'[]'); }catch(e){ return []; } })();
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 function getCount(cat, level){
   return PRESETS_RAW.filter(p=>{
-    const catOk = cat==='todos' || p.cat===cat;
+    const catOk = cat==='todos' || (cat==='favoritos' ? FAVS.includes(p.key) : p.cat===cat);
     const lvlOk = level==='todos' || p.level===level;
     return catOk && lvlOk;
   }).length;
@@ -2618,7 +2750,7 @@ function renderSidebar(){
 function filterPresets(){
   const q = (document.getElementById('global-search').value||'').toLowerCase().trim();
   const filtered = PRESETS_RAW.filter(p=>{
-    const catOk = currentCat==='todos' || p.cat===currentCat;
+    const catOk = currentCat==='todos' || (currentCat==='favoritos' ? FAVS.includes(p.key) : p.cat===currentCat);
     const lvlOk = currentLevel==='todos' || p.level===currentLevel;
     const txtOk = !q || (p.name+' '+p.desc).toLowerCase().includes(q);
     return catOk && lvlOk && txtOk;
@@ -2656,7 +2788,8 @@ function renderGrid(presets){
       card.style.setProperty('--i',i);
       const badgeClass = p.level==='sfw'?'badge-sfw':p.level==='sensual'?'badge-sensual':'badge-explicit';
       const badgeTxt = p.level==='sfw'?'☀ SFW':p.level==='sensual'?'🔥 Sensual':'🔞 Explícito';
-      card.innerHTML=`<div class="card-icon">${p.icon||'📷'}</div><div class="card-name">${p.name}</div><div class="card-desc">${p.desc}</div><span class="card-badge ${badgeClass}">${badgeTxt}</span>`;
+      const isFav = FAVS.includes(p.key);
+      card.innerHTML=`<button class="fav-btn${isFav?' active':''}" data-key="${p.key}" title="Favorito">❤</button><div class="card-icon">${p.icon||'📷'}</div><div class="card-name">${p.name}</div><div class="card-desc">${p.desc}</div><span class="card-badge ${badgeClass}">${badgeTxt}</span>`;
       card.onclick=()=>selectPreset(p.key);
       grid.appendChild(card);
     });
@@ -2717,12 +2850,10 @@ document.addEventListener('click', e=>{
 
 function selectPreset(key){
   selectedKey = key;
-  // update card highlight
   document.querySelectorAll('.card').forEach(c=>c.classList.toggle('selected',c.dataset.key===key));
   const p = PRESETS_RAW.find(x=>x.key===key);
   if(!p) return;
   const prompt = buildBlondePrompt(p);
-  const neg = buildNeg(p);
   document.getElementById('result-title').textContent = '✅ '+p.name;
   document.getElementById('result-prompt').value = prompt;
   setSelectClosest('edit-pose', p.pose || defaultPose(p));
@@ -2730,6 +2861,11 @@ function selectPreset(key){
   const panel = document.getElementById('result-panel');
   panel.classList.add('open');
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  // Auto-copy
+  navigator.clipboard.writeText(prompt).catch(()=>{});
+  showToast('✓ Copiado automaticamente');
+  // Save to history
+  saveHistory(p.key, p.name, prompt);
 }
 
 function applyEdits(){
@@ -2741,7 +2877,13 @@ function applyEdits(){
     overridePose ? {pose: overridePose} : {},
     overrideCam  ? {cam:  overrideCam}  : {}
   );
-  document.getElementById('result-prompt').value = buildBlondePrompt(merged);
+  // Preserve current seed
+  const curVal = document.getElementById('result-prompt').value;
+  const seedMatch = curVal.match(/--seed\s+(\d+)/);
+  const seed = seedMatch ? parseInt(seedMatch[1]) : undefined;
+  const newPrompt = buildBlondePrompt(merged, seed);
+  document.getElementById('result-prompt').value = newPrompt;
+  navigator.clipboard.writeText(newPrompt).catch(()=>{});
   const btn = document.querySelector('.btn-apply');
   btn.textContent='✓ Aplicado!'; btn.style.background='var(--acc)'; btn.style.color='#000';
   setTimeout(()=>{ btn.textContent='↻ Aplicar ao Prompt'; btn.style.background=''; btn.style.color=''; },1800);
@@ -2804,6 +2946,114 @@ function randomPreset(){
     if(btn){ const orig=btn.textContent; btn.textContent='✓ Copiado!'; setTimeout(()=>btn.textContent=orig,1500); }
   }, 50);
 }
+
+// ── FAVORITES ──────────────────────────────────────────────────────────────
+function saveFavs(){ try{ localStorage.setItem('pgen_favs', JSON.stringify(FAVS)); }catch(e){} }
+function toggleFav(key, e){
+  e.stopPropagation();
+  const idx = FAVS.indexOf(key);
+  if(idx===-1) FAVS.push(key); else FAVS.splice(idx,1);
+  saveFavs();
+  // update the clicked button
+  const btn = e.currentTarget;
+  btn.classList.toggle('active', FAVS.includes(key));
+  if(currentCat==='favoritos') filterPresets();
+  showToast(FAVS.includes(key) ? '❤ Adicionado aos favoritos' : '💔 Removido dos favoritos');
+}
+
+// ── HISTORY ────────────────────────────────────────────────────────────────
+function saveHistory(key, name, prompt){
+  try{
+    let hist = JSON.parse(localStorage.getItem('pgen_history')||'[]');
+    hist.unshift({key, name, prompt, ts: Date.now()});
+    hist = hist.slice(0,20);
+    localStorage.setItem('pgen_history', JSON.stringify(hist));
+  }catch(e){}
+}
+function toggleHistorico(){
+  const overlay = document.getElementById('modal-hist');
+  const isOpen = overlay.classList.contains('open');
+  if(isOpen){ overlay.classList.remove('open'); return; }
+  // Build list
+  let hist = [];
+  try{ hist = JSON.parse(localStorage.getItem('pgen_history')||'[]'); }catch(e){}
+  const body = document.getElementById('modal-hist-body');
+  if(!hist.length){
+    body.innerHTML = '<div style="text-align:center;padding:30px;color:var(--txt3);font-size:.82rem;">Nenhum prompt gerado ainda.<br>Selecione um preset para começar.</div>';
+  } else {
+    body.innerHTML = hist.map((h,i)=>`
+      <div class="hist-item">
+        <div class="hist-info">
+          <div class="hist-name">${h.name||h.key}</div>
+          <div class="hist-text">${(h.prompt||'').slice(0,90)}…</div>
+        </div>
+        <button class="hist-copy" onclick="copyHistItem(${i})">📋 Copiar</button>
+      </div>`).join('');
+  }
+  overlay.classList.add('open');
+}
+function copyHistItem(i){
+  try{
+    const hist = JSON.parse(localStorage.getItem('pgen_history')||'[]');
+    if(hist[i]) navigator.clipboard.writeText(hist[i].prompt).then(()=>showToast('✓ Copiado!'));
+  }catch(e){}
+}
+// Close modal clicking overlay background
+document.getElementById('modal-hist').addEventListener('click', function(e){
+  if(e.target===this) this.classList.remove('open');
+});
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+// ── ROULETTE ───────────────────────────────────────────────────────────────
+let rouletteTimer = null;
+let rouletteCount = 0;
+function toggleRoulette(){
+  const btn = document.getElementById('roulette-btn');
+  if(rouletteTimer){
+    clearInterval(rouletteTimer);
+    rouletteTimer = null;
+    btn.textContent = '🎰 Roulette';
+    btn.classList.remove('active');
+  } else {
+    btn.classList.add('active');
+    rouletteCount = 3;
+    btn.textContent = `⏹ Parar (${rouletteCount}s)`;
+    rouletteTimer = setInterval(()=>{
+      rouletteCount--;
+      if(rouletteCount<=0){
+        randomPreset();
+        rouletteCount=3;
+      }
+      if(rouletteTimer) btn.textContent = `⏹ Parar (${rouletteCount}s)`;
+    },1000);
+  }
+}
+
+// ── KEYBOARD SHORTCUTS ─────────────────────────────────────────────────────
+document.addEventListener('keydown', e=>{
+  if(e.target.matches('input,textarea,select')) return;
+  if(e.key===' '||e.code==='Space'){ e.preventDefault(); randomPreset(); }
+  if(e.key==='c'||e.key==='C'){ copyPrompt(); }
+  if(e.key==='v'||e.key==='V'){ variation(); }
+  if(e.key==='Escape'){ closeResult(); document.getElementById('modal-hist').classList.remove('open'); }
+  if(e.key==='h'||e.key==='H'){ toggleHistorico(); }
+  if(e.key==='f'||e.key==='F'){ currentCat='favoritos'; renderSidebar(); filterPresets(); }
+});
+
+// ── DELEGATE FAV BTN CLICKS ─────────────────────────────────────────────────
+document.addEventListener('click', e=>{
+  const fb = e.target.closest('.fav-btn');
+  if(fb){ toggleFav(fb.dataset.key, e); }
+});
 
 // ── START ──────────────────────────────────────────────────────────────────
 renderSidebar();
