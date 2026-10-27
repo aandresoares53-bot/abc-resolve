@@ -374,7 +374,8 @@ header{
         <!-- Prompt -->
         <div style="padding:0 14px 6px">
           <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
-          <textarea class="result-ta neg" id="result-neg" rows="2" readonly style="display:none"></textarea>
+          <div style="margin-top:4px;font-size:.68rem;color:var(--txt3);padding:2px 0">🚫 Negativo (--no)</div>
+          <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
           <div class="btn-row" style="margin-top:6px">
             <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar</button>
             <button class="btn-action" onclick="variation()">🔀 Variação</button>
@@ -524,7 +525,7 @@ const PRESETS_RAW = [
     expressao:'determined excited expression, surf energy, adventurous',cenario:'ocean beach, large waves in background, surf conditions, dramatic seascape',
     pose:'holding surfboard upright, ready to surf, dynamic stance',film:'Fujifilm Superia 400, bright action outdoor colors'},
   {key:'blonde_praia_molhada',cat:'praia',level:'sfw',icon:'💦',name:'Saindo do Mar',desc:'Saindo da água, cabelo molhado, pele glistening',
-    corpo:'slim athletic body, natural glistening wet skin',roupa:'wearing bikini soaked with water, clinging to body, natural wet look',
+    corpo:'slim athletic body, wet skin, water droplets on skin, natural',roupa:'wearing bikini soaked with water, clinging to body, natural wet look',
     expressao:'refreshed happy expression, emerging from sea smile',cenario:'ocean beach, just emerged from waves, water droplets, bright afternoon light',
     pose:'walking out of sea, hair wet swept back, water dripping off skin',film:'Kodak Ektar 100, bright saturated beach light'},
   {key:'blonde_praia_topless',cat:'praia',level:'sensual',icon:'☀',name:'Topless Piscina',desc:'Topless na piscina, bronzeado dourado, verão',
@@ -557,7 +558,7 @@ const PRESETS_RAW = [
     expressao:'confident satisfied expression, post-workout glow, proud smile',cenario:'home gym mirror, private setting, natural light, intimate atmosphere',
     pose:'selfie angle in full-length mirror, phone in hand, slight side angle',film:'natural selfie lighting, authentic feel'},
   {key:'blonde_gym_after_shower',cat:'academia',level:'sensual',icon:'🚿',name:'Pós-treino Chuveiro',desc:'Chuveiro academia, molhada, nude sensual',
-    corpo:'athletic toned body, fit physique, wet glistening skin',roupa:'nude in shower, water running over body, nothing on',
+    corpo:'athletic toned body, fit physique, wet skin with water droplets',roupa:'nude in shower, water running over body, nothing on',
     nsfw:'nude post-workout shower, bare body under water, sensual wet nude',
     expressao:'relaxed refreshed expression, eyes closed under water, relief face',cenario:'modern gym shower room, tiled walls, multiple shower heads, steam atmosphere',
     pose:'standing under shower, head tilted back, water cascading down body',film:'Fujifilm Pro 400H, soft wet light'},
@@ -841,7 +842,7 @@ const PRESETS_RAW = [
     expressao:'intense expression, gripping desk, pleasure face, moaning',cenario:'office or desk setting, bent over surface, professional environment turned sexual',
     pose:'bent over desk, palms flat on surface, rear to camera, bent doggy over desk',film:'Kodak Portra 800, dramatic office lighting'},
   {key:'blonde_sex_shower',cat:'posicoes',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🚿',name:'Sexo no Chuveiro',desc:'Sexo no chuveiro, água escorrendo, vapor, intenso',
-    corpo:'athletic toned body, wet glistening skin, natural proportions',roupa:'fully nude explicit, completely naked, soaking wet',
+    corpo:'athletic toned body, wet skin with water droplets, natural proportions',roupa:'fully nude explicit, completely naked, soaking wet',
     nsfw:'shower sex, sex while standing in shower, wet explicit sex adult, water running',
     expressao:'wet pleasure expression, water on face, ecstasy, steaming',cenario:'glass shower enclosure, water streaming, steam, modern bathroom, hot',
     pose:'pressed against glass shower wall, water cascading, explicit shower sex',film:'Fujifilm Neopan, dramatic wet B&W contrast'},
