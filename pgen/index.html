@@ -374,10 +374,13 @@ header{
         <!-- Prompt -->
         <div style="padding:0 14px 6px">
           <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
-          <div style="margin-top:4px;font-size:.68rem;color:var(--txt3);padding:2px 0">🚫 Negativo (--no)</div>
+          <div style="margin-top:4px;font-size:.68rem;color:var(--txt3);padding:2px 0;display:flex;align-items:center;justify-content:space-between">
+            <span>🚫 Negativo (--no)</span>
+            <button class="btn-action" style="font-size:.65rem;padding:3px 8px" onclick="copyNeg()">📋 Copiar --no</button>
+          </div>
           <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
           <div class="btn-row" style="margin-top:6px">
-            <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar</button>
+            <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar Prompt</button>
             <button class="btn-action" onclick="variation()">🔀 Variação</button>
             <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
           </div>
@@ -393,13 +396,13 @@ header{
 const DEFAULT_SEED = 419528731;
 
 // Midjourney --no (negative) base
-const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch, makeup, cosmetics, lipstick, eyeshadow, foundation, blush, mascara, beauty product, perfect body, idealized body, fashion model, supermodel, flawless body, perfect symmetry, symmetrical face, perfect proportions, editorial, high fashion, vogue, magazine shoot, model pose, model body, goddess, perfect figure';
+const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch, makeup, cosmetics, lipstick, eyeshadow, foundation, blush, mascara, beauty product, perfect body, idealized body, fashion model, supermodel, flawless body, perfect symmetry, symmetrical face, perfect proportions, editorial, high fashion, vogue, magazine shoot, model pose, model body, goddess, perfect figure, skin smoothing, frequency separation, dodge and burn, photoshop edit, AI enhanced, digitally altered, over-edited, beauty retouch, body retouch, hair retouch, luminosity mask, clarity filter, skin filter, instagram filter, vsco filter, facetune, meitu, perfect lighting, rim lighting, key light, softbox, beauty dish, fill light, catchlight, hair light, glamour lighting, boudoir lighting, fashion lighting';
 
 // Midjourney suffix parameters
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, slight natural blemishes, realistic human skin texture, NOT retouched, NOT airbrushed, authentic candid person';
+const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, slight natural blemishes, uneven skin tone, faint freckles, realistic human skin texture, no skin smoothing, no retouching, no beauty filter, NOT retouched, NOT airbrushed, authentic candid person, raw documentary style, analog film grain visible on skin';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -597,7 +600,7 @@ const PRESETS_RAW = [
 
   // ── BANHEIRO ──
   {key:'blonde_bath_bubbles',cat:'banheiro',level:'sensual',icon:'🛁',name:'Banheira Espumosa',desc:'Banheira com espuma, velas ao redor, nude íntimo',
-    corpo:'slim natural body, graceful feminine figure',roupa:'nude in bathtub, bubble bath, foam partially covering body, sensual bathing',
+    corpo:'slim natural body, natural feminine figure',roupa:'nude in bathtub, bubble bath, foam partially covering body, sensual bathing',
     nsfw:'nude bathtub, wet bare breasts above foam line, sensual bath nude',
     expressao:'blissful relaxed expression, eyes half-closed, enjoying bath',cenario:'marble luxury bathroom, clawfoot tub, candles surrounding, rose petals in water',
     pose:'reclining in bathtub, arms on edge, head tilted back, foam around body',film:'Fujifilm Pro 400H, warm golden candlelight tones'},
@@ -623,7 +626,7 @@ const PRESETS_RAW = [
     expressao:'sleepy soft expression, morning face, half-open eyes, no makeup natural',cenario:'luxury hotel room, golden morning sun through curtains, white Egyptian cotton sheets',
     pose:'lying on side in bed, sheet loosely covering, hair tousled, authentic morning',film:'Kodak Portra 400, warm morning golden light'},
   {key:'blonde_boudoir_window',cat:'boudoir',level:'sensual',icon:'🪟',name:'Janela',desc:'Nua na janela, cidade ao fundo, luz do dia artística',
-    corpo:'slim natural body, graceful silhouette, feminine proportions',roupa:'fully nude, standing at window, natural ambient light, nothing on',
+    corpo:'slim natural body, natural silhouette, feminine proportions',roupa:'fully nude, standing at window, natural ambient light, nothing on',
     nsfw:'nude at window, full body visible in natural light, artistic window nude',
     expressao:'pensive contemplative expression, looking outside, serene',cenario:'hotel room large floor-to-ceiling window, city skyline view, natural daylight flooding in',
     pose:'standing at window sideways, silhouette, looking out at city, hands on glass',film:'Kodak Ektar 100, bright natural window light'},
