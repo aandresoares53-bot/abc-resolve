@@ -384,13 +384,13 @@ header{
 const DEFAULT_SEED = 128966260;
 
 // Midjourney --no (negative) base
-const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter';
+const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch';
 
 // Midjourney suffix parameters
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --q 2 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = '19 year old woman, blonde hair, blue eyes, curvy figure, large breasts, full hips, thick thighs, fair skin with natural imperfections, real human skin texture, visible pores, slight skin blemishes, uneven skin tone, natural body, European features, documentary portrait, authentic person';
+const MJ_SUBJECT = 'young woman, 19 years old, blonde hair, blue eyes, natural curvy body, European, visible skin pores, skin blemishes, uneven skin tone, natural skin texture, slight stretch marks, real human skin, authentic person, imperfect natural complexion';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -400,13 +400,13 @@ function buildNeg(p){
 
 function buildBlondePrompt(p){
   // Always Kodak 800 — high ISO grain breaks plastic skin
-  const film = 'Kodak Ultramax 800, 35mm film, ISO 800 grain';
+  const film = 'Kodak Ultramax 800';
 
-  // Build Midjourney prompt: description first, film/camera, then --no, then params
+  // Build Midjourney prompt: realism anchors first (MJ weights earlier tokens more)
   const desc = [];
-  desc.push('RAW analog film photograph, unretouched, documentary style');
-  desc.push('shot on 35mm ' + film + ', chunky film grain, film imperfections, grain visible on skin');
-  desc.push('Canon AE-1, heavy grain texture, slight vignette, film halation, warm saturated analog tones, slightly underexposed, raw unedited look');
+  desc.push('candid analog film photograph, Nan Goldin style, Larry Clark photography, documentary realism');
+  desc.push('shot on 35mm ' + film + ', ISO 800, heavy chunky grain, grain visible on skin and shadows, film halation, color bleeding, slight vignette');
+  desc.push('Canon AE-1 camera, handheld, slightly unsteady, warm saturated tones, slightly underexposed, raw unedited scan, no post-processing');
   desc.push(MJ_SUBJECT);
   if(p.partner) desc.push(p.partner);
   if(p.corpo)   desc.push(p.corpo);
