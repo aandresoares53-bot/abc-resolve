@@ -508,10 +508,10 @@ const DEFAULT_SEED = 128966260;
 const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch';
 
 // Midjourney suffix parameters
-const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --q 2 --seed ' + DEFAULT_SEED;
+const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = 'young woman, 19 years old, blonde hair, blue eyes, extremely curvy voluptuous body, very large natural breasts, wide round hips, big round ass, thick juicy thighs, narrow waist, hourglass figure, sexy and gorgeous, drop-dead gorgeous, breathtakingly beautiful, European features, visible skin pores, natural skin imperfections, real human skin texture, authentic person';
+const MJ_SUBJECT = 'real photograph of a woman, 19 years old, blonde hair, blue eyes, curvy body, large breasts, wide hips, thick thighs, hourglass figure, skin with visible pores, skin texture, slight blemishes, redness on cheeks, natural skin imperfections, uneven skin tone, realistic human skin, NOT retouched, NOT airbrushed, authentic candid person';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -522,7 +522,7 @@ function buildNeg(p){
 function buildBlondePrompt(p, seedOverride){
   // Dynamic seed each call; caller can pass a fixed seed (for applyEdits)
   const seed = seedOverride !== undefined ? seedOverride : Math.floor(Math.random()*999999999);
-  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --q 2 --seed ' + seed;
+  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + seed;
 
   // Read chip overrides from UI (safe — inputs exist once DOM is ready)
   const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
@@ -537,11 +537,11 @@ function buildBlondePrompt(p, seedOverride){
 
   // Build Midjourney prompt: realism anchors first (MJ weights earlier tokens more)
   const desc = [];
-  desc.push('candid analog film photograph, Nan Goldin style, Larry Clark photography, documentary realism');
+  desc.push('unretouched analog snapshot, raw skin texture, imperfect real skin, visible pores on face, natural blemishes, NOT smooth skin, NOT airbrushed, Nan Goldin style, Larry Clark photography');
   if(styleOverride) desc.push(styleOverride);
-  desc.push('shot on 35mm ' + film + ', heavy grain, grain visible on skin and shadows, film halation, color bleeding, slight vignette' + (isMonochrome ? ', monochrome' : ''));
+  desc.push('shot on 35mm ' + film + ', ISO 800 grain, heavy visible grain on skin, grain on shadows, film halation, color fringing, slight vignette' + (isMonochrome ? ', monochrome' : ''));
   if(luzOverride) desc.push(luzOverride);
-  desc.push('Canon AE-1 camera, handheld, slightly unsteady, warm saturated tones, slightly underexposed, raw unedited scan, no post-processing');
+  desc.push('Canon AE-1 handheld, grainy imperfect exposure, warm analog tones, raw unedited negative scan, no post-processing whatsoever');
   desc.push(MJ_SUBJECT);
   if(p.partner) desc.push(p.partner);
   // always enforce curvy body regardless of preset corpo field
