@@ -478,8 +478,7 @@ header{
             </div>
             <input type="hidden" id="edit-cam" value="">
           </div>
-          <button class="btn-apply" style="background:var(--surface2);color:var(--txt3);margin-bottom:4px" onclick="clearAllChips()">✕ Zerar Tudo</button>
-          <button class="btn-apply" onclick="applyEdits()">↻ Aplicar ao Prompt</button>
+          <button class="btn-apply" style="background:var(--surface2);color:var(--txt3)" onclick="clearAllChips()">✕ Zerar Tudo</button>
         </div>
         <div>
           <div class="result-label">👤 Referência de Personagem <span style="font-size:11px;opacity:.6;font-weight:400">— URL da imagem para manter rosto/cabelo (--cref)</span></div>
@@ -3987,6 +3986,8 @@ function selectChip(group, val){
   });
   const inp = document.getElementById('edit-'+group);
   if(inp) inp.value = val||'';
+  // Auto-apply: update prompt immediately when chip changes
+  if(selectedKey) applyEdits(true);
 }
 function setSelectClosest(id, val){
   const group = id.replace('edit-','');
@@ -4044,11 +4045,12 @@ function clearAllChips(){
     const el = document.getElementById(id);
     if(el) el.value = '';
   });
+  if(selectedKey) applyEdits(true);
   const btn = document.querySelector('[onclick="clearAllChips()"]');
   if(btn){ btn.textContent='✓ Zerado!'; setTimeout(()=>{ btn.textContent='✕ Zerar Tudo'; },1200); }
 }
 
-function applyEdits(){
+function applyEdits(silent){
   const p = PRESETS_RAW.find(x=>x.key===selectedKey);
   if(!p) return;
   const overridePose = document.getElementById('edit-pose').value.trim();
@@ -4066,9 +4068,7 @@ function applyEdits(){
   const negM = newPrompt.match(/--no\s+(.+?)\s+--ar/);
   if(negM) document.getElementById('result-neg').value = negM[1];
   navigator.clipboard.writeText(newPrompt).catch(()=>{});
-  const btn = document.querySelector('.btn-apply');
-  btn.textContent='✓ Aplicado!'; btn.style.background='var(--acc)'; btn.style.color='#000';
-  setTimeout(()=>{ btn.textContent='↻ Aplicar ao Prompt'; btn.style.background=''; btn.style.color=''; },1800);
+  if(!silent) showToast('✓ Copiado!');
 }
 
 function closeResult(){
