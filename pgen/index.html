@@ -201,9 +201,11 @@ header{
 .btn-close-result:hover{border-color:var(--red);color:var(--red);}
 
 /* ── QUICK PICKS ── */
+.qrow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:8px 14px 0;}
+.qlabel{font-size:.85rem;min-width:20px;}
 .qpick{
   background:var(--surface2);border:1px solid var(--bdr);border-radius:20px;
-  color:var(--txt2);font-size:.68rem;font-weight:600;padding:3px 10px;cursor:pointer;
+  color:var(--txt2);font-size:.7rem;font-weight:600;padding:4px 11px;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s;white-space:nowrap;
 }
 .qpick:hover{background:var(--surface3);color:var(--txt);}
@@ -327,228 +329,58 @@ header{
     <div id="result-panel">
       <div class="result-header">
         <div class="result-title" id="result-title">✅ Preset selecionado</div>
-        <button class="btn-close-result" onclick="closeResult()">✕ Fechar</button>
+        <button class="btn-close-result" onclick="closeResult()">✕</button>
       </div>
       <div class="result-body">
-        <!-- Quick picks: pose & camera -->
-        <div style="display:flex;flex-direction:column;gap:6px;padding:10px 14px 0">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:.7rem;color:var(--txt3);min-width:52px">🕺 Pose</span>
-            <button class="qpick" data-group="pose" data-val="">– padrão</button>
-            <button class="qpick" data-group="pose" data-val="standing relaxed, weight on one hip, arms loose">Em pé</button>
-            <button class="qpick" data-group="pose" data-val="standing, looking back over shoulder seductively">Olhar ombro</button>
-            <button class="qpick" data-group="pose" data-val="facing away from camera, looking back over shoulder, back and ass on display">De costas</button>
-            <button class="qpick" data-group="pose" data-val="sitting on edge of bed, legs crossed, hands on knees">Sentada</button>
-            <button class="qpick" data-group="pose" data-val="lying on side, head resting on hand, top leg bent">Deitada lateral</button>
-            <button class="qpick" data-group="pose" data-val="lying on back, arms above head, legs slightly apart">Deitada costas</button>
-            <button class="qpick" data-group="pose" data-val="on all fours, looking back at camera seductively">De quatro</button>
-            <button class="qpick" data-group="pose" data-val="bent over, hands on surface, back arched, looking back">Curvada</button>
-            <button class="qpick" data-group="pose" data-val="kneeling on floor, sitting back on heels, hands on thighs">Ajoelhada</button>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:.7rem;color:var(--txt3);min-width:52px">📷 Câmera</span>
-            <button class="qpick" data-group="cam" data-val="">– padrão</button>
-            <button class="qpick" data-group="cam" data-val="eye level, 50mm, natural framing, slight candid tilt">Natural 50mm</button>
-            <button class="qpick" data-group="cam" data-val="eye level, portrait framing, 85mm, shallow depth of field">Retrato 85mm</button>
-            <button class="qpick" data-group="cam" data-val="full body shot, head to toe, environmental portrait, 28mm wide">Corpo inteiro</button>
-            <button class="qpick" data-group="cam" data-val="low angle POV, looking up at subject from below">POV de baixo</button>
-            <button class="qpick" data-group="cam" data-val="high angle, camera above looking down, vulnerable feel">Alto ângulo</button>
-            <button class="qpick" data-group="cam" data-val="POV shot, first person perspective, intimate and direct">POV 1ª pessoa</button>
-            <button class="qpick" data-group="cam" data-val="extreme close-up, face and eyes filling frame">Close rosto</button>
-            <button class="qpick" data-group="cam" data-val="mirror reflection shot, dual perspective, bathroom mirror">Espelho</button>
-            <button class="qpick" data-group="cam" data-val="side profile, silhouette against bright background">Perfil</button>
+
+        <!-- Pose row -->
+        <div class="qrow">
+          <span class="qlabel">🕺</span>
+          <button class="qpick active" data-group="pose" data-val="">Padrão</button>
+          <button class="qpick" data-group="pose" data-val="standing relaxed, weight on one hip, arms loose">Em pé</button>
+          <button class="qpick" data-group="pose" data-val="standing, looking back over shoulder seductively">Olhar ombro</button>
+          <button class="qpick" data-group="pose" data-val="facing away from camera, looking back over shoulder, back and ass on display">De costas</button>
+          <button class="qpick" data-group="pose" data-val="sitting on edge of bed, legs crossed, hands on knees">Sentada</button>
+          <button class="qpick" data-group="pose" data-val="lying on side, head resting on hand, top leg bent">Deitada</button>
+          <button class="qpick" data-group="pose" data-val="on all fours, looking back at camera seductively">De quatro</button>
+          <button class="qpick" data-group="pose" data-val="bent over, hands on surface, back arched, looking back">Curvada</button>
+          <button class="qpick" data-group="pose" data-val="kneeling on floor, sitting back on heels, hands on thighs">Ajoelhada</button>
+          <button class="qpick" data-group="pose" data-val="squatting low, knees wide, arms between legs">Agachada</button>
+        </div>
+
+        <!-- Camera row -->
+        <div class="qrow">
+          <span class="qlabel">📷</span>
+          <button class="qpick active" data-group="cam" data-val="">Padrão</button>
+          <button class="qpick" data-group="cam" data-val="eye level, 50mm, natural framing, slight candid tilt">50mm</button>
+          <button class="qpick" data-group="cam" data-val="eye level, portrait framing, 85mm, shallow depth of field">85mm</button>
+          <button class="qpick" data-group="cam" data-val="full body shot, head to toe, environmental portrait, 28mm wide">Corpo inteiro</button>
+          <button class="qpick" data-group="cam" data-val="low angle POV, looking up at subject from below">POV baixo</button>
+          <button class="qpick" data-group="cam" data-val="POV shot, first person perspective, intimate and direct">POV 1ª</button>
+          <button class="qpick" data-group="cam" data-val="extreme close-up, face and eyes filling frame">Close</button>
+          <button class="qpick" data-group="cam" data-val="mirror reflection shot, dual perspective, bathroom mirror">Espelho</button>
+          <button class="qpick" data-group="cam" data-val="side profile, silhouette against bright background">Perfil</button>
+          <button class="qpick" data-group="cam" data-val="high angle, camera above looking down, vulnerable feel">Alto</button>
+        </div>
+
+        <!-- hidden inputs for JS compatibility -->
+        <input type="hidden" id="edit-pose" value="">
+        <input type="hidden" id="edit-cam" value="">
+        <input type="hidden" id="edit-style" value="">
+        <input type="hidden" id="edit-luz" value="">
+        <input type="hidden" id="edit-filmstock" value="Kodak Ultramax 800, ISO 800, chunky warm grain">
+
+        <!-- Prompt -->
+        <div style="padding:0 14px 6px">
+          <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
+          <textarea class="result-ta neg" id="result-neg" rows="2" readonly style="display:none"></textarea>
+          <div class="btn-row" style="margin-top:6px">
+            <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar</button>
+            <button class="btn-action" onclick="variation()">🔀 Variação</button>
+            <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
           </div>
         </div>
-        <details style="margin:6px 14px 0">
-          <summary style="font-size:.72rem;color:var(--txt3);cursor:pointer;user-select:none;padding:4px 0">⚙️ Mais opções (estilo, luz, filme, pose completa…)</summary>
-        <div class="edit-fields">
-          <div class="edit-field">
-            <label class="edit-label">📸 Estilo Fotográfico</label>
-            <div class="chip-group" id="chips-style">
-              <button class="chip" data-group="style" data-val="Nan Goldin style, intimate documentary, raw emotional photography">Nan Goldin</button>
-              <button class="chip" data-group="style" data-val="Larry Clark style, gritty teen documentary, real life candid">Larry Clark</button>
-              <button class="chip" data-group="style" data-val="Terry Richardson style, direct flash, raw party photography, snapshot aesthetic">Terry Richardson</button>
-              <button class="chip" data-group="style" data-val="Richard Kern style, underground erotic photography, raw downtown NYC">Richard Kern</button>
-              <button class="chip" data-group="style" data-val="Helmut Newton style, powerful glamour, black and white elegance">Helmut Newton</button>
-              <button class="chip" data-group="style" data-val="Ryan McGinley style, youth freedom, soft light, natural joy">Ryan McGinley</button>
-              <button class="chip" data-group="style" data-val="Wolfgang Tillmans style, casual intimate, everyday life photography">Tillmans</button>
-              <button class="chip" data-group="style" data-val="raw documentary photography, authentic candid street style">Documental</button>
-              <button class="chip" data-group="style" data-val="Playboy magazine 1970s style, soft focus, warm tones, vintage atmosphere">Playboy 70s</button>
-              <button class="chip" data-group="style" data-val="amateur candid snapshot, phone camera, low quality real, authentic">Amador/Caseiro</button>
-            </div>
-            <input type="hidden" id="edit-style" value="">
-          </div>
-          <div class="edit-field">
-            <label class="edit-label">💡 Iluminação</label>
-            <div class="chip-group" id="chips-luz">
-              <button class="chip" data-group="luz" data-val="natural window light, soft diffused daylight, golden hour">Luz natural janela</button>
-              <button class="chip" data-group="luz" data-val="harsh direct flash, paparazzi flash, blown highlights">Flash direto</button>
-              <button class="chip" data-group="luz" data-val="candlelight, warm orange glow, intimate low light">Luz de vela</button>
-              <button class="chip" data-group="luz" data-val="neon lights, colored artificial light, urban night scene">Néon</button>
-              <button class="chip" data-group="luz" data-val="backlight, rim lighting, silhouette against bright background">Contraluz</button>
-              <button class="chip" data-group="luz" data-val="bathroom fluorescent, harsh overhead, clinical white light">Fluorescente</button>
-              <button class="chip" data-group="luz" data-val="golden hour sunlight, warm sunset rays, magic hour">Hora dourada</button>
-              <button class="chip" data-group="luz" data-val="overcast soft light, flat even illumination, outdoor cloudy">Dia nublado</button>
-              <button class="chip" data-group="luz" data-val="strobe flash, dramatic shadows, raw flash photography">Strobe</button>
-            </div>
-            <input type="hidden" id="edit-luz" value="">
-          </div>
-          <div class="edit-field">
-            <label class="edit-label">🎞 Filme</label>
-            <div class="chip-group" id="chips-filmstock">
-              <button class="chip active" data-group="filmstock" data-val="Kodak Ultramax 800, ISO 800, chunky warm grain">Kodak 800</button>
-              <button class="chip" data-group="filmstock" data-val="Kodak Portra 400, fine grain, natural skin tones">Portra 400</button>
-              <button class="chip" data-group="filmstock" data-val="Kodak Gold 200, warm yellow tones, vintage look">Gold 200</button>
-              <button class="chip" data-group="filmstock" data-val="Cinestill 800T, tungsten film, red halation, night scene">Cinestill 800T</button>
-              <button class="chip" data-group="filmstock" data-val="Fujifilm Superia 400, cool tones, fine grain, Japanese aesthetic">Fuji 400</button>
-              <button class="chip" data-group="filmstock" data-val="Ilford HP5, ISO 400, black and white film, monochrome, classic B&W grain">Ilford HP5 B&W</button>
-              <button class="chip" data-group="filmstock" data-val="Lomography 800, cross-processed, vivid saturated colors, lo-fi">Lomo 800</button>
-            </div>
-            <input type="hidden" id="edit-filmstock" value="Kodak Ultramax 800, ISO 800, chunky warm grain">
-          </div>
-          <div class="edit-field">
-            <label class="edit-label">🕺 Pose</label>
-            <div class="chip-group" id="chips-pose">
-              <span class="chip-section">Em pé</span>
-              <button class="chip" data-group="pose" data-val="standing relaxed, weight on one hip, arms loose">Relaxada</button>
-              <button class="chip" data-group="pose" data-val="standing, back arched, chest forward, confident">Costas arqueadas</button>
-              <button class="chip" data-group="pose" data-val="standing, hands on hips, power pose">Mãos no quadril</button>
-              <button class="chip" data-group="pose" data-val="standing, arms above head, stretching, midriff exposed">Braços acima</button>
-              <button class="chip" data-group="pose" data-val="standing, leaning against wall, one leg bent">Encostada na parede</button>
-              <button class="chip" data-group="pose" data-val="standing, looking back over shoulder seductively">Olhar sobre ombro</button>
-              <button class="chip" data-group="pose" data-val="standing, walking toward camera, confident strut">Caminhando</button>
-              <span class="chip-section">Sentada</span>
-              <button class="chip" data-group="pose" data-val="sitting on edge of bed, legs crossed, hands on knees">Beira da cama</button>
-              <button class="chip" data-group="pose" data-val="sitting on chair, legs slightly open, leaning forward">Cadeira, inclinada</button>
-              <button class="chip" data-group="pose" data-val="perched on edge of chair, back arched, looking at camera">Bico da cadeira</button>
-              <button class="chip" data-group="pose" data-val="sitting cross-legged on floor, relaxed">Chão, pernas cruzadas</button>
-              <span class="chip-section">Deitada</span>
-              <button class="chip" data-group="pose" data-val="lying on back, arms above head, legs slightly apart">De costas, braços acima</button>
-              <button class="chip" data-group="pose" data-val="lying on side, head resting on hand, top leg bent">De lado, cabeça na mão</button>
-              <button class="chip" data-group="pose" data-val="lying on back, one knee raised, back arched">Joelho levantado</button>
-              <button class="chip" data-group="pose" data-val="sprawled on bed, hair spread out, relaxed">Espalhada na cama</button>
-              <button class="chip" data-group="pose" data-val="lying on stomach, chin resting on hands, feet up">De bruços</button>
-              <span class="chip-section">De joelhos</span>
-              <button class="chip" data-group="pose" data-val="kneeling on floor, sitting back on heels, hands on thighs">Ajoelhada, mãos nas coxas</button>
-              <button class="chip" data-group="pose" data-val="on all fours, looking back at camera seductively">De quatro, olhando para câmera</button>
-              <button class="chip" data-group="pose" data-val="kneeling, arching back, hands behind head">Ajoelhada, arqueada</button>
-              <button class="chip" data-group="pose" data-val="squatting low, knees wide, arms between legs">Agachada, joelhos abertos</button>
-              <span class="chip-section">Curvada</span>
-              <button class="chip" data-group="pose" data-val="bent over a surface, torso folded forward flat on table or bed, ass raised high, legs straight">Dobrada sobre algo</button>
-              <button class="chip" data-group="pose" data-val="bent over, hands on surface, back arched, looking back">Curvada, olhando para trás</button>
-              <button class="chip" data-group="pose" data-val="bending forward at waist, hands on knees, looking at camera">Inclinada para frente</button>
-              <button class="chip" data-group="pose" data-val="arching back dramatically, head thrown back, eyes closed">Arco dramático</button>
-              <span class="chip-section">Pernas abertas</span>
-              <button class="chip" data-group="pose" data-val="lying on back, legs spread wide open, explicit, full view">Deitada, abertas (frontal)</button>
-              <button class="chip" data-group="pose" data-val="sitting, legs spread wide, leaning back on hands, explicit">Sentada, pernas abertas</button>
-              <button class="chip" data-group="pose" data-val="lying back, knees bent and spread apart, feet flat, explicit">Joelhos dobrados, abertos</button>
-              <button class="chip" data-group="pose" data-val="lying on back, legs raised and spread in V shape, explicit">Pernas em V aberto</button>
-              <button class="chip" data-group="pose" data-val="on back, legs pulled back toward shoulders, fully exposed, explicit">Pernas puxadas p/ ombros</button>
-              <button class="chip" data-group="pose" data-val="kneeling, knees spread wide, sitting open, explicit">Ajoelhada, joelhos abertos</button>
-              <span class="chip-section">Agachada</span>
-              <button class="chip" data-group="pose" data-val="deep squat, heels flat, thighs spread, hands on knees">Agachada funda</button>
-              <button class="chip" data-group="pose" data-val="squat pose, ass out, back straight, looking at camera">Agachada de frente</button>
-              <button class="chip" data-group="pose" data-val="squatting facing wall, hands on wall, back arched, explicit rear">Agachada na parede</button>
-              <span class="chip-section">De costas</span>
-              <button class="chip" data-group="pose" data-val="facing away from camera, looking back over shoulder, back and ass on display">De costas, olhar sobre ombro</button>
-              <button class="chip" data-group="pose" data-val="back to camera, both hands pulling aside clothing, rear exposed">De costas, exibindo</button>
-              <button class="chip" data-group="pose" data-val="standing, back to camera, hands on wall, back arched">De costas na parede</button>
-              <span class="chip-section">Pernas levantadas</span>
-              <button class="chip" data-group="pose" data-val="lying on back, both legs raised straight up toward ceiling">Pernas retas para cima</button>
-              <button class="chip" data-group="pose" data-val="lying back, one leg raised high, other flat, side profile">Uma perna levantada</button>
-              <button class="chip" data-group="pose" data-val="on back, legs hooked over partner shoulders, explicit">Pernas no ombro</button>
-              <span class="chip-section">Apoiada</span>
-              <button class="chip" data-group="pose" data-val="leaning on elbows on surface, face close to camera, relaxed natural expression">Apoiada nos cotovelos</button>
-              <button class="chip" data-group="pose" data-val="hands and knees on floor, back flat, table-top position">Posição mesa</button>
-              <button class="chip" data-group="pose" data-val="leaning back against surface, hands behind, hips pushed forward">Apoiada, quadril projetado</button>
-              <span class="chip-section">Dança & Movimento</span>
-              <button class="chip" data-group="pose" data-val="dancing pose, arms up, hips swaying, flowing movement, joyful">Dançando</button>
-              <button class="chip" data-group="pose" data-val="spinning, dress or hair flying, motion blur, dynamic energy">Girando</button>
-              <button class="chip" data-group="pose" data-val="twerking pose, bent forward, ass pushed back, low stance">Twerking</button>
-              <span class="chip-section">Oral</span>
-              <button class="chip" data-group="pose" data-val="on knees looking up, mouth open, submissive expression, explicit oral pose">Ajoelhada, boca aberta</button>
-              <button class="chip" data-group="pose" data-val="lying on stomach, face close to camera at groin level, explicit oral position">Deitada, posição oral</button>
-            </div>
-            <input type="hidden" id="edit-pose" value="">
-          </div>
-          <div class="edit-field">
-            <label class="edit-label">📷 Câmera</label>
-            <div class="chip-group" id="chips-cam">
-              <span class="chip-section">Nível do olho</span>
-              <button class="chip" data-group="cam" data-val="eye level, 50mm, natural framing, slight candid tilt">Natural 50mm</button>
-              <button class="chip" data-group="cam" data-val="eye level, portrait framing, 85mm, shallow depth of field">Retrato 85mm</button>
-              <button class="chip" data-group="cam" data-val="eye level, wide shot, 35mm, full body visible">Wide 35mm</button>
-              <span class="chip-section">Baixo ângulo</span>
-              <button class="chip" data-group="cam" data-val="low angle, camera at knee level looking up, dominant">Nível do joelho</button>
-              <button class="chip" data-group="cam" data-val="low angle POV, looking up at subject from below">POV de baixo</button>
-              <button class="chip" data-group="cam" data-val="worm's eye view, ultra low angle, towering figure">Vista de minhoca</button>
-              <span class="chip-section">Alto ângulo</span>
-              <button class="chip" data-group="cam" data-val="high angle, camera above looking down, vulnerable feel">Alto ângulo</button>
-              <button class="chip" data-group="cam" data-val="bird's eye view, top-down, camera directly above">Vista aérea</button>
-              <span class="chip-section">POV</span>
-              <button class="chip" data-group="cam" data-val="POV shot, first person perspective, intimate and direct">POV 1ª pessoa</button>
-              <button class="chip" data-group="cam" data-val="POV from behind, following close, voyeur angle">POV por trás</button>
-              <button class="chip" data-group="cam" data-val="over-the-shoulder POV, looking past shoulder at reflection">Por cima do ombro</button>
-              <span class="chip-section">Close-up</span>
-              <button class="chip" data-group="cam" data-val="extreme close-up, face and eyes filling frame">Close rosto</button>
-              <button class="chip" data-group="cam" data-val="close-up on lips and jawline, sensual detail">Close lábios</button>
-              <button class="chip" data-group="cam" data-val="close-up on curves, abstract body landscape">Close curvas</button>
-              <button class="chip" data-group="cam" data-val="medium close-up, chest and face, intimate framing">Meio close</button>
-              <span class="chip-section">Perfil</span>
-              <button class="chip" data-group="cam" data-val="side profile, silhouette against bright background">Perfil lateral</button>
-              <button class="chip" data-group="cam" data-val="backlit silhouette, rim lighting, against window">Silhueta contraluz</button>
-              <span class="chip-section">Espelho</span>
-              <button class="chip" data-group="cam" data-val="mirror reflection shot, dual perspective, bathroom mirror">Reflexo espelho</button>
-              <button class="chip" data-group="cam" data-val="full length mirror, subject facing away, reflection faces camera">Espelho corpo inteiro</button>
-              <span class="chip-section">Explícito</span>
-              <button class="chip" data-group="cam" data-val="extreme close-up of ass, low angle from below, butt filling frame, explicit detail">Close bunda</button>
-              <button class="chip" data-group="cam" data-val="extreme close-up of vagina from below, upward angle, vulva detail, explicit">Close vulva</button>
-              <button class="chip" data-group="cam" data-val="between legs POV, camera between thighs looking up, explicit upshot">POV entre pernas</button>
-              <button class="chip" data-group="cam" data-val="rear view close-up, ass and pussy from behind, low angle, explicit detail">Vista traseira close</button>
-              <button class="chip" data-group="cam" data-val="missionary POV, camera below looking up at body and face during sex">POV missionário</button>
-              <button class="chip" data-group="cam" data-val="doggy style POV from behind, close on penetration, explicit rear angle">POV doggy</button>
-              <button class="chip" data-group="cam" data-val="cowgirl POV looking up, camera below facing upward at riding woman">POV cowgirl</button>
-              <button class="chip" data-group="cam" data-val="side angle close-up of penetration, lateral explicit detail shot">Vista lateral close</button>
-              <button class="chip" data-group="cam" data-val="overhead shot looking down at body, aerial framing, full length">De cima, plano aberto</button>
-              <button class="chip" data-group="cam" data-val="extreme macro close-up of face during orgasm, intense emotion">Close orgasmo</button>
-              <span class="chip-section">Corpo inteiro</span>
-              <button class="chip" data-group="cam" data-val="full body shot, head to toe, environmental portrait, 28mm wide">Corpo inteiro 28mm</button>
-              <button class="chip" data-group="cam" data-val="3/4 body shot, thigh to above head, 50mm natural">Três quartos 50mm</button>
-              <button class="chip" data-group="cam" data-val="bust shot, waist up, intimate framing, 85mm portrait">Busto 85mm</button>
-            </div>
-            <input type="hidden" id="edit-cam" value="">
-          </div>
-          <button class="btn-apply" style="background:var(--surface2);color:var(--txt3)" onclick="clearAllChips()">✕ Zerar Tudo</button>
-        </div>
-        </details>
-        <div>
-          <div class="result-label">👤 Referência de Personagem <span style="font-size:11px;opacity:.6;font-weight:400">— URL da imagem para manter rosto/cabelo (--cref)</span></div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input type="url" id="cref-url" placeholder="https://... (cole a URL da imagem de referência)" style="flex:1;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r2);color:var(--txt);padding:7px 11px;font-size:.8rem;font-family:inherit;outline:none" oninput="refreshCref()">
-            <select id="cref-cw" style="background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r2);color:var(--txt);padding:6px 8px;font-size:.75rem;font-family:inherit;outline:none" onchange="refreshCref()">
-              <option value="100">--cw 100 (rosto+corpo)</option>
-              <option value="75">--cw 75</option>
-              <option value="50">--cw 50</option>
-              <option value="0">--cw 0 (só rosto)</option>
-            </select>
-            <button class="btn-action" style="font-size:.7rem;padding:5px 10px;white-space:nowrap" onclick="document.getElementById('cref-url').value='';refreshCref()">✕</button>
-          </div>
-        </div>
-        <div>
-          <div class="result-label">🎨 Midjourney Prompt <span style="font-size:11px;opacity:.6;font-weight:400">— cole no /imagine do Discord</span></div>
-          <textarea class="result-ta" id="result-prompt" rows="6"></textarea>
-        </div>
-        <div>
-          <div class="result-label">🚫 Prompt Negativo <span style="font-size:11px;opacity:.6;font-weight:400">— conteúdo do --no (para ferramentas com campo separado)</span></div>
-          <textarea class="result-ta neg" id="result-neg" rows="3" readonly></textarea>
-          <button class="btn-action" style="margin-top:5px;font-size:.7rem;padding:5px 10px" onclick="copyNeg()">📋 Copiar Negativo</button>
-        </div>
-        <div class="btn-row">
-          <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar Prompt</button>
-          <button class="btn-action" onclick="downloadTxt()">💾 .txt</button>
-          <button class="btn-action" onclick="variation()">🔀 Variação</button>
-          <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
-        </div>
+
       </div>
     </div>
   </div>
@@ -4025,9 +3857,9 @@ function selectChip(group, val){
   document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(c=>{
     c.classList.toggle('active', c.dataset.val===val);
   });
-  // sync quick picks
+  // sync quick picks (Padrão active when val empty)
   document.querySelectorAll(`.qpick[data-group="${group}"]`).forEach(b=>{
-    b.classList.toggle('active', !!val && b.dataset.val===val);
+    b.classList.toggle('active', b.dataset.val===(val||'') && (b.dataset.val==='' ? !val : b.dataset.val===val));
   });
   const inp = document.getElementById('edit-'+group);
   if(inp) inp.value = val||'';
@@ -4097,14 +3929,14 @@ function refreshCref(){
 }
 
 function clearAllChips(){
-  document.querySelectorAll('.chip.active').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.chip.active,.qpick.active').forEach(c=>c.classList.remove('active'));
+  // restore "Padrão" active state
+  document.querySelectorAll('.qpick[data-val=""]').forEach(b=>b.classList.add('active'));
   ['edit-pose','edit-cam','edit-style','edit-luz','edit-filmstock'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.value = '';
   });
   if(selectedKey) applyEdits(true);
-  const btn = document.querySelector('[onclick="clearAllChips()"]');
-  if(btn){ btn.textContent='✓ Zerado!'; setTimeout(()=>{ btn.textContent='✕ Zerar Tudo'; },1200); }
 }
 
 function applyEdits(silent){
