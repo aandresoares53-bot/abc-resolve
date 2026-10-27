@@ -402,7 +402,7 @@ const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, 
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, slight natural blemishes, uneven skin tone, faint freckles, visible skin texture, skin creases, natural skin folds, realistic human skin, matte skin, dry natural skin, no skin smoothing, no retouching, no beauty filter, NOT retouched, NOT airbrushed, NOT oily, NOT shiny skin, authentic candid person, raw documentary style, analog film grain visible on skin, photographed in natural environment';
+const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, slight natural blemishes, uneven skin tone, faint freckles, visible skin texture, skin creases, natural skin folds, matte dry skin, authentic candid person, raw documentary style, analog film grain visible on skin, photographed in natural environment';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -431,7 +431,7 @@ function buildBlondePrompt(p, seedOverride){
 
   // Build Midjourney prompt: realism anchors first (MJ weights earlier tokens more)
   const desc = [];
-  desc.push('unretouched candid photograph, raw human skin texture, visible skin pores and imperfections, natural blemishes, slight skin unevenness, NOT smooth skin, NOT airbrushed, NOT retouched, Nan Goldin style, Larry Clark documentary photography, Wolfgang Tillmans intimacy');
+  desc.push('candid snapshot, raw human skin texture, visible skin pores, natural blemishes and imperfections, slight skin unevenness, matte dry skin, Nan Goldin style, Larry Clark documentary photography, Wolfgang Tillmans intimacy');
   if(styleOverride) desc.push(styleOverride);
   desc.push('Canon 5D Mark II or iPhone snapshot, 50mm f/1.8 lens, f/2.0 aperture, 1/80s shutter, ISO 1600, handheld, slight camera shake, available light only, no professional lighting, no flash, ' + film + ', heavy film grain on skin and shadows, film halation, color fringing, lens aberration, slight vignette, slightly out of focus background' + (isMonochrome ? ', monochrome' : ''));
   if(luzOverride) desc.push(luzOverride);
