@@ -407,7 +407,8 @@ const MJ_NO = 'plastic skin, rubber skin, waxy skin, smooth skin, airbrushed, be
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, open pores, skin micro-texture, subsurface skin warmth, capillaries visible under fair skin, natural skin tone variation, uneven skin coloration, slight natural blemishes, faint freckles, skin folds and creases, natural gravity-pulled skin, skin weight and drape, natural skin laxity, natural stretch marks, matte dry skin, everyday real woman not a professional model, real feminine weight and softness, authentic candid person, SOOC straight out of camera, analog film grain visible on skin';
+// Apenas identificador de rosto/cabelo — corpo vem do preset para evitar duplicação
+const MJ_SUBJECT = 'woman, 19 years old, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -421,7 +422,7 @@ function buildBlondePrompt(p, seedOverride){
   const crefUrl = document.getElementById('cref-url')?.value.trim();
   const crefCw  = document.getElementById('cref-cw')?.value || '100';
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
-  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 10 --s 30 --seed ' + seed + crefPart;
+  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.0 --style raw --chaos 10 --s 30 --seed ' + seed + crefPart;
 
   const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
     ? document.getElementById('edit-filmstock').value.trim() : '';
@@ -442,8 +443,8 @@ function buildBlondePrompt(p, seedOverride){
   // 2. Referências de fotógrafo — dispara o "modo documentário" do MJ
   desc.push('Nan Goldin, Larry Clark, Juergen Teller');
 
-  // 3. Pele real — termos específicos e curtos
-  desc.push('real human skin, visible pores, skin micro-texture, natural blemishes, subsurface skin warmth, matte skin, skin folds and creases, natural gravity-pulled skin');
+  // 3. Pele real — termos específicos e curtos (sem repetir o que está no MJ_SUBJECT)
+  desc.push('visible pores, skin micro-texture, subsurface skin warmth, skin folds and creases, natural gravity-pulled skin, natural stretch marks, real feminine weight and softness');
 
   // 4. Personagem
   desc.push(MJ_SUBJECT);
