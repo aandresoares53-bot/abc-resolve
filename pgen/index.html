@@ -416,7 +416,7 @@ function buildBlondePrompt(p, seedOverride){
   const crefUrl = document.getElementById('cref-url')?.value.trim();
   const crefCw  = document.getElementById('cref-cw')?.value || '100';
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
-  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + seed + crefPart;
+  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 35 --weird 500 --seed ' + seed + crefPart;
 
   // Read chip overrides from UI (safe — inputs exist once DOM is ready)
   const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
@@ -433,7 +433,7 @@ function buildBlondePrompt(p, seedOverride){
   const desc = [];
   desc.push('unretouched candid photograph, raw human skin texture, visible skin pores and imperfections, natural blemishes, slight skin unevenness, NOT smooth skin, NOT airbrushed, NOT retouched, Nan Goldin style, Larry Clark documentary photography, Wolfgang Tillmans intimacy');
   if(styleOverride) desc.push(styleOverride);
-  desc.push('Canon 5D Mark II, 50mm f/1.8 lens, f/2.0 aperture, 1/80s shutter, ISO 1600, handheld, slight camera shake, natural available light only, no flash, no artificial lighting, ' + film + ', heavy film grain on skin and shadows, film halation, color fringing, lens aberration, slight vignette' + (isMonochrome ? ', monochrome' : ''));
+  desc.push('Canon 5D Mark II or iPhone snapshot, 50mm f/1.8 lens, f/2.0 aperture, 1/80s shutter, ISO 1600, handheld, slight camera shake, available light only, no professional lighting, no flash, ' + film + ', heavy film grain on skin and shadows, film halation, color fringing, lens aberration, slight vignette, slightly out of focus background' + (isMonochrome ? ', monochrome' : ''));
   if(luzOverride) desc.push(luzOverride);
   desc.push('raw unedited scan, no color grading, no post-processing, slightly underexposed or overexposed, imperfect exposure, authentic snapshot aesthetic, documentary realism');
   desc.push(MJ_SUBJECT);
