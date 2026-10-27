@@ -396,13 +396,13 @@ header{
 const DEFAULT_SEED = 419528731;
 
 // Midjourney --no (negative) base
-const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch, makeup, cosmetics, lipstick, eyeshadow, foundation, blush, mascara, beauty product, perfect body, idealized body, fashion model, supermodel, flawless body, perfect symmetry, symmetrical face, perfect proportions, editorial, high fashion, vogue, magazine shoot, model pose, model body, goddess, perfect figure, skin smoothing, frequency separation, dodge and burn, photoshop edit, AI enhanced, digitally altered, over-edited, beauty retouch, body retouch, hair retouch, luminosity mask, clarity filter, skin filter, instagram filter, vsco filter, facetune, meitu, perfect lighting, rim lighting, key light, softbox, beauty dish, fill light, catchlight, hair light, glamour lighting, boudoir lighting, fashion lighting';
+const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, oily skin, dewy skin, wet skin look, skin glow, highlighted skin, shiny skin, luminous skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch, makeup, cosmetics, lipstick, eyeshadow, foundation, blush, mascara, beauty product, perfect body, idealized body, fashion model, supermodel, flawless body, perfect symmetry, symmetrical face, perfect proportions, editorial, high fashion, vogue, magazine shoot, model pose, model body, goddess, perfect figure, skin smoothing, frequency separation, dodge and burn, photoshop edit, AI enhanced, digitally altered, over-edited, beauty retouch, body retouch, hair retouch, luminosity mask, clarity filter, skin filter, instagram filter, vsco filter, facetune, meitu, perfect lighting, rim lighting, key light, softbox, beauty dish, fill light, catchlight, hair light, glamour lighting, boudoir lighting, fashion lighting, studio backdrop, gray backdrop, white backdrop, seamless background, cyclorama, studio background, product photography, beauty photography, stock photo, stock photography, professional studio, clean background, neutral background, posed photograph, professional pose, commercial photography';
 
 // Midjourney suffix parameters
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, slight natural blemishes, uneven skin tone, faint freckles, realistic human skin texture, no skin smoothing, no retouching, no beauty filter, NOT retouched, NOT airbrushed, authentic candid person, raw documentary style, analog film grain visible on skin';
+const MJ_SUBJECT = 'real photograph of a woman, 19 years old, long messy wavy blonde hair, loose tangled blonde waves falling past shoulders, light blue eyes, small straight nose, full natural lips, defined cheekbones, heart-shaped face, fit athletic body, toned flat abs, medium natural breasts, round firm full buttocks, shapely hips, slim waist, toned legs, skin with visible pores, slight natural blemishes, uneven skin tone, faint freckles, visible skin texture, skin creases, natural skin folds, realistic human skin, matte skin, dry natural skin, no skin smoothing, no retouching, no beauty filter, NOT retouched, NOT airbrushed, NOT oily, NOT shiny skin, authentic candid person, raw documentary style, analog film grain visible on skin, photographed in natural environment';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -446,7 +446,12 @@ function buildBlondePrompt(p, seedOverride){
   if(p.pose)    desc.push(p.pose);
   if(p.cam)     desc.push(p.cam);
   if(p.expressao) desc.push(p.expressao);
-  if(p.cenario)   desc.push(p.cenario);
+  // Force real environment — never leave MJ to default to studio backdrop
+  if(p.cenario) {
+    desc.push(p.cenario);
+  } else {
+    desc.push('messy bedroom, natural window light from the side, wrinkled bed sheets, lived-in environment, no studio, no backdrop');
+  }
 
   const neg = buildNeg(p);
   return desc.filter(Boolean).join(', ') + ' --no ' + neg + ' ' + MJ_PARAMS_DYN;
