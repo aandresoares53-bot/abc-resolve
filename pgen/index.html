@@ -417,7 +417,7 @@ function buildBlondePrompt(p, seedOverride){
   const crefUrl = document.getElementById('cref-url')?.value.trim();
   const crefCw  = document.getElementById('cref-cw')?.value || '100';
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
-  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 35 --weird 500 --seed ' + seed + crefPart;
+  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 35 --weird 500 --s 25 --seed ' + seed + crefPart;
 
   // Read chip overrides from UI (safe — inputs exist once DOM is ready)
   const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
@@ -432,7 +432,7 @@ function buildBlondePrompt(p, seedOverride){
 
   // Build Midjourney prompt: realism anchors first (MJ weights earlier tokens more)
   const desc = [];
-  desc.push('candid snapshot, raw human skin texture, visible skin pores, natural blemishes and imperfections, slight skin unevenness, matte dry skin, Nan Goldin style, Larry Clark documentary photography, Wolfgang Tillmans intimacy');
+  desc.push('candid snapshot, raw human skin texture, visible skin pores, natural blemishes and imperfections, slight skin unevenness, matte dry skin, Nan Goldin style, Larry Clark documentary photography, Wolfgang Tillmans intimacy, Terry Richardson harsh flash, Juergen Teller unflattering real light');
   if(styleOverride) desc.push(styleOverride);
   desc.push('Canon 5D Mark II or iPhone snapshot, 50mm f/1.8 lens, f/2.0 aperture, 1/80s shutter, ISO 1600, handheld, slight camera shake, available light only, no professional lighting, no flash, ' + film + ', heavy film grain on skin and shadows, film halation, color fringing, lens aberration, slight vignette, slightly out of focus background' + (isMonochrome ? ', monochrome' : ''));
   if(luzOverride) desc.push(luzOverride);
@@ -451,7 +451,7 @@ function buildBlondePrompt(p, seedOverride){
   if(p.cenario) {
     desc.push(p.cenario);
   } else {
-    desc.push('messy bedroom, natural window light from the side, wrinkled bed sheets, lived-in environment, no studio, no backdrop');
+    desc.push('messy bedroom, rumpled sheets, clothes on floor, half-empty glass on nightstand, natural window light from the side, slightly cluttered lived-in room, imperfect real environment');
   }
 
   const neg = buildNeg(p);
