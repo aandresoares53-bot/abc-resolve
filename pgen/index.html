@@ -289,6 +289,29 @@ header{
               <button class="chip" data-group="pose" data-val="lying on back, legs raised and spread in V shape, explicit">Pernas em V aberto</button>
               <button class="chip" data-group="pose" data-val="on back, legs pulled back toward shoulders, fully exposed, explicit">Pernas puxadas p/ ombros</button>
               <button class="chip" data-group="pose" data-val="kneeling, knees spread wide, sitting open, explicit">Ajoelhada, joelhos abertos</button>
+              <span class="chip-section">Agachada</span>
+              <button class="chip" data-group="pose" data-val="deep squat, heels flat, thighs spread, hands on knees">Agachada funda</button>
+              <button class="chip" data-group="pose" data-val="squat pose, ass out, back straight, looking at camera">Agachada de frente</button>
+              <button class="chip" data-group="pose" data-val="squatting facing wall, hands on wall, back arched, explicit rear">Agachada na parede</button>
+              <span class="chip-section">De costas</span>
+              <button class="chip" data-group="pose" data-val="facing away from camera, looking back over shoulder, back and ass on display">De costas, olhar sobre ombro</button>
+              <button class="chip" data-group="pose" data-val="back to camera, both hands pulling aside clothing, rear exposed">De costas, exibindo</button>
+              <button class="chip" data-group="pose" data-val="standing, back to camera, hands on wall, back arched">De costas na parede</button>
+              <span class="chip-section">Pernas levantadas</span>
+              <button class="chip" data-group="pose" data-val="lying on back, both legs raised straight up toward ceiling">Pernas retas para cima</button>
+              <button class="chip" data-group="pose" data-val="lying back, one leg raised high, other flat, side profile">Uma perna levantada</button>
+              <button class="chip" data-group="pose" data-val="on back, legs hooked over partner shoulders, explicit">Pernas no ombro</button>
+              <span class="chip-section">Apoiada</span>
+              <button class="chip" data-group="pose" data-val="leaning on elbows on surface, face close to camera, sultry expression">Apoiada nos cotovelos</button>
+              <button class="chip" data-group="pose" data-val="hands and knees on floor, back flat, table-top position">Posição mesa</button>
+              <button class="chip" data-group="pose" data-val="leaning back against surface, hands behind, hips pushed forward">Apoiada, quadril projetado</button>
+              <span class="chip-section">Dança & Movimento</span>
+              <button class="chip" data-group="pose" data-val="dancing pose, arms up, hips swaying, flowing movement, joyful">Dançando</button>
+              <button class="chip" data-group="pose" data-val="spinning, dress or hair flying, motion blur, dynamic energy">Girando</button>
+              <button class="chip" data-group="pose" data-val="twerking pose, bent forward, ass pushed back, low stance">Twerking</button>
+              <span class="chip-section">Oral</span>
+              <button class="chip" data-group="pose" data-val="on knees looking up, mouth open, submissive expression, explicit oral pose">Ajoelhada, boca aberta</button>
+              <button class="chip" data-group="pose" data-val="lying on stomach, face close to camera at groin level, explicit oral position">Deitada, posição oral</button>
             </div>
             <input type="hidden" id="edit-pose" value="">
           </div>
@@ -329,6 +352,13 @@ header{
               <button class="chip" data-group="cam" data-val="missionary POV, camera below looking up at body and face during sex">POV missionário</button>
               <button class="chip" data-group="cam" data-val="doggy style POV from behind, close on penetration, explicit rear angle">POV doggy</button>
               <button class="chip" data-group="cam" data-val="cowgirl POV looking up, camera below facing upward at riding woman">POV cowgirl</button>
+              <button class="chip" data-group="cam" data-val="side angle close-up of penetration, lateral explicit detail shot">Vista lateral close</button>
+              <button class="chip" data-group="cam" data-val="overhead shot looking down at body, aerial framing, full length">De cima, plano aberto</button>
+              <button class="chip" data-group="cam" data-val="extreme macro close-up of face during orgasm, intense emotion">Close orgasmo</button>
+              <span class="chip-section">Corpo inteiro</span>
+              <button class="chip" data-group="cam" data-val="full body shot, head to toe, environmental portrait, 28mm wide">Corpo inteiro 28mm</button>
+              <button class="chip" data-group="cam" data-val="3/4 body shot, thigh to above head, 50mm natural">Três quartos 50mm</button>
+              <button class="chip" data-group="cam" data-val="bust shot, waist up, intimate framing, 85mm portrait">Busto 85mm</button>
             </div>
             <input type="hidden" id="edit-cam" value="">
           </div>
@@ -354,13 +384,13 @@ header{
 const DEFAULT_SEED = 128966260;
 
 // Midjourney --no (negative) base
-const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs';
+const MJ_NO = 'plastic skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, skin retouching, post-processing, enhanced skin, overly smooth, studio lighting, professional retouching, face tune, beauty app filter';
 
 // Midjourney suffix parameters
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --q 2 --seed ' + DEFAULT_SEED;
 
 // Subject base (Midjourney plain language, no weights)
-const MJ_SUBJECT = '19 year old woman, blonde hair, blue eyes, curvy figure, large breasts, full hips, thick thighs, fair skin, natural body, European features, visible skin pores, natural skin texture, skin imperfections, uneven skin tone';
+const MJ_SUBJECT = '19 year old woman, blonde hair, blue eyes, curvy figure, large breasts, full hips, thick thighs, fair skin with natural imperfections, real human skin texture, visible pores, slight skin blemishes, uneven skin tone, natural body, European features, documentary portrait, authentic person';
 
 function buildNeg(p){
   let neg = MJ_NO;
@@ -375,9 +405,9 @@ function buildBlondePrompt(p){
 
   // Build Midjourney prompt: description first, film/camera, then --no, then params
   const desc = [];
-  desc.push('analog film photograph');
-  desc.push('shot on 35mm film, ' + film);
-  desc.push('Canon AE-1 camera, natural film grain, slight vignette, film halation, warm analog tones');
+  desc.push('RAW analog film photograph, unretouched, documentary style');
+  desc.push('shot on 35mm film, ' + film + ', visible grain texture, film imperfections');
+  desc.push('Canon AE-1, grainy texture on skin, slight vignette, film halation, warm analog tones, slightly underexposed, raw unedited look');
   desc.push(MJ_SUBJECT);
   if(p.partner) desc.push(p.partner);
   if(p.corpo)   desc.push(p.corpo);
