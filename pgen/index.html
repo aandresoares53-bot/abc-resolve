@@ -417,9 +417,8 @@ function buildBlondePrompt(p, seedOverride){
   const crefUrl = document.getElementById('cref-url')?.value.trim();
   const crefCw  = document.getElementById('cref-cw')?.value || '100';
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
-  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 35 --weird 500 --s 25 --seed ' + seed + crefPart;
+  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 10 --s 30 --seed ' + seed + crefPart;
 
-  // Read chip overrides from UI (safe — inputs exist once DOM is ready)
   const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
     ? document.getElementById('edit-filmstock').value.trim() : '';
   const styleOverride = (typeof document !== 'undefined' && document.getElementById('edit-style'))
@@ -427,31 +426,42 @@ function buildBlondePrompt(p, seedOverride){
   const luzOverride   = (typeof document !== 'undefined' && document.getElementById('edit-luz'))
     ? document.getElementById('edit-luz').value.trim() : '';
 
-  const film = filmOverride || 'Kodak Ultramax 800, ISO 800, chunky warm grain';
+  const film = filmOverride || 'Kodak Ultramax 800';
   const isMonochrome = /ilford|black and white|monochrome/i.test(film);
 
-  // Build Midjourney prompt: realism anchors first (MJ weights earlier tokens more)
+  // Prompt enxuto — MJ v6.1 dilui atenção em prompts muito longos
   const desc = [];
-  desc.push('RAW analog photograph, SOOC straight out of camera, candid snapshot, raw human skin texture, visible skin pores, skin micro-texture, natural blemishes and imperfections, natural gravity-pulled skin, real feminine weight and softness, human imperfections celebrated, genuine human presence, everyday real woman not a professional model, Nan Goldin style, Larry Clark documentary photography, Wolfgang Tillmans intimacy, Terry Richardson harsh flash, Juergen Teller unflattering real light');
-  if(styleOverride) desc.push(styleOverride);
-  desc.push('Canon 5D Mark II or iPhone snapshot, 50mm f/1.8 lens, f/2.0 aperture, 1/80s shutter, ISO 1600, handheld, slight camera shake, available light only, no professional lighting, no flash, ' + film + ', heavy film grain on skin and shadows, film halation, color fringing, lens aberration, slight vignette, slightly out of focus background' + (isMonochrome ? ', monochrome' : ''));
-  if(luzOverride) desc.push(luzOverride);
-  desc.push('raw unedited scan, no color grading, no post-processing, slightly underexposed or overexposed, imperfect exposure, authentic snapshot aesthetic, documentary realism');
+
+  // 1. Âncora de câmera/estilo — posição 1 tem maior peso
+  desc.push('shot on iPhone 12, candid photo, ISO 1600, available light, slight motion blur, ' + film + ', heavy film grain' + (isMonochrome ? ', monochrome' : ''));
+
+  // 2. Referências de fotógrafo — dispara o "modo documentário" do MJ
+  desc.push('Nan Goldin, Larry Clark, Juergen Teller');
+
+  // 3. Pele real — termos específicos e curtos
+  desc.push('real human skin, visible pores, skin micro-texture, natural blemishes, subsurface skin warmth, matte skin, skin folds and creases, natural gravity-pulled skin');
+
+  // 4. Personagem
   desc.push(MJ_SUBJECT);
+
+  if(styleOverride) desc.push(styleOverride);
+  if(luzOverride)   desc.push(luzOverride);
+
+  // 5. Corpo + roupa + nsfw do preset
   if(p.partner) desc.push(p.partner);
-  // always enforce curvy body regardless of preset corpo field
-  const CORPO_BASE = 'fit athletic figure, toned abs, medium natural breasts, round firm buttocks, shapely hips, slim toned waist, fit thighs';
+  const CORPO_BASE = 'fit athletic body, medium natural breasts, round firm buttocks, shapely hips';
   desc.push(p.corpo ? CORPO_BASE + ', ' + p.corpo : CORPO_BASE);
-  if(p.roupa)   desc.push(p.roupa);
-  if(p.nsfw)    desc.push(p.nsfw);
-  if(p.pose)    desc.push(p.pose);
-  if(p.cam)     desc.push(p.cam);
+  if(p.roupa)     desc.push(p.roupa);
+  if(p.nsfw)      desc.push(p.nsfw);
+  if(p.pose)      desc.push(p.pose);
+  if(p.cam)       desc.push(p.cam);
   if(p.expressao) desc.push(p.expressao);
-  // Force real environment — never leave MJ to default to studio backdrop
+
+  // 6. Cenário — real e específico
   if(p.cenario) {
     desc.push(p.cenario);
   } else {
-    desc.push('messy bedroom, rumpled sheets, clothes on floor, half-empty glass on nightstand, natural window light from the side, slightly cluttered lived-in room, imperfect real environment');
+    desc.push('messy bedroom, rumpled sheets, window light');
   }
 
   const neg = buildNeg(p);
