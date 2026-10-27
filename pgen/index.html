@@ -399,15 +399,14 @@ function buildNeg(p){
 }
 
 function buildBlondePrompt(p){
-  const film = p.film
-    ? p.film.replace(/Cinestill|Kodak|Fuji|Ilford/gi, s => s)
-    : 'Kodak Portra 400, 35mm film';
+  // Always Kodak 800 — high ISO grain breaks plastic skin
+  const film = 'Kodak Ultramax 800, 35mm film, ISO 800 grain';
 
   // Build Midjourney prompt: description first, film/camera, then --no, then params
   const desc = [];
   desc.push('RAW analog film photograph, unretouched, documentary style');
-  desc.push('shot on 35mm film, ' + film + ', visible grain texture, film imperfections');
-  desc.push('Canon AE-1, grainy texture on skin, slight vignette, film halation, warm analog tones, slightly underexposed, raw unedited look');
+  desc.push('shot on 35mm ' + film + ', chunky film grain, film imperfections, grain visible on skin');
+  desc.push('Canon AE-1, heavy grain texture, slight vignette, film halation, warm saturated analog tones, slightly underexposed, raw unedited look');
   desc.push(MJ_SUBJECT);
   if(p.partner) desc.push(p.partner);
   if(p.corpo)   desc.push(p.corpo);
