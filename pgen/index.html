@@ -200,6 +200,15 @@ header{
 }
 .btn-close-result:hover{border-color:var(--red);color:var(--red);}
 
+/* ── QUICK PICKS ── */
+.qpick{
+  background:var(--surface2);border:1px solid var(--bdr);border-radius:20px;
+  color:var(--txt2);font-size:.68rem;font-weight:600;padding:3px 10px;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s;white-space:nowrap;
+}
+.qpick:hover{background:var(--surface3);color:var(--txt);}
+.qpick.active{background:var(--acc);border-color:var(--acc);color:#000;}
+
 /* ── FAV BTN ── */
 .fav-btn{
   position:absolute;top:8px;right:8px;background:none;border:none;
@@ -321,6 +330,37 @@ header{
         <button class="btn-close-result" onclick="closeResult()">✕ Fechar</button>
       </div>
       <div class="result-body">
+        <!-- Quick picks: pose & camera -->
+        <div style="display:flex;flex-direction:column;gap:6px;padding:10px 14px 0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:.7rem;color:var(--txt3);min-width:52px">🕺 Pose</span>
+            <button class="qpick" data-group="pose" data-val="">– padrão</button>
+            <button class="qpick" data-group="pose" data-val="standing relaxed, weight on one hip, arms loose">Em pé</button>
+            <button class="qpick" data-group="pose" data-val="standing, looking back over shoulder seductively">Olhar ombro</button>
+            <button class="qpick" data-group="pose" data-val="facing away from camera, looking back over shoulder, back and ass on display">De costas</button>
+            <button class="qpick" data-group="pose" data-val="sitting on edge of bed, legs crossed, hands on knees">Sentada</button>
+            <button class="qpick" data-group="pose" data-val="lying on side, head resting on hand, top leg bent">Deitada lateral</button>
+            <button class="qpick" data-group="pose" data-val="lying on back, arms above head, legs slightly apart">Deitada costas</button>
+            <button class="qpick" data-group="pose" data-val="on all fours, looking back at camera seductively">De quatro</button>
+            <button class="qpick" data-group="pose" data-val="bent over, hands on surface, back arched, looking back">Curvada</button>
+            <button class="qpick" data-group="pose" data-val="kneeling on floor, sitting back on heels, hands on thighs">Ajoelhada</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:.7rem;color:var(--txt3);min-width:52px">📷 Câmera</span>
+            <button class="qpick" data-group="cam" data-val="">– padrão</button>
+            <button class="qpick" data-group="cam" data-val="eye level, 50mm, natural framing, slight candid tilt">Natural 50mm</button>
+            <button class="qpick" data-group="cam" data-val="eye level, portrait framing, 85mm, shallow depth of field">Retrato 85mm</button>
+            <button class="qpick" data-group="cam" data-val="full body shot, head to toe, environmental portrait, 28mm wide">Corpo inteiro</button>
+            <button class="qpick" data-group="cam" data-val="low angle POV, looking up at subject from below">POV de baixo</button>
+            <button class="qpick" data-group="cam" data-val="high angle, camera above looking down, vulnerable feel">Alto ângulo</button>
+            <button class="qpick" data-group="cam" data-val="POV shot, first person perspective, intimate and direct">POV 1ª pessoa</button>
+            <button class="qpick" data-group="cam" data-val="extreme close-up, face and eyes filling frame">Close rosto</button>
+            <button class="qpick" data-group="cam" data-val="mirror reflection shot, dual perspective, bathroom mirror">Espelho</button>
+            <button class="qpick" data-group="cam" data-val="side profile, silhouette against bright background">Perfil</button>
+          </div>
+        </div>
+        <details style="margin:6px 14px 0">
+          <summary style="font-size:.72rem;color:var(--txt3);cursor:pointer;user-select:none;padding:4px 0">⚙️ Mais opções (estilo, luz, filme, pose completa…)</summary>
         <div class="edit-fields">
           <div class="edit-field">
             <label class="edit-label">📸 Estilo Fotográfico</label>
@@ -480,6 +520,7 @@ header{
           </div>
           <button class="btn-apply" style="background:var(--surface2);color:var(--txt3)" onclick="clearAllChips()">✕ Zerar Tudo</button>
         </div>
+        </details>
         <div>
           <div class="result-label">👤 Referência de Personagem <span style="font-size:11px;opacity:.6;font-weight:400">— URL da imagem para manter rosto/cabelo (--cref)</span></div>
           <div style="display:flex;gap:6px;align-items:center">
@@ -3984,6 +4025,10 @@ function selectChip(group, val){
   document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(c=>{
     c.classList.toggle('active', c.dataset.val===val);
   });
+  // sync quick picks
+  document.querySelectorAll(`.qpick[data-group="${group}"]`).forEach(b=>{
+    b.classList.toggle('active', !!val && b.dataset.val===val);
+  });
   const inp = document.getElementById('edit-'+group);
   if(inp) inp.value = val||'';
   // Auto-apply: update prompt immediately when chip changes
@@ -4000,6 +4045,18 @@ document.addEventListener('click', e=>{
   const group = c.dataset.group;
   const already = c.classList.contains('active');
   selectChip(group, already ? '' : c.dataset.val);
+});
+
+// quick-pick click handler
+document.addEventListener('click', e=>{
+  const q = e.target.closest('.qpick[data-group]');
+  if(!q) return;
+  const group = q.dataset.group;
+  const val = q.dataset.val;
+  // toggle active on qpick buttons in this group
+  document.querySelectorAll(`.qpick[data-group="${group}"]`).forEach(b=>b.classList.toggle('active', b===q && val!==''));
+  // sync with hidden input and full chips
+  selectChip(group, val);
 });
 
 function selectPreset(key){
