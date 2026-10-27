@@ -356,7 +356,7 @@ header{
 
 <script>
 // ── NEGATIVE PROMPT ────────────────────────────────────────────────────────
-const BASE_NEG = '(plastic skin:1.5), (rubber skin:1.5), (silicone skin:1.5), (waxy skin:1.5), (glossy skin:1.4), (airbrushed skin:1.5), (oversmoothed skin:1.5), (porcelain skin:1.4), (flawless skin:1.4), (perfect skin:1.4), (no pores:1.5), (smooth skin:1.4), skin filter, beauty filter, beauty mode, (photoshop skin:1.4), retouched, skin retouching, instagram filter, facetune, (doll face:1.4), mannequin, wax figure, uncanny valley, inhuman face, perfect symmetry, studio strobe, overlit, blown out highlights, artificial lighting, rendered, 3d render, cgi, cartoon, anime, illustration, painting, drawing, digital art, ai generated, ai art, midjourney, stable diffusion artifacts, ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, out of focus, watermark, text, signature, bad proportions, disfigured, low quality, worst quality, oversaturated, neon colors, (fluorescent skin:1.4), cropped limbs, floating limbs, body horror, extra fingers, abnormal hands, impossible pose, (fake skin:1.5), (synthetic skin:1.5), (plastic look:1.5), (unnatural skin:1.5), (digital skin:1.4), (CGI body:1.5), (artificial body:1.4), (model retouching:1.5), skin softening, beauty app filter, (virtual skin:1.4), (inhuman smoothness:1.5), (skin without pores:1.5), (skin without texture:1.5), (overly perfect body:1.4), makeup filter, heavy foundation, painted skin, filtered face, beauty enhancement';
+const BASE_NEG = '(digital photography:1.5), (digital camera:1.4), (DSLR:1.3), (mirrorless camera:1.3), (digital look:1.5), (digital skin:1.5), (CGI:1.5), (3D render:1.5), (rendered:1.5), (artificial:1.5), (AI generated:1.5), (AI art:1.5), midjourney, (plastic skin:1.5), (rubber skin:1.5), (silicone skin:1.5), (waxy skin:1.5), (glossy skin:1.5), (airbrushed skin:1.5), (oversmoothed skin:1.5), (porcelain skin:1.5), (flawless skin:1.5), (perfect skin:1.5), (no pores:1.5), (smooth skin:1.5), (skin without texture:1.5), (skin without pores:1.5), (fake skin:1.5), (synthetic skin:1.5), (plastic look:1.5), (unnatural skin:1.5), (virtual skin:1.5), (inhuman smoothness:1.5), skin filter, beauty filter, beauty mode, photoshop skin, retouched, skin retouching, instagram filter, facetune, skin softening, beauty app, (doll face:1.4), mannequin, wax figure, uncanny valley, perfect symmetry, studio strobe, overlit, blown out highlights, overly sharp, hyper detailed unnatural, cartoon, anime, illustration, painting, drawing, ugly, deformed, bad anatomy, extra limbs, missing limbs, mutated hands, fused fingers, too many fingers, poorly drawn face, blurry, watermark, text, signature, bad proportions, disfigured, low quality, worst quality, oversaturated, neon colors, (model retouching:1.5), heavy foundation, painted skin, filtered face, beauty enhancement, (CGI body:1.5), (artificial body:1.5)';
 
 function buildNeg(p){
   const extras=[];
@@ -368,10 +368,12 @@ function buildNeg(p){
 
 // ── BASE PROMPT ────────────────────────────────────────────────────────────
 const DEFAULT_SEED = 128966260;
-const BASE = 'RAW photo, (skin pores:1.4), (skin texture:1.4), (skin imperfections:1.3), (freckles:0.4), (natural skin:1.5), (realistic skin:1.5), subsurface scattering, 35mm film grain, Kodak Portra 400, Canon AE-1, natural film grain, slight vignette, warm tones, unretouched candid photo, amateur photography, no makeup filter, (real woman:1.3), (natural body:1.3), 19 year old woman, blonde hair, blue eyes, curvy figure, full hips, large breasts, thick thighs, fair skin, soft belly, European features, (imperfect skin:1.3), (human skin detail:1.4), (natural skin tone variation:1.3), not airbrushed, not filtered, (raw unedited:1.2)';
+const ANALOG_BASE = '(analog photography:1.5), (35mm film:1.5), (film grain:1.4), (film photography:1.5), shot on film, (Kodak Portra 400:1.4), (Canon AE-1:1.3), (analog camera:1.4), (photographic grain:1.3), film halation, light leak edges, (film saturation:1.2), color shift, slight over or underexposure, (natural vignette:1.3), film border, developed photo, (analog look:1.5), (film aesthetic:1.4), not digital, not CGI, not AI generated';
+const BASE = ANALOG_BASE + ', (skin pores:1.5), (skin texture:1.5), (skin imperfections:1.4), (natural skin:1.5), (realistic skin:1.5), subsurface scattering, (human skin detail:1.5), (natural skin tone variation:1.4), (skin without filter:1.4), unretouched candid photo, no beauty filter, no skin smoothing, (real woman:1.4), (natural body:1.4), 19 year old woman, blonde hair, blue eyes, curvy figure, full hips, large breasts, thick thighs, fair skin, soft belly, European features, (imperfect skin:1.4), not airbrushed, (raw analog photo:1.3), (candid snapshot:1.2)';
 
 function buildBlondePrompt(p){
-  const parts=[BASE];
+  const film = p.film || 'Kodak Portra 400, 35mm film grain, analog warmth';
+  const parts=['(analog film photography:1.5)', '('+film+':1.3)', BASE];
   if(p.partner) parts.push(p.partner);
   if(p.corpo) parts.push(p.corpo);
   if(p.roupa) parts.push('('+p.roupa+':1.1)');
@@ -380,7 +382,6 @@ function buildBlondePrompt(p){
   if(p.cam)   parts.push('('+p.cam+':1.1)');
   if(p.expressao) parts.push(p.expressao);
   if(p.cenario) parts.push(p.cenario);
-  if(p.film)  parts.push(p.film);
   parts.push('seed:'+DEFAULT_SEED);
   return parts.filter(Boolean).join(', ');
 }
