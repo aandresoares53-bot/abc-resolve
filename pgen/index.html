@@ -484,6 +484,11 @@ header{
           <div class="result-label">🎨 Midjourney Prompt <span style="font-size:11px;opacity:.6;font-weight:400">— cole no /imagine do Discord</span></div>
           <textarea class="result-ta" id="result-prompt" rows="6"></textarea>
         </div>
+        <div>
+          <div class="result-label">🚫 Prompt Negativo <span style="font-size:11px;opacity:.6;font-weight:400">— conteúdo do --no (para ferramentas com campo separado)</span></div>
+          <textarea class="result-ta neg" id="result-neg" rows="3" readonly></textarea>
+          <button class="btn-action" style="margin-top:5px;font-size:.7rem;padding:5px 10px" onclick="copyNeg()">📋 Copiar Negativo</button>
+        </div>
         <div class="btn-row">
           <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar Prompt</button>
           <button class="btn-action" onclick="downloadTxt()">💾 .txt</button>
@@ -3877,6 +3882,8 @@ function selectPreset(key){
   const prompt = buildBlondePrompt(p);
   document.getElementById('result-title').textContent = '✅ '+p.name;
   document.getElementById('result-prompt').value = prompt;
+  const negMatch = prompt.match(/--no\s+(.+?)\s+--ar/);
+  if(negMatch) document.getElementById('result-neg').value = negMatch[1];
   setSelectClosest('edit-pose', p.pose || defaultPose(p));
   setSelectClosest('edit-cam',  p.cam  || defaultCam(p));
   const panel = document.getElementById('result-panel');
@@ -3904,6 +3911,8 @@ function applyEdits(){
   const seed = seedMatch ? parseInt(seedMatch[1]) : undefined;
   const newPrompt = buildBlondePrompt(merged, seed);
   document.getElementById('result-prompt').value = newPrompt;
+  const negM = newPrompt.match(/--no\s+(.+?)\s+--ar/);
+  if(negM) document.getElementById('result-neg').value = negM[1];
   navigator.clipboard.writeText(newPrompt).catch(()=>{});
   const btn = document.querySelector('.btn-apply');
   btn.textContent='✓ Aplicado!'; btn.style.background='var(--acc)'; btn.style.color='#000';
@@ -3926,6 +3935,13 @@ function setLevel(lv){
   filterPresets();
 }
 
+function copyNeg(){
+  const ta=document.getElementById('result-neg');
+  if(!ta.value) return;
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    showToast('✓ Negativo copiado!');
+  });
+}
 function copyPrompt(){
   const ta=document.getElementById('result-prompt');
   navigator.clipboard.writeText(ta.value).then(()=>{
