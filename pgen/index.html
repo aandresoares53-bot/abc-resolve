@@ -422,7 +422,7 @@ function buildBlondePrompt(p, seedOverride){
   const crefUrl = document.getElementById('cref-url')?.value.trim();
   const crefCw  = document.getElementById('cref-cw')?.value || '100';
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
-  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.0 --style raw --chaos 10 --s 30 --seed ' + seed + crefPart;
+  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.0 --style raw --chaos 10 --s 0 --seed ' + seed + crefPart;
 
   const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
     ? document.getElementById('edit-filmstock').value.trim() : '';
@@ -437,14 +437,14 @@ function buildBlondePrompt(p, seedOverride){
   // Prompt enxuto — MJ v6.1 dilui atenção em prompts muito longos
   const desc = [];
 
-  // 1. Âncora de câmera/estilo — posição 1 tem maior peso
-  desc.push('shot on iPhone 12, candid photo, ISO 1600, available light, slight motion blur, ' + film + ', heavy film grain' + (isMonochrome ? ', monochrome' : ''));
+  // 1. Âncora — câmera barata + fotógrafo documentário (posição 1 = maior peso no MJ)
+  desc.push('35mm disposable camera photo, circa 2006, candid snapshot, available light, ' + film + ', heavy grain' + (isMonochrome ? ', monochrome' : ''));
 
-  // 2. Referências de fotógrafo — dispara o "modo documentário" do MJ
+  // 2. Fotógrafo documentário
   desc.push('Nan Goldin, Larry Clark, Juergen Teller');
 
-  // 3. Pele real — termos específicos e curtos (sem repetir o que está no MJ_SUBJECT)
-  desc.push('visible pores, skin micro-texture, subsurface skin warmth, skin folds and creases, natural gravity-pulled skin, natural stretch marks, real feminine weight and softness');
+  // 3. Pele real com imperfeições específicas no corpo
+  desc.push('visible pores, skin micro-texture, slight cellulite texture on thighs and buttocks, natural skin dimples, skin folds and creases, natural gravity-pulled skin, natural stretch marks, uneven skin tone on body');
 
   // 4. Personagem
   desc.push(MJ_SUBJECT);
@@ -454,7 +454,7 @@ function buildBlondePrompt(p, seedOverride){
 
   // 5. Corpo + roupa + nsfw do preset
   if(p.partner) desc.push(p.partner);
-  const CORPO_BASE = 'fit athletic body, medium natural breasts, round firm buttocks, shapely hips';
+  const CORPO_BASE = 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body';
   desc.push(p.corpo ? CORPO_BASE + ', ' + p.corpo : CORPO_BASE);
   if(p.roupa)     desc.push(p.roupa);
   if(p.nsfw)      desc.push(p.nsfw);
