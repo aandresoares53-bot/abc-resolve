@@ -466,7 +466,8 @@ function buildBlondePrompt(p, seedOverride){
   // 5. Corpo + roupa + nsfw do preset
   if(p.partner) desc.push(p.partner);
   const CORPO_BASE = 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body';
-  desc.push(p.corpo ? CORPO_BASE + ', ' + p.corpo : CORPO_BASE);
+  const corpoExtra = p.corpo && p.corpo !== CORPO_BASE ? p.corpo : '';
+  desc.push(corpoExtra ? CORPO_BASE + ', ' + corpoExtra : CORPO_BASE);
   if(p.roupa)     desc.push(p.roupa);
   if(p.nsfw)      desc.push(p.nsfw);
   if(p.pose)      desc.push(p.pose);
@@ -5309,9 +5310,10 @@ function applyEdits(silent){
 
   // POV baixo extremo: inject explicit upshot content automatically
   const isPovExtremo = /upshot|vulva|floor.*between|between.*legs.*floor/i.test(overrideCam);
+  const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
   const povInject = isPovExtremo ? {
-    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside or nude from waist down, extreme close angle of genitals from below',
-    roupa: 'panties pulled aside, nude from waist down, top still on'
+    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below',
+    roupa: baseRoupa + ', panties pulled aside exposing vulva'
   } : {};
 
   const merged = Object.assign({}, p,
