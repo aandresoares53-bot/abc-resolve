@@ -294,7 +294,6 @@ header{
 @media(max-width:1024px){
   :root{--sidebar:220px;}
   .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
-  #result-panel{max-height:55vh;}
   .header-search{max-width:260px;}
 }
 
@@ -305,69 +304,67 @@ header{
   .hamburger{display:flex;}
   .logo span{display:none;}
   .hbtn{font-size:.7rem;padding:5px 9px;}
-  .header-search{max-width:none;font-size:.8rem;padding:6px 10px;}
-  /* Hide less-used header buttons on mobile, keep core ones */
+  .header-search{max-width:none;flex:1;font-size:.8rem;padding:6px 10px;}
   #hist-btn{display:none;}
-  #roulette-btn{display:none;}
 
-  /* Sidebar — off-canvas drawer */
+  /* Sidebar — off-canvas drawer (position:fixed stays) */
   .sidebar{
-    position:fixed;top:0;left:0;bottom:0;z-index:50;
-    width:260px!important;min-width:0!important;
-    transform:translateX(-100%);transition:transform .25s ease;
+    position:fixed!important;top:0;left:0;bottom:0;z-index:100;
+    width:75vw!important;max-width:300px!important;min-width:0!important;
+    transform:translateX(-110%);transition:transform .28s cubic-bezier(.4,0,.2,1);
     border-right:1px solid var(--bdr);
-    box-shadow:4px 0 24px rgba(0,0,0,.5);
+    box-shadow:6px 0 32px rgba(0,0,0,.6);
   }
-  .sidebar.drawer-open{transform:translateX(0);}
-  .sidebar{position:relative;}
+  .sidebar.drawer-open{transform:translateX(0)!important;}
   .sidebar-close{display:block;}
 
-  /* Main full width */
-  .main{overflow:hidden;}
+  /* Main takes full width since sidebar is out of flow */
+  .app-body{position:relative;}
+  .main{width:100%;overflow:hidden;}
   .grid-wrap{padding:10px;}
   .grid{grid-template-columns:1fr 1fr;gap:8px;}
 
   /* Cards smaller */
   .card{padding:10px 11px;}
-  .card-icon{font-size:1.25rem;margin-bottom:5px;}
-  .card-name{font-size:.78rem;}
-  .card-desc{font-size:.68rem;}
+  .card-icon{font-size:1.2rem;margin-bottom:4px;}
+  .card-name{font-size:.76rem;}
+  .card-desc{font-size:.66rem;}
 
-  /* Quick-pick rows — horizontal scroll */
+  /* Quick-pick rows — horizontal scroll, no wrap */
   .qrow{
-    flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
-    padding:6px 10px 6px;gap:5px;
-    scrollbar-width:none;
+    flex-wrap:nowrap!important;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    padding:5px 10px;gap:5px;scrollbar-width:none;
   }
   .qrow::-webkit-scrollbar{display:none;}
-  .qlabel{flex-shrink:0;}
-  .qpick{flex-shrink:0;font-size:.68rem;padding:5px 10px;min-height:32px;}
+  .qlabel{flex-shrink:0;font-size:.7rem;}
+  .qpick{flex-shrink:0;font-size:.67rem;padding:5px 10px;min-height:32px;white-space:nowrap;}
 
-  /* Result panel — full screen */
+  /* Result panel — full screen overlay */
   #result-panel{
-    position:fixed;inset:0;z-index:60;max-height:none!important;
-    overflow-y:auto;display:none;
+    position:fixed!important;inset:0!important;z-index:90;
+    width:100vw!important;max-width:none!important;
+    max-height:none!important;height:100vh!important;
+    overflow-y:auto;border-left:none!important;
+    display:none;
   }
-  #result-panel.open{display:block;}
+  #result-panel.open{display:flex;flex-direction:column;}
   .result-header{position:sticky;top:0;z-index:5;padding:10px 12px;}
-  .result-body{padding:8px 10px;}
-  .result-ta{font-size:.75rem;}
-  .btn-row{gap:6px;}
-  .btn-action{font-size:.72rem;padding:8px 12px;min-height:40px;}
+  .result-body{padding:8px 12px;flex:1;}
+  .result-ta{font-size:.74rem;}
+  .btn-row{gap:6px;flex-wrap:wrap;}
+  .btn-action{font-size:.71rem;padding:9px 12px;min-height:42px;}
 
-  /* Touch-friendly targets */
+  /* Touch-friendly */
   .cat-item{min-height:44px;padding:10px 14px;}
-  .pill{min-height:32px;}
-  .hbtn{min-height:36px;}
+  .hbtn{min-height:38px;}
 }
 
 /* ── VERY SMALL (< 380px) ── */
 @media(max-width:380px){
   .grid{grid-template-columns:1fr;}
-  header{gap:5px;}
-  .hbtn{display:none;}
-  .hamburger{display:flex;}
-  .header-search{font-size:.75rem;}
+  header{gap:4px;}
+  .hbtn:not(.hamburger){display:none;}
+  .header-search{font-size:.74rem;}
 }
 </style>
 </head>
