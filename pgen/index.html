@@ -510,7 +510,10 @@ const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' 
 
 // Subject base (Midjourney plain language, no weights)
 // Apenas identificador de rosto/cabelo — corpo vem do preset para evitar duplicação
-const MJ_SUBJECT = 'woman, 19 years old, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model';
+const isAna = p.cat === 'ana';
+const MJ_SUBJECT = isAna
+  ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 19 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
+  : 'woman, 19 years old, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model';
 
 function buildNeg(p){
   return MJ_NO;
@@ -605,6 +608,7 @@ const CATS = [
   {key:'detalhe',    icon:'👅', name:'Close de Detalhes'},
   {key:'narrativa',  icon:'💔', name:'Narrativas Sensuais'},
   {key:'sexting',    icon:'💌', name:'Sexting'},
+  {key:'ana',        icon:'🌸', name:'Anãs'},
 ];
 
 // ── PRESETS ────────────────────────────────────────────────────────────────
@@ -6576,6 +6580,238 @@ const PRESETS_RAW = [
     expressao:'phone-lit face in darkness — intimate glowing expression, slight nervousness of sending',
     cam:'phone selfie close, phone light from below illuminating face, darkness all around',
     cenario:'completely dark bedroom, only phone screen glow visible, middle of night intimacy',film:'Cinestill 800T'},
+
+  // ── ANÃS ──────────────────────────────────────────────────────────────────
+  // Casual em Casa (5)
+  {key:'ana_casa_sofa',cat:'ana',level:'sensual',icon:'🌸',name:'Anã no Sofá',desc:'Relaxando no sofá com look casual',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'tight crop top, high-waist shorts, bra and panties visible under top',
+    nsfw:'natural at-home relaxed, casual intimate vibe',
+    pose:'lounging on sofa, legs up over armrest, one knee bent, playful',
+    expressao:'relaxed playful smile, looking at camera',
+    cam:'low angle full body shot showing short stature, natural home light',
+    cenario:'cozy living room, afternoon light, cushions around',film:'Kodak Gold 200'},
+
+  {key:'ana_casa_cama',cat:'ana',level:'sensual',icon:'🌸',name:'Anã na Cama',desc:'Na cama com look confortável',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'short pajama top, tiny sleep shorts, bra underneath',
+    nsfw:'cozy bed morning vibe, intimate comfort',
+    pose:'sitting up in bed, knees pulled to chest, stretching arms above head',
+    expressao:'sleepy soft expression, natural morning face',
+    cam:'eye-level medium shot, morning bedroom light',
+    cenario:'unmade bed, soft morning light, rumpled sheets',film:'Kodak Portra 400'},
+
+  {key:'ana_casa_cozinha',cat:'ana',level:'casual',icon:'🌸',name:'Anã na Cozinha',desc:'Preparando algo na cozinha',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'fitted t-shirt, leggings, bra and panties under',
+    nsfw:'domestic candid, natural daily life',
+    pose:'standing by counter, tip-toes reaching shelf, profile view full body',
+    expressao:'focused natural expression, unaware candid look',
+    cam:'full body from side showing height contrast with kitchen counter',
+    cenario:'home kitchen, warm light, everyday objects',film:'Fuji Superia 400'},
+
+  {key:'ana_casa_espelho',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Espelho',desc:'Se admirando em frente ao espelho',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bra and panties, short robe open',
+    nsfw:'intimate mirror self-admiration, confident body',
+    pose:'standing before full-length mirror, one hand on hip, other raised touching hair',
+    expressao:'confident self-assured smile',
+    cam:'medium shot including mirror reflection, warm bedroom light',
+    cenario:'bedroom with full-length mirror, golden hour light',film:'Kodak Ultramax 400'},
+
+  {key:'ana_casa_moletom',cat:'ana',level:'casual',icon:'🌸',name:'Anã de Moletom',desc:'Com moletom justo e confortável',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'fitted cropped hoodie, tiny sweat shorts, bra and panties underneath',
+    nsfw:'comfortable cozy look, candid at-home vibe',
+    pose:'sitting cross-legged on floor, phone in hand, looking up to camera',
+    expressao:'relaxed casual smile, natural everyday look',
+    cam:'slightly above eye-level showing full petite figure',
+    cenario:'living room floor, afternoon cozy light, cushions',film:'Kodak Gold 200'},
+
+  // Praia & Piscina (3)
+  {key:'ana_praia_biquini',cat:'ana',level:'sensual',icon:'🌸',name:'Anã na Praia',desc:'Na praia de biquíni',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'tiny bikini top, bikini bottom, bra and panties under if removed',
+    nsfw:'beach body confident, sun-kissed skin, natural ocean candid',
+    pose:'standing at water\'s edge, one hip out, looking back over shoulder at camera',
+    expressao:'bright sun-squinting smile, wind in hair',
+    cam:'low angle full body, ocean horizon behind, afternoon golden light',
+    cenario:'sandy beach, blue ocean, bright afternoon sun, real candid beach photo',film:'Kodak Colorplus 200'},
+
+  {key:'ana_piscina_beira',cat:'ana',level:'sensual',icon:'🌸',name:'Anã na Piscina',desc:'À beira da piscina',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bikini top and bottom, wet skin',
+    nsfw:'poolside wet body, natural summer vibe',
+    pose:'sitting at pool edge, legs dangling in water, leaning back on hands',
+    expressao:'relaxed happy smile, eyes slightly closed',
+    cam:'low angle showing legs in water and full short figure',
+    cenario:'outdoor pool, bright summer midday, turquoise water, pool tiles',film:'Fuji Superia 400'},
+
+  {key:'ana_praia_areia',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Deitada na Areia',desc:'Deitada na areia da praia',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bikini, sunglasses',
+    nsfw:'tanning beach body, natural sun relaxation',
+    pose:'lying face down on beach towel, propped on elbows, bikini top untied in back, chin in hands',
+    expressao:'relaxed dreamy eyes, sun-warmed face',
+    cam:'eye level from front showing full compact body length, beach stretching behind',
+    cenario:'sandy beach, midday sun, beach towel, sunscreen bottle nearby',film:'Kodak Gold 200'},
+
+  // Lingerie & Sensual (5)
+  {key:'ana_lingerie_vermelha',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Lingerie Vermelha',desc:'Lingerie vermelha provocante',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'red lace bra and matching panties, garter belt, stockings',
+    nsfw:'confident boudoir energy, sensual lingerie pose',
+    pose:'standing sideways against wall, one leg slightly raised, hand on thigh',
+    expressao:'smoldering confident gaze directly at camera',
+    cam:'full body low angle showing petite stature and lingerie detail',
+    cenario:'bedroom, warm dim light, red bedsheets, candles',film:'Cinestill 800T'},
+
+  {key:'ana_lingerie_preta',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Lingerie Preta',desc:'Lingerie preta na cama',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'black lace bralette, black thong, bra and panties',
+    nsfw:'intimate boudoir bed pose',
+    pose:'kneeling on bed, hands on headboard, hair falling over face',
+    expressao:'lips slightly parted, intense gaze',
+    cam:'medium shot from slightly below showing full figure',
+    cenario:'dark bedroom, minimal light, white bedsheets contrast with black lingerie',film:'Ilford HP5 Plus pushed'},
+
+  {key:'ana_sensual_sofa',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Sensual no Sofá',desc:'Pose sensual no sofá',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'lace bodysuit, bra and panties underneath showing',
+    nsfw:'couch sensual stretch, arching back, confident body',
+    pose:'lying along sofa, arching back, head tipped back, one knee raised',
+    expressao:'mouth open slightly, eyes half-closed sensual',
+    cam:'wide low angle from foot of sofa showing full petite body',
+    cenario:'living room, evening warm lamp light',film:'Kodak Portra 800'},
+
+  {key:'ana_sensual_robe',cat:'ana',level:'sensual',icon:'🌸',name:'Anã de Robe',desc:'Roupão aberto revelando lingerie',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'silk robe open, bra and panties underneath fully visible',
+    nsfw:'robe falling off shoulder revealing lingerie, morning intimate',
+    pose:'leaning against doorframe, one shoulder dropped, robe slipping off',
+    expressao:'playful teasing smile, looking over shoulder',
+    cam:'full body shot from doorway perspective',
+    cenario:'bedroom doorway, morning backlight, hallway behind',film:'Kodak Portra 400'},
+
+  {key:'ana_sensual_espelho',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Selfie Espelho Lingerie',desc:'Selfie em lingerie no espelho',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'matching set bra and panties, cute set with details',
+    nsfw:'mirror selfie lingerie, intimate confident body display',
+    pose:'standing before mirror, phone raised taking selfie, one hip popped',
+    expressao:'cute pout face, confident eyes in mirror',
+    cam:'mirror reflection showing full short body, phone obscuring part of face',
+    cenario:'bathroom or bedroom mirror, warm light',film:'Fuji Superia 200'},
+
+  // Nude / Implícito (4)
+  {key:'ana_nude_arte',cat:'ana',level:'explicito',icon:'🌸',name:'Anã Nudez Artística',desc:'Nudez artística tasteful',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'nude, artistically posed with strategic limb placement',
+    nsfw:'tasteful nude artistic, no explicit display, body as art',
+    pose:'curled sitting pose, knees pulled to chest covering, arm across chest, looking away',
+    expressao:'serene contemplative expression, eyes closed',
+    cam:'full body artistic shot, dramatic side lighting',
+    cenario:'minimal studio look, plain background, dramatic single light source',film:'Ilford HP5 Plus'},
+
+  {key:'ana_nude_banho',cat:'ana',level:'explicito',icon:'🌸',name:'Anã no Banho',desc:'No chuveiro, implícito sensual',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'nude, water covering, steam obscuring',
+    nsfw:'shower nude, water streams, steam obscuring, implied nude',
+    pose:'standing under shower head, head back, water running over, one arm raised against wall',
+    expressao:'eyes closed, mouth slightly open, enjoying water',
+    cam:'medium shot through glass or from side, steam softening details',
+    cenario:'tiled shower, steamy atmosphere, water streams, natural lighting',film:'Fuji Superia 800'},
+
+  {key:'ana_nude_cama',cat:'ana',level:'explicito',icon:'🌸',name:'Anã Nua na Cama',desc:'Nua na cama, luz suave',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'nude, lying with sheets partially covering hips',
+    nsfw:'nude lying in bed, sheets tangled, morning light, implied nude',
+    pose:'lying on side, curled slightly, sheet draped over lower half, arm under pillow',
+    expressao:'peaceful sleeping expression, eyes closed',
+    cam:'high angle soft, showing full petite figure in bed from above',
+    cenario:'bedroom, soft morning window light, white sheets',film:'Kodak Portra 400'},
+
+  {key:'ana_nude_janela',cat:'ana',level:'explicito',icon:'🌸',name:'Anã à Janela',desc:'Nua à janela com luz natural',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'nude, silhouette or back view at window',
+    nsfw:'nude silhouette at window, tasteful artistic back view',
+    pose:'standing at window, back to camera, arms slightly raised touching curtain, looking out',
+    expressao:'profile pensive expression, looking outside',
+    cam:'full body back view, window backlight creating silhouette effect',
+    cenario:'bedroom window, golden hour backlight, sheer curtains',film:'Kodak Portra 160'},
+
+  // Fantasias (3)
+  {key:'ana_fantasia_colegial',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Colegial',desc:'Fantasia de colegial sexy',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'tiny pleated schoolgirl skirt, white blouse tied at waist, knee socks, bra and panties visible',
+    nsfw:'playful schoolgirl costume, innocent-corrupt aesthetic',
+    pose:'sitting on desk, legs dangling, skirt hiked showing thighs, holding pencil to lips',
+    expressao:'coy playful half-smile, wide eyes',
+    cam:'full body low angle showing dangling short legs',
+    cenario:'school desk setting, chalkboard behind, warm classroom light',film:'Kodak Gold 200'},
+
+  {key:'ana_fantasia_enfermeira',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Enfermeira',desc:'Fantasia de enfermeira sexy',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'short nurse costume dress, white with red cross, bra and panties underneath visible',
+    nsfw:'nurse costume playful, medical fantasy vibe',
+    pose:'standing hands on hips, one eyebrow raised, stethoscope around neck',
+    expressao:'confident nurse expression, slight smirk',
+    cam:'full body from slight low angle',
+    cenario:'clean white room suggestion, minimal props, neutral background',film:'Fuji Superia 400'},
+
+  {key:'ana_fantasia_fada',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Fada Sensual',desc:'Fantasia de fada mágica',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'tiny fairy costume, sparkly bra and skirt with wings, bra and panties base layer',
+    nsfw:'magical fairy fantasy, ethereal tiny woman energy, whimsical sensual',
+    pose:'sitting on large prop mushroom or rock, legs crossed, fairy wings spread, wand in hand',
+    expressao:'mischievous magical smile, sparkling eyes',
+    cam:'full body low angle showing complete fairy figure with wings',
+    cenario:'enchanted forest suggestion, bokeh lights, fairy glow effect, green nature',film:'Kodak Ektar 100'},
+
+  // Poses Especiais (5)
+  {key:'ana_pose_pov_baixo',cat:'ana',level:'sensual',icon:'🌸',name:'Anã POV Baixo',desc:'POV de baixo para cima mostrando estatura',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bra and panties, short skirt',
+    nsfw:'extreme low angle pov showing vulva mound through fabric from below, panties outline',
+    pose:'standing over camera on floor, feet apart, looking down at camera between thighs, skirt falling',
+    expressao:'looking down dominantly, slight smirk',
+    cam:'extreme worm-eye view from floor level looking directly up at subject, short legs framing sky/ceiling',
+    cenario:'home interior, natural light from above, camera placed on floor',film:'Kodak Ultramax 400'},
+
+  {key:'ana_pose_dobrada',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Dobrada',desc:'Dobrada sobre superfície',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bra and panties clearly visible, short skirt raised',
+    nsfw:'bent over surface, panties and skirt raised, intimate from behind view',
+    pose:'bent forward over table or bed, hands flat on surface, looking back at camera',
+    expressao:'seductive look-back expression, mouth slightly open',
+    cam:'from behind and side showing petite bent figure, low angle',
+    cenario:'bedroom or living room, natural warm light, simple surface',film:'Cinestill 800T'},
+
+  {key:'ana_pose_pernas_abertas',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Pernas Abertas',desc:'Pernas abertas mostrando vulva marcada',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bra and panties, camel toe visible through fabric',
+    nsfw:'legs spread wide, panties tight showing mound outline, cameltoe through fabric',
+    pose:'sitting or lying with legs spread wide apart, feet flat, knees out, facing camera directly',
+    expressao:'confident direct gaze at camera',
+    cam:'direct front shot between legs, low angle showing full short body',
+    cenario:'bed or sofa, warm light, simple intimate setting',film:'Kodak Portra 800'},
+
+  {key:'ana_pose_cavalinho',cat:'ana',level:'sensual',icon:'🌸',name:'Anã no Cavalinho',desc:'Montada em superfície ou cadeira',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bra and panties, cropped top',
+    nsfw:'straddling chair or surface, hips rocking forward, intimate grinding energy',
+    pose:'straddling backwards chair, legs dangling short on either side, leaning forward on chair back',
+    expressao:'playful confident expression, hair messy',
+    cam:'full body side angle showing legs not reaching floor, candid intimate',
+    cenario:'simple room, chair as only prop, warm indoor light',film:'Kodak Gold 200'},
+
+  {key:'ana_pose_espelho_baixo',cat:'ana',level:'sensual',icon:'🌸',name:'Anã Espelho POV Baixo',desc:'Selfie no espelho em POV baixo extremo',
+    corpo:'little person body, achondroplasia proportions, very short stature, proportionally short limbs, natural body, real skin texture',
+    roupa:'bra and panties, camel toe through fabric, thong option',
+    nsfw:'low mirror selfie, phone at floor level angled up, vulva mound fully visible through panties from below',
+    pose:'standing before mirror, phone held low near floor angled up, looking down at phone screen',
+    expressao:'focused selfie face, slight smile, looking down',
+    cam:'extreme low angle floor mirror selfie, full body visible, panty area centered in frame',
+    cenario:'bathroom or bedroom mirror, bright light, clean floor',film:'Fuji Superia 400'},
 ];
 
 
