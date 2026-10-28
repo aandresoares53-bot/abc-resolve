@@ -412,7 +412,7 @@ header{
 const DEFAULT_SEED = 419528731;
 
 // Midjourney --no (negative) base
-const MJ_NO = 'plastic skin, rubber skin, waxy skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, poreless skin, silicone, doll, mannequin, digital art, watermark, text, ugly, deformed, extra limbs, flawless complexion, smooth complexion, glossy skin, oily skin, dewy skin, wet skin look, skin glow, highlighted skin, shiny skin, luminous skin, skin retouching, skin blur filter, skin softening, digital airbrush, AI beauty filter, beauty mode, post-processing, enhanced skin, overly smooth, subsurface scattering render, studio lighting, professional retouching, face tune, beauty app filter, render, digital painting, concept art, artwork, drawing, sketch, makeup, cosmetics, lipstick, eyeshadow, foundation, blush, mascara, beauty product, idealized body, no cellulite, no stretch marks, fashion model, supermodel, perfect symmetry, symmetrical face, perfect proportions, editorial, high fashion, vogue, magazine shoot, model pose, model body, goddess, perfect figure, skin smoothing, frequency separation, dodge and burn, photoshop edit, AI enhanced, digitally altered, over-edited, beauty retouch, body retouch, hair retouch, luminosity mask, clarity filter, skin filter, instagram filter, vsco filter, facetune, meitu, perfect lighting, rim lighting, key light, softbox, beauty dish, fill light, catchlight, hair light, glamour lighting, boudoir lighting, fashion lighting, studio backdrop, gray backdrop, white backdrop, seamless background, cyclorama, studio background, product photography, beauty photography, stock photo, stock photography, professional studio, clean background, neutral background, posed photograph, professional pose, commercial photography, plastic surgery look, wax figure, too perfect, uncanny valley, barbie look, doll face, fake tan, orange skin, oversaturated skin';
+const MJ_NO = 'plastic skin, rubber skin, waxy skin, smooth skin, airbrushed, beauty filter, retouched, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, poreless skin, silicone, doll, mannequin, digital art, watermark, text, deformed, extra limbs, glossy skin, oily skin, skin glow, shiny skin, skin softening, subsurface scattering render, studio lighting, professional retouching, render, digital painting, concept art, drawing, perfect body, idealized body, fashion model, supermodel, flawless body, perfect symmetry, editorial, high fashion, magazine shoot, model body, photoshop edit, AI enhanced, beauty retouch, instagram filter, facetune, perfect lighting, softbox, beauty dish, studio backdrop, white backdrop, seamless background, studio background, professional studio, plastic surgery look, wax figure, uncanny valley, barbie look, doll face, oversaturated skin, clothed, dressed';
 
 // Midjourney suffix parameters
 const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' + DEFAULT_SEED;
@@ -422,9 +422,7 @@ const MJ_PARAMS = '--ar 2:3 --v 6.1 --style raw --chaos 20 --weird 250 --seed ' 
 const MJ_SUBJECT = 'woman, 19 years old, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model';
 
 function buildNeg(p){
-  let neg = MJ_NO;
-  if(p && /nude|naked|pelada|sem roupa|topless/i.test(p.roupa||'')) neg += ', clothed, dressed';
-  return neg;
+  return MJ_NO;
 }
 
 function buildBlondePrompt(p, seedOverride){
@@ -445,20 +443,20 @@ function buildBlondePrompt(p, seedOverride){
   const film = filmOverride || 'Kodak Ultramax 800';
   const isMonochrome = /ilford|black and white|monochrome/i.test(film);
 
-  // Prompt enxuto — MJ v6.1 dilui atenção em prompts muito longos
+  // Prompt enxuto — MJ dilui atenção em prompts muito longos
   const desc = [];
 
-  // 1. Âncora — câmera barata + fotógrafo documentário (posição 1 = maior peso no MJ)
-  desc.push('35mm disposable camera photo, circa 2006, candid snapshot, available light, ' + film + ', heavy grain' + (isMonochrome ? ', monochrome' : ''));
+  // 1. Personagem (posição 1 = maior peso no MJ)
+  desc.push(MJ_SUBJECT);
 
-  // 2. Fotógrafo documentário
-  desc.push('Nan Goldin, Larry Clark, Juergen Teller');
+  // 2. Âncora — câmera barata + filme vencido (maior trigger de imperfeição analógica)
+  desc.push('35mm disposable camera photo, circa 2006, candid snapshot, available light, slight camera shake, motion blur, ' + film + (film === 'Kodak Ultramax 800' ? ', expired film roll, heavy grain, color shift, light leak' : ', heavy grain') + (isMonochrome ? ', monochrome' : ''));
 
   // 3. Pele real com imperfeições específicas no corpo
   desc.push('visible pores, skin micro-texture, slight cellulite texture on thighs and buttocks, natural skin dimples, skin folds and creases, natural gravity-pulled skin, natural stretch marks, uneven skin tone on body');
 
-  // 4. Personagem
-  desc.push(MJ_SUBJECT);
+  // 4. Fotógrafo documentário
+  desc.push('Nan Goldin, Larry Clark, Juergen Teller');
 
   if(styleOverride) desc.push(styleOverride);
   if(luzOverride)   desc.push(luzOverride);
@@ -603,7 +601,7 @@ const PRESETS_RAW = [
   // ── LINGERIE ──
   {key:'blonde_lingerie_red',cat:'lingerie',level:'sensual',icon:'🔴',name:'Lingerie Vermelha',desc:'Rendada vermelha, quarto luxo, poses sensuais',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'natural seductive expression, relaxed lips parted',cenario:'luxury bedroom, gold accents, red rose petals on bed, warm candlelight',
+    expressao:'relaxed candid expression, lips slightly parted',cenario:'luxury bedroom, gold accents, red rose petals on bed, warm candlelight',
     pose:'sitting on bed edge, legs crossed, arching back, facing camera',film:'Kodak Portra 800, warm golden grain'},
   {key:'blonde_lingerie_white',cat:'lingerie',level:'sensual',icon:'🤍',name:'Lingerie Branca',desc:'Renda branca, boudoir suave, luz etérea',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -611,7 +609,7 @@ const PRESETS_RAW = [
     pose:'lying on bed, hair fanned out, one knee raised, serene pose',film:'Fujifilm Pro 400H, soft natural pastel tones'},
   {key:'blonde_lingerie_black',cat:'lingerie',level:'sensual',icon:'🖤',name:'Lingerie Preta',desc:'Black lace, estúdio dramático, poderosa',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'confident powerful expression, dominant fierce gaze',cenario:'dramatic photo studio, low key lighting, deep shadows, chiaroscuro effect',
+    expressao:'direct candid gaze, neutral expression',cenario:'dim apartment hallway, single lamp, natural shadows',
     pose:'standing arms on hips, legs apart, commanding presence',film:'Ilford HP5 Plus, black and white high contrast'},
   {key:'blonde_lingerie_corset',cat:'lingerie',level:'sensual',icon:'🎀',name:'Espartilho',desc:'Corset vitoriano, quarto vintage, cintura fina',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -620,7 +618,7 @@ const PRESETS_RAW = [
   {key:'blonde_lingerie_stockings',cat:'lingerie',level:'sensual',icon:'🩱',name:'Meia-calça',desc:'Bodysuit transparente, meia preta, salto alto',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'sheer see-through bodysuit, nipples faintly visible through fabric, semi-nude',
-    expressao:'candid confident expression, natural pose',cenario:'clean photo studio, white backdrop, dramatic spotlight, raw studio mood',
+    expressao:'candid confident expression, natural pose',cenario:'living room, natural window light, bare wall',
     pose:'standing elongated pose, one hand on hip, weight shifted, elegant',film:'Kodak Ultramax 800, visible grain'},
   {key:'blonde_lingerie_babydoll',cat:'lingerie',level:'sensual',icon:'🌸',name:'Babydoll',desc:'Babydoll rosa, cama branca, manhã delicada',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -629,7 +627,7 @@ const PRESETS_RAW = [
   {key:'blonde_lingerie_gstring',cat:'lingerie',level:'sensual',icon:'💋',name:'G-String',desc:'Só g-string, espelho, traseiro perfeit, sensual',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'g-string thong only, bare buttocks fully visible, minimal lingerie',
-    expressao:'seductive look over shoulder, confident expression',cenario:'bedroom full-length mirror, warm ambient light, minimalist private space',
+    expressao:'candid glance over shoulder, relaxed',cenario:'bedroom full-length mirror, warm ambient light, minimalist private space',
     pose:'back to camera looking over shoulder, g-string highlighting rear, mirror selfie angle',film:'Kodak Portra 800, warm intimate grain'},
 
   // ── BANHEIRO ──
@@ -652,7 +650,7 @@ const PRESETS_RAW = [
   // ── BOUDOIR ──
   {key:'blonde_boudoir_candles',cat:'boudoir',level:'sensual',icon:'🕯',name:'Boudoir Velas',desc:'Velas, lençol de seda, lingerie, ambiente íntimo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'seductive intimate expression, bedroom eyes, soft desire',cenario:'intimate boudoir setting, many candles lit, silk bed sheets, rose petals, warm glow',
+    expressao:'relaxed unfocused gaze, slightly parted lips',cenario:'intimate boudoir setting, many candles lit, silk bed sheets, rose petals, warm glow',
     pose:'reclining on bed, propped on elbows, silk sheets around body, intimate',film:'Fujifilm Pro 400H, warm candlelight color grading'},
   {key:'blonde_boudoir_morning',cat:'boudoir',level:'sensual',icon:'🌅',name:'Manhã no Hotel',desc:'Acordando nua, lençol branco, luz matinal perfeita',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -679,7 +677,7 @@ const PRESETS_RAW = [
   {key:'blonde_nude_desert',cat:'nude',level:'sensual',icon:'🏜',name:'Deserto',desc:'Nude no deserto, dunas douradas, pôr do sol épico',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'nude in desert landscape, full body visible, artistic outdoor nude',
-    expressao:'wild free expression, windswept hair, liberated fierce look',cenario:'vast desert sand dunes, golden sunset, dramatic orange sky, isolated wilderness',
+    expressao:'windswept candid look, squinting against wind',cenario:'vast desert sand dunes, golden sunset, dramatic orange sky, isolated wilderness',
     pose:'standing on dune crest, arms outstretched, hair blowing, backlit',film:'Kodak Portra 800, warm golden grain, pushed'},
   {key:'blonde_nude_forest',cat:'nude',level:'sensual',icon:'🌿',name:'Floresta',desc:'Nude na floresta, folhas verdes, luz filtrada natural',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -701,7 +699,7 @@ const PRESETS_RAW = [
   {key:'blonde_fantasy_nurse',cat:'fantasia',level:'sensual',icon:'💉',name:'Enfermeira',desc:'Uniforme curto, clínica, pose sedutora sensual',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing short white nurse uniform, barely covering thighs, half-unbuttoned, stockings, heels, white cotton panties and matching bra underneath',
     nsfw:'nurse uniform open revealing cleavage, short skirt showing stocking tops, provocative nurse fantasy',
-    expressao:'seductive nurse expression, playful naughty look, red lips',cenario:'clinic exam room, white walls, exam table, medical equipment, sterile lighting',
+    expressao:'distracted candid look, slightly parted lips',cenario:'clinic exam room, white walls, exam table, medical equipment, sterile lighting',
     pose:'sitting on exam table, legs slightly apart, leaning back, uniform open',film:'Kodak Portra 400, clean clinical with warm accent'},
   {key:'blonde_fantasy_maid',cat:'fantasia',level:'sensual',icon:'🧹',name:'Empregada',desc:'Avental rendado, quarto de luxo, provocante',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing French maid costume, black and white, lace apron, short skirt, heels, white cotton panties and matching bra underneath',
@@ -709,24 +707,24 @@ const PRESETS_RAW = [
     pose:'dusting with feather duster, bending slightly, skirt lifting, caught posing',film:'Kodak Portra 400, warm luxury interior light'},
   {key:'blonde_fantasy_stewardess',cat:'fantasia',level:'sensual',icon:'✈',name:'Aeromoça',desc:'Uniforme aeromoça, avião ou hangar, elegante sexy',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing flight attendant uniform, fitted blazer, pencil skirt, silk scarf, heels, white cotton panties and matching bra underneath',
-    expressao:'professional seductive expression, confident airline smile',cenario:'airplane interior or private hangar, aviation setting, elegant atmosphere',
+    expressao:'casual professional look, slight smile',cenario:'airplane interior or private hangar, aviation setting, elegant atmosphere',
     pose:'standing in aisle, hand on headrest, welcoming pose, uniform fitted',film:'Fujifilm Pro 400H, clean aviation lighting'},
   {key:'blonde_fantasy_secretary',cat:'fantasia',level:'sensual',icon:'💼',name:'Secretária',desc:'Saia lápis curta, escritório noturno, sedutora',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing very short pencil skirt, tight fitted blouse barely buttoned, heels, stockings with garter, white cotton panties and matching bra underneath',
     nsfw:'blouse open revealing cleavage and bra, short skirt showing stocking tops, secretary fantasy',
-    expressao:'seductive confident look, naughty secretary smile, authority',cenario:'corporate office at night, glass windows, city view, desk with papers, low lighting',
+    expressao:'casual glance, relaxed jaw, slight smirk',cenario:'corporate office at night, glass windows, city view, desk with papers, low lighting',
     pose:'sitting on desk edge, legs crossed, leaning forward showing cleavage',film:'Kodak Portra 800, warm pushed night office lighting'},
   {key:'blonde_fantasy_princess',cat:'fantasia',level:'sensual',icon:'👑',name:'Princesa',desc:'Vestido decotado, castelo, fantasy elegante',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing elaborate fantasy princess gown, deep decolletage, jeweled corset, flowing skirt, white cotton panties and matching bra underneath',
-    expressao:'regal poised expression, princess dignity, mysterious smile',cenario:'medieval castle interior, stone arches, candlelight, tapestries, fantasy atmosphere',
+    expressao:'neutral look, slight chin tilt, distant gaze',cenario:'medieval castle interior, stone arches, candlelight, tapestries, fantasy atmosphere',
     pose:'standing on castle steps, dress flowing, holding candelabra, majestic',film:'Kodak Portra 400, warm candlelit fantasy tones'},
   {key:'blonde_fantasy_devil',cat:'fantasia',level:'sensual',icon:'😈',name:'Diaba',desc:'Fantasia diaba, tridente, lingerie vermelha, dark',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing red devil lingerie costume, horns, holding trident, fishnet stockings, white cotton panties and matching bra underneath',
-    expressao:'mischievous evil expression, devil smile, dominant dark energy',cenario:'nightclub interior, smoke machine, red and black lighting, Halloween atmosphere',
+    expressao:'playful smirk, relaxed, amused look',cenario:'nightclub interior, smoke machine, red and black lighting, Halloween atmosphere',
     pose:'standing legs apart, trident raised, dominant devil pose',film:'Cinestill 800T, red saturated night tones'},
   {key:'blonde_fantasy_angel',cat:'fantasia',level:'sensual',icon:'👼',name:'Anjo',desc:'Asas brancas, lingerie branca, divino e etéreo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white angel lingerie, white wings, halo, sheer white fabric, white cotton panties and matching bra underneath',
-    expressao:'innocent pure expression, serene serenity, intense beauty',cenario:'white studio with clouds, soft overexposed light atmosphere, white setting',
+    expressao:'soft unfocused gaze, natural, calm',cenario:'small bedroom, white curtains, daylight',
     pose:'wings spread, hands clasped, looking upward, serene upward pose',film:'Fujifilm Pro 400H, overexposed bright white tones'},
   {key:'blonde_fantasy_witch',cat:'fantasia',level:'sensual',icon:'🔮',name:'Bruxa',desc:'Roupa bruxa sensual, lua cheia, magia dark',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing dark witch costume, revealing dark robe, pointed hat, dark fantasy styling, white cotton panties and matching bra underneath',
@@ -752,7 +750,7 @@ const PRESETS_RAW = [
   {key:'blonde_locais_cliff',cat:'locais',level:'sensual',icon:'🏔',name:'Falésia Oceânica',desc:'Nude na falésia, oceano épico, selvagem e livre',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'nude on ocean cliff, bare body in dramatic landscape, wild nude',
-    expressao:'wild fierce expression, free spirit, dramatic landscape energy',cenario:'dramatic ocean cliff edge, crashing waves far below, sky and sea, epic vista',
+    expressao:'windswept distracted look, squinting in light',cenario:'dramatic ocean cliff edge, crashing waves far below, sky and sea, epic vista',
     pose:'standing on cliff edge, arms outstretched, hair wild in wind, body free',film:'Kodak Portra 800, dramatic pushed contrast'},
   {key:'blonde_locais_sauna',cat:'locais',level:'sensual',icon:'🧖',name:'Sauna',desc:'Sauna nórdica, vapor, nude artístico e natural',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -774,7 +772,7 @@ const PRESETS_RAW = [
   {key:'blonde_exp_presenting',cat:'explicito_suave',level:'explicit',icon:'🔞',name:'Presenting',desc:'Arch pose, presenting, estúdio, closeup bunda',
     corpo:'athletic toned body, toned glutes, defined figure',roupa:'fully nude explicit, completely naked',
     nsfw:'presenting arch pose, nude presenting from behind, buttocks prominently displayed, explicit presenting position',
-    expressao:'seductive look over shoulder, submission expression',cenario:'dim bedroom, window light from side, crumpled bedsheets, natural ambient light',
+    expressao:'candid look over shoulder, casual',cenario:'dim bedroom, window light from side, crumpled bedsheets, natural ambient light',
     pose:'arch pose bent forward, buttocks toward camera, looking back seductively',film:'Kodak Portra 400, warm pushed grain'},
   {key:'blonde_exp_masturbating',cat:'explicito_suave',level:'explicit',icon:'🔞',name:'Masturbação',desc:'Masturbando, quarto íntimo, expressão prazer',
     corpo:'curvy natural figure, full natural breasts',roupa:'fully nude explicit, completely naked',
@@ -784,7 +782,7 @@ const PRESETS_RAW = [
   {key:'blonde_exp_bdsm_tied',cat:'explicito_suave',level:'explicit',icon:'🔞',name:'Amarrada na Cama',desc:'Amarrada com lenços de seda, cama, submissa',
     corpo:'slim petite body, submissive proportions',roupa:'wearing lingerie or fully nude, tied with silk scarves, restrained',
     nsfw:'tied to bed with silk scarves, BDSM light bondage, submissive restrained nude',
-    expressao:'submissive pleading expression, shy restrained look',cenario:'luxury bedroom, tied to bedposts with silk, candles, intimate dominant atmosphere',
+    expressao:'nervous candid look, slightly tense',cenario:'luxury bedroom, tied to bedposts with silk, candles, intimate dominant atmosphere',
     pose:'lying on bed, wrists tied to headboard, legs slightly apart, submissive',film:'Fujifilm Pro 400H, warm intimate dominant light'},
   {key:'blonde_exp_upskirt',cat:'explicito_suave',level:'explicit',icon:'🌬',name:'Upskirt Vento',desc:'Saia voando no vento, sem calcinha, surpresa',
     corpo:'slim petite body, long legs, slender figure',roupa:'wearing light summer dress blown up by wind, no underwear, pantyless upskirt',
@@ -794,7 +792,7 @@ const PRESETS_RAW = [
   {key:'blonde_exp_kitchen_nude',cat:'explicito_suave',level:'explicit',icon:'🍳',name:'Cozinha Nua',desc:'Só avental, cozinha, pelada por baixo, sensual',
     corpo:'curvy natural figure, natural proportions, feminine body',roupa:'wearing only a kitchen apron tied around neck, bare back, nude underneath apron',
     nsfw:'wearing only apron, nude underneath visible from back and sides, kitchen nude',
-    expressao:'playful flirty expression, domestic warm smile, seductive cook',cenario:'modern kitchen, cooking breakfast, morning light through window, domestic',
+    expressao:'playful warm smile, domestic casual mood',cenario:'modern kitchen, cooking breakfast, morning light through window, domestic',
     pose:'standing at stove cooking, apron only, bare back and legs visible, glancing back',film:'Kodak Ektar 100, warm morning kitchen light'},
   {key:'blonde_exp_pool_underwater',cat:'explicito_suave',level:'explicit',icon:'🌊',name:'Subaquática Topless',desc:'Debaixo d\'água na piscina, topless, azul etéreo',
     corpo:'athletic slim body, natural proportions',roupa:'wearing only bikini bottoms, topless underwater, bare breasts in water',
@@ -814,7 +812,7 @@ const PRESETS_RAW = [
   {key:'blonde_exp_car_nude',cat:'explicito_suave',level:'explicit',icon:'🚗',name:'Carro Luxo Nude',desc:'Pelada dentro de carro de luxo à noite, exclusivo',
     corpo:'curvy slim figure, natural proportions',roupa:'fully nude in car, nothing on, bare skin on leather seat',
     nsfw:'nude inside luxury car, bare body on leather seats, car nude at night',
-    expressao:'seductive confident expression, luxury attitude, powerful gaze',cenario:'interior of luxury sports car at night, dashboard lights, city blur through windows',
+    expressao:'candid confident look, relaxed in luxury',cenario:'interior of luxury sports car at night, dashboard lights, city blur through windows',
     pose:'reclined in passenger seat, nude, legs positioned, dashboard glow on skin',film:'Cinestill 800T, luxury night car interior tones'},
 
   // ── POSIÇÕES SEXUAIS ──
@@ -931,7 +929,7 @@ const PRESETS_RAW = [
   {key:'blonde_sex_handjob',cat:'posicoes',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'Punheta',desc:'Mão no pênis, expressão sedutora, close das mãos',
     corpo:'natural hands, natural proportions, full figure',roupa:'fully nude explicit, completely naked',
     nsfw:'handjob, hand on penis stroking explicit, manual stimulation adult sex act',
-    expressao:'seductive focused expression, enjoying giving pleasure, confident',cenario:'bed or intimate setting, close-up hand and face together',
+    expressao:'focused candid expression, engaged look',cenario:'bed or intimate setting, close-up hand and face together',
     pose:'kneeling or beside partner, hand stroking explicitly, close composition',film:'Kodak Portra 400, intimate close grain'},
   {key:'blonde_sex_footjob',cat:'posicoes',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'Footjob',desc:'Pé no pênis, pedicure perfeita, close fetiche',
     corpo:'long slender legs, beautiful feet, pedicured toes',roupa:'fully nude explicit, completely naked',
@@ -1013,7 +1011,7 @@ const PRESETS_RAW = [
   {key:'blonde_ext_bdsm',cat:'extremo',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'BDSM Rope Bondage',desc:'Bondage rope, boate neon dark, dominada, explícito',
     corpo:'slim petite body, submissive proportions',roupa:'fully nude with rope bondage, kinbaku restraints, nothing else',
     nsfw:'BDSM rope bondage kinbaku, submissive restrained explicit nude, dark adult bondage',
-    expressao:'submissive pleading expression, dominated restrained look, fearful desire',cenario:'nightclub dark interior, neon RGB lights, smoky atmosphere, dominant dark',
+    expressao:'nervous candid look, slightly wide eyes',cenario:'nightclub dark interior, neon RGB lights, smoky atmosphere, dominant dark',
     pose:'bound in kinbaku rope suspension, nude restrained, BDSM pose explicit',film:'Cinestill 800T, dark red neon halation grain'},
 
   // ── CASUAL (novos) ──
@@ -1065,7 +1063,7 @@ const PRESETS_RAW = [
     pose:'lying in hammock, one leg hanging off, arm over eyes shielding sun',film:'Kodak Ektar 100, vivid tropical palette'},
   {key:'blonde_praia_volleyball',cat:'praia',level:'sfw',icon:'🏐',name:'Vôlei de Praia',desc:'Beach volleyball, biquíni esportivo, areia e sol',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'competitive fierce expression, beach volleyball concentration',cenario:'beach volleyball court, net, sand flying, bright midday sun',
+    expressao:'focused athletic concentration, sporty',cenario:'beach volleyball court, net, sand flying, bright midday sun',
     pose:'jumping to spike ball, arms raised, dynamic action shot, sand mid-air',film:'Fujifilm Superia 400, vivid action beach'},
   {key:'blonde_praia_splahs',cat:'praia',level:'sfw',icon:'💦',name:'Splash no Mar',desc:'Pulando nas ondas, risada, energia de verão',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -1108,7 +1106,7 @@ const PRESETS_RAW = [
     pose:'reformer pilates exercise, controlled movement, elongated body line',film:'Fujifilm Pro 400H, clean studio light'},
   {key:'blonde_gym_battle_ropes',cat:'academia',level:'sfw',icon:'💪',name:'Battle Ropes',desc:'Battle ropes, galpão crossfit, esforço máximo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'maximum effort expression, battle ropes intensity, fierce',cenario:'crossfit gym warehouse, ropes on floor, dramatic industrial lighting',
+    expressao:'intense effort expression, exertion face',cenario:'crossfit gym warehouse, ropes on floor, dramatic industrial lighting',
     pose:'slamming battle ropes, squat stance, ropes in waves, extreme effort',film:'Kodak Ektar 100, industrial gym grit'},
   {key:'blonde_gym_back_standing',cat:'academia',level:'sfw',icon:'🔙',name:'De Costas em Pé',desc:'De costas na academia, músculos das costas',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -1128,16 +1126,16 @@ const PRESETS_RAW = [
   {key:'blonde_lingerie_thong_back',cat:'lingerie',level:'sensual',icon:'🍑',name:'Thong Pêssego',desc:'Calcinha fio, costas, bunda destaque, espelho',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'thong only rear view, bare buttocks highlighted, lingerie minimal',
-    expressao:'seductive over-shoulder glance, playful tease expression',cenario:'bedroom with floor mirror, warm accent lighting, minimal clean space',
+    expressao:'casual glance back, relaxed shoulders',cenario:'bedroom with floor mirror, warm accent lighting, minimal clean space',
     pose:'standing back to camera, slight hip turn, looking over shoulder into mirror',film:'Kodak Portra 800, warm intimate grain'},
   {key:'blonde_lingerie_fishnets',cat:'lingerie',level:'sensual',icon:'🕸',name:'Fishnet & Lingerie',desc:'Fishnet body, lingerie por baixo, rock sensual',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'fishnet stockings and lingerie, edgy sensual look',
-    expressao:'edgy fierce expression, rock chic confidence',cenario:'dark moody studio, dramatic shadows, band poster on wall, edgy atmosphere',
+    expressao:'cool detached look, casual attitude',cenario:'dark bedroom, low lamp light, posters on wall',
     pose:'standing one hip forward, fishnets prominent, edgy fashion pose',film:'Ilford HP5 pushed, gritty black and white'},
   {key:'blonde_lingerie_latex',cat:'lingerie',level:'sensual',icon:'⚫',name:'Latex Fetiche',desc:'Catsuit latex preto, brilhante, pose dominante',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'dominant fierce expression, latex mistress look, powerful gaze',cenario:'dark fetish studio, leather accents, dramatic low key lighting',
+    expressao:'direct stare, controlled expression',cenario:'dim private room, single lamp, dark walls',
     pose:'standing dominant, hands on hips, latex gleaming, commanding pose',film:'Cinestill 800T, dark shiny latex night tones'},
   {key:'blonde_lingerie_pasties',cat:'lingerie',level:'sensual',icon:'✨',name:'Pasties & Saia',desc:'Pasties nos seios, saia mini, natural daring',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -1207,7 +1205,7 @@ const PRESETS_RAW = [
     pose:'standing wrapped in sheet at window, sheet draped artistically',film:'Fujifilm Pro 400H, soft overexposed morning'},
   {key:'blonde_boudoir_garters',cat:'boudoir',level:'sensual',icon:'🩰',name:'Liga e Salto',desc:'Cama, liga, salto alto e lingerie, clássico boudoir',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'classic pinup seductive expression, vintage bombshell look',cenario:'classic boudoir bedroom, satin sheets, ornate headboard, warm photography',
+    expressao:'candid vintage look, soft smile',cenario:'classic boudoir bedroom, satin sheets, ornate headboard, warm photography',
     pose:'lying on bed, legs in air wearing heels and stockings, playful pinup',film:'Kodak Portra 400, classic warm boudoir tone'},
   {key:'blonde_boudoir_fur',cat:'boudoir',level:'sensual',icon:'🦊',name:'Casaco de Pelo',desc:'Casaco de pelo sintético, nada por baixo, luxo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -1271,12 +1269,12 @@ const PRESETS_RAW = [
   {key:'blonde_fantasy_policewoman',cat:'fantasia',level:'sensual',icon:'👮',name:'Policial',desc:'Uniforme policial curto, colegial, arma de mentira',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing revealing police costume, short uniform skirt, badge, handcuffs, white cotton panties and matching bra underneath',
     nsfw:'police costume revealing, short skirt, handcuffs, provocative cop',
-    expressao:'stern dominant police expression, authority with seduction',cenario:'urban street or interrogation room, dramatic side lighting, law enforcement',
+    expressao:'focused professional look, neutral',cenario:'urban street or interrogation room, dramatic side lighting, law enforcement',
     pose:'hands on hips, handcuffs at belt, authoritative stance, legs apart',film:'Kodak Ektar 100, high contrast law enforcement'},
   {key:'blonde_fantasy_teacher',cat:'fantasia',level:'sensual',icon:'📐',name:'Professora',desc:'Roupa professora, quadro negro, óculos, sedutora',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing pencil skirt, button-down shirt barely buttoned, reading glasses, teacher style, white cotton panties and matching bra underneath',
     nsfw:'teacher outfit revealing, shirt open, skirt riding up, sensual classroom',
-    expressao:'strict seductive expression, teacher authority with desire',cenario:'classic classroom, blackboard with equations, chalk, wooden desk, warm light',
+    expressao:'focused teaching expression, slight concentration',cenario:'classic classroom, blackboard with equations, chalk, wooden desk, warm light',
     pose:'writing on blackboard, reaching up, shirt pulling tight, looking back',film:'Kodak Portra 400, classroom warm sepia'},
   {key:'blonde_fantasy_cowgirl',cat:'fantasia',level:'sensual',icon:'🤠',name:'Cowgirl',desc:'Chapéu de cowboy, botas, shorts jeans, rancho',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing cowboy hat, denim short shorts, plaid shirt tied at waist, boots, white cotton panties and matching bra underneath',
@@ -1284,12 +1282,12 @@ const PRESETS_RAW = [
     pose:'sitting on fence, hat tipped, legs dangling, country girl pose',film:'Kodak Portra 400, warm country golden tones'},
   {key:'blonde_fantasy_pirate',cat:'fantasia',level:'sensual',icon:'🏴‍☠️',name:'Pirata',desc:'Fantasia pirata sensual, praia, tesouro, espada',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing revealing pirate costume, corset top, torn shorts, boots, hat, white cotton panties and matching bra underneath',
-    expressao:'fierce pirate expression, sea adventure confidence',cenario:'beach or ship deck, dramatic sea behind, ropes and rigging, stormy sky',
+    expressao:'determined adventurous look, squinting at horizon',cenario:'beach or ship deck, dramatic sea behind, ropes and rigging, stormy sky',
     pose:'one foot on chest, hand on sword hilt, pirate captain stance',film:'Kodak Ektar 100, high contrast adventure drama'},
   {key:'blonde_fantasy_ninja',cat:'fantasia',level:'sensual',icon:'🥷',name:'Ninja Sensuall',desc:'Traje ninja revelador, dojo, katana, arte marcial',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing revealing black ninja outfit, tight fabric, katana, minimal covering, white cotton panties and matching bra underneath',
     nsfw:'ninja costume revealing fit body, tight minimal coverage, martial sensual',
-    expressao:'focused deadly expression, warrior intensity, dangerous beauty',cenario:'Japanese dojo, wooden floor, paper walls, lanterns, night atmosphere',
+    expressao:'concentrated look, tense jaw',cenario:'Japanese dojo, wooden floor, paper walls, lanterns, night atmosphere',
     pose:'crouching action pose, katana held, ready stance, muscles coiled',film:'Cinestill 800T, dark blue night Japanese aesthetic'},
   {key:'blonde_fantasy_gamer',cat:'fantasia',level:'sensual',icon:'🎮',name:'Gamer Girl',desc:'Headset, shorts curto, quarto neon gamer',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing tiny gaming shorts and crop top, gaming headset, controller in hand, white cotton panties and matching bra underneath',
@@ -1433,7 +1431,7 @@ const PRESETS_RAW = [
   {key:'blonde_ext_atm',cat:'extremo',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'ATM Extremo',desc:'Extremo adulto, ATM, dominada, explícito',
     corpo:'slim petite body, submissive proportions',roupa:'fully nude explicit, completely naked',
     nsfw:'ATM ass to mouth extreme adult, extremely explicit domination act',
-    expressao:'submissive degraded expression, extreme act submission',cenario:'explicit adult studio, dominant atmosphere, extreme adult setting',
+    expressao:'submissive degraded expression, extreme act submission',cenario:'private bedroom, dim warm light, rumpled sheets',
     pose:'submissive ATM position, kneeling, extreme explicit adult act',film:'Kodak Portra 800, warm explicit grain'},
   {key:'blonde_ext_breeding',cat:'extremo',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'Dominação Intensa',desc:'Dominação múltipla, amarrada, adulto extremo',
     corpo:'curvy natural figure, full submissive figure',roupa:'fully nude explicit, bound, nothing on',
@@ -1465,7 +1463,7 @@ const PRESETS_RAW = [
     pose:'lying on stomach propped on elbows, feet up behind her, book open',cam:'bird\'s eye top-down directly above, full body visible',film:'Fujifilm 400, clean lifestyle daylight'},
   {key:'cas_mirror_selfie',cat:'casual',level:'sensual',icon:'🪞',name:'Selfie no Espelho',desc:'Morde o lábio no espelho, sensual casual, reflexo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',nsfw:'',
-    maquiagem:'subtle contour, glossy lip, mascara',expressao:'biting lower lip, eyebrow raised, natural seductive selfie look',
+    maquiagem:'subtle contour, glossy lip, mascara',expressao:'eyebrow raised, candid selfie look, relaxed',
     cenario:'bathroom mirror, ring light glow, clean white tiles',
     pose:'holding phone up, one hand on hip, hip cocked to side, slight pout',cam:'mirror reflection straight-on, slight upward phone angle',film:'iPhone aesthetic, clean sharp, slightly overexposed'},
   {key:'cas_dance_candid',cat:'casual',level:'sfw',icon:'💃',name:'Dançando Candid',desc:'Dançando de lado, perfil, estilo paparazzi candidato',
@@ -1680,7 +1678,7 @@ const PRESETS_RAW = [
     pose:'standing with back arched, hands in hair, face up, chest forward',cam:'low angle from floor level, dramatic upward angle exaggerating arch',film:'Ilford HP5, high contrast black and white analog'},
   {key:'bou_wall_dutch',cat:'boudoir',level:'sensual',icon:'🎭',name:'Contra a Parede Dutch',desc:'Apoiada na parede, ângulo holandês, sensual dramático',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',nsfw:'sensual nudity',
-    maquiagem:'strong brow, natural look',expressao:'intense direct stare, dominant energy',
+    maquiagem:'strong brow, natural look',expressao:'direct candid stare, neutral',
     cenario:'exposed brick wall, single key light, shadows',
     pose:'back against wall, one knee slightly raised, arms wide at sides',cam:'Dutch angle tilted 15 degrees, medium shot, creating tension',film:'Kodak T-Max 3200, high grain dark mood'},
   {key:'bou_shoulder_closeup',cat:'boudoir',level:'sensual',icon:'👁️',name:'Olhar Over-the-Shoulder',desc:'Por cima do ombro, close-up no rosto e ombro',
@@ -1749,12 +1747,12 @@ const PRESETS_RAW = [
     pose:'standing with cape flowing, fists on hips, chin up',cam:'extreme low angle looking up, cape filling upper frame',film:'Kodak Vision3, cinematic superhero'},
   {key:'fan_wall_dutch',cat:'fantasia',level:'sensual',icon:'🗡️',name:'Guerreira Dutch Angle',desc:'Fantasia de guerreira, ângulo holandês, tensão dramática',
     corpo:'natural body, real skin texture, everyday woman',roupa:'armor bikini, sword, warrior costume, white cotton panties and matching bra underneath',nsfw:'',
-    maquiagem:'warrior face paint, battle ready',expressao:'fierce battle stare, slight snarl, intensity',
+    maquiagem:'warrior face paint, battle ready',expressao:'focused look, slightly tense jaw',
     cenario:'fantasy castle stone wall, torchlight, smoke',
     pose:'pressed against wall, sword raised, listening for enemy',cam:'Dutch angle 20 degrees, medium shot, dramatic tension',film:'Cinestill 800T, flickering torch warm'},
   {key:'fan_throne_lowangle',cat:'fantasia',level:'sensual',icon:'👑',name:'Rainha no Trono',desc:'Sentada no trono, câmera rente ao chão, ângulo de poder',
     corpo:'natural body, real skin texture, everyday woman',roupa:'elaborate fantasy queen gown, crown, jewels, white cotton panties and matching bra underneath',nsfw:'',
-    maquiagem:'regal full makeup, jewels on face',expressao:'imperious queen gaze, slight chin tilt of disdain',
+    maquiagem:'regal full makeup, jewels on face',expressao:'relaxed chin tilt, neutral expression',
     cenario:'elaborate fantasy throne room, candles, tapestries',
     pose:'seated on ornate throne, one leg over armrest, crown perfect',cam:'low angle looking up at her on throne, emphasizing power',film:'Kodak Vision3, throne room cinematic'},
   {key:'fan_mirror_costume',cat:'fantasia',level:'sensual',icon:'🪞',name:'Checando Fantasia no Espelho',desc:'Ajustando fantasia no espelho, reflexo, getting dressed',
@@ -1811,7 +1809,7 @@ const PRESETS_RAW = [
     pose:'lying on forest floor, surrounded by leaves and ferns, arms spread',cam:'bird\'s eye top-down, forest canopy above camera',film:'Fujifilm Pro 400H, forest green filtered light'},
   {key:'loc_doorway_lowangle',cat:'locais',level:'sensual',icon:'🚪',name:'Portal Histórico Ângulo Baixo',desc:'Na porta de construção antiga, câmera rente ao chão',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',nsfw:'',
-    maquiagem:'timeless classic beauty',expressao:'regal confidence, looking down at world',
+    maquiagem:'timeless classic beauty',expressao:'neutral chin tilt, distant look',
     cenario:'ancient stone doorway, Morocco or Greece, worn steps',
     pose:'standing in arched doorway, one hand on stone frame, looking past camera',cam:'low angle from stone steps looking up at her in arch',film:'Kodak Ektar 100, warm historic stone'},
   {key:'loc_dock_reflection',cat:'locais',level:'sensual',icon:'🌊',name:'Deck no Lago Reflexo',desc:'No deck sobre o lago, reflexo na água abaixo',
@@ -1960,7 +1958,7 @@ const PRESETS_RAW = [
   {key:'loc2_yacht',cat:'locais',level:'sfw',icon:'⛵',name:'Iate de Luxo',desc:'Iate no mar azul, vestido branco, brisa e luxo',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'leaning on yacht railing, one leg slightly raised, looking at horizon',cam:'low angle from deck looking up, ocean in background, wide shot',expressao:'confident, free, luxurious smile',cenario:'luxury yacht deck, open mediterranean sea, golden afternoon light'},
   {key:'loc2_penthouse',cat:'locais',level:'sensual',icon:'🏙',name:'Cobertura Noturna',desc:'Cobertura de luxo, city view noturna, atmosphere total',
-    roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'standing by floor-to-ceiling window, arching back slightly, hands on glass',cam:'from outside looking in, city lights reflecting on glass, dramatic',expressao:'seductive, powerful, owning the view',cenario:'penthouse suite, panoramic city night view, ambient warm lighting',nsfw:'sensual silhouette against city lights'},
+    roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'standing by floor-to-ceiling window, arching back slightly, hands on glass',cam:'from outside looking in, city lights reflecting on glass, dramatic',expressao:'candid look at city, relaxed expression',cenario:'penthouse suite, panoramic city night view, ambient warm lighting',nsfw:'sensual silhouette against city lights'},
   {key:'loc2_waterfall',cat:'locais',level:'sensual',icon:'💧',name:'Cachoeira Natural',desc:'Cachoeira na floresta, água cristalina, nu natural',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'standing under waterfall, head tilted back, arms reaching up, water cascading over body',cam:'low angle from pool level looking up at figure against waterfall',expressao:'ecstatic, free, eyes closed in pleasure',cenario:'natural jungle waterfall, crystal clear pool, lush green surroundings',nsfw:'wet translucent fabric clinging to curves'},
   {key:'loc2_wine_cellar',cat:'locais',level:'sensual',icon:'🍷',name:'Adega de Vinho',desc:'Adega italiana, vinho, sensualidade entre as barricas',
@@ -2002,11 +2000,11 @@ const PRESETS_RAW = [
   {key:'pose_straddling_chair',cat:'boudoir',level:'sensual',icon:'💺',name:'Cavalgando a Cadeira',desc:'Cavalgando cadeira ao contrário, corpo sobre o encosto',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'straddling chair backwards, arms folded over backrest, head resting on arms, legs apart',cam:'eye level from front, showing straddling and lingerie',expressao:'relaxed natural, resting on chair arms',cenario:'vintage chair, moody bedroom lighting, dramatic shadows'},
   {key:'pose_hips_forward',cat:'casual',level:'sensual',icon:'👑',name:'Quadril à Frente',desc:'Quadril empurrado para frente, postura dominante sexy',
-    roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'standing, hips thrust forward, weight back, hands in waistband',cam:'full body, slightly low angle, emphasizing hip thrust and curves',expressao:'confident, dominant, slightly defiant',cenario:'urban setting, brick wall, street style shoot'},
+    roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'standing, hips thrust forward, weight back, hands in waistband',cam:'full body, slightly low angle, emphasizing hip thrust and curves',expressao:'casual confident look, relaxed',cenario:'urban setting, brick wall, street style shoot'},
   {key:'pose_one_leg_raised',cat:'nude',level:'sensual',icon:'🦵',name:'Uma Perna Levantada',desc:'Uma perna levantada na parede, pose yoga sensual nua',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'standing with one leg raised and foot flat against wall at hip height, body in L-shape profile',cam:'side profile, full body, minimalist',expressao:'focused, physically powerful, yoga grace',cenario:'white studio wall, clean minimalist, strong side light',nsfw:'nude standing with raised leg, artistic explicit body display'},
   {key:'pose_pushing_breasts',cat:'lingerie',level:'sensual',icon:'💋',name:'Seios Empurrados',desc:'Mãos empurrando os seios, lingerie rendada, intensidade',
-    roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'both hands cupping and pushing breasts together from sides, elbows in',cam:'chest up close-medium shot, slightly low angle',expressao:'intensely seductive, direct eye contact',cenario:'bathroom vanity, bright mirror lighting from front',nsfw:'hands pushing breasts together in lace bralette'},
+    roupa:'wearing white cotton panties and matching bra, simple everyday underwear',pose:'both hands cupping and pushing breasts together from sides, elbows in',cam:'chest up close-medium shot, slightly low angle',expressao:'direct eye contact, neutral expression',cenario:'bathroom vanity, bright mirror lighting from front',nsfw:'hands pushing breasts together in lace bralette'},
 
   // ── NOVOS PRESETS: CENÁRIOS SENSUAIS ──────────────────────────────────────
   {key:'scen_rooftop_pool',cat:'praia',level:'sensual',icon:'🏊',name:'Piscina Rooftop',desc:'Piscina no rooftop, cidade ao fundo, pôr do sol luxo',
@@ -2064,7 +2062,7 @@ const PRESETS_RAW = [
 
   // ── NOVOS PRESETS: FANTASIA / COSPLAY ──────────────────────────────────────
   {key:'fan_nurse',cat:'fantasia',level:'sensual',icon:'💉',name:'Enfermeira',desc:'Uniforme de enfermeira curto, sensual, hospital de luxo',
-    roupa:'very short nurse uniform, white stockings, nurse cap, white cotton panties and matching bra underneath',pose:'leaning over pretend patient, uniform riding up, stethoscope swinging',cam:'low angle from bed level looking up at nurse',expressao:'mock professional with seductive undertone',cenario:'private hospital room, white and clean, clinical sensual'},
+    roupa:'very short nurse uniform, white stockings, nurse cap, white cotton panties and matching bra underneath',pose:'leaning over pretend patient, uniform riding up, stethoscope swinging',cam:'low angle from bed level looking up at nurse',expressao:'casual professional look, slight smile',cenario:'private hospital room, white and clean, clinical sensual'},
   {key:'fan_teacher',cat:'fantasia',level:'sensual',icon:'📐',name:'Professora Travessa',desc:'Professora sedutora, óculos, saia curta, lousa',
     roupa:'pencil skirt, white blouse, librarian glasses, hair in bun, white cotton panties and matching bra underneath',pose:'leaning back on desk, one hand on hip, glasses lowered on nose',cam:'student POV eye level looking up at teacher at desk',expressao:'strict teacher about to break bad, intense gaze over glasses',cenario:'classroom, chalkboard with equations, afternoon light, desks'},
   {key:'fan_secretary',cat:'fantasia',level:'sensual',icon:'💼',name:'Secretária Perfeita',desc:'Secretária executiva, escritório, saia lápis, poder',
@@ -2072,7 +2070,7 @@ const PRESETS_RAW = [
   {key:'fan_maid',cat:'fantasia',level:'sensual',icon:'🧹',name:'Empregada Francesa',desc:'Empregada com avental, plumeau, quarto luxuoso',
     roupa:'french maid outfit, very short, white apron, black stockings, white cotton panties and matching bra underneath',pose:'bending over to dust furniture, skirt flipping up',cam:'from behind low angle, catching the bend',expressao:'innocent unaware of effect on viewer',cenario:'luxury bedroom being cleaned, ornate furniture, European villa'},
   {key:'fan_policewoman',cat:'fantasia',level:'sensual',icon:'👮',name:'Policial Feminina',desc:'Uniforme policial feminino justo, arma, autoridade sensual',
-    roupa:'tight police uniform, utility belt, cap, heels instead of boots, white cotton panties and matching bra underneath',pose:'hands on hips, legs apart in power stance, badge prominent',cam:'low angle full body, authoritative framing',expressao:'commanding, badge-flashing authority with edge of invitation',cenario:'urban street setting, police car in background, night'},
+    roupa:'tight police uniform, utility belt, cap, heels instead of boots, white cotton panties and matching bra underneath',pose:'hands on hips, legs apart in power stance, badge prominent',cam:'low angle full body, authoritative framing',expressao:'focused professional look, neutral',cenario:'urban street setting, police car in background, night'},
   {key:'fan_vampire',cat:'fantasia',level:'sensual',icon:'🧛',name:'Vampira Sedutora',desc:'Vampira gótica, castelo, sangue nos lábios, poder eterno',
     roupa:'black gothic corset dress, red velvet cape, fangs, pale skin, white cotton panties and matching bra underneath',pose:'emerging from shadows, one hand on stone wall, cape flowing',cam:'dramatic low angle, fog and darkness framing',expressao:'eternal hunger, blood-red lips, piercing gaze',cenario:'gothic castle hall, candelabras, stone walls, dramatic shadows, fog'},
 
@@ -2116,7 +2114,7 @@ const PRESETS_RAW = [
     pose:'standing hands above head stretching, micro bikini visible, golden skin',film:'Kodak Ektar 100, vivid tropical luxury'},
   {key:'pra_wetsuit_surfer',cat:'praia',level:'sfw',icon:'🤽',name:'Roupa de Neoprene',desc:'Wetsuit colante de surfista, prancha, energia radical',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    expressao:'fierce surf champion expression, stoked energy',cenario:'rocky surf beach, offshore break, spray, dramatic ocean',
+    expressao:'excited happy surf expression, windswept',cenario:'rocky surf beach, offshore break, spray, dramatic ocean',
     pose:'waxing surfboard, one knee down, wetsuit half off, looking at waves',film:'Fujifilm Superia 400, action outdoor drama'},
   {key:'pra_hammock_bikini',cat:'praia',level:'sensual',icon:'🌴',name:'Rede Sensual',desc:'Rede entre coqueiros, biquíni de amarrar, pôr do sol',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2169,7 +2167,7 @@ const PRESETS_RAW = [
   {key:'ling_teddy_lace',cat:'lingerie',level:'sensual',icon:'🌸',name:'Teddy Rendado',desc:'Teddy de renda com abertura na frente, sensual e elegante',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'sheer lace teddy, body outline fully visible through fabric, front slit',
-    expressao:'elegant seductive expression, confident intimate look',cenario:'luxury boudoir, ornate headboard, silk sheets, candlelight',
+    expressao:'relaxed candid look, soft expression',cenario:'luxury boudoir, ornate headboard, silk sheets, candlelight',
     pose:'lying back propped on elbows, teddy falling open, legs bent, inviting',film:'Kodak Portra 800, warm boudoir grain'},
   {key:'ling_sports_underwear',cat:'lingerie',level:'sensual',icon:'⚡',name:'Conjunto Esportivo',desc:'Conjunto lingerie estilo esportivo, sutiã e short mínimo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2182,7 +2180,7 @@ const PRESETS_RAW = [
   {key:'ling_harness_bold',cat:'lingerie',level:'sensual',icon:'⚫',name:'Harness Arrojado',desc:'Harness corporal, lingerie ousada, estética dark fashion',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'leather harness highlighting nude body contours, bold dark fashion',
-    expressao:'dominant fierce expression, alternative power',cenario:'dark studio, dramatic single spotlight, shadow play, raw',
+    expressao:'direct stare, controlled candid expression',cenario:'dim room, single lamp, natural shadow play',
     pose:'hands raised gripping vertical bar or rope, body displayed in harness',film:'Ilford HP5 pushed, gritty high contrast B&W'},
   {key:'ling_boudoir_gown',cat:'lingerie',level:'sensual',icon:'🌙',name:'Robe Longo',desc:'Robe longo de cetim, varanda, elegância noturna',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2192,7 +2190,7 @@ const PRESETS_RAW = [
   {key:'ling_micro_g_back',cat:'lingerie',level:'sensual',icon:'🍑',name:'Micro G-String Costas',desc:'Só micro g-string, costas, bunda em destaque, editorial',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
     nsfw:'g-string thong from behind, full bare buttocks visible, minimal lingerie rear',
-    expressao:'seductive over-shoulder glance, playful tease, confident rear pose',cenario:'raw studio, white or dark backdrop, natural lighting',
+    expressao:'casual glance back over shoulder, relaxed',cenario:'bare apartment wall, window light, natural',
     pose:'standing facing away, hips tilted, looking over shoulder, g-string highlighted',film:'Kodak Portra 800, close warm grain'},
   {key:'ling_pastel_set',cat:'lingerie',level:'sensual',icon:'🌷',name:'Conjunto Pastel',desc:'Conjunto lingerie pastel, sutiã e calcinha, romantismo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2285,7 +2283,7 @@ const PRESETS_RAW = [
     pose:'kneeling in seiza position, kimono slightly open, hair in traditional updo',film:'Fujifilm Pro 400H, warm Japanese indoor light'},
   {key:'fan_amazon',cat:'fantasia',level:'sensual',icon:'🏹',name:'Guerreira Amazona',desc:'Armadura de couro, floresta, amazona feroz',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing leather and fur warrior armor, minimal coverage, bow and quiver, white cotton panties and matching bra underneath',
-    expressao:'fierce warrior expression, hunter focus, raw power',cenario:'dense forest, dramatic shafts of light, ancient trees, warrior atmosphere',
+    expressao:'focused determined look',cenario:'dense forest, dramatic shafts of light, ancient trees, warrior atmosphere',
     pose:'drawing bow back ready to fire, one eye closed, muscles taut, warrior',film:'Fujifilm Velvia 50, rich forest warrior colors'},
   {key:'fan_mermaid',cat:'fantasia',level:'sensual',icon:'🧜',name:'Sereia',desc:'Cauda de sereia, praia ou piscina, fantasia aquática',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing mermaid tail costume, seashell bra or bare, fantasy ocean creature, white cotton panties and matching bra underneath',
@@ -2295,7 +2293,7 @@ const PRESETS_RAW = [
   {key:'fan_dominatrix',cat:'fantasia',level:'sensual',icon:'🖤',name:'Dominatrix',desc:'Dominatrix de couro preto, chicote, poder absoluto',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing black leather dominatrix outfit, corset, thigh boots, gloves, whip, white cotton panties and matching bra underneath',
     nsfw:'dominatrix leather revealing outfit, power pose, BDSM dominant aesthetic',
-    expressao:'commanding dominant expression, absolute power look, cold authority',cenario:'dark playroom, dungeon aesthetic, chains on walls, dramatic red light',
+    expressao:'direct stare, controlled expression, neutral',cenario:'dark playroom, dungeon aesthetic, chains on walls, dramatic red light',
     pose:'standing legs wide, whip held, one heel on chair, dominant stance',film:'Cinestill 800T, dark red dramatic dungeon tones'},
   {key:'fan_elf',cat:'fantasia',level:'sensual',icon:'🧝',name:'Elfa da Floresta',desc:'Elfa com orelhas pontudas, floresta encantada, magia',
     corpo:'natural body, real skin texture, everyday woman',roupa:'wearing delicate leaf-and-flower fairy outfit, minimal coverage, forest elf style, white cotton panties and matching bra underneath',
@@ -2360,7 +2358,7 @@ const PRESETS_RAW = [
   {key:'exs_lapdance',cat:'explicito_suave',level:'explicit',icon:'💃',name:'Lap Dance',desc:'Fazendo lap dance, dançando provocativamente, clube íntimo',
     corpo:'athletic curvy body, dancer proportions',roupa:'wearing minimal club outfit, g-string, barely covered top',
     nsfw:'lap dance intimate, grinding on someone, revealing dance outfit',
-    expressao:'seductive dancer expression, performance power, eye contact',cenario:'private club or dark bar, dramatic lighting, leather chair',
+    expressao:'focused performer look, direct eye contact',cenario:'private club or dark bar, dramatic lighting, leather chair',
     pose:'grinding in lap dance position, hands on own body, seductive dance moves',film:'Cinestill 800T, club red-orange neon tones'},
 
   // ── POSIÇÕES SEXUAIS EXTRA ────────────────────────────────────────────
@@ -2442,7 +2440,7 @@ const PRESETS_RAW = [
     cenario:'wildflower meadow, golden afternoon light, countryside',film:'Kodak Ektar 100, saturated warm meadow'},
   {key:'cas_tennis_skirt',cat:'casual',level:'sensual',icon:'🎾',name:'Saia de Tênis',desc:'Saia plissada curta, court de tênis, sporty chic',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'mid-serve swing, skirt lifting, athletic energy',expressao:'competitive fierce smile, sporty confidence',
+    pose:'mid-serve swing, skirt lifting, athletic energy',expressao:'focused sporty expression, natural effort',
     cenario:'clay tennis court, country club, bright daylight',film:'Fuji Velvia 50, vivid athletic whites'},
   {key:'cas_kimono_street',cat:'casual',level:'sfw',icon:'🎌',name:'Kimono Street Style',desc:'Kimono aberto, camiseta branca, jeans, look moderno',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2450,7 +2448,7 @@ const PRESETS_RAW = [
     cenario:'Japanese-inspired street district, neon signs, afternoon',film:'Fuji Pro 400H, street grain tones'},
   {key:'cas_wrap_dress',cat:'casual',level:'sensual',icon:'💃',name:'Vestido Wrap Sensual',desc:'Vestido wrap decotado, cintura marcada, jantar casual',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'seated at restaurant table, leaning forward slightly, glass of wine',expressao:'seductive dinner companion smile, eyes glowing',
+    pose:'seated at restaurant table, leaning forward slightly, glass of wine',expressao:'warm candid smile, relaxed dinner look',
     cenario:'candlelit bistro, intimate dinner setting, warm amber light',film:'Cinestill 800T, warm candlelit romantic'},
   {key:'cas_oversized_shirt',cat:'casual',level:'sensual',icon:'👔',name:'Camisa Oversized',desc:'Camisa masculina oversized, sem calça, botões abertos',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2544,7 +2542,7 @@ const PRESETS_RAW = [
     cenario:'turquoise ocean lagoon, strong wind, kite in sky, mid-afternoon',film:'Kodak Ektar 100, vivid sport saturated'},
   {key:'pra_volleyball_sand',cat:'praia',level:'sfw',icon:'🏐',name:'Vôlei de Praia',desc:'Bikini esportivo, vôlei de praia, areia quente, pulo',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'mid-air spike jump, arms high, powerful athletic form',expressao:'competitive fierce concentration, game face',
+    pose:'mid-air spike jump, arms high, powerful athletic form',expressao:'focused athletic concentration, game face',
     cenario:'beach volleyball court, white sand, clear sky, tournament setting',film:'Fuji Velvia 50, vivid beach sport'},
   {key:'pra_sunbath_topless',cat:'praia',level:'explicit',icon:'☀',name:'Topless na Areia',desc:'Deitada na areia topless, óleo corporal, sol quente',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2654,7 +2652,7 @@ const PRESETS_RAW = [
     cenario:'minimalist yoga studio, wooden floor, large windows, morning light',film:'Fuji Pro 400H, soft studio light'},
   {key:'gym_crossfit_tire',cat:'academia',level:'sfw',icon:'🔧',name:'CrossFit Pneu',desc:'Golpe no pneu, sledgehammer, crossfit extremo, garra',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'swinging sledgehammer at tire, explosive power, mid-strike',expressao:'primal fierce warrior energy, screaming effort',
+    pose:'swinging sledgehammer at tire, explosive power, mid-strike',expressao:'intense effort expression, open mouth exertion',
     cenario:'outdoor CrossFit box, large tire, rustic setting, dramatic sky',film:'Kodak T-Max 400, high contrast dramatic'},
   {key:'gym_stretching_sensual',cat:'academia',level:'sensual',icon:'🤸',name:'Alongamento Sensual',desc:'Alongamento extremo, posição sexual-like, ginástica',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2756,11 +2754,11 @@ const PRESETS_RAW = [
     cenario:'all-white bedroom, morning light, soft pillows, romantic',film:'Fuji Pro 400H, pastel soft pink tones'},
   {key:'ling_latex_catsuit',cat:'lingerie',level:'sensual',icon:'🖤',name:'Catsuit Latex',desc:'Catsuit de latex preto, dominante, poderosa, fetish',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'standing with legs wide, hands on hips, commanding presence',expressao:'dominant powerful femme fatale, piercing confident stare',
+    pose:'standing with legs wide, hands on hips, commanding presence',expressao:'direct confident stare, relaxed posture',
     cenario:'dark studio, dramatic red light, fetish aesthetic, smoke',film:'Cinestill 800T, dark shiny dramatic red'},
   {key:'ling_crotchless',cat:'lingerie',level:'explicit',icon:'💋',name:'Calcinha Crotchless',desc:'Calcinha crotchless, sutiã lace, explícito sugestivo',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'lying on side, leg raised, explicit lingerie detail visible',expressao:'seductive inviting expression, bedroom eyes',
+    pose:'lying on side, leg raised, explicit lingerie detail visible',expressao:'relaxed candid look, soft gaze',
     cenario:'upscale bedroom, satin sheets, dim warm lighting, intimate',film:'Cinestill 800T, warm intimate tones'},
   {key:'ling_silk_robe_open',cat:'lingerie',level:'sensual',icon:'🥂',name:'Robe de Seda Aberto',desc:'Robe de seda aberto mostrando lingerie, champanhe',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2768,7 +2766,7 @@ const PRESETS_RAW = [
     cenario:'penthouse suite, city view at night, champagne, candlelight',film:'Kodak Portra 800, warm luxury penthouse'},
   {key:'ling_fishnet_bodysuit',cat:'lingerie',level:'sensual',icon:'🕸',name:'Body Fishnet',desc:'Body fishnet completo, sexy, transparência, provocante',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'hands running through hair, chest forward, provocative stance',expressao:'fiery seductive confidence, challenging look',
+    pose:'hands running through hair, chest forward, provocative stance',expressao:'candid confident look, slight challenge',
     cenario:'dark moody studio, spotlight, music video aesthetic',film:'Ilford Delta 3200, high contrast dramatic B&W'},
   {key:'ling_white_lace_wedding',cat:'lingerie',level:'sensual',icon:'🤍',name:'Lingerie Noiva',desc:'Lingerie branca de noiva, renda, véu, romantismo puro',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2816,7 +2814,7 @@ const PRESETS_RAW = [
     cenario:'rainy window, urban cityscape below, soft curtains, moody interior',film:'Fuji Pro 400H, cool moody rain tones'},
   {key:'bou_champagne_toast',cat:'boudoir',level:'sensual',icon:'🥂',name:'Brinde de Champanhe',desc:'Champanhe, lingerie, noite especial, celebração sensual',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'raising champagne glass in toast, eyes meeting camera seductively',expressao:'celebratory seductive confidence, new year or victory toast',
+    pose:'raising champagne glass in toast, eyes meeting camera seductively',expressao:'genuine happy smile, celebratory moment',
     cenario:'luxury penthouse bedroom, city lights, midnight, celebration',film:'Kodak Portra 800, night luxury golden'},
   {key:'bou_pet_morning',cat:'boudoir',level:'sfw',icon:'🐈',name:'Manhã com Gatinho',desc:'Acordando com gato, lingerie fofa, manhã preguiçosa',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -2848,7 +2846,7 @@ const PRESETS_RAW = [
   // === FANTASIAS EXTRA ROUND 2 ===
   {key:'fan_vampire',cat:'fantasia',level:'sensual',icon:'🧛',name:'Vampira Sedutora',desc:'Vampira gótica, capa vermelha, castelo, sedução sombria',
     roupa:'black gothic corset dress, red velvet cape, fangs, pale skin, white cotton panties and matching bra underneath',
-    pose:'floating in darkened doorway, cape spread wide, commanding',expressao:'vampire seductive hunger, dark predatory beauty',
+    pose:'floating in darkened doorway, cape spread wide, commanding',expressao:'intense focused gaze, slightly tense',
     cenario:'gothic castle interior, candelabras, stone walls, dramatic shadows',film:'Cinestill 800T, dark gothic red dramatic'},
   {key:'fan_angel',cat:'fantasia',level:'sensual',icon:'👼',name:'Anjo Caído',desc:'Anjo caído, asas brancas sujas, lingerie, pura e suja',
     roupa:'white lingerie, large white angel wings, golden halo slightly tilted, white cotton panties and matching bra underneath',
@@ -2868,7 +2866,7 @@ const PRESETS_RAW = [
     cenario:'vintage theater stage, red velvet curtains, spotlight, 1940s',film:'Kodak Portra 400, warm vintage theater gold'},
   {key:'fan_cop',cat:'fantasia',level:'sensual',icon:'👮',name:'Policial Sedutor',desc:'Policial feminina sexy, uniforme ajustado, dominante',
     roupa:'tight police uniform shirt open, mini skirt, handcuffs, cap, boots, white cotton panties and matching bra underneath',
-    pose:'hands on hips dominant stance, handcuffs displayed, authoritative',expressao:'dominant police authority, you-are-under-arrest look',
+    pose:'hands on hips dominant stance, handcuffs displayed, authoritative',expressao:'focused professional authority look',
     cenario:'police station or dimly lit alley, dramatic side lighting',film:'Ilford HP5, high contrast dramatic noir'},
 
   // === LOCAIS ESPECIAIS EXTRA ROUND 2 ===
@@ -2977,7 +2975,7 @@ const PRESETS_RAW = [
   // === LINGERIE EXTRA ===
   {key:'ling_n01',cat:'lingerie',level:'sensual',icon:'🩱',name:'Body Rendado',desc:'Body de renda transparente, delicado, sensual',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'leaning against wall one leg bent, hands framing waist',expressao:'soft seductive look, lips slightly parted',
+    pose:'leaning against wall one leg bent, hands framing waist',expressao:'soft candid look, lips slightly parted',
     cenario:'dimly lit bedroom, fairy lights behind, warm amber glow',film:'Kodak Ultramax 800, warm amber grain'},
   {key:'ling_n02',cat:'lingerie',level:'sensual',icon:'🎀',name:'Lingerie Vintage',desc:'Lingerie estilo anos 50, pinup, retrô, charmoso',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -3025,7 +3023,7 @@ const PRESETS_RAW = [
     cenario:'tropical garden, hammock between palms, golden afternoon',film:'Fuji Velvia 50, saturated tropical colors'},
   {key:'ling_n13',cat:'lingerie',level:'explicit',icon:'🖤',name:'Strappy Lingerie',desc:'Lingerie com tiras múltiplas, intrincado, geométrico',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'standing arms raised, full body strappy design visible',expressao:'fierce bodycon confidence, strong explicit display',
+    pose:'standing arms raised, full body strappy design visible',expressao:'direct confident gaze, relaxed',
     cenario:'industrial loft, concrete walls, dramatic side lighting',film:'Ilford HP5, high contrast black and white straps'},
   {key:'ling_n14',cat:'lingerie',level:'sensual',icon:'💃',name:'Robe de Seda',desc:'Robe de seda aberto, lingerie por baixo, elegante',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -3045,7 +3043,7 @@ const PRESETS_RAW = [
     cenario:'summer apartment, open window, city sounds, morning light',film:'Kodak Portra 160, fresh summer morning tones'},
   {key:'ling_n18',cat:'lingerie',level:'explicit',icon:'🔞',name:'Latex e Lingerie',desc:'Combinando latex brilhante com lingerie rendada',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'standing dominatrix pose, hand on hip, other hand holding whip',expressao:'dominant explicit power display, commanding gaze',
+    pose:'standing dominatrix pose, hand on hip, other hand holding whip',expressao:'direct stare, in control expression',
     cenario:'dark leather room, mood lighting, explicit adult fetish setting',film:'Cinestill 800T, high contrast latex shine'},
   {key:'ling_n19',cat:'lingerie',level:'sensual',icon:'🎭',name:'Lingerie Mascarada',desc:'Lingerie com máscara veneziana, mistério, fantasia',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
@@ -3317,7 +3315,7 @@ const PRESETS_RAW = [
     cenario:'ancient magical forest, glowing mushrooms light',film:'Fuji Velvia 50, magical forest saturated green'},
   {key:'fan_n04',cat:'fantasia',level:'sensual',icon:'👸',name:'Princesa das Trevas',desc:'Princesa sombria, coroa espinhosa, poder das sombras',
     roupa:'dark queen gown, thorned crown, dramatic dark fantasy, white cotton panties and matching bra underneath',
-    pose:'seated on dark throne, legs crossed, imperious command',expressao:'dark queen authority, cold power, commanding dominance',
+    pose:'seated on dark throne, legs crossed, imperious command',expressao:'cool distant stare, slight chin tilt',
     cenario:'dark castle throne room, ravens, black roses, shadow',film:'Cinestill 800T, gothic darkness dramatic'},
   {key:'fan_n05',cat:'fantasia',level:'sensual',icon:'🦊',name:'Kitsune Japonesa',desc:'Kitsune, raposa japonesa de nove caudas, mistica',
     roupa:'japanese kitsune costume, fox ears, multiple tails, kimono, white cotton panties and matching bra underneath',
@@ -3549,7 +3547,7 @@ const PRESETS_RAW = [
     cenario:'bedroom or kitchen, simple setting, direct camera contact',film:'Kodak Ultramax 800, explicit grain documentary'},
   {key:'exs_back_standing',cat:'explicito_suave',level:'explicit',icon:'🔙',name:'De Costas em Pé',desc:'De costas semi-exposta, detalhes sensuais',
     roupa:'minimal clothing from behind, thong or nothing, bare back explicit',
-    pose:'standing back to camera, arched back, looking over shoulder seductively',expressao:'seductive look back, confident explicit expression, aroused',
+    pose:'standing back to camera, arched back, looking over shoulder seductively',expressao:'candid look back, lips parted, natural',
     cenario:'bedroom or mirror wall, intimate explicit setting, direct exposure',film:'Kodak Ultramax 800, explicit grain'},
   {key:'exs_back_sitting',cat:'explicito_suave',level:'explicit',icon:'🪑',name:'De Costas Sentada',desc:'Sentada de costas, exposição sensual',
     roupa:'minimal or nothing from behind seated, bare back and buttocks, explicit',
@@ -3565,7 +3563,7 @@ const PRESETS_RAW = [
   {key:'sex_n02',cat:'posicoes',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'Sentada de Costas',desc:'Cavalgando de costas, visao das costas, powerful',
     corpo:'powerful riding position from behind viewpoint',roupa:'fully nude riding reverse cowgirl, explicit intercourse',
     nsfw:'reverse cowgirl explicit intercourse adult, back view riding position',
-    expressao:'powerful riding control, dominant woman position pleasure',cenario:'bed, explicit view, power dynamic, intimate',
+    expressao:'focused expression, lips parted, engaged',cenario:'bed, explicit view, power dynamic, intimate',
     pose:'reverse cowgirl riding position, back to partner, control',film:'Kodak Ultramax 800, explicit grain'},
   {key:'sex_n03',cat:'posicoes',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'Missionario Classico',desc:'Posicao classica do missionario, olhar nos olhos',
     corpo:'classic missionary intimate bodies, face to face',roupa:'fully nude missionary position, intimate face to face',
@@ -3707,7 +3705,7 @@ const PRESETS_RAW = [
   {key:'ext_n08',cat:'extremo',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'Mulher Alfa',desc:'Mulher dominando, parceiro submisso, femdom',
     corpo:'femdom dominant woman, submissive male partner, explicit',roupa:'leather femdom outfit or nude, dominant position explicit',
     nsfw:'femdom dominant explicit adult, woman on top controlling male',
-    expressao:'femdom supreme authority, dominant woman pleasure command',cenario:'bedroom or dungeon, femdom scene, dominant woman explicit',
+    expressao:'controlled confident expression, focused',cenario:'bedroom or dungeon, femdom scene, dominant woman explicit',
     pose:'femdom dominant position, controlling submissive partner',film:'Cinestill 800T, femdom dramatic explicit grain'},
   {key:'ext_n09',cat:'extremo',level:'explicit',partner:'with a young man, male partner, regular build, explicit intercourse',icon:'🔞',name:'Squirting',desc:'Squirting, orgasmo intenso, jato, extremo adulto',
     corpo:'squirting orgasm, female ejaculation, extreme pleasure',roupa:'nude squirting orgasm, extreme pleasure female ejaculation',
@@ -4045,7 +4043,7 @@ const PRESETS_RAW = [
     cenario:'ancient forest, shafts of green light, ferns, magical atmosphere',film:'Kodak Ektar 100'},
   {key:'fan_vampira_moderna',cat:'fantasia',level:'sensual',icon:'🧛',name:'Vampira moderna',desc:'Vampira contemporânea em apartamento antigo',
     corpo:'natural body, real skin texture, everyday woman',roupa:'black lace dress, bare shoulders, antique jewelry, white cotton panties and matching bra underneath',
-    pose:'draped over old armchair, one arm over backrest, head tilted, exposing neck',expressao:'vampire seductive dark gaze',
+    pose:'draped over old armchair, one arm over backrest, head tilted, exposing neck',expressao:'intense dark gaze, slightly furrowed brow',
     cenario:'old apartment, dark wood, candles, gothic furniture, night',film:'Cinestill 800T'},
   {key:'fan_femme_fatale_noir',cat:'fantasia',level:'sensual',icon:'🎬',name:'Femme fatale noir',desc:'Femme fatale estilo cinema noir',
     corpo:'natural body, real skin texture, everyday woman',roupa:'black evening dress, long gloves, heels, white cotton panties and matching bra underneath',
@@ -4706,7 +4704,7 @@ const PRESETS_RAW = [
   {key:'mol_ombro',cat:'casual',level:'sensual',icon:'👕',name:'Moletom Olhar Ombro',desc:'Moletom justo olhando sobre o ombro',
     corpo:'natural body, real skin texture, everyday woman',
     roupa:'wearing white cotton panties and matching bra, simple everyday underwear',
-    pose:'standing, looking back over shoulder seductively, hoodie hem just below buttocks',expressao:'seductive glance over shoulder',
+    pose:'standing, looking back over shoulder seductively, hoodie hem just below buttocks',expressao:'candid glance over shoulder, relaxed',
     cenario:'bedroom, warm morning light, wooden floor',film:'Kodak Ultramax 800'},
 
   // ── PIJAMA CURTO ──
