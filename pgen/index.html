@@ -5306,9 +5306,18 @@ function applyEdits(silent){
   if(!p) return;
   const overridePose = document.getElementById('edit-pose').value.trim();
   const overrideCam  = document.getElementById('edit-cam').value.trim();
+
+  // POV baixo extremo: inject explicit upshot content automatically
+  const isPovExtremo = /upshot|vulva|floor.*between|between.*legs.*floor/i.test(overrideCam);
+  const povInject = isPovExtremo ? {
+    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside or nude from waist down, extreme close angle of genitals from below',
+    roupa: 'panties pulled aside, nude from waist down, top still on'
+  } : {};
+
   const merged = Object.assign({}, p,
     overridePose ? {pose: overridePose} : {},
-    overrideCam  ? {cam:  overrideCam}  : {}
+    overrideCam  ? {cam:  overrideCam}  : {},
+    povInject
   );
   // Preserve current seed
   const curVal = document.getElementById('result-prompt').value;
