@@ -471,12 +471,51 @@ header{
           <button class="qpick" data-group="style" data-val="Polaroid instant photo, square crop, faded colors, slight blur, vintage instant film grain, overexposed center">Polaroid</button>
         </div>
 
+        <!-- Luz row -->
+        <div class="qrow">
+          <span class="qlabel">💡</span>
+          <button class="qpick active" data-group="luz2" data-val="">Padrão</button>
+          <button class="qpick" data-group="luz2" data-val="golden hour light, warm amber sunlight, long shadows, late afternoon sun raking through window">Golden hour</button>
+          <button class="qpick" data-group="luz2" data-val="dim available light, dark room, barely lit, low exposure, deep shadows, single weak light source">Luz baixa</button>
+          <button class="qpick" data-group="luz2" data-val="candlelight only, warm flickering orange glow, deep shadows, intimate moody lighting, no artificial light">Vela</button>
+          <button class="qpick" data-group="luz2" data-val="natural window light from side, soft diffused daylight, no artificial source, indoor natural light">Janela</button>
+          <button class="qpick" data-group="luz2" data-val="harsh direct camera flash, blown out highlights, red-eye, deep flat shadows behind subject, party photo look">Flash</button>
+          <button class="qpick" data-group="luz2" data-val="neon sign light, purple and pink color cast, urban night, neon glow on skin, wet reflective floor">Neon</button>
+          <button class="qpick" data-group="luz2" data-val="UV blacklight, fluorescent glow on white fabric, dark room, glowing highlights, black light party">Blacklight</button>
+        </div>
+
+        <!-- Expressão row -->
+        <div class="qrow">
+          <span class="qlabel">😮</span>
+          <button class="qpick active" data-group="expressao2" data-val="">Padrão</button>
+          <button class="qpick" data-group="expressao2" data-val="neutral blank expression, relaxed face, natural resting look, no smile, unposed candid face">Neutra</button>
+          <button class="qpick" data-group="expressao2" data-val="provocative smoldering gaze, half-lidded eyes staring directly into camera, lips slightly parted, intense look">Provocante</button>
+          <button class="qpick" data-group="expressao2" data-val="biting lower lip, teeth grazing lip, seductive expression, eyes slightly downcast">Mordendo lábio</button>
+          <button class="qpick" data-group="expressao2" data-val="expression of pleasure, eyes slightly rolled back, mouth open, breathless look, flushed cheeks">Prazer</button>
+          <button class="qpick" data-group="expressao2" data-val="surprised open mouth expression, wide eyes, caught off guard, candid shocked look">Surpresa</button>
+          <button class="qpick" data-group="expressao2" data-val="vacant empty stare, unfocused gaze, dreamy distant expression, detached look, thousand yard stare">Olhar vazio</button>
+        </div>
+
+        <!-- Estado row -->
+        <div class="qrow">
+          <span class="qlabel">🌡️</span>
+          <button class="qpick active" data-group="estado" data-val="">Padrão</button>
+          <button class="qpick" data-group="estado" data-val="sweaty glistening skin, visible sweat droplets, damp hair sticking to skin, sweat beads on chest and neck">Suada</button>
+          <button class="qpick" data-group="estado" data-val="wet skin, dripping water on body, soaked hair, water droplets running down skin, wet fabric clinging to body">Molhada</button>
+          <button class="qpick" data-group="estado" data-val="post-workout flushed skin, red cheeks, messy hair, slight sweat, tired expression, active wear disheveled">Pós-treino</button>
+          <button class="qpick" data-group="estado" data-val="tan lines visible, bronze sun-kissed skin, uneven tan, slight redness on shoulders, beach tan marks">Bronzeada</button>
+          <button class="qpick" data-group="estado" data-val="goosebumps on arms and thighs, cold skin, hardened nipples visible under fabric, shivering slightly, pale cold complexion">Arrepiada</button>
+        </div>
+
         <!-- hidden inputs for JS compatibility -->
         <input type="hidden" id="edit-pose" value="">
         <input type="hidden" id="edit-cam" value="">
         <input type="hidden" id="edit-style" value="">
         <input type="hidden" id="edit-luz" value="">
         <input type="hidden" id="edit-filmstock" value="Kodak Ultramax 800, ISO 800, chunky warm grain">
+        <input type="hidden" id="edit-luz2" value="">
+        <input type="hidden" id="edit-expressao2" value="">
+        <input type="hidden" id="edit-estado" value="">
 
         <!-- Prompt -->
         <div style="padding:0 14px 6px">
@@ -526,12 +565,18 @@ function buildBlondePrompt(p, seedOverride){
     ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 19 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
     : 'woman, 19 years old, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model';
 
-  const filmOverride  = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
+  const filmOverride      = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
     ? document.getElementById('edit-filmstock').value.trim() : '';
-  const styleOverride = (typeof document !== 'undefined' && document.getElementById('edit-style'))
+  const styleOverride     = (typeof document !== 'undefined' && document.getElementById('edit-style'))
     ? document.getElementById('edit-style').value.trim() : '';
-  const luzOverride   = (typeof document !== 'undefined' && document.getElementById('edit-luz'))
+  const luzOverride       = (typeof document !== 'undefined' && document.getElementById('edit-luz'))
     ? document.getElementById('edit-luz').value.trim() : '';
+  const luz2Override      = (typeof document !== 'undefined' && document.getElementById('edit-luz2'))
+    ? document.getElementById('edit-luz2').value.trim() : '';
+  const expressao2Override= (typeof document !== 'undefined' && document.getElementById('edit-expressao2'))
+    ? document.getElementById('edit-expressao2').value.trim() : '';
+  const estadoOverride    = (typeof document !== 'undefined' && document.getElementById('edit-estado'))
+    ? document.getElementById('edit-estado').value.trim() : '';
 
   const film = filmOverride || p.film || 'Kodak Ultramax 800';
   const isMonochrome = /ilford|black and white|monochrome/i.test(film);
@@ -551,8 +596,10 @@ function buildBlondePrompt(p, seedOverride){
   // 4. Fotógrafo documentário
   desc.push('Nan Goldin, Larry Clark, Juergen Teller');
 
-  if(styleOverride) desc.push(styleOverride);
-  if(luzOverride)   desc.push(luzOverride);
+  if(styleOverride)      desc.push(styleOverride);
+  if(luzOverride)        desc.push(luzOverride);
+  if(luz2Override)       desc.push(luz2Override);
+  if(estadoOverride)     desc.push(estadoOverride);
 
   // 5. Corpo + roupa + nsfw do preset
   if(p.partner) desc.push(p.partner);
@@ -563,7 +610,8 @@ function buildBlondePrompt(p, seedOverride){
   if(p.nsfw)      desc.push(p.nsfw);
   if(p.pose)      desc.push(p.pose);
   if(p.cam)       desc.push(p.cam);
-  if(p.expressao) desc.push(p.expressao);
+  if(expressao2Override) desc.push(expressao2Override);
+  else if(p.expressao)  desc.push(p.expressao);
 
   // 6. Cenário — real e específico
   if(p.cenario) {
@@ -7066,7 +7114,7 @@ function reiniciarTudo(){
     b.classList.toggle('active', b.dataset.val==='');
   });
   // Limpa campos ocultos
-  ['edit-pose','edit-cam','edit-style','edit-luz','edit-filmstock'].forEach(id=>{
+  ['edit-pose','edit-cam','edit-style','edit-luz','edit-filmstock','edit-luz2','edit-expressao2','edit-estado'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value = id==='edit-filmstock' ? 'Kodak Ultramax 800' : '';
   });
