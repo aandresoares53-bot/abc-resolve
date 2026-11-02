@@ -1,120 +1,121 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const AMADEUS_API_KEY = process.env.AMADEUS_API_KEY || '';
-const AMADEUS_API_SECRET = process.env.AMADEUS_API_SECRET || '';
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
 
-const CITY_CODES: Record<string, string> = {
-  'são paulo': 'SAO', 'sao paulo': 'SAO', 'sp': 'SAO',
-  'rio de janeiro': 'RIO', 'rio': 'RIO', 'rj': 'RIO',
-  'salvador': 'SSA', 'ba': 'SSA',
-  'fortaleza': 'FOR', 'ce': 'FOR',
-  'recife': 'REC', 'pe': 'REC',
-  'belo horizonte': 'BHZ', 'bh': 'BHZ', 'mg': 'BHZ',
-  'porto alegre': 'POA', 'rs': 'POA',
-  'curitiba': 'CWB', 'pr': 'CWB',
-  'manaus': 'MAO', 'am': 'MAO',
-  'belém': 'BEL', 'belem': 'BEL', 'pa': 'BEL',
-  'florianópolis': 'FLN', 'florianopolis': 'FLN', 'sc': 'FLN',
-  'natal': 'NAT', 'rn': 'NAT',
-  'maceió': 'MCZ', 'maceio': 'MCZ', 'al': 'MCZ',
-  'goiânia': 'GYN', 'goiania': 'GYN', 'go': 'GYN',
-  'campo grande': 'CGR', 'ms': 'CGR',
-  'cuiabá': 'CGB', 'cuiaba': 'CGB', 'mt': 'CGB',
-  'porto seguro': 'BPS',
-  'foz do iguaçu': 'IGU', 'foz do iguacu': 'IGU', 'foz': 'IGU',
-  'gramado': 'GRP',
-  'brasília': 'BSB', 'brasilia': 'BSB', 'df': 'BSB',
-  'vitória': 'VIX', 'vitoria': 'VIX', 'es': 'VIX',
-  'joão pessoa': 'JPA', 'joao pessoa': 'JPA', 'pb': 'JPA',
-  'aracaju': 'AJU', 'se': 'AJU',
-  'teresina': 'THE', 'pi': 'THE',
-  'são luís': 'SLZ', 'sao luis': 'SLZ', 'ma': 'SLZ',
-  'macapá': 'MCP', 'macapa': 'MCP', 'ap': 'MCP',
-  'boa vista': 'BVB', 'rr': 'BVB',
-  'rio branco': 'RBR', 'ac': 'RBR',
-  'porto velho': 'PVH', 'ro': 'PVH',
-  'palmas': 'PMW', 'to': 'PMW',
-};
-
-async function getAmadeusToken(): Promise<string> {
-  const res = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: AMADEUS_API_KEY,
-      client_secret: AMADEUS_API_SECRET,
-    }),
+function buildBookingUrl(city: string, checkIn: string, checkOut: string, adults: number, rooms: number) {
+  const params = new URLSearchParams({
+    ss: city,
+    checkin: checkIn,
+    checkout: checkOut,
+    group_adults: String(adults),
+    no_rooms: String(rooms),
+    lang: 'pt-br',
+    selected_currency: 'BRL',
   });
-  const data = await res.json();
-  return data.access_token;
+  return `https://www.booking.com/searchresults.pt-br.html?${params.toString()}`;
 }
 
-function detectCity(query: string): string {
-  const lower = query.toLowerCase();
-  for (const [name, code] of Object.entries(CITY_CODES)) {
-    if (lower.includes(name)) return code;
-  }
-  return 'RIO'; // default
+function buildHotelBookingUrl(hotelName: string, city: string, checkIn: string, checkOut: string, adults: number) {
+  const params = new URLSearchParams({
+    ss: `${hotelName} ${city}`,
+    checkin: checkIn,
+    checkout: checkOut,
+    group_adults: String(adults),
+    lang: 'pt-br',
+    selected_currency: 'BRL',
+  });
+  return `https://www.booking.com/searchresults.pt-br.html?${params.toString()}`;
 }
 
 export async function POST(req: NextRequest) {
   try {
     const { query, checkIn, checkOut, adults = 2, rooms = 1 } = await req.json();
 
-    if (!AMADEUS_API_KEY) {
-      return NextResponse.json({ error: 'AMADEUS_API_KEY não configurada' }, { status: 500 });
+    if (!ANTHROPIC_API_KEY) {
+      return NextResponse.json({ error: 'ANTHROPIC_API_KEY não configurada' }, { status: 500 });
     }
 
-    const cityCode = detectCity(query || '');
-    const token = await getAmadeusToken();
-
-    // Step 1: get hotel list for city
-    const hotelsRes = await fetch(
-      `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}&radius=20&radiusUnit=KM&hotelSource=ALL`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    const hotelsData = await hotelsRes.json();
-    const hotelIds: string[] = (hotelsData.data || []).slice(0, 20).map((h: {hotelId: string}) => h.hotelId);
-
-    if (!hotelIds.length) {
-      return NextResponse.json({ hotels: [], city: cityCode, query });
-    }
-
-    // Step 2: get prices for those hotels
     const today = new Date();
     const defaultCheckIn = checkIn || new Date(today.getTime() + 7 * 86400000).toISOString().split('T')[0];
     const defaultCheckOut = checkOut || new Date(today.getTime() + 9 * 86400000).toISOString().split('T')[0];
 
-    const offersRes = await fetch(
-      `https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=${hotelIds.join(',')}&checkInDate=${defaultCheckIn}&checkOutDate=${defaultCheckOut}&adults=${adults}&roomQuantity=${rooms}&currency=BRL&bestRateOnly=true`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    const offersData = await offersRes.json();
+    const systemPrompt = `Você é um especialista em turismo brasileiro e retorna recomendações de hotéis e pousadas reais no Brasil.
 
-    const hotels = (offersData.data || []).map((item: {
-      hotel: { hotelId: string; name: string; rating?: string; address?: { cityName?: string; stateCode?: string }; amenities?: string[] };
-      offers: Array<{ price: { total: string; currency: string }; room?: { typeEstimated?: { category?: string } }; policies?: { cancellations?: Array<{ type?: string }> } }>;
-    }) => {
-      const offer = item.offers?.[0];
-      return {
-        id: item.hotel.hotelId,
-        name: item.hotel.name,
-        rating: item.hotel.rating || null,
-        city: item.hotel.address?.cityName || cityCode,
-        state: item.hotel.address?.stateCode || '',
-        price: offer?.price?.total ? parseFloat(offer.price.total) : null,
-        currency: offer?.price?.currency || 'BRL',
-        roomType: offer?.room?.typeEstimated?.category || 'Standard',
-        freeCancellation: offer?.policies?.cancellations?.some((c) => c.type === 'FULL_STAY') || false,
-        amenities: item.hotel.amenities?.slice(0, 6) || [],
-        checkIn: defaultCheckIn,
-        checkOut: defaultCheckOut,
-      };
-    }).filter((h: {price: number | null}) => h.price !== null)
-      .sort((a: {price: number}, b: {price: number}) => a.price - b.price);
+Quando receber uma busca, retorne EXATAMENTE um JSON válido com este formato (sem markdown, sem explicações, apenas o JSON):
 
-    return NextResponse.json({ hotels, city: cityCode, query, checkIn: defaultCheckIn, checkOut: defaultCheckOut });
+{
+  "city": "Nome da cidade principal detectada",
+  "hotels": [
+    {
+      "name": "Nome real do hotel/pousada",
+      "neighborhood": "Bairro ou localização",
+      "stars": 4,
+      "priceRange": "R$ 250-400/noite",
+      "description": "Descrição curta e real do estabelecimento (1-2 frases)",
+      "highlights": ["Wi-Fi grátis", "Piscina", "Café da manhã incluso"],
+      "type": "hotel"
+    }
+  ]
+}
+
+Regras:
+- Retorne 6 a 8 opções variadas (diferentes bairros, faixas de preço, tipos)
+- Use nomes REAIS e conhecidos de hotéis e pousadas brasileiras
+- Cubra diferentes faixas de preço: econômico, intermediário, luxo
+- "type" pode ser: hotel, pousada, resort, hostel
+- "stars" de 1 a 5
+- Considere a data (${defaultCheckIn} a ${defaultCheckOut}) para sugerir locais relevantes (praia no verão, serra no inverno, etc.)
+- Para ${adults} adulto(s)
+- Preços em BRL, estimativa realista para a temporada`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: query }],
+      }),
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '{}';
+
+    let parsed: { city?: string; hotels?: Array<{
+      name: string;
+      neighborhood: string;
+      stars: number;
+      priceRange: string;
+      description: string;
+      highlights: string[];
+      type: string;
+    }> } = {};
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      const match = text.match(/\{[\s\S]*\}/);
+      if (match) parsed = JSON.parse(match[0]);
+    }
+
+    const city = parsed.city || query;
+    const hotels = (parsed.hotels || []).map((h) => ({
+      ...h,
+      bookingUrl: buildHotelBookingUrl(h.name, city, defaultCheckIn, defaultCheckOut, adults),
+    }));
+
+    return NextResponse.json({
+      hotels,
+      city,
+      query,
+      checkIn: defaultCheckIn,
+      checkOut: defaultCheckOut,
+      allResultsUrl: buildBookingUrl(city, defaultCheckIn, defaultCheckOut, adults, rooms),
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: 'Erro ao buscar hotéis' }, { status: 500 });

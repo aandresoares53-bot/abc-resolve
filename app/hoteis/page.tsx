@@ -1,102 +1,109 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
 
-type Hotel = {
-  id: string;
+import { useState } from 'react';
+
+interface Hotel {
   name: string;
-  rating: string | null;
+  neighborhood: string;
+  stars: number;
+  priceRange: string;
+  description: string;
+  highlights: string[];
+  type: string;
+  bookingUrl: string;
+}
+
+interface SearchResult {
+  hotels: Hotel[];
   city: string;
-  state: string;
-  price: number;
-  currency: string;
-  roomType: string;
-  freeCancellation: boolean;
-  amenities: string[];
+  query: string;
   checkIn: string;
   checkOut: string;
-};
+  allResultsUrl: string;
+}
 
-type ChatMessage = { role: 'user' | 'assistant'; text: string };
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
-const SEASONAL = [
-  { label: '🎆 Réveillon', query: 'Rio de Janeiro Réveillon', checkIn: '2025-12-29', checkOut: '2026-01-02' },
-  { label: '🎭 Carnaval', query: 'Salvador Carnaval', checkIn: '2026-02-28', checkOut: '2026-03-05' },
-  { label: '🌊 Verão Nordeste', query: 'Fortaleza praia', checkIn: '', checkOut: '' },
-  { label: '❄️ Inverno Gramado', query: 'Gramado inverno', checkIn: '', checkOut: '' },
-  { label: '🏖️ Férias Julho', query: 'Florianópolis julho', checkIn: '2026-07-05', checkOut: '2026-07-12' },
-  { label: '👨‍👩‍👧 Família SP', query: 'São Paulo família', checkIn: '', checkOut: '' },
+const SHORTCUTS = [
+  { label: '🎆 Réveillon', query: 'hotéis para réveillon na praia', checkIn: '2025-12-30', checkOut: '2026-01-02' },
+  { label: '🎭 Carnaval', query: 'hotéis para carnaval Salvador ou Rio', checkIn: '2026-02-28', checkOut: '2026-03-04' },
+  { label: '☀️ Verão Nordeste', query: 'pousadas na praia no nordeste', checkIn: '', checkOut: '' },
+  { label: '❄️ Gramado Inverno', query: 'hotéis em Gramado no inverno', checkIn: '2025-07-10', checkOut: '2025-07-14' },
+  { label: '🏖️ Férias Julho', query: 'hotéis na praia para família em julho', checkIn: '2025-07-05', checkOut: '2025-07-12' },
+  { label: '🏙️ Família SP', query: 'hotéis em São Paulo para família com crianças', checkIn: '', checkOut: '' },
 ];
 
-const AMENITY_ICONS: Record<string, string> = {
-  SWIMMING_POOL: '🏊', WIFI: '📶', PARKING: '🅿️', RESTAURANT: '🍽️',
-  SPA: '💆', GYM: '🏋️', AIR_CONDITIONING: '❄️', ROOM_SERVICE: '🛎️',
-  BAR: '🍸', BEACH: '🏖️', PETS_ALLOWED: '🐾', BREAKFAST: '☕',
+const TYPE_LABELS: Record<string, string> = {
+  hotel: 'Hotel',
+  pousada: 'Pousada',
+  resort: 'Resort',
+  hostel: 'Hostel',
 };
 
-function Stars({ rating }: { rating: string | null }) {
-  const n = parseInt(rating || '0');
+function StarRating({ stars }: { stars: number }) {
   return (
     <span className="text-yellow-400 text-sm">
-      {'★'.repeat(Math.min(n, 5))}{'☆'.repeat(Math.max(0, 5 - n))}
+      {'★'.repeat(Math.min(5, Math.max(1, stars)))}
+      {'☆'.repeat(Math.max(0, 5 - stars))}
     </span>
   );
 }
 
 function HotelCard({ hotel }: { hotel: Hotel }) {
-  const nights = Math.max(1, Math.round(
-    (new Date(hotel.checkOut).getTime() - new Date(hotel.checkIn).getTime()) / 86400000
-  ));
-  const total = hotel.price * nights;
-
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden">
-      <div className="bg-gradient-to-r from-blue-600 to-teal-500 h-2" />
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <div>
-            <h3 className="font-bold text-gray-800 text-base leading-tight">{hotel.name}</h3>
-            <p className="text-gray-500 text-sm mt-0.5">📍 {hotel.city}{hotel.state ? `, ${hotel.state}` : ''}</p>
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-2xl font-black text-blue-600">R${hotel.price.toFixed(0)}</p>
-            <p className="text-xs text-gray-400">/ noite</p>
-          </div>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h3 className="font-semibold text-gray-900 text-base leading-tight">{hotel.name}</h3>
+          <p className="text-sm text-gray-500 mt-0.5">{hotel.neighborhood}</p>
         </div>
-
-        <div className="flex items-center gap-2 mb-3">
-          <Stars rating={hotel.rating} />
-          <span className="text-xs text-gray-400">{hotel.roomType}</span>
-        </div>
-
-        {hotel.amenities.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            {hotel.amenities.map(a => (
-              <span key={a} className="text-xs bg-gray-100 rounded-full px-2 py-0.5 text-gray-600">
-                {AMENITY_ICONS[a] || '•'} {a.replace(/_/g, ' ').toLowerCase()}
-              </span>
-            ))}
-          </div>
-        )}
-
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <div>
-            {hotel.freeCancellation && (
-              <span className="text-xs text-green-600 font-medium">✓ Cancelamento grátis</span>
-            )}
-            <p className="text-xs text-gray-400 mt-0.5">
-              {nights} noite{nights > 1 ? 's' : ''} · Total R${total.toFixed(0)}
-            </p>
-          </div>
-          <a
-            href={`https://www.booking.com/search.html?ss=${encodeURIComponent(hotel.name + ' ' + hotel.city)}&checkin=${hotel.checkIn}&checkout=${hotel.checkOut}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
-          >
-            Ver oferta →
-          </a>
-        </div>
+        <span className="shrink-0 text-xs bg-blue-50 text-blue-700 font-medium px-2 py-1 rounded-full">
+          {TYPE_LABELS[hotel.type] || hotel.type}
+        </span>
       </div>
+
+      <div className="flex items-center gap-3">
+        <StarRating stars={hotel.stars} />
+        <span className="text-green-700 font-semibold text-sm">{hotel.priceRange}</span>
+      </div>
+
+      <p className="text-sm text-gray-600 leading-relaxed">{hotel.description}</p>
+
+      {hotel.highlights?.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {hotel.highlights.slice(0, 4).map((h) => (
+            <span key={h} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">{h}</span>
+          ))}
+        </div>
+      )}
+
+      <a
+        href={hotel.bookingUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 px-4 rounded-xl transition-colors"
+      >
+        Ver no Booking.com →
+      </a>
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-3 animate-pulse">
+      <div className="h-4 bg-gray-200 rounded w-3/4" />
+      <div className="h-3 bg-gray-200 rounded w-1/2" />
+      <div className="h-3 bg-gray-200 rounded w-1/4" />
+      <div className="h-12 bg-gray-200 rounded" />
+      <div className="flex gap-2">
+        <div className="h-6 bg-gray-200 rounded-full w-20" />
+        <div className="h-6 bg-gray-200 rounded-full w-16" />
+      </div>
+      <div className="h-10 bg-gray-200 rounded-xl mt-auto" />
     </div>
   );
 }
@@ -106,30 +113,21 @@ export default function HoteisPage() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [adults, setAdults] = useState(2);
-  const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<SearchResult | null>(null);
   const [error, setError] = useState('');
-  const [searched, setSearched] = useState(false);
-  const [sortBy, setSortBy] = useState<'price' | 'rating'>('price');
-  const [maxPrice, setMaxPrice] = useState(2000);
-  const [showChat, setShowChat] = useState(false);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', text: 'Olá! 👋 Sou seu assistente de viagens. Me conte o que você está buscando: destino, datas, número de pessoas e orçamento.' }
-  ]);
+
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
 
   async function search(overrideQuery?: string, overrideCheckIn?: string, overrideCheckOut?: string) {
     const q = overrideQuery ?? query;
     if (!q.trim()) return;
     setLoading(true);
     setError('');
-    setSearched(true);
+    setResult(null);
     try {
       const res = await fetch('/api/hoteis/search', {
         method: 'POST',
@@ -142,262 +140,240 @@ export default function HoteisPage() {
         }),
       });
       const data = await res.json();
-      if (data.error) setError(data.error);
-      else setHotels(data.hotels || []);
-    } catch {
-      setError('Erro ao conectar. Verifique sua conexão.');
+      if (data.error) throw new Error(data.error);
+      setResult(data);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Erro ao buscar hotéis');
     } finally {
       setLoading(false);
     }
+  }
+
+  function applyShortcut(s: typeof SHORTCUTS[0]) {
+    setQuery(s.query);
+    if (s.checkIn) setCheckIn(s.checkIn);
+    if (s.checkOut) setCheckOut(s.checkOut);
+    search(s.query, s.checkIn || checkIn, s.checkOut || checkOut);
   }
 
   async function sendChat() {
     if (!chatInput.trim() || chatLoading) return;
     const msg = chatInput.trim();
     setChatInput('');
-    setChatMessages(prev => [...prev, { role: 'user', text: msg }]);
+    const newMessages: ChatMessage[] = [...chatMessages, { role: 'user', content: msg }];
+    setChatMessages(newMessages);
     setChatLoading(true);
-
-    // auto-trigger search if message looks like a search
-    const searchTrigger = /busca|procura|quero|hotel|pousada|viagem|viajar|ir para/i.test(msg);
-    if (searchTrigger && !loading) {
-      setQuery(msg);
-      search(msg);
-    }
-
     try {
       const res = await fetch('/api/hoteis/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg, hotels }),
+        body: JSON.stringify({
+          message: msg,
+          hotels: result?.hotels,
+          context: result ? `Busca atual: "${result.query}" em ${result.city}, ${result.checkIn} a ${result.checkOut}` : '',
+        }),
       });
       const data = await res.json();
-      setChatMessages(prev => [...prev, { role: 'assistant', text: data.reply }]);
+      setChatMessages([...newMessages, { role: 'assistant', content: data.reply }]);
     } catch {
-      setChatMessages(prev => [...prev, { role: 'assistant', text: 'Erro ao conectar com o assistente.' }]);
+      setChatMessages([...newMessages, { role: 'assistant', content: 'Erro ao conectar com o assistente.' }]);
     } finally {
       setChatLoading(false);
     }
   }
 
-  const filtered = hotels
-    .filter(h => h.price <= maxPrice)
-    .sort((a, b) => sortBy === 'price'
-      ? a.price - b.price
-      : (parseInt(b.rating || '0') - parseInt(a.rating || '0'))
-    );
-
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-black text-blue-700">🏨 HotéisIA</h1>
-            <p className="text-xs text-gray-400">Hotéis e pousadas em todo o Brasil</p>
+            <h1 className="text-xl font-bold text-gray-900">🏨 HotéisIA</h1>
+            <p className="text-xs text-gray-500">Busca inteligente de hotéis no Brasil</p>
           </div>
           <button
-            onClick={() => setShowChat(!showChat)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
+            onClick={() => setChatOpen(!chatOpen)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
           >
-            💬 {showChat ? 'Fechar chat' : 'Assistente IA'}
+            🤖 Assistente IA
           </button>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Hero search */}
-        <div className="bg-white rounded-3xl shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-black text-gray-800 mb-1">Encontre o hotel ideal 🇧🇷</h2>
-          <p className="text-gray-500 text-sm mb-5">Busca inteligente em hotéis e pousadas por todo o Brasil</p>
-
-          <div className="flex flex-col gap-3">
-            <input
-              type="text"
+      <main className="max-w-5xl mx-auto px-4 py-8 flex gap-6">
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+          {/* Search box */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+            <textarea
               value={query}
-              onChange={e => setQuery(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && search()}
-              placeholder="Ex: praia em Fortaleza para família, pousada em Gramado..."
-              className="w-full border-2 border-gray-200 focus:border-blue-500 rounded-2xl px-5 py-4 text-base outline-none transition-colors"
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); search(); } }}
+              placeholder="Ex: pousada na praia de Morro de São Paulo para 2 pessoas em fevereiro..."
+              className="w-full resize-none border border-gray-200 rounded-xl p-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-300 min-h-[72px]"
             />
-            <div className="flex flex-wrap gap-3">
-              <div className="flex flex-col gap-1 flex-1 min-w-[130px]">
+
+            <div className="flex flex-wrap gap-3 mt-3">
+              <div className="flex flex-col gap-1">
                 <label className="text-xs text-gray-500 font-medium">Check-in</label>
-                <input type="date" value={checkIn} min={today} onChange={e => setCheckIn(e.target.value)}
-                  className="border-2 border-gray-200 focus:border-blue-500 rounded-xl px-3 py-2.5 text-sm outline-none" />
-              </div>
-              <div className="flex flex-col gap-1 flex-1 min-w-[130px]">
-                <label className="text-xs text-gray-500 font-medium">Check-out</label>
-                <input type="date" value={checkOut} min={checkIn || today} onChange={e => setCheckOut(e.target.value)}
-                  className="border-2 border-gray-200 focus:border-blue-500 rounded-xl px-3 py-2.5 text-sm outline-none" />
+                <input
+                  type="date"
+                  value={checkIn}
+                  min={today}
+                  onChange={(e) => setCheckIn(e.target.value)}
+                  className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-500 font-medium">Hóspedes</label>
-                <select value={adults} onChange={e => setAdults(parseInt(e.target.value))}
-                  className="border-2 border-gray-200 focus:border-blue-500 rounded-xl px-3 py-2.5 text-sm outline-none bg-white">
-                  {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} adulto{n > 1 ? 's' : ''}</option>)}
+                <label className="text-xs text-gray-500 font-medium">Check-out</label>
+                <input
+                  type="date"
+                  value={checkOut}
+                  min={checkIn || today}
+                  onChange={(e) => setCheckOut(e.target.value)}
+                  className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-500 font-medium">Adultos</label>
+                <select
+                  value={adults}
+                  onChange={(e) => setAdults(Number(e.target.value))}
+                  className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
+                  {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} {n === 1 ? 'adulto' : 'adultos'}</option>)}
                 </select>
               </div>
-              <div className="flex items-end">
-                <button
-                  onClick={() => search()}
-                  disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-bold px-8 py-2.5 rounded-xl transition-colors text-sm"
-                >
-                  {loading ? '⏳ Buscando...' : '🔍 Buscar'}
-                </button>
-              </div>
+              <button
+                onClick={() => search()}
+                disabled={loading || !query.trim()}
+                className="mt-auto bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium px-6 py-2 rounded-xl text-sm transition-colors"
+              >
+                {loading ? 'Buscando...' : 'Buscar'}
+              </button>
             </div>
           </div>
-        </div>
 
-        {/* Seasonal shortcuts */}
-        <div className="mb-6">
-          <p className="text-sm font-semibold text-gray-500 mb-3">🗓️ Pacotes sazonais populares</p>
-          <div className="flex flex-wrap gap-2">
-            {SEASONAL.map(s => (
+          {/* Shortcuts */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {SHORTCUTS.map((s) => (
               <button
                 key={s.label}
-                onClick={() => { setQuery(s.query); if(s.checkIn) setCheckIn(s.checkIn); if(s.checkOut) setCheckOut(s.checkOut); search(s.query, s.checkIn, s.checkOut); }}
-                className="bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-400 text-gray-700 text-sm px-4 py-2 rounded-full transition-colors font-medium"
+                onClick={() => applyShortcut(s)}
+                className="text-sm bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 text-gray-700 px-3 py-1.5 rounded-full transition-colors"
               >
                 {s.label}
               </button>
             ))}
           </div>
-        </div>
 
-        <div className="flex gap-6">
+          {/* Error */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-6">{error}</div>
+          )}
+
+          {/* Loading skeletons */}
+          {loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+          )}
+
           {/* Results */}
-          <div className="flex-1">
-            {searched && !loading && (
+          {result && !loading && (
+            <>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-gray-600">
-                  {filtered.length > 0
-                    ? `${filtered.length} hotel${filtered.length > 1 ? 's' : ''} encontrado${filtered.length > 1 ? 's' : ''}`
-                    : 'Nenhum hotel encontrado'}
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <label className="text-xs text-gray-500">Até R$</label>
-                    <input type="number" value={maxPrice} onChange={e => setMaxPrice(Number(e.target.value))}
-                      className="border border-gray-200 rounded-lg px-2 py-1 text-sm w-24 outline-none" />
-                  </div>
-                  <select value={sortBy} onChange={e => setSortBy(e.target.value as 'price' | 'rating')}
-                    className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white outline-none">
-                    <option value="price">Menor preço</option>
-                    <option value="rating">Melhor avaliação</option>
-                  </select>
+                <div>
+                  <h2 className="font-semibold text-gray-800">
+                    {result.hotels.length} opções em <span className="text-blue-600">{result.city}</span>
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {result.checkIn} → {result.checkOut} · {adults} {adults === 1 ? 'adulto' : 'adultos'}
+                  </p>
                 </div>
+                <a
+                  href={result.allResultsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Ver todos no Booking.com →
+                </a>
               </div>
-            )}
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4 text-red-700 text-sm">
-                ⚠️ {error}
-              </div>
-            )}
-
-            {loading && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl shadow-md p-5 animate-pulse">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-3" />
-                    <div className="h-3 bg-gray-100 rounded w-1/2 mb-4" />
-                    <div className="h-8 bg-gray-200 rounded w-1/3 mb-4" />
-                    <div className="flex gap-2">
-                      <div className="h-6 bg-gray-100 rounded-full w-16" />
-                      <div className="h-6 bg-gray-100 rounded-full w-20" />
-                    </div>
-                  </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {result.hotels.map((hotel, i) => (
+                  <HotelCard key={i} hotel={hotel} />
                 ))}
               </div>
-            )}
+            </>
+          )}
 
-            {!loading && filtered.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filtered.map(hotel => <HotelCard key={hotel.id} hotel={hotel} />)}
-              </div>
-            )}
-
-            {!loading && searched && filtered.length === 0 && !error && (
-              <div className="text-center py-16 text-gray-400">
-                <p className="text-5xl mb-4">🏨</p>
-                <p className="text-lg font-semibold text-gray-500">Nenhum hotel disponível para este destino</p>
-                <p className="text-sm mt-2">Tente outro destino ou ajuste as datas</p>
-              </div>
-            )}
-
-            {!searched && (
-              <div className="text-center py-20 text-gray-300">
-                <p className="text-6xl mb-4">🇧🇷</p>
-                <p className="text-xl font-bold text-gray-400">Busque hotéis em qualquer cidade do Brasil</p>
-                <p className="text-sm text-gray-300 mt-2">Preços reais · Comparação instantânea · IA integrada</p>
-              </div>
-            )}
-          </div>
-
-          {/* Chat panel */}
-          {showChat && (
-            <div className="w-80 shrink-0">
-              <div className="bg-white rounded-3xl shadow-lg flex flex-col h-[600px] sticky top-24">
-                <div className="p-4 border-b border-gray-100">
-                  <p className="font-bold text-gray-800">💬 Assistente de Viagens</p>
-                  <p className="text-xs text-gray-400">Powered by Claude AI</p>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-                  {chatMessages.map((m, i) => (
-                    <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                        m.role === 'user'
-                          ? 'bg-blue-600 text-white rounded-br-none'
-                          : 'bg-gray-100 text-gray-700 rounded-bl-none'
-                      }`}>
-                        {m.text}
-                      </div>
-                    </div>
-                  ))}
-                  {chatLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-gray-100 rounded-2xl rounded-bl-none px-4 py-3">
-                        <div className="flex gap-1">
-                          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay:'0ms'}} />
-                          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay:'150ms'}} />
-                          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay:'300ms'}} />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div ref={chatEndRef} />
-                </div>
-                <div className="p-3 border-t border-gray-100 flex gap-2">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={e => setChatInput(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && sendChat()}
-                    placeholder="Pergunte algo..."
-                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400"
-                  />
-                  <button
-                    onClick={sendChat}
-                    disabled={chatLoading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl px-3 py-2 text-sm transition-colors"
-                  >
-                    ➤
-                  </button>
-                </div>
-              </div>
+          {/* Empty state */}
+          {!result && !loading && !error && (
+            <div className="text-center py-16 text-gray-400">
+              <div className="text-5xl mb-4">🏨</div>
+              <p className="text-lg font-medium text-gray-500">Encontre o hotel ideal no Brasil</p>
+              <p className="text-sm mt-1">Descreva sua viagem em linguagem natural ou use um atalho acima</p>
             </div>
           )}
         </div>
-      </div>
 
-      <footer className="text-center py-8 text-xs text-gray-300 mt-8">
-        HotéisIA · Dados via Amadeus · IA via Anthropic Claude · 🇧🇷 Todo o Brasil
-      </footer>
+        {/* Chat panel */}
+        {chatOpen && (
+          <div className="w-80 shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[600px] sticky top-24">
+            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-sm text-gray-800">🤖 Assistente IA</p>
+                <p className="text-xs text-gray-400">Dúvidas sobre destinos e hotéis</p>
+              </div>
+              <button onClick={() => setChatOpen(false)} className="text-gray-400 hover:text-gray-600 text-lg">✕</button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+              {chatMessages.length === 0 && (
+                <div className="text-center text-gray-400 text-sm mt-8">
+                  <div className="text-3xl mb-2">💬</div>
+                  <p>Pergunte sobre destinos, melhores épocas, dicas de viagem...</p>
+                </div>
+              )}
+              {chatMessages.map((m, i) => (
+                <div key={i} className={`text-sm px-3 py-2 rounded-xl max-w-[95%] leading-relaxed whitespace-pre-wrap ${
+                  m.role === 'user'
+                    ? 'bg-blue-600 text-white self-end'
+                    : 'bg-gray-100 text-gray-800 self-start'
+                }`}>
+                  {m.content}
+                </div>
+              ))}
+              {chatLoading && (
+                <div className="bg-gray-100 text-gray-500 text-sm px-3 py-2 rounded-xl self-start animate-pulse">
+                  Digitando...
+                </div>
+              )}
+            </div>
+
+            <div className="p-3 border-t border-gray-100 flex gap-2">
+              <input
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') sendChat(); }}
+                placeholder="Faça uma pergunta..."
+                className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+              <button
+                onClick={sendChat}
+                disabled={chatLoading || !chatInput.trim()}
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-3 py-2 rounded-xl text-sm transition-colors"
+              >
+                →
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
