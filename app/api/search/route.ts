@@ -29,7 +29,6 @@ function scoreHotel(hotel: Hotel, query: string, filters: {
     if (hotel.amenities.some(a => normalizeText(a).includes(w))) score += 2;
   }
 
-  // Filter scoring
   if (filters.region && filters.region !== "Todos") {
     if (hotel.region === filters.region) score += 15;
     else score -= 20;
@@ -69,7 +68,6 @@ function scoreHotel(hotel: Hotel, query: string, filters: {
     if (hotel.type === filters.type) score += 8;
   }
 
-  // Quality boost
   score += hotel.rating * 2;
   if (hotel.featured) score += 5;
   if (hotel.discount) score += hotel.discount / 10;
@@ -77,19 +75,19 @@ function scoreHotel(hotel: Hotel, query: string, filters: {
   return score;
 }
 
-// Detect if any word in the query matches a city (or alias that represents a city)
 function detectCityInQuery(query: string): string | null {
   const words = normalizeText(query).split(/\s+/).filter(Boolean);
-  // Build a list of all unique cities
-  const cities = [...new Set(hotelsData.map(h => h.city))];
+  const citySet: Record<string, boolean> = {};
+  hotelsData.forEach(h => { citySet[h.city] = true; });
+  const cities = Object.keys(citySet);
+
   for (const city of cities) {
     const normCity = normalizeText(city);
-    // Match if the normalized city contains any word OR any word contains the normalized city
     if (words.some(w => normCity.includes(w) || w.includes(normCity))) {
       return city;
     }
   }
-  // Also check aliases that map to a city
+
   for (const hotel of hotelsData) {
     if (hotel.aliases) {
       for (const alias of hotel.aliases) {
@@ -115,7 +113,6 @@ export async function GET(request: NextRequest) {
 
   const filters = { region, state, seasonal, packageFor, maxPrice, type };
 
-  // If no query and no meaningful filters, return all featured first
   if (!query && region === "Todos" && state === "Todos" && !seasonal && !packageFor) {
     const results = [...hotelsData].sort((a, b) => {
       if (a.featured && !b.featured) return -1;
@@ -130,7 +127,6 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // Detect if query refers to a specific city — if so, hard-filter to that city only
   const detectedCity = query ? detectCityInQuery(query) : null;
 
   let pool = hotelsData;
@@ -145,24 +141,20 @@ export async function GET(request: NextRequest) {
     .sort((a, b) => b.score - a.score)
     .map(({ hotel }) => hotel);
 
-  // If no results after city filter, show all from that city sorted by rating
   if (detectedCity && results.length === 0) {
     results = [...pool].sort((a, b) => b.rating - a.rating);
   }
 
-  // If query returned nothing and no city was detected, suggest top-rated hotels as fallback
   if (!detectedCity && query && results.length === 0) {
     results = [...hotelsData]
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 6);
   }
 
-  // Apply type filter
   if (filters.type && filters.type !== "todos") {
     results = results.filter(h => h.type === filters.type);
   }
 
-  // Simulate AI suggestion
   const aiSuggestion = generateAISuggestion(query, results.length, filters, detectedCity);
 
   return NextResponse.json({
