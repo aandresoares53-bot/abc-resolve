@@ -3648,6 +3648,17 @@ export const hotelsData: Hotel[] = [
     featured: false, seasonal: ["Inverno"], packageFor: ["Aventura", "Cultural"],
     aliases: ["guajara mirim", "guajará-mirim", "rondonia fronteira"], bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Guajar%C3%A1-Mirim+Rond%C3%B4nia&lang=pt-br",
   },
+  {
+    id: "189", name: "Pousada Pedra Branca São Thomé", type: "pousada", city: "São Thomé das Letras", state: "MG", region: "Sudeste",
+    price: 280, discount: 10, rating: 4.7, reviews: 312,
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    tags: ["Misticismo", "Pedras", "Cachoeiras", "Trilhas", "Espiritualidade", "Vale do Matutu"],
+    amenities: ["Wi-Fi", "Café da manhã", "Varanda", "Estacionamento", "Trilhas", "Vista Panorâmica"],
+    description: "Pousada em São Thomé das Letras, cidade mística do sul de Minas Gerais famosa pelas construções de pedra quartzito, cachoeiras encantadoras como Véu de Noiva e Flor de Lis, e energia espiritual única no Vale do Matutu.",
+    featured: true, seasonal: ["Inverno", "Férias de Julho"], packageFor: ["Casal", "Aventura", "Natureza"],
+    aliases: ["sao thome das letras", "são thomé", "sao thome", "thome das letras", "mg mistico", "sul de minas mistica"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=S%C3%A3o+Thom%C3%A9+das+Letras+MG&lang=pt-br",
+  },
 ];
 
 export const regions = ["Todos", "Nordeste", "Sudeste", "Sul", "Centro-Oeste", "Norte"];
