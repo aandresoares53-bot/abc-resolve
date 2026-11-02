@@ -3650,7 +3650,7 @@ export const hotelsData: Hotel[] = [
   },
   {
     id: "189", name: "Pousada Pedra Branca São Thomé", type: "pousada", city: "São Thomé das Letras", state: "MG", region: "Sudeste",
-    price: 280, discount: 10, rating: 4.7, reviews: 312,
+    priceFrom: 220, priceTo: 380, discount: 10, rating: 4.7, reviews: 312,
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
     tags: ["Misticismo", "Pedras", "Cachoeiras", "Trilhas", "Espiritualidade", "Vale do Matutu"],
     amenities: ["Wi-Fi", "Café da manhã", "Varanda", "Estacionamento", "Trilhas", "Vista Panorâmica"],
