@@ -32,3 +32,23 @@ body {
 }
 
 html { scroll-behavior: smooth; }
+
+/* Dark mode */
+[data-theme="dark"] {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+}
+[data-theme="dark"] body { background: #0f172a; color: #f1f5f9; }
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+.fade-in-up-1 { animation-delay: 0.05s; }
+.fade-in-up-2 { animation-delay: 0.1s; }
+.fade-in-up-3 { animation-delay: 0.15s; }
+.fade-in-up-4 { animation-delay: 0.2s; }
+.fade-in-up-5 { animation-delay: 0.25s; }
+.fade-in-up-6 { animation-delay: 0.3s; }

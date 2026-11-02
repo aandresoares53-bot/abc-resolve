@@ -1,8 +1,10 @@
 "use client";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Hotel } from "@/lib/hotels-data";
-import { regions, states, seasonalDates, packageTypes } from "@/lib/hotels-data";
+import { regions, states, seasonalDates, packageTypes, hotelsData } from "@/lib/hotels-data";
 import HotelCard from "./HotelCard";
+
+const allCities = Array.from(new Set(hotelsData.map(h => `${h.city}, ${h.state}`)));
 
 type SearchResult = {
   results: Hotel[];
@@ -35,6 +37,9 @@ export default function SearchSection() {
   const [showFilters, setShowFilters] = useState(false);
   const [showGuests, setShowGuests] = useState(false);
   const [showDates, setShowDates] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const dayAfter = new Date(); dayAfter.setDate(dayAfter.getDate() + 2);
   const [checkIn, setCheckIn] = useState(toInputDate(tomorrow));
@@ -81,8 +86,23 @@ export default function SearchSection() {
   }, [query, region, state, seasonal, packageFor, type, maxPrice]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleSearch();
+    if (e.key === "Enter") { setShowSuggestions(false); handleSearch(); }
   };
+
+  function handleVoice() {
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { alert("Seu navegador não suporta busca por voz."); return; }
+    const recognition = new SR();
+    recognition.lang = "pt-BR";
+    recognition.onstart = () => setListening(true);
+    recognition.onend = () => setListening(false);
+    recognition.onresult = (e: any) => {
+      const transcript = e.results[0][0].transcript;
+      setQuery(transcript);
+      setShowSuggestions(false);
+    };
+    recognition.start();
+  }
 
   const exampleSearches = [
     "Campos do Jordão",
@@ -121,12 +141,45 @@ export default function SearchSection() {
             <input
               type="text"
               value={query}
-              onChange={e => setQuery(e.target.value)}
+              onChange={e => {
+                setQuery(e.target.value);
+                if (e.target.value.length >= 2) {
+                  const q = e.target.value.toLowerCase();
+                  setSuggestions(allCities.filter(c => c.toLowerCase().includes(q)).slice(0, 6));
+                  setShowSuggestions(true);
+                } else {
+                  setShowSuggestions(false);
+                }
+              }}
               onKeyDown={handleKeyDown}
+              onFocus={() => { if (query.length >= 2) setShowSuggestions(true); }}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               placeholder='Ex: "Pousada com piscina em Trancoso"...'
               className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base transition-all"
             />
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                {suggestions.map(s => (
+                  <button
+                    key={s}
+                    onMouseDown={() => { setQuery(s.split(",")[0]); setShowSuggestions(false); }}
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2 border-b border-gray-50 last:border-0"
+                  >
+                    <span className="text-gray-400">📍</span> {s}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+          <button
+            onClick={handleVoice}
+            title={listening ? "Ouvindo..." : "Buscar por voz"}
+            className={`p-4 rounded-2xl border transition-all ${listening ? "bg-red-500 border-red-500 text-white animate-pulse" : "bg-gray-50 border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500"}`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+          </button>
           <button
             onClick={handleSearch}
             disabled={loading}
@@ -356,6 +409,23 @@ export default function SearchSection() {
               </div>
             </div>
 
+            <div className="sm:col-span-2 lg:col-span-3 mb-2">
+              <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+                Preço máximo/noite: {maxPrice > 0 ? `R$ ${maxPrice}` : "Qualquer"}
+              </label>
+              <input
+                type="range"
+                min={0} max={2000} step={50}
+                value={maxPrice}
+                onChange={e => setMaxPrice(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+              />
+              <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <span>Qualquer</span>
+                <span>R$ 2.000+</span>
+              </div>
+            </div>
+
             <div className="mb-4">
               <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Data Sazonal</label>
               <div className="flex flex-wrap gap-2">
@@ -438,8 +508,10 @@ export default function SearchSection() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {result.results.map(hotel => (
-                <HotelCard key={hotel.id} hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} />
+              {result.results.map((hotel, i) => (
+                <div key={hotel.id} className={`fade-in-up fade-in-up-${Math.min(i + 1, 6)}`}>
+                  <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} />
+                </div>
               ))}
             </div>
           )}
