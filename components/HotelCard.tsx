@@ -122,6 +122,15 @@ export default function HotelCard({
   const [fav, setFav] = useState(() => {
     try { const f = JSON.parse(localStorage.getItem("favs") || "[]"); return f.includes(hotel.id); } catch { return false; }
   });
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertPrice, setAlertPrice] = useState("");
+  const [hasAlert, setHasAlert] = useState(() => {
+    try {
+      const alerts = JSON.parse(localStorage.getItem("priceAlerts") || "[]");
+      return alerts.some((a: { hotelId: string }) => a.hotelId === hotel.id);
+    } catch { return false; }
+  });
+
   const ref = useRef<HTMLDivElement>(null);
   const images = getExtraImages(hotel);
 
@@ -140,6 +149,37 @@ export default function HotelCard({
       const next = fav ? f.filter((x: string) => x !== hotel.id) : [...f, hotel.id];
       localStorage.setItem("favs", JSON.stringify(next));
       setFav(!fav);
+    } catch {}
+  }
+
+  function shareWhatsApp(e: React.MouseEvent) {
+    e.stopPropagation();
+    const url = `${window.location.origin}/hotel/${hotel.id}`;
+    const text = `Confira este hotel: ${hotel.name} em ${hotel.city} - ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+  }
+
+  function saveAlert() {
+    try {
+      const max = parseInt(alertPrice);
+      if (!max || max <= 0) return;
+      const alerts = JSON.parse(localStorage.getItem("priceAlerts") || "[]")
+        .filter((a: { hotelId: string }) => a.hotelId !== hotel.id);
+      alerts.push({ hotelId: hotel.id, hotelName: hotel.name, maxPrice: max, createdAt: new Date().toISOString() });
+      localStorage.setItem("priceAlerts", JSON.stringify(alerts));
+      setHasAlert(true);
+      setAlertOpen(false);
+      setAlertPrice("");
+    } catch {}
+  }
+
+  function removeAlert(e: React.MouseEvent) {
+    e.stopPropagation();
+    try {
+      const alerts = JSON.parse(localStorage.getItem("priceAlerts") || "[]")
+        .filter((a: { hotelId: string }) => a.hotelId !== hotel.id);
+      localStorage.setItem("priceAlerts", JSON.stringify(alerts));
+      setHasAlert(false);
     } catch {}
   }
 
@@ -166,7 +206,6 @@ export default function HotelCard({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
-        {/* Carousel nav */}
         {images.length > 1 && (
           <>
             <button
@@ -205,6 +244,16 @@ export default function HotelCard({
           <span className="bg-white/90 text-gray-700 text-xs font-semibold px-2 py-1 rounded-lg capitalize">
             {hotel.type === "hotel" ? "🏨 Hotel" : "🏡 Pousada"}
           </span>
+          {/* WhatsApp share button */}
+          <button
+            onClick={shareWhatsApp}
+            title="Compartilhar no WhatsApp"
+            className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+          >
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </button>
           <button
             onClick={toggleFav}
             className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
@@ -341,6 +390,43 @@ export default function HotelCard({
               </div>
             )}
           </div>
+        </div>
+
+        {/* Price Alert */}
+        <div className="mt-3">
+          {hasAlert ? (
+            <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+              <span className="text-xs text-green-700 font-semibold">✓ Alerta de preço ativo</span>
+              <button onClick={removeAlert} className="text-xs text-green-600 hover:text-red-500 transition-colors ml-2">Remover</button>
+            </div>
+          ) : alertOpen ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+              <p className="text-xs font-semibold text-gray-700 mb-2">🔔 Qual o preço máximo por noite?</p>
+              <div className="flex gap-2">
+                <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden flex-1">
+                  <span className="px-2 text-gray-500 text-xs bg-gray-50 h-full flex items-center border-r border-gray-200">R$</span>
+                  <input
+                    type="number"
+                    value={alertPrice}
+                    onChange={e => setAlertPrice(e.target.value)}
+                    placeholder="ex: 400"
+                    className="flex-1 px-2 py-1.5 text-sm focus:outline-none bg-transparent"
+                    autoFocus
+                    onKeyDown={e => e.key === "Enter" && saveAlert()}
+                  />
+                </div>
+                <button onClick={saveAlert} className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600 transition-colors">OK</button>
+                <button onClick={() => { setAlertOpen(false); setAlertPrice(""); }} className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors">✕</button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setAlertOpen(true)}
+              className="w-full py-1.5 text-xs font-semibold rounded-xl border-2 border-dashed border-amber-300 text-amber-600 hover:border-amber-400 hover:bg-amber-50 transition-all flex items-center justify-center gap-1"
+            >
+              🔔 Alertar quando o preço baixar
+            </button>
+          )}
         </div>
 
         <Link href={`/hotel/${hotel.id}`} className="mt-3 block text-center text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">

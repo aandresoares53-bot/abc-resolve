@@ -7,6 +7,10 @@ import CompareBar from "./CompareBar";
 
 const allCities = Array.from(new Set(hotelsData.map(h => `${h.city}, ${h.state}`)));
 
+const AMENITY_OPTIONS = ["Wi-Fi", "Piscina", "Spa", "Café da manhã", "Estacionamento", "Restaurante", "Academia", "Pet-friendly"];
+
+type SortOption = "relevancia" | "menor-preco" | "maior-avaliacao" | "maior-desconto" | "mais-estrelas";
+
 type SearchResult = {
   results: Hotel[];
   total: number;
@@ -20,6 +24,25 @@ function toInputDate(d: Date) {
 
 function formatDateBR(d: Date) {
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+}
+
+function getFromLS<T>(key: string, fallback: T): T {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
+}
+
+function setToLS(key: string, value: unknown) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+}
+
+function sortResults(results: Hotel[], sort: SortOption): Hotel[] {
+  const arr = [...results];
+  switch (sort) {
+    case "menor-preco": return arr.sort((a, b) => a.priceFrom - b.priceFrom);
+    case "maior-avaliacao": return arr.sort((a, b) => b.rating - a.rating);
+    case "maior-desconto": return arr.sort((a, b) => (b.discount ?? 0) - (a.discount ?? 0));
+    case "mais-estrelas": return arr.sort((a, b) => b.stars - a.stars);
+    default: return arr;
+  }
 }
 
 export default function SearchSection() {
@@ -39,6 +62,18 @@ export default function SearchSection() {
   const [showGuests, setShowGuests] = useState(false);
   const [showDates, setShowDates] = useState(false);
   const [compareList, setCompareList] = useState<Hotel[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>("relevancia");
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [recentlyViewed, setRecentlyViewed] = useState<Hotel[]>([]);
+
+  useEffect(() => {
+    setSearchHistory(getFromLS<string[]>("searchHistory", []));
+    const ids = getFromLS<string[]>("recentlyViewed", []);
+    const hotels = ids.map(id => hotelsData.find(h => h.id === id)).filter(Boolean) as Hotel[];
+    setRecentlyViewed(hotels.slice(0, 4));
+  }, []);
 
   function toggleCompare(hotel: Hotel) {
     setCompareList(prev => {
@@ -47,6 +82,13 @@ export default function SearchSection() {
       return [...prev, hotel];
     });
   }
+
+  function toggleAmenity(amenity: string) {
+    setSelectedAmenities(prev =>
+      prev.includes(amenity) ? prev.filter(a => a !== amenity) : [...prev, amenity]
+    );
+  }
+
   const [listening, setListening] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -55,27 +97,39 @@ export default function SearchSection() {
   const [checkIn, setCheckIn] = useState(toInputDate(tomorrow));
   const [checkOut, setCheckOut] = useState(toInputDate(dayAfter));
   const datesRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (datesRef.current && !datesRef.current.contains(e.target as Node)) {
         setShowDates(false);
       }
+      if (searchInputRef.current && !searchInputRef.current.contains(e.target as Node)) {
+        setShowHistory(false);
+      }
     }
-    if (showDates) document.addEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [showDates]);
+  }, []);
 
   const nights = Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000));
 
-  const handleSearch = useCallback(async () => {
+  const handleSearch = useCallback(async (overrideQuery?: string) => {
+    const q = overrideQuery ?? query;
     setLoading(true);
     setSearched(true);
     setShowGuests(false);
     setShowDates(false);
+    setShowHistory(false);
+
+    if (q.trim()) {
+      const updated = [q, ...searchHistory.filter(h => h !== q)].slice(0, 5);
+      setSearchHistory(updated);
+      setToLS("searchHistory", updated);
+    }
 
     const params = new URLSearchParams({
-      q: query,
+      q,
       region,
       state,
       seasonal,
@@ -87,16 +141,25 @@ export default function SearchSection() {
     try {
       const res = await fetch(`/api/search?${params}`);
       const data = await res.json();
+
+      // Apply amenity filter client-side
+      if (selectedAmenities.length > 0) {
+        data.results = data.results.filter((h: Hotel) =>
+          selectedAmenities.every(a => h.amenities.some(ha => ha.toLowerCase().includes(a.toLowerCase())))
+        );
+        data.total = data.results.length;
+      }
+
       setResult(data);
     } catch {
       setResult(null);
     } finally {
       setLoading(false);
     }
-  }, [query, region, state, seasonal, packageFor, type, maxPrice]);
+  }, [query, region, state, seasonal, packageFor, type, maxPrice, selectedAmenities, searchHistory]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") { setShowSuggestions(false); handleSearch(); }
+    if (e.key === "Enter") { setShowSuggestions(false); setShowHistory(false); handleSearch(); }
   };
 
   function handleVoice() {
@@ -114,6 +177,11 @@ export default function SearchSection() {
     recognition.start();
   }
 
+  function clearHistory() {
+    setSearchHistory([]);
+    setToLS("searchHistory", []);
+  }
+
   const exampleSearches = [
     "Campos do Jordão",
     "Gramado inverno",
@@ -122,6 +190,23 @@ export default function SearchSection() {
     "Foz do Iguaçu família",
     "Praia em Fortaleza",
   ];
+
+  // Nearby hotels when no results
+  function getNearbyHotels(q: string): Hotel[] {
+    if (!result || result.results.length > 0) return [];
+    const lq = q.toLowerCase();
+    const matched = hotelsData.find(h =>
+      h.city.toLowerCase().includes(lq) || h.state.toLowerCase().includes(lq) || h.region.toLowerCase().includes(lq)
+    );
+    if (!matched) return hotelsData.sort(() => Math.random() - 0.5).slice(0, 3);
+    return hotelsData
+      .filter(h => h.id !== matched.id && (h.state === matched.state || h.region === matched.region))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+  }
+
+  const sortedResults = result ? sortResults(result.results, sortBy) : [];
+  const nearbyHotels = searched && result && result.results.length === 0 ? getNearbyHotels(result.query) : [];
 
   return (
     <section id="buscar" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -142,7 +227,7 @@ export default function SearchSection() {
       <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 mb-6">
         {/* Search Input */}
         <div className="flex gap-3 mb-4">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative" ref={searchInputRef}>
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -153,6 +238,7 @@ export default function SearchSection() {
               value={query}
               onChange={e => {
                 setQuery(e.target.value);
+                setShowHistory(false);
                 if (e.target.value.length >= 2) {
                   const q = e.target.value.toLowerCase();
                   setSuggestions(allCities.filter(c => c.toLowerCase().includes(q)).slice(0, 6));
@@ -162,11 +248,15 @@ export default function SearchSection() {
                 }
               }}
               onKeyDown={handleKeyDown}
-              onFocus={() => { if (query.length >= 2) setShowSuggestions(true); }}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              onFocus={() => {
+                if (query.length >= 2) { setShowSuggestions(true); setShowHistory(false); }
+                else if (searchHistory.length > 0) { setShowHistory(true); setShowSuggestions(false); }
+              }}
               placeholder='Ex: "Pousada com piscina em Trancoso"...'
               className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base transition-all"
             />
+
+            {/* City autocomplete suggestions */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
                 {suggestions.map(s => (
@@ -180,7 +270,27 @@ export default function SearchSection() {
                 ))}
               </div>
             )}
+
+            {/* Search history dropdown */}
+            {showHistory && !showSuggestions && searchHistory.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-2 border-b border-gray-50">
+                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Buscas recentes</span>
+                  <button onClick={clearHistory} className="text-xs text-red-400 hover:text-red-600 font-medium">Limpar</button>
+                </div>
+                {searchHistory.map(h => (
+                  <button
+                    key={h}
+                    onMouseDown={() => { setQuery(h); setShowHistory(false); handleSearch(h); }}
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2 border-b border-gray-50 last:border-0"
+                  >
+                    <span className="text-gray-300">🕐</span> {h}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
           <button
             onClick={handleVoice}
             title={listening ? "Ouvindo..." : "Buscar por voz"}
@@ -191,7 +301,7 @@ export default function SearchSection() {
             </svg>
           </button>
           <button
-            onClick={handleSearch}
+            onClick={() => handleSearch()}
             disabled={loading}
             className="px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-2xl hover:shadow-lg hover:shadow-blue-200 transition-all active:scale-95 disabled:opacity-60 flex items-center gap-2 whitespace-nowrap"
           >
@@ -233,55 +343,32 @@ export default function SearchSection() {
           {showGuests && (
             <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 z-40 w-72">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Quantidade de hóspedes</p>
-
-              {/* Adults */}
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="font-semibold text-gray-800 text-sm">Adultos</p>
                   <p className="text-xs text-gray-400">A partir de 13 anos</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setAdults(v => Math.max(1, v - 1))}
-                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
-                  >−</button>
+                  <button onClick={() => setAdults(v => Math.max(1, v - 1))} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">−</button>
                   <span className="w-6 text-center font-bold text-gray-800">{adults}</span>
-                  <button
-                    onClick={() => setAdults(v => Math.min(10, v + 1))}
-                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
-                  >+</button>
+                  <button onClick={() => setAdults(v => Math.min(10, v + 1))} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">+</button>
                 </div>
               </div>
-
-              {/* Children */}
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="font-semibold text-gray-800 text-sm">Crianças</p>
                   <p className="text-xs text-gray-400">De 2 a 12 anos</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setChildren(v => Math.max(0, v - 1))}
-                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
-                  >−</button>
+                  <button onClick={() => setChildren(v => Math.max(0, v - 1))} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">−</button>
                   <span className="w-6 text-center font-bold text-gray-800">{children}</span>
-                  <button
-                    onClick={() => setChildren(v => Math.min(6, v + 1))}
-                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
-                  >+</button>
+                  <button onClick={() => setChildren(v => Math.min(6, v + 1))} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">+</button>
                 </div>
               </div>
-
               <div className="pt-3 border-t border-gray-100">
                 <p className="text-xs text-gray-400 text-center">Crianças até 2 anos geralmente não pagam</p>
               </div>
-
-              <button
-                onClick={() => setShowGuests(false)}
-                className="mt-3 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
-              >
-                Confirmar
-              </button>
+              <button onClick={() => setShowGuests(false)} className="mt-3 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">Confirmar</button>
             </div>
           )}
         </div>
@@ -308,7 +395,6 @@ export default function SearchSection() {
           {showDates && (
             <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 z-40 w-72">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Período da estadia</p>
-
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Check-in</label>
                 <input
@@ -326,7 +412,6 @@ export default function SearchSection() {
                   className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Check-out</label>
                 <input
@@ -337,19 +422,10 @@ export default function SearchSection() {
                   className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
               <div className="pt-3 border-t border-gray-100 mb-3">
-                <p className="text-xs text-gray-400 text-center">
-                  {nights} noite{nights !== 1 ? "s" : ""} selecionada{nights !== 1 ? "s" : ""}
-                </p>
+                <p className="text-xs text-gray-400 text-center">{nights} noite{nights !== 1 ? "s" : ""} selecionada{nights !== 1 ? "s" : ""}</p>
               </div>
-
-              <button
-                onClick={() => setShowDates(false)}
-                className="w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
-              >
-                Confirmar
-              </button>
+              <button onClick={() => setShowDates(false)} className="w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">Confirmar</button>
             </div>
           )}
         </div>
@@ -379,6 +455,9 @@ export default function SearchSection() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
           {showFilters ? "Ocultar filtros" : "Filtros avançados"}
+          {selectedAmenities.length > 0 && (
+            <span className="ml-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{selectedAmenities.length}</span>
+          )}
         </button>
 
         {/* Advanced Filters */}
@@ -419,7 +498,7 @@ export default function SearchSection() {
               </div>
             </div>
 
-            <div className="sm:col-span-2 lg:col-span-3 mb-2">
+            <div className="sm:col-span-2 lg:col-span-3 mb-4">
               <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
                 Preço máximo/noite: {maxPrice > 0 ? `R$ ${maxPrice}` : "Qualquer"}
               </label>
@@ -434,6 +513,34 @@ export default function SearchSection() {
                 <span>Qualquer</span>
                 <span>R$ 2.000+</span>
               </div>
+            </div>
+
+            {/* Amenities filter */}
+            <div className="mb-4">
+              <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Comodidades</label>
+              <div className="flex flex-wrap gap-2">
+                {AMENITY_OPTIONS.map(amenity => (
+                  <button
+                    key={amenity}
+                    onClick={() => toggleAmenity(amenity)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                      selectedAmenities.includes(amenity)
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-blue-400"
+                    }`}
+                  >
+                    {amenity === "Wi-Fi" ? "📶" : amenity === "Piscina" ? "🏊" : amenity === "Spa" ? "💆" : amenity === "Café da manhã" ? "☕" : amenity === "Estacionamento" ? "🅿️" : amenity === "Restaurante" ? "🍽️" : amenity === "Academia" ? "💪" : "🐾"} {amenity}
+                  </button>
+                ))}
+                {selectedAmenities.length > 0 && (
+                  <button onClick={() => setSelectedAmenities([])} className="px-3 py-1.5 rounded-full text-sm font-medium text-red-500 border border-red-200 hover:bg-red-50 transition-all">
+                    ✕ Limpar
+                  </button>
+                )}
+              </div>
+              {selectedAmenities.length > 0 && (
+                <p className="text-xs text-blue-600 mt-1">Mostrando apenas hotéis com: {selectedAmenities.join(", ")}</p>
+              )}
             </div>
 
             <div className="mb-4">
@@ -491,6 +598,28 @@ export default function SearchSection() {
         </div>
       )}
 
+      {/* Sort bar */}
+      {!loading && searched && result && result.results.length > 1 && (
+        <div className="flex items-center gap-3 mb-6 flex-wrap">
+          <span className="text-sm text-gray-500 font-medium">{result.total} resultado{result.total !== 1 ? "s" : ""}. Ordenar por:</span>
+          {([
+            { value: "relevancia", label: "Relevância" },
+            { value: "menor-preco", label: "Menor preço" },
+            { value: "maior-avaliacao", label: "Melhor avaliação" },
+            { value: "maior-desconto", label: "Maior desconto" },
+            { value: "mais-estrelas", label: "Mais estrelas" },
+          ] as { value: SortOption; label: string }[]).map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => setSortBy(opt.value)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${sortBy === opt.value ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Results */}
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -511,14 +640,30 @@ export default function SearchSection() {
       {!loading && searched && result && (
         <>
           {result.results.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">Nenhum resultado encontrado</h3>
-              <p className="text-gray-400">Tente ampliar os filtros ou buscar em outras regiões</p>
+            <div>
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-xl font-bold text-gray-700 mb-2">Nenhum resultado encontrado</h3>
+                <p className="text-gray-400">Tente ampliar os filtros ou buscar em outras regiões</p>
+              </div>
+
+              {/* Nearby suggestions */}
+              {nearbyHotels.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-bold text-gray-700 mb-4">✨ Talvez você goste de destinos próximos</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {nearbyHotels.map((hotel, i) => (
+                      <div key={hotel.id} className={`fade-in-up fade-in-up-${i + 1}`}>
+                        <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {result.results.map((hotel, i) => (
+              {sortedResults.map((hotel, i) => (
                 <div key={hotel.id} className={`fade-in-up fade-in-up-${Math.min(i + 1, 6)}`}>
                   <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
                 </div>
@@ -528,16 +673,30 @@ export default function SearchSection() {
         </>
       )}
 
-      {/* Initial state - show all */}
+      {/* Initial state */}
       {!searched && !loading && (
-        <div className="text-center py-10">
-          <p className="text-gray-400 text-lg">Use a busca acima para encontrar hotéis e pousadas ✨</p>
-          <button
-            onClick={handleSearch}
-            className="mt-4 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-lg transition-all"
-          >
-            Ver todas as opções
-          </button>
+        <div>
+          {recentlyViewed.length > 0 && (
+            <div className="mb-10">
+              <h3 className="text-lg font-bold text-gray-700 mb-4">🕐 Visitados recentemente</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {recentlyViewed.map((hotel, i) => (
+                  <div key={hotel.id} className={`fade-in-up fade-in-up-${i + 1}`}>
+                    <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="text-center py-10">
+            <p className="text-gray-400 text-lg">Use a busca acima para encontrar hotéis e pousadas ✨</p>
+            <button
+              onClick={() => handleSearch()}
+              className="mt-4 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-lg transition-all"
+            >
+              Ver todas as opções
+            </button>
+          </div>
         </div>
       )}
 

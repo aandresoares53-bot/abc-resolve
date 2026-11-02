@@ -19,6 +19,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             document.documentElement.setAttribute('data-theme', t);
           } catch(e) {}
         ` }} />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+          }
+        ` }} />
       </head>
       <body className={inter.className}>{children}</body>
     </html>
