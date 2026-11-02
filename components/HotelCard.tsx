@@ -2,29 +2,72 @@
 import { useState, useRef, useEffect } from "react";
 import { Hotel } from "@/lib/hotels-data";
 
-function getPriceOptions(hotel: Hotel) {
+function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn: string, checkOut: string) {
   const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const base = hotel.priceFrom;
   const q = encodeURIComponent(`${hotel.name} ${hotel.city}`);
+
+  // Parse dates for each platform's format
+  const [ciY, ciM, ciD] = checkIn.split("-");
+  const [coY, coM, coD] = checkOut.split("-");
+
+  // Booking.com: checkin=YYYY-MM-DD&checkout=YYYY-MM-DD&group_adults=N&group_children=N&no_rooms=N
+  const rooms = getRooms(adults, children);
+  const bookingBase = hotel.bookingUrl.includes("booking.com")
+    ? hotel.bookingUrl.split("?")[0]
+    : `https://www.booking.com/searchresults.pt-br.html`;
+  const bookingParams = new URLSearchParams({
+    ss: `${hotel.name} ${hotel.city}`,
+    checkin: checkIn,
+    checkout: checkOut,
+    group_adults: String(adults),
+    group_children: String(children),
+    no_rooms: String(rooms),
+    lang: "pt-br",
+  });
+  const bookingUrl = `${bookingBase}?${bookingParams}`;
+
+  // Hotels.com: q-check-in=YYYY-MM-DD&q-check-out=YYYY-MM-DD&q-rooms=N&q-room-0-adults=N&q-room-0-children=N
+  const hotelsParams = new URLSearchParams({
+    "q-query": `${hotel.name} ${hotel.city}`,
+    "q-check-in": `${ciM}/${ciD}/${ciY}`,
+    "q-check-out": `${coM}/${coD}/${coY}`,
+    "q-rooms": String(rooms),
+    "q-room-0-adults": String(adults),
+    "q-room-0-children": String(children),
+  });
+  const hotelsUrl = `https://www.hotels.com/search.do?${hotelsParams}`;
+
+  // Expedia: startDate=MM/DD/YYYY&endDate=MM/DD/YYYY&rooms=N&adults=N&children=N
+  const expediaParams = new URLSearchParams({
+    destination: `${hotel.name}, ${hotel.city}`,
+    startDate: `${ciM}/${ciD}/${ciY}`,
+    endDate: `${coM}/${coD}/${coY}`,
+    rooms: String(rooms),
+    adults: String(adults),
+    children: String(children),
+  });
+  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?${expediaParams}`;
+
   const platforms = [
     {
       platform: "Booking.com",
       logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",
-      url: hotel.bookingUrl,
+      url: bookingUrl,
       note: "Mais reservas",
       price: Math.round(base * (1 + ((seed % 9) * 0.01))),
     },
     {
       platform: "Hotels.com",
       logo: "https://www.hotels.com/favicon.ico",
-      url: `https://www.hotels.com/search.do?q-query=${q}`,
+      url: hotelsUrl,
       note: "Desconto para membros",
       price: Math.round(base * (0.88 + ((seed % 8) * 0.01))),
     },
     {
       platform: "Expedia",
       logo: "https://www.expedia.com.br/favicon.ico",
-      url: `https://www.expedia.com.br/Hotel-Search?destination=${q}`,
+      url: expediaUrl,
       note: "Pacote hotel + voo",
       price: Math.round(base * (0.94 + ((seed % 9) * 0.01))),
     },
@@ -38,7 +81,22 @@ function getRooms(adults: number, children: number): number {
   return Math.max(1, adultRooms + childRooms);
 }
 
-export default function HotelCard({ hotel, adults = 2, children = 0 }: { hotel: Hotel; adults?: number; children?: number }) {
+function todayPlusStr(n: number) {
+  const d = new Date(); d.setDate(d.getDate() + n);
+  return d.toISOString().split("T")[0];
+}
+
+export default function HotelCard({
+  hotel, adults = 2, children = 0,
+  checkIn, checkOut, nights,
+}: {
+  hotel: Hotel; adults?: number; children?: number;
+  checkIn?: string; checkOut?: string; nights?: number;
+}) {
+  const ci = checkIn || todayPlusStr(1);
+  const co = checkOut || todayPlusStr(2);
+  const n = nights ?? 1;
+
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -52,11 +110,17 @@ export default function HotelCard({ hotel, adults = 2, children = 0 }: { hotel: 
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
-  const options = getPriceOptions(hotel);
+  const options = getPriceOptions(hotel, adults, children, ci, co);
   const cheapest = options[0].price;
   const rooms = getRooms(adults, children);
   const totalNightly = cheapest * rooms;
+  const totalStay = totalNightly * n;
   const guestLabel = `${adults} adulto${adults !== 1 ? "s" : ""}${children > 0 ? ` + ${children} criança${children !== 1 ? "s" : ""}` : ""}`;
+
+  function fmtDate(s: string) {
+    const d = new Date(s + "T12:00:00");
+    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover group">
@@ -126,19 +190,17 @@ export default function HotelCard({ hotel, adults = 2, children = 0 }: { hotel: 
         <div className="flex items-end justify-between">
           <div>
             <p className="text-gray-400 text-xs mb-0.5">👥 {guestLabel}</p>
+            <p className="text-gray-400 text-xs mb-0.5">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""}</p>
             {hotel.discount && (
               <p className="text-gray-400 text-xs line-through">
-                R$ {Math.round((hotel.priceFrom / (1 - hotel.discount / 100)) * rooms)}/noite
+                R$ {Math.round((hotel.priceFrom / (1 - hotel.discount / 100)) * rooms * n)}
               </p>
             )}
             <p className="text-gray-900">
-              <span className="text-xs text-gray-500">A partir de </span>
-              <span className="font-bold text-xl text-blue-600">R$ {totalNightly}</span>
-              <span className="text-gray-400 text-xs">/noite</span>
+              <span className="text-xs text-gray-500">Total estimado </span>
+              <span className="font-bold text-xl text-blue-600">R$ {totalStay}</span>
             </p>
-            {rooms > 1 && (
-              <p className="text-xs text-gray-400">{rooms} quartos · R$ {cheapest}/quarto</p>
-            )}
+            <p className="text-xs text-gray-400">R$ {totalNightly}/noite{rooms > 1 ? ` · ${rooms} quartos` : ""}</p>
           </div>
 
           {/* Button + Price Comparison Dropdown */}
@@ -155,15 +217,17 @@ export default function HotelCard({ hotel, adults = 2, children = 0 }: { hotel: 
 
             {open && (
               <div className="absolute right-0 bottom-full mb-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
-                <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100 flex items-center justify-between">
-                  <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Comparar preços</p>
+                <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
+                  <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Comparar preços</p>
+                  <p className="text-xs text-gray-400">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""}</p>
                   <p className="text-xs text-gray-400">👥 {guestLabel} · {rooms} qto{rooms !== 1 ? "s" : ""}</p>
                 </div>
 
                 {options.map((opt, idx) => {
                   const isCheapest = idx === 0;
-                  const optTotal = opt.price * rooms;
-                  const cheapestTotal = cheapest * rooms;
+                  const optNightly = opt.price * rooms;
+                  const optTotal = optNightly * n;
+                  const cheapestTotal = cheapest * rooms * n;
                   return (
                     <a
                       key={opt.platform}
@@ -190,7 +254,7 @@ export default function HotelCard({ hotel, adults = 2, children = 0 }: { hotel: 
                         <p className={`text-base font-black ${isCheapest ? "text-green-600" : "text-gray-700"}`}>
                           R$ {optTotal}
                         </p>
-                        {rooms > 1 && <p className="text-xs text-gray-400">R$ {opt.price}/qto</p>}
+                        <p className="text-xs text-gray-400">R$ {optNightly}/noite</p>
                         {isCheapest ? (
                           <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full font-semibold">
                             Menor preço
@@ -209,7 +273,7 @@ export default function HotelCard({ hotel, adults = 2, children = 0 }: { hotel: 
                 })}
 
                 <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-                  <p className="text-xs text-gray-400 text-center">Preços estimados · Clique para ver oferta</p>
+                  <p className="text-xs text-gray-400 text-center">Abre já com datas e hóspedes preenchidos ✓</p>
                 </div>
               </div>
             )}

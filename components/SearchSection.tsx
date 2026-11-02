@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Hotel } from "@/lib/hotels-data";
 import { regions, states, seasonalDates, packageTypes } from "@/lib/hotels-data";
 import HotelCard from "./HotelCard";
@@ -10,6 +10,14 @@ type SearchResult = {
   aiSuggestion: string;
   query: string;
 };
+
+function toInputDate(d: Date) {
+  return d.toISOString().split("T")[0];
+}
+
+function formatDateBR(d: Date) {
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+}
 
 export default function SearchSection() {
   const [query, setQuery] = useState("");
@@ -26,11 +34,30 @@ export default function SearchSection() {
   const [searched, setSearched] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showGuests, setShowGuests] = useState(false);
+  const [showDates, setShowDates] = useState(false);
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter = new Date(); dayAfter.setDate(dayAfter.getDate() + 2);
+  const [checkIn, setCheckIn] = useState(toInputDate(tomorrow));
+  const [checkOut, setCheckOut] = useState(toInputDate(dayAfter));
+  const datesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (datesRef.current && !datesRef.current.contains(e.target as Node)) {
+        setShowDates(false);
+      }
+    }
+    if (showDates) document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showDates]);
+
+  const nights = Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000));
 
   const handleSearch = useCallback(async () => {
     setLoading(true);
     setSearched(true);
     setShowGuests(false);
+    setShowDates(false);
 
     const params = new URLSearchParams({
       q: query,
@@ -118,11 +145,14 @@ export default function SearchSection() {
           </button>
         </div>
 
+        {/* Guest & Date row */}
+        <div className="flex flex-wrap gap-3 mb-4">
+
         {/* Guest Selector */}
-        <div className="relative mb-4">
+        <div className="relative">
           <button
-            onClick={() => setShowGuests(!showGuests)}
-            className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all w-full sm:w-auto"
+            onClick={() => { setShowGuests(!showGuests); setShowDates(false); }}
+            className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all"
           >
             <span className="text-lg">👥</span>
             <div className="text-left flex-1">
@@ -192,6 +222,76 @@ export default function SearchSection() {
             </div>
           )}
         </div>
+
+        {/* Date Selector */}
+        <div className="relative" ref={datesRef}>
+          <button
+            onClick={() => { setShowDates(!showDates); setShowGuests(false); }}
+            className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all"
+          >
+            <span className="text-lg">📅</span>
+            <div className="text-left">
+              <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Datas</p>
+              <p className="text-sm font-bold text-gray-700">
+                {formatDateBR(new Date(checkIn + "T12:00:00"))} → {formatDateBR(new Date(checkOut + "T12:00:00"))}
+                <span className="ml-1 text-gray-400 font-normal">({nights} noite{nights !== 1 ? "s" : ""})</span>
+              </p>
+            </div>
+            <svg className={`w-4 h-4 text-gray-400 transition-transform ${showDates ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {showDates && (
+            <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 z-40 w-72">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Período da estadia</p>
+
+              <div className="mb-4">
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Check-in</label>
+                <input
+                  type="date"
+                  value={checkIn}
+                  min={toInputDate(new Date())}
+                  onChange={e => {
+                    setCheckIn(e.target.value);
+                    if (e.target.value >= checkOut) {
+                      const next = new Date(e.target.value + "T12:00:00");
+                      next.setDate(next.getDate() + 1);
+                      setCheckOut(toInputDate(next));
+                    }
+                  }}
+                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Check-out</label>
+                <input
+                  type="date"
+                  value={checkOut}
+                  min={checkIn}
+                  onChange={e => setCheckOut(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-gray-100 mb-3">
+                <p className="text-xs text-gray-400 text-center">
+                  {nights} noite{nights !== 1 ? "s" : ""} selecionada{nights !== 1 ? "s" : ""}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowDates(false)}
+                className="w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+              >
+                Confirmar
+              </button>
+            </div>
+          )}
+        </div>
+
+        </div>{/* end flex row */}
 
         {/* Quick examples */}
         <div className="flex flex-wrap gap-2 mb-4">
@@ -339,7 +439,7 @@ export default function SearchSection() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {result.results.map(hotel => (
-                <HotelCard key={hotel.id} hotel={hotel} adults={adults} children={children} />
+                <HotelCard key={hotel.id} hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} />
               ))}
             </div>
           )}
