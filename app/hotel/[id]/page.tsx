@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import HotelCard from "@/components/HotelCard";
 import Header from "@/components/Header";
+import WeatherWidget from "@/components/WeatherWidget";
 
 export default function HotelPage({ params }: { params: { id: string } }) {
   const hotel = hotelsData.find(h => h.id === params.id);
@@ -61,6 +62,9 @@ export default function HotelPage({ params }: { params: { id: string } }) {
               <p className="text-gray-500 flex items-center gap-2 text-sm">
                 📍 {hotel.city}, {hotel.state} · {hotel.region}
               </p>
+              <div className="mt-2">
+                <WeatherWidget city={hotel.city} />
+              </div>
               <div className="flex items-center gap-3 mt-3">
                 <span className="text-2xl font-black text-amber-500">{hotel.rating}★</span>
                 <span className="text-gray-500 text-sm">{hotel.reviews.toLocaleString("pt-BR")} avaliações</span>
