@@ -3,6 +3,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Hotel } from "@/lib/hotels-data";
 import { regions, states, seasonalDates, packageTypes, hotelsData } from "@/lib/hotels-data";
 import HotelCard from "./HotelCard";
+import CompareBar from "./CompareBar";
 
 const allCities = Array.from(new Set(hotelsData.map(h => `${h.city}, ${h.state}`)));
 
@@ -37,6 +38,15 @@ export default function SearchSection() {
   const [showFilters, setShowFilters] = useState(false);
   const [showGuests, setShowGuests] = useState(false);
   const [showDates, setShowDates] = useState(false);
+  const [compareList, setCompareList] = useState<Hotel[]>([]);
+
+  function toggleCompare(hotel: Hotel) {
+    setCompareList(prev => {
+      if (prev.find(h => h.id === hotel.id)) return prev.filter(h => h.id !== hotel.id);
+      if (prev.length >= 3) return prev;
+      return [...prev, hotel];
+    });
+  }
   const [listening, setListening] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -510,7 +520,7 @@ export default function SearchSection() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {result.results.map((hotel, i) => (
                 <div key={hotel.id} className={`fade-in-up fade-in-up-${Math.min(i + 1, 6)}`}>
-                  <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} />
+                  <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
                 </div>
               ))}
             </div>
@@ -530,6 +540,12 @@ export default function SearchSection() {
           </button>
         </div>
       )}
+
+      <CompareBar
+        hotels={compareList}
+        onRemove={id => setCompareList(prev => prev.filter(h => h.id !== id))}
+        onClear={() => setCompareList([])}
+      />
     </section>
   );
 }

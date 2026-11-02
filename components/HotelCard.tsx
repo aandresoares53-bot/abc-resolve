@@ -1,17 +1,38 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { Hotel } from "@/lib/hotels-data";
+
+function getExtraImages(hotel: Hotel): string[] {
+  const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const collections: Record<string, string[]> = {
+    hotel: [
+      `https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80`,
+      `https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80`,
+      `https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80`,
+      `https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80`,
+      `https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80`,
+    ],
+    pousada: [
+      `https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80`,
+      `https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=800&q=80`,
+      `https://images.unsplash.com/photo-1501117716987-c8c394bb29df?w=800&q=80`,
+      `https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&q=80`,
+      `https://images.unsplash.com/photo-1521782462922-9318be7a97b1?w=800&q=80`,
+    ],
+  };
+  const pool = collections[hotel.type] || collections.hotel;
+  const start = seed % pool.length;
+  return [hotel.image, pool[start], pool[(start + 1) % pool.length], pool[(start + 2) % pool.length]];
+}
 
 function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn: string, checkOut: string) {
   const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const base = hotel.priceFrom;
-  const q = encodeURIComponent(`${hotel.name} ${hotel.city}`);
 
-  // Parse dates for each platform's format
   const [ciY, ciM, ciD] = checkIn.split("-");
   const [coY, coM, coD] = checkOut.split("-");
 
-  // Booking.com: checkin=YYYY-MM-DD&checkout=YYYY-MM-DD&group_adults=N&group_children=N&no_rooms=N
   const rooms = getRooms(adults, children);
   const bookingBase = hotel.bookingUrl.includes("booking.com")
     ? hotel.bookingUrl.split("?")[0]
@@ -27,7 +48,6 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   });
   const bookingUrl = `${bookingBase}?${bookingParams}`;
 
-  // Hotels.com: q-check-in=YYYY-MM-DD&q-check-out=YYYY-MM-DD&q-rooms=N&q-room-0-adults=N&q-room-0-children=N
   const hotelsParams = new URLSearchParams({
     "q-query": `${hotel.name} ${hotel.city}`,
     "q-check-in": `${ciM}/${ciD}/${ciY}`,
@@ -38,7 +58,6 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   });
   const hotelsUrl = `https://www.hotels.com/search.do?${hotelsParams}`;
 
-  // Expedia: startDate=MM/DD/YYYY&endDate=MM/DD/YYYY&rooms=N&adults=N&children=N
   const expediaParams = new URLSearchParams({
     destination: `${hotel.name}, ${hotel.city}`,
     startDate: `${ciM}/${ciD}/${ciY}`,
@@ -49,7 +68,7 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   });
   const expediaUrl = `https://www.expedia.com.br/Hotel-Search?${expediaParams}`;
 
-  const platforms = [
+  return [
     {
       platform: "Booking.com",
       logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",
@@ -72,7 +91,6 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
       price: Math.round(base * (0.94 + ((seed % 9) * 0.01))),
     },
   ].sort((a, b) => a.price - b.price);
-  return platforms;
 }
 
 function getRooms(adults: number, children: number): number {
@@ -89,26 +107,41 @@ function todayPlusStr(n: number) {
 export default function HotelCard({
   hotel, adults = 2, children = 0,
   checkIn, checkOut, nights,
+  compareList, onToggleCompare,
 }: {
   hotel: Hotel; adults?: number; children?: number;
   checkIn?: string; checkOut?: string; nights?: number;
+  compareList?: Hotel[]; onToggleCompare?: (hotel: Hotel) => void;
 }) {
   const ci = checkIn || todayPlusStr(1);
   const co = checkOut || todayPlusStr(2);
   const n = nights ?? 1;
 
   const [open, setOpen] = useState(false);
+  const [imgIdx, setImgIdx] = useState(0);
+  const [fav, setFav] = useState(() => {
+    try { const f = JSON.parse(localStorage.getItem("favs") || "[]"); return f.includes(hotel.id); } catch { return false; }
+  });
   const ref = useRef<HTMLDivElement>(null);
+  const images = getExtraImages(hotel);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     if (open) document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
+
+  function toggleFav(e: React.MouseEvent) {
+    e.stopPropagation();
+    try {
+      const f: string[] = JSON.parse(localStorage.getItem("favs") || "[]");
+      const next = fav ? f.filter((x: string) => x !== hotel.id) : [...f, hotel.id];
+      localStorage.setItem("favs", JSON.stringify(next));
+      setFav(!fav);
+    } catch {}
+  }
 
   const options = getPriceOptions(hotel, adults, children, ci, co);
   const cheapest = options[0].price;
@@ -124,14 +157,38 @@ export default function HotelCard({
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover group">
-      {/* Image */}
-      <div className="relative h-52 overflow-hidden">
+      {/* Image Carousel */}
+      <div className="relative h-52 overflow-hidden group/img">
         <img
-          src={hotel.image}
+          src={images[imgIdx]}
           alt={hotel.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover transition-all duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+
+        {/* Carousel nav */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={e => { e.stopPropagation(); setImgIdx(i => (i - 1 + images.length) % images.length); }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/40 text-white rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity text-sm"
+            >‹</button>
+            <button
+              onClick={e => { e.stopPropagation(); setImgIdx(i => (i + 1) % images.length); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/40 text-white rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity text-sm"
+            >›</button>
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={e => { e.stopPropagation(); setImgIdx(i); }}
+                  className={`h-1.5 rounded-full transition-all ${i === imgIdx ? "bg-white w-3" : "bg-white/50 w-1.5"}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         <div className="absolute top-3 left-3 flex gap-2">
           {hotel.discount && (
             <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
@@ -144,10 +201,16 @@ export default function HotelCard({
             </span>
           )}
         </div>
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 flex items-center gap-2">
           <span className="bg-white/90 text-gray-700 text-xs font-semibold px-2 py-1 rounded-lg capitalize">
             {hotel.type === "hotel" ? "🏨 Hotel" : "🏡 Pousada"}
           </span>
+          <button
+            onClick={toggleFav}
+            className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+          >
+            <span style={{ fontSize: "14px" }}>{fav ? "❤️" : "🤍"}</span>
+          </button>
         </div>
         <div className="absolute bottom-3 left-3">
           <span className="text-white text-sm font-medium bg-black/30 px-2 py-1 rounded-lg">
@@ -279,6 +342,23 @@ export default function HotelCard({
             )}
           </div>
         </div>
+
+        <Link href={`/hotel/${hotel.id}`} className="mt-3 block text-center text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
+          Ver todos os detalhes →
+        </Link>
+
+        {onToggleCompare && (
+          <button
+            onClick={() => onToggleCompare(hotel)}
+            className={`mt-2 w-full py-1.5 text-xs font-semibold rounded-xl border-2 transition-all flex items-center justify-center gap-1 ${
+              compareList?.find(h => h.id === hotel.id)
+                ? "border-blue-600 bg-blue-600 text-white"
+                : "border-gray-200 text-gray-500 hover:border-blue-400 hover:text-blue-600"
+            }`}
+          >
+            {compareList?.find(h => h.id === hotel.id) ? "✓ Selecionado para comparar" : "+ Comparar"}
+          </button>
+        )}
       </div>
     </div>
   );
