@@ -245,7 +245,7 @@ export default function Home() {
           </div>
           <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-sm">© 2024 Encontrar Hotéis e Pousadas. Todos os direitos reservados.</p>
-            <p className="text-gray-500 text-sm flex items-center gap-2"><span>🤖</span><span>Powered by Inteligência Artificial</span></p>
+            <p className="text-gray-500 text-sm flex items-center gap-2"><span>🤖</span><span>A.s Digital Design</span></p>
           </div>
         </div>
       </footer>
