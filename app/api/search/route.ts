@@ -77,6 +77,32 @@ function scoreHotel(hotel: Hotel, query: string, filters: {
   return score;
 }
 
+// Detect if any word in the query matches a city (or alias that represents a city)
+function detectCityInQuery(query: string): string | null {
+  const words = normalizeText(query).split(/\s+/).filter(Boolean);
+  // Build a list of all unique cities
+  const cities = [...new Set(hotelsData.map(h => h.city))];
+  for (const city of cities) {
+    const normCity = normalizeText(city);
+    // Match if the normalized city contains any word OR any word contains the normalized city
+    if (words.some(w => normCity.includes(w) || w.includes(normCity))) {
+      return city;
+    }
+  }
+  // Also check aliases that map to a city
+  for (const hotel of hotelsData) {
+    if (hotel.aliases) {
+      for (const alias of hotel.aliases) {
+        const normAlias = normalizeText(alias);
+        if (words.some(w => normAlias === w || normAlias.includes(w))) {
+          return hotel.city;
+        }
+      }
+    }
+  }
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q") || "";
@@ -89,31 +115,55 @@ export async function GET(request: NextRequest) {
 
   const filters = { region, state, seasonal, packageFor, maxPrice, type };
 
-  const scored = hotelsData.map(hotel => ({ hotel, score: scoreHotel(hotel, query, filters) }));
+  // If no query and no meaningful filters, return all featured first
+  if (!query && region === "Todos" && state === "Todos" && !seasonal && !packageFor) {
+    const results = [...hotelsData].sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return b.rating - a.rating;
+    });
+    return NextResponse.json({
+      results,
+      total: results.length,
+      aiSuggestion: `Encontrei ${results.length} hotéis e pousadas disponíveis em todo o Brasil. Use os filtros ou descreva sua viagem ideal para resultados personalizados!`,
+      query,
+    });
+  }
+
+  // Detect if query refers to a specific city — if so, hard-filter to that city only
+  const detectedCity = query ? detectCityInQuery(query) : null;
+
+  let pool = hotelsData;
+  if (detectedCity) {
+    pool = hotelsData.filter(h => h.city === detectedCity);
+  }
+
+  const scored = pool.map(hotel => ({ hotel, score: scoreHotel(hotel, query, filters) }));
 
   let results = scored
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score)
     .map(({ hotel }) => hotel);
 
-  // If no query and no meaningful filters, return all featured first
-  if (!query && region === "Todos" && state === "Todos" && !seasonal && !packageFor) {
-    results = [...hotelsData].sort((a, b) => {
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      return b.rating - a.rating;
-    });
+  // If no results after city filter, show all from that city sorted by rating
+  if (detectedCity && results.length === 0) {
+    results = [...pool].sort((a, b) => b.rating - a.rating);
   }
 
-  // If query returned nothing, suggest top-rated hotels as fallback
-  if (query && results.length === 0) {
+  // If query returned nothing and no city was detected, suggest top-rated hotels as fallback
+  if (!detectedCity && query && results.length === 0) {
     results = [...hotelsData]
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 6);
   }
 
+  // Apply type filter
+  if (filters.type && filters.type !== "todos") {
+    results = results.filter(h => h.type === filters.type);
+  }
+
   // Simulate AI suggestion
-  const aiSuggestion = generateAISuggestion(query, results.length, filters);
+  const aiSuggestion = generateAISuggestion(query, results.length, filters, detectedCity);
 
   return NextResponse.json({
     results,
@@ -123,13 +173,10 @@ export async function GET(request: NextRequest) {
   });
 }
 
-function generateAISuggestion(query: string, count: number, filters: Record<string, string | number | undefined>): string {
-  if (!query && !filters.seasonal && !filters.packageFor) {
-    return `Encontrei ${count} hotéis e pousadas disponíveis em todo o Brasil. Use os filtros ou descreva sua viagem ideal para resultados personalizados!`;
-  }
-
+function generateAISuggestion(query: string, count: number, filters: Record<string, string | number | undefined>, detectedCity?: string | null): string {
   const parts: string[] = [];
-  if (query) parts.push(`"${query}"`);
+  if (detectedCity) parts.push(`em ${detectedCity}`);
+  else if (query) parts.push(`"${query}"`);
   if (filters.region && filters.region !== "Todos") parts.push(`na região ${filters.region}`);
   if (filters.state && filters.state !== "Todos") parts.push(`no estado ${filters.state}`);
   if (filters.seasonal) parts.push(`para o período sazonal selecionado`);
@@ -139,9 +186,5 @@ function generateAISuggestion(query: string, count: number, filters: Record<stri
     return `Não encontrei resultados para ${parts.join(", ")}. Tente ampliar os filtros ou buscar em outras regiões do Brasil.`;
   }
 
-  if (query && parts.length > 0) {
-    return `Encontrei ${count} opção${count > 1 ? "s" : ""} para ${parts.join(", ")}. Resultados ordenados por relevância e avaliação dos hóspedes.`;
-  }
-
-  return `Mostrando ${count} opção${count > 1 ? "s" : ""} disponíveis. Os resultados estão ordenados por relevância e avaliação dos hóspedes.`;
+  return `Encontrei ${count} opção${count > 1 ? "s" : ""} ${parts.join(", ")}. Resultados ordenados por relevância e avaliação dos hóspedes.`;
 }
