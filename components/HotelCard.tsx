@@ -29,10 +29,8 @@ function getExtraImages(hotel: Hotel): string[] {
 function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn: string, checkOut: string) {
   const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const base = hotel.priceFrom;
-
   const [ciY, ciM, ciD] = checkIn.split("-");
   const [coY, coM, coD] = checkOut.split("-");
-
   const rooms = getRooms(adults, children);
   const bookingBase = hotel.bookingUrl.includes("booking.com")
     ? hotel.bookingUrl.split("?")[0]
@@ -47,7 +45,6 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
     lang: "pt-br",
   });
   const bookingUrl = `${bookingBase}?${bookingParams}`;
-
   const hotelsParams = new URLSearchParams({
     "q-query": `${hotel.name} ${hotel.city}`,
     "q-check-in": `${ciM}/${ciD}/${ciY}`,
@@ -57,7 +54,6 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
     "q-room-0-children": String(children),
   });
   const hotelsUrl = `https://www.hotels.com/search.do?${hotelsParams}`;
-
   const expediaParams = new URLSearchParams({
     destination: `${hotel.name}, ${hotel.city}`,
     startDate: `${ciM}/${ciD}/${ciY}`,
@@ -67,29 +63,10 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
     children: String(children),
   });
   const expediaUrl = `https://www.expedia.com.br/Hotel-Search?${expediaParams}`;
-
   return [
-    {
-      platform: "Booking.com",
-      logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",
-      url: bookingUrl,
-      note: "Mais reservas",
-      price: Math.round(base * (1 + ((seed % 9) * 0.01))),
-    },
-    {
-      platform: "Hotels.com",
-      logo: "https://www.hotels.com/favicon.ico",
-      url: hotelsUrl,
-      note: "Desconto para membros",
-      price: Math.round(base * (0.88 + ((seed % 8) * 0.01))),
-    },
-    {
-      platform: "Expedia",
-      logo: "https://www.expedia.com.br/favicon.ico",
-      url: expediaUrl,
-      note: "Pacote hotel + voo",
-      price: Math.round(base * (0.94 + ((seed % 9) * 0.01))),
-    },
+    { platform: "Booking.com", logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico", url: bookingUrl, note: "Mais reservas", price: Math.round(base * (1 + ((seed % 9) * 0.01))) },
+    { platform: "Hotels.com", logo: "https://www.hotels.com/favicon.ico", url: hotelsUrl, note: "Desconto para membros", price: Math.round(base * (0.88 + ((seed % 8) * 0.01))) },
+    { platform: "Expedia", logo: "https://www.expedia.com.br/favicon.ico", url: expediaUrl, note: "Pacote hotel + voo", price: Math.round(base * (0.94 + ((seed % 9) * 0.01))) },
   ].sort((a, b) => a.price - b.price);
 }
 
@@ -102,6 +79,26 @@ function getRooms(adults: number, children: number): number {
 function todayPlusStr(n: number) {
   const d = new Date(); d.setDate(d.getDate() + n);
   return d.toISOString().split("T")[0];
+}
+
+function RatingBadge({ rating }: { rating: number }) {
+  const score = rating * 10;
+  const color = score >= 85 ? "#4caf50" : score >= 70 ? "#ff9800" : "#f44336";
+  const label = score >= 85 ? "Excelente" : score >= 70 ? "Muito bom" : "Bom";
+  return (
+    <div className="flex items-center gap-1.5">
+      <div
+        className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-black text-sm shrink-0"
+        style={{ backgroundColor: color }}
+      >
+        {rating.toFixed(1)}
+      </div>
+      <div>
+        <p className="text-xs font-bold text-gray-700 leading-none">{label}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{(rating * 10 * 10).toFixed(0)} avaliações</p>
+      </div>
+    </div>
+  );
 }
 
 export default function HotelCard({
@@ -188,7 +185,6 @@ export default function HotelCard({
   const rooms = getRooms(adults, children);
   const totalNightly = cheapest * rooms;
   const totalStay = totalNightly * n;
-  const guestLabel = `${adults} adulto${adults !== 1 ? "s" : ""}${children > 0 ? ` + ${children} criança${children !== 1 ? "s" : ""}` : ""}`;
 
   function fmtDate(s: string) {
     const d = new Date(s + "T12:00:00");
@@ -196,255 +192,251 @@ export default function HotelCard({
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover group">
-      {/* Image Carousel */}
-      <div className="relative h-52 overflow-hidden group/img">
-        <img
-          src={images[imgIdx]}
-          alt={hotel.name}
-          className="w-full h-full object-cover transition-all duration-500"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      {/* Horizontal layout: image left, content right */}
+      <div className="flex">
+        {/* Image column */}
+        <div className="relative shrink-0 w-56 sm:w-64 md:w-72" style={{ minHeight: "200px" }}>
+          <div className="relative h-full group/img overflow-hidden" style={{ minHeight: "200px" }}>
+            <img
+              src={images[imgIdx]}
+              alt={hotel.name}
+              className="w-full h-full object-cover"
+              style={{ minHeight: "200px" }}
+            />
 
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={e => { e.stopPropagation(); setImgIdx(i => (i - 1 + images.length) % images.length); }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/40 text-white rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity text-sm"
-            >‹</button>
-            <button
-              onClick={e => { e.stopPropagation(); setImgIdx(i => (i + 1) % images.length); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/40 text-white rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity text-sm"
-            >›</button>
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1">
-              {images.map((_, i) => (
+            {images.length > 1 && (
+              <>
                 <button
-                  key={i}
-                  onClick={e => { e.stopPropagation(); setImgIdx(i); }}
-                  className={`h-1.5 rounded-full transition-all ${i === imgIdx ? "bg-white w-3" : "bg-white/50 w-1.5"}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-
-        <div className="absolute top-3 left-3 flex gap-2">
-          {hotel.discount && (
-            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
-              -{hotel.discount}%
-            </span>
-          )}
-          {hotel.featured && (
-            <span className="bg-amber-400 text-amber-900 text-xs font-bold px-2 py-1 rounded-lg">
-              ⭐ Destaque
-            </span>
-          )}
-        </div>
-        <div className="absolute top-3 right-3 flex items-center gap-2">
-          <span className="bg-white/90 text-gray-700 text-xs font-semibold px-2 py-1 rounded-lg capitalize">
-            {hotel.type === "hotel" ? "🏨 Hotel" : "🏡 Pousada"}
-          </span>
-          {/* WhatsApp share button */}
-          <button
-            onClick={shareWhatsApp}
-            title="Compartilhar no WhatsApp"
-            className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
-          >
-            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-          </button>
-          <button
-            onClick={toggleFav}
-            className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
-          >
-            <span style={{ fontSize: "14px" }}>{fav ? "❤️" : "🤍"}</span>
-          </button>
-        </div>
-        <div className="absolute bottom-3 left-3">
-          <span className="text-white text-sm font-medium bg-black/30 px-2 py-1 rounded-lg">
-            📍 {hotel.city}, {hotel.state}
-          </span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-gray-900 text-base leading-tight flex-1 mr-2">
-            {hotel.name}
-          </h3>
-          <div className="flex items-center gap-1 shrink-0">
-            <span className="text-amber-400 text-sm">★</span>
-            <span className="font-bold text-gray-900 text-sm">{hotel.rating}</span>
-            <span className="text-gray-400 text-xs">({hotel.reviews.toLocaleString("pt-BR")})</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-1 mb-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <span key={i} className={`text-xs ${i < hotel.stars ? "text-amber-400" : "text-gray-200"}`}>★</span>
-          ))}
-          <span className="text-gray-400 text-xs ml-1">{hotel.stars} estrelas</span>
-        </div>
-
-        <p className="text-gray-500 text-sm line-clamp-2 mb-3">{hotel.description}</p>
-
-        <div className="flex flex-wrap gap-1 mb-4">
-          {hotel.tags.slice(0, 3).map(tag => (
-            <span key={tag} className="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Price & CTA */}
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-gray-400 text-xs mb-0.5">👥 {guestLabel}</p>
-            <p className="text-gray-400 text-xs mb-0.5">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""}</p>
-            {hotel.discount && (
-              <p className="text-gray-400 text-xs line-through">
-                R$ {Math.round((hotel.priceFrom / (1 - hotel.discount / 100)) * rooms * n)}
-              </p>
+                  onClick={e => { e.stopPropagation(); setImgIdx(i => (i - 1 + images.length) % images.length); }}
+                  className="absolute left-1.5 top-1/2 -translate-y-1/2 w-6 h-6 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity text-xs"
+                >‹</button>
+                <button
+                  onClick={e => { e.stopPropagation(); setImgIdx(i => (i + 1) % images.length); }}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity text-xs"
+                >›</button>
+              </>
             )}
-            <p className="text-gray-900">
-              <span className="text-xs text-gray-500">Total estimado </span>
-              <span className="font-bold text-xl text-blue-600">R$ {totalStay}</span>
-            </p>
-            <p className="text-xs text-gray-400">R$ {totalNightly}/noite{rooms > 1 ? ` · ${rooms} quartos` : ""}</p>
-          </div>
 
-          {/* Button + Price Comparison Dropdown */}
-          <div className="relative" ref={ref}>
+            {/* Badges top-left */}
+            <div className="absolute top-2 left-2 flex flex-col gap-1">
+              {hotel.discount && (
+                <span className="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                  -{hotel.discount}%
+                </span>
+              )}
+              {hotel.featured && (
+                <span className="bg-amber-400 text-amber-900 text-xs font-bold px-1.5 py-0.5 rounded">
+                  Destaque
+                </span>
+              )}
+            </div>
+
+            {/* Fav top-right */}
             <button
-              onClick={() => setOpen(v => !v)}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-semibold rounded-xl hover:shadow-md hover:shadow-blue-200 transition-all active:scale-95 flex items-center gap-1"
+              onClick={toggleFav}
+              className="absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
             >
-              Ver oferta
-              <svg className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-              </svg>
+              <span style={{ fontSize: "12px" }}>{fav ? "❤️" : "🤍"}</span>
             </button>
 
-            {open && (
-              <div className="absolute right-0 bottom-full mb-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
-                <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
-                  <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Comparar preços</p>
-                  <p className="text-xs text-gray-400">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""}</p>
-                  <p className="text-xs text-gray-400">👥 {guestLabel} · {rooms} qto{rooms !== 1 ? "s" : ""}</p>
-                </div>
-
-                {options.map((opt, idx) => {
-                  const isCheapest = idx === 0;
-                  const optNightly = opt.price * rooms;
-                  const optTotal = optNightly * n;
-                  const cheapestTotal = cheapest * rooms * n;
-                  return (
-                    <a
-                      key={opt.platform}
-                      href={opt.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-50 last:border-0 ${isCheapest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}
-                    >
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${isCheapest ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500"}`}>
-                        {idx + 1}
-                      </div>
-                      <img
-                        src={opt.logo}
-                        alt={opt.platform}
-                        className="w-5 h-5 rounded object-contain shrink-0"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-gray-800">{opt.platform}</p>
-                        <p className="text-xs text-gray-500">{opt.note}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className={`text-base font-black ${isCheapest ? "text-green-600" : "text-gray-700"}`}>
-                          R$ {optTotal}
-                        </p>
-                        <p className="text-xs text-gray-400">R$ {optNightly}/noite</p>
-                        {isCheapest ? (
-                          <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full font-semibold">
-                            Menor preço
-                          </span>
-                        ) : (
-                          <span className="text-xs text-gray-400">
-                            +R$ {optTotal - cheapestTotal}
-                          </span>
-                        )}
-                      </div>
-                      <svg className="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  );
-                })}
-
-                <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-                  <p className="text-xs text-gray-400 text-center">Abre já com datas e hóspedes preenchidos ✓</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Price Alert */}
-        <div className="mt-3">
-          {hasAlert ? (
-            <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-3 py-2">
-              <span className="text-xs text-green-700 font-semibold">✓ Alerta de preço ativo</span>
-              <button onClick={removeAlert} className="text-xs text-green-600 hover:text-red-500 transition-colors ml-2">Remover</button>
-            </div>
-          ) : alertOpen ? (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-              <p className="text-xs font-semibold text-gray-700 mb-2">🔔 Qual o preço máximo por noite?</p>
-              <div className="flex gap-2">
-                <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden flex-1">
-                  <span className="px-2 text-gray-500 text-xs bg-gray-50 h-full flex items-center border-r border-gray-200">R$</span>
-                  <input
-                    type="number"
-                    value={alertPrice}
-                    onChange={e => setAlertPrice(e.target.value)}
-                    placeholder="ex: 400"
-                    className="flex-1 px-2 py-1.5 text-sm focus:outline-none bg-transparent"
-                    autoFocus
-                    onKeyDown={e => e.key === "Enter" && saveAlert()}
+            {/* Image dots bottom */}
+            {images.length > 1 && (
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={e => { e.stopPropagation(); setImgIdx(i); }}
+                    className={`h-1 rounded-full transition-all ${i === imgIdx ? "bg-white w-3" : "bg-white/50 w-1.5"}`}
                   />
-                </div>
-                <button onClick={saveAlert} className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600 transition-colors">OK</button>
-                <button onClick={() => { setAlertOpen(false); setAlertPrice(""); }} className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors">✕</button>
+                ))}
               </div>
-            </div>
-          ) : (
-            <button
-              onClick={() => setAlertOpen(true)}
-              className="w-full py-1.5 text-xs font-semibold rounded-xl border-2 border-dashed border-amber-300 text-amber-600 hover:border-amber-400 hover:bg-amber-50 transition-all flex items-center justify-center gap-1"
-            >
-              🔔 Alertar quando o preço baixar
-            </button>
-          )}
+            )}
+          </div>
         </div>
 
-        <Link href={`/hotel/${hotel.id}`} className="mt-3 block text-center text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
-          Ver todos os detalhes →
-        </Link>
+        {/* Content column */}
+        <div className="flex-1 p-4 flex flex-col min-w-0">
+          {/* Top row: name + rating badge */}
+          <div className="flex items-start justify-between gap-3 mb-1">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-xs text-gray-400 font-medium capitalize">
+                  {hotel.type === "hotel" ? "Hotel" : "Pousada"}
+                </span>
+                <span className="text-gray-200">·</span>
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: hotel.stars }).map((_, i) => (
+                    <span key={i} className="text-amber-400 text-xs">★</span>
+                  ))}
+                </div>
+              </div>
+              <h3 className="font-bold text-gray-900 text-base leading-tight">{hotel.name}</h3>
+              <p className="text-sm text-gray-500 mt-0.5">📍 {hotel.city}, {hotel.state}</p>
+            </div>
+            <RatingBadge rating={hotel.rating} />
+          </div>
 
-        {onToggleCompare && (
-          <button
-            onClick={() => onToggleCompare(hotel)}
-            className={`mt-2 w-full py-1.5 text-xs font-semibold rounded-xl border-2 transition-all flex items-center justify-center gap-1 ${
-              compareList?.find(h => h.id === hotel.id)
-                ? "border-blue-600 bg-blue-600 text-white"
-                : "border-gray-200 text-gray-500 hover:border-blue-400 hover:text-blue-600"
-            }`}
-          >
-            {compareList?.find(h => h.id === hotel.id) ? "✓ Selecionado para comparar" : "+ Comparar"}
-          </button>
-        )}
+          {/* Description */}
+          <p className="text-gray-500 text-sm line-clamp-2 mb-2">{hotel.description}</p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1 mb-2">
+            {hotel.amenities.slice(0, 4).map(a => (
+              <span key={a} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{a}</span>
+            ))}
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1 mb-3">
+            {hotel.tags.slice(0, 3).map(tag => (
+              <span key={tag} className="bg-blue-50 text-blue-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>
+            ))}
+          </div>
+
+          {/* Bottom row: price left, buttons right */}
+          <div className="flex items-end justify-between mt-auto gap-3">
+            {/* Price */}
+            <div>
+              {hotel.discount && (
+                <p className="text-gray-400 text-xs line-through">
+                  R$ {Math.round(hotel.priceFrom / (1 - hotel.discount / 100))}/noite
+                </p>
+              )}
+              <p className="text-gray-400 text-xs">a partir de</p>
+              <p className="text-2xl font-black text-gray-900">R$ {cheapest}</p>
+              <p className="text-xs text-gray-400">/noite · {fmtDate(ci)} – {fmtDate(co)}</p>
+              <p className="text-xs text-gray-500 mt-0.5">Total estimado: <span className="font-semibold">R$ {totalStay}</span></p>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex flex-col gap-2 items-end shrink-0">
+              {/* Price comparison dropdown */}
+              <div className="relative" ref={ref}>
+                <button
+                  onClick={() => setOpen(v => !v)}
+                  className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap"
+                >
+                  Ver oferta
+                  <svg className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {open && (
+                  <div className="absolute right-0 bottom-full mb-2 w-72 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
+                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                      <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Comparar preços</p>
+                      <p className="text-xs text-gray-400">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""}</p>
+                    </div>
+                    {options.map((opt, idx) => {
+                      const isCheapest = idx === 0;
+                      const optTotal = opt.price * rooms * n;
+                      const cheapestTotal = cheapest * rooms * n;
+                      return (
+                        <a
+                          key={opt.platform}
+                          href={opt.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpen(false)}
+                          className={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-50 last:border-0 ${isCheapest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}
+                        >
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${isCheapest ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500"}`}>
+                            {idx + 1}
+                          </div>
+                          <img src={opt.logo} alt={opt.platform} className="w-4 h-4 rounded object-contain shrink-0" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-gray-800">{opt.platform}</p>
+                            <p className="text-xs text-gray-500">{opt.note}</p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className={`text-sm font-black ${isCheapest ? "text-green-600" : "text-gray-700"}`}>R$ {optTotal}</p>
+                            {isCheapest ? (
+                              <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded font-semibold">Menor preço</span>
+                            ) : (
+                              <span className="text-xs text-gray-400">+R$ {optTotal - cheapestTotal}</span>
+                            )}
+                          </div>
+                        </a>
+                      );
+                    })}
+                    <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
+                      <p className="text-xs text-gray-400 text-center">Abre com datas e hóspedes preenchidos ✓</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* WhatsApp */}
+                <button
+                  onClick={shareWhatsApp}
+                  title="Compartilhar no WhatsApp"
+                  className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                </button>
+
+                {/* Alert */}
+                {!hasAlert ? (
+                  <button
+                    onClick={() => setAlertOpen(v => !v)}
+                    title="Alerta de preço"
+                    className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center hover:bg-amber-200 transition-colors text-amber-600 font-bold text-sm"
+                  >🔔</button>
+                ) : (
+                  <button
+                    onClick={removeAlert}
+                    title="Remover alerta"
+                    className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors text-green-600 text-sm"
+                  >✓</button>
+                )}
+              </div>
+
+              {/* Alert input */}
+              {alertOpen && !hasAlert && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 w-48">
+                  <p className="text-xs font-semibold text-gray-700 mb-1.5">Preço máx/noite</p>
+                  <div className="flex gap-1">
+                    <div className="flex items-center border border-gray-200 rounded overflow-hidden flex-1">
+                      <span className="px-1.5 text-gray-500 text-xs bg-gray-50 border-r border-gray-200">R$</span>
+                      <input
+                        type="number"
+                        value={alertPrice}
+                        onChange={e => setAlertPrice(e.target.value)}
+                        placeholder="400"
+                        className="flex-1 px-1.5 py-1 text-xs focus:outline-none bg-transparent w-16"
+                        autoFocus
+                        onKeyDown={e => e.key === "Enter" && saveAlert()}
+                      />
+                    </div>
+                    <button onClick={saveAlert} className="px-2 py-1 bg-orange-500 text-white text-xs font-bold rounded hover:bg-orange-600">OK</button>
+                  </div>
+                </div>
+              )}
+
+              <Link href={`/hotel/${hotel.id}`} className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                Ver detalhes →
+              </Link>
+
+              {onToggleCompare && (
+                <button
+                  onClick={() => onToggleCompare(hotel)}
+                  className={`text-xs font-semibold px-3 py-1 rounded-lg border transition-all ${
+                    compareList?.find(h => h.id === hotel.id)
+                      ? "border-blue-600 bg-blue-600 text-white"
+                      : "border-gray-300 text-gray-500 hover:border-blue-400 hover:text-blue-600"
+                  }`}
+                >
+                  {compareList?.find(h => h.id === hotel.id) ? "✓ Comparar" : "+ Comparar"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

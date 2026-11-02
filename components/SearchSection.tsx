@@ -303,7 +303,7 @@ export default function SearchSection() {
           <button
             onClick={() => handleSearch()}
             disabled={loading}
-            className="px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-2xl hover:shadow-lg hover:shadow-blue-200 transition-all active:scale-95 disabled:opacity-60 flex items-center gap-2 whitespace-nowrap"
+            className="px-6 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all active:scale-95 disabled:opacity-60 flex items-center gap-2 whitespace-nowrap"
           >
             {loading ? (
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -368,7 +368,7 @@ export default function SearchSection() {
               <div className="pt-3 border-t border-gray-100">
                 <p className="text-xs text-gray-400 text-center">Crianças até 2 anos geralmente não pagam</p>
               </div>
-              <button onClick={() => setShowGuests(false)} className="mt-3 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">Confirmar</button>
+              <button onClick={() => setShowGuests(false)} className="mt-3 w-full py-2 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-colors">Confirmar</button>
             </div>
           )}
         </div>
@@ -425,7 +425,7 @@ export default function SearchSection() {
               <div className="pt-3 border-t border-gray-100 mb-3">
                 <p className="text-xs text-gray-400 text-center">{nights} noite{nights !== 1 ? "s" : ""} selecionada{nights !== 1 ? "s" : ""}</p>
               </div>
-              <button onClick={() => setShowDates(false)} className="w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">Confirmar</button>
+              <button onClick={() => setShowDates(false)} className="w-full py-2 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-colors">Confirmar</button>
             </div>
           )}
         </div>
@@ -449,14 +449,14 @@ export default function SearchSection() {
         {/* Toggle Filters */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors"
+          className="flex items-center gap-2 text-orange-500 text-sm font-semibold hover:text-orange-600 transition-colors"
         >
           <svg className={`w-4 h-4 transition-transform ${showFilters ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
           {showFilters ? "Ocultar filtros" : "Filtros avançados"}
           {selectedAmenities.length > 0 && (
-            <span className="ml-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{selectedAmenities.length}</span>
+            <span className="ml-1 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">{selectedAmenities.length}</span>
           )}
         </button>
 
@@ -525,8 +525,8 @@ export default function SearchSection() {
                     onClick={() => toggleAmenity(amenity)}
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
                       selectedAmenities.includes(amenity)
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-blue-400"
+                        ? "bg-orange-500 text-white border-orange-500"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-orange-400"
                     }`}
                   >
                     {amenity === "Wi-Fi" ? "📶" : amenity === "Piscina" ? "🏊" : amenity === "Spa" ? "💆" : amenity === "Café da manhã" ? "☕" : amenity === "Estacionamento" ? "🅿️" : amenity === "Restaurante" ? "🍽️" : amenity === "Academia" ? "💪" : "🐾"} {amenity}
@@ -548,7 +548,7 @@ export default function SearchSection() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSeasonal("")}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${seasonal === "" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${seasonal === "" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
                 >
                   Qualquer data
                 </button>
@@ -556,7 +556,7 @@ export default function SearchSection() {
                   <button
                     key={s.id}
                     onClick={() => setSeasonal(seasonal === s.id ? "" : s.id)}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${seasonal === s.id ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${seasonal === s.id ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
                   >
                     {s.icon} {s.label}
                   </button>
@@ -569,7 +569,7 @@ export default function SearchSection() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setPackageFor("")}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${packageFor === "" ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${packageFor === "" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
                 >
                   Todos os pacotes
                 </button>
@@ -577,7 +577,7 @@ export default function SearchSection() {
                   <button
                     key={p.id}
                     onClick={() => setPackageFor(packageFor === p.id ? "" : p.id)}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${packageFor === p.id ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${packageFor === p.id ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
                   >
                     {p.icon} {p.label}
                   </button>
@@ -612,7 +612,7 @@ export default function SearchSection() {
             <button
               key={opt.value}
               onClick={() => setSortBy(opt.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${sortBy === opt.value ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${sortBy === opt.value ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
             >
               {opt.label}
             </button>
@@ -622,15 +622,16 @@ export default function SearchSection() {
 
       {/* Results */}
       {loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100">
-              <div className="h-52 shimmer" />
-              <div className="p-4 space-y-3">
-                <div className="h-4 shimmer rounded w-3/4" />
-                <div className="h-3 shimmer rounded w-1/2" />
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden flex">
+              <div className="w-64 shrink-0 shimmer" style={{ minHeight: "200px" }} />
+              <div className="flex-1 p-4 space-y-3">
+                <div className="h-4 shimmer rounded w-2/3" />
+                <div className="h-3 shimmer rounded w-1/3" />
                 <div className="h-3 shimmer rounded w-full" />
-                <div className="h-8 shimmer rounded-xl w-1/3 ml-auto" />
+                <div className="h-3 shimmer rounded w-4/5" />
+                <div className="h-8 shimmer rounded w-28 ml-auto mt-6" />
               </div>
             </div>
           ))}
@@ -651,7 +652,7 @@ export default function SearchSection() {
               {nearbyHotels.length > 0 && (
                 <div className="mt-4">
                   <h3 className="text-lg font-bold text-gray-700 mb-4">✨ Talvez você goste de destinos próximos</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="flex flex-col gap-4">
                     {nearbyHotels.map((hotel, i) => (
                       <div key={hotel.id} className={`fade-in-up fade-in-up-${i + 1}`}>
                         <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
@@ -662,7 +663,7 @@ export default function SearchSection() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-4">
               {sortedResults.map((hotel, i) => (
                 <div key={hotel.id} className={`fade-in-up fade-in-up-${Math.min(i + 1, 6)}`}>
                   <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
@@ -679,7 +680,7 @@ export default function SearchSection() {
           {recentlyViewed.length > 0 && (
             <div className="mb-10">
               <h3 className="text-lg font-bold text-gray-700 mb-4">🕐 Visitados recentemente</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="flex flex-col gap-4">
                 {recentlyViewed.map((hotel, i) => (
                   <div key={hotel.id} className={`fade-in-up fade-in-up-${i + 1}`}>
                     <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
@@ -692,7 +693,7 @@ export default function SearchSection() {
             <p className="text-gray-400 text-lg">Use a busca acima para encontrar hotéis e pousadas ✨</p>
             <button
               onClick={() => handleSearch()}
-              className="mt-4 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl hover:shadow-lg transition-all"
+              className="mt-4 px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl transition-all"
             >
               Ver todas as opções
             </button>
