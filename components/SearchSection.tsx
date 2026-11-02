@@ -19,14 +19,18 @@ export default function SearchSection() {
   const [packageFor, setPackageFor] = useState("");
   const [type, setType] = useState("todos");
   const [maxPrice, setMaxPrice] = useState(0);
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SearchResult | null>(null);
   const [searched, setSearched] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showGuests, setShowGuests] = useState(false);
 
   const handleSearch = useCallback(async () => {
     setLoading(true);
     setSearched(true);
+    setShowGuests(false);
 
     const params = new URLSearchParams({
       q: query,
@@ -73,7 +77,7 @@ export default function SearchSection() {
           Encontre o hotel ou pousada perfeito
         </h2>
         <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-          Digite o destino ou descreva a viagem dos seus sonhos e nossa IA encontra as melhores opções em todo o Brasil
+          Descreva a viagem dos seus sonhos e nossa IA encontra as melhores opções em todo o Brasil
         </p>
       </div>
 
@@ -92,7 +96,7 @@ export default function SearchSection() {
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder='Ex: "Campos do Jordão", "Praia em Fortaleza", "Resort família nordeste"...'
+              placeholder='Ex: "Pousada com piscina em Trancoso"...'
               className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base transition-all"
             />
           </div>
@@ -112,6 +116,81 @@ export default function SearchSection() {
             <span className="hidden sm:inline">{loading ? "Buscando..." : "Buscar com IA"}</span>
             <span className="sm:hidden">{loading ? "..." : "Buscar"}</span>
           </button>
+        </div>
+
+        {/* Guest Selector */}
+        <div className="relative mb-4">
+          <button
+            onClick={() => setShowGuests(!showGuests)}
+            className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all w-full sm:w-auto"
+          >
+            <span className="text-lg">👥</span>
+            <div className="text-left flex-1">
+              <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Hóspedes</p>
+              <p className="text-sm font-bold text-gray-700">
+                {adults} adulto{adults !== 1 ? "s" : ""}
+                {children > 0 ? `, ${children} criança${children !== 1 ? "s" : ""}` : ""}
+              </p>
+            </div>
+            <svg className={`w-4 h-4 text-gray-400 transition-transform ${showGuests ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {showGuests && (
+            <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 z-40 w-72">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Quantidade de hóspedes</p>
+
+              {/* Adults */}
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="font-semibold text-gray-800 text-sm">Adultos</p>
+                  <p className="text-xs text-gray-400">A partir de 13 anos</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setAdults(v => Math.max(1, v - 1))}
+                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
+                  >−</button>
+                  <span className="w-6 text-center font-bold text-gray-800">{adults}</span>
+                  <button
+                    onClick={() => setAdults(v => Math.min(10, v + 1))}
+                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
+                  >+</button>
+                </div>
+              </div>
+
+              {/* Children */}
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="font-semibold text-gray-800 text-sm">Crianças</p>
+                  <p className="text-xs text-gray-400">De 2 a 12 anos</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setChildren(v => Math.max(0, v - 1))}
+                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
+                  >−</button>
+                  <span className="w-6 text-center font-bold text-gray-800">{children}</span>
+                  <button
+                    onClick={() => setChildren(v => Math.min(6, v + 1))}
+                    className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors"
+                  >+</button>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-gray-100">
+                <p className="text-xs text-gray-400 text-center">Crianças até 2 anos geralmente não pagam</p>
+              </div>
+
+              <button
+                onClick={() => setShowGuests(false)}
+                className="mt-3 w-full py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+              >
+                Confirmar
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Quick examples */}
@@ -143,7 +222,6 @@ export default function SearchSection() {
         {showFilters && (
           <div className="mt-4 pt-4 border-t border-gray-100">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-              {/* Type */}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Tipo</label>
                 <select
@@ -156,8 +234,6 @@ export default function SearchSection() {
                   <option value="pousada">Pousada</option>
                 </select>
               </div>
-
-              {/* Region */}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Região</label>
                 <select
@@ -168,8 +244,6 @@ export default function SearchSection() {
                   {regions.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
-
-              {/* State */}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Estado</label>
                 <select
@@ -182,7 +256,6 @@ export default function SearchSection() {
               </div>
             </div>
 
-            {/* Seasonal */}
             <div className="mb-4">
               <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Data Sazonal</label>
               <div className="flex flex-wrap gap-2">
@@ -204,7 +277,6 @@ export default function SearchSection() {
               </div>
             </div>
 
-            {/* Package For */}
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Tipo de Pacote</label>
               <div className="flex flex-wrap gap-2">
@@ -267,7 +339,7 @@ export default function SearchSection() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {result.results.map(hotel => (
-                <HotelCard key={hotel.id} hotel={hotel} />
+                <HotelCard key={hotel.id} hotel={hotel} adults={adults} children={children} />
               ))}
             </div>
           )}

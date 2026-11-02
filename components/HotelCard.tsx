@@ -3,19 +3,15 @@ import { useState, useRef, useEffect } from "react";
 import { Hotel } from "@/lib/hotels-data";
 
 function getPriceOptions(hotel: Hotel) {
-  // Deterministic variation based on hotel id so prices stay stable between renders
   const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const base = hotel.priceFrom;
-
   const q = encodeURIComponent(`${hotel.name} ${hotel.city}`);
-
   const platforms = [
     {
       platform: "Booking.com",
       logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",
       url: hotel.bookingUrl,
       note: "Mais reservas",
-      // 0% to +8% variation
       price: Math.round(base * (1 + ((seed % 9) * 0.01))),
     },
     {
@@ -23,7 +19,6 @@ function getPriceOptions(hotel: Hotel) {
       logo: "https://www.hotels.com/favicon.ico",
       url: `https://www.hotels.com/search.do?q-query=${q}`,
       note: "Desconto para membros",
-      // -12% to -5% variation
       price: Math.round(base * (0.88 + ((seed % 8) * 0.01))),
     },
     {
@@ -31,15 +26,19 @@ function getPriceOptions(hotel: Hotel) {
       logo: "https://www.expedia.com.br/favicon.ico",
       url: `https://www.expedia.com.br/Hotel-Search?destination=${q}`,
       note: "Pacote hotel + voo",
-      // -6% to +2% variation
       price: Math.round(base * (0.94 + ((seed % 9) * 0.01))),
     },
   ].sort((a, b) => a.price - b.price);
-
   return platforms;
 }
 
-export default function HotelCard({ hotel }: { hotel: Hotel }) {
+function getRooms(adults: number, children: number): number {
+  const adultRooms = Math.ceil(adults / 2);
+  const childRooms = Math.ceil(Math.max(0, children - adults) / 2);
+  return Math.max(1, adultRooms + childRooms);
+}
+
+export default function HotelCard({ hotel, adults = 2, children = 0 }: { hotel: Hotel; adults?: number; children?: number }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -55,6 +54,9 @@ export default function HotelCard({ hotel }: { hotel: Hotel }) {
 
   const options = getPriceOptions(hotel);
   const cheapest = options[0].price;
+  const rooms = getRooms(adults, children);
+  const totalNightly = cheapest * rooms;
+  const guestLabel = `${adults} adulto${adults !== 1 ? "s" : ""}${children > 0 ? ` + ${children} criança${children !== 1 ? "s" : ""}` : ""}`;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover group">
@@ -66,7 +68,6 @@ export default function HotelCard({ hotel }: { hotel: Hotel }) {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-
         <div className="absolute top-3 left-3 flex gap-2">
           {hotel.discount && (
             <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
@@ -79,13 +80,11 @@ export default function HotelCard({ hotel }: { hotel: Hotel }) {
             </span>
           )}
         </div>
-
         <div className="absolute top-3 right-3">
           <span className="bg-white/90 text-gray-700 text-xs font-semibold px-2 py-1 rounded-lg capitalize">
             {hotel.type === "hotel" ? "🏨 Hotel" : "🏡 Pousada"}
           </span>
         </div>
-
         <div className="absolute bottom-3 left-3">
           <span className="text-white text-sm font-medium bg-black/30 px-2 py-1 rounded-lg">
             📍 {hotel.city}, {hotel.state}
@@ -126,16 +125,20 @@ export default function HotelCard({ hotel }: { hotel: Hotel }) {
         {/* Price & CTA */}
         <div className="flex items-end justify-between">
           <div>
+            <p className="text-gray-400 text-xs mb-0.5">👥 {guestLabel}</p>
             {hotel.discount && (
               <p className="text-gray-400 text-xs line-through">
-                R$ {Math.round(hotel.priceFrom / (1 - hotel.discount / 100))}/noite
+                R$ {Math.round((hotel.priceFrom / (1 - hotel.discount / 100)) * rooms)}/noite
               </p>
             )}
             <p className="text-gray-900">
               <span className="text-xs text-gray-500">A partir de </span>
-              <span className="font-bold text-xl text-blue-600">R$ {cheapest}</span>
+              <span className="font-bold text-xl text-blue-600">R$ {totalNightly}</span>
               <span className="text-gray-400 text-xs">/noite</span>
             </p>
+            {rooms > 1 && (
+              <p className="text-xs text-gray-400">{rooms} quartos · R$ {cheapest}/quarto</p>
+            )}
           </div>
 
           {/* Button + Price Comparison Dropdown */}
@@ -152,15 +155,15 @@ export default function HotelCard({ hotel }: { hotel: Hotel }) {
 
             {open && (
               <div className="absolute right-0 bottom-full mb-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
-                {/* Header */}
                 <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100 flex items-center justify-between">
                   <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">Comparar preços</p>
-                  <p className="text-xs text-gray-400">por noite</p>
+                  <p className="text-xs text-gray-400">👥 {guestLabel} · {rooms} qto{rooms !== 1 ? "s" : ""}</p>
                 </div>
 
-                {/* Platform rows */}
                 {options.map((opt, idx) => {
                   const isCheapest = idx === 0;
+                  const optTotal = opt.price * rooms;
+                  const cheapestTotal = cheapest * rooms;
                   return (
                     <a
                       key={opt.platform}
@@ -170,41 +173,34 @@ export default function HotelCard({ hotel }: { hotel: Hotel }) {
                       onClick={() => setOpen(false)}
                       className={`flex items-center gap-3 px-4 py-3 transition-colors border-b border-gray-50 last:border-0 ${isCheapest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}
                     >
-                      {/* Rank */}
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${isCheapest ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500"}`}>
                         {idx + 1}
                       </div>
-
-                      {/* Logo */}
                       <img
                         src={opt.logo}
                         alt={opt.platform}
                         className="w-5 h-5 rounded object-contain shrink-0"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                       />
-
-                      {/* Info */}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-gray-800">{opt.platform}</p>
                         <p className="text-xs text-gray-500">{opt.note}</p>
                       </div>
-
-                      {/* Price + Badge */}
                       <div className="text-right shrink-0">
                         <p className={`text-base font-black ${isCheapest ? "text-green-600" : "text-gray-700"}`}>
-                          R$ {opt.price}
+                          R$ {optTotal}
                         </p>
+                        {rooms > 1 && <p className="text-xs text-gray-400">R$ {opt.price}/qto</p>}
                         {isCheapest ? (
                           <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full font-semibold">
                             Menor preço
                           </span>
                         ) : (
                           <span className="text-xs text-gray-400">
-                            +R$ {opt.price - cheapest}
+                            +R$ {optTotal - cheapestTotal}
                           </span>
                         )}
                       </div>
-
                       <svg className="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
