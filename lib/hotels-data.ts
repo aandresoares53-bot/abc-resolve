@@ -18,6 +18,8 @@ export type Hotel = {
   featured: boolean;
   seasonal?: string[];
   packageFor?: string[];
+  aliases?: string[];
+  bookingUrl: string;
 };
 
 export const hotelsData: Hotel[] = [
@@ -41,6 +43,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Inverno", "Natal", "Réveillon", "Férias de Julho"],
     packageFor: ["Casal", "Lua de Mel", "Família"],
+    aliases: ["campos", "jordao", "cj", "mantiqueira", "toriba"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Campos+do+Jord%C3%A3o%2C+Brasil&lang=pt-br",
   },
   {
     id: "14",
@@ -62,6 +66,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Inverno", "Natal", "Réveillon", "Férias de Julho", "Páscoa"],
     packageFor: ["Casal", "Família", "Gastronomia"],
+    aliases: ["campos", "jordao", "capivari", "fondue", "chocolate"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Campos+do+Jord%C3%A3o%2C+Brasil&lang=pt-br",
   },
   {
     id: "15",
@@ -83,6 +89,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Inverno", "Férias de Julho", "Natal"],
     packageFor: ["Família", "Crianças", "Natureza"],
+    aliases: ["campos", "jordao", "fazenda serra"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Campos+do+Jord%C3%A3o%2C+Brasil&lang=pt-br",
   },
   {
     id: "16",
@@ -104,6 +112,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Inverno", "Férias de Julho", "Semana Santa"],
     packageFor: ["Casal", "Natureza", "Aventura"],
+    aliases: ["pedra azul", "espirito santo", "domingos"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Domingos+Martins%2C+Brasil&lang=pt-br",
   },
   {
     id: "17",
@@ -125,6 +135,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Verão", "Carnaval", "Réveillon"],
     packageFor: ["Casal", "Lua de Mel", "Grupo"],
+    aliases: ["buzios", "cabo frio", "rj praia", "armacao dos buzios"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=B%C3%BAzios%2C+Brasil&lang=pt-br",
   },
   {
     id: "18",
@@ -146,6 +158,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Verão", "Carnaval", "Réveillon"],
     packageFor: ["Casal", "Lua de Mel"],
+    aliases: ["trancoso", "quadrado", "porto seguro", "bahia luxo"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Trancoso%2C+Brasil&lang=pt-br",
   },
   {
     id: "19",
@@ -167,6 +181,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Carnaval", "Semana Santa", "Natal", "Férias de Julho"],
     packageFor: ["Casal", "Cultural", "Grupo"],
+    aliases: ["ouro preto", "minas historica", "patrimonio", "barroco", "minas gerais historia"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Ouro+Preto%2C+Brasil&lang=pt-br",
   },
   {
     id: "20",
@@ -188,6 +204,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Verão", "Carnaval", "Férias de Julho"],
     packageFor: ["Família", "Natureza", "Crianças"],
+    aliases: ["praia do forte", "tamar", "bahia norte", "costa do sauipe"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Praia+do+Forte%2C+Brasil&lang=pt-br",
   },
   {
     id: "21",
@@ -209,6 +227,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Férias de Julho", "Natal", "Semana Santa", "Réveillon"],
     packageFor: ["Família", "Aventura", "Natureza"],
+    aliases: ["foz", "iguacu", "cataratas", "iguassu", "parana"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Foz+do+Igua%C3%A7u%2C+Brasil&lang=pt-br",
   },
   {
     id: "22",
@@ -230,6 +250,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Férias de Julho", "Semana Santa"],
     packageFor: ["Aventura", "Natureza", "Família"],
+    aliases: ["chapada diamantina", "lencois", "gruta", "cachoeira bahia"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Len%C3%A7%C3%B3is%2C+Brasil&lang=pt-br",
   },
   {
     id: "23",
@@ -251,6 +273,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Verão", "Carnaval", "Férias de Julho", "Semana Santa"],
     packageFor: ["Família", "Casal", "All-Inclusive"],
+    aliases: ["porto galinhas", "porto de galinhas", "piscinas naturais", "ipojuca", "pe praia"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Porto+de+Galinhas%2C+Brasil&lang=pt-br",
   },
   {
     id: "24",
@@ -272,6 +296,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Férias de Julho", "Verão"],
     packageFor: ["Aventura", "Natureza", "Família"],
+    aliases: ["alter", "chao", "amazonia", "para", "santarem", "caribe amazonia"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Alter+do+Ch%C3%A3o%2C+Brasil&lang=pt-br",
   },
   {
     id: "1",
@@ -293,6 +319,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Verão", "Recesso Escolar", "Carnaval"],
     packageFor: ["Casal", "Lua de Mel"],
+    aliases: ["noronha", "fernando", "ilhas", "arquipelago", "fen"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Fernando+de+Noronha%2C+Brasil&lang=pt-br",
   },
   {
     id: "2",
@@ -314,6 +342,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Férias de Julho", "Natal", "Ano Novo"],
     packageFor: ["Família", "Crianças", "Aventura"],
+    aliases: ["goncalves", "mantiqueira", "serra verde", "minas serra"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Gon%C3%A7alves%2C+Brasil&lang=pt-br",
   },
   {
     id: "3",
@@ -335,6 +365,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Carnaval", "Verão", "Semana Santa"],
     packageFor: ["Família", "All-Inclusive", "Casal"],
+    aliases: ["maceio", "alagoas", "al praia", "piscinas alagoas"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Macei%C3%B3%2C+Brasil&lang=pt-br",
   },
   {
     id: "4",
@@ -356,6 +388,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Férias de Julho", "Semana Santa"],
     packageFor: ["Aventura", "Natureza", "Casal"],
+    aliases: ["chapada veadeiros", "alto paraiso", "goias", "df cachoeira"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Alto+Para%C3%ADso+de+Goi%C3%A1s%2C+Brasil&lang=pt-br",
   },
   {
     id: "5",
@@ -377,6 +411,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Carnaval", "Réveillon", "Ano Novo"],
     packageFor: ["Casal", "Grupo", "Cultural"],
+    aliases: ["parati", "paraty", "colonial rj", "costa verde"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Paraty%2C+Brasil&lang=pt-br",
   },
   {
     id: "6",
@@ -398,6 +434,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Verão", "Férias de Julho"],
     packageFor: ["Aventura", "Família", "Fotografia"],
+    aliases: ["lencois maranhenses", "barreirinhas", "dunas lagoas", "maranhao"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Barreirinhas%2C+Brasil&lang=pt-br",
   },
   {
     id: "7",
@@ -419,6 +457,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Verão", "Carnaval", "Réveillon"],
     packageFor: ["Família", "Casal", "Surf"],
+    aliases: ["floripa", "florianopolis", "ilha da magia", "santa catarina praia"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Florian%C3%B3polis%2C+Brasil&lang=pt-br",
   },
   {
     id: "8",
@@ -440,6 +480,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Férias de Julho", "Semana Santa"],
     packageFor: ["Natureza", "Aventura", "Família"],
+    aliases: ["bonito", "pantanal", "mato grosso do sul", "ms natureza", "snorkel"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Bonito%2C+Brasil&lang=pt-br",
   },
   {
     id: "9",
@@ -461,6 +503,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Verão", "Carnaval"],
     packageFor: ["Casal", "Mergulho", "Fotografia"],
+    aliases: ["arraial", "cabo frio region", "caribe brasileiro", "rj mergulho"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Arraial+do+Cabo%2C+Brasil&lang=pt-br",
   },
   {
     id: "10",
@@ -482,6 +526,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Natal", "Páscoa", "Festa das Hortênsias", "Inverno"],
     packageFor: ["Casal", "Família", "Lua de Mel"],
+    aliases: ["gramado", "canela", "serra gaucha", "natal gramado", "rs inverno"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Gramado%2C+Brasil&lang=pt-br",
   },
   {
     id: "11",
@@ -503,6 +549,8 @@ export const hotelsData: Hotel[] = [
     featured: true,
     seasonal: ["Carnaval", "Réveillon", "Verão"],
     packageFor: ["Aventura", "Casal", "Kitesurf"],
+    aliases: ["jeri", "jericoacoara", "kite", "ceara praia", "por do sol"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Jericoacoara%2C+Brasil&lang=pt-br",
   },
   {
     id: "12",
@@ -524,6 +572,8 @@ export const hotelsData: Hotel[] = [
     featured: false,
     seasonal: ["Férias de Julho", "Semana Santa", "Natal"],
     packageFor: ["Família", "Gastronomia", "Cultural"],
+    aliases: ["vale do cafe", "vassouras", "fazenda rj", "cafe historico"],
+    bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Vassouras%2C+Brasil&lang=pt-br",
   },
 ];
 

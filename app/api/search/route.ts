@@ -23,6 +23,7 @@ function scoreHotel(hotel: Hotel, query: string, filters: {
     if (normalizeText(hotel.state).includes(w)) score += 7;
     if (normalizeText(hotel.region).includes(w)) score += 6;
     if (normalizeText(hotel.name).includes(w)) score += 10;
+    if (hotel.aliases?.some(a => normalizeText(a).includes(w))) score += 15;
     if (hotel.tags.some(t => normalizeText(t).includes(w))) score += 5;
     if (normalizeText(hotel.description).includes(w)) score += 3;
     if (hotel.amenities.some(a => normalizeText(a).includes(w))) score += 2;
@@ -111,6 +112,7 @@ export async function GET(request: NextRequest) {
       .slice(0, 6);
   }
 
+  // Simulate AI suggestion
   const aiSuggestion = generateAISuggestion(query, results.length, filters);
 
   return NextResponse.json({
