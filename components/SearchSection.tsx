@@ -85,6 +85,29 @@ export default function SearchSection() {
     });
   }
 
+  function clearSearch() {
+    setQuery("");
+    setRegion("Todos");
+    setState("Todos");
+    setSeasonal("");
+    setPackageFor("");
+    setType("todos");
+    setMaxPrice(0);
+    setAdults(2);
+    setChildren(0);
+    setChildrenAges([]);
+    setSelectedAmenities([]);
+    setPreferredPlatform("");
+    const tom = new Date(); tom.setDate(tom.getDate() + 1);
+    const da = new Date(); da.setDate(da.getDate() + 2);
+    setCheckIn(toInputDate(tom));
+    setCheckOut(toInputDate(da));
+    setResult(null);
+    setSearched(false);
+    setSortBy("relevancia");
+    try { localStorage.removeItem("searchState"); } catch {}
+  }
+
   function toggleAmenity(amenity: string) {
     setSelectedAmenities(prev =>
       prev.includes(amenity) ? prev.filter(a => a !== amenity) : [...prev, amenity]
@@ -346,6 +369,17 @@ export default function SearchSection() {
             <span className="hidden sm:inline">{loading ? "Buscando..." : "Buscar com IA"}</span>
             <span className="sm:hidden">{loading ? "..." : "Buscar"}</span>
           </button>
+          {(searched || query || region !== "Todos" || state !== "Todos" || seasonal || packageFor || type !== "todos" || selectedAmenities.length > 0) && (
+            <button
+              onClick={clearSearch}
+              title="Limpar pesquisa"
+              className="p-4 rounded-2xl border border-gray-200 bg-gray-50 text-gray-400 hover:border-red-300 hover:bg-red-50 hover:text-red-500 transition-all"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Guest & Date row */}
