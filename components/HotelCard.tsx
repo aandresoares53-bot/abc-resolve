@@ -165,11 +165,24 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
     },
   ];
 
-  // dealScore: preço efetivo = price * (1 - cashback%) - bonus de condições
-  // Menor dealScore = melhor negócio
-  return allOptions
-    .map(o => ({ ...o, dealScore: o.price * (1 - o.cashbackPct / 100) - o.dealBonus }))
+  const ownSite = {
+    platform: "encontrarhoteis.com.br",
+    logo: "/favicon.ico",
+    url: `/hotel/${hotel.id}`,
+    price: base,
+    badges: ["🏆 Resultado exato", "Ver detalhes completos"],
+    note: "Veja fotos, comodidades e compare todos os preços aqui",
+    cashbackPct: 0,
+    dealBonus: 0,
+    dealScore: -Infinity, // sempre primeiro
+    isOwn: true,
+  };
+
+  const ranked = allOptions
+    .map(o => ({ ...o, dealScore: o.price * (1 - o.cashbackPct / 100) - o.dealBonus, isOwn: false }))
     .sort((a, b) => a.dealScore - b.dealScore);
+
+  return [ownSite, ...ranked];
 }
 
 function getRooms(adults: number, children: number): number {
@@ -496,26 +509,46 @@ export default function HotelCard({
           </div>
           <div className="divide-y divide-gray-50">
             {options.map((opt, idx) => {
-              const isBest = idx === 0;
-              const optTotal = opt.price * rooms * n;
-              const cheapestTotal = cheapest * rooms * n;
-              const isPreferred = opt.platform === preferredPlatform;
-              const hasCashback = (opt as any).cashbackPct > 0;
+              const isOwn = (opt as any).isOwn === true;
+              const isBest = !isOwn && idx === 1; // idx 0 = próprio site, idx 1 = melhor parceiro
+              const optTotal = isOwn ? opt.price : opt.price * rooms * n;
+              const partnerBestTotal = options[1] ? options[1].price * rooms * n : optTotal;
+              const isPreferred = !isOwn && opt.platform === preferredPlatform;
+              const hasCashback = !isOwn && (opt as any).cashbackPct > 0;
               const effectiveTotal = hasCashback
                 ? Math.round(optTotal * (1 - (opt as any).cashbackPct / 100))
                 : optTotal;
+
+              if (isOwn) {
+                return (
+                  <Link key="own" href={opt.url} onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 px-4 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-colors">
+                    <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-blue-700 font-black text-xs shrink-0">★</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-black text-white">{hotel.name}</p>
+                        <span className="text-xs bg-white text-blue-700 px-2 py-0.5 rounded-full font-bold leading-none">Resultado exato</span>
+                      </div>
+                      <p className="text-xs text-blue-200 mt-0.5">Ver fotos, comodidades e todos os preços comparados</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-base font-black text-white">R$ {opt.price}</p>
+                      <p className="text-xs text-blue-200">Ver detalhes →</p>
+                    </div>
+                  </Link>
+                );
+              }
+
+              const extIdx = idx; // mantém posição real na lista
               return (
                 <a key={opt.platform} href={opt.url} target="_blank" rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3.5 transition-colors ${isPreferred ? "bg-orange-50 hover:bg-orange-100" : isBest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}>
-                  {/* Rank */}
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shrink-0 ${isBest ? "bg-green-500 text-white" : isPreferred ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"}`}>
-                    {idx + 1}
+                    {extIdx}
                   </div>
-                  {/* Logo */}
                   <img src={opt.logo} alt={opt.platform} className="w-5 h-5 rounded object-contain shrink-0"
                     onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <p className="text-sm font-bold text-gray-800">{opt.platform}</p>
@@ -531,12 +564,11 @@ export default function HotelCard({
                       </div>
                     )}
                   </div>
-                  {/* Price */}
                   <div className="text-right shrink-0">
                     {hasCashback ? (
                       <>
                         <p className="text-xs text-gray-400 line-through">R$ {optTotal}</p>
-                        <p className={`text-base font-black text-green-600`}>R$ {effectiveTotal}</p>
+                        <p className="text-base font-black text-green-600">R$ {effectiveTotal}</p>
                         <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">-{(opt as any).cashbackPct}% cashback</span>
                       </>
                     ) : (
@@ -544,7 +576,7 @@ export default function HotelCard({
                         <p className={`text-base font-black ${isBest ? "text-green-600" : "text-gray-700"}`}>R$ {optTotal}</p>
                         {isBest
                           ? <span className="text-xs text-green-600 font-semibold">Menor preço</span>
-                          : <span className="text-xs text-gray-400">+R$ {optTotal - cheapestTotal}</span>}
+                          : <span className="text-xs text-gray-400">+R$ {optTotal - partnerBestTotal}</span>}
                       </>
                     )}
                   </div>
