@@ -263,7 +263,7 @@ export default function HotelPage({ params, searchParams }: { params: { id: stri
                 {partners.map((p, i) => (
                   <a key={p.platform} href={p.url} target="_blank" rel="noopener noreferrer"
                     className={`flex items-center gap-2 w-full px-3 py-2 rounded-xl border text-sm font-semibold transition-all hover:shadow-sm ${i === 0 ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent" : "bg-white border-gray-200 text-gray-700 hover:border-blue-400"}`}>
-                    <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" />
                     <span className="flex-1 text-left">{p.platform}</span>
                     <span className={i === 0 ? "text-white font-black" : "text-blue-700 font-black"}>R$ {p.price}</span>
                     {i === 0 && <span className="text-xs bg-yellow-300 text-yellow-900 px-1.5 rounded font-bold">MELHOR</span>}
