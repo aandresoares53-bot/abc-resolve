@@ -128,30 +128,39 @@ export async function GET(request: NextRequest) {
 
   const detectedCity = query ? detectCityInQuery(query) : null;
 
-  let pool = hotelsData;
+  let results: Hotel[];
+
   if (detectedCity) {
-    pool = hotelsData.filter(h => h.city === detectedCity);
-  }
+    // City detected: show ALL hotels from that city, sorted by featured+rating
+    // Apply only type filter on top (never spill into other cities)
+    let cityHotels = hotelsData.filter(h => h.city === detectedCity);
+    if (filters.type && filters.type !== "todos") {
+      cityHotels = cityHotels.filter(h => h.type === filters.type);
+    }
+    results = cityHotels.sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return b.rating - a.rating;
+    });
+  } else {
+    // No city detected: score across all hotels using filters
+    let pool = hotelsData;
+    const scored = pool.map(hotel => ({ hotel, score: scoreHotel(hotel, query, filters) }));
+    results = scored
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ hotel }) => hotel);
 
-  const scored = pool.map(hotel => ({ hotel, score: scoreHotel(hotel, query, filters) }));
+    if (filters.type && filters.type !== "todos") {
+      results = results.filter(h => h.type === filters.type);
+    }
 
-  let results = scored
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score)
-    .map(({ hotel }) => hotel);
-
-  if (detectedCity && results.length === 0) {
-    results = [...pool].sort((a, b) => b.rating - a.rating);
-  }
-
-  if (!detectedCity && query && results.length === 0) {
-    results = [...hotelsData]
-      .sort((a, b) => b.rating - a.rating)
-      .slice(0, 6);
-  }
-
-  if (filters.type && filters.type !== "todos") {
-    results = results.filter(h => h.type === filters.type);
+    // Fallback: no matches found for query — return top-rated hotels
+    if (query && results.length === 0) {
+      results = [...hotelsData]
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 6);
+    }
   }
 
   const aiSuggestion = generateAISuggestion(query, results.length, filters, detectedCity);
