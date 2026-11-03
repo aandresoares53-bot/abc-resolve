@@ -29,45 +29,42 @@ function getExtraImages(hotel: Hotel): string[] {
 function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn: string, checkOut: string) {
   const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const base = hotel.priceFrom;
-  const [ciY, ciM, ciD] = checkIn.split("-");
-  const [coY, coM, coD] = checkOut.split("-");
   const rooms = getRooms(adults, children);
-  const bookingBase = hotel.bookingUrl.includes("booking.com")
-    ? hotel.bookingUrl.split("?")[0]
-    : `https://www.booking.com/searchresults.pt-br.html`;
-  const bookingParams = new URLSearchParams({
-    ss: `${hotel.name} ${hotel.city}`,
-    checkin: checkIn,
-    checkout: checkOut,
-    group_adults: String(adults),
-    group_children: String(children),
-    no_rooms: String(rooms),
-    lang: "pt-br",
-  });
-  const bookingUrl = `${bookingBase}?${bookingParams}`;
-  const hotelsParams = new URLSearchParams({
-    "q-query": `${hotel.name} ${hotel.city}`,
-    "q-check-in": `${ciM}/${ciD}/${ciY}`,
-    "q-check-out": `${coM}/${coD}/${coY}`,
-    "q-rooms": String(rooms),
-    "q-room-0-adults": String(adults),
-    "q-room-0-children": String(children),
-  });
-  const hotelsUrl = `https://www.hotels.com/search.do?${hotelsParams}`;
-  const expediaParams = new URLSearchParams({
-    destination: `${hotel.name}, ${hotel.city}`,
-    startDate: `${ciM}/${ciD}/${ciY}`,
-    endDate: `${coM}/${coD}/${coY}`,
-    rooms: String(rooms),
-    adults: String(adults),
-    children: String(children),
-  });
-  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?${expediaParams}`;
-  return [
-    { platform: "Booking.com", logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico", url: bookingUrl, note: "Mais reservas", price: Math.round(base * (1 + ((seed % 9) * 0.01))) },
-    { platform: "Hotels.com", logo: "https://www.hotels.com/favicon.ico", url: hotelsUrl, note: "Desconto para membros", price: Math.round(base * (0.88 + ((seed % 8) * 0.01))) },
-    { platform: "Expedia", logo: "https://www.expedia.com.br/favicon.ico", url: expediaUrl, note: "Pacote hotel + voo", price: Math.round(base * (0.94 + ((seed % 9) * 0.01))) },
-  ].sort((a, b) => a.price - b.price);
+  const searchTerm = encodeURIComponent(`${hotel.name} ${hotel.city}`);
+  const cityTerm = encodeURIComponent(hotel.city);
+
+  // Booking.com — checkin/checkout em YYYY-MM-DD
+  const bookingUrl = `https://www.booking.com/searchresults.pt-br.html?ss=${searchTerm}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br`;
+
+  // Hotels.com — usa formato de busca com datas ISO
+  const hotelsUrl = `https://www.hotels.com/search.do?q-query=${searchTerm}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}`;
+
+  // Expedia BR — parâmetros corretos
+  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?destination=${searchTerm}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}&rooms=${rooms}`;
+
+  // Decolar — plataforma líder no Brasil
+  const decolarUrl = `https://www.decolar.com/hospedagens/busca/${cityTerm}/${checkIn}/${checkOut}/${adults}/${children}?q=${searchTerm}`;
+
+  // Kayak — comparador global
+  const kayakUrl = `https://www.kayak.com.br/hotels/${cityTerm}/${checkIn}/${checkOut}/${adults}adults?sort=price_a`;
+
+  // TripAdvisor — avaliações + reservas
+  const tripUrl = `https://www.tripadvisor.com.br/Search?q=${searchTerm}&searchSessionId=${checkIn}&geo=&pid=3826&direct_search=true&date=${checkIn}&enddate=${checkOut}&adult=${adults}&child=${children}`;
+
+  // Airbnb — ótimo para pousadas
+  const airbnbUrl = `https://www.airbnb.com.br/s/${cityTerm}/homes?checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}&query=${searchTerm}`;
+
+  const allOptions = [
+    { platform: "Booking.com",  logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico", url: bookingUrl,  note: "Mais reservas no Brasil",     price: Math.round(base * (1.00 + ((seed % 9) * 0.01))) },
+    { platform: "Hotels.com",   logo: "https://www.hotels.com/favicon.ico",                          url: hotelsUrl,  note: "Desconto para membros",         price: Math.round(base * (0.88 + ((seed % 8) * 0.01))) },
+    { platform: "Expedia",      logo: "https://www.expedia.com.br/favicon.ico",                      url: expediaUrl, note: "Pacote hotel + voo disponível",  price: Math.round(base * (0.94 + ((seed % 9) * 0.01))) },
+    { platform: "Decolar",      logo: "https://www.decolar.com/favicon.ico",                         url: decolarUrl, note: "Líder na América Latina",        price: Math.round(base * (0.91 + ((seed % 7) * 0.01))) },
+    { platform: "Kayak",        logo: "https://www.kayak.com.br/favicon.ico",                        url: kayakUrl,   note: "Comparador global",              price: Math.round(base * (0.93 + ((seed % 6) * 0.01))) },
+    { platform: "TripAdvisor",  logo: "https://static.tacdn.com/img2/favicon.ico",                   url: tripUrl,    note: "Melhor avaliação de hóspedes",   price: Math.round(base * (0.96 + ((seed % 8) * 0.01))) },
+    { platform: "Airbnb",       logo: "https://a0.muscache.com/airbnb/static/icons/android-icon-192x192-c0465f9f0380893768972a31a614aaed.png", url: airbnbUrl, note: "Pousadas e casas únicas", price: Math.round(base * (0.85 + ((seed % 9) * 0.01))) },
+  ];
+
+  return allOptions.sort((a, b) => a.price - b.price);
 }
 
 function getRooms(adults: number, children: number): number {
@@ -325,7 +322,7 @@ export default function HotelCard({
                 </button>
 
                 {open && (
-                  <div className="absolute right-0 bottom-full mb-2 w-72 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
+                  <div className="absolute right-0 bottom-full mb-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
                     <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
                       <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Comparar preços</p>
                       <p className="text-xs text-gray-400">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""}</p>
