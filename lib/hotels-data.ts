@@ -19,7 +19,7 @@ export type Hotel = {
   seasonal?: string[];
   packageFor?: string[];
   aliases?: string[];
-  bookingUrl: string;
+  bookingUrl?: string;
 };
 
 export const hotelsData: Hotel[] = [
