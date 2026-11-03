@@ -7245,14 +7245,19 @@ function selectPreset(key){
   if(negMatch) document.getElementById('result-neg').value = negMatch[1];
   setSelectClosest('edit-pose', p.pose || defaultPose(p));
   setSelectClosest('edit-cam',  p.cam  || defaultCam(p));
+  // For POV extremo presets, run applyEdits to inject upshot nsfw overrides
+  if(p.cat === 'pov_extremo') {
+    applyEdits(true);
+  }
   const panel = document.getElementById('result-panel');
   panel.classList.add('open');
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   // Auto-copy
-  navigator.clipboard.writeText(prompt).catch(()=>{});
+  const finalPrompt = document.getElementById('result-prompt').value;
+  navigator.clipboard.writeText(finalPrompt).catch(()=>{});
   showToast('✓ Copiado automaticamente');
   // Save to history
-  saveHistory(p.key, p.name, prompt);
+  saveHistory(p.key, p.name, finalPrompt);
 }
 
 function refreshCref(){
@@ -7288,7 +7293,8 @@ function applyEdits(silent){
   const overrideCam  = document.getElementById('edit-cam').value.trim();
 
   // POV baixo extremo: inject explicit upshot content automatically
-  const isPovExtremo = /upshot|vulva|floor.*between|between.*legs.*floor/i.test(overrideCam);
+  const camToCheck = overrideCam || p.cam || '';
+  const isPovExtremo = p.cat === 'pov_extremo' || /upshot|vulva|floor.*between|between.*legs.*floor/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
   const povInject = isPovExtremo ? {
     nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below',
