@@ -19,7 +19,7 @@ export default function PhotoGallery({ photos, hotelName }: Props) {
       <div className="grid grid-cols-4 grid-rows-2 gap-1.5 rounded-2xl overflow-hidden h-72 sm:h-[420px]">
         {/* Large first photo */}
         <div className="col-span-2 row-span-2 relative cursor-pointer group" onClick={() => setLightbox(0)}>
-          <img src={shown[0].url} alt={shown[0].caption} className="w-full h-full object-cover" />
+          <img src={shown[0].url} alt={shown[0].caption} className="w-full h-full object-cover" referrerPolicy="no-referrer" crossOrigin="anonymous" />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
             <span className="opacity-0 group-hover:opacity-100 text-white text-2xl transition-all">🔍</span>
           </div>
@@ -27,7 +27,7 @@ export default function PhotoGallery({ photos, hotelName }: Props) {
         {/* Right grid: 4 smaller photos */}
         {shown.slice(1, 5).map((photo, i) => (
           <div key={i} className="relative cursor-pointer group" onClick={() => setLightbox(i + 1)}>
-            <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" />
+            <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all" />
             {i === 3 && photos.length > 5 && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center" onClick={() => setLightbox(5)}>
@@ -43,7 +43,7 @@ export default function PhotoGallery({ photos, hotelName }: Props) {
         {photos.map((photo, i) => (
           <button key={i} onClick={() => setLightbox(i)}
             className="shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all hover:border-blue-500 border-transparent">
-            <img src={photo.url} alt="" className="w-full h-full object-cover" />
+            <img src={photo.url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           </button>
         ))}
       </div>
@@ -56,7 +56,7 @@ export default function PhotoGallery({ photos, hotelName }: Props) {
             onClick={e => { e.stopPropagation(); setLightbox(l => l !== null && l > 0 ? l - 1 : photos.length - 1); }}>‹</button>
           <div className="max-w-5xl max-h-screen p-8 text-center" onClick={e => e.stopPropagation()}>
             <img src={photos[lightbox].url.replace("w=800", "w=1400")} alt={photos[lightbox].caption}
-              className="max-w-full max-h-[80vh] object-contain rounded-xl mx-auto" />
+              className="max-w-full max-h-[80vh] object-contain rounded-xl mx-auto" referrerPolicy="no-referrer" />
             <p className="text-white/80 text-sm mt-3">{photos[lightbox].caption}</p>
             <p className="text-white/50 text-xs mt-1">{lightbox + 1} / {photos.length}</p>
           </div>
