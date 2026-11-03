@@ -193,11 +193,11 @@ export default function HotelCard({
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      {/* Horizontal layout: image left, content right */}
-      <div className="flex">
+      {/* Horizontal on md+, vertical on mobile */}
+      <div className="flex flex-col sm:flex-row">
         {/* Image column */}
-        <div className="relative shrink-0 w-56 sm:w-64 md:w-72" style={{ minHeight: "200px" }}>
-          <div className="relative h-full group/img overflow-hidden" style={{ minHeight: "200px" }}>
+        <div className="relative shrink-0 w-full sm:w-56 md:w-64" style={{ minHeight: "200px" }}>
+          <div className="relative h-48 sm:h-full group/img overflow-hidden" style={{ minHeight: "200px" }}>
             <img
               src={images[imgIdx]}
               alt={hotel.name}
@@ -295,7 +295,7 @@ export default function HotelCard({
           </div>
 
           {/* Bottom row: price left, buttons right */}
-          <div className="flex items-end justify-between mt-auto gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mt-auto gap-3">
             {/* Price */}
             <div>
               {hotel.discount && (
@@ -310,7 +310,7 @@ export default function HotelCard({
             </div>
 
             {/* Action buttons */}
-            <div className="flex flex-col gap-2 items-end shrink-0">
+            <div className="flex flex-col gap-2 items-start sm:items-end shrink-0 w-full sm:w-auto">
               {/* Price comparison dropdown */}
               <div className="relative" ref={ref}>
                 <button
