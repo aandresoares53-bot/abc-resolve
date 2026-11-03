@@ -5192,7 +5192,6 @@ export const hotelsData: Hotel[] = [
     aliases: ["imbituba pousada", "imbituba barato"],
     bookingUrl: "https://www.booking.com/searchresults.pt-br.html?ss=Imbituba+SC&lang=pt-br",
   },
-];
 
 // IDs 321-385: expansão de cidades com 1 opção + novas cidades importantes
   { id: "321", name: "Pousada do Carmo", type: "pousada", city: "Olinda", state: "PE", region: "Nordeste", stars: 4, priceFrom: 280, priceTo: 480, discount: 12, rating: 9.1, reviews: 1240, image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80", tags: ["Patrimônio UNESCO", "Centro Histórico", "Vista Panorâmica"], amenities: ["Wi-Fi", "Café da manhã", "Terraço"], description: "Pousada charmosa no coração do centro histórico de Olinda, Patrimônio da Humanidade. Quartos coloniais com vista para o mar e as igrejas barrocas.", featured: true, seasonal: ["Carnaval", "Verão"], packageFor: ["Casal", "Gastronomia"], aliases: ["pousada olinda", "hotel olinda"] },
@@ -5291,6 +5290,7 @@ export const hotelsData: Hotel[] = [
   { id: "384", name: "Pousada Duna Grande", type: "pousada", city: "Itaúnas", state: "ES", region: "Sudeste", stars: 3, priceFrom: 230, priceTo: 400, discount: 15, rating: 8.9, reviews: 620, image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80", tags: ["Dunas", "Praia", "Forró", "Rústico"], amenities: ["Wi-Fi", "Café da manhã", "Trilhas nas dunas"], description: "Pousada rústica e charmosa em Itaúnas com café da manhã capixaba e acesso às dunas e praias desertas da região.", featured: false, seasonal: ["Verão", "Carnaval"], packageFor: ["Casal", "Aventura"], aliases: [] },
 
   { id: "385", name: "Pousada Alcântara Colonial", type: "pousada", city: "Alcântara", state: "MA", region: "Nordeste", stars: 3, priceFrom: 180, priceTo: 320, discount: 0, rating: 8.7, reviews: 430, image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80", tags: ["Ruínas Coloniais", "Base de Lançamento", "Barco", "Histórico"], amenities: ["Wi-Fi", "Café da manhã"], description: "Pousada em Alcântara, cidade histórica acessível apenas de barco de São Luís. Ruínas coloniais do século XVII e a Base de Lançamento da CLBI.", featured: false, seasonal: ["Verão"], packageFor: ["Casal", "Natureza"], aliases: ["alcantara ma", "alcantara maranhao"] },
+];
 
 export const regions = ["Todos", "Nordeste", "Sudeste", "Sul", "Centro-Oeste", "Norte"];
 export const states = [
