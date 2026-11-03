@@ -36,7 +36,34 @@ export default function HotelPage({ params }: { params: { id: string } }) {
     `https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80`,
   ];
 
-  const bookingUrl = `https://www.booking.com/searchresults.pt-br.html?ss=${encodeURIComponent(hotel.name + " " + hotel.city)}&lang=pt-br`;
+  // Default dates: tomorrow check-in, day after check-out
+  const today = new Date();
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
+  const fmt = (d: Date) => d.toISOString().split("T")[0];
+  const checkIn = fmt(tomorrow);
+  const checkOut = fmt(dayAfter);
+  const adults = 2; const children = 0; const rooms = 1;
+
+  const nameCityState = encodeURIComponent(`${hotel.name}, ${hotel.city}, ${hotel.state}`);
+  const nameCity = encodeURIComponent(`${hotel.name} ${hotel.city}`);
+
+  const base = hotel.priceFrom;
+  const partners = [
+    { platform: "Booking.com", logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.png", url: `https://www.booking.com/searchresults.pt-br.html?ss=${nameCityState}&dest_type=hotel&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br`, price: Math.round(base * 1.00), badges: ["Cancelamento grátis", "5% cashback"], cashbackPct: 5, dealBonus: 0 },
+    { platform: "Hotels.com", logo: "https://www.hotels.com/favicon.ico", url: `https://www.hotels.com/search.do?q-query=${nameCityState}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}`, price: Math.round(base * 1.02), badges: ["10 noites = 1 grátis"], cashbackPct: 0, dealBonus: 10 },
+    { platform: "Expedia", logo: "https://www.expedia.com.br/favicon.ico", url: `https://www.expedia.com.br/Hotel-Search?destination=${nameCityState}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}`, price: Math.round(base * 0.98), badges: ["Preço garantido"], cashbackPct: 0, dealBonus: 5 },
+    { platform: "Decolar", logo: "https://www.decolar.com/favicon.ico", url: `https://www.decolar.com/hotels/search/${encodeURIComponent(hotel.city)}?checkIn=${checkIn}&checkOut=${checkOut}&rooms=${rooms}&adults=${adults}&children=${children}&q=${nameCity}`, price: Math.round(base * 1.01), badges: ["Parcelamento 12x"], cashbackPct: 0, dealBonus: 0 },
+    { platform: "Hurb", logo: "https://www.hurb.com/favicon.ico", url: `https://www.hurb.com/search?q=${nameCity}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`, price: Math.round(base * 0.96), badges: ["🔥 Oferta relâmpago"], cashbackPct: 0, dealBonus: 20 },
+    { platform: "CVC", logo: "https://www.cvc.com.br/favicon.ico", url: `https://www.cvc.com.br/hoteis/resultado?destino=${encodeURIComponent(hotel.city)}&entrada=${checkIn}&saida=${checkOut}&quartos=${rooms}&adultos=${adults}`, price: Math.round(base * 1.03), badges: ["Parcelamento 18x"], cashbackPct: 0, dealBonus: 0 },
+    { platform: "Submarino Viagens", logo: "https://www.submarinoviagens.com.br/favicon.ico", url: `https://www.submarinoviagens.com.br/hoteis?q=${nameCity}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`, price: Math.round(base * 1.01), badges: ["Cashback 3%"], cashbackPct: 3, dealBonus: 0 },
+    { platform: "Google Hotels", logo: "https://www.google.com/favicon.ico", url: `https://www.google.com/travel/hotels/search?q=${nameCityState}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}`, price: Math.round(base * 0.99), badges: ["Compare preços"], cashbackPct: 0, dealBonus: 5 },
+    { platform: "Trivago", logo: "https://www.trivago.com.br/favicon.ico", url: `https://www.trivago.com.br/?aDateRange[arr]=${checkIn}&aDateRange[dep]=${checkOut}&iRoomType=7&iPersons[]=${adults}&query=${nameCityState}`, price: Math.round(base * 0.97), badges: ["Melhor preço comparado"], cashbackPct: 0, dealBonus: 15 },
+    { platform: "Hoteis.com", logo: "https://www.hoteis.com/favicon.ico", url: `https://www.hoteis.com/search.do?q-query=${nameCity}&q-check-in=${checkIn}&q-check-out=${checkOut}`, price: Math.round(base * 1.00), badges: ["Preço especial BR"], cashbackPct: 2, dealBonus: 0 },
+    { platform: "Kayak", logo: "https://www.kayak.com.br/favicon.ico", url: `https://www.kayak.com.br/hotels/${encodeURIComponent(hotel.city)}-${encodeURIComponent(hotel.state)}/${checkIn}/${checkOut}/${adults}adults?q=${nameCity}`, price: Math.round(base * 0.99), badges: ["Comparador global"], cashbackPct: 0, dealBonus: 8 },
+    { platform: "Airbnb", logo: "https://www.airbnb.com.br/favicon.ico", url: `https://www.airbnb.com.br/s/${encodeURIComponent(hotel.city + ", " + hotel.state)}/homes?checkin=${checkIn}&checkout=${checkOut}&adults=${adults}`, price: Math.round(base * 0.95), badges: ["Experiência local"], cashbackPct: 0, dealBonus: 10 },
+  ].map(p => ({ ...p, dealScore: p.price * (1 - p.cashbackPct / 100) - p.dealBonus }))
+   .sort((a, b) => a.dealScore - b.dealScore);
 
   const schemaOrg = {
     "@context": "https://schema.org",
@@ -166,15 +193,15 @@ export default function HotelPage({ params }: { params: { id: string } }) {
 
           {/* Booking sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-20 bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
-              <div className="text-center mb-5">
+            <div className="sticky top-20 bg-white rounded-3xl shadow-lg border border-gray-100 p-5">
+              <div className="text-center mb-4">
                 {hotel.discount && (
                   <p className="text-gray-400 text-sm line-through">
                     R$ {Math.round(hotel.priceFrom / (1 - hotel.discount / 100))}
                   </p>
                 )}
                 <p className="text-4xl font-black text-blue-600">R$ {hotel.priceFrom}</p>
-                <p className="text-gray-400 text-sm">por noite · por quarto</p>
+                <p className="text-gray-400 text-sm">por noite · 1 quarto · 2 adultos</p>
                 {hotel.discount && (
                   <span className="inline-block mt-2 bg-red-100 text-red-600 text-sm font-bold px-3 py-1 rounded-full">
                     -{hotel.discount}% OFF
@@ -182,34 +209,26 @@ export default function HotelPage({ params }: { params: { id: string } }) {
                 )}
               </div>
 
-              <div className="space-y-3 mb-4">
-                <a
-                  href={bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-2xl text-center hover:shadow-lg transition-all"
-                >
-                  Reservar no Booking.com
-                </a>
-                <a
-                  href={`https://www.hotels.com/search.do?q-query=${encodeURIComponent(hotel.name + " " + hotel.city)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-3 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-2xl text-center hover:border-blue-400 transition-all"
-                >
-                  Ver no Hotels.com
-                </a>
-                <a
-                  href={`https://www.expedia.com.br/Hotel-Search?destination=${encodeURIComponent(hotel.name + ", " + hotel.city)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-3 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-2xl text-center hover:border-blue-400 transition-all"
-                >
-                  Ver na Expedia
-                </a>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Compare preços — {partners.length} parceiros</p>
+              <div className="space-y-2 mb-3">
+                {partners.map((p, i) => (
+                  <a key={p.platform} href={p.url} target="_blank" rel="noopener noreferrer"
+                    className={`flex items-center gap-2 w-full px-3 py-2 rounded-xl border text-sm font-semibold transition-all hover:shadow-sm ${i === 0 ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent" : "bg-white border-gray-200 text-gray-700 hover:border-blue-400"}`}>
+                    <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    <span className="flex-1 text-left">{p.platform}</span>
+                    <span className={i === 0 ? "text-white font-black" : "text-blue-700 font-black"}>R$ {p.price}</span>
+                    {i === 0 && <span className="text-xs bg-yellow-300 text-yellow-900 px-1.5 rounded font-bold">MELHOR</span>}
+                  </a>
+                ))}
               </div>
-
-              <p className="text-xs text-gray-400 text-center">Preços sujeitos a disponibilidade.</p>
+              {partners[0]?.badges && partners[0].badges.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {partners[0].badges.map(b => (
+                    <span key={b} className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">{b}</span>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-gray-400 text-center">Preços estimados · sujeitos a disponibilidade</p>
             </div>
           </div>
         </div>
