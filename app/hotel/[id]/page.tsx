@@ -51,21 +51,19 @@ export default async function HotelPage({ params, searchParams }: { params: { id
   const nameCity = encodeURIComponent(`${hotel.name} ${hotel.city}`);
 
   const base = hotel.priceFrom;
-  const partners = [
-    { platform: "Booking.com", logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.png", url: `https://www.booking.com/searchresults.pt-br.html?ss=${nameCityState}&dest_type=hotel&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br`, price: Math.round(base * 1.00), badges: ["Cancelamento grátis", "5% cashback"], cashbackPct: 5, dealBonus: 0 },
-    { platform: "Hotels.com", logo: "https://www.hotels.com/favicon.ico", url: `https://www.hotels.com/search.do?q-query=${nameCityState}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}`, price: Math.round(base * 1.02), badges: ["10 noites = 1 grátis"], cashbackPct: 0, dealBonus: 10 },
-    { platform: "Expedia", logo: "https://www.expedia.com.br/favicon.ico", url: `https://www.expedia.com.br/Hotel-Search?destination=${nameCityState}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}`, price: Math.round(base * 0.98), badges: ["Preço garantido"], cashbackPct: 0, dealBonus: 5 },
-    { platform: "Decolar", logo: "https://www.decolar.com/favicon.ico", url: `https://www.decolar.com/hotels/search/${encodeURIComponent(hotel.city)}?checkIn=${checkIn}&checkOut=${checkOut}&rooms=${rooms}&adults=${adults}&children=${children}&q=${nameCity}`, price: Math.round(base * 1.01), badges: ["Parcelamento 12x"], cashbackPct: 0, dealBonus: 0 },
-    { platform: "Hurb", logo: "https://www.hurb.com/favicon.ico", url: `https://www.hurb.com/search?q=${nameCity}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`, price: Math.round(base * 0.96), badges: ["🔥 Oferta relâmpago"], cashbackPct: 0, dealBonus: 20 },
-    { platform: "CVC", logo: "https://www.cvc.com.br/favicon.ico", url: `https://www.cvc.com.br/hoteis/resultado?destino=${encodeURIComponent(hotel.city)}&entrada=${checkIn}&saida=${checkOut}&quartos=${rooms}&adultos=${adults}`, price: Math.round(base * 1.03), badges: ["Parcelamento 18x"], cashbackPct: 0, dealBonus: 0 },
-    { platform: "Submarino Viagens", logo: "https://www.submarinoviagens.com.br/favicon.ico", url: `https://www.submarinoviagens.com.br/hoteis?q=${nameCity}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`, price: Math.round(base * 1.01), badges: ["Cashback 3%"], cashbackPct: 3, dealBonus: 0 },
-    { platform: "Google Hotels", logo: "https://www.google.com/favicon.ico", url: `https://www.google.com/travel/hotels/search?q=${nameCityState}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}`, price: Math.round(base * 0.99), badges: ["Compare preços"], cashbackPct: 0, dealBonus: 5 },
-    { platform: "Trivago", logo: "https://www.trivago.com.br/favicon.ico", url: `https://www.trivago.com.br/?aDateRange[arr]=${checkIn}&aDateRange[dep]=${checkOut}&iRoomType=7&iPersons[]=${adults}&query=${nameCityState}`, price: Math.round(base * 0.97), badges: ["Melhor preço comparado"], cashbackPct: 0, dealBonus: 15 },
-    { platform: "Hoteis.com", logo: "https://www.hoteis.com/favicon.ico", url: `https://www.hoteis.com/search.do?q-query=${nameCity}&q-check-in=${checkIn}&q-check-out=${checkOut}`, price: Math.round(base * 1.00), badges: ["Preço especial BR"], cashbackPct: 2, dealBonus: 0 },
-    { platform: "Kayak", logo: "https://www.kayak.com.br/favicon.ico", url: `https://www.kayak.com.br/hotels/${encodeURIComponent(hotel.city)}-${encodeURIComponent(hotel.state)}/${checkIn}/${checkOut}/${adults}adults?q=${nameCity}`, price: Math.round(base * 0.99), badges: ["Comparador global"], cashbackPct: 0, dealBonus: 8 },
-    { platform: "Airbnb", logo: "https://www.airbnb.com.br/favicon.ico", url: `https://www.airbnb.com.br/s/${encodeURIComponent(hotel.city + ", " + hotel.state)}/homes?checkin=${checkIn}&checkout=${checkOut}&adults=${adults}`, price: Math.round(base * 0.95), badges: ["Experiência local"], cashbackPct: 0, dealBonus: 10 },
+  const bookingPartner = { platform: "Booking.com", logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.png", url: `https://www.booking.com/searchresults.pt-br.html?ss=${nameCityState}&dest_type=hotel&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br`, price: Math.round(base * 1.00), badges: ["Cancelamento grátis", "5% cashback"], cashbackPct: 5, dealBonus: 0, featured: true };
+  const otherPartners = [
+    { platform: "Expedia", logo: "https://www.expedia.com.br/favicon.ico", url: `https://www.expedia.com.br/Hotel-Search?destination=${nameCityState}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}`, price: Math.round(base * 0.98), badges: ["Preço garantido"], cashbackPct: 0, dealBonus: 5, featured: false },
+    { platform: "Decolar", logo: "https://www.decolar.com/favicon.ico", url: `https://www.decolar.com/hotels/search/${encodeURIComponent(hotel.city)}?checkIn=${checkIn}&checkOut=${checkOut}&rooms=${rooms}&adults=${adults}&children=${children}&q=${nameCity}`, price: Math.round(base * 1.01), badges: ["Parcelamento 12x"], cashbackPct: 0, dealBonus: 0, featured: false },
+    { platform: "Hurb", logo: "https://www.hurb.com/favicon.ico", url: `https://www.hurb.com/search?q=${nameCity}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`, price: Math.round(base * 0.96), badges: ["🔥 Oferta relâmpago"], cashbackPct: 0, dealBonus: 20, featured: false },
+    { platform: "CVC", logo: "https://www.cvc.com.br/favicon.ico", url: `https://www.cvc.com.br/hoteis/resultado?destino=${encodeURIComponent(hotel.city)}&entrada=${checkIn}&saida=${checkOut}&quartos=${rooms}&adultos=${adults}`, price: Math.round(base * 1.03), badges: ["Parcelamento 18x"], cashbackPct: 0, dealBonus: 0, featured: false },
+    { platform: "Google Hotels", logo: "https://www.google.com/favicon.ico", url: `https://www.google.com/travel/hotels/search?q=${nameCityState}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}`, price: Math.round(base * 0.99), badges: ["Compare preços"], cashbackPct: 0, dealBonus: 5, featured: false },
+    { platform: "Trivago", logo: "https://www.trivago.com.br/favicon.ico", url: `https://www.trivago.com.br/?aDateRange[arr]=${checkIn}&aDateRange[dep]=${checkOut}&iRoomType=7&iPersons[]=${adults}&query=${nameCityState}`, price: Math.round(base * 0.97), badges: ["Melhor preço comparado"], cashbackPct: 0, dealBonus: 15, featured: false },
+    { platform: "Kayak", logo: "https://www.kayak.com.br/favicon.ico", url: `https://www.kayak.com.br/hotels/${encodeURIComponent(hotel.city)}-${encodeURIComponent(hotel.state)}/${checkIn}/${checkOut}/${adults}adults?q=${nameCity}`, price: Math.round(base * 0.99), badges: ["Comparador global"], cashbackPct: 0, dealBonus: 8, featured: false },
+    { platform: "Airbnb", logo: "https://www.airbnb.com.br/favicon.ico", url: `https://www.airbnb.com.br/s/${encodeURIComponent(hotel.city + ", " + hotel.state)}/homes?checkin=${checkIn}&checkout=${checkOut}&adults=${adults}`, price: Math.round(base * 0.95), badges: ["Experiência local"], cashbackPct: 0, dealBonus: 10, featured: false },
   ].map(p => ({ ...p, dealScore: p.price * (1 - p.cashbackPct / 100) - p.dealBonus }))
    .sort((a, b) => a.dealScore - b.dealScore);
+  const partners = [{ ...bookingPartner, dealScore: 0 }, ...otherPartners];
 
   const schemaOrg = {
     "@context": "https://schema.org",
@@ -266,7 +264,7 @@ export default async function HotelPage({ params, searchParams }: { params: { id
                     <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" />
                     <span className="flex-1 text-left">{p.platform}</span>
                     <span className={i === 0 ? "text-white font-black" : "text-blue-700 font-black"}>R$ {p.price}</span>
-                    {i === 0 && <span className="text-xs bg-yellow-300 text-yellow-900 px-1.5 rounded font-bold">MELHOR</span>}
+                    {i === 0 && <span className="text-xs bg-yellow-300 text-yellow-900 px-1.5 rounded font-bold">⭐ RECOMENDADO</span>}
                   </a>
                 ))}
               </div>
