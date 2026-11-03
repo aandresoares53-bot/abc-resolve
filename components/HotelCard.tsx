@@ -72,22 +72,100 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   // Trivago — comparador de preços
   const trivagoUrl = `https://www.trivago.com.br/?query=${nameEnc}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`;
 
+  // Conditions shown as badges — cashback/cancelamento grátis/parcelamento/fidelidade
+  // dealScore = preço efetivo após benefícios (menor = melhor negócio)
   const allOptions = [
-    { platform: "Booking.com",        logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",                                                    url: bookingUrl,   note: "Mais reservas no Brasil",        price: Math.round(base * (1.00 + ((seed % 9) * 0.01))) },
-    { platform: "Hotels.com",         logo: "https://www.hotels.com/favicon.ico",                                                                              url: hotelsUrl,    note: "Desconto para membros",          price: Math.round(base * (0.88 + ((seed % 8) * 0.01))) },
-    { platform: "Expedia",            logo: "https://www.expedia.com.br/favicon.ico",                                                                          url: expediaUrl,   note: "Pacote hotel + voo disponível",  price: Math.round(base * (0.94 + ((seed % 9) * 0.01))) },
-    { platform: "Decolar",            logo: "https://www.decolar.com/favicon.ico",                                                                             url: decolarUrl,   note: "Líder na América Latina",        price: Math.round(base * (0.91 + ((seed % 7) * 0.01))) },
-    { platform: "Kayak",              logo: "https://www.kayak.com.br/favicon.ico",                                                                            url: kayakUrl,     note: "Comparador global",              price: Math.round(base * (0.93 + ((seed % 6) * 0.01))) },
-    { platform: "TripAdvisor",        logo: "https://static.tacdn.com/img2/favicon.ico",                                                                       url: tripUrl,      note: "Melhor avaliação de hóspedes",   price: Math.round(base * (0.96 + ((seed % 8) * 0.01))) },
-    { platform: "Airbnb",             logo: "https://a0.muscache.com/airbnb/static/icons/android-icon-192x192-c0465f9f0380893768972a31a614aaed.png",           url: airbnbUrl,    note: "Pousadas e casas únicas",        price: Math.round(base * (0.85 + ((seed % 9) * 0.01))) },
-    { platform: "Hurb",               logo: "https://www.hurb.com/favicon.ico",                                                                                url: hurbUrl,      note: "Pacotes exclusivos no Brasil",   price: Math.round(base * (0.89 + ((seed % 7) * 0.01))) },
-    { platform: "CVC",                logo: "https://www.cvc.com.br/favicon.ico",                                                                              url: cvcUrl,       note: "Maior agência da América Latina",price: Math.round(base * (0.92 + ((seed % 8) * 0.01))) },
-    { platform: "Submarino Viagens",  logo: "https://www.submarinoviagens.com.br/favicon.ico",                                                                 url: submarinoUrl, note: "Cashback e parcelamento",        price: Math.round(base * (0.90 + ((seed % 6) * 0.01))) },
-    { platform: "Google Hotels",      logo: "https://www.google.com/favicon.ico",                                                                              url: googleUrl,    note: "Compare todos os preços",        price: Math.round(base * (0.87 + ((seed % 9) * 0.01))) },
-    { platform: "Trivago",            logo: "https://www.trivago.com.br/favicon.ico",                                                                          url: trivagoUrl,   note: "Comparador de hotéis global",    price: Math.round(base * (0.95 + ((seed % 7) * 0.01))) },
+    {
+      platform: "Booking.com",       logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",
+      url: bookingUrl,   price: Math.round(base * (1.00 + ((seed % 9) * 0.01))),
+      badges: ["Cancelamento grátis", "Pague no hotel"],
+      note: "Cancelamento grátis disponível",
+      cashbackPct: 0, dealBonus: 5,
+    },
+    {
+      platform: "Hotels.com",        logo: "https://www.hotels.com/favicon.ico",
+      url: hotelsUrl,    price: Math.round(base * (0.88 + ((seed % 8) * 0.01))),
+      badges: ["1 noite grátis a cada 10", "Membro: -10%"],
+      note: "Programa One Key — acumule noites grátis",
+      cashbackPct: 0, dealBonus: 12,
+    },
+    {
+      platform: "Expedia",           logo: "https://www.expedia.com.br/favicon.ico",
+      url: expediaUrl,   price: Math.round(base * (0.94 + ((seed % 9) * 0.01))),
+      badges: ["Pacote hotel+voo", "One Key Rewards"],
+      note: "Economize até 20% combinando voo + hotel",
+      cashbackPct: 0, dealBonus: 8,
+    },
+    {
+      platform: "Decolar",           logo: "https://www.decolar.com/favicon.ico",
+      url: decolarUrl,   price: Math.round(base * (0.91 + ((seed % 7) * 0.01))),
+      badges: ["Parcelado s/ juros", "Desconto à vista"],
+      note: "Parcelamento em até 12x sem juros",
+      cashbackPct: 0, dealBonus: 7,
+    },
+    {
+      platform: "Kayak",             logo: "https://www.kayak.com.br/favicon.ico",
+      url: kayakUrl,     price: Math.round(base * (0.93 + ((seed % 6) * 0.01))),
+      badges: ["Price Alert", "Hacker Fares"],
+      note: "Alerta de preço — avisa quando cair",
+      cashbackPct: 0, dealBonus: 4,
+    },
+    {
+      platform: "TripAdvisor",       logo: "https://static.tacdn.com/img2/favicon.ico",
+      url: tripUrl,      price: Math.round(base * (0.96 + ((seed % 8) * 0.01))),
+      badges: ["Avaliação verificada"],
+      note: "Baseado em avaliações reais de hóspedes",
+      cashbackPct: 0, dealBonus: 3,
+    },
+    {
+      platform: "Airbnb",            logo: "https://a0.muscache.com/airbnb/static/icons/android-icon-192x192-c0465f9f0380893768972a31a614aaed.png",
+      url: airbnbUrl,    price: Math.round(base * (0.85 + ((seed % 9) * 0.01))),
+      badges: ["Cozinha inclusa", "Espaço privativo"],
+      note: "Casas e apartamentos completos",
+      cashbackPct: 0, dealBonus: 6,
+    },
+    {
+      platform: "Hurb",              logo: "https://www.hurb.com/favicon.ico",
+      url: hurbUrl,      price: Math.round(base * (0.89 + ((seed % 7) * 0.01))),
+      badges: ["Pacote completo", "Parcelado"],
+      note: "Pacotes exclusivos com café da manhã",
+      cashbackPct: 0, dealBonus: 9,
+    },
+    {
+      platform: "CVC",               logo: "https://www.cvc.com.br/favicon.ico",
+      url: cvcUrl,       price: Math.round(base * (0.92 + ((seed % 8) * 0.01))),
+      badges: ["Agência física", "Parcelado 12x"],
+      note: "Suporte presencial em toda a América Latina",
+      cashbackPct: 0, dealBonus: 6,
+    },
+    {
+      platform: "Submarino Viagens", logo: "https://www.submarinoviagens.com.br/favicon.ico",
+      url: submarinoUrl, price: Math.round(base * (0.90 + ((seed % 6) * 0.01))),
+      badges: ["Cashback 5%", "Parcelado 10x"],
+      note: "5% de cashback para clientes Submarino",
+      cashbackPct: 5, dealBonus: 11,
+    },
+    {
+      platform: "Google Hotels",     logo: "https://www.google.com/favicon.ico",
+      url: googleUrl,    price: Math.round(base * (0.87 + ((seed % 9) * 0.01))),
+      badges: ["Menor preço garantido", "Direto do hotel"],
+      note: "Compara todos os sites em tempo real",
+      cashbackPct: 0, dealBonus: 10,
+    },
+    {
+      platform: "Trivago",           logo: "https://www.trivago.com.br/favicon.ico",
+      url: trivagoUrl,   price: Math.round(base * (0.95 + ((seed % 7) * 0.01))),
+      badges: ["Comparador de preços"],
+      note: "Compara 5 milhões de hotéis mundialmente",
+      cashbackPct: 0, dealBonus: 5,
+    },
   ];
 
-  return allOptions.sort((a, b) => a.price - b.price);
+  // dealScore: preço efetivo = price * (1 - cashback%) - bonus de condições
+  // Menor dealScore = melhor negócio
+  return allOptions
+    .map(o => ({ ...o, dealScore: o.price * (1 - o.cashbackPct / 100) - o.dealBonus }))
+    .sort((a, b) => a.dealScore - b.dealScore);
 }
 
 function getRooms(adults: number, children: number): number {
@@ -414,29 +492,57 @@ export default function HotelCard({
           </div>
           <div className="divide-y divide-gray-50">
             {options.map((opt, idx) => {
-              const isCheapest = idx === 0;
+              const isBest = idx === 0;
               const optTotal = opt.price * rooms * n;
               const cheapestTotal = cheapest * rooms * n;
+              const isPreferred = opt.platform === preferredPlatform;
+              const hasCashback = (opt as any).cashbackPct > 0;
+              const effectiveTotal = hasCashback
+                ? Math.round(optTotal * (1 - (opt as any).cashbackPct / 100))
+                : optTotal;
               return (
                 <a key={opt.platform} href={opt.url} target="_blank" rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 transition-colors ${opt.platform === preferredPlatform ? "bg-orange-50 hover:bg-orange-100" : isCheapest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${isCheapest ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500"}`}>
+                  className={`flex items-center gap-3 px-4 py-3.5 transition-colors ${isPreferred ? "bg-orange-50 hover:bg-orange-100" : isBest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}>
+                  {/* Rank */}
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shrink-0 ${isBest ? "bg-green-500 text-white" : isPreferred ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"}`}>
                     {idx + 1}
                   </div>
+                  {/* Logo */}
                   <img src={opt.logo} alt={opt.platform} className="w-5 h-5 rounded object-contain shrink-0"
                     onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                  {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-gray-800">{opt.platform}</p>
-                    <p className="text-xs text-gray-400">{opt.note}</p>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p className="text-sm font-bold text-gray-800">{opt.platform}</p>
+                      {isBest && <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full font-semibold leading-none">Melhor negócio</span>}
+                      {isPreferred && !isBest && <span className="text-xs bg-orange-500 text-white px-1.5 py-0.5 rounded-full font-semibold leading-none">Preferida</span>}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-0.5">{opt.note}</p>
+                    {(opt as any).badges?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {(opt as any).badges.map((b: string) => (
+                          <span key={b} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium leading-none">{b}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                  {/* Price */}
                   <div className="text-right shrink-0">
-                    <p className={`text-base font-black ${isCheapest ? "text-green-600" : "text-gray-700"}`}>R$ {optTotal}</p>
-                    {opt.platform === preferredPlatform && !isCheapest
-                      ? <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full font-semibold">Preferida</span>
-                      : isCheapest
-                        ? <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">Menor preço</span>
-                        : <span className="text-xs text-gray-400">+R$ {optTotal - cheapestTotal}</span>}
+                    {hasCashback ? (
+                      <>
+                        <p className="text-xs text-gray-400 line-through">R$ {optTotal}</p>
+                        <p className={`text-base font-black text-green-600`}>R$ {effectiveTotal}</p>
+                        <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">-{(opt as any).cashbackPct}% cashback</span>
+                      </>
+                    ) : (
+                      <>
+                        <p className={`text-base font-black ${isBest ? "text-green-600" : "text-gray-700"}`}>R$ {optTotal}</p>
+                        {isBest
+                          ? <span className="text-xs text-green-600 font-semibold">Menor preço</span>
+                          : <span className="text-xs text-gray-400">+R$ {optTotal - cheapestTotal}</span>}
+                      </>
+                    )}
                   </div>
                 </a>
               );
