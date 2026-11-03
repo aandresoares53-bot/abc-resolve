@@ -65,6 +65,7 @@ export default function SearchSection() {
   const [compareList, setCompareList] = useState<Hotel[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("relevancia");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [preferredPlatform, setPreferredPlatform] = useState("");
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [recentlyViewed, setRecentlyViewed] = useState<Hotel[]>([]);
@@ -575,6 +576,38 @@ export default function SearchSection() {
               )}
             </div>
 
+            {/* Platform filter */}
+            <div className="mb-4">
+              <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Plataforma preferida</label>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { id: "", label: "Todas", emoji: "🌐" },
+                  { id: "Booking.com", label: "Booking.com", emoji: "🏨" },
+                  { id: "Airbnb", label: "Airbnb", emoji: "🏠" },
+                  { id: "Decolar", label: "Decolar", emoji: "✈️" },
+                  { id: "Expedia", label: "Expedia", emoji: "🧳" },
+                  { id: "Hotels.com", label: "Hotels.com", emoji: "🛎️" },
+                  { id: "Kayak", label: "Kayak", emoji: "🔍" },
+                  { id: "TripAdvisor", label: "TripAdvisor", emoji: "⭐" },
+                ].map(p => (
+                  <button
+                    key={p.id}
+                    onClick={() => setPreferredPlatform(preferredPlatform === p.id ? "" : p.id)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                      preferredPlatform === p.id
+                        ? "bg-orange-500 text-white border-orange-500"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-orange-400"
+                    }`}
+                  >
+                    {p.emoji} {p.label}
+                  </button>
+                ))}
+              </div>
+              {preferredPlatform && (
+                <p className="text-xs text-orange-600 mt-1">✓ {preferredPlatform} em destaque no comparador de preços</p>
+              )}
+            </div>
+
             <div className="mb-4">
               <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Data Sazonal</label>
               <div className="flex flex-wrap gap-2">
@@ -687,7 +720,7 @@ export default function SearchSection() {
                   <div className="flex flex-col gap-4">
                     {nearbyHotels.map((hotel, i) => (
                       <div key={hotel.id} className={`fade-in-up fade-in-up-${i + 1}`}>
-                        <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
+                        <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} preferredPlatform={preferredPlatform} />
                       </div>
                     ))}
                   </div>
@@ -698,7 +731,7 @@ export default function SearchSection() {
             <div className="flex flex-col gap-4">
               {sortedResults.map((hotel, i) => (
                 <div key={hotel.id} className={`fade-in-up fade-in-up-${Math.min(i + 1, 6)}`}>
-                  <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
+                  <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} preferredPlatform={preferredPlatform} />
                 </div>
               ))}
             </div>
@@ -715,7 +748,7 @@ export default function SearchSection() {
               <div className="flex flex-col gap-4">
                 {recentlyViewed.map((hotel, i) => (
                   <div key={hotel.id} className={`fade-in-up fade-in-up-${i + 1}`}>
-                    <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} />
+                    <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} preferredPlatform={preferredPlatform} />
                   </div>
                 ))}
               </div>

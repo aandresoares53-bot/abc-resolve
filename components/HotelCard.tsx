@@ -103,11 +103,13 @@ export default function HotelCard({
   checkIn, checkOut, nights,
   compareList, onToggleCompare,
   variant = "horizontal",
+  preferredPlatform = "",
 }: {
   hotel: Hotel; adults?: number; children?: number;
   checkIn?: string; checkOut?: string; nights?: number;
   compareList?: Hotel[]; onToggleCompare?: (hotel: Hotel) => void;
   variant?: "horizontal" | "vertical";
+  preferredPlatform?: string;
 }) {
   const ci = checkIn || todayPlusStr(1);
   const co = checkOut || todayPlusStr(2);
@@ -179,7 +181,10 @@ export default function HotelCard({
     } catch {}
   }
 
-  const options = getPriceOptions(hotel, adults, children, ci, co);
+  const rawOptions = getPriceOptions(hotel, adults, children, ci, co);
+  const options = preferredPlatform
+    ? [...rawOptions].sort((a, b) => a.platform === preferredPlatform ? -1 : b.platform === preferredPlatform ? 1 : 0)
+    : rawOptions;
   const cheapest = options[0].price;
   const rooms = getRooms(adults, children);
   const totalNightly = cheapest * rooms;
@@ -390,7 +395,7 @@ export default function HotelCard({
               return (
                 <a key={opt.platform} href={opt.url} target="_blank" rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 transition-colors ${isCheapest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}>
+                  className={`flex items-center gap-3 px-4 py-3 transition-colors ${opt.platform === preferredPlatform ? "bg-orange-50 hover:bg-orange-100" : isCheapest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${isCheapest ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500"}`}>
                     {idx + 1}
                   </div>
@@ -402,9 +407,11 @@ export default function HotelCard({
                   </div>
                   <div className="text-right shrink-0">
                     <p className={`text-base font-black ${isCheapest ? "text-green-600" : "text-gray-700"}`}>R$ {optTotal}</p>
-                    {isCheapest
-                      ? <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">Menor preço</span>
-                      : <span className="text-xs text-gray-400">+R$ {optTotal - cheapestTotal}</span>}
+                    {opt.platform === preferredPlatform && !isCheapest
+                      ? <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full font-semibold">Preferida</span>
+                      : isCheapest
+                        ? <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">Menor preço</span>
+                        : <span className="text-xs text-gray-400">+R$ {optTotal - cheapestTotal}</span>}
                   </div>
                 </a>
               );
