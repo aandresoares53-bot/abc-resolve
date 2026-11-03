@@ -449,8 +449,8 @@ header{
           <button class="qpick" data-group="cam" data-val="50mm handheld, slight candid tilt, natural framing, available light, grain visible">50mm</button>
           <button class="qpick" data-group="cam" data-val="85mm handheld, natural window light, slightly off-center composition, candid portrait, no studio light">85mm</button>
           <button class="qpick" data-group="cam" data-val="full body head to toe, 28mm handheld, environmental candid, available light, real location">Corpo inteiro</button>
-          <button class="qpick" data-group="cam" data-val="low angle shot from the floor, camera tilted up, shot from below, upward angle from ground level, floor-level candid photo, looking up at subject from below">POV baixo</button>
-          <button class="qpick" data-group="cam" data-val="camera on floor between legs shooting straight up, extreme low angle from below, looking directly up between thighs, shot from ground level between feet, upward angle from floor">POV baixo extremo</button>
+          <button class="qpick" data-group="cam" data-val="upshot from below between legs, camera between thighs looking straight up, shot from underneath looking upward, close-up upward angle from floor between legs, bottom-up shot under skirt, legs framing the frame on both sides, shot straight up from below">POV baixo</button>
+          <button class="qpick" data-group="cam" data-val="extreme upshot from directly below, camera flat on floor between feet pointing straight up, close-up shot from between legs looking up, inner thighs and crotch filling frame from beneath, floor-level shot up between spread legs, bottom-up extreme close angle">POV baixo extremo</button>
           <button class="qpick" data-group="cam" data-val="first person POV, handheld shaky, intimate candid angle, natural light">POV 1ª</button>
           <button class="qpick" data-group="cam" data-val="candid close-up, face filling frame, slight handheld shake, natural available light, no beauty lighting">Close</button>
           <button class="qpick" data-group="cam" data-val="bathroom mirror selfie, phone visible in reflection, natural bathroom light, candid unposed">Espelho</button>
@@ -7302,13 +7302,17 @@ function applyEdits(silent){
   const overridePose = document.getElementById('edit-pose').value.trim();
   const overrideCam  = document.getElementById('edit-cam').value.trim();
 
-  // POV baixo extremo: inject explicit upshot content automatically
+  // POV baixo / extremo: detect and inject pose + nsfw automatically
   const camToCheck = overrideCam || p.cam || '';
-  const isPovExtremo = p.cat === 'pov_extremo' || /upshot|vulva|floor.*between|between.*legs.*floor/i.test(camToCheck);
+  const isPovBaixo   = /upshot.*between|between.*legs.*up|shot from beneath|bottom-up|shot straight up from below/i.test(camToCheck);
+  const isPovExtremo = p.cat === 'pov_extremo' || /extreme upshot|floor.*between.*feet|between.*spread legs/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
   const povInject = isPovExtremo ? {
+    pose: 'standing with legs wide apart, feet planted on floor, shot from directly below between feet',
     nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below',
     roupa: baseRoupa + ', panties pulled aside exposing vulva'
+  } : isPovBaixo ? {
+    pose: (overridePose || p.pose || '') + ', legs apart, shot from between legs looking up, thighs framing the upshot'
   } : {};
 
   const merged = Object.assign({}, p,
