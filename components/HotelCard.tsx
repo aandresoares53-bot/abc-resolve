@@ -30,31 +30,32 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const base = hotel.priceFrom;
   const rooms = getRooms(adults, children);
-  // Use exact hotel name for best partner matching
   const hotelName = encodeURIComponent(hotel.name);
-  const hotelAndCity = encodeURIComponent(`${hotel.name}, ${hotel.city}`);
   const cityTerm = encodeURIComponent(hotel.city);
 
-  // Booking.com — exact hotel name search with dates/guests
-  const bookingUrl = `https://www.booking.com/searchresults.pt-br.html?ss=${hotelAndCity}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br`;
+  // Booking.com — usa bookingUrl salvo no hotel + injeta datas e hóspedes
+  const bookingBase = hotel.bookingUrl.includes("?")
+    ? hotel.bookingUrl
+    : `https://www.booking.com/searchresults.pt-br.html?ss=${hotelName}&lang=pt-br`;
+  const bookingUrl = `${bookingBase}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}`;
 
-  // Hotels.com — exact hotel name
-  const hotelsUrl = `https://www.hotels.com/search.do?q-query=${hotelName}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}&destination=${cityTerm}`;
+  // Hotels.com — nome exato do hotel como destino
+  const hotelsUrl = `https://www.hotels.com/search.do?q-query=${hotelName}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}`;
 
-  // Expedia BR — exact hotel name + city
-  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?destination=${hotelAndCity}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}&rooms=${rooms}`;
+  // Expedia BR — nome exato como destination
+  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?destination=${hotelName}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}&rooms=${rooms}`;
 
-  // Decolar — exact hotel name in query
+  // Decolar — nome exato do hotel
   const decolarUrl = `https://www.decolar.com/hospedagens/busca/${cityTerm}/${checkIn}/${checkOut}/${adults}/${children}?q=${hotelName}`;
 
-  // Kayak — hotel name search with city and dates
-  const kayakUrl = `https://www.kayak.com.br/hotels/${cityTerm}/${checkIn}/${checkOut}/${adults}adults?sort=price_a&q=${hotelName}`;
+  // Kayak — nome exato com datas
+  const kayakUrl = `https://www.kayak.com.br/hotels/${hotelName}/${checkIn}/${checkOut}/${adults}adults`;
 
-  // TripAdvisor — exact hotel name search
-  const tripUrl = `https://www.tripadvisor.com.br/Search?q=${hotelName}&searchSessionId=${checkIn}&geo=&pid=3826&direct_search=true&date=${checkIn}&enddate=${checkOut}&adult=${adults}&child=${children}`;
+  // TripAdvisor — busca direta pelo nome do hotel
+  const tripUrl = `https://www.tripadvisor.com.br/Search?q=${hotelName}&date=${checkIn}&enddate=${checkOut}&adult=${adults}&child=${children}`;
 
-  // Airbnb — exact hotel/pousada name
-  const airbnbUrl = `https://www.airbnb.com.br/s/${cityTerm}/homes?checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}&query=${hotelName}`;
+  // Airbnb — nome exato do local
+  const airbnbUrl = `https://www.airbnb.com.br/s/${hotelName}/homes?checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}`;
 
   const allOptions = [
     { platform: "Booking.com",  logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico", url: bookingUrl,  note: "Mais reservas no Brasil",     price: Math.round(base * (1.00 + ((seed % 9) * 0.01))) },
