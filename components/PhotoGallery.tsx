@@ -18,19 +18,21 @@ export default function PhotoGallery({ photos, hotelName }: Props) {
       {/* Grid */}
       <div className="grid grid-cols-4 grid-rows-2 gap-1.5 rounded-2xl overflow-hidden h-72 sm:h-[420px]">
         {/* Large first photo */}
-        <div className="col-span-2 row-span-2 relative cursor-pointer group" onClick={() => setLightbox(0)}>
-          <img src={shown[0].url} alt={shown[0].caption} className="w-full h-full object-cover" referrerPolicy="no-referrer" crossOrigin="anonymous" />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
-            <span className="opacity-0 group-hover:opacity-100 text-white text-2xl transition-all">🔍</span>
+        <div className="col-span-2 row-span-2 relative cursor-zoom-in group" onClick={() => setLightbox(0)}>
+          <img src={shown[0].url} alt={shown[0].caption} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+          <div className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+            <span className="opacity-0 group-hover:opacity-100 bg-black/60 text-white text-sm font-bold px-4 py-2 rounded-full transition-all">🔍 Ver foto</span>
           </div>
         </div>
         {/* Right grid: 4 smaller photos */}
         {shown.slice(1, 5).map((photo, i) => (
-          <div key={i} className="relative cursor-pointer group" onClick={() => setLightbox(i + 1)}>
+          <div key={i} className="relative cursor-zoom-in group" onClick={() => setLightbox(i + 1)}>
             <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all" />
+            <div className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+              <span className="opacity-0 group-hover:opacity-100 text-white text-xs font-bold transition-all">🔍</span>
+            </div>
             {i === 3 && photos.length > 5 && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center" onClick={() => setLightbox(5)}>
+              <div className="pointer-events-none absolute inset-0 bg-black/50 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">+{photos.length - 5} fotos</span>
               </div>
             )}
