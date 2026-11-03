@@ -30,47 +30,51 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const base = hotel.priceFrom;
   const rooms = getRooms(adults, children);
-  // nome exato do hotel — melhor precisão possível sem ID interno das plataformas
   const name = hotel.name;
-  const nameEnc = encodeURIComponent(name);
-  const nameCity = encodeURIComponent(`${name} ${hotel.city}`);
-  const cityEnc = encodeURIComponent(hotel.city);
+  const city = hotel.city;
+  const state = hotel.state;
+  // "Nome do Hotel, Cidade, Estado" — busca o mais específica possível
+  const nameEnc       = encodeURIComponent(name);
+  const nameCityState = encodeURIComponent(`${name}, ${city}, ${state}`);
+  const nameCity      = encodeURIComponent(`${name} ${city}`);
+  const cityStateEnc  = encodeURIComponent(`${city}, ${state}`);
+  const cityEnc       = encodeURIComponent(city);
 
-  // Booking.com — busca pelo nome exato + cidade + datas + hóspedes
-  const bookingUrl = `https://www.booking.com/searchresults.pt-br.html?ss=${nameEnc}&label=msn-${nameEnc}&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br`;
+  // Booking.com: ss = "Nome, Cidade" + dest_type=hotel força busca de propriedade exata
+  const bookingUrl = `https://www.booking.com/searchresults.pt-br.html?ss=${nameCityState}&dest_type=hotel&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br&sb_travel_purpose=leisure`;
 
-  // Hotels.com — nome exato + datas
-  const hotelsUrl = `https://www.hotels.com/search.do?q-query=${nameEnc}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}`;
+  // Hotels.com: q-query com nome + cidade aumenta precisão
+  const hotelsUrl = `https://www.hotels.com/search.do?q-query=${nameCity}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}&sort-order=BEST_SELLER`;
 
-  // Expedia BR — nome exato + datas
-  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?destination=${nameCity}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}&rooms=${rooms}`;
+  // Expedia: destination = "Nome, Cidade, Estado" + type=hotel
+  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?destination=${nameCityState}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}&rooms=${rooms}&sort=RECOMMENDED`;
 
-  // Decolar — nome exato + cidade + datas
-  const decolarUrl = `https://www.decolar.com/hospedagens/busca/${cityEnc}/${checkIn}/${checkOut}/${adults}/${children}?q=${nameEnc}`;
+  // Decolar: rota com cidade + query = nome exato
+  const decolarUrl = `https://www.decolar.com/hospedagens/busca/${cityEnc}/${checkIn}/${checkOut}/${adults}/${children}?q=${nameEnc}&sortBy=PRICE`;
 
-  // Kayak — nome exato como destino + datas
-  const kayakUrl = `https://www.kayak.com.br/hotels/${nameEnc}/${checkIn}/${checkOut}/${adults}adults`;
+  // Kayak: busca por nome + cidade como destino
+  const kayakUrl = `https://www.kayak.com.br/hotels/${nameCity}/${checkIn}/${checkOut}/${adults}adults?sort=price_a`;
 
-  // TripAdvisor — busca pelo nome exato + datas
-  const tripUrl = `https://www.tripadvisor.com.br/Search?q=${nameEnc}&searchSessionId=&date=${checkIn}&enddate=${checkOut}&adult=${adults}&child=${children}`;
+  // TripAdvisor: q = "Nome, Cidade" — aparece como primeira sugestão de propriedade
+  const tripUrl = `https://www.tripadvisor.com.br/Search?q=${nameCity}&searchSessionId=&date=${checkIn}&enddate=${checkOut}&adult=${adults}&child=${children}&geo=&searchNearby=false`;
 
-  // Airbnb — nome exato + cidade + datas
-  const airbnbUrl = `https://www.airbnb.com.br/s/${cityEnc}/homes?query=${nameEnc}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}`;
+  // Airbnb: query = "Nome" dentro da cidade exata
+  const airbnbUrl = `https://www.airbnb.com.br/s/${cityStateEnc}/homes?query=${nameEnc}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}&refinement_paths[]=%2Fhomes`;
 
-  // Hurb (Hotel Urbano) — busca por nome
-  const hurbUrl = `https://www.hurb.com/search?q=${nameEnc}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}`;
+  // Hurb: q = "Nome Cidade"
+  const hurbUrl = `https://www.hurb.com/search?q=${nameCity}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&type=hotel`;
 
-  // CVC — busca por destino
-  const cvcUrl = `https://www.cvc.com.br/hoteis/${cityEnc.toLowerCase().replace(/%20/g, "-")}?checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&q=${nameEnc}`;
+  // CVC: busca com nome do hotel em destaque
+  const cvcUrl = `https://www.cvc.com.br/hoteis/busca?q=${nameCityState}&dataIda=${checkIn}&dataVolta=${checkOut}&adultos=${adults}&criancas=${children}`;
 
-  // Submarino Viagens — busca por nome
-  const submarinoUrl = `https://www.submarinoviagens.com.br/hoteis/?q=${nameEnc}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}`;
+  // Submarino Viagens
+  const submarinoUrl = `https://www.submarinoviagens.com.br/hoteis/?q=${nameCity}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}`;
 
-  // Google Hotels — pesquisa no Google
-  const googleUrl = `https://www.google.com/travel/hotels?q=${nameCity}&dates=${checkIn},${checkOut}&adults=${adults}`;
+  // Google Hotels: pesquisa "Nome Hotel Cidade" → aparece como ficha do estabelecimento
+  const googleUrl = `https://www.google.com/travel/hotels?q=${nameCityState}&dates=${checkIn},${checkOut}&adults=${adults}&ved=0`;
 
-  // Trivago — comparador de preços
-  const trivagoUrl = `https://www.trivago.com.br/?query=${nameEnc}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`;
+  // Trivago: query = "Nome, Cidade" para máxima precisão
+  const trivagoUrl = `https://www.trivago.com.br/pt-BR/lm/hotel-search?search%5Bquery%5D=${nameCity}&search%5BcheckIn%5D=${checkIn}&search%5BcheckOut%5D=${checkOut}&search%5BnumAdults%5D=${adults}&search%5BnumChildren%5D=${children}`;
 
   // Conditions shown as badges — cashback/cancelamento grátis/parcelamento/fidelidade
   // dealScore = preço efetivo após benefícios (menor = melhor negócio)
