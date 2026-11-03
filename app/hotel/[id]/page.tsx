@@ -1,9 +1,11 @@
 import { hotelsData } from "@/lib/hotels-data";
+import { getHotelPhotos } from "@/lib/hotel-photos";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import HotelCard from "@/components/HotelCard";
 import Header from "@/components/Header";
 import WeatherWidget from "@/components/WeatherWidget";
+import PhotoGallery from "@/components/PhotoGallery";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -29,12 +31,7 @@ export default function HotelPage({ params }: { params: { id: string } }) {
     .filter(h => h.id !== hotel.id && (h.city === hotel.city || h.state === hotel.state))
     .slice(0, 3);
 
-  const extraImages = [
-    hotel.image,
-    `https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80`,
-    `https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80`,
-    `https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80`,
-  ];
+  const photos = getHotelPhotos(hotel);
 
   // Default dates: tomorrow check-in, day after check-out
   const today = new Date();
@@ -101,16 +98,9 @@ export default function HotelPage({ params }: { params: { id: string } }) {
         </Link>
       </div>
 
-      {/* Hero image grid */}
+      {/* Photo Gallery */}
       <div className="max-w-5xl mx-auto px-4 mb-8">
-        <div className="grid grid-cols-2 gap-2 rounded-3xl overflow-hidden h-72 sm:h-96">
-          <img src={extraImages[0]} alt={hotel.name} className="w-full h-full object-cover" />
-          <div className="grid grid-rows-2 gap-2">
-            {extraImages.slice(1, 3).map((img, i) => (
-              <img key={i} src={img} alt="" className="w-full h-full object-cover" />
-            ))}
-          </div>
-        </div>
+        <PhotoGallery photos={photos} hotelName={hotel.name} />
       </div>
 
       <div className="max-w-5xl mx-auto px-4 pb-16">
@@ -189,6 +179,42 @@ export default function HotelPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
             )}
+
+            {/* Room types */}
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-3">Tipos de Acomodação</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {(hotel.type === "pousada"
+                  ? hotel.tags.some(t => t === "Chalé" || t.toLowerCase().includes("chale"))
+                    ? [
+                        { icon: "🏡", name: "Chalé Standard", desc: "Chalé privativo com varanda", capacity: "2 adultos", photo: photos.find(p => p.caption.toLowerCase().includes("chalé"))?.url || photos[0].url },
+                        { icon: "🏡", name: "Chalé Luxo", desc: "Chalé amplo com banheira", capacity: "2 adultos", photo: photos[1]?.url || photos[0].url },
+                        { icon: "🛏️", name: "Suíte Master", desc: "Suíte com vista panorâmica", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
+                      ]
+                    : [
+                        { icon: "🛏️", name: "Quarto Standard", desc: "Quarto aconchegante com café da manhã", capacity: "2 adultos", photo: photos[1]?.url || photos[0].url },
+                        { icon: "🛏️", name: "Suíte Família", desc: "Suíte espaçosa para famílias", capacity: "4 pessoas", photo: photos[2]?.url || photos[0].url },
+                        { icon: "💑", name: "Quarto Casal", desc: "Cama queen, ambiente romântico", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
+                      ]
+                  : [
+                      { icon: "🛏️", name: "Standard", desc: "Quarto confortável com todas comodidades", capacity: "2 adultos", photo: photos[1]?.url || photos[0].url },
+                      { icon: "⭐", name: "Superior", desc: "Quarto superior com vista privilegiada", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
+                      { icon: "👑", name: "Suíte", desc: "Suíte luxuosa com sala de estar", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
+                      { icon: "👨‍👩‍👧", name: "Familiar", desc: "Amplo, ideal para famílias", capacity: "4 pessoas", photo: photos[4]?.url || photos[0].url },
+                    ]
+                ).map(room => (
+                  <div key={room.name} className="border border-gray-200 rounded-2xl overflow-hidden flex hover:shadow-md transition-all">
+                    <img src={room.photo} alt={room.name} className="w-24 h-24 object-cover shrink-0" />
+                    <div className="p-3 flex-1">
+                      <p className="font-bold text-gray-900 text-sm">{room.icon} {room.name}</p>
+                      <p className="text-gray-500 text-xs mt-0.5">{room.desc}</p>
+                      <p className="text-blue-600 text-xs mt-1 font-medium">👤 {room.capacity}</p>
+                      <p className="text-green-700 text-xs font-bold mt-1">A partir de R$ {hotel.priceFrom}/noite</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Booking sidebar */}
