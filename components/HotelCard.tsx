@@ -105,10 +105,12 @@ export default function HotelCard({
   hotel, adults = 2, children = 0,
   checkIn, checkOut, nights,
   compareList, onToggleCompare,
+  variant = "horizontal",
 }: {
   hotel: Hotel; adults?: number; children?: number;
   checkIn?: string; checkOut?: string; nights?: number;
   compareList?: Hotel[]; onToggleCompare?: (hotel: Hotel) => void;
+  variant?: "horizontal" | "vertical";
 }) {
   const ci = checkIn || todayPlusStr(1);
   const co = checkOut || todayPlusStr(2);
@@ -193,11 +195,10 @@ export default function HotelCard({
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      {/* Horizontal on md+, vertical on mobile */}
-      <div className="flex flex-col sm:flex-row">
+      <div className={variant === "vertical" ? "flex flex-col" : "flex flex-col sm:flex-row"}>
         {/* Image column */}
-        <div className="relative shrink-0 w-full sm:w-56 md:w-64" style={{ minHeight: "200px" }}>
-          <div className="relative h-48 sm:h-full group/img overflow-hidden" style={{ minHeight: "200px" }}>
+        <div className={`relative shrink-0 ${variant === "vertical" ? "w-full" : "w-full sm:w-56 md:w-64"}`} style={{ minHeight: "200px" }}>
+          <div className={`relative group/img overflow-hidden ${variant === "vertical" ? "h-52" : "h-48 sm:h-full"}`} style={{ minHeight: "200px" }}>
             <img
               src={images[imgIdx]}
               alt={hotel.name}
@@ -295,7 +296,7 @@ export default function HotelCard({
           </div>
 
           {/* Bottom row: price left, buttons right */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mt-auto gap-3">
+          <div className={`flex ${variant === "vertical" ? "flex-row items-end" : "flex-col sm:flex-row items-start sm:items-end"} justify-between mt-auto gap-3`}>
             {/* Price */}
             <div>
               {hotel.discount && (
@@ -310,7 +311,7 @@ export default function HotelCard({
             </div>
 
             {/* Action buttons */}
-            <div className="flex flex-col gap-2 items-start sm:items-end shrink-0 w-full sm:w-auto">
+            <div className={`flex flex-col gap-2 shrink-0 ${variant === "vertical" ? "items-end" : "items-start sm:items-end w-full sm:w-auto"}`}>
               {/* Price comparison dropdown */}
               <div className="relative" ref={ref}>
                 <button
