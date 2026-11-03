@@ -55,6 +55,7 @@ export default function SearchSection() {
   const [maxPrice, setMaxPrice] = useState(0);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
+  const [childrenAges, setChildrenAges] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SearchResult | null>(null);
   const [searched, setSearched] = useState(false);
@@ -334,6 +335,11 @@ export default function SearchSection() {
                 {adults} adulto{adults !== 1 ? "s" : ""}
                 {children > 0 ? `, ${children} criança${children !== 1 ? "s" : ""}` : ""}
               </p>
+              {children > 0 && childrenAges.length > 0 && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Idades: {childrenAges.slice(0, children).map(a => a === 0 ? "<1" : a).join(", ")} anos
+                </p>
+              )}
             </div>
             <svg className={`w-4 h-4 text-gray-400 transition-transform ${showGuests ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -354,17 +360,43 @@ export default function SearchSection() {
                   <button onClick={() => setAdults(v => Math.min(10, v + 1))} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">+</button>
                 </div>
               </div>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="font-semibold text-gray-800 text-sm">Crianças</p>
-                  <p className="text-xs text-gray-400">De 2 a 12 anos</p>
+                  <p className="text-xs text-gray-400">Até 17 anos</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setChildren(v => Math.max(0, v - 1))} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">−</button>
+                  <button onClick={() => { setChildren(v => Math.max(0, v - 1)); setChildrenAges(a => a.slice(0, -1)); }} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">−</button>
                   <span className="w-6 text-center font-bold text-gray-800">{children}</span>
-                  <button onClick={() => setChildren(v => Math.min(6, v + 1))} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">+</button>
+                  <button onClick={() => { setChildren(v => Math.min(6, v + 1)); setChildrenAges(a => [...a, 5]); }} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-blue-500 hover:text-blue-600 font-bold transition-colors">+</button>
                 </div>
               </div>
+
+              {/* Age selector per child */}
+              {children > 0 && (
+                <div className="mb-3 space-y-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Idade de cada criança</p>
+                  {Array.from({ length: children }).map((_, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Criança {i + 1}</span>
+                      <select
+                        value={childrenAges[i] ?? 5}
+                        onChange={e => {
+                          const ages = [...childrenAges];
+                          ages[i] = parseInt(e.target.value);
+                          setChildrenAges(ages);
+                        }}
+                        className="border border-gray-200 rounded-lg px-2 py-1 text-sm text-gray-700 bg-white focus:outline-none focus:border-orange-400"
+                      >
+                        {Array.from({ length: 18 }, (_, age) => (
+                          <option key={age} value={age}>{age === 0 ? "< 1 ano" : `${age} ano${age !== 1 ? "s" : ""}`}</option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="pt-3 border-t border-gray-100">
                 <p className="text-xs text-gray-400 text-center">Crianças até 2 anos geralmente não pagam</p>
               </div>
