@@ -178,7 +178,7 @@ export default function HotelPage({ params }: { params: { id: string } }) {
           <div className="mt-12">
             <h2 className="text-2xl font-black text-gray-900 mb-6">Hotéis Similares em {hotel.state}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {similar.map(h => <HotelCard key={h.id} hotel={h} />)}
+              {similar.map(h => <HotelCard key={h.id} hotel={h} variant="vertical" />)}
             </div>
           </div>
         )}
