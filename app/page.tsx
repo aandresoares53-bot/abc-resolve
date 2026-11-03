@@ -203,10 +203,16 @@ export default function Home() {
               <p className="text-gray-400 text-sm">Comparador de hotéis e pousadas em todo o Brasil.</p>
             </div>
             <div>
-              <h4 className="font-bold mb-3 text-xs uppercase tracking-wide text-gray-400">Destinos</h4>
+              <h4 className="font-bold mb-3 text-xs uppercase tracking-wide text-gray-400">Destinos Populares</h4>
               <ul className="space-y-1.5 text-gray-400 text-sm">
-                {["Nordeste", "Sudeste", "Sul", "Centro-Oeste", "Norte"].map(r => (
-                  <li key={r}><a href="#regioes" className="hover:text-orange-400 transition-colors">{r}</a></li>
+                {[
+                  { label: "Gramado", slug: "gramado" },
+                  { label: "Florianópolis", slug: "florianopolis" },
+                  { label: "Búzios", slug: "buzios" },
+                  { label: "Porto de Galinhas", slug: "porto-de-galinhas" },
+                  { label: "Jericoacoara", slug: "jericoacoara" },
+                ].map(r => (
+                  <li key={r.slug}><a href={`/hoteis/${r.slug}`} className="hover:text-orange-400 transition-colors">{r.label}</a></li>
                 ))}
               </ul>
             </div>

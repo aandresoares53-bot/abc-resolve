@@ -505,8 +505,9 @@ export default function SearchSection() {
                   className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="todos">Todos</option>
-                  <option value="hotel">Hotel</option>
-                  <option value="pousada">Pousada</option>
+                  <option value="hotel">🏨 Hotel</option>
+                  <option value="pousada">🏡 Pousada</option>
+                  <option value="espaco-inteiro">🏠 Espaço Inteiro</option>
                 </select>
               </div>
               <div>

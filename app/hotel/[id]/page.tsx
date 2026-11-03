@@ -4,6 +4,22 @@ import Link from "next/link";
 import HotelCard from "@/components/HotelCard";
 import Header from "@/components/Header";
 import WeatherWidget from "@/components/WeatherWidget";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const hotel = hotelsData.find(h => h.id === params.id);
+  if (!hotel) return {};
+  return {
+    title: `${hotel.name} — ${hotel.city}, ${hotel.state} | Encontrar Hotéis`,
+    description: hotel.description.slice(0, 155),
+    openGraph: {
+      title: hotel.name,
+      description: hotel.description.slice(0, 155),
+      images: [hotel.image],
+      type: "website",
+    },
+  };
+}
 
 export default function HotelPage({ params }: { params: { id: string } }) {
   const hotel = hotelsData.find(h => h.id === params.id);
@@ -22,8 +38,33 @@ export default function HotelPage({ params }: { params: { id: string } }) {
 
   const bookingUrl = `https://www.booking.com/searchresults.pt-br.html?ss=${encodeURIComponent(hotel.name + " " + hotel.city)}&lang=pt-br`;
 
+  const schemaOrg = {
+    "@context": "https://schema.org",
+    "@type": hotel.type === "hotel" ? "Hotel" : "LodgingBusiness",
+    "name": hotel.name,
+    "description": hotel.description,
+    "image": hotel.image,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": hotel.city,
+      "addressRegion": hotel.state,
+      "addressCountry": "BR"
+    },
+    "starRating": { "@type": "Rating", "ratingValue": hotel.stars },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": hotel.rating,
+      "reviewCount": hotel.reviews,
+      "bestRating": "5"
+    },
+    "priceRange": `R$ ${hotel.priceFrom} - R$ ${hotel.priceTo}`,
+    "amenityFeature": hotel.amenities.map(a => ({ "@type": "LocationFeatureSpecification", "name": a, "value": true })),
+    "url": `https://encontrar-hoteis-pousadas.vercel.app/hotel/${hotel.id}`,
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 pt-16">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }} />
       <Header />
 
       {/* Back */}

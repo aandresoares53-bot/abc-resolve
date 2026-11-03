@@ -112,7 +112,14 @@ export async function GET(request: NextRequest) {
 
   const filters = { region, state, seasonal, packageFor, maxPrice, type };
 
-  if (!query && region === "Todos" && state === "Todos" && !seasonal && !packageFor) {
+  function matchesType(hotel: Hotel, t: string): boolean {
+    if (t === "todos") return true;
+    if (t === "espaco-inteiro") return hotel.tags?.some(tag => tag === "Espaço Inteiro" || tag === "Casa Inteira" || tag === "Apartamento") ?? false;
+    if (t === "pousada") return hotel.type === "pousada" && !(hotel.tags?.some(tag => tag === "Espaço Inteiro" || tag === "Casa Inteira"));
+    return hotel.type === t;
+  }
+
+  if (!query && region === "Todos" && state === "Todos" && !seasonal && !packageFor && type === "todos") {
     const results = [...hotelsData].sort((a, b) => {
       if (a.featured && !b.featured) return -1;
       if (!a.featured && b.featured) return 1;
@@ -135,7 +142,7 @@ export async function GET(request: NextRequest) {
     // Apply only type filter on top (never spill into other cities)
     let cityHotels = hotelsData.filter(h => h.city === detectedCity);
     if (filters.type && filters.type !== "todos") {
-      cityHotels = cityHotels.filter(h => h.type === filters.type);
+      cityHotels = cityHotels.filter(h => matchesType(h, filters.type));
     }
     results = cityHotels.sort((a, b) => {
       if (a.featured && !b.featured) return -1;
@@ -152,7 +159,7 @@ export async function GET(request: NextRequest) {
       .map(({ hotel }) => hotel);
 
     if (filters.type && filters.type !== "todos") {
-      results = results.filter(h => h.type === filters.type);
+      results = results.filter(h => matchesType(h, filters.type));
     }
 
     // Fallback: no matches found for query — return top-rated hotels
