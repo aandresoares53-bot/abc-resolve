@@ -168,7 +168,7 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   const ownSite = {
     platform: "encontrarhoteis.com.br",
     logo: "/favicon.ico",
-    url: `/hotel/${hotel.id}`,
+    url: `/hotel/${hotel.id}?adults=${adults}&children=${children}&checkIn=${ci}&checkOut=${co}&nights=${n}`,
     price: base,
     badges: ["🏆 Resultado exato", "Ver detalhes completos"],
     note: "Veja fotos, comodidades e compare todos os preços aqui",
@@ -462,7 +462,7 @@ export default function HotelCard({
 
               {/* Row 2: secondary links */}
               <div className="flex items-center gap-3">
-                <Link href={`/hotel/${hotel.id}`} className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                <Link href={`/hotel/${hotel.id}?adults=${adults}&children=${children}&checkIn=${ci}&checkOut=${co}&nights=${n}`} className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
                   Ver detalhes →
                 </Link>
                 {onToggleCompare && (

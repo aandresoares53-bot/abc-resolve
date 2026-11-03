@@ -23,9 +23,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default function HotelPage({ params }: { params: { id: string } }) {
+export default function HotelPage({ params, searchParams }: { params: { id: string }; searchParams?: { adults?: string; children?: string; checkIn?: string; checkOut?: string; nights?: string } }) {
   const hotel = hotelsData.find(h => h.id === params.id);
   if (!hotel) notFound();
+
+  const adults = parseInt(searchParams?.adults || "2");
+  const children = parseInt(searchParams?.children || "0");
+  const totalGuests = adults + children;
+  const spNights = parseInt(searchParams?.nights || "1");
 
   const similar = hotelsData
     .filter(h => h.id !== hotel.id && (h.city === hotel.city || h.state === hotel.state))
@@ -33,14 +38,14 @@ export default function HotelPage({ params }: { params: { id: string } }) {
 
   const photos = getHotelPhotos(hotel);
 
-  // Default dates: tomorrow check-in, day after check-out
+  // Use dates from search params or default to tomorrow/day-after
   const today = new Date();
   const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
   const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
   const fmt = (d: Date) => d.toISOString().split("T")[0];
-  const checkIn = fmt(tomorrow);
-  const checkOut = fmt(dayAfter);
-  const adults = 2; const children = 0; const rooms = 1;
+  const checkIn = searchParams?.checkIn || fmt(tomorrow);
+  const checkOut = searchParams?.checkOut || fmt(dayAfter);
+  const rooms = Math.max(1, Math.ceil(adults / 2));
 
   const nameCityState = encodeURIComponent(`${hotel.name}, ${hotel.city}, ${hotel.state}`);
   const nameCity = encodeURIComponent(`${hotel.name} ${hotel.city}`);
@@ -180,39 +185,57 @@ export default function HotelPage({ params }: { params: { id: string } }) {
               </div>
             )}
 
-            {/* Room types */}
+            {/* Room types — adapted to guest count */}
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-3">Tipos de Acomodação</h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">Tipos de Acomodação</h2>
+              <p className="text-sm text-blue-600 font-medium mb-3">
+                💡 Sugestão para {adults} adulto{adults > 1 ? "s" : ""}{children > 0 ? ` e ${children} criança${children > 1 ? "s" : ""}` : ""} · {spNights} noite{spNights > 1 ? "s" : ""}
+              </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {(hotel.type === "pousada"
-                  ? hotel.tags.some(t => t === "Chalé" || t.toLowerCase().includes("chale"))
-                    ? [
-                        { icon: "🏡", name: "Chalé Standard", desc: "Chalé privativo com varanda", capacity: "2 adultos", photo: photos.find(p => p.caption.toLowerCase().includes("chalé"))?.url || photos[0].url },
-                        { icon: "🏡", name: "Chalé Luxo", desc: "Chalé amplo com banheira", capacity: "2 adultos", photo: photos[1]?.url || photos[0].url },
-                        { icon: "🛏️", name: "Suíte Master", desc: "Suíte com vista panorâmica", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
-                      ]
-                    : [
-                        { icon: "🛏️", name: "Quarto Standard", desc: "Quarto aconchegante com café da manhã", capacity: "2 adultos", photo: photos[1]?.url || photos[0].url },
-                        { icon: "🛏️", name: "Suíte Família", desc: "Suíte espaçosa para famílias", capacity: "4 pessoas", photo: photos[2]?.url || photos[0].url },
-                        { icon: "💑", name: "Quarto Casal", desc: "Cama queen, ambiente romântico", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
-                      ]
-                  : [
-                      { icon: "🛏️", name: "Standard", desc: "Quarto confortável com todas comodidades", capacity: "2 adultos", photo: photos[1]?.url || photos[0].url },
-                      { icon: "⭐", name: "Superior", desc: "Quarto superior com vista privilegiada", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
-                      { icon: "👑", name: "Suíte", desc: "Suíte luxuosa com sala de estar", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
-                      { icon: "👨‍👩‍👧", name: "Familiar", desc: "Amplo, ideal para famílias", capacity: "4 pessoas", photo: photos[4]?.url || photos[0].url },
-                    ]
-                ).map(room => (
-                  <div key={room.name} className="border border-gray-200 rounded-2xl overflow-hidden flex hover:shadow-md transition-all">
-                    <img src={room.photo} alt={room.name} className="w-24 h-24 object-cover shrink-0" />
-                    <div className="p-3 flex-1">
-                      <p className="font-bold text-gray-900 text-sm">{room.icon} {room.name}</p>
-                      <p className="text-gray-500 text-xs mt-0.5">{room.desc}</p>
-                      <p className="text-blue-600 text-xs mt-1 font-medium">👤 {room.capacity}</p>
-                      <p className="text-green-700 text-xs font-bold mt-1">A partir de R$ {hotel.priceFrom}/noite</p>
+                {(() => {
+                  const isChale = hotel.tags.some(t => t.toLowerCase().includes("chalé") || t.toLowerCase().includes("chale") || t.toLowerCase().includes("bangalô") || t.toLowerCase().includes("bangalo"));
+                  const needsFamily = totalGuests >= 3;
+                  const isRomantic = totalGuests === 2 && children === 0;
+
+                  type Room = { icon: string; name: string; desc: string; capacity: string; photo: string; recommended?: boolean };
+                  let rooms: Room[] = [];
+
+                  if (isChale) {
+                    rooms = [
+                      { icon: "🏡", name: needsFamily ? "Chalé Família" : isRomantic ? "Chalé Romântico" : "Chalé Standard", desc: needsFamily ? `Chalé amplo para ${totalGuests} pessoas com varanda` : isRomantic ? "Chalé privativo com banheira e varanda" : "Chalé privativo com varanda e jardim", capacity: `${totalGuests} pessoas`, photo: photos[1]?.url || photos[0].url, recommended: true },
+                      { icon: "🛏️", name: "Suíte com Varanda", desc: "Suíte com varanda e vista panorâmica", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
+                      { icon: "🏡", name: "Chalé Luxo", desc: "Chalé premium com hidromassagem", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
+                    ];
+                  } else if (hotel.type === "pousada") {
+                    rooms = [
+                      { icon: needsFamily ? "👨‍👩‍👧" : isRomantic ? "💑" : "🛏️", name: needsFamily ? "Quarto Família" : isRomantic ? "Quarto Casal" : "Quarto Standard", desc: needsFamily ? `Quarto espaçoso para ${totalGuests} pessoas` : isRomantic ? "Cama queen com decoração romântica" : "Quarto confortável com café da manhã", capacity: `${totalGuests} pessoas`, photo: photos[1]?.url || photos[0].url, recommended: true },
+                      { icon: "⭐", name: "Suíte Superior", desc: "Suíte com área de estar e vista", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
+                      { icon: "🛏️", name: "Quarto Standard", desc: "Quarto aconchegante com café da manhã", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
+                    ];
+                  } else {
+                    rooms = [
+                      { icon: needsFamily ? "👨‍👩‍👧" : isRomantic ? "💑" : "🛏️", name: needsFamily ? "Apartamento Família" : isRomantic ? "Quarto Casal Superior" : "Standard", desc: needsFamily ? `Apartamento para ${totalGuests} pessoas` : isRomantic ? "Cama king, vista e frigobar" : "Quarto confortável com todas comodidades", capacity: `${totalGuests} pessoas`, photo: photos[1]?.url || photos[0].url, recommended: true },
+                      { icon: "👑", name: "Suíte Executiva", desc: "Suíte com sala de estar e banheira", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
+                      { icon: "🛏️", name: "Standard", desc: "Quarto standard com vista interna", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
+                      { icon: "⭐", name: "Superior", desc: "Quarto superior com vista privilegiada", capacity: "2 adultos", photo: photos[4]?.url || photos[0].url },
+                    ];
+                  }
+
+                  return rooms.map(room => (
+                    <div key={room.name} className={`border rounded-2xl overflow-hidden flex hover:shadow-md transition-all ${room.recommended ? "border-blue-400 ring-1 ring-blue-200" : "border-gray-200"}`}>
+                      <img src={room.photo} alt={room.name} className="w-24 h-24 object-cover shrink-0" referrerPolicy="no-referrer" />
+                      <div className="p-3 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-bold text-gray-900 text-sm">{room.icon} {room.name}</p>
+                          {room.recommended && <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-bold">✓ Ideal</span>}
+                        </div>
+                        <p className="text-gray-500 text-xs mt-0.5">{room.desc}</p>
+                        <p className="text-blue-600 text-xs mt-1 font-medium">👤 {room.capacity}</p>
+                        <p className="text-green-700 text-xs font-bold mt-1">A partir de R$ {hotel.priceFrom}/noite</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ));
+                })()}
               </div>
             </div>
           </div>
@@ -227,7 +250,7 @@ export default function HotelPage({ params }: { params: { id: string } }) {
                   </p>
                 )}
                 <p className="text-4xl font-black text-blue-600">R$ {hotel.priceFrom}</p>
-                <p className="text-gray-400 text-sm">por noite · 1 quarto · 2 adultos</p>
+                <p className="text-gray-400 text-sm">por noite · {rooms} quarto{rooms > 1 ? "s" : ""} · {adults} adulto{adults > 1 ? "s" : ""}{children > 0 ? ` · ${children} criança${children > 1 ? "s" : ""}` : ""}</p>
                 {hotel.discount && (
                   <span className="inline-block mt-2 bg-red-100 text-red-600 text-sm font-bold px-3 py-1 rounded-full">
                     -{hotel.discount}% OFF
