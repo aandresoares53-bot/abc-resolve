@@ -279,7 +279,8 @@ export default function SearchSection() {
       {/* Main Search */}
       <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 mb-6">
         {/* Search Input */}
-        <div className="flex gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <div className="flex gap-3 flex-1">
           <div className="flex-1 relative" ref={searchInputRef}>
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -347,16 +348,18 @@ export default function SearchSection() {
           <button
             onClick={handleVoice}
             title={listening ? "Ouvindo..." : "Buscar por voz"}
-            className={`p-4 rounded-2xl border transition-all ${listening ? "bg-red-500 border-red-500 text-white animate-pulse" : "bg-gray-50 border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500"}`}
+            className={`p-4 rounded-2xl border transition-all shrink-0 ${listening ? "bg-red-500 border-red-500 text-white animate-pulse" : "bg-gray-50 border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500"}`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
             </svg>
           </button>
+          </div>
+          <div className="flex gap-3">
           <button
             onClick={() => handleSearch()}
             disabled={loading}
-            className="px-6 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all active:scale-95 disabled:opacity-60 flex items-center gap-2 whitespace-nowrap"
+            className="flex-1 sm:flex-none px-6 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2 whitespace-nowrap"
           >
             {loading ? (
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -366,20 +369,20 @@ export default function SearchSection() {
             ) : (
               <span>✨</span>
             )}
-            <span className="hidden sm:inline">{loading ? "Buscando..." : "Buscar com IA"}</span>
-            <span className="sm:hidden">{loading ? "..." : "Buscar"}</span>
+            <span>{loading ? "Buscando..." : "Buscar com IA"}</span>
           </button>
           {(searched || query || region !== "Todos" || state !== "Todos" || seasonal || packageFor || type !== "todos" || selectedAmenities.length > 0) && (
             <button
               onClick={clearSearch}
               title="Limpar pesquisa"
-              className="p-4 rounded-2xl border border-gray-200 bg-gray-50 text-gray-400 hover:border-red-300 hover:bg-red-50 hover:text-red-500 transition-all"
+              className="p-4 rounded-2xl border border-gray-200 bg-gray-50 text-gray-400 hover:border-red-300 hover:bg-red-50 hover:text-red-500 transition-all shrink-0"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           )}
+          </div>
         </div>
 
         {/* Guest & Date row */}
