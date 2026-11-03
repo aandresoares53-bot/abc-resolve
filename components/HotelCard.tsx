@@ -235,17 +235,19 @@ export default function HotelCard({
 
   const [open, setOpen] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
-  const [fav, setFav] = useState(() => {
-    try { const f = JSON.parse(localStorage.getItem("favs") || "[]"); return f.includes(hotel.id); } catch { return false; }
-  });
+  const [fav, setFav] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertPrice, setAlertPrice] = useState("");
-  const [hasAlert, setHasAlert] = useState(() => {
+  const [hasAlert, setHasAlert] = useState(false);
+
+  useEffect(() => {
     try {
+      const f = JSON.parse(localStorage.getItem("favs") || "[]");
+      setFav(f.includes(hotel.id));
       const alerts = JSON.parse(localStorage.getItem("priceAlerts") || "[]");
-      return alerts.some((a: { hotelId: string }) => a.hotelId === hotel.id);
-    } catch { return false; }
-  });
+      setHasAlert(alerts.some((a: { hotelId: string }) => a.hotelId === hotel.id));
+    } catch {}
+  }, [hotel.id]);
 
   const ref = useRef<HTMLDivElement>(null);
   const images = getExtraImages(hotel);
