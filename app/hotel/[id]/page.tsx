@@ -1,5 +1,5 @@
 import { hotelsData } from "@/lib/hotels-data";
-import { getHotelPhotos } from "@/lib/hotel-photos";
+import { fetchPixabayPhotos } from "@/lib/hotel-photos";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import HotelCard from "@/components/HotelCard";
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default function HotelPage({ params, searchParams }: { params: { id: string }; searchParams?: { adults?: string; children?: string; checkIn?: string; checkOut?: string; nights?: string } }) {
+export default async function HotelPage({ params, searchParams }: { params: { id: string }; searchParams?: { adults?: string; children?: string; checkIn?: string; checkOut?: string; nights?: string } }) {
   const hotel = hotelsData.find(h => h.id === params.id);
   if (!hotel) notFound();
 
@@ -36,7 +36,7 @@ export default function HotelPage({ params, searchParams }: { params: { id: stri
     .filter(h => h.id !== hotel.id && (h.city === hotel.city || h.state === hotel.state))
     .slice(0, 3);
 
-  const photos = getHotelPhotos(hotel);
+  const photos = await fetchPixabayPhotos(hotel!);
 
   // Use dates from search params or default to tomorrow/day-after
   const today = new Date();
