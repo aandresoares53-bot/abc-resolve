@@ -306,7 +306,7 @@ export default function SearchSection() {
                 else if (searchHistory.length > 0) { setShowHistory(true); setShowSuggestions(false); }
               }}
               placeholder='Ex: "Pousada com piscina em Trancoso"...'
-              className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base transition-all"
+              className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base transition-all"
             />
 
             {/* City autocomplete suggestions */}
