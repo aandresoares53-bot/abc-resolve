@@ -57,14 +57,34 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   // Airbnb — nome exato + cidade + datas
   const airbnbUrl = `https://www.airbnb.com.br/s/${cityEnc}/homes?query=${nameEnc}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}`;
 
+  // Hurb (Hotel Urbano) — busca por nome
+  const hurbUrl = `https://www.hurb.com/search?q=${nameEnc}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}`;
+
+  // CVC — busca por destino
+  const cvcUrl = `https://www.cvc.com.br/hoteis/${cityEnc.toLowerCase().replace(/%20/g, "-")}?checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&q=${nameEnc}`;
+
+  // Submarino Viagens — busca por nome
+  const submarinoUrl = `https://www.submarinoviagens.com.br/hoteis/?q=${nameEnc}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}`;
+
+  // Google Hotels — pesquisa no Google
+  const googleUrl = `https://www.google.com/travel/hotels?q=${nameCity}&dates=${checkIn},${checkOut}&adults=${adults}`;
+
+  // Trivago — comparador de preços
+  const trivagoUrl = `https://www.trivago.com.br/?query=${nameEnc}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}`;
+
   const allOptions = [
-    { platform: "Booking.com",  logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico", url: bookingUrl,  note: "Mais reservas no Brasil",     price: Math.round(base * (1.00 + ((seed % 9) * 0.01))) },
-    { platform: "Hotels.com",   logo: "https://www.hotels.com/favicon.ico",                          url: hotelsUrl,  note: "Desconto para membros",         price: Math.round(base * (0.88 + ((seed % 8) * 0.01))) },
-    { platform: "Expedia",      logo: "https://www.expedia.com.br/favicon.ico",                      url: expediaUrl, note: "Pacote hotel + voo disponível",  price: Math.round(base * (0.94 + ((seed % 9) * 0.01))) },
-    { platform: "Decolar",      logo: "https://www.decolar.com/favicon.ico",                         url: decolarUrl, note: "Líder na América Latina",        price: Math.round(base * (0.91 + ((seed % 7) * 0.01))) },
-    { platform: "Kayak",        logo: "https://www.kayak.com.br/favicon.ico",                        url: kayakUrl,   note: "Comparador global",              price: Math.round(base * (0.93 + ((seed % 6) * 0.01))) },
-    { platform: "TripAdvisor",  logo: "https://static.tacdn.com/img2/favicon.ico",                   url: tripUrl,    note: "Melhor avaliação de hóspedes",   price: Math.round(base * (0.96 + ((seed % 8) * 0.01))) },
-    { platform: "Airbnb",       logo: "https://a0.muscache.com/airbnb/static/icons/android-icon-192x192-c0465f9f0380893768972a31a614aaed.png", url: airbnbUrl, note: "Pousadas e casas únicas", price: Math.round(base * (0.85 + ((seed % 9) * 0.01))) },
+    { platform: "Booking.com",        logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",                                                    url: bookingUrl,   note: "Mais reservas no Brasil",        price: Math.round(base * (1.00 + ((seed % 9) * 0.01))) },
+    { platform: "Hotels.com",         logo: "https://www.hotels.com/favicon.ico",                                                                              url: hotelsUrl,    note: "Desconto para membros",          price: Math.round(base * (0.88 + ((seed % 8) * 0.01))) },
+    { platform: "Expedia",            logo: "https://www.expedia.com.br/favicon.ico",                                                                          url: expediaUrl,   note: "Pacote hotel + voo disponível",  price: Math.round(base * (0.94 + ((seed % 9) * 0.01))) },
+    { platform: "Decolar",            logo: "https://www.decolar.com/favicon.ico",                                                                             url: decolarUrl,   note: "Líder na América Latina",        price: Math.round(base * (0.91 + ((seed % 7) * 0.01))) },
+    { platform: "Kayak",              logo: "https://www.kayak.com.br/favicon.ico",                                                                            url: kayakUrl,     note: "Comparador global",              price: Math.round(base * (0.93 + ((seed % 6) * 0.01))) },
+    { platform: "TripAdvisor",        logo: "https://static.tacdn.com/img2/favicon.ico",                                                                       url: tripUrl,      note: "Melhor avaliação de hóspedes",   price: Math.round(base * (0.96 + ((seed % 8) * 0.01))) },
+    { platform: "Airbnb",             logo: "https://a0.muscache.com/airbnb/static/icons/android-icon-192x192-c0465f9f0380893768972a31a614aaed.png",           url: airbnbUrl,    note: "Pousadas e casas únicas",        price: Math.round(base * (0.85 + ((seed % 9) * 0.01))) },
+    { platform: "Hurb",               logo: "https://www.hurb.com/favicon.ico",                                                                                url: hurbUrl,      note: "Pacotes exclusivos no Brasil",   price: Math.round(base * (0.89 + ((seed % 7) * 0.01))) },
+    { platform: "CVC",                logo: "https://www.cvc.com.br/favicon.ico",                                                                              url: cvcUrl,       note: "Maior agência da América Latina",price: Math.round(base * (0.92 + ((seed % 8) * 0.01))) },
+    { platform: "Submarino Viagens",  logo: "https://www.submarinoviagens.com.br/favicon.ico",                                                                 url: submarinoUrl, note: "Cashback e parcelamento",        price: Math.round(base * (0.90 + ((seed % 6) * 0.01))) },
+    { platform: "Google Hotels",      logo: "https://www.google.com/favicon.ico",                                                                              url: googleUrl,    note: "Compare todos os preços",        price: Math.round(base * (0.87 + ((seed % 9) * 0.01))) },
+    { platform: "Trivago",            logo: "https://www.trivago.com.br/favicon.ico",                                                                          url: trivagoUrl,   note: "Comparador de hotéis global",    price: Math.round(base * (0.95 + ((seed % 7) * 0.01))) },
   ];
 
   return allOptions.sort((a, b) => a.price - b.price);

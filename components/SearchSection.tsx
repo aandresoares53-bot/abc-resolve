@@ -590,6 +590,11 @@ export default function SearchSection() {
                   { id: "Hotels.com", label: "Hotels.com", emoji: "🛎️" },
                   { id: "Kayak", label: "Kayak", emoji: "🔍" },
                   { id: "TripAdvisor", label: "TripAdvisor", emoji: "⭐" },
+                  { id: "Hurb", label: "Hurb", emoji: "🎒" },
+                  { id: "CVC", label: "CVC", emoji: "🏖️" },
+                  { id: "Submarino Viagens", label: "Submarino", emoji: "🚀" },
+                  { id: "Google Hotels", label: "Google Hotels", emoji: "🔎" },
+                  { id: "Trivago", label: "Trivago", emoji: "💡" },
                 ].map(p => (
                   <button
                     key={p.id}
