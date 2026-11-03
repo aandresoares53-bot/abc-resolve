@@ -168,7 +168,7 @@ function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn
   const ownSite = {
     platform: "encontrarhoteis.com.br",
     logo: "/favicon.ico",
-    url: `/hotel/${hotel.id}?adults=${adults}&children=${children}&checkIn=${ci}&checkOut=${co}&nights=${n}`,
+    url: `/hotel/${hotel.id}?adults=${adults}&children=${children}&checkIn=${checkIn}&checkOut=${checkOut}&nights=${Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000))}`,
     price: base,
     badges: ["🏆 Resultado exato", "Ver detalhes completos"],
     note: "Veja fotos, comodidades e compare todos os preços aqui",
