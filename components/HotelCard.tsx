@@ -322,11 +322,12 @@ export default function HotelCard({
                 </button>
 
                 {open && (
-                  <div className="absolute right-0 bottom-full mb-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
+                  <div className="absolute right-0 bottom-full mb-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden flex flex-col" style={{ maxHeight: "340px" }}>
                     <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
                       <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Comparar preços</p>
                       <p className="text-xs text-gray-400">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""}</p>
                     </div>
+                    <div className="overflow-y-auto" style={{ maxHeight: "220px" }}>
                     {options.map((opt, idx) => {
                       const isCheapest = idx === 0;
                       const optTotal = opt.price * rooms * n;
@@ -359,6 +360,7 @@ export default function HotelCard({
                         </a>
                       );
                     })}
+                    </div>
                     <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
                       <p className="text-xs text-gray-400 text-center">Abre com datas e hóspedes preenchidos ✓</p>
                     </div>
