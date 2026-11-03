@@ -76,28 +76,27 @@ function scoreHotel(hotel: Hotel, query: string, filters: {
 }
 
 function detectCityInQuery(query: string): string | null {
-  const words = normalizeText(query).split(/\s+/).filter(Boolean);
-  const citySet: Record<string, boolean> = {};
-  hotelsData.forEach(h => { citySet[h.city] = true; });
-  const cities = Object.keys(citySet);
+  const normQuery = normalizeText(query);
+  const citySet = new Map<string, string>(); // normCity -> original city
+  hotelsData.forEach(h => { citySet.set(normalizeText(h.city), h.city); });
 
-  for (const city of cities) {
-    const normCity = normalizeText(city);
-    if (words.some(w => normCity.includes(w) || w.includes(normCity))) {
-      return city;
-    }
+  // Sort cities by name length descending so longer/more specific cities match first
+  const cities = Array.from(citySet.entries()).sort((a, b) => b[0].length - a[0].length);
+
+  // 1. Exact substring match against full normalized query (longest city wins)
+  for (const [normCity, origCity] of cities) {
+    if (normQuery.includes(normCity)) return origCity;
   }
 
+  // 2. Alias match
   for (const hotel of hotelsData) {
     if (hotel.aliases) {
       for (const alias of hotel.aliases) {
-        const normAlias = normalizeText(alias);
-        if (words.some(w => normAlias === w || normAlias.includes(w))) {
-          return hotel.city;
-        }
+        if (normQuery.includes(normalizeText(alias))) return hotel.city;
       }
     }
   }
+
   return null;
 }
 
