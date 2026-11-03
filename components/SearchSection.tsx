@@ -101,6 +101,27 @@ export default function SearchSection() {
   const datesRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLDivElement>(null);
 
+  // Restore search state from localStorage on mount
+  useEffect(() => {
+    const saved = getFromLS<Record<string, unknown>>("searchState", {});
+    if (saved.query) setQuery(saved.query as string);
+    if (saved.region) setRegion(saved.region as string);
+    if (saved.state) setState(saved.state as string);
+    if (saved.seasonal) setSeasonal(saved.seasonal as string);
+    if (saved.packageFor) setPackageFor(saved.packageFor as string);
+    if (saved.type) setType(saved.type as string);
+    if (saved.maxPrice) setMaxPrice(saved.maxPrice as number);
+    if (saved.adults) setAdults(saved.adults as number);
+    if (saved.children) setChildren(saved.children as number);
+    if (saved.childrenAges) setChildrenAges(saved.childrenAges as number[]);
+    if (saved.selectedAmenities) setSelectedAmenities(saved.selectedAmenities as string[]);
+    if (saved.preferredPlatform) setPreferredPlatform(saved.preferredPlatform as string);
+    // Only restore dates if they are still in the future
+    const today = toInputDate(new Date());
+    if (saved.checkIn && (saved.checkIn as string) >= today) setCheckIn(saved.checkIn as string);
+    if (saved.checkOut && (saved.checkOut as string) > today) setCheckOut(saved.checkOut as string);
+  }, []);
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (datesRef.current && !datesRef.current.contains(e.target as Node)) {
@@ -129,6 +150,13 @@ export default function SearchSection() {
       setSearchHistory(updated);
       setToLS("searchHistory", updated);
     }
+
+    // Persist full search state so it survives navigation
+    setToLS("searchState", {
+      query: q, region, state, seasonal, packageFor, type, maxPrice,
+      adults, children, childrenAges, selectedAmenities, preferredPlatform,
+      checkIn, checkOut,
+    });
 
     const params = new URLSearchParams({
       q,
