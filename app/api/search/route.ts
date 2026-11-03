@@ -112,10 +112,15 @@ export async function GET(request: NextRequest) {
 
   const filters = { region, state, seasonal, packageFor, maxPrice, type };
 
+  const ESPACO_INTEIRO_TAGS = ["Espaço Inteiro", "Casa Inteira", "Apartamento", "Chalé", "Chalés", "Bangalô", "Bangalôs", "Villa", "Villas", "Bangalô Privativo", "Bangalôs Privativos", "Chalé Privativo", "Bangalô com Piscina", "Bangalô Pé na Areia"];
   function matchesType(hotel: Hotel, t: string): boolean {
     if (t === "todos") return true;
-    if (t === "espaco-inteiro") return hotel.tags?.some(tag => tag === "Espaço Inteiro" || tag === "Casa Inteira" || tag === "Apartamento") ?? false;
-    if (t === "pousada") return hotel.type === "pousada" && !(hotel.tags?.some(tag => tag === "Espaço Inteiro" || tag === "Casa Inteira"));
+    if (t === "espaco-inteiro") {
+      const tags = hotel.tags ?? [];
+      return tags.some(tag => ESPACO_INTEIRO_TAGS.some(et => tag.toLowerCase().includes(et.toLowerCase()))) ||
+        hotel.type === "pousada"; // pousadas always count as private accommodation
+    }
+    if (t === "pousada") return hotel.type === "pousada";
     return hotel.type === t;
   }
 
