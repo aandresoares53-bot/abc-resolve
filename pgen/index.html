@@ -442,23 +442,30 @@ header{
           <button class="qpick" data-group="pose" data-val="fabric pulled tight against vulva, camel toe clearly visible through fabric, underwear or clothing pressing against pubic mound, explicit fabric outline of genitalia">Vulva marcada 👙</button>
         </div>
 
-        <!-- Camera row -->
+        <!-- Ângulo row -->
         <div class="qrow">
-          <span class="qlabel">📷</span>
+          <span class="qlabel">🔭 Ângulo</span>
+          <button class="qpick active" data-group="angulo" data-val="">Padrão</button>
+          <button class="qpick" data-group="angulo" data-val="first person POV, handheld shaky, intimate candid angle, natural light">POV 1ª</button>
+          <button class="qpick" data-group="angulo" data-val="low angle upward shot, shot from below between legs, inner thighs and crotch filling center of frame, legs extending upward on both sides, floor-level close-up looking up">POV baixo</button>
+          <button class="qpick" data-group="angulo" data-val="low angle close-up from below, tight frame on inner thighs and crotch, upward angle from floor level, genitals and thighs centered, legs framing top of shot">POV baixo close-up</button>
+          <button class="qpick" data-group="angulo" data-val="low angle extreme close-up from below, shot straight up between spread legs, inner thighs and crotch dominating entire frame, extreme upward angle from floor between feet">POV baixo extremo</button>
+          <button class="qpick" data-group="angulo" data-val="high angle handheld above, looking down, available light, candid overhead">Alto</button>
+          <button class="qpick" data-group="angulo" data-val="side profile, natural window light from front, candid moment, no studio setup">Perfil</button>
+          <button class="qpick" data-group="angulo" data-val="facing away from camera, back to viewer, candid rear view">De costas</button>
+          <button class="qpick" data-group="angulo" data-val="bent over surface, torso folded forward, buttocks pushed toward camera, rear view, handheld, natural light, candid">Dobrada</button>
+        </div>
+
+        <!-- Lente row -->
+        <div class="qrow">
+          <span class="qlabel">📷 Lente</span>
           <button class="qpick active" data-group="cam" data-val="">Padrão</button>
           <button class="qpick" data-group="cam" data-val="50mm handheld, slight candid tilt, natural framing, available light, grain visible">50mm</button>
           <button class="qpick" data-group="cam" data-val="85mm handheld, natural window light, slightly off-center composition, candid portrait, no studio light">85mm</button>
           <button class="qpick" data-group="cam" data-val="full body head to toe, 28mm handheld, environmental candid, available light, real location">Corpo inteiro</button>
-          <button class="qpick" data-group="cam" data-val="low angle upward shot, shot from below between legs, inner thighs and crotch filling center of frame, legs extending upward on both sides, floor-level close-up looking up">POV baixo</button>
-          <button class="qpick" data-group="cam" data-val="low angle close-up from below, tight frame on inner thighs and crotch, upward angle from floor level, genitals and thighs centered, legs framing top of shot">POV baixo close-up</button>
-          <button class="qpick" data-group="cam" data-val="low angle extreme close-up from below, shot straight up between spread legs, inner thighs and crotch dominating entire frame, extreme upward angle from floor between feet">POV baixo extremo</button>
-          <button class="qpick" data-group="cam" data-val="first person POV, handheld shaky, intimate candid angle, natural light">POV 1ª</button>
-          <button class="qpick" data-group="cam" data-val="candid close-up, face filling frame, slight handheld shake, natural available light, no beauty lighting">Close</button>
-          <button class="qpick" data-group="cam" data-val="bathroom mirror selfie, phone visible in reflection, natural bathroom light, candid unposed">Espelho</button>
-          <button class="qpick" data-group="cam" data-val="side profile, natural window light from front, candid moment, no studio setup">Perfil</button>
-          <button class="qpick" data-group="cam" data-val="high angle handheld above, looking down, available light, candid overhead">Alto</button>
+          <button class="qpick" data-group="cam" data-val="candid close-up, face filling frame, slight handheld shake, natural available light, no beauty lighting">Close rosto</button>
           <button class="qpick" data-group="cam" data-val="extreme close-up of buttocks filling frame, natural skin texture visible, slight grain, rear view, no head, available light">Close bunda</button>
-          <button class="qpick" data-group="cam" data-val="bent over surface, torso folded forward, buttocks pushed toward camera, rear view, handheld, natural light, candid">Dobrada</button>
+          <button class="qpick" data-group="cam" data-val="bathroom mirror selfie, phone visible in reflection, natural bathroom light, candid unposed">Espelho</button>
         </div>
 
         <!-- Estilo de foto row -->
@@ -511,6 +518,7 @@ header{
 
         <!-- hidden inputs for JS compatibility -->
         <input type="hidden" id="edit-pose" value="">
+        <input type="hidden" id="edit-angulo" value="">
         <input type="hidden" id="edit-cam" value="">
         <input type="hidden" id="edit-style" value="">
         <input type="hidden" id="edit-luz" value="">
@@ -586,7 +594,8 @@ function buildBlondePrompt(p, seedOverride){
   // Prompt enxuto — MJ dilui atenção em prompts muito longos
   const desc = [];
 
-  // 1. Ângulo de câmera PRIMEIRO — maior peso no MJ para composição
+  // 1. Ângulo PRIMEIRO, depois lente — maior peso no MJ para composição
+  if(p.angulo) desc.push(p.angulo);
   if(p.cam) desc.push(p.cam);
 
   // 2. Personagem
@@ -7248,12 +7257,17 @@ function selectPreset(key){
   if(negMatch) document.getElementById('result-neg').value = negMatch[1];
   setSelectClosest('edit-pose', p.pose || defaultPose(p));
   // Only reset cam pill if user hasn't explicitly chosen one (Padrão = no override)
-  const activeCamPill = document.querySelector('.qpick[data-group="cam"].active');
-  const camPillIsDefault = !activeCamPill || activeCamPill.dataset.val === '';
+  const activeAnguloPill = document.querySelector('.qpick[data-group="angulo"].active');
+  const activeCamPill    = document.querySelector('.qpick[data-group="cam"].active');
+  const anguloPillIsDefault = !activeAnguloPill || activeAnguloPill.dataset.val === '';
+  const camPillIsDefault    = !activeCamPill    || activeCamPill.dataset.val    === '';
+  if(anguloPillIsDefault) {
+    setSelectClosest('edit-angulo', p.angulo || '');
+  }
   if(camPillIsDefault) {
     setSelectClosest('edit-cam', p.cam || defaultCam(p));
-  } else {
-    // Keep user's cam pill but re-apply it so the new preset gets the override
+  }
+  if(!anguloPillIsDefault || !camPillIsDefault) {
     applyEdits(true);
   }
   // For POV extremo presets, always run applyEdits to inject upshot nsfw overrides
@@ -7290,7 +7304,7 @@ function clearAllChips(){
   document.querySelectorAll('.chip.active,.qpick.active').forEach(c=>c.classList.remove('active'));
   // restore "Padrão" active state
   document.querySelectorAll('.qpick[data-val=""]').forEach(b=>b.classList.add('active'));
-  ['edit-pose','edit-cam','edit-style','edit-luz','edit-filmstock'].forEach(id=>{
+  ['edit-pose','edit-angulo','edit-cam','edit-style','edit-luz','edit-filmstock'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.value = '';
   });
@@ -7300,11 +7314,12 @@ function clearAllChips(){
 function applyEdits(silent){
   const p = PRESETS_RAW.find(x=>x.key===selectedKey);
   if(!p) return;
-  const overridePose = document.getElementById('edit-pose').value.trim();
-  const overrideCam  = document.getElementById('edit-cam').value.trim();
+  const overridePose   = document.getElementById('edit-pose').value.trim();
+  const overrideAngulo = document.getElementById('edit-angulo').value.trim();
+  const overrideCam    = document.getElementById('edit-cam').value.trim();
 
   // POV baixo / extremo: detect and inject pose + nsfw automatically
-  const camToCheck = overrideCam || p.cam || '';
+  const camToCheck = overrideAngulo || p.angulo || overrideCam || p.cam || '';
   const isPovBaixo   = /inner thighs.*crotch.*filling|close-up.*inner thighs.*crotch|thighs.*prominent.*foreground|upward floor-level|crotch.*dominating.*frame|floor-angle composition|low angle close-up from below.*tight frame|low angle upward shot.*shot from below/i.test(camToCheck);
   const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
@@ -7317,8 +7332,9 @@ function applyEdits(silent){
   } : {};
 
   const merged = Object.assign({}, p,
-    overridePose ? {pose: overridePose} : {},
-    overrideCam  ? {cam:  overrideCam}  : {},
+    overridePose   ? {pose:   overridePose}   : {},
+    overrideAngulo ? {angulo: overrideAngulo} : {},
+    overrideCam    ? {cam:    overrideCam}    : {},
     povInject
   );
   // Preserve current seed
@@ -7357,7 +7373,7 @@ function reiniciarTudo(){
     b.classList.toggle('active', b.dataset.val==='');
   });
   // Limpa campos ocultos
-  ['edit-pose','edit-cam','edit-style','edit-luz','edit-filmstock','edit-luz2','edit-expressao2','edit-estado'].forEach(id=>{
+  ['edit-pose','edit-angulo','edit-cam','edit-style','edit-luz','edit-filmstock','edit-luz2','edit-expressao2','edit-estado'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value = id==='edit-filmstock' ? 'Kodak Ultramax 800' : '';
   });
