@@ -449,8 +449,8 @@ header{
           <button class="qpick" data-group="cam" data-val="50mm handheld, slight candid tilt, natural framing, available light, grain visible">50mm</button>
           <button class="qpick" data-group="cam" data-val="85mm handheld, natural window light, slightly off-center composition, candid portrait, no studio light">85mm</button>
           <button class="qpick" data-group="cam" data-val="full body head to toe, 28mm handheld, environmental candid, available light, real location">Corpo inteiro</button>
-          <button class="qpick" data-group="cam" data-val="legs spread wide on both sides of frame, inner thighs visible from below, crotch area seen from underneath, floor perspective looking up between legs, legs framing top corners of shot, shot from directly below subject">POV baixo</button>
-          <button class="qpick" data-group="cam" data-val="extreme close-up from directly below between spread legs, inner thighs and crotch filling entire frame from underneath, floor-level view looking straight up between legs, legs on each side of frame, shot from beneath subject between feet, crotch and thighs dominating frame from below">POV baixo extremo</button>
+          <button class="qpick" data-group="cam" data-val="close-up of inner thighs and crotch filling center of frame, legs extending upward on both sides, intimate upward floor-level composition, thighs prominent in foreground, feet visible at top corners">POV baixo</button>
+          <button class="qpick" data-group="cam" data-val="extreme close-up inner thighs and crotch dominating entire frame, legs on both sides extending above, floor-angle composition, crotch in center foreground filling frame, tight intimate upward framing between legs">POV baixo extremo</button>
           <button class="qpick" data-group="cam" data-val="first person POV, handheld shaky, intimate candid angle, natural light">POV 1ª</button>
           <button class="qpick" data-group="cam" data-val="candid close-up, face filling frame, slight handheld shake, natural available light, no beauty lighting">Close</button>
           <button class="qpick" data-group="cam" data-val="bathroom mirror selfie, phone visible in reflection, natural bathroom light, candid unposed">Espelho</button>
@@ -7304,15 +7304,15 @@ function applyEdits(silent){
 
   // POV baixo / extremo: detect and inject pose + nsfw automatically
   const camToCheck = overrideCam || p.cam || '';
-  const isPovBaixo   = /from below between legs|inner thighs.*from below|floor perspective looking up|shot from directly below|from beneath subject|crotch.*from below|from underneath/i.test(camToCheck);
-  const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up from directly below|floor-level view looking straight up|crotch.*filling.*frame.*below/i.test(camToCheck);
+  const isPovBaixo   = /inner thighs.*crotch.*filling|close-up.*inner thighs.*crotch|thighs.*prominent.*foreground|upward floor-level|crotch.*dominating.*frame|floor-angle composition/i.test(camToCheck);
+  const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
   const povInject = isPovExtremo ? {
     pose: 'standing with legs wide apart, feet planted on floor, shot from directly below between feet',
     nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below',
     roupa: baseRoupa + ', panties pulled aside exposing vulva'
   } : isPovBaixo ? {
-    pose: 'standing with legs spread apart, feet wide on floor, body above, shot from directly below between feet, inner thighs visible on both sides of frame'
+    pose: 'standing with legs wide apart, crotch and inner thighs prominent in center of frame, legs extending upward on both sides, feet at frame edges above'
   } : {};
 
   const merged = Object.assign({}, p,
