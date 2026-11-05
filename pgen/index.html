@@ -666,16 +666,15 @@ function buildBlondePrompt(p, seedOverride){
   // Prompt enxuto — MJ dilui atenção em prompts muito longos
   const desc = [];
 
-  // 1. ÂNCORA CANDID PRIMEIRO — MJ pesa início do prompt mais forte
-  // Sem mencionar segundo filmstock, usa apenas o selecionado
-  desc.push('35mm disposable camera photo, candid snapshot, circa 2006, amateur photo, available light, slight camera shake, motion blur, ' + film + (film === 'Kodak Ultramax 800' ? ', expired film roll, heavy grain, color shift, light leak' : ', heavy grain') + (isMonochrome ? ', monochrome' : ''));
-
-  // 2. Ângulo / lente — após âncora
+  // 1. Ângulo PRIMEIRO — maior peso no MJ para composição e POV
   if(p.angulo) desc.push(p.angulo);
   if(p.cam) desc.push(p.cam);
 
-  // 3. Personagem
+  // 2. Personagem
   desc.push(MJ_SUBJECT);
+
+  // 3. Âncora candid + filmstock
+  desc.push('35mm disposable camera photo, candid snapshot, circa 2006, amateur photo, available light, slight camera shake, motion blur, ' + film + (film === 'Kodak Ultramax 800' ? ', expired film roll, heavy grain, color shift, light leak' : ', heavy grain') + (isMonochrome ? ', monochrome' : ''));
 
   // 4. Pele real com imperfeições específicas no corpo
   desc.push('visible pores, skin micro-texture, slight cellulite texture on thighs and buttocks, natural skin dimples, skin folds and creases, natural gravity-pulled skin, natural stretch marks, uneven skin tone on body');
