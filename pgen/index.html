@@ -7747,12 +7747,15 @@ function applyEdits(silent){
   const isPovBaixo   = /inner thighs.*crotch.*filling|close-up.*inner thighs.*crotch|thighs.*prominent.*foreground|upward floor-level|crotch.*dominating.*frame|floor-angle composition|low angle close-up from below.*tight frame|low angle upward shot.*shot from below/i.test(camToCheck);
   const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
+  // Anti-plastic skin reinforcement for all POV shots
+  const POV_SKIN = 'natural unretouched skin texture, visible pores on thighs, real skin dimples and micro-texture, slight cellulite, natural skin folds, candid unposed real body, no beauty retouch, no airbrushing, no smoothing, no studio lighting, available light only';
   const povInject = isPovExtremo ? {
     pose: 'standing with legs wide apart, feet planted on floor, shot from directly below between feet',
-    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below',
+    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below, ' + POV_SKIN,
     roupa: baseRoupa + ', panties pulled aside exposing vulva'
   } : isPovBaixo ? {
-    pose: 'standing with legs wide apart, crotch and inner thighs prominent in center of frame, legs extending upward on both sides, feet at frame edges above'
+    pose: 'standing with legs wide apart, crotch and inner thighs prominent in center of frame, legs extending upward on both sides, feet at frame edges above',
+    nsfw: (p.nsfw ? p.nsfw + ', ' : '') + POV_SKIN
   } : {};
 
   const merged = Object.assign({}, p,
