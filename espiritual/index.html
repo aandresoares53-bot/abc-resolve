@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal das Sombras — Gerador Chat</title>
+<meta name="description" content="Gere prompts espirituais para Umbanda, Quimbanda e o mundo afro-brasileiro em formato de conversa.">
+<style>
+:root {
+  --bg:      #110A0D;
+  --surface: #1C1018;
+  --card:    #251520;
+  --border:  #3A2030;
+  --border-lit: #7A3A50;
+  --ember:   #C8320A;
+  --gold:    #C9860A;
+  --gold-dim:#7A5206;
+  --violet:  #7B2FBE;
+  --forest:  #1E6B2E;
+  --text:    #EDE0D4;
+  --muted:   #9A7A6A;
+  --dim:     #4A3030;
+  --bot-bg:  #1C1018;
+  --user-bg: #2A1820;
+  --chip-bg: #251520;
+  --chip-border: #5A2A3A;
+  --chip-hover: #3A1E28;
+  --chip-active: #C8320A;
+  --radius: 14px;
+  --r-chip: 24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── Header ── */
+header{text-align:center;padding:28px 16px 16px;border-bottom:1px solid var(--border)}
+.sigil-wrap{width:44px;height:44px;margin:0 auto 10px;opacity:.85}
+header h1{font-family:'Palatino Linotype',Palatino,Georgia,serif;font-size:clamp(1.1rem,4vw,1.6rem);font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--text)}
+header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gold);margin-bottom:4px}
+.header-sub{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin-top:4px}
+
+/* ── Progress bar ── */
+.progress-wrap{padding:10px 16px 0;max-width:700px;margin:0 auto;width:100%}
+.progress-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--ember),var(--gold));border-radius:2px;transition:width .4s ease}
+.progress-label{font-size:.65rem;color:var(--muted);letter-spacing:.15em;text-align:right;margin-top:4px;text-transform:uppercase}
+
+/* ── Chat window ── */
+#chat{flex:1;max-width:700px;width:100%;margin:0 auto;padding:16px 16px 120px;display:flex;flex-direction:column;gap:18px}
+
+/* ── Messages ── */
+.msg{display:flex;gap:10px;align-items:flex-start;animation:fadeUp .3s ease}
+.msg.bot{flex-direction:row}
+.msg.user{flex-direction:row-reverse}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.bot .avatar{background:var(--surface);border:1px solid var(--border-lit)}
+.user .avatar{background:var(--user-bg);border:1px solid var(--dim)}
+
+.bubble{padding:11px 16px;border-radius:var(--radius);font-size:.88rem;line-height:1.55;max-width:88%}
+.bot .bubble{background:var(--bot-bg);border:1px solid var(--border);border-top-left-radius:4px;color:var(--text)}
+.user .bubble{background:var(--user-bg);border:1px solid var(--dim);border-top-right-radius:4px;color:var(--muted)}
+
+/* ── Chips ── */
+.chips-wrap{padding:0 0 0 40px;display:flex;flex-wrap:wrap;gap:10px;animation:fadeUp .3s ease .1s both}
+.chip{padding:10px 20px;background:var(--chip-bg);border:1px solid var(--chip-border);border-radius:var(--r-chip);color:var(--text);font-family:Georgia,serif;font-size:.9rem;cursor:pointer;transition:all .18s;white-space:nowrap;outline:none}
+.chip:hover{background:var(--chip-hover);border-color:var(--border-lit);color:var(--text)}
+.chip.selected{background:var(--ember);border-color:var(--ember);color:#fff}
+.chip.skip{border-color:var(--dim);color:var(--muted)}
+.chip.skip:hover{border-color:var(--border-lit);color:var(--text)}
+
+/* ── Free input ── */
+.free-wrap{padding:0 0 0 40px;display:flex;gap:8px;animation:fadeUp .3s ease .15s both}
+.free-wrap input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-chip);padding:9px 16px;color:var(--text);font-family:Georgia,serif;font-size:.85rem;outline:none}
+.free-wrap input:focus{border-color:var(--border-lit)}
+.free-wrap input::placeholder{color:var(--muted)}
+.free-wrap button{padding:9px 18px;background:var(--ember);border:none;border-radius:var(--r-chip);color:#fff;font-family:Georgia,serif;font-size:.82rem;cursor:pointer}
+
+/* ── Typing indicator ── */
+.typing{display:flex;align-items:center;gap:5px;padding:12px 16px}
+.dot{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bounce .9s infinite}
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* ── Result card ── */
+.result-card{background:var(--surface);border:1px solid var(--border-lit);border-radius:var(--radius);padding:20px;animation:fadeUp .35s ease}
+.result-card h3{font-family:'Palatino Linotype',Georgia,serif;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.result-card .entity-name{font-size:1.5rem;color:var(--gold);margin-bottom:4px;font-style:italic;font-family:'Palatino Linotype',Georgia,serif;font-weight:700;text-shadow:0 0 12px rgba(201,134,10,.4)}
+.result-card .entity-name-sub{font-size:.7rem;color:var(--text);letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px;opacity:.8}
+.assinatura{margin-top:16px;padding-top:12px;border-top:1px solid var(--border-lit);text-align:center;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-family:'Palatino Linotype',Georgia,serif;font-style:italic}
+/* ── Affinity suggestion chips ── */
+.chip.sugg{border-color:var(--gold);color:var(--gold);background:rgba(201,134,10,.08)}
+.chip.sugg:hover{background:rgba(201,134,10,.18)}
+.prompt-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.prompt-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.8rem;line-height:1.55;color:var(--text);white-space:pre-wrap;word-break:break-word;margin-bottom:14px}
+.result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.btn-act{padding:8px 16px;border-radius:var(--r-chip);border:1px solid var(--border-lit);background:transparent;color:var(--text);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.btn-act:hover{background:var(--card);border-color:var(--gold)}
+.btn-act.primary{background:var(--ember);border-color:var(--ember);color:#fff}
+.btn-act.primary:hover{opacity:.9}
+.divider-rune{text-align:center;color:var(--dim);font-size:.8rem;letter-spacing:.3em;margin:4px 0}
+
+/* ── Bottom bar ── */
+#bottom-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,var(--bg) 30%);padding:20px 16px 20px;display:flex;justify-content:center;gap:10px;z-index:10}
+.bar-btn{padding:9px 20px;border-radius:var(--r-chip);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.bar-btn:hover{border-color:var(--border-lit);color:var(--text)}
+.bar-btn.danger{border-color:var(--dim)}
+
+/* ── History panel ── */
+#hist-panel{position:fixed;inset:0;background:rgba(10,5,8,.92);z-index:50;display:none;flex-direction:column}
+#hist-panel.open{display:flex}
+.hist-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.hist-header h2{font-family:'Palatino Linotype',Georgia,serif;font-size:1rem;letter-spacing:.15em;text-transform:uppercase;font-weight:400;color:var(--gold)}
+.hist-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px 8px}
+#hist-list{flex:1;overflow-y:auto;padding:16px}
+.hist-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
+.hist-item:hover{border-color:var(--border-lit)}
+.hist-item-name{font-size:.85rem;color:var(--text);margin-bottom:4px}
+.hist-item-meta{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
+.hist-item-preview{font-size:.72rem;color:var(--dim);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-empty{text-align:center;color:var(--muted);font-size:.82rem;padding:40px 0}
+
+/* ── Loading ── */
+#loading{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.load-sigil{font-size:2.5rem;animation:spin 3s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.load-text{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Mobile ── */
+@media(max-width:480px){
+  .bubble{font-size:.85rem}
+  .chip{font-size:.82rem;padding:9px 16px}
+  header h1{font-size:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Loading screen -->
+<div id="loading">
+  <div class="load-sigil">⛧</div>
+  <div class="load-text">Invocando entidades...</div>
+</div>
+
+<header>
+  <div class="sigil-wrap">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="22" cy="22" r="20" stroke="#C9860A" stroke-width="1.2"/>
+      <polygon points="22,4 40,36 4,36" fill="none" stroke="#C8320A" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="22" cy="22" r="4" fill="#C9860A" opacity=".8"/>
+    </svg>
+  </div>
+  <h1><span>Portal das Sombras</span>Gerador Espiritual</h1>
+  <div class="header-sub">Prompts para Umbanda · Quimbanda · Espiritualidade</div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">Etapa 1 de 6</div>
+</div>
+
+<div id="chat"></div>
+
+<div id="bottom-bar">
+  <button class="bar-btn" onclick="openHist()">📜 Histórico</button>
+  <button class="bar-btn danger" onclick="restartFlow()">↺ Recomeçar</button>
+</div>
+
+<!-- History panel -->
+<div id="hist-panel">
+  <div class="hist-header">
+    <h2>⛧ Histórico</h2>
+    <button class="hist-close" onclick="closeHist()">✕</button>
+  </div>
+  <div id="hist-list"></div>
+</div>
+
+<script>
+// ── Entity data store ──────────────────────────────────────────────────
+const BASE_URL = 'https://raw.githubusercontent.com/aandresoares53-bot/abc-resolve/claude/vercel-list-projects-acsxdg/promptespiritual-data';
+const CATS = ["orixa","exu","pombo","bruxa","demonio","egungun","eguns","malandro","baiano","preto","boiadeiro","ere","caboclo","cigano"];
+const CAT_LABELS = {
+  orixa:'Orixá', exu:'Exu', pombo:'Pomba-Gira', bruxa:'Bruxa / Feiticeira',
+  demonio:'Demônio', egungun:'Egungun', eguns:'Egum', malandro:'Malandro',
+  baiano:'Baiano', preto:'Preto-Velho', boiadeiro:'Boiadeiro', ere:'Erê',
+  caboclo:'Caboclo', cigano:'Cigano'
+};
+const CAT_ICONS = {
+  orixa:'🌊', exu:'🔥', pombo:'🌹', bruxa:'🌙', demonio:'⛧', egungun:'💀',
+  eguns:'👁', malandro:'🎩', baiano:'🌺', preto:'🕯', boiadeiro:'🌾',
+  ere:'⭐', caboclo:'🏹', cigano:'🔮'
+};
+let ENTITIES = {};
+let answers = {};
+let currentStep = 0;
+let currentEntity = null;
+let generatedEN = '';
+let generatedPT = '';
+let activeTags = new Set();
+
+// ── Steps definition ───────────────────────────────────────────────────
+const STEPS = [
+  {
+    id: 'categoria',
+    label: 'Categoria',
+    ask: 'Qual categoria de entidade espiritual você quer invocar?',
+    qr: Object.entries(CAT_LABELS).map(([val,label]) => ({label: `${CAT_ICONS[val]} ${label}`, val})),
+    dynamic: false, skip: false
+  },
+  {
+    id: 'entidade',
+    label: 'Entidade',
+    ask: 'Qual entidade específica?',
+    qr: [], // populated after categoria chosen
+    dynamic: true, skip: false
+  },
+  {
+    id: 'estilo',
+    label: 'Estilo',
+    ask: 'Qual o estilo artístico da imagem?',
+    qr: [
+      {label:'📸 Fotorrealismo hiper-detalhado', val:'(photorealistic:1.4), (hyperrealistic:1.3), ultra detailed photograph, 8k uhd, sharp focus, professional studio lighting', tags:['photo','realistic','portrait']},
+      {label:'🖥️ Render 3D fotorrealista', val:'(3d render:1.3), (photorealistic:1.4), octane render, cinema 4d, ray tracing, physically based rendering, ultra detailed', tags:['photo','realistic','fantasy']},
+      {label:'🎨 Pintura digital hiper-realista', val:'(digital painting:1.2), (hyperrealistic:1.3), detailed digital art, artstation, concept art, sharp details', tags:['painting','realistic','fantasy','dark']},
+      {label:'📷 Fotografia analógica', val:'analog photography, film grain, 35mm film, (photorealistic:1.2), cinematic', tags:['photo','realistic','dark']},
+      {label:'📸 Foto de estúdio profissional', val:'(professional studio photography:1.3), (photorealistic:1.4), dramatic lighting, high resolution, ultra sharp', tags:['photo','realistic','portrait','sacred']},
+      {label:'🎨 Pintura a óleo clássica', val:'oil painting, thick impasto brushwork, classical technique, old masters style', tags:['painting','classic','sacred']},
+      {label:'⚙️ Gravura em metal', val:'etching engraving, intaglio printmaking, black and white', tags:['dark','occult','classic']},
+      {label:'💧 Aquarela', val:'watercolor painting, transparent washes, soft edges', tags:['soft','mystic','nature']},
+      {label:'🖥️ Arte digital conceitual', val:'digital concept art, detailed matte painting, artstation trending', tags:['dark','fantasy','mystic']},
+      {label:'📖 Iluminura medieval', val:'medieval illuminated manuscript, gold leaf ornate borders', tags:['sacred','classic','gold']},
+      {label:'🪵 Xilogravura', val:'woodblock print, bold graphic lines, high contrast', tags:['dark','occult','bold']},
+      {label:'✝️ Arte sacra barroca', val:'baroque religious art, dramatic chiaroscuro, gilded frame', tags:['sacred','gold','classic','light']},
+      {label:'🖤 Arte sombria gótica', val:'dark fantasy art, gothic illustration, occult aesthetic', tags:['dark','occult','horror','infernal']},
+      {label:'🌀 Surrealismo', val:'surrealist painting, dreamlike distortion, symbolic imagery', tags:['mystic','dream','fantasy']},
+      {label:'🌊 Arte visceral expressionista', val:'expressionist painting, raw emotional intensity, distorted forms, bold brushwork', tags:['dark','horror','bold','infernal']},
+      {label:'⚡ Cyberpunk ocultista', val:'cyberpunk aesthetic, neon occult, futuristic dark art, digital glitch effects', tags:['dark','fantasy','bold','mystic']},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'composicao',
+    label: 'Composição',
+    ask: 'Como deve ser a composição da imagem?',
+    qr: [
+      {label:'👤 Retrato ultra-fechado', val:'extreme close-up portrait, face only, sharp focus, every detail visible', tags:['portrait','photo','realistic']},
+      {label:'👤 Retrato fechado', val:'close-up portrait, face and shoulders', tags:['portrait','photo','realistic']},
+      {label:'🧍 Meio corpo', val:'half body shot, waist up', tags:['portrait','classic']},
+      {label:'🧍‍♀️ Corpo inteiro', val:'full body standing figure', tags:['sacred','majestic','nature']},
+      {label:'🔭 Vista de baixo dramática', val:'dramatic low angle view, looking up at figure, foreshortening, imposing perspective', tags:['majestic','dark','bold']},
+      {label:'👁️ Vista de cima', val:'high angle view, looking down', tags:['mystic','dream','occult']},
+      {label:'🌑 Silhueta dramática', val:'dramatic silhouette against glowing background', tags:['dark','occult','infernal','bold']},
+      {label:'🌅 Cena panorâmica épica', val:'epic wide establishing shot, figure in vast dramatic environment', tags:['nature','sacred','fantasy','majestic']},
+      {label:'🪞 Composição simétrica', val:'symmetrical composition, centered figure, perfect balance', tags:['sacred','gold','majestic','classic']},
+      {label:'🎭 Cena narrativa', val:'narrative scene composition, figure interacting with environment, storytelling visual', tags:['classic','sacred','nature','mystic']},
+      {label:'🌀 Espiral circular', val:'circular radial composition, figure at center, surrounding elements spiraling outward', tags:['mystic','occult','gold','sacred']},
+      {label:'💃 Pose dinâmica', val:'dynamic action pose, figure in movement, diagonal composition, energy and motion', tags:['bold','majestic','infernal','dark']},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'luz',
+    label: 'Iluminação',
+    ask: 'Qual o tipo de iluminação?',
+    qr: [
+      {label:'🕯️ Velas e fogueira', val:'candlelight and bonfire glow, warm flickering orange light, chiaroscuro', tags:['occult','sacred','ritual','infernal']},
+      {label:'🌕 Lua cheia', val:'full moonlight, cool silver lunar glow, night scene, moonbeams', tags:['mystic','dark','nature','dream']},
+      {label:'🌋 Brasas incandescentes', val:'glowing embers, red-orange incandescent heat glow, magma light', tags:['infernal','dark','bold']},
+      {label:'💡 Contraluz dramático', val:'dramatic backlight, strong rim light, silhouette effect, cinematic lighting', tags:['dark','bold','majestic','photo']},
+      {label:'🌫️ Névoa luminosa etérea', val:'glowing ethereal mist, diffused supernatural light, volumetric fog', tags:['mystic','dream','fantasy','soft']},
+      {label:'⚡ Raios de tempestade', val:'lightning bolt flashes, stormy dramatic electric light, thunder clouds', tags:['dark','bold','horror','infernal']},
+      {label:'☀️ Luz divina celestial', val:'divine light beam from above, god rays, sacred illumination, heavenly glow', tags:['sacred','gold','light','majestic']},
+      {label:'🔵 Bioluminescência espectral', val:'bioluminescent supernatural glow, blue-green spectral light, spirit fire', tags:['mystic','dream','nature','fantasy']},
+      {label:'🔴 Luz infernal abissal', val:'hellfire red glow, demonic underworld light, lava reflection', tags:['infernal','dark','horror','occult']},
+      {label:'🌅 Crepúsculo dourado', val:'twilight golden hour, dusk sunset orange sky, warm golden light', tags:['gold','nature','mystic','soft']},
+      {label:'🎭 Iluminação de estúdio', val:'professional studio lighting, three point lighting setup, dramatic shadows, high contrast', tags:['photo','realistic','portrait','bold']},
+      {label:'🌈 Luz de vitrô sacro', val:'stained glass colored light, multicolored beams, cathedral illumination', tags:['sacred','gold','classic','mystic']},
+      {label:'🔮 Aura e energia pulsante', val:'pulsating aura energy glow around figure, ethereal energy field, supernatural radiance', tags:['mystic','occult','fantasy','majestic']},
+      {label:'🌙 Noite estrelada', val:'starry night sky illumination, nebula light, cosmic glow, night atmosphere', tags:['dark','mystic','dream','nature']},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'atmosfera',
+    label: 'Atmosfera',
+    ask: 'Qual a atmosfera e o mood da imagem?',
+    qr: [
+      {label:'🖤 Sombria e intensa', val:'dark and intense, brooding ominous atmosphere, heavy shadows', tags:['dark','horror','occult','infernal']},
+      {label:'🌀 Mística e etérea', val:'mystical and ethereal, otherworldly spiritual presence', tags:['mystic','dream','fantasy','soft']},
+      {label:'👑 Majestosa e poderosa', val:'majestic and powerful, commanding divine presence, regal authority', tags:['majestic','sacred','gold','bold']},
+      {label:'🏛️ Ancestral e sagrada', val:'ancestral and sacred, ancient ritual atmosphere, timeless spiritual', tags:['sacred','classic','ritual','occult']},
+      {label:'💀 Sinistra e perturbadora', val:'sinister and unsettling, deeply disturbing horror atmosphere', tags:['horror','dark','occult','infernal']},
+      {label:'🕊️ Serena e contemplativa', val:'serene and contemplative, peaceful meditative mood, tranquil', tags:['soft','nature','mystic','light']},
+      {label:'🎊 Festiva e vibrante', val:'festive and vibrant, joyful celebratory energy, colorful', tags:['ritual','nature','bold','gold']},
+      {label:'🌪️ Caótica e apocalíptica', val:'chaotic apocalyptic, world-ending catastrophic energy, destructive', tags:['dark','horror','infernal','bold']},
+      {label:'🧿 Onírica e surreal', val:'dreamlike and surreal, hallucinatory vision, subconscious imagery', tags:['dream','mystic','fantasy','occult']},
+      {label:'⚔️ Guerreira e colérica', val:'warrior fierce and wrathful, battle-ready fury, combat-hardened', tags:['majestic','bold','dark','infernal']},
+      {label:'🔮 Transcendental e cósmica', val:'transcendental cosmic mood, infinite void, universal spiritual awakening', tags:['mystic','dream','fantasy','sacred']},
+      {label:'❄️ Gelada e implacável', val:'ice cold and merciless, chilling supernatural atmosphere, frozen dread', tags:['dark','horror','bold','occult']},
+      {label:'🌹 Sensual e sedutora', val:'sensual and seductive, magnetic spiritual allure, entrancing beauty', tags:['mystic','gold','soft','portrait']},
+      {label:'⚡ Elétrica e explosiva', val:'electric and explosive energy, crackling power, intense supernatural force', tags:['bold','infernal','majestic','dark']},
+    ],
+    dynamic: false, skip: false
+  },
+  {
+    id: 'extra',
+    label: 'Extras',
+    ask: 'Adicionar detalhes extras? (opcional)',
+    qr: [
+      {label:'✗ Pular', val:'__skip__'},
+      {label:'💨 Fumaça e incenso', val:'smoke and incense haze filling the air, ritual smoke clouds', tags:['ritual','occult','mystic']},
+      {label:'✨ Símbolos e sigils', val:'mystical symbols sigils and runes surrounding figure, glowing inscriptions', tags:['occult','mystic','dark']},
+      {label:'🌸 Flores e oferendas', val:'ritual flowers and sacred offerings scattered around, petals', tags:['ritual','nature','sacred','soft']},
+      {label:'🌀 Espirais de energia', val:'spiraling energy vortex emanating from figure, power aura', tags:['mystic','fantasy','dream']},
+      {label:'🐍 Animais sagrados', val:'sacred animals serpents ravens crows nearby, spirit animals', tags:['sacred','nature','occult','dark']},
+      {label:'🚪 Portal dimensional', val:'dimensional portal opening behind figure, vortex gateway', tags:['fantasy','mystic','dream','occult']},
+      {label:'🌧️ Chuva e tempestade', val:'heavy rain and thunderstorm backdrop, dramatic storm', tags:['dark','bold','nature','horror']},
+      {label:'🔥 Chamas por toda parte', val:'flames and glowing embers everywhere in scene, fire background', tags:['infernal','dark','bold','ritual']},
+      {label:'💀 Ossos e caveiras', val:'bones and skulls ritual objects around figure, death imagery', tags:['horror','dark','occult','ritual']},
+      {label:'🌿 Ervas e raízes', val:'ritual herbs roots and magical plants, nature magic', tags:['nature','ritual','sacred','soft']},
+      {label:'⛓️ Correntes e grilhões', val:'chains and shackles symbolism, bound power', tags:['dark','horror','occult','bold']},
+      {label:'⭐ Estrelas e constelações', val:'stars and constellation patterns surrounding figure, cosmic stellar', tags:['mystic','dream','fantasy','sacred']},
+      {label:'💎 Cristais e gemas', val:'crystals and gemstones scattered, mineral formations, prismatic light', tags:['mystic','sacred','gold','soft']},
+      {label:'🌊 Ondas e água sagrada', val:'sacred water waves and reflections, water mirror, ocean energy', tags:['nature','mystic','soft','ritual']},
+      {label:'🗡️ Armas e instrumentos rituais', val:'ritual weapons daggers staffs swords chalices around figure', tags:['dark','occult','bold','ritual']},
+      {label:'🕸️ Teias e trevas', val:'spider webs and dark tendrils surrounding, darkness tendrils', tags:['dark','horror','occult','infernal']},
+      {label:'🌙 Fase lunar no fundo', val:'crescent moon or full moon prominently in background, lunar symbolism', tags:['mystic','dark','nature','dream']},
+      {label:'🏺 Artefatos antigos', val:'ancient artifacts pottery manuscripts scattered, archaeological mystical objects', tags:['classic','sacred','occult','ritual']},
+    ],
+    skip: true, dynamic: false
+  },
+];
+
+// ── Affinity / suggestion system ──────────────────────────────────────
+function extractTags(opt) {
+  if (opt && opt.tags) opt.tags.forEach(t => activeTags.add(t));
+}
+
+function scoreOption(opt) {
+  if (!opt.tags || !activeTags.size) return 0;
+  return opt.tags.filter(t => activeTags.has(t)).length;
+}
+
+function withSuggestions(opts) {
+  if (!activeTags.size) return opts;
+  const scored = opts.map(o => ({ o, s: scoreOption(o) }));
+  const sugg = scored.filter(x => x.s > 0).sort((a,b) => b.s - a.s);
+  const rest  = scored.filter(x => x.s === 0);
+  return [
+    ...sugg.map(x => ({ ...x.o, label: '✦ ' + x.o.label, _sugg: true })),
+    ...rest.map(x => x.o)
+  ];
+}
+
+// ── History helpers ────────────────────────────────────────────────────
+const HIST_KEY = 'espiritual_hist';
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; }
+}
+
+function saveHistory(h) {
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,20))); } catch {}
+}
+
+function addToHistory(name, en, pt) {
+  const h = getHistory();
+  h.unshift({ ts: Date.now(), name, en, pt });
+  saveHistory(h);
+}
+
+// ── Chat rendering ─────────────────────────────────────────────────────
+const chat = document.getElementById('chat');
+
+function appendBotMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = `<div class="avatar">⛧</div><div class="bubble">${text}</div>`;
+  chat.appendChild(div);
+  scrollBot();
+}
+
+function appendUserMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="bubble">${text}</div><div class="avatar">👁</div>`;
+  chat.appendChild(div);
+  scrollBot();
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="avatar">⛧</div><div class="bubble"><div class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
+  chat.appendChild(div);
+  scrollBot();
+  return div;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+function scrollBot() {
+  setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 50);
+}
+
+// ── Progress ───────────────────────────────────────────────────────────
+function updateProgress() {
+  const total = STEPS.length;
+  const pct = Math.round((currentStep / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `Etapa ${currentStep + 1} de ${total}`;
+}
+
+// ── Step engine ────────────────────────────────────────────────────────
+function showStep(idx) {
+  if (idx >= STEPS.length) { showResult(); return; }
+  currentStep = idx;
+  updateProgress();
+
+  const step = STEPS[idx];
+  let options = step.qr;
+
+  // Dynamic: populate entity options from loaded data
+  if (step.id === 'entidade') {
+    const cat = answers.categoria;
+    const list = ENTITIES[cat] || [];
+    options = list.map(e => ({ label: e.name, val: e.name }));
+    if (!options.length) {
+      // skip if no entities loaded
+      answers.entidade = 'entidade espiritual';
+      currentEntity = null;
+      showStep(idx + 1);
+      return;
+    }
+  }
+
+  // Apply affinity suggestions for non-structural steps
+  if (step.id !== 'categoria' && step.id !== 'entidade') {
+    options = withSuggestions(options);
+  }
+
+  const typing = showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg(step.ask);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'chips-wrap';
+    wrap.id = `chips-${idx}`;
+
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '') + (opt._sugg ? ' sugg' : '');
+      btn.textContent = opt.label;
+      btn.onclick = () => pickOption(idx, opt.label, opt.val, wrap, opt);
+      wrap.appendChild(btn);
+    });
+
+    // Free text for entidade
+    if (step.id === 'entidade' || step.free) {
+      const fw = document.createElement('div');
+      fw.className = 'free-wrap';
+      fw.innerHTML = `<input type="text" placeholder="Digitar nome da entidade..." id="free-${idx}"><button onclick="submitFree(${idx})">→</button>`;
+      chat.appendChild(wrap);
+      chat.appendChild(fw);
+      document.getElementById(`free-${idx}`).addEventListener('keydown', e => {
+        if (e.key === 'Enter') submitFree(idx);
+      });
+    } else {
+      chat.appendChild(wrap);
+    }
+    scrollBot();
+  }, 500);
+}
+
+function submitFree(idx) {
+  const input = document.getElementById(`free-${idx}`);
+  const val = input.value.trim();
+  if (!val) return;
+  pickOption(idx, val, val, document.getElementById(`chips-${idx}`));
+}
+
+function pickOption(idx, label, val, chipsEl, opt) {
+  // Disable all chips
+  if (chipsEl) chipsEl.querySelectorAll('.chip').forEach(c => {
+    c.disabled = true;
+    c.style.opacity = '0.4';
+  });
+  // Disable free input
+  const fw = chipsEl && chipsEl.nextSibling;
+  if (fw && fw.classList && fw.classList.contains('free-wrap')) {
+    fw.querySelectorAll('input,button').forEach(e => e.disabled = true);
+  }
+
+  const step = STEPS[idx];
+
+  if (val === '__skip__') {
+    answers[step.id] = '';
+    appendUserMsg('— Pular —');
+  } else {
+    answers[step.id] = val;
+    // Strip suggestion prefix for user message
+    appendUserMsg(label.replace(/^✦ /, ''));
+
+    // Extract tags for affinity system
+    if (opt) extractTags(opt);
+
+    // Set currentEntity when entidade chosen
+    if (step.id === 'entidade') {
+      const cat = answers.categoria;
+      currentEntity = (ENTITIES[cat] || []).find(e => e.name === val) || { name: val };
+    }
+  }
+
+  setTimeout(() => showStep(idx + 1), 300);
+}
+
+// ── Prompt builder ─────────────────────────────────────────────────────
+function buildPromptEN() {
+  const ent = currentEntity || {};
+  const parts = [];
+
+  // Entity name — weighted so the model prioritizes rendering it
+  const name = ent.name_en || ent.name || answers.entidade || 'spiritual entity';
+  const nameSafe = name.replace(/[(),]/g, '');
+  parts.push(`(${nameSafe}:1.5)`);
+  if (ent.desc_en) parts.push(ent.desc_en);
+  else if (ent.desc) parts.push(ent.desc);
+  // Text overlay instruction so the name appears written in the image
+  parts.push(`ornate calligraphic text inscription "${nameSafe}" visible in image`, `elegant gothic lettering "Artes Espirituais" as signature`);
+
+  // Visual choices
+  if (answers.estilo)     parts.push(answers.estilo);
+  if (answers.composicao) parts.push(answers.composicao);
+  if (answers.luz)        parts.push(answers.luz);
+  if (answers.atmosfera)  parts.push(answers.atmosfera);
+  if (answers.extra)      parts.push(answers.extra);
+
+  // Location from entity data
+  if (ent.local_en) parts.push(`set in ${ent.local_en}`);
+
+  // Add quality tokens — boost if a realism style was chosen
+  const isRealism = answers.estilo && (answers.estilo.includes('photorealistic') || answers.estilo.includes('hyperrealistic') || answers.estilo.includes('3d render') || answers.estilo.includes('studio photography'));
+  if (isRealism) {
+    parts.push('(masterpiece:1.4)', '(best quality:1.3)', '(highly detailed:1.3)', '(8k uhd:1.2)', '(sharp focus:1.2)', 'professional photography');
+  } else {
+    parts.push('highly detailed', 'masterpiece quality', 'intricate details');
+  }
+  parts.push('--ar 9:16', '--artes-espirituais');
+  return parts.filter(Boolean).join(', ');
+}
+
+function buildPromptPT() {
+  const ent = currentEntity || {};
+  const name = ent.name || answers.entidade || 'entidade espiritual';
+  const cat = CAT_LABELS[answers.categoria] || answers.categoria || '';
+  const estilo = answers.estilo ? `Estilo: ${answers.estilo.split(',')[0]}.` : '';
+  const comp = answers.composicao ? `Composição: ${answers.composicao.split(',')[0]}.` : '';
+  const luz = answers.luz ? `Iluminação: ${answers.luz.split(',')[0]}.` : '';
+  const atm = answers.atmosfera ? `Atmosfera: ${answers.atmosfera.split(',')[0]}.` : '';
+  return `${cat}: ${name}. ${estilo} ${comp} ${luz} ${atm}`.replace(/\s+/g,' ').trim();
+}
+
+// ── Result ─────────────────────────────────────────────────────────────
+function showResult() {
+  updateProgress();
+  const typing = showTyping();
+
+  setTimeout(() => {
+    removeTyping();
+
+    generatedEN = buildPromptEN();
+    generatedPT = buildPromptPT();
+    const entityName = (currentEntity && currentEntity.name) || answers.entidade || 'Entidade';
+    addToHistory(entityName, generatedEN, generatedPT);
+
+    const catLabel = CAT_LABELS[answers.categoria] || answers.categoria || '';
+    const catIcon  = CAT_ICONS[answers.categoria] || '⛧';
+    const entNameEN = (currentEntity && currentEntity.name_en) || entityName;
+
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <h3>⛧ Prompt Gerado</h3>
+      <div class="entity-name">${catIcon} ${entityName}</div>
+      <div class="entity-name-sub">${catLabel}${entNameEN && entNameEN !== entityName ? ' · ' + entNameEN : ''}</div>
+
+      <div class="prompt-label">Prompt em Inglês (SD / Midjourney)</div>
+      <div class="prompt-box" id="box-en">${generatedEN}</div>
+
+      <div class="prompt-label">Resumo em Português</div>
+      <div class="prompt-box" id="box-pt">${generatedPT}</div>
+
+      <div class="result-actions">
+        <button class="btn-act primary" onclick="copyEN()">📋 Copiar EN</button>
+        <button class="btn-act" onclick="copyPT()">📋 Copiar PT</button>
+        <button class="btn-act" onclick="exportTxt()">💾 Exportar .txt</button>
+        <button class="btn-act" onclick="restartFlow()">↺ Novo Prompt</button>
+      </div>
+      <div class="assinatura">✦ Artes Espirituais ✦</div>
+    `;
+    chat.appendChild(card);
+    // Auto-copy EN
+    navigator.clipboard.writeText(generatedEN).catch(() => {});
+    scrollBot();
+  }, 600);
+}
+
+function copyEN() {
+  navigator.clipboard.writeText(generatedEN).then(() => flashBtn(event.target, '✓ Copiado!'));
+}
+
+function copyPT() {
+  navigator.clipboard.writeText(generatedPT).then(() => flashBtn(event.target, '✓ Copiado!'));
+}
+
+function flashBtn(btn, msg) {
+  const prev = btn.textContent;
+  btn.textContent = msg;
+  setTimeout(() => btn.textContent = prev, 2000);
+}
+
+function exportTxt() {
+  const entityName = (currentEntity && currentEntity.name) || answers.entidade || 'Entidade';
+  const catLabel   = CAT_LABELS[answers.categoria] || answers.categoria || '';
+  const content = `PORTAL DAS SOMBRAS — Prompt Espiritual\n${'─'.repeat(50)}\n\nEntidade: ${entityName}\nCategoria: ${catLabel}\n\n[EN]\n${generatedEN}\n\n[PT]\n${generatedPT}\n\nGerado em: ${new Date().toLocaleString('pt-BR')}\n✦ Artes Espirituais ✦`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prompt-espiritual-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── History panel ──────────────────────────────────────────────────────
+function openHist() {
+  renderHistList();
+  document.getElementById('hist-panel').classList.add('open');
+}
+
+function closeHist() {
+  document.getElementById('hist-panel').classList.remove('open');
+}
+
+function renderHistList() {
+  const list = document.getElementById('hist-list');
+  const h = getHistory();
+  if (!h.length) {
+    list.innerHTML = '<div class="hist-empty">Nenhum prompt gerado ainda.</div>';
+    return;
+  }
+  list.innerHTML = h.map((item, i) => `
+    <div class="hist-item" onclick="loadHistItem(${i})">
+      <div class="hist-item-name">⛧ ${item.name}</div>
+      <div class="hist-item-meta">${new Date(item.ts).toLocaleString('pt-BR')}</div>
+      <div class="hist-item-preview">${item.en}</div>
+    </div>
+  `).join('');
+}
+
+function loadHistItem(i) {
+  const h = getHistory();
+  const item = h[i];
+  if (!item) return;
+  generatedEN = item.en;
+  generatedPT = item.pt;
+  closeHist();
+  // Show result card
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `
+    <h3>📜 Do Histórico</h3>
+    <div class="entity-name">⛧ ${item.name}</div>
+    <div class="prompt-label">Prompt EN</div>
+    <div class="prompt-box">${item.en}</div>
+    <div class="prompt-label">Resumo PT</div>
+    <div class="prompt-box">${item.pt}</div>
+    <div class="result-actions">
+      <button class="btn-act primary" onclick="navigator.clipboard.writeText(generatedEN).then(()=>flashBtn(this,'✓'))">📋 Copiar EN</button>
+      <button class="btn-act" onclick="exportTxt()">💾 Exportar</button>
+    </div>
+  `;
+  chat.appendChild(card);
+  scrollBot();
+}
+
+// ── Restart ────────────────────────────────────────────────────────────
+function restartFlow() {
+  answers = {};
+  currentEntity = null;
+  generatedEN = '';
+  generatedPT = '';
+  currentStep = 0;
+  activeTags.clear();
+  chat.innerHTML = '';
+  startFlow();
+}
+
+// ── Start ──────────────────────────────────────────────────────────────
+function startFlow() {
+  updateProgress();
+  const typing = showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('Bem-vindo ao Portal das Sombras. Vou guiar você na criação de um prompt espiritual poderoso.');
+    setTimeout(() => showStep(0), 600);
+  }, 700);
+}
+
+// ── Load entities and init ─────────────────────────────────────────────
+async function init() {
+  try {
+    await Promise.all(CATS.map(async cat => {
+      try {
+        const r = await fetch(`${BASE_URL}/ent-${cat}.json`);
+        ENTITIES[cat] = r.ok ? await r.json() : [];
+      } catch {
+        ENTITIES[cat] = [];
+      }
+    }));
+  } catch(e) {
+    console.error('Entity load error:', e);
+  }
+  document.getElementById('loading').style.display = 'none';
+  startFlow();
+}
+
+init();
+</script>
+</body>
+</html>
