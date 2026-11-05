@@ -375,6 +375,7 @@ header{
   <div class="logo">RAWgen Loiras <span>🔞 preset browser</span></div>
   <button class="hbtn hbtn-random" onclick="randomPreset()">🎲 Aleatório</button>
   <button class="hbtn" onclick="toggleHistorico()" id="hist-btn">📜 Histórico</button>
+  <button class="hbtn" onclick="toggleComparar()" id="compare-btn">⚖️ Comparar</button>
   <button class="hbtn hbtn-roulette" onclick="toggleRoulette()" id="roulette-btn">🎰 Roulette</button>
   <input class="header-search" id="global-search" placeholder="🔍 Buscar preset…" oninput="filterPresets()" autocomplete="off">
   <button class="hbtn" onclick="reiniciarTudo()" title="Limpa busca, categoria, pose, câmera e fecha o painel">↺ Reiniciar</button>
@@ -389,6 +390,33 @@ header{
       <button class="modal-close" onclick="toggleHistorico()">✕ Fechar</button>
     </div>
     <div class="modal-body" id="modal-hist-body"></div>
+  </div>
+</div>
+
+<!-- Modal Comparar -->
+<div class="modal-overlay" id="modal-compare" onclick="if(event.target===this)toggleComparar()">
+  <div class="modal-box" style="max-width:860px;width:95vw">
+    <div class="modal-header">
+      <h3>⚖️ Comparar Prompts</h3>
+      <button class="modal-close" onclick="toggleComparar()">✕ Fechar</button>
+    </div>
+    <div style="padding:10px 16px 6px;font-size:.8rem;color:var(--txt3)">
+      Fixe um prompt com <strong>📌 Fixar</strong>, depois selecione outro preset para comparar lado a lado.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 16px" id="compare-grid">
+      <div>
+        <div style="font-size:.78rem;color:var(--txt3);margin-bottom:4px">📌 Fixado</div>
+        <div class="compare-name" id="compare-name-a" style="font-weight:600;font-size:.85rem;margin-bottom:6px;color:var(--acc)">—</div>
+        <textarea class="result-ta" id="compare-a" rows="10" readonly style="width:100%;font-size:.7rem"></textarea>
+        <button class="btn-action" style="margin-top:5px;width:100%" onclick="copyCompare('a')">📋 Copiar A</button>
+      </div>
+      <div>
+        <div style="font-size:.78rem;color:var(--txt3);margin-bottom:4px">🔵 Atual</div>
+        <div class="compare-name" id="compare-name-b" style="font-weight:600;font-size:.85rem;margin-bottom:6px;color:var(--txt)">—</div>
+        <textarea class="result-ta" id="compare-b" rows="10" readonly style="width:100%;font-size:.7rem"></textarea>
+        <button class="btn-action" style="margin-top:5px;width:100%" onclick="copyCompare('b')">📋 Copiar B</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -516,6 +544,39 @@ header{
           <button class="qpick" data-group="estado" data-val="goosebumps on arms and thighs, cold skin, hardened nipples visible under fabric, shivering slightly, pale cold complexion">Arrepiada</button>
         </div>
 
+        <!-- Clima row -->
+        <div class="qrow">
+          <span class="qlabel">🌦️ Clima</span>
+          <button class="qpick active" data-group="clima" data-val="">Padrão</button>
+          <button class="qpick" data-group="clima" data-val="blazing summer heat, harsh midday sun, heatwave light, warm golden ambient, summer atmosphere, sun glare">Verão</button>
+          <button class="qpick" data-group="clima" data-val="cold winter light, overcast sky, pale flat daylight, frost on surfaces, cold breath vapor, winter atmosphere, cool blue tones">Inverno</button>
+          <button class="qpick" data-group="clima" data-val="rainy day, rain falling, wet pavement reflections, gray overcast sky, raindrops on surfaces, rain-soaked atmosphere">Chuva</button>
+          <button class="qpick" data-group="clima" data-val="light snowfall, snow on surfaces, snowflakes in air, cold white ambient light, winter snow atmosphere">Neve</button>
+          <button class="qpick" data-group="clima" data-val="morning fog, low mist, diffused soft light, misty atmospheric haze, reduced visibility, ethereal foggy mood">Névoa</button>
+          <button class="qpick" data-group="clima" data-val="stormy dramatic sky, dark clouds, moody pre-storm light, wind in hair and clothes, atmospheric tension">Tempestade</button>
+        </div>
+
+        <!-- Idade aparente row -->
+        <div class="qrow">
+          <span class="qlabel">🎂 Idade</span>
+          <button class="qpick active" data-group="idade" data-val="">Padrão (19)</button>
+          <button class="qpick" data-group="idade" data-val="woman appearing 18 to 22 years old, youthful face, smooth young skin, fresh college-age appearance">18-22</button>
+          <button class="qpick" data-group="idade" data-val="woman appearing 25 to 30 years old, confident young adult face, slightly more defined features, natural maturity">25-30</button>
+          <button class="qpick" data-group="idade" data-val="woman appearing in her mid thirties, mature face, natural fine lines beginning, confident adult beauty, defined features">30s</button>
+          <button class="qpick" data-group="idade" data-val="woman appearing in her early forties, mature confident face, natural aging features, distinguished adult beauty, life experience visible">40s</button>
+        </div>
+
+        <!-- Proporções row -->
+        <div class="qrow">
+          <span class="qlabel">📐 Corpo</span>
+          <button class="qpick active" data-group="proporcao" data-val="">Padrão</button>
+          <button class="qpick" data-group="proporcao" data-val="very slender slim figure, lean limbs, narrow frame, minimal curves, slight build, thin waist and hips, small breasts">Magra</button>
+          <button class="qpick" data-group="proporcao" data-val="athletic muscular figure, defined muscles, toned arms and legs, flat stomach with visible abs, athletic build, fit physique">Atlética</button>
+          <button class="qpick" data-group="proporcao" data-val="curvy hourglass figure, large full breasts, wide hips, round full buttocks, defined waist, voluptuous curves, natural feminine shape">Curvilínea</button>
+          <button class="qpick" data-group="proporcao" data-val="plus size figure, full rounded body, large breasts, wide hips, thick thighs, soft belly, full arms, natural plus size curves, comfortable in skin">Plus size</button>
+          <button class="qpick" data-group="proporcao" data-val="petite compact figure, small frame, short stature, proportionally small features, petite curves, dainty build">Petite</button>
+        </div>
+
         <!-- hidden inputs for JS compatibility -->
         <input type="hidden" id="edit-pose" value="">
         <input type="hidden" id="edit-angulo" value="">
@@ -526,6 +587,9 @@ header{
         <input type="hidden" id="edit-luz2" value="">
         <input type="hidden" id="edit-expressao2" value="">
         <input type="hidden" id="edit-estado" value="">
+        <input type="hidden" id="edit-clima" value="">
+        <input type="hidden" id="edit-idade" value="">
+        <input type="hidden" id="edit-proporcao" value="">
 
         <!-- Prompt -->
         <div style="padding:0 14px 6px">
@@ -538,6 +602,7 @@ header{
           <div class="btn-row" style="margin-top:6px">
             <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar Prompt</button>
             <button class="btn-action" onclick="variation()">🔀 Variação</button>
+            <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
             <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
           </div>
         </div>
@@ -571,9 +636,10 @@ function buildBlondePrompt(p, seedOverride){
 
   // Subject depends on category (must be inside function where p is defined)
   const isAna = p.cat === 'ana';
+  const ageDesc = idadeOverride || (p.idadeDesc || '19 years old');
   const MJ_SUBJECT = isAna
     ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 19 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
-    : 'woman, 19 years old, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model';
+    : `woman, ${ageDesc}, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model`;
 
   const filmOverride      = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
     ? document.getElementById('edit-filmstock').value.trim() : '';
@@ -587,6 +653,12 @@ function buildBlondePrompt(p, seedOverride){
     ? document.getElementById('edit-expressao2').value.trim() : '';
   const estadoOverride    = (typeof document !== 'undefined' && document.getElementById('edit-estado'))
     ? document.getElementById('edit-estado').value.trim() : '';
+  const climaOverride     = (typeof document !== 'undefined' && document.getElementById('edit-clima'))
+    ? document.getElementById('edit-clima').value.trim() : '';
+  const idadeOverride     = (typeof document !== 'undefined' && document.getElementById('edit-idade'))
+    ? document.getElementById('edit-idade').value.trim() : '';
+  const proporcaoOverride = (typeof document !== 'undefined' && document.getElementById('edit-proporcao'))
+    ? document.getElementById('edit-proporcao').value.trim() : '';
 
   const film = filmOverride || p.film || 'Kodak Ultramax 800';
   const isMonochrome = /ilford|black and white|monochrome/i.test(film);
@@ -614,11 +686,14 @@ function buildBlondePrompt(p, seedOverride){
   if(luzOverride)        desc.push(luzOverride);
   if(luz2Override)       desc.push(luz2Override);
   if(estadoOverride)     desc.push(estadoOverride);
+  if(climaOverride)      desc.push(climaOverride);
 
   // 6. Corpo + roupa + nsfw do preset
   if(p.partner) desc.push(p.partner);
-  const CORPO_BASE = 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body';
-  const corpoExtra = p.corpo && p.corpo !== CORPO_BASE ? p.corpo : '';
+  const CORPO_BASE = proporcaoOverride
+    ? proporcaoOverride
+    : 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body';
+  const corpoExtra = p.corpo && p.corpo !== 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body' ? p.corpo : '';
   desc.push(corpoExtra ? CORPO_BASE + ', ' + corpoExtra : CORPO_BASE);
   if(p.roupa)     desc.push(p.roupa);
   if(p.nsfw)      desc.push(p.nsfw);
@@ -7394,6 +7469,53 @@ const PRESETS_RAW = [
     cenario:'public park at twilight, hidden slightly behind trees, path visible nearby, ambient dusk light',
     pose:'bent over tree or bench, partner behind, clothes disarranged',
     cam:'50mm candid documentary, available dusk light, environmental setting visible',film:'Cinestill 800T'},
+
+  /* ── PRESETS CASAL F+F / LÉSBICO ── */
+  {key:'ff_beijo_cama',cat:'explicito_suave',level:'explicit',icon:'💕',name:'Casal F+F – Beijo',desc:'Duas mulheres se beijando na cama',
+    corpo:'two women, both feminine figures, soft natural bodies',
+    roupa:'both in matching black lace lingerie, bras and panties, bare legs',
+    nsfw:'two women kissing passionately, hands in each other hair, bodies close together, intimate feminine couple, girl on girl',
+    partner:'with another woman, feminine partner, similar blonde features, lace lingerie, kissing intimately',
+    maquiagem:'both with soft romantic makeup, nude lips, mascara',expressao:'both lost in kiss, eyes closed, intimate connection',
+    cenario:'intimate bedroom, soft warm lamp light, white linen sheets, rose petals',
+    pose:'both facing each other, one hand on the other face, bodies pressed together on bed',
+    cam:'85mm close, warm bedroom light, shallow focus on faces',film:'Kodak Portra 400'},
+  {key:'ff_oral_recebendo',cat:'posicoes',level:'explicit',icon:'🔞',name:'Casal F+F – Oral',desc:'Sexo oral entre mulheres explícito',
+    corpo:'two women, feminine bodies, natural curves',
+    roupa:'nothing',
+    nsfw:'explicit lesbian oral sex, woman performing cunnilingus on other woman, face between legs, explicit genital detail, girl on girl explicit',
+    partner:'with another woman, performing oral sex, face pressed between legs, explicit cunnilingus, girl on girl',
+    maquiagem:'natural, pleasure-flushed skin, smeared lipstick',expressao:'one receiving with eyes rolling back in pleasure, mouth open',
+    cenario:'bedroom, comfortable private setting, warm afternoon light',
+    pose:'one lying back legs spread, other between legs performing oral, hands gripping sheets',
+    cam:'50mm from side angle, natural warm light',film:'Kodak Portra 800'},
+  {key:'ff_tribadismo',cat:'posicoes',level:'explicit',icon:'🔞',name:'Casal F+F – Tribbing',desc:'Tribadismo explícito entre mulheres',
+    corpo:'two women, athletic and curvy, natural bodies',
+    roupa:'nothing',
+    nsfw:'explicit tribadism between two women, genitals pressed together, scissoring position, girl on girl explicit sex, full nudity',
+    partner:'with another woman, in scissoring tribadism position, genitals pressed together, explicit girl on girl',
+    maquiagem:'natural, sex-flushed skin, hair wild',expressao:'both in intense pleasure, eyes closed, mouths open',
+    cenario:'bed, rumpled sheets, soft private lighting',
+    pose:'legs intertwined in scissors position, bodies facing each other at angle',
+    cam:'85mm from above, natural window light, intimate close',film:'Kodak Ultramax 800'},
+  {key:'ff_sensual_ducha',cat:'banheiro',level:'sensual',icon:'💕',name:'Casal F+F – Ducha',desc:'Duas mulheres sensuais no chuveiro',
+    corpo:'two slender feminine figures, wet skin, natural curves',
+    roupa:'nothing, fully nude in shower',
+    nsfw:'two nude women in shower together, water cascading over both bodies, touching each other sensually, feminine couple, girl on girl nude',
+    partner:'with another woman, both nude in shower, washing each other, intimate feminine touch',
+    maquiagem:'none, natural wet look, water on faces',expressao:'both smiling and laughing, relaxed intimate moment',
+    cenario:'modern bathroom, rain shower, steam, glass shower door slightly fogged, warm water',
+    pose:'both standing under shower, one washing the other hair, bodies close',
+    cam:'28mm through glass, steam partially obscuring, natural bathroom light',film:'Fuji Pro 400H'},
+  {key:'ff_dominacao',cat:'extremo',level:'explicit',icon:'🔞',name:'Casal F+F – Dominação',desc:'Dominação feminina lésbica explícita',
+    corpo:'one dominant athletic figure, one submissive soft figure',
+    roupa:'dominant in black leather harness with strap-on, submissive in nothing',
+    nsfw:'explicit lesbian dominance, one woman penetrating other with strap-on, explicit penetration, femdom girl on girl, explicit genital detail',
+    partner:'with another dominant woman, wearing leather harness with strap-on, explicit penetration from behind, lesbian femdom',
+    maquiagem:'dominant with fierce dark makeup, submissive with ruined mascara tears',expressao:'dominant fierce commanding expression, submissive overwhelmed pleasure',
+    cenario:'bedroom with BDSM undertones, low dramatic light, velvet and leather accents',
+    pose:'one bent over, other penetrating from behind, dominant gripping submissive hips',
+    cam:'50mm close side angle, dramatic dim lighting',film:'Cinestill 800T'},
 ];
 
 
@@ -7649,6 +7771,8 @@ function applyEdits(silent){
   if(negM) document.getElementById('result-neg').value = negM[1];
   navigator.clipboard.writeText(newPrompt).catch(()=>{});
   if(!silent) showToast('✓ Copiado!');
+  // Update compare B if modal is open
+  if(document.getElementById('modal-compare').classList.contains('open')) updateCompareB();
 }
 
 function closeResult(){
@@ -7675,7 +7799,7 @@ function reiniciarTudo(){
     b.classList.toggle('active', b.dataset.val==='');
   });
   // Limpa campos ocultos
-  ['edit-pose','edit-angulo','edit-cam','edit-style','edit-luz','edit-filmstock','edit-luz2','edit-expressao2','edit-estado'].forEach(id=>{
+  ['edit-pose','edit-angulo','edit-cam','edit-style','edit-luz','edit-filmstock','edit-luz2','edit-expressao2','edit-estado','edit-clima','edit-idade','edit-proporcao'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value = id==='edit-filmstock' ? 'Kodak Ultramax 800' : '';
   });
@@ -7770,8 +7894,14 @@ function closeSidebarOnMobile(){
 }
 
 function randomPreset(){
-  const keys = PRESETS_RAW.map(p=>p.key);
-  const key = keys[Math.floor(Math.random()*keys.length)];
+  // Respect current category + level filters
+  const pool = PRESETS_RAW.filter(p=>{
+    const catOk = currentCat==='todos' || (currentCat==='favoritos' ? FAVS.includes(p.key) : p.cat===currentCat);
+    const lvlOk = currentLevel==='todos' || p.level===currentLevel;
+    return catOk && lvlOk;
+  });
+  if(!pool.length) return;
+  const key = pool[Math.floor(Math.random()*pool.length)].key;
   selectPreset(key);
   setTimeout(()=>{
     const text = document.getElementById('result-prompt').value;
@@ -7821,7 +7951,10 @@ function toggleHistorico(){
           <div class="hist-name">${h.name||h.key}</div>
           <div class="hist-text">${(h.prompt||'').slice(0,90)}…</div>
         </div>
-        <button class="hist-copy" onclick="copyHistItem(${i})">📋 Copiar</button>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          ${h.key ? `<button class="hist-copy" style="background:var(--acc);border-color:var(--acc);color:#000" onclick="reuseHistItem(${i})">🔄 Reusar</button>` : ''}
+          <button class="hist-copy" onclick="copyHistItem(${i})">📋 Copiar</button>
+        </div>
       </div>`).join('');
   }
   overlay.classList.add('open');
@@ -7830,6 +7963,16 @@ function copyHistItem(i){
   try{
     const hist = JSON.parse(localStorage.getItem('pgen_history')||'[]');
     if(hist[i]) navigator.clipboard.writeText(hist[i].prompt).then(()=>showToast('✓ Copiado!'));
+  }catch(e){}
+}
+function reuseHistItem(i){
+  try{
+    const hist = JSON.parse(localStorage.getItem('pgen_history')||'[]');
+    if(hist[i] && hist[i].key){
+      document.getElementById('modal-hist').classList.remove('open');
+      selectPreset(hist[i].key);
+      showToast('🔄 Preset reusado!');
+    }
   }catch(e){}
 }
 // Close modal clicking overlay background
@@ -7872,13 +8015,56 @@ function toggleRoulette(){
   }
 }
 
+// ── COMPARAR ───────────────────────────────────────────────────────────────
+let compareFixed = null; // {name, prompt}
+
+function pinToCompare(){
+  const prompt = document.getElementById('result-prompt').value;
+  if(!prompt){ showToast('Gere um prompt primeiro'); return; }
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  compareFixed = { name: p ? p.name : 'Prompt', prompt };
+  // Update compare modal if open
+  document.getElementById('compare-name-a').textContent = compareFixed.name;
+  document.getElementById('compare-a').value = compareFixed.prompt;
+  const btn = document.getElementById('btn-pin-compare');
+  if(btn){ btn.textContent='✓ Fixado!'; setTimeout(()=>btn.textContent='📌 Fixar',1500); }
+  showToast('📌 Prompt fixado para comparar');
+}
+
+function updateCompareB(){
+  const prompt = document.getElementById('result-prompt').value;
+  if(!prompt) return;
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  document.getElementById('compare-name-b').textContent = p ? p.name : 'Atual';
+  document.getElementById('compare-b').value = prompt;
+}
+
+function toggleComparar(){
+  const overlay = document.getElementById('modal-compare');
+  const isOpen = overlay.classList.contains('open');
+  if(isOpen){ overlay.classList.remove('open'); return; }
+  // Populate A from fixed
+  if(compareFixed){
+    document.getElementById('compare-name-a').textContent = compareFixed.name;
+    document.getElementById('compare-a').value = compareFixed.prompt;
+  }
+  // Populate B from current
+  updateCompareB();
+  overlay.classList.add('open');
+}
+
+function copyCompare(side){
+  const ta = document.getElementById('compare-'+side);
+  if(ta && ta.value) navigator.clipboard.writeText(ta.value).then(()=>showToast(`✓ Prompt ${side.toUpperCase()} copiado!`));
+}
+
 // ── KEYBOARD SHORTCUTS ─────────────────────────────────────────────────────
 document.addEventListener('keydown', e=>{
   if(e.target.matches('input,textarea,select')) return;
   if(e.key===' '||e.code==='Space'){ e.preventDefault(); randomPreset(); }
   if(e.key==='c'||e.key==='C'){ copyPrompt(); }
   if(e.key==='v'||e.key==='V'){ variation(); }
-  if(e.key==='Escape'){ closeResult(); document.getElementById('modal-hist').classList.remove('open'); }
+  if(e.key==='Escape'){ closeResult(); document.getElementById('modal-hist').classList.remove('open'); document.getElementById('modal-compare').classList.remove('open'); }
   if(e.key==='h'||e.key==='H'){ toggleHistorico(); }
   if(e.key==='f'||e.key==='F'){ currentCat='favoritos'; renderSidebar(); filterPresets(); }
 });
