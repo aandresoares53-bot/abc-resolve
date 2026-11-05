@@ -500,7 +500,7 @@ header{
         <div class="qrow">
           <span class="qlabel">🎞️</span>
           <button class="qpick active" data-group="style" data-val="">Padrão</button>
-          <button class="qpick" data-group="style" data-val="Kodak Portra 400, film halation, color fringing, slight vignette">Analógica</button>
+          <button class="qpick" data-group="style" data-val="film halation, color fringing, slight vignette, analog warmth">Analógica</button>
           <button class="qpick" data-group="style" data-val="paparazzi, 200mm telephoto, caught off guard, harsh direct flash, real street, unposed, slight motion blur">Paparazzi</button>
           <button class="qpick" data-group="style" data-val="bathroom mirror selfie, phone camera, natural bathroom light, candid unposed, slightly grainy phone photo">Selfie</button>
           <button class="qpick" data-group="style" data-val="security camera footage, CCTV grain, fixed wide angle, harsh overhead fluorescent light, timestamp overlay, grainy low resolution">CCTV</button>
@@ -666,15 +666,16 @@ function buildBlondePrompt(p, seedOverride){
   // Prompt enxuto — MJ dilui atenção em prompts muito longos
   const desc = [];
 
-  // 1. Ângulo PRIMEIRO, depois lente — maior peso no MJ para composição
+  // 1. ÂNCORA CANDID PRIMEIRO — MJ pesa início do prompt mais forte
+  // Sem mencionar segundo filmstock, usa apenas o selecionado
+  desc.push('35mm disposable camera photo, candid snapshot, circa 2006, amateur photo, available light, slight camera shake, motion blur, ' + film + (film === 'Kodak Ultramax 800' ? ', expired film roll, heavy grain, color shift, light leak' : ', heavy grain') + (isMonochrome ? ', monochrome' : ''));
+
+  // 2. Ângulo / lente — após âncora
   if(p.angulo) desc.push(p.angulo);
   if(p.cam) desc.push(p.cam);
 
-  // 2. Personagem
+  // 3. Personagem
   desc.push(MJ_SUBJECT);
-
-  // 3. Âncora — câmera barata + filme vencido (maior trigger de imperfeição analógica)
-  desc.push('35mm disposable camera photo, circa 2006, candid snapshot, available light, slight camera shake, motion blur, ' + film + (film === 'Kodak Ultramax 800' ? ', expired film roll, heavy grain, color shift, light leak' : ', heavy grain') + (isMonochrome ? ', monochrome' : ''));
 
   // 4. Pele real com imperfeições específicas no corpo
   desc.push('visible pores, skin micro-texture, slight cellulite texture on thighs and buttocks, natural skin dimples, skin folds and creases, natural gravity-pulled skin, natural stretch marks, uneven skin tone on body');
