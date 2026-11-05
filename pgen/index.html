@@ -634,13 +634,6 @@ function buildBlondePrompt(p, seedOverride){
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
   const MJ_PARAMS_DYN = '--ar 2:3 --v 6.0 --style raw --chaos 10 --s 0 --seed ' + seed + crefPart;
 
-  // Subject depends on category (must be inside function where p is defined)
-  const isAna = p.cat === 'ana';
-  const ageDesc = idadeOverride || (p.idadeDesc || '19 years old');
-  const MJ_SUBJECT = isAna
-    ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 19 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
-    : `woman, ${ageDesc}, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model`;
-
   const filmOverride      = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
     ? document.getElementById('edit-filmstock').value.trim() : '';
   const styleOverride     = (typeof document !== 'undefined' && document.getElementById('edit-style'))
@@ -659,6 +652,13 @@ function buildBlondePrompt(p, seedOverride){
     ? document.getElementById('edit-idade').value.trim() : '';
   const proporcaoOverride = (typeof document !== 'undefined' && document.getElementById('edit-proporcao'))
     ? document.getElementById('edit-proporcao').value.trim() : '';
+
+  // Subject depends on category (must be inside function where p is defined)
+  const isAna = p.cat === 'ana';
+  const ageDesc = idadeOverride || '19 years old';
+  const MJ_SUBJECT = isAna
+    ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 19 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
+    : `woman, ${ageDesc}, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model`;
 
   const film = filmOverride || p.film || 'Kodak Ultramax 800';
   const isMonochrome = /ilford|black and white|monochrome/i.test(film);
