@@ -617,7 +617,7 @@ header{
 const DEFAULT_SEED = 419528731;
 
 // Midjourney --no (negative) base
-const MJ_NO = 'plastic skin, rubber skin, waxy skin, smooth skin, airbrushed skin, beauty filter, skin retouching, CGI, 3d render, cartoon, anime, illustration, perfect skin, porcelain skin, poreless skin, silicone skin, doll, mannequin, digital art, watermark, text, deformed, extra limbs, glossy skin, oily shiny skin, skin softening filter, subsurface scattering render, studio lighting, professional retouching, render, digital painting, concept art, drawing, perfect body, idealized body, fashion model, supermodel, flawless body, perfect symmetry, editorial photography, high fashion, magazine shoot, model body, photoshop edit, AI enhanced skin, beauty retouch, instagram filter, facetune, softbox lighting, beauty dish, studio backdrop, white backdrop, seamless background, studio background, professional studio lighting, plastic surgery look, wax figure, uncanny valley, barbie look, doll face, oversaturated skin, skin glow, luminous skin, radiant skin, glowing skin, dewy skin, pearlescent skin, skin highlights, rim lighting, dramatic studio shadows, volumetric lighting, neon lighting, god rays, lens flare, clothed, dressed';
+const MJ_NO = 'smooth skin, plastic skin, airbrushed, CGI, 3d render, digital art, cartoon, anime, perfect skin, poreless skin, doll, mannequin, studio lighting, editorial, high fashion, supermodel, beauty retouch, facetune, skin glow, dewy skin, rim lighting, clothed, dressed';
 
 // Midjourney suffix parameters (kept for reference; dynamic version built inside buildBlondePrompt)
 const MJ_PARAMS = '--ar 2:3 --v 6.0 --style raw --chaos 10 --s 0 --seed ' + DEFAULT_SEED;
@@ -663,50 +663,42 @@ function buildBlondePrompt(p, seedOverride){
   const film = filmOverride || p.film || 'Kodak Ultramax 800';
   const isMonochrome = /ilford|black and white|monochrome/i.test(film);
 
-  // Prompt enxuto — MJ dilui atenção em prompts muito longos
+  // Prompt curto — MJ dilui atenção em prompts longos; máx ~120 palavras no positivo
   const desc = [];
 
   // 1. Ângulo PRIMEIRO — maior peso no MJ para composição e POV
   if(p.angulo) desc.push(p.angulo);
   if(p.cam) desc.push(p.cam);
 
-  // 2. Personagem
+  // 2. Personagem (compacto)
   desc.push(MJ_SUBJECT);
 
-  // 3. Âncora candid + filmstock
-  desc.push('35mm disposable camera photo, candid snapshot, circa 2006, amateur photo, available light, slight camera shake, motion blur, ' + film + (film === 'Kodak Ultramax 800' ? ', expired film roll, heavy grain, color shift, light leak' : ', heavy grain') + (isMonochrome ? ', monochrome' : ''));
+  // 3. Âncora candid + filmstock (uma só vez)
+  const filmTag = film + (film === 'Kodak Ultramax 800' ? ', expired film, heavy grain, light leak' : ', grain');
+  desc.push('35mm snapshot, candid, circa 2006, available light, camera shake, ' + filmTag + (isMonochrome ? ', monochrome' : ''));
 
-  // 4. Pele real com imperfeições específicas no corpo
-  desc.push('visible pores, skin micro-texture, slight cellulite texture on thighs and buttocks, natural skin dimples, skin folds and creases, natural gravity-pulled skin, natural stretch marks, uneven skin tone on body');
+  // 4. Referência de fotógrafo documentário (âncora de estilo)
+  desc.push('Nan Goldin, Larry Clark');
 
-  // 5. Fotógrafo documentário
-  desc.push('Nan Goldin, Larry Clark, Juergen Teller');
+  if(styleOverride)  desc.push(styleOverride);
+  if(luzOverride)    desc.push(luzOverride);
+  if(luz2Override)   desc.push(luz2Override);
+  if(estadoOverride) desc.push(estadoOverride);
+  if(climaOverride)  desc.push(climaOverride);
 
-  if(styleOverride)      desc.push(styleOverride);
-  if(luzOverride)        desc.push(luzOverride);
-  if(luz2Override)       desc.push(luz2Override);
-  if(estadoOverride)     desc.push(estadoOverride);
-  if(climaOverride)      desc.push(climaOverride);
-
-  // 6. Corpo + roupa + nsfw do preset
+  // 5. Corpo + roupa + nsfw + pose do preset
   if(p.partner) desc.push(p.partner);
-  const CORPO_BASE = proporcaoOverride
-    ? proporcaoOverride
-    : 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body';
+  const CORPO_BASE = proporcaoOverride || 'natural body, medium breasts, wide hips, real skin';
   const corpoExtra = p.corpo && p.corpo !== 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body' ? p.corpo : '';
   desc.push(corpoExtra ? CORPO_BASE + ', ' + corpoExtra : CORPO_BASE);
-  if(p.roupa)     desc.push(p.roupa);
-  if(p.nsfw)      desc.push(p.nsfw);
-  if(p.pose)      desc.push(p.pose);
+  if(p.roupa)    desc.push(p.roupa);
+  if(p.nsfw)     desc.push(p.nsfw);
+  if(p.pose)     desc.push(p.pose);
   if(expressao2Override) desc.push(expressao2Override);
-  else if(p.expressao)  desc.push(p.expressao);
+  else if(p.expressao)   desc.push(p.expressao);
 
-  // 6. Cenário — real e específico
-  if(p.cenario) {
-    desc.push(p.cenario);
-  } else {
-    desc.push('messy bedroom, rumpled sheets, window light');
-  }
+  // 6. Cenário
+  desc.push(p.cenario || 'messy bedroom, rumpled sheets, window light');
 
   const neg = buildNeg(p);
   return desc.filter(Boolean).join(', ') + ' --no ' + neg + ' ' + MJ_PARAMS_DYN;
@@ -7747,15 +7739,12 @@ function applyEdits(silent){
   const isPovBaixo   = /inner thighs.*crotch.*filling|close-up.*inner thighs.*crotch|thighs.*prominent.*foreground|upward floor-level|crotch.*dominating.*frame|floor-angle composition|low angle close-up from below.*tight frame|low angle upward shot.*shot from below/i.test(camToCheck);
   const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
-  // Anti-plastic skin reinforcement for all POV shots
-  const POV_SKIN = 'natural unretouched skin texture, visible pores on thighs, real skin dimples and micro-texture, slight cellulite, natural skin folds, candid unposed real body, no beauty retouch, no airbrushing, no smoothing, no studio lighting, available light only';
   const povInject = isPovExtremo ? {
     pose: 'standing with legs wide apart, feet planted on floor, shot from directly below between feet',
-    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below, ' + POV_SKIN,
+    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below',
     roupa: baseRoupa + ', panties pulled aside exposing vulva'
   } : isPovBaixo ? {
-    pose: 'standing with legs wide apart, crotch and inner thighs prominent in center of frame, legs extending upward on both sides, feet at frame edges above',
-    nsfw: (p.nsfw ? p.nsfw + ', ' : '') + POV_SKIN
+    pose: 'standing with legs wide apart, crotch and inner thighs prominent in center of frame, legs extending upward on both sides, feet at frame edges above'
   } : {};
 
   const merged = Object.assign({}, p,
