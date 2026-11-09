@@ -9533,19 +9533,25 @@ function cleanForDALLE(text){
   t = t.replace(/\bunderneath\b/gi, 'inside');
 
   // ── Ângulos/poses explícitos de câmera ──
-  t = t.replace(/\b(shot\s+)?(from\s+below|between\s+(her\s+)?legs?)[^,]*/gi, 'low angle shot');
-  t = t.replace(/\binner\s+thighs?\s+(and\s+)?(crotch|genitals?|visible)[^,]*/gi, 'upper legs');
+  // Replace entire "POV low angle" phrases with safe equivalent before partial cleanup
+  t = t.replace(/low angle upward shot[^,]*/gi, 'low angle');
+  t = t.replace(/\b(shot\s+)?from\s+below\s+between[^,]*/gi, 'low angle shot');
+  t = t.replace(/\bshot\s+from\s+below[^,]*/gi, 'low angle shot');
+  t = t.replace(/\binner\s+thighs?\s+and\s*,?[^,]*/gi, '');   // "inner thighs and ," artifact
+  t = t.replace(/\binner\s+thighs?\s+(and\s+)?(crotch|genitals?|visible|filling)[^,]*/gi, '');
+  t = t.replace(/\binner\s+thighs?\b[^,]*/gi, 'upper legs');
   t = t.replace(/\b(crotch|genitals?|pubic)[^,]*(filling|dominating|centered|center of frame)[^,]*/gi, '');
   t = t.replace(/\b(filling|dominating)[^,]*(crotch|genitals?|frame)[^,]*/gi, '');
   t = t.replace(/\bupward angle[^,]*(between|floor|legs?|feet)[^,]*/gi, 'low angle');
   t = t.replace(/\bstraight up between[^,]*/gi, 'low angle');
   t = t.replace(/\bfloor.?level[^,]*(looking up|close.?up)[^,]*/gi, 'low angle');
+  t = t.replace(/\blegs?\s+extending\s+upward[^,]*/gi, '');
   t = t.replace(/\bcamel.?toe[^,]*/gi, '');
   t = t.replace(/\bpubic mound[^,]*/gi, '');
   t = t.replace(/\bgenitalia[^,]*/gi, '');
   t = t.replace(/\bgenitals?\b[^,]*/gi, '');
   t = t.replace(/\bcrotch\b[^,]*/gi, '');
-  t = t.replace(/\binner thighs?\s+visible[^,]*/gi, 'upper legs');
+  t = t.replace(/\binner thighs?\s+visible[^,]*/gi, '');
   t = t.replace(/\bthighs?\s+open[^,]*/gi, 'legs apart');
   t = t.replace(/\bknees?\s+wide[^,]*/gi, 'legs apart');
   t = t.replace(/\blegs?\s+spread\s+wide[^,]*/gi, 'legs apart');
@@ -9554,8 +9560,12 @@ function cleanForDALLE(text){
   t = t.replace(/\bneon\s+(pink|rosa|purple|roxo)[^,]*/gi, 'colorful lighting');
   // hardened nipples / visible through = blocker
   t = t.replace(/hardened\s+nipples?[^,]*/gi, '');
-  t = t.replace(/nipples?\s+visible[^,]*/gi, '');
-  t = t.replace(/nipples?\s+through[^,]*/gi, '');
+  t = t.replace(/nipples?\s+(visible|through|under)[^,]*/gi, '');
+  // Pose triggers
+  t = t.replace(/trailing\s+up\s+(her\s+)?thigh[^,]*/gi, 'resting on leg');
+  t = t.replace(/\bback\s+arched[^,]*/gi, 'straight posture');
+  // Deduplicate repeated "low angle" after all substitutions
+  t = t.replace(/(low angle[^,]*,\s*){2,}/gi, 'low angle, ');
 
   // ── Frases problemáticas ──
   t = t.replace(/no bra[^,]*/gi, '');
@@ -9613,6 +9623,11 @@ function safeClothing(roupa){
   r = r.replace(/\bthong\b/gi, 'underwear');
   r = r.replace(/\bg-string\b/gi, 'underwear');
   r = r.replace(/\blatex\b/gi, 'fitted outfit');
+  r = r.replace(/\bgarter belt\b[^,]*/gi, '');
+  r = r.replace(/\bstockings\b/gi, 'tights');
+  r = r.replace(/\bred lace\b/gi, 'red');
+  r = r.replace(/\blace (underwear|bra|panties|set)[^,]*/gi, 'underwear');
+  r = r.replace(/\bset,?\s*red,?\s*/gi, '');   // artifact "underwear set, red,"
   return r;
 }
 
