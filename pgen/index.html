@@ -9692,130 +9692,44 @@ function cleanForDALLE(text){
   return t;
 }
 
-// Substitui pill de câmera/ângulo/pose explícita por equivalente seguro para DALL-E
+// Substitui apenas pills com descrições explicitamente genitais — mantém todo o resto
 function safePillVal(val){
   if(!val) return '';
 
-  // ── POV baixo extremo → low angle entre pernas mascarado
-  if(/straight up between|floor between feet|extreme upward angle from floor/i.test(val)){
-    return 'wide angle full body shot, dramatic low perspective, feet to head framing, subject towering in frame, editorial fashion photography, 24mm wide lens';
+  // Genitália explicitamente no centro do quadro
+  if(/vulva|camel.?toe|pubic\s+mound|genitalia|crotch.*cent(?:er|ered)|genitals.*cent(?:er|ered)/i.test(val)){
+    return 'close-up fashion detail, fabric contour, tight athletic wear, sports photography';
   }
 
-  // ── POV baixo close-up / inner thighs centered → editorial low angle
-  if(/tight frame.*inner thighs|inner thighs.*crotch.*centered|genitals.*centered|crotch.*center of frame/i.test(val)){
-    return 'wide angle editorial portrait, low perspective, full body in frame from feet to head, dramatic depth, fashion photography, 24mm lens';
+  // Câmera entre pernas apontando para genitália
+  if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch.*fill|shot.*from.*below.*between/i.test(val)){
+    return 'editorial low angle, wide angle lens, full body portrait feet to head, dramatic fashion perspective';
   }
 
-  // ── POV baixo (shot from below between legs) → editorial low perspective
-  if(/shot from below between legs|from below.*between|between.*legs.*floor|low angle upward.*crotch|inner thighs and crotch filling/i.test(val)){
-    return 'editorial low perspective, wide angle lens, full body portrait feet to head, strong foreground depth, fashion photography, dynamic composition';
+  // POV de baixo entre as pernas olhando para cima
+  if(/straight up between|floor between feet|extreme upward angle from floor|from below between legs/i.test(val)){
+    return 'editorial low angle, wide angle lens, full body portrait feet to head, dramatic fashion perspective';
   }
 
-  // ── Dobrada (buttocks toward camera bent over) → hip hinge side view
-  if(/bent over.*buttocks.*toward|buttocks.*pushed.*camera|torso folded forward.*buttocks/i.test(val)){
-    return 'athletic hip hinge, hands resting on knees, bent at hips, side profile view, fitness stretch photography';
-  }
-
-  // ── Close bunda fill frame → back view fashion crop
-  if(/extreme close.?up.*butt.*filling|butt.*filling.*frame|buttocks.*filling|close.?up.*buttocks/i.test(val)){
-    return 'back view, tight crop from waist down, fashion editorial framing, natural light';
-  }
-
-  // ── Close-up de bunda / câmera traseira → back view fashion
-  if(/close.up of butt|buttocks.*camera|buttocks.*raised|no head.*butt|butt.*focus|ass.*shot/i.test(val)){
-    return 'back view, fashion editorial, cropped composition, natural daylight';
-  }
-
-  // ── Pernas abertas → yoga straddle / fitness stretch
-  if(/legs\s+spread\s+wide|thighs\s+open|open\s+leg\s+position/i.test(val)){
-    return 'seated straddle stretch pose, yoga flexibility training, legs extended to the sides, seated on floor, fitness photography';
-  }
-
-  // ── Vulva marcada / camel toe / fabric pressed → athletic close-up fabric
-  if(/vulva|camel.?toe|pubic\s+mound|genitalia|fabric.*genitalia|pressing against.*mound/i.test(val)){
-    return 'tight athletic wear close-up, fabric contour details, sports photography, focus on athletic fit of clothing';
-  }
-
-  // ── Agachada joelhos abertos → deep squat fitness
-  if(/squatting.*knees\s+wide|knees\s+wide.*squatting/i.test(val)){
-    return 'deep squat position, knees pointing outward, athletic squat, fitness training pose, full body';
-  }
-
-  // ── De quatro / all fours → yoga tabletop
-  if(/on hands and knees|on all fours/i.test(val)){
-    return 'yoga tabletop position, hands and knees on mat, spine neutral, back horizontal, fitness photography, side view';
-  }
-
-  // ── Curvada / bent over → standing forward lean side profile
-  if(/bent forward at waist|bent over/i.test(val)){
-    return 'leaning forward, hands on surface, standing, slight forward tilt, side profile view, fitness photography';
-  }
-
-  // ── Foco em bunda raised → glute bridge / hip thrust fitness
-  if(/buttocks\s+(raised|toward|towards|prominently)|arch.*butt|presenting.*rear|ass.*raised/i.test(val)){
-    return 'glute bridge exercise pose, hips raised, lying on back arching up, fitness training, athletic photography';
+  // Bunda empurrada para câmera explicitamente
+  if(/buttocks.*pushed.*camera|torso folded forward.*buttocks.*toward camera/i.test(val)){
+    return 'bending forward at waist, back arched, side profile view, fashion editorial';
   }
 
   return val;
 }
 
-// Limpa roupa do preset preservando o tipo (lingerie fica lingerie, legging fica legging)
+// Remove apenas referências explícitas a nudez — preserva lingerie, corset, garter, etc.
 function safeClothing(roupa){
   if(!roupa) return '';
   let r = roupa;
-
-  // ── Remove apenas descritores explícitos, preserva o tipo da peça ──
-  // Peças muito explícitas → substituição direta mantendo cor
-  r = r.replace(/\bg-string\b/gi, 'thong bikini bottom');
-  r = r.replace(/\bthong\b(?!\s+bikini)/gi, 'thong bikini bottom');
-  r = r.replace(/\bpanties\b/gi, 'bikini bottoms');
-  r = r.replace(/\bunderwear\s+set\b/gi, 'lingerie set');
-  r = r.replace(/\bunderwear\b/gi, 'fitted shorts');
-  r = r.replace(/\bgarter\s+belt\b/gi, 'garter');
-  r = r.replace(/\bfishnet\s+stockings\b/gi, 'sheer tights');
-  r = r.replace(/\bfishnet\b/gi, 'sheer');
-  r = r.replace(/\bstockings\b/gi, 'thigh-high tights');
-  r = r.replace(/\bthigh[- ]high\s+stockings\b/gi, 'thigh-high tights');
-  r = r.replace(/\blatex\b/gi, 'fitted');
-  r = r.replace(/\bnightgown\b/gi, 'slip dress');
-  r = r.replace(/\bsleepwear\b/gi, 'loungewear');
-
-  // ── Substitui palavras que o DALL-E bloqueia mesmo em contexto neutro ──
-  r = r.replace(/\blingerie\s+set\b/gi, 'two-piece fashion set');
-  r = r.replace(/\blingerie\b/gi, 'fashion two-piece');
-  r = r.replace(/\bsports\s+bra\b/gi, 'SPORTSBRA_PLACEHOLDER');
-  r = r.replace(/\bbra\b/gi, 'bikini top');
-  r = r.replace(/SPORTSBRA_PLACEHOLDER/g, 'sports bra');
-  r = r.replace(/\bgarter\b/gi, '');
-  r = r.replace(/\bbabydoll\b/gi, 'slip dress');
-  r = r.replace(/\bcorset\b/gi, 'structured fitted top');
-  r = r.replace(/\bbustier\b/gi, 'structured top');
-  r = r.replace(/\bbodysuit\b/gi, 'fitted one-piece');
-  r = r.replace(/\bthigh[- ]high\s+tights\b/gi, 'over-the-knee socks');
-  r = r.replace(/\blace\b/gi, 'delicate');
-  r = r.replace(/\bbare\s+(back|buttocks|butt|rear|bottom)\b[^,]*/gi, '');
-  r = r.replace(/\bbare\s+midriff\s+exposed[^,]*/gi, '');
+  r = r.replace(/\bfully\s+nude\b[^,]*/gi, '');
+  r = r.replace(/\bcompletely\s+naked\b[^,]*/gi, '');
   r = r.replace(/\bor\s+nude\b[^,]*/gi, '');
-  r = r.replace(/\bor\s+lingerie\b[^,]*/gi, '');
-  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down)[^,]*/gi, '');
-  r = r.replace(/\bnothing\s+from\s+waist[^,]*/gi, '');
-  r = r.replace(/\bfully\s+nude[^,]*/gi, '');
-  r = r.replace(/\bcompletely\s+naked[^,]*/gi, '');
-  r = r.replace(/\brevealing\b/gi, 'fitted');
-  r = r.replace(/\bminimal\s+outfit\b/gi, 'fitted outfit');
-  r = r.replace(/\bsee[- ]through\b/gi, 'sheer');
-  r = r.replace(/\btransparent\b/gi, 'sheer');
-  r = r.replace(/\bwaist[- ]cinching\b/gi, 'fitted');
-  r = r.replace(/\bperiod[- ]appropriate\b/gi, 'vintage-inspired');
-
-  // ── Remove orphan remnants from substitutions ──
-  r = r.replace(/\band\s+ribbon\s+details?\b/gi, '');
-  r = r.replace(/\band\s+lace\s+details?\b/gi, '');
-  r = r.replace(/\band\s+bow\s+details?\b/gi, '');
+  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down)\b[^,]*/gi, '');
+  r = r.replace(/\bnothing\s+from\s+waist\b[^,]*/gi, '');
+  r = r.replace(/\bbare\s+(buttocks|butt|rear)\b[^,]*/gi, '');
   r = r.replace(/,\s*,/g, ',');
-  // ── Remove cor solitária orphan ──
-  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|dark)\s*,\s*\1\b/gi, ', $1,');
-  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|dark)\s*,/gi, ',');
   r = cleanForDALLE(r);
   return r;
 }
@@ -9881,7 +9795,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const cat = preset.cat || '';
   const parts = [];
 
-  // ── 1. Sujeito — a partir da pill de idade (números perigosos removidos) ──
+  // ── 1. Sujeito ──
   const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
   const idadeSafe = idadePill
     .replace(/\bwoman appearing\s+\d[\d\s]*to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s')
@@ -9890,78 +9804,40 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const subjectAge = idadeSafe || 'adult woman in her early 20s';
   parts.push(`${subjectAge}, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin, real person not a model`);
 
-  // ── 2. Câmera / ângulo — somente de pills ──
+  // ── 2. Câmera / ângulo — pill tem prioridade, senão usa preset.cam ──
   const anguloRaw = pills.activeAngulo || '';
-  const camRaw    = pills.activeCam    || '';
-  const anguloSafe = safePillVal(anguloRaw);
-  const camSafe    = safePillVal(camRaw);
-  // Usa apenas o mais específico para evitar acúmulo de sinais de ângulo
-  const camCombined = cleanForDALLE(anguloSafe || camSafe);
+  const camRaw    = pills.activeCam    || preset.cam || '';
+  const camCombined = cleanForDALLE(safePillVal(anguloRaw || camRaw));
   if(camCombined) parts.push(camCombined);
 
-  // ── 5. Pose — somente pill ──
-  const poseRaw = pills.activePose || '';
-  const poseFiltered = safePillVal(poseRaw);
-  const pose = cleanForDALLE(poseFiltered);
-
-  // ── Detecta se a pose é traseira/curvada/explícita ──
-  const poseIsRear = /rear|forward fold|tabletop|forward bend|floor level|looking up|low angle|low perspective|glute bridge|straddle|squat|athletic wear close-up|feet to head/i.test(pose + ' ' + camCombined);
-
-  // ── 3. Roupa — usa vestimenta original do preset, limpa para DALL-E ──
-  // Para poses traseiras/curvadas, força leggings (biquíni + costas = bloqueado)
+  // ── 3. Roupa — usa preset.roupa, remove apenas nudez explícita ──
   const roupaClean = safeClothing(preset.roupa || '');
-  const roupa = roupaClean || DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
-  parts.push(roupa);
+  parts.push(roupaClean || 'wearing casual everyday outfit');
 
   // ── 4. Estado corporal — pill ──
   if(pills.activeEstado) parts.push(cleanForDALLE(pills.activeEstado));
 
-  // Só adiciona fallback de pose se nem pill de pose nem pill de ângulo descreveram uma pose
-  const camHasPose = /fold|hinge|tabletop|squat|kneel|floor|straddle|bridge|forward|lean|bend/i.test(camCombined);
-  // Lingerie + straddle/pernas abertas → trocar para pose sentada neutra
-  const clothingIsIntimate = /lingerie|boudoir/.test(cat) || /lingerie|babydoll|corset|bodysuit/i.test(preset.roupa||'');
-  const poseIsStraddle = /straddle|legs extended to the sides/i.test(pose);
-  const finalPose = (clothingIsIntimate && poseIsStraddle)
-    ? 'sitting gracefully, legs folded to one side, relaxed elegant pose'
-    : pose;
-  if(finalPose) parts.push(finalPose);
-  else if(!camHasPose) parts.push('natural relaxed pose, standing or sitting casually');
+  // ── 5. Pose — pill tem prioridade, senão usa preset.pose ──
+  const poseRaw = pills.activePose || preset.pose || '';
+  const pose = cleanForDALLE(safePillVal(poseRaw));
+  if(pose) parts.push(pose);
 
-  // ── 6. Expressão — somente pill ──
-  const exprRaw = pills.activeExpr || '';
+  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao ──
+  const exprRaw = pills.activeExpr || preset.expressao || '';
   const expr = cleanForDALLE(exprRaw);
   if(expr) parts.push(expr);
   else parts.push('natural relaxed expression, slight smile');
 
-  // ── 7. Cenário — pose traseira + cena indoor → força outdoor ──
-  const sceneDefault = DALLE_SCENE_OVERRIDE[cat];
-  const sceneIsIndoor = /bedroom|interior|home|living room|bathroom|apartment/i.test(sceneDefault||'');
-  const rawCenario = cleanForDALLE(preset.cenario||'');
-  const cenarioIsIndoor = /bathroom|bedroom|apartment|indoor|interior|home|living room/i.test(rawCenario);
-  const clothingHasBikini = /bikini|two-piece|fashion set|structured top|slip dress|fitted one-piece/i.test(roupaClean);
-
-  let scene;
-  if(poseIsRear && sceneIsIndoor){
-    scene = 'outdoor gym area, natural daylight, open air fitness space';
-  } else if(sceneDefault && !sceneIsIndoor){
-    scene = sceneDefault;
-  } else if(sceneDefault && sceneIsIndoor && clothingHasBikini){
-    scene = 'outdoor lifestyle setting, natural daylight, open air, clean background';
-  } else if(sceneDefault){
-    scene = sceneDefault;
-  } else if(cenarioIsIndoor && clothingHasBikini){
-    scene = 'outdoor lifestyle setting, natural daylight, clean background';
-  } else {
-    scene = rawCenario;
-  }
+  // ── 7. Cenário — usa preset.cenario diretamente ──
+  const scene = cleanForDALLE(preset.cenario || '');
   if(scene) parts.push(scene);
 
   // ── 8. Clima + Iluminação + Estilo — pills ──
   if(pills.activeClima) parts.push(cleanForDALLE(pills.activeClima));
   if(pills.activeLuz)   parts.push(cleanForDALLE(pills.activeLuz));
 
-  const stylePill  = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
-  const styleBase  = 'editorial fashion photography, natural lighting, candid authentic style, 35mm film grain, warm tones, high resolution photograph, 9:16 vertical portrait, professional photographer';
+  const stylePill = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
+  const styleBase = 'editorial fashion photography, natural lighting, candid authentic style, 35mm film grain, warm tones, high resolution photograph, 9:16 vertical portrait, professional photographer';
   parts.push(stylePill ? stylePill + ', ' + styleBase : styleBase);
 
   const joined = parts.filter(Boolean).join(', ')
