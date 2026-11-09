@@ -9689,45 +9689,64 @@ function cleanForDALLE(text){
 function safePillVal(val){
   if(!val) return '';
 
-  // ── Close-up de bunda / câmera traseira explícita → rear view seguro
-  if(/extreme close.up.*butt|close.up of butt|buttocks.*camera|buttocks.*raised|no head.*butt|butt.*focus|ass.*shot/i.test(val)){
-    return 'rear view, full body, natural stance, available light';
+  // ── POV baixo extremo → low angle entre pernas mascarado
+  if(/straight up between|floor between feet|extreme upward angle from floor/i.test(val)){
+    return 'low angle upward shot, wide angle lens, shot from floor level looking up, legs framing the composition, feet in foreground';
   }
 
-  // ── Pernas abertas (spread legs) → sentada relaxada
-  if(/legs\s+spread|spread\s+wide|thighs\s+open|open\s+leg/i.test(val)){
-    return 'sitting cross-legged on floor, relaxed casual pose, comfortable natural position';
+  // ── POV baixo close-up / inner thighs centered → low angle fitness
+  if(/tight frame.*inner thighs|inner thighs.*crotch.*centered|genitals.*centered|crotch.*center of frame/i.test(val)){
+    return 'low angle fitness shot, shooting upward, athletic legs framing top of frame, wide angle perspective from floor';
   }
 
-  // ── Vulva/camel toe/genitais → pose neutra de pé
-  if(/vulva|camel.?toe|pubic\s+mound|genitals|genitalia|explicit.*fabric|fabric.*genitalia/i.test(val)){
-    return 'standing naturally, weight on one hip, relaxed casual stance';
+  // ── POV baixo (shot from below between legs) → low angle editorial
+  if(/shot from below between legs|from below.*between|between.*legs.*floor|low angle upward.*crotch|inner thighs and crotch filling/i.test(val)){
+    return 'low angle upward shot from floor, legs extending upward on both sides, wide angle lens, natural light from above';
   }
 
-  // ── Low angle entre pernas / upskirt → pose neutra
-  if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|upward.*between|floor.*looking\s+up|shot.*below|looking\s+up\s+.*skirt/i.test(val)){
-    return 'standing naturally, weight on one hip, relaxed casual stance';
+  // ── Dobrada (buttocks toward camera bent over) → yoga forward fold
+  if(/bent over.*buttocks.*toward|buttocks.*pushed.*camera|torso folded forward.*buttocks/i.test(val)){
+    return 'yoga forward fold pose, bending forward, hands toward floor, back straight, rear three-quarter view, fitness photography';
   }
 
-  // ── Agachada com joelhos abertos → agachada neutra
+  // ── Close bunda fill frame → rear view editorial close-up
+  if(/extreme close.?up.*butt.*filling|butt.*filling.*frame|buttocks.*filling|close.?up.*buttocks/i.test(val)){
+    return 'rear view close-up, tight crop on lower back and hips, athletic figure, natural skin texture, fitness editorial';
+  }
+
+  // ── Close-up de bunda / câmera traseira → rear view editorial
+  if(/close.up of butt|buttocks.*camera|buttocks.*raised|no head.*butt|butt.*focus|ass.*shot/i.test(val)){
+    return 'rear view, cropped at waist, athletic figure, natural lighting, fitness editorial shot';
+  }
+
+  // ── Pernas abertas → yoga straddle / fitness stretch
+  if(/legs\s+spread\s+wide|thighs\s+open|open\s+leg\s+position/i.test(val)){
+    return 'seated straddle stretch pose, yoga flexibility training, legs extended to the sides, seated on floor, fitness photography';
+  }
+
+  // ── Vulva marcada / camel toe / fabric pressed → athletic close-up fabric
+  if(/vulva|camel.?toe|pubic\s+mound|genitalia|fabric.*genitalia|pressing against.*mound/i.test(val)){
+    return 'tight athletic wear close-up, fabric contour details, sports photography, focus on athletic fit of clothing';
+  }
+
+  // ── Agachada joelhos abertos → deep squat fitness
   if(/squatting.*knees\s+wide|knees\s+wide.*squatting/i.test(val)){
-    return 'squatting down casually, knees together, natural relaxed pose';
+    return 'deep squat position, knees pointing outward, athletic squat, fitness training pose, full body';
   }
 
-  // ── De quatro / all fours → kneeling neutro (DALL-E interpreta como doggy style)
-  // Regex sem [^,]* para pegar o valor todo, independente de vírgulas entre
+  // ── De quatro / all fours → yoga tabletop
   if(/on hands and knees|on all fours/i.test(val)){
-    return 'kneeling on floor, looking to the side, relaxed natural pose';
+    return 'yoga tabletop position, hands and knees on mat, spine neutral, back horizontal, fitness photography, side view';
   }
 
-  // ── Curvada / bent over → inclinada neutra
+  // ── Curvada / bent over → yoga forward fold
   if(/bent forward at waist|bent over/i.test(val)){
-    return 'leaning slightly forward, hands resting on surface, natural posture';
+    return 'yoga forward bend, bending at waist, hands reaching toward floor, spine long, side profile, fitness editorial';
   }
 
-  // ── Foco em bunda → pose neutra de costas
-  if(/buttocks\s+(raised|empinada|empinado|toward|towards|prominently)|arch.*butt|presenting.*rear|ass.*raised/i.test(val)){
-    return 'standing, back to camera, natural posture, full body';
+  // ── Foco em bunda raised → glute bridge / hip thrust fitness
+  if(/buttocks\s+(raised|toward|towards|prominently)|arch.*butt|presenting.*rear|ass.*raised/i.test(val)){
+    return 'glute bridge exercise pose, hips raised, lying on back arching up, fitness training, athletic photography';
   }
 
   return val;
@@ -9810,10 +9829,10 @@ const DALLE_CLOTHING = {
   narrativa:   'wearing casual outfit appropriate for the setting',
   poses_livres:'wearing casual everyday outfit',
   ana:         'wearing casual outfit',
-  posicoes:    'wearing colorful bikini or fitted activewear, casual summer outfit',
-  extremo:     'wearing casual lifestyle outfit, comfortable clothes',
-  pov_extremo: 'wearing casual home outfit, comfortable clothes',
-  explicito_suave: 'wearing casual everyday outfit',
+  posicoes:    'wearing colorful two-piece swimwear, athletic bikini set',
+  extremo:     'wearing fitted athletic wear, sports top and shorts',
+  pov_extremo: 'wearing casual home loungewear, comfortable fitted outfit',
+  explicito_suave: 'wearing fitted casual summer outfit, light clothing',
 };
 
 // ── Cenários seguros por categoria (substitui preset.cenario para cats íntimas) ──
@@ -9833,10 +9852,10 @@ const DALLE_SCENE_OVERRIDE = {
   ana:         'outdoor setting, natural daylight',
   no_carro:    'car interior, natural window light from outside, daytime',
   hotel:       'modern hotel room, natural window light, bright clean interior',
-  posicoes:    'modern bedroom, natural window light, cozy casual atmosphere, daytime',
-  extremo:     'outdoor lifestyle setting, natural daylight, casual environment',
-  pov_extremo: 'modern bright living room, natural window light, casual home atmosphere',
-  explicito_suave: 'modern home interior, natural daylight, clean bright space',
+  posicoes:    'outdoor poolside setting, sunny summer day, natural daylight, casual vacation atmosphere',
+  extremo:     'gym fitness studio, bright natural light, clean athletic environment, motivational fitness setting',
+  pov_extremo: 'modern bright apartment, afternoon sunlight, casual lifestyle atmosphere, clean interior',
+  explicito_suave: 'bright modern home, natural window light, airy clean interior, afternoon light',
 };
 
 function buildChatGPTPromptFromPreset(preset, pillOverrides){
@@ -9893,7 +9912,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   if(pills.activeLuz)   parts.push(cleanForDALLE(pills.activeLuz));
 
   const stylePill  = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
-  const styleBase  = 'lifestyle photography, natural lighting, candid authentic style, film grain, warm tones, high quality photograph, 9:16 vertical portrait';
+  const styleBase  = 'editorial fashion photography, natural lighting, candid authentic style, 35mm film grain, warm tones, high resolution photograph, 9:16 vertical portrait, professional photographer';
   parts.push(stylePill ? stylePill + ', ' + styleBase : styleBase);
 
   const joined = parts.filter(Boolean).join(', ')
