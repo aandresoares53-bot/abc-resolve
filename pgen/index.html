@@ -9698,17 +9698,17 @@ function safePillVal(val){
 
   // ── POV baixo extremo → low angle entre pernas mascarado
   if(/straight up between|floor between feet|extreme upward angle from floor/i.test(val)){
-    return "worm's eye view, camera at floor level pointing straight up, feet in foreground, full body towering above, wide angle lens, dramatic upward perspective, editorial fashion photography";
+    return 'wide angle full body shot, dramatic low perspective, feet to head framing, subject towering in frame, editorial fashion photography, 24mm wide lens';
   }
 
-  // ── POV baixo close-up / inner thighs centered → low angle dramatic
+  // ── POV baixo close-up / inner thighs centered → editorial low angle
   if(/tight frame.*inner thighs|inner thighs.*crotch.*centered|genitals.*centered|crotch.*center of frame/i.test(val)){
-    return "low angle ground-level shot, camera near floor pointing up at standing figure, legs filling lower frame, dramatic upward perspective, wide angle, fashion editorial";
+    return 'wide angle editorial portrait, low perspective, full body in frame from feet to head, dramatic depth, fashion photography, 24mm lens';
   }
 
-  // ── POV baixo (shot from below between legs) → worm's eye editorial
+  // ── POV baixo (shot from below between legs) → editorial low perspective
   if(/shot from below between legs|from below.*between|between.*legs.*floor|low angle upward.*crotch|inner thighs and crotch filling/i.test(val)){
-    return "extreme low angle, camera on ground pointing upward, model standing directly above camera, legs on either side of frame, wide angle lens, dramatic fashion perspective";
+    return 'editorial low perspective, wide angle lens, full body portrait feet to head, strong foreground depth, fashion photography, dynamic composition';
   }
 
   // ── Dobrada (buttocks toward camera bent over) → hip hinge side view
@@ -9905,7 +9905,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pose = cleanForDALLE(poseFiltered);
 
   // ── Detecta se a pose é traseira/curvada/explícita ──
-  const poseIsRear = /rear|forward fold|tabletop|forward bend|floor level|looking up|low angle|glute bridge|straddle|squat|athletic wear close-up/i.test(pose + ' ' + camCombined);
+  const poseIsRear = /rear|forward fold|tabletop|forward bend|floor level|looking up|low angle|low perspective|glute bridge|straddle|squat|athletic wear close-up|feet to head/i.test(pose + ' ' + camCombined);
 
   // ── 3. Roupa — usa vestimenta original do preset, limpa para DALL-E ──
   // Para poses traseiras/curvadas, força leggings (biquíni + costas = bloqueado)
