@@ -600,7 +600,8 @@ header{
           </div>
           <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
           <div class="btn-row" style="margin-top:6px">
-            <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar Prompt</button>
+            <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar MJ</button>
+            <button class="btn-action" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;border:none" id="btn-copy-gpt" onclick="copyForChatGPT()">🤖 ChatGPT</button>
             <button class="btn-action" onclick="variation()">🔀 Variação</button>
             <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
             <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
@@ -620,7 +621,7 @@ const DEFAULT_SEED = 419528731;
 const MJ_NO = 'smooth skin, plastic skin, airbrushed, CGI, 3d render, digital art, cartoon, anime, perfect skin, poreless skin, doll, mannequin, studio lighting, editorial, high fashion, supermodel, beauty retouch, facetune, skin glow, dewy skin, rim lighting, clothed, dressed';
 
 // Midjourney suffix parameters (kept for reference; dynamic version built inside buildBlondePrompt)
-const MJ_PARAMS = '--ar 2:3 --v 6.0 --style raw --chaos 10 --s 0 --seed ' + DEFAULT_SEED;
+const MJ_PARAMS = '--ar 9:16 --v 6.1 --style raw --chaos 10 --s 0 --seed ' + DEFAULT_SEED;
 
 function buildNeg(p){
   return MJ_NO;
@@ -632,7 +633,7 @@ function buildBlondePrompt(p, seedOverride){
   const crefUrl = document.getElementById('cref-url')?.value.trim();
   const crefCw  = document.getElementById('cref-cw')?.value || '100';
   const crefPart = crefUrl ? ' --cref ' + crefUrl + ' --cw ' + crefCw : '';
-  const MJ_PARAMS_DYN = '--ar 2:3 --v 6.1 --style raw --chaos 10 --s 0 --seed ' + seed + crefPart;
+  const MJ_PARAMS_DYN = '--ar 9:16 --v 6.1 --style raw --chaos 10 --s 0 --seed ' + seed + crefPart;
 
   const filmOverride      = (typeof document !== 'undefined' && document.getElementById('edit-filmstock'))
     ? document.getElementById('edit-filmstock').value.trim() : '';
@@ -9476,7 +9477,114 @@ function copyPrompt(){
   navigator.clipboard.writeText(ta.value).then(()=>{
     const btn=document.getElementById('btn-copy-pos');
     btn.textContent='✓ Copiado!'; btn.classList.add('ok');
-    setTimeout(()=>{ btn.innerHTML='📋 Copiar Prompt'; btn.classList.remove('ok'); },2000);
+    setTimeout(()=>{ btn.innerHTML='📋 Copiar MJ'; btn.classList.remove('ok'); },2000);
+  });
+}
+
+// ── ChatGPT / DALL-E prompt converter ────────────────────────────────────────
+function buildChatGPTPrompt(){
+  const mjPrompt = document.getElementById('result-prompt').value;
+  if(!mjPrompt) return '';
+
+  // 1. Remove tudo após --no (negativo não existe no DALL-E)
+  let p = mjPrompt.replace(/\s*--no\s+.*/s, '');
+
+  // 2. Remove todos os parâmetros MJ (--ar, --v, --style, --chaos, --s, --seed, --cref, --cw)
+  p = p.replace(/\s*--(ar|v|style|chaos|s|seed|cref|cw|iw|niji|q|stop|tile|video|repeat|weird|turbo|relax|fast)\s+\S*/gi, '');
+
+  // 3. Remove referências de fotógrafos que DALL-E pode bloquear
+  p = p.replace(/Nan Goldin,?\s*/gi, '');
+  p = p.replace(/Larry Clark,?\s*/gi, '');
+
+  // 4. Substitui termos de filmstock MJ-específicos por equivalentes DALL-E
+  p = p.replace(/35mm snapshot,?\s*/gi, 'photorealistic photograph, ');
+  p = p.replace(/circa 2006,?\s*/gi, '');
+  p = p.replace(/camera shake,?\s*/gi, '');
+  p = p.replace(/expired film,?\s*/gi, '');
+  p = p.replace(/light leak,?\s*/gi, '');
+  p = p.replace(/Kodak Ultramax 800,?\s*/gi, 'film grain, warm tones, ');
+  p = p.replace(/Kodak Portra 400,?\s*/gi, 'soft film tones, ');
+  p = p.replace(/Fujifilm Superia,?\s*/gi, 'vivid film colors, ');
+  p = p.replace(/Ilford HP5,?\s*/gi, 'black and white film, ');
+  p = p.replace(/,\s*grain\b/gi, '');
+
+  // 5. Substitui palavras que bloqueiam DALL-E por equivalentes seguros
+  const replacements = [
+    [/\bnude\b/gi,            'in minimal clothing'],
+    [/\bnaked\b/gi,           'in minimal clothing'],
+    [/\bnudity\b/gi,          'minimal clothing'],
+    [/\btopless\b/gi,         'bare shoulders and upper back'],
+    [/\bnsfw\b/gi,            'sensual'],
+    [/\bexplicit\b/gi,        'suggestive'],
+    [/\bvulva\b/gi,           'intimate area'],
+    [/\bvagina\b/gi,          'intimate area'],
+    [/\bpenis\b/gi,           'intimate area'],
+    [/\bgenitals?\b/gi,       'intimate area'],
+    [/\bintercourse\b/gi,     'intimate moment'],
+    [/\bsex\b/gi,             'intimate'],
+    [/\bporn\b/gi,            'sensual photography'],
+    [/\bxxxb/gi,              'sensual'],
+    [/\bcreampie\b/gi,        'intimate scene'],
+    [/\bblowjob\b/gi,         'intimate close moment'],
+    [/\bcunnilingus\b/gi,     'intimate moment'],
+    [/\banal\b/gi,            'intimate'],
+    [/\bgangbang\b/gi,        'intimate scene'],
+    [/\bpenetration\b/gi,     'intimate contact'],
+    [/\bcowgirl position\b/gi,'intimate position'],
+    [/\bdoggy\b/gi,           'intimate pose'],
+    [/\bmissionary\b/gi,      'intimate lying pose'],
+    [/\bpanties pulled aside\b/gi, 'minimal underwear'],
+    [/\bpanties\b/gi,         'underwear'],
+    [/\bthong\b/gi,           'minimal underwear'],
+    [/\bcrotch\b/gi,          'lower body'],
+    [/\bupshot\b/gi,          'low angle shot'],
+    [/\bbdsm\b/gi,            'dramatic fashion'],
+    [/\bdominatrix\b/gi,      'confident woman'],
+    [/\bsubmissive\b/gi,      'relaxed'],
+    [/\bbondage\b/gi,         'dramatic pose'],
+    [/\btied up\b/gi,         'dramatic pose'],
+    [/\bfisting\b/gi,         'intimate scene'],
+    [/\bsquirt\b/gi,          'intense expression'],
+    [/\borgasm\b/gi,          'peak expression'],
+    [/\bmasturbat\w+/gi,      'self-portrait'],
+    [/\bstriptease\b/gi,      'revealing clothing'],
+    [/\bescort\b/gi,          'confident woman'],
+    [/\bonlyfans\b/gi,        'content creator'],
+  ];
+  for(const [from, to] of replacements){
+    p = p.replace(from, to);
+  }
+
+  // 6. Remove vírgulas duplas e espaços extras
+  p = p.replace(/,\s*,/g, ',').replace(/,\s*,/g, ',').trim();
+  p = p.replace(/\s{2,}/g, ' ').trim();
+  p = p.replace(/^,\s*/, '').replace(/,\s*$/, '');
+
+  // 7. Adiciona instrução de formato 9:16 no início para DALL-E
+  p = 'Create a photorealistic image in 9:16 vertical portrait format. ' + p + '. High quality photograph, natural lighting, candid style, real person aesthetic.';
+
+  return p;
+}
+
+function copyForChatGPT(){
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  if(!p){ showToast('⚠ Selecione um preset primeiro'); return; }
+
+  // Bloqueia categorias explicitamente sexuais
+  const sexCats = ['posicoes','extremo','pov_extremo','explicito_suave'];
+  if(sexCats.includes(p.cat)){
+    showToast('⚠ ChatGPT não suporta conteúdo explícito — use Midjourney');
+    return;
+  }
+
+  const gptPrompt = buildChatGPTPrompt();
+  if(!gptPrompt){ showToast('⚠ Gere um prompt primeiro'); return; }
+
+  navigator.clipboard.writeText(gptPrompt).then(()=>{
+    const btn=document.getElementById('btn-copy-gpt');
+    btn.textContent='✓ Copiado!';
+    setTimeout(()=>{ btn.innerHTML='🤖 ChatGPT'; },2000);
+    showToast('🤖 Prompt ChatGPT copiado!');
   });
 }
 function downloadTxt(){
