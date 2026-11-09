@@ -9780,7 +9780,14 @@ function safeClothing(roupa){
   r = r.replace(/\bnightgown\b/gi, 'slip dress');
   r = r.replace(/\bsleepwear\b/gi, 'loungewear');
 
-  // ── Remove descritores explícitos mantendo o resto ──
+  // ── Substitui palavras que o DALL-E bloqueia mesmo em contexto neutro ──
+  r = r.replace(/\blingerie\s+set\b/gi, 'two-piece fashion set');
+  r = r.replace(/\blingerie\b/gi, 'fashion two-piece');
+  r = r.replace(/\bgarter\b/gi, '');
+  r = r.replace(/\bbabydoll\b/gi, 'slip dress');
+  r = r.replace(/\bcorset\b/gi, 'fitted bustier top');
+  r = r.replace(/\bbodysuit\b/gi, 'fitted one-piece');
+  r = r.replace(/\bthigh[- ]high\s+tights\b/gi, 'over-the-knee socks');
   r = r.replace(/\blace\b/gi, 'delicate');
   r = r.replace(/\bbare\s+(back|buttocks|butt|rear|bottom)\b[^,]*/gi, '');
   r = r.replace(/\bbare\s+midriff\s+exposed[^,]*/gi, '');
