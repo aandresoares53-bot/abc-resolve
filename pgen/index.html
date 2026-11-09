@@ -9905,7 +9905,7 @@ function copyForChatGPT(){
   const preset = PRESETS_RAW.find(x=>x.key===selectedKey);
   if(!preset){ showToast('⚠ Selecione um preset primeiro'); return; }
 
-  const sexCats = ['explicito_suave','nude'];
+  const sexCats = ['nude'];
   if(sexCats.includes(preset.cat)){
     showToast('⚠ ChatGPT não aceita conteúdo explícito — use Midjourney');
     return;
