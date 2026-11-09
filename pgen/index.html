@@ -9534,7 +9534,7 @@ function cleanForDALLE(text){
 
   // ── Ângulos/poses explícitos de câmera ──
   t = t.replace(/\b(shot\s+)?(from\s+below|between\s+(her\s+)?legs?)[^,]*/gi, 'low angle shot');
-  t = t.replace(/\binner\s+thighs?\s+and\s+(crotch|genitals?)[^,]*/gi, 'legs');
+  t = t.replace(/\binner\s+thighs?\s+(and\s+)?(crotch|genitals?|visible)[^,]*/gi, 'upper legs');
   t = t.replace(/\b(crotch|genitals?|pubic)[^,]*(filling|dominating|centered|center of frame)[^,]*/gi, '');
   t = t.replace(/\b(filling|dominating)[^,]*(crotch|genitals?|frame)[^,]*/gi, '');
   t = t.replace(/\bupward angle[^,]*(between|floor|legs?|feet)[^,]*/gi, 'low angle');
@@ -9545,6 +9545,17 @@ function cleanForDALLE(text){
   t = t.replace(/\bgenitalia[^,]*/gi, '');
   t = t.replace(/\bgenitals?\b[^,]*/gi, '');
   t = t.replace(/\bcrotch\b[^,]*/gi, '');
+  t = t.replace(/\binner thighs?\s+visible[^,]*/gi, 'upper legs');
+  t = t.replace(/\bthighs?\s+open[^,]*/gi, 'legs apart');
+  t = t.replace(/\bknees?\s+wide[^,]*/gi, 'legs apart');
+  t = t.replace(/\blegs?\s+spread\s+wide[^,]*/gi, 'legs apart');
+  t = t.replace(/\bopen\s+leg\s+position[^,]*/gi, 'relaxed seated pose');
+  t = t.replace(/\bsexualiz\w+[^,]*/gi, '');
+  t = t.replace(/\bneon\s+(pink|rosa|purple|roxo)[^,]*/gi, 'colorful lighting');
+  // hardened nipples / visible through = blocker
+  t = t.replace(/hardened\s+nipples?[^,]*/gi, '');
+  t = t.replace(/nipples?\s+visible[^,]*/gi, '');
+  t = t.replace(/nipples?\s+through[^,]*/gi, '');
 
   // ── Frases problemáticas ──
   t = t.replace(/no bra[^,]*/gi, '');
@@ -9671,7 +9682,7 @@ function copyForChatGPT(){
   const preset = PRESETS_RAW.find(x=>x.key===selectedKey);
   if(!preset){ showToast('⚠ Selecione um preset primeiro'); return; }
 
-  const sexCats = ['posicoes','extremo','pov_extremo','explicito_suave'];
+  const sexCats = ['posicoes','extremo','pov_extremo','explicito_suave','nude'];
   if(sexCats.includes(preset.cat)){
     showToast('⚠ ChatGPT não aceita conteúdo explícito — use Midjourney');
     return;
@@ -9683,6 +9694,12 @@ function copyForChatGPT(){
   const activeCam    = getActivePillVal('cam');
   if(isPillExplicit(activePose) || isPillExplicit(activeAngulo) || isPillExplicit(activeCam)){
     showToast('⚠ Pose/ângulo explícito — use Midjourney para este');
+    return;
+  }
+
+  // Also check preset's own pose/angulo fields for explicit content
+  if(isPillExplicit(preset.pose||'') || isPillExplicit(preset.angulo||'')){
+    showToast('⚠ Este preset tem pose/ângulo explícito — use Midjourney');
     return;
   }
 
