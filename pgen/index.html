@@ -9591,14 +9591,17 @@ function safeClothing(roupa){
   return r;
 }
 
-function buildChatGPTPromptFromPreset(preset){
+function buildChatGPTPromptFromPreset(preset, pillOverrides){
+  const pills = pillOverrides || {};
   const parts = [];
 
   // Sujeito — sem idade numérica (DALL-E é sensível com idade + roupas revealing)
   parts.push('young adult woman, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
 
-  // Câmera / ângulo se disponível
-  const cam = cleanForDALLE((preset.angulo||'') + (preset.cam ? ', ' + preset.cam : ''));
+  // Câmera / ângulo — pill override takes priority
+  const anguloSrc = (pills.activeAngulo || preset.angulo || '');
+  const camSrc    = (pills.activeCam    || preset.cam   || '');
+  const cam = cleanForDALLE(anguloSrc + (camSrc ? ', ' + camSrc : ''));
   if(cam) parts.push(cam);
 
   // Roupa — sanitizada
@@ -9610,8 +9613,9 @@ function buildChatGPTPromptFromPreset(preset){
   const corpoSafe = corpo.replace(/\b(medium|full|large|small)?\s*breasts?\b/gi,'').replace(/\b(full|wide|big)?\s*(buttocks|butt|ass|hips?)\b/gi,'').replace(/\s{2,}/g,' ').trim();
   if(corpoSafe) parts.push(corpoSafe);
 
-  // Pose
-  const pose = cleanForDALLE(preset.pose||'');
+  // Pose — pill override takes priority
+  const poseSrc = pills.activePose || preset.pose || '';
+  const pose = cleanForDALLE(poseSrc);
   if(pose) parts.push(pose);
 
   // Expressão
@@ -9633,6 +9637,21 @@ function buildChatGPTPromptFromPreset(preset){
   return 'Photorealistic photograph: ' + joined + '.';
 }
 
+function getActivePillVal(group){
+  const btn = document.querySelector(`.qpick[data-group="${group}"].active`);
+  return btn ? btn.dataset.val : '';
+}
+
+// Pills that are too explicit for DALL-E (by their data-val content)
+const EXPLICIT_PILL_PATTERNS = [
+  /vulva/i, /camel.?toe/i, /genitalia/i, /pubic mound/i,
+  /crotch/i, /upshot/i, /upward.*between.*legs/i, /between.*legs.*upward/i,
+  /inner thighs.*crotch/i, /crotch.*center/i, /spread.*legs.*genitals/i,
+];
+function isPillExplicit(val){
+  return EXPLICIT_PILL_PATTERNS.some(rx=>rx.test(val));
+}
+
 function copyForChatGPT(){
   const preset = PRESETS_RAW.find(x=>x.key===selectedKey);
   if(!preset){ showToast('⚠ Selecione um preset primeiro'); return; }
@@ -9643,7 +9662,16 @@ function copyForChatGPT(){
     return;
   }
 
-  const gptPrompt = buildChatGPTPromptFromPreset(preset);
+  // Check active pills for explicit content
+  const activePose   = getActivePillVal('pose');
+  const activeAngulo = getActivePillVal('angulo');
+  const activeCam    = getActivePillVal('cam');
+  if(isPillExplicit(activePose) || isPillExplicit(activeAngulo) || isPillExplicit(activeCam)){
+    showToast('⚠ Pose/ângulo explícito — use Midjourney para este');
+    return;
+  }
+
+  const gptPrompt = buildChatGPTPromptFromPreset(preset, {activePose, activeAngulo, activeCam});
 
   navigator.clipboard.writeText(gptPrompt).then(()=>{
     const btn=document.getElementById('btn-copy-gpt');
