@@ -9709,14 +9709,14 @@ function safePillVal(val){
     return 'yoga forward fold pose, bending forward, hands toward floor, back straight, rear three-quarter view, fitness photography';
   }
 
-  // ── Close bunda fill frame → rear view editorial close-up
+  // ── Close bunda fill frame → back view fashion crop
   if(/extreme close.?up.*butt.*filling|butt.*filling.*frame|buttocks.*filling|close.?up.*buttocks/i.test(val)){
-    return 'rear view close-up, tight crop on lower back and hips, athletic figure, natural skin texture, fitness editorial';
+    return 'back view, tight crop from waist down, fashion editorial framing, natural light';
   }
 
-  // ── Close-up de bunda / câmera traseira → rear view editorial
+  // ── Close-up de bunda / câmera traseira → back view fashion
   if(/close.up of butt|buttocks.*camera|buttocks.*raised|no head.*butt|butt.*focus|ass.*shot/i.test(val)){
-    return 'rear view, cropped at waist, athletic figure, natural lighting, fitness editorial shot';
+    return 'back view, fashion editorial, cropped composition, natural daylight';
   }
 
   // ── Pernas abertas → yoga straddle / fitness stretch
@@ -9881,36 +9881,42 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const camCombined = cleanForDALLE(anguloSafe || camSafe);
   if(camCombined) parts.push(camCombined);
 
-  // ── 3. Roupa — 100% baseada na categoria, ignora preset.roupa ──
-  const roupa = DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
+  // ── 5. Pose — somente pill ──
+  const poseRaw = pills.activePose || '';
+  const poseFiltered = safePillVal(poseRaw);
+  const pose = cleanForDALLE(poseFiltered);
+
+  // ── Detecta se a pose é traseira/curvada/explícita ──
+  const poseIsRear = /rear|forward fold|tabletop|forward bend|floor level|looking up|low angle|glute bridge|straddle|squat|athletic wear close-up/i.test(pose + ' ' + camCombined);
+
+  // ── 3. Roupa — se pose traseira, força roupas cobertas (leggings + top) independente da categoria ──
+  let roupa;
+  if(poseIsRear){
+    roupa = 'wearing fitted athletic leggings and sports crop top, activewear, fully covered';
+  } else {
+    roupa = DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
+  }
   parts.push(roupa);
 
   // ── 4. Estado corporal — pill ──
   if(pills.activeEstado) parts.push(cleanForDALLE(pills.activeEstado));
 
-  // ── 5. Pose — somente pill (nunca preset.pose que contém poses explícitas) ──
-  const poseRaw = pills.activePose || '';
-  const poseFiltered = safePillVal(poseRaw);
-  const pose = cleanForDALLE(poseFiltered);
   if(pose) parts.push(pose);
   else parts.push('natural relaxed pose, standing or sitting casually');
 
-  // ── 6. Expressão — somente pill (nunca preset.expressao) ──
+  // ── 6. Expressão — somente pill ──
   const exprRaw = pills.activeExpr || '';
   const expr = cleanForDALLE(exprRaw);
   if(expr) parts.push(expr);
   else parts.push('natural relaxed expression, slight smile');
 
-  // ── 7. Cenário — detecta combinação pose traseira + cena íntima → força outdoor ──
-  // "rear/bend" + "bedroom" = bloqueio garantido; substituir por outdoor seguro
-  const poseIsRear = /rear|forward fold|tabletop|forward bend|floor level|looking up|low angle|glute bridge|straddle|squat|athletic wear close-up/i.test(pose + ' ' + camCombined);
+  // ── 7. Cenário — pose traseira + cena indoor → força outdoor ──
   const sceneDefault = DALLE_SCENE_OVERRIDE[cat];
   const sceneIsIndoor = sceneDefault && /bedroom|interior|home|living room|bathroom/i.test(sceneDefault);
 
   let scene;
   if(poseIsRear && sceneIsIndoor){
-    // Força cena neutra outdoor quando pose traseira + cenário indoor
-    scene = 'outdoor lifestyle setting, natural daylight, open space, casual environment';
+    scene = 'outdoor gym area, natural daylight, open air fitness space';
   } else if(sceneDefault){
     scene = sceneDefault;
   } else {
