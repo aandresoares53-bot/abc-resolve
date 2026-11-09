@@ -9506,6 +9506,9 @@ const DALLE_BLOCKLIST = [
   /\btied up\b/gi, /\brope\b/gi, /\bwhip\b/gi, /\brestrained\b/gi,
   // plataformas / escorts
   /\bonlyfans\b/gi, /\bescort\b/gi,
+  // body parts that trigger in sexual context
+  /\buttocks\b/gi, /\bglutes?\b/gi,
+  /\bahegao\b/gi,
   // sensual words DALL-E tende a rejeitar em contexto
   /\bprovocative\b/gi, /\bseductive\b/gi,
 ];
@@ -9628,6 +9631,45 @@ function cleanForDALLE(text){
   t = t.replace(/\bnatural body weight visible[^,]*/gi, 'relaxed natural pose');
   t = t.replace(/\bon hands and knees[^,]*looking back[^,]*/gi, 'kneeling, looking to the side');
   t = t.replace(/\bon all fours[^,]*looking back[^,]*/gi, 'kneeling, looking to the side');
+  t = t.replace(/\bback\s+(\w+\s+)?arched[^,]*/gi, 'straight posture');
+  t = t.replace(/\blegs?\s+spread\b(?!\s+wide)[^,]*/gi, 'legs apart');
+  t = t.replace(/\bknees?\s+apart[^,]*/gi, 'relaxed stance');
+  t = t.replace(/leggings?\s+(?:stretched\s+|tight\s+)+across[^,]*/gi, 'leggings');
+  t = t.replace(/\b(across|over|on|showing|raised)\s+(the\s+)?(buttocks|butt|rear|ass)\b[^,]*/gi, '');
+  t = t.replace(/\bbuttocks\s+(raised|empinada|toward|back|up|prominently)[^,]*/gi, '');
+  t = t.replace(/\bbuttocks\b[^,]*/gi, '');
+  t = t.replace(/\b(between\s+(her\s+)?legs|between\s+the\s+knees)[^,]*/gi, '');
+  t = t.replace(/\blooking\s+back\s+between[^,]*/gi, 'looking back over shoulder');
+  t = t.replace(/\bnothing\s+from\s+waist\s+down[^,]*/gi, '');
+  t = t.replace(/\bbare\s+(back|buttocks|butt|rear|bottom)\b[^,]*/gi, '');
+  // Squatting + knees wide implication
+  t = t.replace(/\bsquatt?ing\s+low[^,]*/gi, 'squatting');
+  t = t.replace(/\bknees?\s+wide[^,]*/gi, 'relaxed stance');
+  t = t.replace(/\bhips?\s+sunk\s+low[^,]*/gi, 'low position');
+
+  // ── Palavras de conotação sensual/sexual que passam pelo blocklist ──
+  t = t.replace(/\bsuggestive\b/gi, 'confident');
+  t = t.replace(/\bflirtatious\b/gi, 'friendly');
+  t = t.replace(/\bcoy\b/gi, 'playful');
+  t = t.replace(/\bsensual\b/gi, 'confident');
+  t = t.replace(/\bsensual\s+energy\b[^,]*/gi, '');
+  t = t.replace(/\bindulgent\b/gi, 'relaxed');
+  t = t.replace(/\bpleasure\b/gi, 'enjoyment');
+  // Clothing revealing descriptors
+  t = t.replace(/\bbarely\s+covers?\s+(body|skin|thighs?)[^,]*/gi, '');
+  t = t.replace(/\bcandid\s+sensual[^,]*/gi, 'candid');
+  t = t.replace(/\bnatural\s+body\s+showing\s+through[^,]*/gi, 'natural fit');
+  t = t.replace(/\bnatural\s+curves?\s+in\s+sunlight[^,]*/gi, 'natural');
+  t = t.replace(/\bskin\s+glistening\b[^,]*/gi, 'natural skin');
+  t = t.replace(/\bwet\s+bikini\s+clinging[^,]*/gi, 'wet bikini');
+  t = t.replace(/\bsports?\s+bra\s+bouncing[^,]*/gi, 'sports bra');
+  t = t.replace(/\bshorts?\s+riding\s+up[^,]*/gi, 'athletic shorts');
+  t = t.replace(/\bclinging\s+to\s+(natural\s+)?curves[^,]*/gi, 'fitted');
+  t = t.replace(/\bclothing\s+clinging[^,]*/gi, 'clothing');
+  t = t.replace(/\bskin\s+visible\s+through[^,]*/gi, 'light fabric');
+  t = t.replace(/\body\s+open[^,]*/gi, 'relaxed pose');
+  t = t.replace(/\buninhibited[^,]*/gi, 'free');
+  t = t.replace(/\bcandy[- ]colored[^,]*/gi, 'colorful');
 
   // ── Limpa resultado ──
   // Remove frases duplicadas (ex: "legs apart, legs apart")
@@ -9647,24 +9689,30 @@ function cleanForDALLE(text){
 function safePillVal(val){
   if(!val) return '';
 
-  // ── Câmera de bunda → rear view seguro
-  if(/buttocks|close.up of butt|rear view.*no head|extreme close.up.*butt/i.test(val)){
+  // ── Close-up de bunda / câmera traseira explícita → rear view seguro
+  if(/extreme close.up.*butt|close.up of butt|buttocks.*camera|buttocks.*raised|no head.*butt|butt.*focus|ass.*shot/i.test(val)){
     return 'rear view, full body, natural stance, available light';
   }
 
-  // ── Low angle entre pernas → omitir (DALL-E infere upskirt independente das palavras)
-  if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up|shot.*below/i.test(val)){
+  // ── Low angle entre pernas / upskirt → omitir completamente
+  if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up|shot.*below|looking\s+up\s+.*skirt/i.test(val)){
     return '';
   }
 
-  // ── Poses que DALL-E interpreta como sexuais mesmo sem palavras explícitas
-  // "De quatro" (on hands and knees looking back = doggy style implication)
-  if(/on hands and knees[^,]*looking back|on all fours[^,]*looking back/i.test(val)){
+  // ── De quatro / all fours → kneeling neutro (DALL-E interpreta como doggy style)
+  // Regex sem [^,]* para pegar o valor todo, independente de vírgulas entre
+  if(/on hands and knees|on all fours/i.test(val)){
     return 'kneeling on floor, looking to the side, relaxed natural pose';
   }
-  // "Curvada" (bent over = sexual implication)
-  if(/bent forward at waist|bent over[^,]*(surface|rear|back)/i.test(val)){
+
+  // ── Curvada / bent over → inclinada neutra
+  if(/bent forward at waist|bent over/i.test(val)){
     return 'leaning slightly forward, hands resting on surface, natural posture';
+  }
+
+  // ── Foco em bunda → pose neutra de costas
+  if(/buttocks\s+(raised|empinada|empinado|toward|towards|prominently)|arch.*butt|presenting.*rear|ass.*raised/i.test(val)){
+    return 'standing, back to camera, natural posture, full body';
   }
 
   return val;
@@ -9674,17 +9722,24 @@ function safePillVal(val){
 function safeClothing(roupa){
   if(!roupa) return '';
   let r = roupa;
-  // Ordem importa: tratar combinações antes de partes individuais
-  // Lingerie/underwear → activewear/swimwear (DALL-E bloqueia "underwear" em contexto íntimo)
-  r = r.replace(/\blingerie\s+set\b/gi, 'bikini set');
-  r = r.replace(/\blingerie\b/gi, 'fitted outfit');
-  r = r.replace(/\bgarter\s+belt[^,]*/gi, '');
-  r = r.replace(/\bstockings\b/gi, 'tights');
-  // Remove "lace" adjective anywhere in clothing description
+
+  // ── Lingerie/íntimo completo → substituir conjunto inteiro por activewear ──
+  // Detecta se a peça principal é lingerie ou roupa íntima explícita
+  if(/\blingerie\b|\bgarter\s+belt|\bbabydoll\b|\bcorset\b|\bfishnet\b|\bbodysuit\b|\bg-string\b|\bthong\b|\bbare\s+back\b|\bbare\s+buttocks\b|\bbare\s+butt\b/i.test(r)){
+    const cm = r.match(/\b(red|black|white|pink|blue|dark|scarlet|crimson|navy|ivory|nude)\b/i);
+    const col = cm ? cm[1] + ' ' : '';
+    return `wearing ${col}fitted bikini set, coordinated activewear`;
+  }
+
+  // ── Transparente/see-through completo → opaque ──
+  if(/sheer\s+transparent|see[- ]through\s+(fabric|bodysuit)|transparent\s+bodysuit/i.test(r)){
+    return 'wearing fitted activewear, athletic outfit';
+  }
+
+  // ── Palavra a palavra para casos menos extremos ──
+  r = r.replace(/\bstockings\b/gi, 'athletic tights');
+  r = r.replace(/\bthigh[- ]high\s+stockings\b/gi, 'athletic tights');
   r = r.replace(/\blace\b/gi, '');
-  r = r.replace(/\bbabydoll\b/gi, 'casual dress');
-  r = r.replace(/\bcorset\b/gi, 'fitted top');
-  r = r.replace(/\bfishnet\b/gi, 'patterned tights');
   r = r.replace(/\bbralette\b/gi, 'crop top');
   r = r.replace(/\bunderwear\s+set\b/gi, 'bikini set');
   r = r.replace(/\bunderwear\b/gi, 'fitted shorts');
@@ -9694,9 +9749,21 @@ function safeClothing(roupa){
   r = r.replace(/\blatex\b/gi, 'fitted outfit');
   r = r.replace(/\bnightgown\b/gi, 'casual dress');
   r = r.replace(/\bsleepwear\b/gi, 'casual outfit');
-  // Remove color-only artifacts like ", red," and duplicate colors
-  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow)\s*,\s*\1\b/gi, ', $1,');
-  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow)\s*,/gi, ',');
+  r = r.replace(/\bsuspenders\b/gi, '');
+  // Roupa com descrição implícita de nude ou revealing
+  r = r.replace(/\bor\s+nude\b[^,]*/gi, '');
+  r = r.replace(/\bor\s+lingerie\b[^,]*/gi, '');
+  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down)[^,]*/gi, '');
+  r = r.replace(/\bnothing\s+from\s+waist[^,]*/gi, '');
+  r = r.replace(/\bfully\s+nude[^,]*/gi, '');
+  r = r.replace(/\bcompletely\s+naked[^,]*/gi, '');
+  r = r.replace(/\brevealing\s+(luxury\s+)?outfit\b[^,]*/gi, 'fitted outfit');
+  r = r.replace(/\bminimal\s+outfit\b[^,]*/gi, 'casual outfit');
+  r = r.replace(/\bbare\s+(back|midriff\s+exposed|skin\s+on)[^,]*/gi, 'natural');
+  r = r.replace(/\bnude\b/gi, '');
+  // Remove cor solitária que fica depois de remover garter/outros
+  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|dark)\s*,\s*\1\b/gi, ', $1,');
+  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|dark)\s*,/gi, ',');
   r = cleanForDALLE(r);
   return r;
 }
@@ -9729,12 +9796,17 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
 
   // Corpo — partes seguras apenas
   const corpo = cleanForDALLE(preset.corpo||'');
-  const corpoSafe = corpo.replace(/\b(medium|full|large|small)?\s*breasts?\b/gi,'').replace(/\b(full|wide|big)?\s*(buttocks|butt|ass|hips?)\b/gi,'').replace(/\s{2,}/g,' ').trim();
+  const corpoSafe = corpo
+    .replace(/\b(medium|full|large|small|natural|perky|round|big|huge)?\s*breasts?\b/gi,'')
+    .replace(/\b(full|wide|big|toned|firm|round|athletic|natural)?\s*(buttocks|butt|ass|glutes?|hips?|rear)\b/gi,'')
+    .replace(/\b(curvy|voluptuous|hourglass)\b/gi,'natural')
+    .replace(/\s{2,}/g,' ').trim();
   if(corpoSafe) parts.push(corpoSafe);
 
-  // Pose — pill override; explicit → safePillVal
+  // Pose — pill override; explicit → safePillVal ('' se bloqueado, sem fallback para o original)
   const poseRaw = pills.activePose || (preset.pose || '');
-  const pose = cleanForDALLE(safePillVal(poseRaw) || poseRaw);
+  const poseFiltered = safePillVal(poseRaw);
+  const pose = cleanForDALLE(poseFiltered);
   if(pose) parts.push(pose);
 
   // Expressão — pill override ou preset
