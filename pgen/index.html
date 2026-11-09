@@ -9698,17 +9698,17 @@ function safePillVal(val){
 
   // ── POV baixo extremo → low angle entre pernas mascarado
   if(/straight up between|floor between feet|extreme upward angle from floor/i.test(val)){
-    return 'dynamic side profile shot, wide angle lens, full body athletic photography, natural daylight';
+    return "worm's eye view, camera at floor level pointing straight up, feet in foreground, full body towering above, wide angle lens, dramatic upward perspective, editorial fashion photography";
   }
 
-  // ── POV baixo close-up / inner thighs centered → editorial side view
+  // ── POV baixo close-up / inner thighs centered → low angle dramatic
   if(/tight frame.*inner thighs|inner thighs.*crotch.*centered|genitals.*centered|crotch.*center of frame/i.test(val)){
-    return 'three-quarter angle, slightly below eye level, full body shot, fitness editorial photography';
+    return "low angle ground-level shot, camera near floor pointing up at standing figure, legs filling lower frame, dramatic upward perspective, wide angle, fashion editorial";
   }
 
-  // ── POV baixo (shot from below between legs) → editorial full body
+  // ── POV baixo (shot from below between legs) → worm's eye editorial
   if(/shot from below between legs|from below.*between|between.*legs.*floor|low angle upward.*crotch|inner thighs and crotch filling/i.test(val)){
-    return 'wide angle full body shot, slightly low camera angle, editorial athletic photography, natural light';
+    return "extreme low angle, camera on ground pointing upward, model standing directly above camera, legs on either side of frame, wide angle lens, dramatic fashion perspective";
   }
 
   // ── Dobrada (buttocks toward camera bent over) → hip hinge side view
