@@ -9694,9 +9694,24 @@ function safePillVal(val){
     return 'rear view, full body, natural stance, available light';
   }
 
-  // ── Low angle entre pernas / upskirt → omitir completamente
-  if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up|shot.*below|looking\s+up\s+.*skirt/i.test(val)){
-    return '';
+  // ── Pernas abertas (spread legs) → sentada relaxada
+  if(/legs\s+spread|spread\s+wide|thighs\s+open|open\s+leg/i.test(val)){
+    return 'sitting cross-legged on floor, relaxed casual pose, comfortable natural position';
+  }
+
+  // ── Vulva/camel toe/genitais → pose neutra de pé
+  if(/vulva|camel.?toe|pubic\s+mound|genitals|genitalia|explicit.*fabric|fabric.*genitalia/i.test(val)){
+    return 'standing naturally, weight on one hip, relaxed casual stance';
+  }
+
+  // ── Low angle entre pernas / upskirt → pose neutra
+  if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|upward.*between|floor.*looking\s+up|shot.*below|looking\s+up\s+.*skirt/i.test(val)){
+    return 'standing naturally, weight on one hip, relaxed casual stance';
+  }
+
+  // ── Agachada com joelhos abertos → agachada neutra
+  if(/squatting.*knees\s+wide|knees\s+wide.*squatting/i.test(val)){
+    return 'squatting down casually, knees together, natural relaxed pose';
   }
 
   // ── De quatro / all fours → kneeling neutro (DALL-E interpreta como doggy style)
