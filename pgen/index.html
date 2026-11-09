@@ -9514,7 +9514,25 @@ function cleanForDALLE(text){
   if(!text) return '';
   let t = text;
   for(const rx of DALLE_BLOCKLIST) t = t.replace(rx, '');
-  // Remove frases problemáticas com contexto
+
+  // ── Palavras soltas que bloqueiam fora do blocklist ──
+  t = t.replace(/\bcock\b/gi, 'pop');           // "hip cock" → "hip pop"
+  t = t.replace(/\bcum\b/gi, '');
+  t = t.replace(/\bslut\b/gi, '');
+  t = t.replace(/\bwhore\b/gi, '');
+  t = t.replace(/\bbitch\b/gi, '');
+  t = t.replace(/\bhorny\b/gi, '');
+  t = t.replace(/\baroused\b/gi, '');
+  t = t.replace(/\blust\w*/gi, '');
+  t = t.replace(/\bporn\w*/gi, '');
+
+  // ── Peças íntimas + "visible" = bloqueio ──
+  t = t.replace(/(bra|underwear|panties|thong|lingerie|bikini|shorts|top)[^,]*\bvisible\b[^,]*/gi, '$1');
+  t = t.replace(/\bvisible\s+(bra|underwear|panties|thong|nipple)[^,]*/gi, '');
+  t = t.replace(/\bunderneath\s+visible[^,]*/gi, '');
+  t = t.replace(/\bunderneath\b/gi, 'inside');
+
+  // ── Frases problemáticas ──
   t = t.replace(/no bra[^,]*/gi, '');
   t = t.replace(/without (a )?bra[^,]*/gi, '');
   t = t.replace(/nothing (but|underneath|below|under)[^,]*/gi, '');
@@ -9522,17 +9540,29 @@ function cleanForDALLE(text){
   t = t.replace(/just (a )?(bikini|bra|underwear|shorts|towel|sheet)[^,]*/gi, 'wearing $2');
   t = t.replace(/pulling (down|aside|up)[^,]*(bra|panty|underwear|top|shorts)[^,]*/gi, '');
   t = t.replace(/exposing[^,]*/gi, '');
-  t = t.replace(/revealing[^,]*/gi, 'showing');
-  t = t.replace(/see[- ]through[^,]*/gi, 'sheer fabric');
+  t = t.replace(/revealing\b/gi, 'showing');
+  t = t.replace(/see[- ]through[^,]*/gi, 'light fabric');
   t = t.replace(/translucent[^,]*/gi, 'light fabric');
-  t = t.replace(/sheer[^,]*/gi, 'light fabric');
-  t = t.replace(/very (short|tiny|micro|minimal)[^,]*/gi, 'fitted');
-  t = t.replace(/micro (bikini|shorts|skirt|top)[^,]*/gi, 'bikini');
+  t = t.replace(/sheer\b[^,]*/gi, 'light fabric');
+  t = t.replace(/\b(micro|tiny|very short|barely there)\b\s*(bikini|shorts|skirt|top|dress)/gi, '$2');
   t = t.replace(/string (bikini|bottom|top)[^,]*/gi, 'bikini');
-  t = t.replace(/\bplastered to (her )?body[^,]*/gi, 'wet');
-  t = t.replace(/curves? (prominent|on display|visible through)[^,]*/gi, 'natural posture');
-  // limpa sobrando
-  t = t.replace(/,\s*,/g,',').replace(/,\s*,/g,',').replace(/\s{2,}/g,' ');
+  t = t.replace(/plastered to (her )?body[^,]*/gi, 'wet clothing');
+  t = t.replace(/curves? (prominent|on display|visible through)[^,]*/gi, 'natural figure');
+  t = t.replace(/clinging to (every curve|her body|body)[^,]*/gi, 'wet');
+  t = t.replace(/provocative[^,]*/gi, 'confident');
+  t = t.replace(/seductive[^,]*/gi, 'alluring');
+  t = t.replace(/sensual\b/gi, 'confident');
+  t = t.replace(/erotic\b/gi, '');
+  t = t.replace(/intimate\b/gi, 'personal');
+  t = t.replace(/\blips? parted[^,]*/gi, 'relaxed expression');
+  t = t.replace(/heavy[- ]lidded[^,]*/gi, 'relaxed gaze');
+  t = t.replace(/smoldering[^,]*/gi, 'confident look');
+  t = t.replace(/sultry[^,]*/gi, 'confident');
+  t = t.replace(/\bbite?s? (her |the )?lip[^,]*/gi, 'slight smile');
+  t = t.replace(/knowing (look|gaze|smile|smirk)[^,]*/gi, 'confident look');
+
+  // ── Limpa resultado ──
+  t = t.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
   t = t.replace(/^[,\s]+|[,\s]+$/g,'');
   return t;
 }
