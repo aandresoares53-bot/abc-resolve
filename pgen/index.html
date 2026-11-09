@@ -9893,7 +9893,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // Para poses traseiras/curvadas, força leggings (biquíni + costas = bloqueado)
   let roupa;
   if(poseIsRear){
-    roupa = 'wearing fitted athletic leggings and sports crop top, activewear, fully covered';
+    roupa = 'wearing fitted athletic bike shorts and sports crop top, activewear';
   } else {
     const roupaClean = safeClothing(preset.roupa || '');
     roupa = roupaClean || DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
