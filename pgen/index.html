@@ -9607,6 +9607,13 @@ function cleanForDALLE(text){
   t = t.replace(/\bsoft\s+longing[^,]*/gi, 'gentle expression');
   t = t.replace(/\blonging\b[^,]*/gi, 'gentle expression');
   t = t.replace(/\bhalf[- ]closed\s+eyes[^,]*/gi, 'relaxed gaze');
+  t = t.replace(/\bexpression of pleasure[^,]*/gi, 'relaxed expression');
+  t = t.replace(/\beyes.{0,15}rolled back[^,]*/gi, 'relaxed gaze');
+  t = t.replace(/\bbreath(less|y)[^,]*/gi, 'relaxed');
+  t = t.replace(/\bflushed cheeks[^,]*/gi, 'natural complexion');
+  t = t.replace(/\bgaze.{0,10}camera[^,]*/gi, 'looking at camera');
+  t = t.replace(/\bintense\s+(look|gaze|stare)[^,]*/gi, 'confident look');
+  t = t.replace(/\bpiercin\w+\s+(gaze|eyes)[^,]*/gi, 'confident look');
   // Remove "bra" word from DALL-E prompts (triggers filter even when non-explicit)
   t = t.replace(/\bmatching bra\b[^,]*/gi, '');
   t = t.replace(/\band (a )?bra\b[^,]*/gi, '');
@@ -9671,12 +9678,14 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
   const parts = [];
 
-  // Sujeito — idade implícita via frase (DALL-E bloqueia número de idade + roupa reveladora)
-  parts.push('adult woman in her early 20s, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin, real person not a model');
+  // Sujeito — idade via pill ou padrão mid-20s
+  const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
+  const subjectAge = idadePill || 'adult woman in her early 20s';
+  parts.push(`${subjectAge}, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin, real person not a model`);
 
-  // Câmera / ângulo — pill override takes priority; explicit pill values → safe equivalent
-  const anguloRaw = pills.activeAngulo !== undefined ? pills.activeAngulo : (preset.angulo || '');
-  const camRaw    = pills.activeCam    !== undefined ? pills.activeCam    : (preset.cam   || '');
+  // Câmera / ângulo — pill override → safe equivalent
+  const anguloRaw = pills.activeAngulo || (preset.angulo || '');
+  const camRaw    = pills.activeCam    || (preset.cam   || '');
   const anguloSafe = safePillVal(anguloRaw);
   const camSafe    = safePillVal(camRaw);
   const cam = cleanForDALLE(anguloSafe + (camSafe ? ', ' + camSafe : ''));
@@ -9686,28 +9695,38 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const roupa = safeClothing(preset.roupa);
   if(roupa) parts.push(roupa);
 
-  // Corpo — somente partes seguras
+  // Estado corporal (suada, molhada, bronzeada...) — pill
+  if(pills.activeEstado) parts.push(cleanForDALLE(pills.activeEstado));
+
+  // Corpo — partes seguras apenas
   const corpo = cleanForDALLE(preset.corpo||'');
   const corpoSafe = corpo.replace(/\b(medium|full|large|small)?\s*breasts?\b/gi,'').replace(/\b(full|wide|big)?\s*(buttocks|butt|ass|hips?)\b/gi,'').replace(/\s{2,}/g,' ').trim();
   if(corpoSafe) parts.push(corpoSafe);
 
-  // Pose — pill override takes priority; explicit pill values → safe equivalent
-  const poseRaw = pills.activePose !== undefined ? pills.activePose : (preset.pose || '');
+  // Pose — pill override; explicit → safePillVal
+  const poseRaw = pills.activePose || (preset.pose || '');
   const pose = cleanForDALLE(safePillVal(poseRaw) || poseRaw);
   if(pose) parts.push(pose);
 
-  // Expressão
-  const expr = cleanForDALLE(preset.expressao||'');
+  // Expressão — pill override ou preset
+  const exprRaw = pills.activeExpr || (preset.expressao || '');
+  const expr = cleanForDALLE(exprRaw);
   if(expr) parts.push(expr);
 
   // Cenário
   const cenario = cleanForDALLE(preset.cenario||'');
   if(cenario) parts.push(cenario);
 
-  // NÃO usa preset.nsfw — campo ignorado completamente
+  // Clima (chuva, neve...) — pill
+  if(pills.activeClima) parts.push(cleanForDALLE(pills.activeClima));
 
-  // Estilo fotográfico seguro
-  parts.push('lifestyle photography, natural lighting, candid authentic style, film grain, warm tones, high quality photograph, 9:16 vertical portrait');
+  // Iluminação — pill
+  if(pills.activeLuz) parts.push(cleanForDALLE(pills.activeLuz));
+
+  // Estilo de filme — pill ou padrão
+  const stylePill = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
+  const styleBase = 'lifestyle photography, natural lighting, candid authentic style, film grain, warm tones, high quality photograph, 9:16 vertical portrait';
+  parts.push(stylePill ? stylePill + ', ' + styleBase : styleBase);
 
   const joined = parts.filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
@@ -9740,15 +9759,20 @@ function copyForChatGPT(){
     return;
   }
 
-  // Check active pills for explicit content
-  const activePose   = getActivePillVal('pose');
-  const activeAngulo = getActivePillVal('angulo');
-  const activeCam    = getActivePillVal('cam');
-  // Explicit pills are sanitized by cleanForDALLE — no need to block, just clean
+  // Lê TODAS as pills ativas
+  const pills = {
+    activePose:    getActivePillVal('pose'),
+    activeAngulo:  getActivePillVal('angulo'),
+    activeCam:     getActivePillVal('cam'),
+    activeStyle:   getActivePillVal('style'),
+    activeLuz:     getActivePillVal('luz2'),
+    activeExpr:    getActivePillVal('expressao2'),
+    activeEstado:  getActivePillVal('estado'),
+    activeClima:   getActivePillVal('clima'),
+    activeIdade:   getActivePillVal('idade'),
+  };
 
-  // preset.pose and preset.angulo are sanitized inside buildChatGPTPromptFromPreset — no need to block here
-
-  const gptPrompt = buildChatGPTPromptFromPreset(preset, {activePose, activeAngulo, activeCam});
+  const gptPrompt = buildChatGPTPromptFromPreset(preset, pills);
 
   navigator.clipboard.writeText(gptPrompt).then(()=>{
     const btn=document.getElementById('btn-copy-gpt');
