@@ -9935,15 +9935,24 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
 
   // ── 7. Cenário — pose traseira + cena indoor → força outdoor ──
   const sceneDefault = DALLE_SCENE_OVERRIDE[cat];
-  const sceneIsIndoor = sceneDefault && /bedroom|interior|home|living room|bathroom/i.test(sceneDefault);
+  const sceneIsIndoor = /bedroom|interior|home|living room|bathroom|apartment/i.test(sceneDefault||'');
+  const rawCenario = cleanForDALLE(preset.cenario||'');
+  const cenarioIsIndoor = /bathroom|bedroom|apartment|indoor|interior|home|living room/i.test(rawCenario);
+  const clothingHasBikini = /bikini|two-piece|fashion set|structured top|slip dress|fitted one-piece/i.test(roupaClean);
 
   let scene;
   if(poseIsRear && sceneIsIndoor){
     scene = 'outdoor gym area, natural daylight, open air fitness space';
+  } else if(sceneDefault && !sceneIsIndoor){
+    scene = sceneDefault;
+  } else if(sceneDefault && sceneIsIndoor && clothingHasBikini){
+    scene = 'outdoor lifestyle setting, natural daylight, open air, clean background';
   } else if(sceneDefault){
     scene = sceneDefault;
+  } else if(cenarioIsIndoor && clothingHasBikini){
+    scene = 'outdoor lifestyle setting, natural daylight, clean background';
   } else {
-    scene = cleanForDALLE(preset.cenario||'');
+    scene = rawCenario;
   }
   if(scene) parts.push(scene);
 
