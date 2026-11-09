@@ -9783,6 +9783,9 @@ function safeClothing(roupa){
   // ── Substitui palavras que o DALL-E bloqueia mesmo em contexto neutro ──
   r = r.replace(/\blingerie\s+set\b/gi, 'two-piece fashion set');
   r = r.replace(/\blingerie\b/gi, 'fashion two-piece');
+  r = r.replace(/\bsports\s+bra\b/gi, 'SPORTSBRA_PLACEHOLDER');
+  r = r.replace(/\bbra\b/gi, 'bikini top');
+  r = r.replace(/SPORTSBRA_PLACEHOLDER/g, 'sports bra');
   r = r.replace(/\bgarter\b/gi, '');
   r = r.replace(/\bbabydoll\b/gi, 'slip dress');
   r = r.replace(/\bcorset\b/gi, 'fitted bustier top');
@@ -9908,7 +9911,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // Só adiciona fallback de pose se nem pill de pose nem pill de ângulo descreveram uma pose
   const camHasPose = /fold|hinge|tabletop|squat|kneel|floor|straddle|bridge|forward|lean|bend/i.test(camCombined);
   // Lingerie + straddle/pernas abertas → trocar para pose sentada neutra
-  const clothingIsIntimate = /lingerie|babydoll|corset|bodysuit/i.test(roupaClean);
+  const clothingIsIntimate = /lingerie|boudoir/.test(cat) || /lingerie|babydoll|corset|bodysuit/i.test(preset.roupa||'');
   const poseIsStraddle = /straddle|legs extended to the sides/i.test(pose);
   const finalPose = (clothingIsIntimate && poseIsStraddle)
     ? 'sitting gracefully, legs folded to one side, relaxed elegant pose'
