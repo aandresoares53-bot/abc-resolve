@@ -9891,13 +9891,8 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
 
   // ── 3. Roupa — usa vestimenta original do preset, limpa para DALL-E ──
   // Para poses traseiras/curvadas, força leggings (biquíni + costas = bloqueado)
-  let roupa;
-  if(poseIsRear){
-    roupa = 'wearing fitted athletic bike shorts and sports crop top, activewear';
-  } else {
-    const roupaClean = safeClothing(preset.roupa || '');
-    roupa = roupaClean || DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
-  }
+  const roupaClean = safeClothing(preset.roupa || '');
+  const roupa = roupaClean || DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
   parts.push(roupa);
 
   // ── 4. Estado corporal — pill ──
