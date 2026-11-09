@@ -9626,9 +9626,9 @@ function cleanForDALLE(text){
 // Substitui pill de câmera/ângulo/lente explícita por equivalente seguro para DALL-E
 function safePillVal(val){
   if(!val) return '';
-  // Câmera de bunda → omitir (DALL-E bloqueia close-up de bunda)
+  // Câmera de bunda → substituir por rear view seguro (DALL-E bloqueia close-up de bunda sem cabeça)
   if(/buttocks|close.up of butt|rear view.*no head|extreme close.up.*butt/i.test(val)){
-    return ''; // omite — sem ângulo específico
+    return 'rear view, full body, natural stance, available light';
   }
   // Low angle entre pernas → omitir (DALL-E infere upskirt)
   if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up|shot.*below/i.test(val)){
