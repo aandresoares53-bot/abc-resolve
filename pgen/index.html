@@ -9598,6 +9598,10 @@ function cleanForDALLE(text){
   t = t.replace(/\bbite?s? (her |the )?lip[^,]*/gi, 'slight smile');
   t = t.replace(/knowing (look|gaze|smile|smirk)[^,]*/gi, 'confident look');
   t = t.replace(/\bdrowsy\b[^,]*/gi, 'relaxed');
+  t = t.replace(/\bdreamy\b[^,]*/gi, 'relaxed');
+  t = t.replace(/\bsoft\s+longing[^,]*/gi, 'gentle expression');
+  t = t.replace(/\blonging\b[^,]*/gi, 'gentle expression');
+  t = t.replace(/\bhalf[- ]closed\s+eyes[^,]*/gi, 'relaxed gaze');
   // Remove "bra" word from DALL-E prompts (triggers filter even when non-explicit)
   t = t.replace(/\bmatching bra\b[^,]*/gi, '');
   t = t.replace(/\band (a )?bra\b[^,]*/gi, '');
@@ -9612,12 +9616,10 @@ function cleanForDALLE(text){
 // Substitui pill de câmera/ângulo explícita por equivalente seguro para DALL-E
 function safePillVal(val){
   if(!val) return '';
-  // Se contém conteúdo explícito de câmera → substituir por equivalente seguro
-  if(/between\s+(her\s+)?legs|inner\s+thighs.*crotch|crotch.*center|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up/i.test(val)){
-    if(/extreme.*low\s+angle|low\s+angle.*extreme/i.test(val)) return 'extreme low angle, candid';
-    if(/close.?up.*low\s+angle|low\s+angle.*close.?up/i.test(val)) return 'low angle close-up, candid';
-    if(/low\s+angle/i.test(val)) return 'low angle shot, candid';
-    return ''; // vulva marcada → sem substituição
+  // Se contém conteúdo explícito de câmera → omitir ângulo completamente
+  // "low angle" + underwear = DALL-E infere upskirt independente de palavras explícitas
+  if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up|shot.*below/i.test(val)){
+    return ''; // omite ângulo — melhor nenhum que "low angle" que implica upskirt
   }
   return val;
 }
@@ -9631,6 +9633,7 @@ function safeClothing(roupa){
   r = r.replace(/\bgarter\s+belt[^,]*/gi, '');
   r = r.replace(/\bstockings\b/gi, 'tights');
   r = r.replace(/\blace\s+(underwear|bra|set|top|panties)[^,]*/gi, '$1');
+  r = r.replace(/\w+\s+lace\s+(underwear|bra|set|top|panties)[^,]*/gi, '$1');
   r = r.replace(/\blingerie\b/gi, 'underwear');
   r = r.replace(/\bbabydoll\b/gi, 'short nightgown');
   r = r.replace(/\bcorset\b/gi, 'fitted top');
