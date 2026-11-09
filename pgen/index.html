@@ -9629,20 +9629,25 @@ function safeClothing(roupa){
   if(!roupa) return '';
   let r = roupa;
   // Ordem importa: tratar combinações antes de partes individuais
-  r = r.replace(/\blingerie\s+set\b/gi, 'underwear set');
+  // Lingerie/underwear → activewear/swimwear (DALL-E bloqueia "underwear" em contexto íntimo)
+  r = r.replace(/\blingerie\s+set\b/gi, 'bikini set');
+  r = r.replace(/\blingerie\b/gi, 'fitted outfit');
   r = r.replace(/\bgarter\s+belt[^,]*/gi, '');
   r = r.replace(/\bstockings\b/gi, 'tights');
-  r = r.replace(/\blace\s+(underwear|bra|set|top|panties)[^,]*/gi, '$1');
-  r = r.replace(/\w+\s+lace\s+(underwear|bra|set|top|panties)[^,]*/gi, '$1');
-  r = r.replace(/\blingerie\b/gi, 'underwear');
-  r = r.replace(/\bbabydoll\b/gi, 'short nightgown');
+  r = r.replace(/lace\s+(underwear|bra|set|top|panties)/gi, 'bikini top');
+  r = r.replace(/\w[\w\s]*lace\s+(underwear|bra|set|top|panties)/gi, 'bikini top');
+  r = r.replace(/\bbabydoll\b/gi, 'casual dress');
   r = r.replace(/\bcorset\b/gi, 'fitted top');
   r = r.replace(/\bfishnet\b/gi, 'patterned tights');
-  r = r.replace(/\bbralette\b/gi, 'fitted top');
-  r = r.replace(/\bpanties\b/gi, 'underwear');
-  r = r.replace(/\bthong\b/gi, 'underwear');
-  r = r.replace(/\bg-string\b/gi, 'underwear');
+  r = r.replace(/\bbralette\b/gi, 'crop top');
+  r = r.replace(/\bunderwear\s+set\b/gi, 'bikini set');
+  r = r.replace(/\bunderwear\b/gi, 'fitted shorts');
+  r = r.replace(/\bpanties\b/gi, 'fitted shorts');
+  r = r.replace(/\bthong\b/gi, 'fitted shorts');
+  r = r.replace(/\bg-string\b/gi, 'fitted shorts');
   r = r.replace(/\blatex\b/gi, 'fitted outfit');
+  r = r.replace(/\bnightgown\b/gi, 'casual dress');
+  r = r.replace(/\bsleepwear\b/gi, 'casual outfit');
   // Remove color-only artifacts like ", red,"
   r = r.replace(/,\s*(red|black|white|pink|blue|green)\s*,/gi, ',');
   r = cleanForDALLE(r);
