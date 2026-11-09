@@ -9481,104 +9481,132 @@ function copyPrompt(){
   });
 }
 
-// ── ChatGPT / DALL-E prompt converter ────────────────────────────────────────
-function buildChatGPTPrompt(){
-  const mjPrompt = document.getElementById('result-prompt').value;
-  if(!mjPrompt) return '';
+// ── ChatGPT / DALL-E prompt builder ──────────────────────────────────────────
+// Constrói do zero a partir do preset — NÃO converte o prompt MJ.
+// Campo nsfw é completamente ignorado. Linguagem 100% segura para DALL-E.
 
-  // 1. Remove tudo após --no (negativo não existe no DALL-E)
-  let p = mjPrompt.replace(/\s*--no\s+.*/s, '');
+const DALLE_BLOCKLIST = [
+  // nudez
+  /\bnud[eo]\b/gi, /\bnaked\b/gi, /\btopless\b/gi, /\bnudity\b/gi,
+  /\bbare breasts?\b/gi, /\bbare chest\b/gi, /\bno bra visible\b/gi,
+  /\bnothing underneath\b/gi, /\bnothing below\b/gi,
+  /\bnipple\b/gi, /\bbraless\b/gi,
+  // sexual
+  /\bnsfw\b/gi, /\bexplicit\b/gi, /\bsex\b/gi, /\bsexual\b/gi,
+  /\berótic\w*/gi, /\berotic\b/gi, /\bporn\b/gi,
+  /\bvulva\b/gi, /\bvagina\b/gi, /\bpenis\b/gi, /\bgenitals?\b/gi,
+  /\bintercourse\b/gi, /\bcreampie\b/gi, /\bblowjob\b/gi,
+  /\bcunnilingus\b/gi, /\banal\b/gi, /\bgangbang\b/gi,
+  /\bpenetrat\w+/gi, /\borgasm\b/gi, /\bsquirt\w*/gi,
+  /\bmasturbat\w+/gi, /\bstriptease\b/gi,
+  /\bcrotch\b/gi, /\bupshot\b/gi, /\bpanties pulled aside\b/gi,
+  /\bthong\b/gi, /\bg-string\b/gi,
+  // bdsm
+  /\bbdsm\b/gi, /\bbondage\b/gi, /\bdominatrix\b/gi, /\bsubmissive\b/gi,
+  /\btied up\b/gi, /\brope\b/gi, /\bwhip\b/gi, /\brestrained\b/gi,
+  // plataformas / escorts
+  /\bonlyfans\b/gi, /\bescort\b/gi,
+  // sensual words DALL-E tende a rejeitar em contexto
+  /\bprovocative\b/gi, /\bseductive\b/gi,
+];
 
-  // 2. Remove todos os parâmetros MJ (--ar, --v, --style, --chaos, --s, --seed, --cref, --cw)
-  p = p.replace(/\s*--(ar|v|style|chaos|s|seed|cref|cw|iw|niji|q|stop|tile|video|repeat|weird|turbo|relax|fast)\s+\S*/gi, '');
+function cleanForDALLE(text){
+  if(!text) return '';
+  let t = text;
+  for(const rx of DALLE_BLOCKLIST) t = t.replace(rx, '');
+  // Remove frases problemáticas com contexto
+  t = t.replace(/no bra[^,]*/gi, '');
+  t = t.replace(/without (a )?bra[^,]*/gi, '');
+  t = t.replace(/nothing (but|underneath|below|under)[^,]*/gi, '');
+  t = t.replace(/barely (covered|secured|wrapped|clothed)[^,]*/gi, 'wearing minimal clothing');
+  t = t.replace(/just (a )?(bikini|bra|underwear|shorts|towel|sheet)[^,]*/gi, 'wearing $2');
+  t = t.replace(/pulling (down|aside|up)[^,]*(bra|panty|underwear|top|shorts)[^,]*/gi, '');
+  t = t.replace(/exposing[^,]*/gi, '');
+  t = t.replace(/revealing[^,]*/gi, 'showing');
+  t = t.replace(/see[- ]through[^,]*/gi, 'sheer fabric');
+  t = t.replace(/translucent[^,]*/gi, 'light fabric');
+  t = t.replace(/sheer[^,]*/gi, 'light fabric');
+  t = t.replace(/very (short|tiny|micro|minimal)[^,]*/gi, 'fitted');
+  t = t.replace(/micro (bikini|shorts|skirt|top)[^,]*/gi, 'bikini');
+  t = t.replace(/string (bikini|bottom|top)[^,]*/gi, 'bikini');
+  t = t.replace(/\bplastered to (her )?body[^,]*/gi, 'wet');
+  t = t.replace(/curves? (prominent|on display|visible through)[^,]*/gi, 'natural posture');
+  // limpa sobrando
+  t = t.replace(/,\s*,/g,',').replace(/,\s*,/g,',').replace(/\s{2,}/g,' ');
+  t = t.replace(/^[,\s]+|[,\s]+$/g,'');
+  return t;
+}
 
-  // 3. Remove referências de fotógrafos que DALL-E pode bloquear
-  p = p.replace(/Nan Goldin,?\s*/gi, '');
-  p = p.replace(/Larry Clark,?\s*/gi, '');
+// Mapeamento de roupas sensíveis para versão segura
+function safeClothing(roupa){
+  if(!roupa) return '';
+  let r = cleanForDALLE(roupa);
+  // lingerie → underwear/clothing contextual
+  r = r.replace(/\blingerie\b/gi, 'underwear set');
+  r = r.replace(/\bbabydoll\b/gi, 'short nightgown');
+  r = r.replace(/\bcorset\b/gi, 'fitted top');
+  r = r.replace(/\bfishnet\b/gi, 'patterned tights');
+  r = r.replace(/\bbralette\b/gi, 'bra top');
+  r = r.replace(/\bpanties\b/gi, 'underwear');
+  r = r.replace(/\bthong\b/gi, 'underwear');
+  r = r.replace(/\bg-string\b/gi, 'underwear');
+  r = r.replace(/\blatex\b/gi, 'fitted outfit');
+  return r;
+}
 
-  // 4. Substitui termos de filmstock MJ-específicos por equivalentes DALL-E
-  p = p.replace(/35mm snapshot,?\s*/gi, 'photorealistic photograph, ');
-  p = p.replace(/circa 2006,?\s*/gi, '');
-  p = p.replace(/camera shake,?\s*/gi, '');
-  p = p.replace(/expired film,?\s*/gi, '');
-  p = p.replace(/light leak,?\s*/gi, '');
-  p = p.replace(/Kodak Ultramax 800,?\s*/gi, 'film grain, warm tones, ');
-  p = p.replace(/Kodak Portra 400,?\s*/gi, 'soft film tones, ');
-  p = p.replace(/Fujifilm Superia,?\s*/gi, 'vivid film colors, ');
-  p = p.replace(/Ilford HP5,?\s*/gi, 'black and white film, ');
-  p = p.replace(/,\s*grain\b/gi, '');
+function buildChatGPTPromptFromPreset(preset){
+  const parts = [];
 
-  // 5. Substitui palavras que bloqueiam DALL-E por equivalentes seguros
-  const replacements = [
-    [/\bnude\b/gi,            'in minimal clothing'],
-    [/\bnaked\b/gi,           'in minimal clothing'],
-    [/\bnudity\b/gi,          'minimal clothing'],
-    [/\btopless\b/gi,         'bare shoulders and upper back'],
-    [/\bnsfw\b/gi,            'sensual'],
-    [/\bexplicit\b/gi,        'suggestive'],
-    [/\bvulva\b/gi,           'intimate area'],
-    [/\bvagina\b/gi,          'intimate area'],
-    [/\bpenis\b/gi,           'intimate area'],
-    [/\bgenitals?\b/gi,       'intimate area'],
-    [/\bintercourse\b/gi,     'intimate moment'],
-    [/\bsex\b/gi,             'intimate'],
-    [/\bporn\b/gi,            'sensual photography'],
-    [/\bxxxb/gi,              'sensual'],
-    [/\bcreampie\b/gi,        'intimate scene'],
-    [/\bblowjob\b/gi,         'intimate close moment'],
-    [/\bcunnilingus\b/gi,     'intimate moment'],
-    [/\banal\b/gi,            'intimate'],
-    [/\bgangbang\b/gi,        'intimate scene'],
-    [/\bpenetration\b/gi,     'intimate contact'],
-    [/\bcowgirl position\b/gi,'intimate position'],
-    [/\bdoggy\b/gi,           'intimate pose'],
-    [/\bmissionary\b/gi,      'intimate lying pose'],
-    [/\bpanties pulled aside\b/gi, 'minimal underwear'],
-    [/\bpanties\b/gi,         'underwear'],
-    [/\bthong\b/gi,           'minimal underwear'],
-    [/\bcrotch\b/gi,          'lower body'],
-    [/\bupshot\b/gi,          'low angle shot'],
-    [/\bbdsm\b/gi,            'dramatic fashion'],
-    [/\bdominatrix\b/gi,      'confident woman'],
-    [/\bsubmissive\b/gi,      'relaxed'],
-    [/\bbondage\b/gi,         'dramatic pose'],
-    [/\btied up\b/gi,         'dramatic pose'],
-    [/\bfisting\b/gi,         'intimate scene'],
-    [/\bsquirt\b/gi,          'intense expression'],
-    [/\borgasm\b/gi,          'peak expression'],
-    [/\bmasturbat\w+/gi,      'self-portrait'],
-    [/\bstriptease\b/gi,      'revealing clothing'],
-    [/\bescort\b/gi,          'confident woman'],
-    [/\bonlyfans\b/gi,        'content creator'],
-  ];
-  for(const [from, to] of replacements){
-    p = p.replace(from, to);
-  }
+  // Sujeito — sem idade numérica (DALL-E é sensível com idade + roupas revealing)
+  parts.push('young adult woman, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
 
-  // 6. Remove vírgulas duplas e espaços extras
-  p = p.replace(/,\s*,/g, ',').replace(/,\s*,/g, ',').trim();
-  p = p.replace(/\s{2,}/g, ' ').trim();
-  p = p.replace(/^,\s*/, '').replace(/,\s*$/, '');
+  // Câmera / ângulo se disponível
+  const cam = cleanForDALLE((preset.angulo||'') + (preset.cam ? ', ' + preset.cam : ''));
+  if(cam) parts.push(cam);
 
-  // 7. Adiciona instrução de formato 9:16 no início para DALL-E
-  p = 'Create a photorealistic image in 9:16 vertical portrait format. ' + p + '. High quality photograph, natural lighting, candid style, real person aesthetic.';
+  // Roupa — sanitizada
+  const roupa = safeClothing(preset.roupa);
+  if(roupa) parts.push(roupa);
 
-  return p;
+  // Corpo — somente partes seguras (sem "natural breasts", "wide hips" etc que podem ser associadas)
+  const corpo = cleanForDALLE(preset.corpo||'');
+  const corpoSafe = corpo.replace(/\b(medium|full|large|small)?\s*breasts?\b/gi,'').replace(/\b(full|wide|big)?\s*(buttocks|butt|ass|hips?)\b/gi,'').replace(/\s{2,}/g,' ').trim();
+  if(corpoSafe) parts.push(corpoSafe);
+
+  // Pose
+  const pose = cleanForDALLE(preset.pose||'');
+  if(pose) parts.push(pose);
+
+  // Expressão
+  const expr = cleanForDALLE(preset.expressao||'');
+  if(expr) parts.push(expr);
+
+  // Cenário
+  const cenario = cleanForDALLE(preset.cenario||'');
+  if(cenario) parts.push(cenario);
+
+  // NÃO usa preset.nsfw — campo ignorado completamente
+
+  // Estilo fotográfico seguro
+  parts.push('lifestyle photography, natural lighting, candid authentic style, film grain, warm tones, high quality photograph, 9:16 vertical portrait');
+
+  const joined = parts.filter(Boolean).join(', ')
+    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
+
+  return 'Photorealistic photograph: ' + joined + '.';
 }
 
 function copyForChatGPT(){
-  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-  if(!p){ showToast('⚠ Selecione um preset primeiro'); return; }
+  const preset = PRESETS_RAW.find(x=>x.key===selectedKey);
+  if(!preset){ showToast('⚠ Selecione um preset primeiro'); return; }
 
-  // Bloqueia categorias explicitamente sexuais
   const sexCats = ['posicoes','extremo','pov_extremo','explicito_suave'];
-  if(sexCats.includes(p.cat)){
-    showToast('⚠ ChatGPT não suporta conteúdo explícito — use Midjourney');
+  if(sexCats.includes(preset.cat)){
+    showToast('⚠ ChatGPT não aceita conteúdo explícito — use Midjourney');
     return;
   }
 
-  const gptPrompt = buildChatGPTPrompt();
-  if(!gptPrompt){ showToast('⚠ Gere um prompt primeiro'); return; }
+  const gptPrompt = buildChatGPTPromptFromPreset(preset);
 
   navigator.clipboard.writeText(gptPrompt).then(()=>{
     const btn=document.getElementById('btn-copy-gpt');
