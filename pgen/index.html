@@ -9704,9 +9704,9 @@ function safePillVal(val){
     return 'low angle upward shot from floor, legs extending upward on both sides, wide angle lens, natural light from above';
   }
 
-  // ── Dobrada (buttocks toward camera bent over) → yoga forward fold
+  // ── Dobrada (buttocks toward camera bent over) → hip hinge side view
   if(/bent over.*buttocks.*toward|buttocks.*pushed.*camera|torso folded forward.*buttocks/i.test(val)){
-    return 'yoga forward fold pose, bending forward, hands toward floor, back straight, rear three-quarter view, fitness photography';
+    return 'athletic hip hinge, hands resting on knees, bent at hips, side profile view, fitness stretch photography';
   }
 
   // ── Close bunda fill frame → back view fashion crop
@@ -9739,9 +9739,9 @@ function safePillVal(val){
     return 'yoga tabletop position, hands and knees on mat, spine neutral, back horizontal, fitness photography, side view';
   }
 
-  // ── Curvada / bent over → yoga forward fold
+  // ── Curvada / bent over → standing forward lean side profile
   if(/bent forward at waist|bent over/i.test(val)){
-    return 'yoga forward bend, bending at waist, hands reaching toward floor, spine long, side profile, fitness editorial';
+    return 'leaning forward, hands on surface, standing, slight forward tilt, side profile view, fitness photography';
   }
 
   // ── Foco em bunda raised → glute bridge / hip thrust fitness
@@ -9901,8 +9901,10 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // ── 4. Estado corporal — pill ──
   if(pills.activeEstado) parts.push(cleanForDALLE(pills.activeEstado));
 
+  // Só adiciona fallback de pose se nem pill de pose nem pill de ângulo descreveram uma pose
+  const camHasPose = /fold|hinge|tabletop|squat|kneel|squat|floor|straddle|bridge|forward|lean|bend/i.test(camCombined);
   if(pose) parts.push(pose);
-  else parts.push('natural relaxed pose, standing or sitting casually');
+  else if(!camHasPose) parts.push('natural relaxed pose, standing or sitting casually');
 
   // ── 6. Expressão — somente pill ──
   const exprRaw = pills.activeExpr || '';
