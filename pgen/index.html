@@ -9795,6 +9795,10 @@ const DALLE_CLOTHING = {
   narrativa:   'wearing casual outfit appropriate for the setting',
   poses_livres:'wearing casual everyday outfit',
   ana:         'wearing casual outfit',
+  posicoes:    'wearing colorful bikini or fitted activewear, casual summer outfit',
+  extremo:     'wearing casual lifestyle outfit, comfortable clothes',
+  pov_extremo: 'wearing casual home outfit, comfortable clothes',
+  explicito_suave: 'wearing casual everyday outfit',
 };
 
 // ── Cenários seguros por categoria (substitui preset.cenario para cats íntimas) ──
@@ -9814,6 +9818,10 @@ const DALLE_SCENE_OVERRIDE = {
   ana:         'outdoor setting, natural daylight',
   no_carro:    'car interior, natural window light from outside, daytime',
   hotel:       'modern hotel room, natural window light, bright clean interior',
+  posicoes:    'modern bedroom, natural window light, cozy casual atmosphere, daytime',
+  extremo:     'outdoor lifestyle setting, natural daylight, casual environment',
+  pov_extremo: 'modern bright living room, natural window light, casual home atmosphere',
+  explicito_suave: 'modern home interior, natural daylight, clean bright space',
 };
 
 function buildChatGPTPromptFromPreset(preset, pillOverrides){
@@ -9897,7 +9905,7 @@ function copyForChatGPT(){
   const preset = PRESETS_RAW.find(x=>x.key===selectedKey);
   if(!preset){ showToast('⚠ Selecione um preset primeiro'); return; }
 
-  const sexCats = ['posicoes','extremo','pov_extremo','explicito_suave','nude'];
+  const sexCats = ['explicito_suave','nude'];
   if(sexCats.includes(preset.cat)){
     showToast('⚠ ChatGPT não aceita conteúdo explícito — use Midjourney');
     return;
