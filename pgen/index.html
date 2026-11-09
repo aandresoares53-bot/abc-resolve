@@ -9485,208 +9485,71 @@ function copyPrompt(){
 // Constrói do zero a partir do preset — NÃO converte o prompt MJ.
 // Campo nsfw é completamente ignorado. Linguagem 100% segura para DALL-E.
 
-const DALLE_BLOCKLIST = [
-  // nudez
-  /\bnud[eo]\b/gi, /\bnaked\b/gi, /\btopless\b/gi, /\bnudity\b/gi,
-  /\bbare breasts?\b/gi, /\bbare chest\b/gi, /\bno bra visible\b/gi,
-  /\bnothing underneath\b/gi, /\bnothing below\b/gi,
-  /\bnipple\b/gi, /\bbraless\b/gi,
-  // sexual
-  /\bnsfw\b/gi, /\bexplicit\b/gi, /\bsex\b/gi, /\bsexual\b/gi,
-  /\berótic\w*/gi, /\berotic\b/gi, /\bporn\b/gi,
-  /\bvulva\b/gi, /\bvagina\b/gi, /\bpenis\b/gi, /\bgenitals?\b/gi,
-  /\bintercourse\b/gi, /\bcreampie\b/gi, /\bblowjob\b/gi,
-  /\bcunnilingus\b/gi, /\banal\b/gi, /\bgangbang\b/gi,
-  /\bpenetrat\w+/gi, /\borgasm\b/gi, /\bsquirt\w*/gi,
-  /\bmasturbat\w+/gi, /\bstriptease\b/gi,
-  /\bcrotch\b/gi, /\bupshot\b/gi, /\bpanties pulled aside\b/gi,
-  /\bthong\b/gi, /\bg-string\b/gi,
-  // bdsm
-  /\bbdsm\b/gi, /\bbondage\b/gi, /\bdominatrix\b/gi, /\bsubmissive\b/gi,
-  /\btied up\b/gi, /\brope\b/gi, /\bwhip\b/gi, /\brestrained\b/gi,
-  // plataformas / escorts
-  /\bonlyfans\b/gi, /\bescort\b/gi,
-  // body parts that trigger in sexual context
-  /\buttocks\b/gi, /\bglutes?\b/gi,
-  /\bahegao\b/gi,
-  // sensual words DALL-E tende a rejeitar em contexto
-  /\bprovocative\b/gi, /\bseductive\b/gi,
-];
-
+// Remove APENAS o que DALL-E 3 definitivamente bloqueia — atos sexuais, genitália, nudez total
 function cleanForDALLE(text){
   if(!text) return '';
   let t = text;
-  for(const rx of DALLE_BLOCKLIST) t = t.replace(rx, '');
 
-  // ── Palavras soltas que bloqueiam fora do blocklist ──
-  t = t.replace(/\bcock\b/gi, 'pop');           // "hip cock" → "hip pop"
-  t = t.replace(/\bcum\b/gi, '');
-  t = t.replace(/\bslut\b/gi, '');
-  t = t.replace(/\bwhore\b/gi, '');
-  t = t.replace(/\bbitch\b/gi, '');
-  t = t.replace(/\bhorny\b/gi, '');
-  t = t.replace(/\baroused\b/gi, '');
-  t = t.replace(/\blust\w*/gi, '');
-  t = t.replace(/\bporn\w*/gi, '');
+  // Atos sexuais explícitos
+  t = t.replace(/\bblowjob\b[^,]*/gi, '');
+  t = t.replace(/\bcunnilingus\b[^,]*/gi, '');
+  t = t.replace(/\bpenetrat\w+[^,]*/gi, '');
+  t = t.replace(/\borgasm\b[^,]*/gi, '');
+  t = t.replace(/\bsquirt\w*[^,]*/gi, '');
+  t = t.replace(/\bmasturbat\w+[^,]*/gi, '');
+  t = t.replace(/\bgangbang\b[^,]*/gi, '');
+  t = t.replace(/\bcreampie\b[^,]*/gi, '');
+  t = t.replace(/\bintercourse\b[^,]*/gi, '');
+  t = t.replace(/\bstriptease\b[^,]*/gi, '');
 
-  // ── Peças íntimas + "visible" = bloqueio ──
-  t = t.replace(/(bra|underwear|panties|thong|lingerie|bikini|shorts|top)[^,]*\bvisible\b[^,]*/gi, '$1');
-  t = t.replace(/\bvisible\s+(bra|underwear|panties|thong|nipple)[^,]*/gi, '');
-  t = t.replace(/\bunderneath\s+visible[^,]*/gi, '');
-  t = t.replace(/\bunderneath\b/gi, 'inside');
-
-  // ── Ângulos/poses explícitos de câmera ──
-  // Replace entire "POV low angle" phrases with safe equivalent before partial cleanup
-  t = t.replace(/low angle upward shot[^,]*/gi, 'low angle');
-  t = t.replace(/\b(shot\s+)?from\s+below\s+between[^,]*/gi, 'low angle shot');
-  t = t.replace(/\bshot\s+from\s+below[^,]*/gi, 'low angle shot');
-  t = t.replace(/\binner\s+thighs?\s+and\s*,?[^,]*/gi, '');   // "inner thighs and ," artifact
-  t = t.replace(/\binner\s+thighs?\s+(and\s+)?(crotch|genitals?|visible|filling)[^,]*/gi, '');
-  t = t.replace(/\binner\s+thighs?\b[^,]*/gi, 'upper legs');
-  t = t.replace(/\b(crotch|genitals?|pubic)[^,]*(filling|dominating|centered|center of frame)[^,]*/gi, '');
-  t = t.replace(/\b(filling|dominating)[^,]*(crotch|genitals?|frame)[^,]*/gi, '');
-  t = t.replace(/\bupward angle[^,]*(between|floor|legs?|feet)[^,]*/gi, 'low angle');
-  t = t.replace(/\bstraight up between[^,]*/gi, 'low angle');
-  t = t.replace(/\bfloor.?level[^,]*(looking up|close.?up)[^,]*/gi, 'low angle');
-  t = t.replace(/\blegs?\s+extending\s+upward[^,]*/gi, '');
-  t = t.replace(/\bcamel.?toe[^,]*/gi, '');
-  t = t.replace(/\bpubic mound[^,]*/gi, '');
-  t = t.replace(/\bgenitalia[^,]*/gi, '');
-  t = t.replace(/\bgenitals?\b[^,]*/gi, '');
+  // Genitália explícita
+  t = t.replace(/\bvulva\b[^,]*/gi, '');
+  t = t.replace(/\bvagina\b[^,]*/gi, '');
+  t = t.replace(/\bpenis\b[^,]*/gi, '');
+  t = t.replace(/\bgenitali[^,]*/gi, '');
+  t = t.replace(/\bpubic\s+mound\b[^,]*/gi, '');
+  t = t.replace(/\bcamel.?toe\b[^,]*/gi, '');
   t = t.replace(/\bcrotch\b[^,]*/gi, '');
-  t = t.replace(/\binner thighs?\s+visible[^,]*/gi, '');
-  t = t.replace(/\bthighs?\s+open[^,]*/gi, 'legs apart');
-  t = t.replace(/\bknees?\s+wide[^,]*/gi, 'legs apart');
-  t = t.replace(/\blegs?\s+spread\s+wide[^,]*/gi, 'legs apart');
-  t = t.replace(/\bopen\s+leg\s+position[^,]*/gi, 'relaxed seated pose');
-  t = t.replace(/\bbarely\s+covering[^,]*/gi, '');
-  t = t.replace(/\bhalf[- ]unbuttoned[^,]*/gi, '');
-  t = t.replace(/\bunbuttoned[^,]*/gi, '');
-  t = t.replace(/\bpartially\s+open[^,]*/gi, '');
-  t = t.replace(/\bsexualiz\w+[^,]*/gi, '');
-  t = t.replace(/\bneon\s+(pink|rosa|purple|roxo)[^,]*/gi, 'colorful lighting');
-  // hardened nipples / visible through = blocker
-  t = t.replace(/hardened\s+nipples?[^,]*/gi, '');
-  t = t.replace(/nipples?\s+(visible|through|under)[^,]*/gi, '');
-  // Pose triggers
-  t = t.replace(/trailing\s+up\s+(her\s+)?thigh[^,]*/gi, 'resting on leg');
-  t = t.replace(/\bback\s+arched[^,]*/gi, 'straight posture');
-  // Deduplicate repeated "low angle" after all substitutions
-  t = t.replace(/(low angle[^,]*,\s*){2,}/gi, 'low angle, ');
+  t = t.replace(/\bgenitals?\b[^,]*/gi, '');
 
-  // ── Frases problemáticas ──
-  t = t.replace(/no bra[^,]*/gi, '');
-  t = t.replace(/without (a )?bra[^,]*/gi, '');
-  t = t.replace(/nothing (but|underneath|below|under)[^,]*/gi, '');
-  t = t.replace(/barely (covered|secured|wrapped|clothed)[^,]*/gi, 'wearing minimal clothing');
-  t = t.replace(/just (a )?(bikini|bra|underwear|shorts|towel|sheet)[^,]*/gi, 'wearing $2');
-  t = t.replace(/pulling (down|aside|up)[^,]*(bra|panty|underwear|top|shorts)[^,]*/gi, '');
-  t = t.replace(/exposing[^,]*/gi, '');
-  t = t.replace(/revealing\b/gi, 'showing');
-  t = t.replace(/see[- ]through[^,]*/gi, 'light fabric');
-  t = t.replace(/translucent[^,]*/gi, 'light fabric');
-  t = t.replace(/sheer\b[^,]*/gi, 'light fabric');
-  t = t.replace(/\b(micro|tiny|very short|barely there)\b\s*(bikini|shorts|skirt|top|dress)/gi, '$2');
-  t = t.replace(/string (bikini|bottom|top)[^,]*/gi, 'bikini');
-  t = t.replace(/plastered to (her )?body[^,]*/gi, 'wet clothing');
-  t = t.replace(/curves? (prominent|on display|visible through)[^,]*/gi, 'natural figure');
-  t = t.replace(/clinging to (every curve|her body|body)[^,]*/gi, 'wet');
-  t = t.replace(/provocative[^,]*/gi, 'confident');
-  t = t.replace(/seductive[^,]*/gi, 'alluring');
-  t = t.replace(/sensual\b/gi, 'confident');
-  t = t.replace(/erotic\b/gi, '');
-  t = t.replace(/intimate\b/gi, 'personal');
-  t = t.replace(/\blips?\b[^,]{0,20}\bparted\b[^,]*/gi, 'relaxed expression');
-  t = t.replace(/\bparted\b[^,]{0,10}\blips?\b[^,]*/gi, 'relaxed expression');
-  t = t.replace(/\bmouth\b[^,]{0,15}\bopen\b[^,]*/gi, 'relaxed expression');
-  t = t.replace(/heavy[- ]lidded[^,]*/gi, 'relaxed gaze');
-  t = t.replace(/half[- ]lidded[^,]*/gi, 'relaxed gaze');
-  t = t.replace(/smoldering[^,]*/gi, 'confident look');
-  t = t.replace(/sultry[^,]*/gi, 'confident');
-  t = t.replace(/\bbit(?:e[sd]?|ing)[^,]*lip[^,]*/gi, 'slight smile');
-  t = t.replace(/\blip[^,]*bit(?:e[sd]?|ing)[^,]*/gi, 'slight smile');
-  t = t.replace(/\bteeth\s+graz\w+[^,]*/gi, '');
-  t = t.replace(/\bgraz\w+\s+(?:her\s+)?lip[^,]*/gi, 'slight smile');
-  t = t.replace(/knowing (look|gaze|smile|smirk)[^,]*/gi, 'confident look');
-  t = t.replace(/\bdrowsy\b[^,]*/gi, 'relaxed');
-  t = t.replace(/\bdreamy\b[^,]*/gi, 'relaxed');
-  t = t.replace(/\bsoft\s+longing[^,]*/gi, 'gentle expression');
-  t = t.replace(/\blonging\b[^,]*/gi, 'gentle expression');
-  t = t.replace(/\bhalf[- ]closed\s+eyes[^,]*/gi, 'relaxed gaze');
-  t = t.replace(/\bexpression of pleasure[^,]*/gi, 'relaxed expression');
-  t = t.replace(/\beyes.{0,15}rolled back[^,]*/gi, 'relaxed gaze');
-  t = t.replace(/\bbreath(less|y)[^,]*/gi, 'relaxed');
-  t = t.replace(/\bflushed cheeks[^,]*/gi, 'natural complexion');
-  t = t.replace(/\bgaze.{0,10}camera[^,]*/gi, 'looking at camera');
-  t = t.replace(/\bintense\s+(look|gaze|stare)[^,]*/gi, 'confident look');
-  t = t.replace(/\bpiercin\w+\s+(gaze|eyes)[^,]*/gi, 'confident look');
-  // Remove "bra" word from DALL-E prompts (triggers filter even when non-explicit)
-  t = t.replace(/\bmatching bra\b[^,]*/gi, '');
-  t = t.replace(/\band (a )?bra\b[^,]*/gi, '');
-  t = t.replace(/,?\s*\bbra\b[^,]*/gi, '');
+  // Mamilos em contexto explícito
+  t = t.replace(/\bhardened\s+nipples?[^,]*/gi, '');
+  t = t.replace(/\bnipples?\s+(visible|through|erect|hardened)[^,]*/gi, '');
+  t = t.replace(/\bnipple\b[^,]*/gi, '');
 
-  // ── Idade — números específicos bloqueiam DALL-E com roupas revealing ──
-  t = t.replace(/\bwoman appearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s');
-  t = t.replace(/\bappearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'in her early 20s');
-  t = t.replace(/\b(age[d]?\s+)?(18|19)\b[^,]*/gi, '');
+  // Nudez total
+  t = t.replace(/\bfully\s+nude\b[^,]*/gi, '');
+  t = t.replace(/\bcompletely\s+naked\b[^,]*/gi, '');
+  t = t.replace(/\bnaked\b[^,]*/gi, '');
+  t = t.replace(/\bnudity\b[^,]*/gi, '');
+  t = t.replace(/\btopless\b[^,]*/gi, '');
+  t = t.replace(/\bbare\s+breasts?\b[^,]*/gi, '');
+  t = t.replace(/\bbare\s+chest\b[^,]*/gi, '');
+  t = t.replace(/\bbare\s+(buttocks|butt|rear)\b[^,]*/gi, '');
+  t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist)[^,]*/gi, '');
+  t = t.replace(/\bor\s+nude\b[^,]*/gi, '');
 
-  // ── Poses implicitamente sexuais sem palavras explícitas ──
-  t = t.replace(/\bnatural body weight visible[^,]*/gi, 'relaxed natural pose');
-  t = t.replace(/\bon hands and knees[^,]*looking back[^,]*/gi, 'kneeling, looking to the side');
-  t = t.replace(/\bon all fours[^,]*looking back[^,]*/gi, 'kneeling, looking to the side');
-  t = t.replace(/\bback\s+(\w+\s+)?arched[^,]*/gi, 'straight posture');
-  t = t.replace(/\blegs?\s+spread\b(?!\s+wide)[^,]*/gi, 'legs apart');
-  t = t.replace(/\bknees?\s+apart[^,]*/gi, 'relaxed stance');
-  t = t.replace(/leggings?\s+(?:stretched\s+|tight\s+)+across[^,]*/gi, 'leggings');
-  t = t.replace(/\b(across|over|on|showing|raised)\s+(the\s+)?(buttocks|butt|rear|ass)\b[^,]*/gi, '');
-  t = t.replace(/\bbuttocks\s+(raised|empinada|toward|back|up|prominently)[^,]*/gi, '');
-  t = t.replace(/\bbuttocks\b[^,]*/gi, '');
-  t = t.replace(/\b(between\s+(her\s+)?legs|between\s+the\s+knees)[^,]*/gi, '');
-  t = t.replace(/\blooking\s+back\s+between[^,]*/gi, 'looking back over shoulder');
-  t = t.replace(/\bnothing\s+from\s+waist\s+down[^,]*/gi, '');
-  t = t.replace(/\bbare\s+(back|buttocks|butt|rear|bottom)\b[^,]*/gi, '');
-  // Squatting + knees wide implication
-  t = t.replace(/\bsquatt?ing\s+low[^,]*/gi, 'squatting');
-  t = t.replace(/\bknees?\s+wide[^,]*/gi, 'relaxed stance');
-  t = t.replace(/\bhips?\s+sunk\s+low[^,]*/gi, 'low position');
+  // Palavrões
+  t = t.replace(/\bslut\b/gi, ''); t = t.replace(/\bwhore\b/gi, '');
+  t = t.replace(/\bcum\b/gi, ''); t = t.replace(/\bhorny\b/gi, '');
+  t = t.replace(/\bporn\w*/gi, ''); t = t.replace(/\berotic\b/gi, '');
+  t = t.replace(/\bahegao\b/gi, '');
 
-  // ── Palavras de conotação sensual/sexual que passam pelo blocklist ──
-  t = t.replace(/\bsuggestive\b/gi, 'confident');
-  t = t.replace(/\bflirtatious\b/gi, 'friendly');
-  t = t.replace(/\bcoy\b/gi, 'playful');
-  t = t.replace(/\bsensual\b/gi, 'confident');
-  t = t.replace(/\bsensual\s+energy\b[^,]*/gi, '');
-  t = t.replace(/\bindulgent\b/gi, 'relaxed');
-  t = t.replace(/\bpleasure\b/gi, 'enjoyment');
-  // Clothing revealing descriptors
-  t = t.replace(/\bbarely\s+covers?\s+(body|skin|thighs?)[^,]*/gi, '');
-  t = t.replace(/\bcandid\s+sensual[^,]*/gi, 'candid');
-  t = t.replace(/\bnatural\s+body\s+showing\s+through[^,]*/gi, 'natural fit');
-  t = t.replace(/\bnatural\s+curves?\s+in\s+sunlight[^,]*/gi, 'natural');
-  t = t.replace(/\bskin\s+glistening\b[^,]*/gi, 'natural skin');
-  t = t.replace(/\bwet\s+bikini\s+clinging[^,]*/gi, 'wet bikini');
-  t = t.replace(/\bsports?\s+bra\s+bouncing[^,]*/gi, 'sports bra');
-  t = t.replace(/\bshorts?\s+riding\s+up[^,]*/gi, 'athletic shorts');
-  t = t.replace(/\bclinging\s+to\s+(natural\s+)?curves[^,]*/gi, 'fitted');
-  t = t.replace(/\bclothing\s+clinging[^,]*/gi, 'clothing');
-  t = t.replace(/\bskin\s+visible\s+through[^,]*/gi, 'light fabric');
-  t = t.replace(/\body\s+open[^,]*/gi, 'relaxed pose');
-  t = t.replace(/\buninhibited[^,]*/gi, 'free');
-  t = t.replace(/\bcandy[- ]colored[^,]*/gi, 'colorful');
+  // BDSM explícito
+  t = t.replace(/\bbdsm\b/gi, ''); t = t.replace(/\bbondage\b/gi, '');
+  t = t.replace(/\bpenetrat\w+/gi, '');
 
-  // ── Remove contradições indoor/outdoor ──
-  t = t.replace(/,?\s*\bindoor natural light\b[^,]*/gi, '');
-  t = t.replace(/,?\s*\bno artificial source\b[^,]*/gi, '');
+  // Câmera entre pernas apontando para genitália (não "between legs" genérico)
+  t = t.replace(/\binner\s+thighs?\s+(and\s+)?(crotch|genitals?|filling)[^,]*/gi, 'upper legs');
+  t = t.replace(/\b(crotch|genitals?|pubic)[^,]*(filling|centered|center\s+of\s+frame)[^,]*/gi, '');
+  t = t.replace(/\bstraight up between\s+legs?[^,]*/gi, 'low angle shot');
+  t = t.replace(/\bshot\s+from\s+below\s+between\s+legs?[^,]*/gi, 'low angle shot');
 
-  // ── Limpa resultado ──
-  // Remove frases duplicadas (ex: "legs apart, legs apart")
-  t = t.replace(/\b([\w ]{4,30}),\s*\1\b/gi, '$1');
-  // Remove "and ," artifact
-  t = t.replace(/\band\s*,/g, ',');
-  t = t.replace(/\band\s*$/g, '');
-  // Remove duplicate color tokens like ", red, red ..." or "red tights, red tights"
-  t = t.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|orange)\s*,\s*\1\b/gi, ', $1,');
-  t = t.replace(/\b(red|black|white|pink|blue|green|purple|yellow|orange)\s+(\w+),\s*\1\s+\2\b/gi, '$1 $2');
+  // Segurança de idade
+  t = t.replace(/\bwoman appearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman');
+  t = t.replace(/\b(18|19)\b/g, '');
+
+  // Limpeza de artefatos
   t = t.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
   t = t.replace(/^[,\s]+|[,\s]+$/g,'');
   return t;
