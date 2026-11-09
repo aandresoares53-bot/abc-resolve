@@ -9556,6 +9556,10 @@ function cleanForDALLE(text){
   t = t.replace(/\bknees?\s+wide[^,]*/gi, 'legs apart');
   t = t.replace(/\blegs?\s+spread\s+wide[^,]*/gi, 'legs apart');
   t = t.replace(/\bopen\s+leg\s+position[^,]*/gi, 'relaxed seated pose');
+  t = t.replace(/\bbarely\s+covering[^,]*/gi, '');
+  t = t.replace(/\bhalf[- ]unbuttoned[^,]*/gi, '');
+  t = t.replace(/\bunbuttoned[^,]*/gi, '');
+  t = t.replace(/\bpartially\s+open[^,]*/gi, '');
   t = t.replace(/\bsexualiz\w+[^,]*/gi, '');
   t = t.replace(/\bneon\s+(pink|rosa|purple|roxo)[^,]*/gi, 'colorful lighting');
   // hardened nipples / visible through = blocker
@@ -9590,6 +9594,7 @@ function cleanForDALLE(text){
   t = t.replace(/erotic\b/gi, '');
   t = t.replace(/intimate\b/gi, 'personal');
   t = t.replace(/\blips?\b[^,]{0,20}\bparted\b[^,]*/gi, 'relaxed expression');
+  t = t.replace(/\bparted\b[^,]{0,10}\blips?\b[^,]*/gi, 'relaxed expression');
   t = t.replace(/\bmouth\b[^,]{0,15}\bopen\b[^,]*/gi, 'relaxed expression');
   t = t.replace(/heavy[- ]lidded[^,]*/gi, 'relaxed gaze');
   t = t.replace(/half[- ]lidded[^,]*/gi, 'relaxed gaze');
@@ -9610,6 +9615,9 @@ function cleanForDALLE(text){
   // ── Limpa resultado ──
   // Remove frases duplicadas (ex: "legs apart, legs apart")
   t = t.replace(/\b([\w ]{4,30}),\s*\1\b/gi, '$1');
+  // Remove "and ," artifact
+  t = t.replace(/\band\s*,/g, ',');
+  t = t.replace(/\band\s*$/g, '');
   t = t.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
   t = t.replace(/^[,\s]+|[,\s]+$/g,'');
   return t;
