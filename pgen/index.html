@@ -9623,9 +9623,8 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // Sujeito — sem idade numérica (DALL-E é sensível com idade + roupas revealing)
   parts.push('young adult woman, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
 
-  // Câmera / ângulo — pill override takes priority; skip preset.angulo if explicit
-  const presetAngulo = (preset.angulo||'');
-  const anguloSrc = pills.activeAngulo || (isPillExplicit(presetAngulo) ? '' : presetAngulo);
+  // Câmera / ângulo — pill override takes priority, then preset field — all cleaned
+  const anguloSrc = pills.activeAngulo || (preset.angulo || '');
   const camSrc    = pills.activeCam    || (preset.cam   || '');
   const cam = cleanForDALLE(anguloSrc + (camSrc ? ', ' + camSrc : ''));
   if(cam) parts.push(cam);
@@ -9639,7 +9638,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const corpoSafe = corpo.replace(/\b(medium|full|large|small)?\s*breasts?\b/gi,'').replace(/\b(full|wide|big)?\s*(buttocks|butt|ass|hips?)\b/gi,'').replace(/\s{2,}/g,' ').trim();
   if(corpoSafe) parts.push(corpoSafe);
 
-  // Pose — pill override takes priority
+  // Pose — pill override takes priority, then preset field — all cleaned
   const poseSrc = pills.activePose || preset.pose || '';
   const pose = cleanForDALLE(poseSrc);
   if(pose) parts.push(pose);
@@ -9692,16 +9691,9 @@ function copyForChatGPT(){
   const activePose   = getActivePillVal('pose');
   const activeAngulo = getActivePillVal('angulo');
   const activeCam    = getActivePillVal('cam');
-  if(isPillExplicit(activePose) || isPillExplicit(activeAngulo) || isPillExplicit(activeCam)){
-    showToast('⚠ Pose/ângulo explícito — use Midjourney para este');
-    return;
-  }
+  // Explicit pills are sanitized by cleanForDALLE — no need to block, just clean
 
-  // Also check preset's own pose/angulo fields for explicit content
-  if(isPillExplicit(preset.pose||'') || isPillExplicit(preset.angulo||'')){
-    showToast('⚠ Este preset tem pose/ângulo explícito — use Midjourney');
-    return;
-  }
+  // preset.pose and preset.angulo are sanitized inside buildChatGPTPromptFromPreset — no need to block here
 
   const gptPrompt = buildChatGPTPromptFromPreset(preset, {activePose, activeAngulo, activeCam});
 
