@@ -9554,12 +9554,19 @@ function cleanForDALLE(text){
   t = t.replace(/sensual\b/gi, 'confident');
   t = t.replace(/erotic\b/gi, '');
   t = t.replace(/intimate\b/gi, 'personal');
-  t = t.replace(/\blips? parted[^,]*/gi, 'relaxed expression');
+  t = t.replace(/\blips?\b[^,]{0,20}\bparted\b[^,]*/gi, 'relaxed expression');
+  t = t.replace(/\bmouth\b[^,]{0,15}\bopen\b[^,]*/gi, 'relaxed expression');
   t = t.replace(/heavy[- ]lidded[^,]*/gi, 'relaxed gaze');
+  t = t.replace(/half[- ]lidded[^,]*/gi, 'relaxed gaze');
   t = t.replace(/smoldering[^,]*/gi, 'confident look');
   t = t.replace(/sultry[^,]*/gi, 'confident');
   t = t.replace(/\bbite?s? (her |the )?lip[^,]*/gi, 'slight smile');
   t = t.replace(/knowing (look|gaze|smile|smirk)[^,]*/gi, 'confident look');
+  t = t.replace(/\bdrowsy\b[^,]*/gi, 'relaxed');
+  // Remove "bra" word from DALL-E prompts (triggers filter even when non-explicit)
+  t = t.replace(/\bmatching bra\b[^,]*/gi, '');
+  t = t.replace(/\band (a )?bra\b[^,]*/gi, '');
+  t = t.replace(/,?\s*\bbra\b[^,]*/gi, '');
 
   // ── Limpa resultado ──
   t = t.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
