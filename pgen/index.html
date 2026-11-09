@@ -9790,10 +9790,39 @@ const DALLE_SCENE_OVERRIDE = {
   explicito_suave: 'bright modern home, natural window light, airy clean interior, afternoon light',
 };
 
+// Mapeia categoria para o género fotográfico que "sinaliza" ao DALL-E o enquadramento correto
+const DALLE_PHOTO_GENRE = {
+  lingerie:    'Professional boudoir and lingerie editorial photography',
+  boudoir:     'Professional boudoir editorial photography',
+  praia:       'Professional beach lifestyle and swimwear photography',
+  academia:    'Professional fitness and athletic photography',
+  foco_bunda:  'Professional fitness editorial photography',
+  foco_pernas: 'Professional fitness and lifestyle photography',
+  posicoes:    'Professional boudoir editorial photography',
+  extremo:     'Professional athletic and boudoir photography',
+  pov_extremo: 'Professional boudoir editorial photography',
+  explicito_suave: 'Professional boudoir editorial photography',
+  onlyfans:    'Professional lifestyle and boudoir photography',
+  sexting:     'Professional casual lifestyle photography',
+  banheiro:    'Professional lifestyle photography',
+  pos_banho:   'Professional lifestyle photography',
+  dormindo:    'Professional intimate lifestyle photography',
+  hotel:       'Professional travel and lifestyle photography',
+  no_carro:    'Professional automotive lifestyle photography',
+  conteudo:    'Professional lifestyle photography',
+  detalhe:     'Professional close-up fashion photography',
+  narrativa:   'Professional lifestyle storytelling photography',
+  fantasia:    'Professional costume and fashion photography',
+  locais:      'Professional location lifestyle photography',
+  tiktok:      'Professional social media content photography',
+  casual:      'Professional lifestyle photography',
+};
+
 function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
   const cat = preset.cat || '';
-  const parts = [];
+
+  const genre = DALLE_PHOTO_GENRE[cat] || 'Professional editorial photography';
 
   // ── 1. Sujeito ──
   const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
@@ -9802,47 +9831,42 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     .replace(/\b(18|19)\b/g, '')
     .replace(/\s{2,}/g,' ').trim();
   const subjectAge = idadeSafe || 'adult woman in her early 20s';
-  parts.push(`${subjectAge}, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin, real person not a model`);
+  const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin`;
 
   // ── 2. Câmera / ângulo — pill tem prioridade, senão usa preset.cam ──
   const anguloRaw = pills.activeAngulo || '';
   const camRaw    = pills.activeCam    || preset.cam || '';
   const camCombined = cleanForDALLE(safePillVal(anguloRaw || camRaw));
-  if(camCombined) parts.push(camCombined);
 
-  // ── 3. Roupa — usa preset.roupa, remove apenas nudez explícita ──
+  // ── 3. Roupa — preset.roupa com limpeza mínima ──
   const roupaClean = safeClothing(preset.roupa || '');
-  parts.push(roupaClean || 'wearing casual everyday outfit');
+  const roupa = roupaClean || 'wearing casual everyday outfit';
 
   // ── 4. Estado corporal — pill ──
-  if(pills.activeEstado) parts.push(cleanForDALLE(pills.activeEstado));
+  const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
 
   // ── 5. Pose — pill tem prioridade, senão usa preset.pose ──
   const poseRaw = pills.activePose || preset.pose || '';
   const pose = cleanForDALLE(safePillVal(poseRaw));
-  if(pose) parts.push(pose);
 
   // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao ──
   const exprRaw = pills.activeExpr || preset.expressao || '';
-  const expr = cleanForDALLE(exprRaw);
-  if(expr) parts.push(expr);
-  else parts.push('natural relaxed expression, slight smile');
+  const expr = cleanForDALLE(exprRaw) || 'natural relaxed expression';
 
   // ── 7. Cenário — usa preset.cenario diretamente ──
   const scene = cleanForDALLE(preset.cenario || '');
-  if(scene) parts.push(scene);
 
   // ── 8. Clima + Iluminação + Estilo — pills ──
-  if(pills.activeClima) parts.push(cleanForDALLE(pills.activeClima));
-  if(pills.activeLuz)   parts.push(cleanForDALLE(pills.activeLuz));
-
+  const clima = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
+  const luz   = pills.activeLuz   ? cleanForDALLE(pills.activeLuz)   : '';
   const stylePill = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
-  const styleBase = 'editorial fashion photography, natural lighting, candid authentic style, 35mm film grain, warm tones, high resolution photograph, 9:16 vertical portrait, professional photographer';
-  parts.push(stylePill ? stylePill + ', ' + styleBase : styleBase);
+  const styleBase = '35mm film grain, warm tones, high resolution photograph, 9:16 vertical portrait, natural lighting, professional photographer';
 
-  const joined = parts.filter(Boolean).join(', ')
+  const details = [subject, camCombined, roupa, estado, pose, expr, scene, clima, luz, stylePill, styleBase]
+    .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-  return 'Photorealistic photograph: ' + joined + '.';
+
+  return `${genre}, photorealistic: ${details}.`;
 }
 
 function getActivePillVal(group){
