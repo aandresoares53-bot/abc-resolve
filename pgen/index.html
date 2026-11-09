@@ -9701,9 +9701,22 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const camRaw    = pills.activeCam    || preset.cam || '';
   const camCombined = cleanForDALLE(safePillVal(anguloRaw || camRaw));
 
-  // ── 3. Roupa — preset.roupa com limpeza mínima ──
-  const roupaClean = safeClothing(preset.roupa || '');
-  const roupa = roupaClean || 'wearing casual everyday outfit';
+  // ── 3. Roupa — preset.roupa com limpeza mínima; lingerie→shorts lycra para ChatGPT ──
+  let roupaClean = safeClothing(preset.roupa || '');
+  // Substitui termos de lingerie por shorts lycra (apenas neste prompt ChatGPT)
+  roupaClean = roupaClean
+    .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bgarter\s*belt\b[^,]*/gi, '')
+    .replace(/\bgarter\b[^,]*/gi, '')
+    .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/,\s*,/g, ',').replace(/\s{2,}/g,' ').trim();
+  const roupa = roupaClean || 'white short tight lycra shorts, fitted crop top';
 
   // ── 4. Estado corporal — pill ──
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
