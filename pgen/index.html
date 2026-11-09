@@ -9875,8 +9875,11 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // ── 2. Câmera / ângulo — somente de pills ──
   const anguloRaw = pills.activeAngulo || '';
   const camRaw    = pills.activeCam    || '';
-  const cam = cleanForDALLE(safePillVal(anguloRaw) + (safePillVal(camRaw) ? ', ' + safePillVal(camRaw) : ''));
-  if(cam) parts.push(cam);
+  const anguloSafe = safePillVal(anguloRaw);
+  const camSafe    = safePillVal(camRaw);
+  // Usa apenas o mais específico para evitar acúmulo de sinais de ângulo
+  const camCombined = cleanForDALLE(anguloSafe || camSafe);
+  if(camCombined) parts.push(camCombined);
 
   // ── 3. Roupa — 100% baseada na categoria, ignora preset.roupa ──
   const roupa = DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
@@ -9898,14 +9901,22 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   if(expr) parts.push(expr);
   else parts.push('natural relaxed expression, slight smile');
 
-  // ── 7. Cenário — override seguro para cats íntimas; cenário real para cats safe ──
-  const sceneOverride = DALLE_SCENE_OVERRIDE[cat];
-  if(sceneOverride){
-    parts.push(sceneOverride);
+  // ── 7. Cenário — detecta combinação pose traseira + cena íntima → força outdoor ──
+  // "rear/bend" + "bedroom" = bloqueio garantido; substituir por outdoor seguro
+  const poseIsRear = /rear|forward fold|tabletop|forward bend|floor level|looking up|low angle|glute bridge|straddle|squat|athletic wear close-up/i.test(pose + ' ' + camCombined);
+  const sceneDefault = DALLE_SCENE_OVERRIDE[cat];
+  const sceneIsIndoor = sceneDefault && /bedroom|interior|home|living room|bathroom/i.test(sceneDefault);
+
+  let scene;
+  if(poseIsRear && sceneIsIndoor){
+    // Força cena neutra outdoor quando pose traseira + cenário indoor
+    scene = 'outdoor lifestyle setting, natural daylight, open space, casual environment';
+  } else if(sceneDefault){
+    scene = sceneDefault;
   } else {
-    const cenario = cleanForDALLE(preset.cenario||'');
-    if(cenario) parts.push(cenario);
+    scene = cleanForDALLE(preset.cenario||'');
   }
+  if(scene) parts.push(scene);
 
   // ── 8. Clima + Iluminação + Estilo — pills ──
   if(pills.activeClima) parts.push(cleanForDALLE(pills.activeClima));
