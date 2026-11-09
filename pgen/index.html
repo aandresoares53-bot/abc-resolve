@@ -9619,28 +9619,54 @@ function cleanForDALLE(text){
   t = t.replace(/\band (a )?bra\b[^,]*/gi, '');
   t = t.replace(/,?\s*\bbra\b[^,]*/gi, '');
 
+  // ── Idade — números específicos bloqueiam DALL-E com roupas revealing ──
+  t = t.replace(/\bwoman appearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s');
+  t = t.replace(/\bappearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'in her early 20s');
+  t = t.replace(/\b(age[d]?\s+)?(18|19)\b[^,]*/gi, '');
+
+  // ── Poses implicitamente sexuais sem palavras explícitas ──
+  t = t.replace(/\bnatural body weight visible[^,]*/gi, 'relaxed natural pose');
+  t = t.replace(/\bon hands and knees[^,]*looking back[^,]*/gi, 'kneeling, looking to the side');
+  t = t.replace(/\bon all fours[^,]*looking back[^,]*/gi, 'kneeling, looking to the side');
+
   // ── Limpa resultado ──
   // Remove frases duplicadas (ex: "legs apart, legs apart")
   t = t.replace(/\b([\w ]{4,30}),\s*\1\b/gi, '$1');
   // Remove "and ," artifact
   t = t.replace(/\band\s*,/g, ',');
   t = t.replace(/\band\s*$/g, '');
+  // Remove duplicate color tokens like ", red, red ..." or "red tights, red tights"
+  t = t.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|orange)\s*,\s*\1\b/gi, ', $1,');
+  t = t.replace(/\b(red|black|white|pink|blue|green|purple|yellow|orange)\s+(\w+),\s*\1\s+\2\b/gi, '$1 $2');
   t = t.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
   t = t.replace(/^[,\s]+|[,\s]+$/g,'');
   return t;
 }
 
-// Substitui pill de câmera/ângulo/lente explícita por equivalente seguro para DALL-E
+// Substitui pill de câmera/ângulo/pose explícita por equivalente seguro para DALL-E
 function safePillVal(val){
   if(!val) return '';
-  // Câmera de bunda → substituir por rear view seguro (DALL-E bloqueia close-up de bunda sem cabeça)
+
+  // ── Câmera de bunda → rear view seguro
   if(/buttocks|close.up of butt|rear view.*no head|extreme close.up.*butt/i.test(val)){
     return 'rear view, full body, natural stance, available light';
   }
-  // Low angle entre pernas → omitir (DALL-E infere upskirt)
+
+  // ── Low angle entre pernas → omitir (DALL-E infere upskirt independente das palavras)
   if(/between\s+(her\s+)?legs|inner\s+thighs|crotch|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up|shot.*below/i.test(val)){
     return '';
   }
+
+  // ── Poses que DALL-E interpreta como sexuais mesmo sem palavras explícitas
+  // "De quatro" (on hands and knees looking back = doggy style implication)
+  if(/on hands and knees[^,]*looking back|on all fours[^,]*looking back/i.test(val)){
+    return 'kneeling on floor, looking to the side, relaxed natural pose';
+  }
+  // "Curvada" (bent over = sexual implication)
+  if(/bent forward at waist|bent over[^,]*(surface|rear|back)/i.test(val)){
+    return 'leaning slightly forward, hands resting on surface, natural posture';
+  }
+
   return val;
 }
 
@@ -9668,8 +9694,9 @@ function safeClothing(roupa){
   r = r.replace(/\blatex\b/gi, 'fitted outfit');
   r = r.replace(/\bnightgown\b/gi, 'casual dress');
   r = r.replace(/\bsleepwear\b/gi, 'casual outfit');
-  // Remove color-only artifacts like ", red,"
-  r = r.replace(/,\s*(red|black|white|pink|blue|green)\s*,/gi, ',');
+  // Remove color-only artifacts like ", red," and duplicate colors
+  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow)\s*,\s*\1\b/gi, ', $1,');
+  r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow)\s*,/gi, ',');
   r = cleanForDALLE(r);
   return r;
 }
@@ -9678,9 +9705,11 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
   const parts = [];
 
-  // Sujeito — idade via pill ou padrão mid-20s
+  // Sujeito — idade via pill ou padrão mid-20s (números 18/19 removidos via cleanForDALLE)
   const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
-  const subjectAge = idadePill || 'adult woman in her early 20s';
+  // Strip any residual age-number phrases that DALL-E blocks with revealing clothing
+  const idadeSafe = idadePill.replace(/\bwoman appearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s').replace(/\b(18|19)\b/g, '').trim();
+  const subjectAge = idadeSafe || 'adult woman in her early 20s';
   parts.push(`${subjectAge}, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin, real person not a model`);
 
   // Câmera / ângulo — pill override → safe equivalent
