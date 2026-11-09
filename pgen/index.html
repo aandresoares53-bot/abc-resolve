@@ -9768,70 +9768,113 @@ function safeClothing(roupa){
   return r;
 }
 
+// ── Roupas seguras por categoria (ignora preset.roupa completamente) ──
+const DALLE_CLOTHING = {
+  casual:      'wearing casual everyday outfit, jeans and fitted top',
+  praia:       'wearing colorful bikini swimwear, beach-ready',
+  academia:    'wearing athletic activewear, sports top and fitted leggings',
+  lingerie:    'wearing fitted bikini set, coordinated activewear',
+  banheiro:    'wearing cozy white bath robe, clean post-shower look',
+  boudoir:     'wearing satin slip dress, relaxed home wear',
+  fantasia:    'wearing stylish themed costume, full coverage',
+  locais:      'wearing casual chic outfit, everyday look',
+  tiktok:      'wearing trendy casual outfit',
+  selfie:      'wearing casual everyday clothes',
+  em_casa:     'wearing cozy home clothes, comfortable casual wear',
+  pos_banho:   'wearing white bath robe, post-shower',
+  dormindo:    'wearing comfortable casual pajamas',
+  urbano:      'wearing urban street style outfit',
+  no_carro:    'wearing casual chic outfit',
+  hotel:       'wearing elegant casual outfit',
+  foco_bunda:  'wearing athletic shorts and fitted crop top, activewear',
+  foco_pernas: 'wearing fitted jeans or athletic leggings, casual',
+  detalhe:     'wearing fitted casual outfit',
+  conteudo:    'wearing casual lifestyle outfit',
+  onlyfans:    'wearing colorful bikini or casual summer outfit',
+  sexting:     'wearing casual home outfit, comfortable clothes',
+  narrativa:   'wearing casual outfit appropriate for the setting',
+  poses_livres:'wearing casual everyday outfit',
+  ana:         'wearing casual outfit',
+};
+
+// ── Cenários seguros por categoria (substitui preset.cenario para cats íntimas) ──
+const DALLE_SCENE_OVERRIDE = {
+  lingerie:    'bright airy bedroom, soft natural window light, clean minimal interior, morning atmosphere',
+  boudoir:     'elegant bright bedroom, natural daylight, sheer curtains, clean tasteful interior',
+  banheiro:    'modern clean bathroom, bright natural light, fresh post-shower atmosphere',
+  pos_banho:   'bathroom, natural morning light, clean bright space',
+  dormindo:    'cozy bedroom, soft warm natural morning light, sitting on bed',
+  foco_bunda:  'gym fitness studio, bright daylight, clean background',
+  foco_pernas: 'outdoor lifestyle setting, natural daylight, clean background',
+  detalhe:     'clean bright neutral background, natural light',
+  conteudo:    'outdoor sunny lifestyle setting, natural environment',
+  onlyfans:    'modern home living room, bright natural window light, casual atmosphere',
+  sexting:     'modern bright bedroom, natural window light, cozy casual atmosphere',
+  narrativa:   'lifestyle setting, natural outdoor or indoor environment',
+  ana:         'outdoor setting, natural daylight',
+  no_carro:    'car interior, natural window light from outside, daytime',
+  hotel:       'modern hotel room, natural window light, bright clean interior',
+};
+
 function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
+  const cat = preset.cat || '';
   const parts = [];
 
-  // Sujeito — idade via pill ou padrão mid-20s (números 18/19 removidos via cleanForDALLE)
+  // ── 1. Sujeito — a partir da pill de idade (números perigosos removidos) ──
   const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
-  // Strip any residual age-number phrases that DALL-E blocks with revealing clothing
-  const idadeSafe = idadePill.replace(/\bwoman appearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s').replace(/\b(18|19)\b/g, '').trim();
+  const idadeSafe = idadePill
+    .replace(/\bwoman appearing\s+\d[\d\s]*to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s')
+    .replace(/\b(18|19)\b/g, '')
+    .replace(/\s{2,}/g,' ').trim();
   const subjectAge = idadeSafe || 'adult woman in her early 20s';
   parts.push(`${subjectAge}, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin, real person not a model`);
 
-  // Câmera / ângulo — pill override → safe equivalent
-  const anguloRaw = pills.activeAngulo || (preset.angulo || '');
-  const camRaw    = pills.activeCam    || (preset.cam   || '');
-  const anguloSafe = safePillVal(anguloRaw);
-  const camSafe    = safePillVal(camRaw);
-  const cam = cleanForDALLE(anguloSafe + (camSafe ? ', ' + camSafe : ''));
+  // ── 2. Câmera / ângulo — somente de pills ──
+  const anguloRaw = pills.activeAngulo || '';
+  const camRaw    = pills.activeCam    || '';
+  const cam = cleanForDALLE(safePillVal(anguloRaw) + (safePillVal(camRaw) ? ', ' + safePillVal(camRaw) : ''));
   if(cam) parts.push(cam);
 
-  // Roupa — sanitizada
-  const roupa = safeClothing(preset.roupa);
-  if(roupa) parts.push(roupa);
+  // ── 3. Roupa — 100% baseada na categoria, ignora preset.roupa ──
+  const roupa = DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
+  parts.push(roupa);
 
-  // Estado corporal (suada, molhada, bronzeada...) — pill
+  // ── 4. Estado corporal — pill ──
   if(pills.activeEstado) parts.push(cleanForDALLE(pills.activeEstado));
 
-  // Corpo — partes seguras apenas
-  const corpo = cleanForDALLE(preset.corpo||'');
-  const corpoSafe = corpo
-    .replace(/\b(medium|full|large|small|natural|perky|round|big|huge)?\s*breasts?\b/gi,'')
-    .replace(/\b(full|wide|big|toned|firm|round|athletic|natural)?\s*(buttocks|butt|ass|glutes?|hips?|rear)\b/gi,'')
-    .replace(/\b(curvy|voluptuous|hourglass)\b/gi,'natural')
-    .replace(/\s{2,}/g,' ').trim();
-  if(corpoSafe) parts.push(corpoSafe);
-
-  // Pose — pill override; explicit → safePillVal ('' se bloqueado, sem fallback para o original)
-  const poseRaw = pills.activePose || (preset.pose || '');
+  // ── 5. Pose — somente pill (nunca preset.pose que contém poses explícitas) ──
+  const poseRaw = pills.activePose || '';
   const poseFiltered = safePillVal(poseRaw);
   const pose = cleanForDALLE(poseFiltered);
   if(pose) parts.push(pose);
+  else parts.push('natural relaxed pose, standing or sitting casually');
 
-  // Expressão — pill override ou preset
-  const exprRaw = pills.activeExpr || (preset.expressao || '');
+  // ── 6. Expressão — somente pill (nunca preset.expressao) ──
+  const exprRaw = pills.activeExpr || '';
   const expr = cleanForDALLE(exprRaw);
   if(expr) parts.push(expr);
+  else parts.push('natural relaxed expression, slight smile');
 
-  // Cenário
-  const cenario = cleanForDALLE(preset.cenario||'');
-  if(cenario) parts.push(cenario);
+  // ── 7. Cenário — override seguro para cats íntimas; cenário real para cats safe ──
+  const sceneOverride = DALLE_SCENE_OVERRIDE[cat];
+  if(sceneOverride){
+    parts.push(sceneOverride);
+  } else {
+    const cenario = cleanForDALLE(preset.cenario||'');
+    if(cenario) parts.push(cenario);
+  }
 
-  // Clima (chuva, neve...) — pill
+  // ── 8. Clima + Iluminação + Estilo — pills ──
   if(pills.activeClima) parts.push(cleanForDALLE(pills.activeClima));
+  if(pills.activeLuz)   parts.push(cleanForDALLE(pills.activeLuz));
 
-  // Iluminação — pill
-  if(pills.activeLuz) parts.push(cleanForDALLE(pills.activeLuz));
-
-  // Estilo de filme — pill ou padrão
-  const stylePill = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
-  const styleBase = 'lifestyle photography, natural lighting, candid authentic style, film grain, warm tones, high quality photograph, 9:16 vertical portrait';
+  const stylePill  = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
+  const styleBase  = 'lifestyle photography, natural lighting, candid authentic style, film grain, warm tones, high quality photograph, 9:16 vertical portrait';
   parts.push(stylePill ? stylePill + ', ' + styleBase : styleBase);
 
   const joined = parts.filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-
   return 'Photorealistic photograph: ' + joined + '.';
 }
 
