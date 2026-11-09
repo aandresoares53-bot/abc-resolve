@@ -9663,8 +9663,8 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
   const parts = [];
 
-  // Sujeito — sem idade numérica (DALL-E é sensível com idade + roupas revealing)
-  parts.push('young adult woman, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
+  // Sujeito — idade implícita via frase (DALL-E bloqueia número de idade + roupa reveladora)
+  parts.push('adult woman in her mid-20s, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
 
   // Câmera / ângulo — pill override takes priority; explicit pill values → safe equivalent
   const anguloRaw = pills.activeAngulo !== undefined ? pills.activeAngulo : (preset.angulo || '');
