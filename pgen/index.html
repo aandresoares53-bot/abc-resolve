@@ -9532,6 +9532,20 @@ function cleanForDALLE(text){
   t = t.replace(/\bunderneath\s+visible[^,]*/gi, '');
   t = t.replace(/\bunderneath\b/gi, 'inside');
 
+  // ── Ângulos/poses explícitos de câmera ──
+  t = t.replace(/\b(shot\s+)?(from\s+below|between\s+(her\s+)?legs?)[^,]*/gi, 'low angle shot');
+  t = t.replace(/\binner\s+thighs?\s+and\s+(crotch|genitals?)[^,]*/gi, 'legs');
+  t = t.replace(/\b(crotch|genitals?|pubic)[^,]*(filling|dominating|centered|center of frame)[^,]*/gi, '');
+  t = t.replace(/\b(filling|dominating)[^,]*(crotch|genitals?|frame)[^,]*/gi, '');
+  t = t.replace(/\bupward angle[^,]*(between|floor|legs?|feet)[^,]*/gi, 'low angle');
+  t = t.replace(/\bstraight up between[^,]*/gi, 'low angle');
+  t = t.replace(/\bfloor.?level[^,]*(looking up|close.?up)[^,]*/gi, 'low angle');
+  t = t.replace(/\bcamel.?toe[^,]*/gi, '');
+  t = t.replace(/\bpubic mound[^,]*/gi, '');
+  t = t.replace(/\bgenitalia[^,]*/gi, '');
+  t = t.replace(/\bgenitals?\b[^,]*/gi, '');
+  t = t.replace(/\bcrotch\b[^,]*/gi, '');
+
   // ── Frases problemáticas ──
   t = t.replace(/no bra[^,]*/gi, '');
   t = t.replace(/without (a )?bra[^,]*/gi, '');
@@ -9598,9 +9612,10 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // Sujeito — sem idade numérica (DALL-E é sensível com idade + roupas revealing)
   parts.push('young adult woman, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
 
-  // Câmera / ângulo — pill override takes priority
-  const anguloSrc = (pills.activeAngulo || preset.angulo || '');
-  const camSrc    = (pills.activeCam    || preset.cam   || '');
+  // Câmera / ângulo — pill override takes priority; skip preset.angulo if explicit
+  const presetAngulo = (preset.angulo||'');
+  const anguloSrc = pills.activeAngulo || (isPillExplicit(presetAngulo) ? '' : presetAngulo);
+  const camSrc    = pills.activeCam    || (preset.cam   || '');
   const cam = cleanForDALLE(anguloSrc + (camSrc ? ', ' + camSrc : ''));
   if(cam) parts.push(cam);
 
