@@ -9609,25 +9609,40 @@ function cleanForDALLE(text){
   return t;
 }
 
+// Substitui pill de câmera/ângulo explícita por equivalente seguro para DALL-E
+function safePillVal(val){
+  if(!val) return '';
+  // Se contém conteúdo explícito de câmera → substituir por equivalente seguro
+  if(/between\s+(her\s+)?legs|inner\s+thighs.*crotch|crotch.*center|genitals|vulva|camel.?toe|pubic\s+mound|upward.*between|floor.*looking\s+up/i.test(val)){
+    if(/extreme.*low\s+angle|low\s+angle.*extreme/i.test(val)) return 'extreme low angle, candid';
+    if(/close.?up.*low\s+angle|low\s+angle.*close.?up/i.test(val)) return 'low angle close-up, candid';
+    if(/low\s+angle/i.test(val)) return 'low angle shot, candid';
+    return ''; // vulva marcada → sem substituição
+  }
+  return val;
+}
+
 // Mapeamento de roupas sensíveis para versão segura
 function safeClothing(roupa){
   if(!roupa) return '';
-  let r = cleanForDALLE(roupa);
-  // lingerie → underwear/clothing contextual
-  r = r.replace(/\blingerie\b/gi, 'underwear set');
+  let r = roupa;
+  // Ordem importa: tratar combinações antes de partes individuais
+  r = r.replace(/\blingerie\s+set\b/gi, 'underwear set');
+  r = r.replace(/\bgarter\s+belt[^,]*/gi, '');
+  r = r.replace(/\bstockings\b/gi, 'tights');
+  r = r.replace(/\blace\s+(underwear|bra|set|top|panties)[^,]*/gi, '$1');
+  r = r.replace(/\blingerie\b/gi, 'underwear');
   r = r.replace(/\bbabydoll\b/gi, 'short nightgown');
   r = r.replace(/\bcorset\b/gi, 'fitted top');
   r = r.replace(/\bfishnet\b/gi, 'patterned tights');
-  r = r.replace(/\bbralette\b/gi, 'bra top');
+  r = r.replace(/\bbralette\b/gi, 'fitted top');
   r = r.replace(/\bpanties\b/gi, 'underwear');
   r = r.replace(/\bthong\b/gi, 'underwear');
   r = r.replace(/\bg-string\b/gi, 'underwear');
   r = r.replace(/\blatex\b/gi, 'fitted outfit');
-  r = r.replace(/\bgarter belt\b[^,]*/gi, '');
-  r = r.replace(/\bstockings\b/gi, 'tights');
-  r = r.replace(/\bred lace\b/gi, 'red');
-  r = r.replace(/\blace (underwear|bra|panties|set)[^,]*/gi, 'underwear');
-  r = r.replace(/\bset,?\s*red,?\s*/gi, '');   // artifact "underwear set, red,"
+  // Remove color-only artifacts like ", red,"
+  r = r.replace(/,\s*(red|black|white|pink|blue|green)\s*,/gi, ',');
+  r = cleanForDALLE(r);
   return r;
 }
 
@@ -9638,24 +9653,25 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // Sujeito — sem idade numérica (DALL-E é sensível com idade + roupas revealing)
   parts.push('young adult woman, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
 
-  // Câmera / ângulo — pill override takes priority, then preset field — all cleaned
-  const anguloSrc = pills.activeAngulo || (preset.angulo || '');
-  const camSrc    = pills.activeCam    || (preset.cam   || '');
-  const cam = cleanForDALLE(anguloSrc + (camSrc ? ', ' + camSrc : ''));
+  // Câmera / ângulo — pill override takes priority; explicit pill values → safe equivalent
+  const anguloRaw = pills.activeAngulo !== undefined ? pills.activeAngulo : (preset.angulo || '');
+  const camRaw    = pills.activeCam    !== undefined ? pills.activeCam    : (preset.cam   || '');
+  const anguloSafe = safePillVal(anguloRaw);
+  const cam = cleanForDALLE(anguloSafe + (camRaw ? ', ' + camRaw : ''));
   if(cam) parts.push(cam);
 
   // Roupa — sanitizada
   const roupa = safeClothing(preset.roupa);
   if(roupa) parts.push(roupa);
 
-  // Corpo — somente partes seguras (sem "natural breasts", "wide hips" etc que podem ser associadas)
+  // Corpo — somente partes seguras
   const corpo = cleanForDALLE(preset.corpo||'');
   const corpoSafe = corpo.replace(/\b(medium|full|large|small)?\s*breasts?\b/gi,'').replace(/\b(full|wide|big)?\s*(buttocks|butt|ass|hips?)\b/gi,'').replace(/\s{2,}/g,' ').trim();
   if(corpoSafe) parts.push(corpoSafe);
 
-  // Pose — pill override takes priority, then preset field — all cleaned
-  const poseSrc = pills.activePose || preset.pose || '';
-  const pose = cleanForDALLE(poseSrc);
+  // Pose — pill override takes priority; explicit pill values → safe equivalent
+  const poseRaw = pills.activePose !== undefined ? pills.activePose : (preset.pose || '');
+  const pose = cleanForDALLE(safePillVal(poseRaw) || poseRaw);
   if(pose) parts.push(pose);
 
   // Expressão
