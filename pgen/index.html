@@ -9889,12 +9889,14 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // ── Detecta se a pose é traseira/curvada/explícita ──
   const poseIsRear = /rear|forward fold|tabletop|forward bend|floor level|looking up|low angle|glute bridge|straddle|squat|athletic wear close-up/i.test(pose + ' ' + camCombined);
 
-  // ── 3. Roupa — se pose traseira, força roupas cobertas (leggings + top) independente da categoria ──
+  // ── 3. Roupa — usa vestimenta original do preset, limpa para DALL-E ──
+  // Para poses traseiras/curvadas, força leggings (biquíni + costas = bloqueado)
   let roupa;
   if(poseIsRear){
     roupa = 'wearing fitted athletic leggings and sports crop top, activewear, fully covered';
   } else {
-    roupa = DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
+    const roupaClean = safeClothing(preset.roupa || '');
+    roupa = roupaClean || DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, natural look';
   }
   parts.push(roupa);
 
