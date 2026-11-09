@@ -9698,17 +9698,17 @@ function safePillVal(val){
 
   // ── POV baixo extremo → low angle entre pernas mascarado
   if(/straight up between|floor between feet|extreme upward angle from floor/i.test(val)){
-    return 'low angle upward shot, wide angle lens, shot from floor level looking up, legs framing the composition, feet in foreground';
+    return 'dynamic side profile shot, wide angle lens, full body athletic photography, natural daylight';
   }
 
-  // ── POV baixo close-up / inner thighs centered → low angle fitness
+  // ── POV baixo close-up / inner thighs centered → editorial side view
   if(/tight frame.*inner thighs|inner thighs.*crotch.*centered|genitals.*centered|crotch.*center of frame/i.test(val)){
-    return 'low angle fitness shot, shooting upward, athletic legs framing top of frame, wide angle perspective from floor';
+    return 'three-quarter angle, slightly below eye level, full body shot, fitness editorial photography';
   }
 
-  // ── POV baixo (shot from below between legs) → low angle editorial
+  // ── POV baixo (shot from below between legs) → editorial full body
   if(/shot from below between legs|from below.*between|between.*legs.*floor|low angle upward.*crotch|inner thighs and crotch filling/i.test(val)){
-    return 'low angle upward shot from floor, legs extending upward on both sides, wide angle lens, natural light from above';
+    return 'wide angle full body shot, slightly low camera angle, editorial athletic photography, natural light';
   }
 
   // ── Dobrada (buttocks toward camera bent over) → hip hinge side view
@@ -9788,7 +9788,8 @@ function safeClothing(roupa){
   r = r.replace(/SPORTSBRA_PLACEHOLDER/g, 'sports bra');
   r = r.replace(/\bgarter\b/gi, '');
   r = r.replace(/\bbabydoll\b/gi, 'slip dress');
-  r = r.replace(/\bcorset\b/gi, 'fitted bustier top');
+  r = r.replace(/\bcorset\b/gi, 'structured fitted top');
+  r = r.replace(/\bbustier\b/gi, 'structured top');
   r = r.replace(/\bbodysuit\b/gi, 'fitted one-piece');
   r = r.replace(/\bthigh[- ]high\s+tights\b/gi, 'over-the-knee socks');
   r = r.replace(/\blace\b/gi, 'delicate');
@@ -9804,7 +9805,14 @@ function safeClothing(roupa){
   r = r.replace(/\bminimal\s+outfit\b/gi, 'fitted outfit');
   r = r.replace(/\bsee[- ]through\b/gi, 'sheer');
   r = r.replace(/\btransparent\b/gi, 'sheer');
+  r = r.replace(/\bwaist[- ]cinching\b/gi, 'fitted');
+  r = r.replace(/\bperiod[- ]appropriate\b/gi, 'vintage-inspired');
 
+  // ── Remove orphan remnants from substitutions ──
+  r = r.replace(/\band\s+ribbon\s+details?\b/gi, '');
+  r = r.replace(/\band\s+lace\s+details?\b/gi, '');
+  r = r.replace(/\band\s+bow\s+details?\b/gi, '');
+  r = r.replace(/,\s*,/g, ',');
   // ── Remove cor solitária orphan ──
   r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|dark)\s*,\s*\1\b/gi, ', $1,');
   r = r.replace(/,\s*(red|black|white|pink|blue|green|purple|yellow|dark)\s*,/gi, ',');
