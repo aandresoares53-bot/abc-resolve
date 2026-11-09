@@ -9603,7 +9603,10 @@ function cleanForDALLE(text){
   t = t.replace(/half[- ]lidded[^,]*/gi, 'relaxed gaze');
   t = t.replace(/smoldering[^,]*/gi, 'confident look');
   t = t.replace(/sultry[^,]*/gi, 'confident');
-  t = t.replace(/\bbite?s? (her |the )?lip[^,]*/gi, 'slight smile');
+  t = t.replace(/\bbit(?:e[sd]?|ing)[^,]*lip[^,]*/gi, 'slight smile');
+  t = t.replace(/\blip[^,]*bit(?:e[sd]?|ing)[^,]*/gi, 'slight smile');
+  t = t.replace(/\bteeth\s+graz\w+[^,]*/gi, '');
+  t = t.replace(/\bgraz\w+\s+(?:her\s+)?lip[^,]*/gi, 'slight smile');
   t = t.replace(/knowing (look|gaze|smile|smirk)[^,]*/gi, 'confident look');
   t = t.replace(/\bdrowsy\b[^,]*/gi, 'relaxed');
   t = t.replace(/\bdreamy\b[^,]*/gi, 'relaxed');
@@ -9670,6 +9673,10 @@ function cleanForDALLE(text){
   t = t.replace(/\body\s+open[^,]*/gi, 'relaxed pose');
   t = t.replace(/\buninhibited[^,]*/gi, 'free');
   t = t.replace(/\bcandy[- ]colored[^,]*/gi, 'colorful');
+
+  // ── Remove contradições indoor/outdoor ──
+  t = t.replace(/,?\s*\bindoor natural light\b[^,]*/gi, '');
+  t = t.replace(/,?\s*\bno artificial source\b[^,]*/gi, '');
 
   // ── Limpa resultado ──
   // Remove frases duplicadas (ex: "legs apart, legs apart")
@@ -9892,8 +9899,14 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   if(pills.activeEstado) parts.push(cleanForDALLE(pills.activeEstado));
 
   // Só adiciona fallback de pose se nem pill de pose nem pill de ângulo descreveram uma pose
-  const camHasPose = /fold|hinge|tabletop|squat|kneel|squat|floor|straddle|bridge|forward|lean|bend/i.test(camCombined);
-  if(pose) parts.push(pose);
+  const camHasPose = /fold|hinge|tabletop|squat|kneel|floor|straddle|bridge|forward|lean|bend/i.test(camCombined);
+  // Lingerie + straddle/pernas abertas → trocar para pose sentada neutra
+  const clothingIsIntimate = /lingerie|babydoll|corset|bodysuit/i.test(roupaClean);
+  const poseIsStraddle = /straddle|legs extended to the sides/i.test(pose);
+  const finalPose = (clothingIsIntimate && poseIsStraddle)
+    ? 'sitting gracefully, legs folded to one side, relaxed elegant pose'
+    : pose;
+  if(finalPose) parts.push(finalPose);
   else if(!camHasPose) parts.push('natural relaxed pose, standing or sitting casually');
 
   // ── 6. Expressão — somente pill ──
