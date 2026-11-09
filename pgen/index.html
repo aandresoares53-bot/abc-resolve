@@ -659,7 +659,7 @@ function buildBlondePrompt(p, seedOverride){
   const ageDesc = idadeOverride || '19 years old';
   const MJ_SUBJECT = isAna
     ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 19 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
-    : `woman, ${ageDesc}, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, visible skin pores, natural skin texture, unretouched real skin, slight skin imperfections, everyday real woman not a professional model, not a model, not retouched`;
+    : `woman, ${ageDesc}, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, delicate small nose, full soft lips, high cheekbones, heart-shaped face, symmetrical beautiful face, faint freckles, clear youthful skin, smooth natural complexion, subtle skin texture, luminous natural glow, naturally pretty, effortless beauty, everyday real woman not a professional model, not a model, not retouched`;
 
   const film = filmOverride || p.film || 'Kodak Ultramax 800';
   const isMonochrome = /ilford|black and white|monochrome/i.test(film);
@@ -9672,7 +9672,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const parts = [];
 
   // Sujeito — idade implícita via frase (DALL-E bloqueia número de idade + roupa reveladora)
-  parts.push('adult woman in her mid-20s, natural wavy blonde hair, light blue eyes, natural skin, real person not a model');
+  parts.push('adult woman in her early 20s, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin, real person not a model');
 
   // Câmera / ângulo — pill override takes priority; explicit pill values → safe equivalent
   const anguloRaw = pills.activeAngulo !== undefined ? pills.activeAngulo : (preset.angulo || '');
