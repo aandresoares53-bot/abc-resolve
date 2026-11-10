@@ -9945,8 +9945,29 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
       ? (SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, editorial framing')
       : cleanForDALLE(safePoseForDALLE(safePillVal(preset.cam || '')));
 
-  // ── 3. Roupa — DALLE_CLOTHING por categoria (ignora preset); fallback com limpeza ──
-  const roupa = DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, jeans and fitted top';
+  // ── 3. Roupa — usa roupa do preset sanitizada; fallback para DALLE_CLOTHING da categoria ──
+  const roupaPreset = preset.roupa || '';
+  let roupaSafe = safeClothing(safePoseForDALLE(roupaPreset));
+  roupaSafe = roupaSafe
+    .replace(/\bcompletely\s+nude\b[^,]*/gi, '')
+    .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, '')
+    .replace(/\blingerie\b[^,]*/gi, 'fitted bodysuit')
+    .replace(/\bbustier\b[^,]*/gi, 'fitted strapless top')
+    .replace(/\bcorset\b[^,]*/gi, 'fitted waist-cinching top')
+    .replace(/\bgarter\s*belt\b[^,]*/gi, '').replace(/\bgarter\b[^,]*/gi, '')
+    .replace(/\bthong\b[^,]*/gi, 'bikini bottoms')
+    .replace(/\bg-string\b[^,]*/gi, 'bikini bottoms')
+    .replace(/\bpanties\b/gi, 'shorts').replace(/\bpanty\b/gi, 'shorts')
+    .replace(/\bbodystocking\b[^,]*/gi, 'sheer bodysuit')
+    .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'fitted bodysuit')
+    .replace(/\bmatching\s+bra\b/gi, 'matching sports bra').replace(/\bbra\b/gi, 'sports bra')
+    .replace(/\bnaked\b[^,]*/gi, '').replace(/\bnakedness\b[^,]*/gi, '')
+    .replace(/\bbare\s+(breasts?|chest)[^,]*/gi, 'bare shoulders')
+    .replace(/\bbare\s+(butt|buttocks|ass)[^,]*/gi, 'short shorts')
+    .replace(/\bexposed\s+(breasts?|chest|nipples?)[^,]*/gi, 'bare shoulders')
+    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim()
+    .replace(/^,|,$/g,'').trim();
+  const roupa = roupaSafe || DALLE_CLOTHING[cat] || 'casual fitted outfit';
 
   // ── 4. Estado corporal — pill ──
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
