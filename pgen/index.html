@@ -9677,57 +9677,137 @@ const DALLE_SCENE_OVERRIDE = {
   explicito_suave: 'bright modern home, natural window light, airy clean interior, afternoon light',
 };
 
-// Mapeia categoria para o género fotográfico que "sinaliza" ao DALL-E o enquadramento correto
+// ── Género fotográfico por categoria ──
 const DALLE_PHOTO_GENRE = {
-  lingerie:    'Professional boudoir and lingerie editorial photography',
-  boudoir:     'Professional boudoir editorial photography',
-  praia:       'Professional beach lifestyle and swimwear photography',
-  academia:    'Professional fitness and athletic photography',
-  foco_bunda:  'Professional fitness editorial photography',
-  foco_pernas: 'Professional fitness and lifestyle photography',
-  posicoes:    'Professional boudoir editorial photography',
-  extremo:     'Professional athletic and boudoir photography',
-  pov_extremo: 'Professional boudoir editorial photography',
-  explicito_suave: 'Professional boudoir editorial photography',
-  onlyfans:    'Professional lifestyle and boudoir photography',
-  sexting:     'Professional casual lifestyle photography',
-  banheiro:    'Professional lifestyle photography',
-  pos_banho:   'Professional lifestyle photography',
-  dormindo:    'Professional intimate lifestyle photography',
-  hotel:       'Professional travel and lifestyle photography',
-  no_carro:    'Professional automotive lifestyle photography',
-  conteudo:    'Professional lifestyle photography',
-  detalhe:     'Professional close-up fashion photography',
-  narrativa:   'Professional lifestyle storytelling photography',
-  fantasia:    'Professional costume and fashion photography',
-  locais:      'Professional location lifestyle photography',
-  tiktok:      'Professional social media content photography',
-  casual:      'Professional lifestyle photography',
+  lingerie:        'Professional boudoir and lingerie editorial photography, shot by Mert Alas, Vogue Italia aesthetic',
+  boudoir:         'Professional boudoir editorial photography, shot by Rankin, intimate editorial style',
+  praia:           'Professional beach lifestyle and swimwear photography, Sports Illustrated aesthetic',
+  academia:        'Professional fitness and athletic photography, Nike campaign aesthetic',
+  foco_bunda:      'Professional fitness editorial photography, athletic editorial style',
+  foco_pernas:     'Professional fitness and lifestyle photography, editorial campaign',
+  posicoes:        'Professional boudoir editorial photography, intimate lifestyle editorial',
+  extremo:         'Professional athletic and boudoir photography, editorial campaign',
+  pov_extremo:     'Professional boudoir editorial photography, intimate editorial style',
+  explicito_suave: 'Professional boudoir editorial photography, editorial intimate style',
+  onlyfans:        'Professional lifestyle and boudoir photography, editorial style',
+  sexting:         'Professional casual lifestyle photography, candid editorial',
+  banheiro:        'Professional lifestyle photography, editorial bathroom scene',
+  pos_banho:       'Professional lifestyle photography, post-shower editorial',
+  dormindo:        'Professional intimate lifestyle photography, bedroom editorial',
+  hotel:           'Professional travel and lifestyle photography, hotel editorial',
+  no_carro:        'Professional automotive lifestyle photography, editorial campaign',
+  conteudo:        'Professional lifestyle photography, editorial campaign',
+  detalhe:         'Professional close-up fashion photography, macro editorial',
+  narrativa:       'Professional lifestyle storytelling photography, editorial narrative',
+  fantasia:        'Professional costume and fashion photography, editorial fantasy',
+  locais:          'Professional location lifestyle photography, editorial outdoor',
+  tiktok:          'Professional social media content photography, lifestyle editorial',
+  casual:          'Professional lifestyle photography, candid editorial',
+};
+
+// ── Especificações de câmera por categoria ──
+const DALLE_CAMERA = {
+  lingerie:        'Canon EOS R5, 85mm f/1.4 lens, shallow depth of field, creamy bokeh background',
+  boudoir:         'Sony A7R IV, 85mm f/1.2 lens, razor-thin depth of field, smooth bokeh',
+  praia:           'Nikon Z9, 35mm wide angle, f/5.6, everything in focus, bright exposure',
+  academia:        'Canon EOS R3, 50mm f/2.8, medium depth of field, athletic sharp detail',
+  foco_bunda:      'Canon EOS R5, 85mm f/1.8, shallow focus on subject, blurred background',
+  foco_pernas:     'Sony A7R IV, 50mm f/2, medium bokeh, full body in frame',
+  posicoes:        'Canon EOS R5, 85mm f/1.4, intimate shallow depth of field',
+  extremo:         'Sony A7R IV, 35mm f/2, wide dramatic angle, sharp throughout',
+  pov_extremo:     'Canon EOS R5, 24mm f/2 wide angle, immersive POV framing',
+  explicito_suave: 'Sony A7R IV, 85mm f/1.4, intimate editorial framing',
+  onlyfans:        'Canon EOS M50, 35mm f/1.8, natural light casual look',
+  sexting:         'iPhone RAW quality, 26mm, candid close framing, available light',
+  banheiro:        'Sony A7III, 35mm f/2, environmental portrait, warm indoor light',
+  pos_banho:       'Canon EOS R6, 50mm f/1.8, soft warm tones, shallow focus',
+  dormindo:        'Sony A7R IV, 85mm f/1.4, ultra soft bokeh, dim intimate light',
+  hotel:           'Canon EOS R5, 50mm f/2, clean editorial hotel framing',
+  no_carro:        'Sony A7III, 24mm f/2.8, tight interior framing, available window light',
+  detalhe:         'Canon EOS R5, 100mm macro f/2.8, extreme close-up detail, shallow focus',
+  fantasia:        'Sony A7R IV, 85mm f/1.4, dramatic portrait framing, costume detail',
+  default:         'Canon EOS R5, 85mm f/1.4 portrait lens, shallow depth of field',
+};
+
+// ── Iluminação por categoria ──
+const DALLE_LIGHTING = {
+  lingerie:        'single soft key light at 45 degrees, subtle fill from opposite side, dark moody background, Rembrandt lighting style',
+  boudoir:         'warm practical bedroom lamp, motivated soft directional light, intimate warm shadows',
+  praia:           'golden hour backlight, rim light catching hair, natural overexposed beach highlights, sun flare',
+  academia:        'harsh overhead gym fluorescents, strong motivated shadows, high-contrast athletic lighting',
+  foco_bunda:      'dramatic side light, strong shadow definition, fitness editorial contrast',
+  foco_pernas:     'soft natural window light, even fill, editorial clean lighting',
+  posicoes:        'warm intimate bedroom lighting, low key, soft motivated light',
+  extremo:         'dramatic high-contrast studio light, editorial athletic lighting',
+  pov_extremo:     'warm ambient room light, intimate low-key, available light look',
+  explicito_suave: 'warm natural window light, soft fill, intimate lifestyle lighting',
+  onlyfans:        'ring light or soft box, even flattering light, lifestyle warmth',
+  sexting:         'available light, slightly underexposed, candid natural feel',
+  banheiro:        'warm tungsten practical bathroom lights, soft steam diffusion, intimate warm glow',
+  pos_banho:       'warm morning light through frosted window, soft diffused glow',
+  dormindo:        'dim warm bedside lamp, golden hour window slice, ultra soft shadows',
+  hotel:           'combination of practical lamps and filtered window light, clean warm editorial',
+  no_carro:        'natural window light from outside, soft side fill, golden hour exterior',
+  detalhe:         'macro ring light, soft even illumination, texture emphasis',
+  fantasia:        'dramatic theatrical lighting, motivated color gels, editorial fantasy atmosphere',
+  locais:          'natural outdoor ambient light, golden hour warmth, environmental lighting',
+  tiktok:          'ring light, even flattering illumination, vibrant social media quality',
+  casual:          'soft natural window light, even fill, lifestyle warmth',
+  default:         'soft natural window light, warm tones, professional studio quality',
+};
+
+// ── Paleta de cores por categoria ──
+const DALLE_PALETTE = {
+  lingerie:        'deep burgundy, black and ivory tones, moody low-key color palette',
+  boudoir:         'warm rose gold and cream tones, soft blush palette, romantic warm hues',
+  praia:           'bright cyan, warm coral and golden sand tones, overexposed tropical palette',
+  academia:        'high contrast neutral tones, bright whites and deep blacks, clean athletic palette',
+  foco_bunda:      'warm neutral athletic palette, high contrast, clean background',
+  foco_pernas:     'warm golden tones, natural skin palette, clean editorial',
+  posicoes:        'warm cream and blush tones, intimate soft palette',
+  extremo:         'high contrast dramatic palette, deep blacks and bright highlights',
+  pov_extremo:     'warm amber and cream palette, intimate lifestyle tones',
+  explicito_suave: 'soft warm neutral palette, blush and cream lifestyle tones',
+  onlyfans:        'vibrant warm lifestyle palette, saturated golden tones',
+  sexting:         'slightly desaturated candid palette, natural skin tones',
+  banheiro:        'warm tungsten amber palette, cream and white tiles, steam haze softness',
+  pos_banho:       'fresh white and cream palette, warm morning softness',
+  dormindo:        'deep warm amber and shadow tones, low saturation intimate palette',
+  hotel:           'neutral beige and white editorial palette, clean sophisticated tones',
+  no_carro:        'warm interior palette, golden exterior light, clean interior tones',
+  detalhe:         'neutral macro palette, skin tone warmth, texture-revealing lighting',
+  fantasia:        'rich saturated costume palette, theatrical color depth',
+  locais:          'natural environment palette, warm outdoor tones, lifestyle colors',
+  tiktok:          'vibrant saturated social media palette, punchy warm colors',
+  casual:          'natural lifestyle palette, warm neutral everyday tones',
+  default:         'warm natural editorial palette, flattering skin tones',
 };
 
 function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
   const cat = preset.cat || '';
 
-  const genre = DALLE_PHOTO_GENRE[cat] || 'Professional editorial photography';
+  const genre   = DALLE_PHOTO_GENRE[cat] || 'Professional editorial photography, award-winning style';
+  const camSpec = DALLE_CAMERA[cat]      || DALLE_CAMERA.default;
+  const light   = DALLE_LIGHTING[cat]    || DALLE_LIGHTING.default;
+  const palette = DALLE_PALETTE[cat]     || DALLE_PALETTE.default;
 
-  // ── 1. Sujeito ──
+  // ── 1. Sujeito — rosto consistente e detalhado ──
   const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
   const idadeSafe = idadePill
     .replace(/\bwoman appearing\s+\d[\d\s]*to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s')
     .replace(/\b(18|19)\b/g, '')
     .replace(/\s{2,}/g,' ').trim();
   const subjectAge = idadeSafe || 'adult woman in her early 20s';
-  const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, high cheekbones, symmetrical face, effortless natural beauty, clear youthful skin`;
+  const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
   // ── 2. Câmera / ângulo — pill tem prioridade, senão usa preset.cam ──
-  const anguloRaw = pills.activeAngulo || '';
-  const camRaw    = pills.activeCam    || preset.cam || '';
+  const anguloRaw  = pills.activeAngulo || '';
+  const camRaw     = pills.activeCam    || preset.cam || '';
   const camCombined = cleanForDALLE(safePillVal(anguloRaw || camRaw));
 
-  // ── 3. Roupa — preset.roupa com limpeza mínima; lingerie→shorts lycra para ChatGPT ──
+  // ── 3. Roupa — preset.roupa com limpeza; lingerie→shorts lycra para ChatGPT ──
   let roupaClean = safeClothing(preset.roupa || '');
-  // Substitui termos de lingerie por shorts lycra (apenas neste prompt ChatGPT)
   roupaClean = roupaClean
     .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
@@ -9749,24 +9829,31 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const poseRaw = pills.activePose || preset.pose || '';
   const pose = cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)));
 
-  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao; sanitiza explícito ──
+  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao ──
   const exprRaw = pills.activeExpr || preset.expressao || '';
-  const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression';
+  const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
 
   // ── 7. Cenário — usa preset.cenario; remove referências explícitas ──
   const scene = cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
 
-  // ── 8. Clima + Iluminação + Estilo — pills ──
-  const clima = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
-  const luz   = pills.activeLuz   ? cleanForDALLE(pills.activeLuz)   : '';
+  // ── 8. Clima + Iluminação pill (sobrescreve default se ativo) ──
+  const clima     = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
+  const luzPill   = pills.activeLuz   ? cleanForDALLE(pills.activeLuz)   : '';
   const stylePill = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
-  const styleBase = '35mm film grain, warm tones, high resolution photograph, 9:16 vertical portrait, natural lighting, professional photographer';
 
-  const details = [subject, camCombined, roupa, estado, pose, expr, scene, clima, luz, stylePill, styleBase]
+  // ── 9. Composição explícita + qualidade técnica ──
+  const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, negative space above, feet visible or implied at bottom, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
+
+  // ── 10. Negative prompt em texto ──
+  const negatives = 'avoid: cartoon, illustration, anime, CGI, 3D render, distorted anatomy, extra limbs, blurry face, plastic skin, overprocessed skin, painted look, watercolor';
+
+  const lightFinal = luzPill || light;
+
+  const details = [subject, camSpec, camCombined, roupa, estado, pose, expr, scene, clima, lightFinal, palette, stylePill, composition]
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
-  return `${genre}, photorealistic: ${details}.`;
+  return `${genre}, photorealistic: ${details}. ${negatives}.`;
 }
 
 function getActivePillVal(group){
