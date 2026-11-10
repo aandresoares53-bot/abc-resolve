@@ -10046,7 +10046,10 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     .replace(/\btopless\b[^,]*/gi, '')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
-  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
+  // Anti-AI-detection suffix — natural imperfections, film grain, real camera cues
+  const antiAI_chatgpt = 'shot on Sony A7IV mirrorless camera, 85mm f/1.8 prime lens, natural skin texture with pores and subtle imperfections visible, slight film grain ISO 800, micro-motion blur on hair strands, authentic candid moment, unretouched raw capture, real person not model, slight chromatic aberration on edges, natural asymmetry, not digitally perfected, handheld slight camera shake, real ambient light falloff, genuine candid photograph found online, not generated';
+
+  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI_chatgpt}. ${negatives}.`;
 }
 
 function getActivePillVal(group){
@@ -10251,7 +10254,10 @@ function buildMJPromptForDALLE(preset){
     .replace(/\btopless\b[^,]*/gi, '')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
-  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
+  // Anti-AI-detection suffix — natural imperfections, film grain, real camera cues
+  const antiAI_mj = 'shot on Canon EOS R6 mirrorless, 50mm f/1.4 prime lens, visible skin pores and natural texture, slight film grain ISO 1000, authentic candid capture, real ambient environment light, natural asymmetry and slight imperfections, handheld micro-camera shake, genuine color fringing on high-contrast edges, unretouched unprocessed capture, real person photographed in real location, not digitally generated, found photograph documentary style';
+
+  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI_mj}. ${negatives}.`;
 }
 
 function copyMJForDALLE(){
