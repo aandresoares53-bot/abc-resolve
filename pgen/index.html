@@ -9537,8 +9537,13 @@ function cleanForDALLE(text){
   t = t.replace(/\bbare\s+breasts?\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+chest\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+(buttocks|butt|rear)\b[^,]*/gi, '');
-  t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist)[^,]*/gi, '');
+  t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist|at\s+all)[^,]*/gi, '');
   t = t.replace(/\bor\s+nude\b[^,]*/gi, '');
+  t = t.replace(/\bor\s+nothing\b[^,]*/gi, '');
+  t = t.replace(/\bnatural\s+gravity\s+on\s+body[^,]*/gi, 'natural comfortable posture');
+  t = t.replace(/\bgravity\s+(on\s+)?(breasts?|chest|body)[^,]*/gi, 'relaxed natural posture');
+  t = t.replace(/\bbare\s+shoulders?\b[^,]*/gi, 'shoulders visible');
+  t = t.replace(/\bwrapped\s+only\s+in[^,]*/gi, 'wearing');
 
   // Palavrões
   t = t.replace(/\bslut\b/gi, ''); t = t.replace(/\bwhore\b/gi, '');
@@ -9695,9 +9700,13 @@ function safeClothing(roupa){
   r = r.replace(/\bfully\s+nude\b[^,]*/gi, '');
   r = r.replace(/\bcompletely\s+naked\b[^,]*/gi, '');
   r = r.replace(/\bor\s+nude\b[^,]*/gi, '');
-  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down)\b[^,]*/gi, '');
+  r = r.replace(/\bor\s+nothing\b[^,]*/gi, '');
+  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down|at\s+all)\b[^,]*/gi, '');
   r = r.replace(/\bnothing\s+from\s+waist\b[^,]*/gi, '');
   r = r.replace(/\bbare\s+(buttocks|butt|rear)\b[^,]*/gi, '');
+  r = r.replace(/\bwrapped\s+only\s+in[^,]*/gi, 'wearing');
+  r = r.replace(/\bnearly\s+nothing\b[^,]*/gi, 'minimal coverage');
+  r = r.replace(/\bminimal\s+outfit\s+or\b[^,]*/gi, 'casual outfit,');
   r = r.replace(/,\s*,/g, ',');
   r = cleanForDALLE(r);
   return r;
