@@ -9559,12 +9559,7 @@ function cleanForDALLE(text){
 function safePillVal(val){
   if(!val) return '';
 
-  // Genitália explicitamente no centro do quadro
-  if(/vulva|camel.?toe|pubic\s+mound|genitalia|crotch.*cent(?:er|ered)|genitals.*cent(?:er|ered)/i.test(val)){
-    return 'close-up fashion detail, fabric contour, tight athletic wear, low angle upward shot, legs filling frame';
-  }
-
-  // POV baixo — câmera entre pernas apontando para genitália → preserva ângulo baixo sem genitália
+  // POV baixo — câmera entre pernas: verificar ANTES do crotch genérico para manter ângulo dramático
   if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch.*fill|shot.*from.*below.*between/i.test(val)){
     return 'low angle ground-level shot, camera at floor level pointing upward at subject, legs filling frame on both sides, wide angle dramatic upward perspective, fashion editorial';
   }
@@ -9572,6 +9567,11 @@ function safePillVal(val){
   // POV extremo — direto para cima entre pernas
   if(/straight up between|floor between feet|extreme upward angle from floor|from below between legs/i.test(val)){
     return 'extreme low angle floor-level shot, camera directly below subject pointing straight up, wide angle lens, legs and full body from feet to face, dramatic upward fashion editorial';
+  }
+
+  // Genitália explicitamente no centro do quadro (sem POV entre pernas)
+  if(/vulva|camel.?toe|pubic\s+mound|genitalia|crotch.*cent(?:er|ered)|genitals.*cent(?:er|ered)/i.test(val)){
+    return 'close-up fashion detail, fabric contour, tight athletic wear, low angle upward shot, legs filling frame';
   }
 
   // Bunda empurrada para câmera
@@ -9588,20 +9588,24 @@ function safePoseForDALLE(pose){
   let p = pose;
   p = p.replace(/,?\s*partner\s+between[^,]*/gi, '');
   p = p.replace(/,?\s*with\s+(a\s+)?(male\s+|female\s+)?partner[^,]*/gi, '');
-  p = p.replace(/\bmissionary\s+position\b[^,]*/gi, 'lying on back, legs raised, dramatic pose');
+  // Posições sexuais — substitui mas preserva posição corporal base
+  p = p.replace(/\b(on\s+back\s+in\s+)?missionary\s+position\b[^,]*/gi, 'lying on back, legs raised, dramatic pose');
   p = p.replace(/\bdoggy\s*[\-\s]*style\b[^,]*/gi, 'on hands and knees, back arched, looking back');
   p = p.replace(/\bcowgirl\b[^,]*/gi, 'kneeling straddling, hands on thighs, upright torso');
   p = p.replace(/\breverse\s+cowgirl\b[^,]*/gi, 'kneeling, back to camera, hands on knees');
   p = p.replace(/\bperforming\s+oral\b[^,]*/gi, 'kneeling, looking up at camera');
   p = p.replace(/\btaking\s+(extreme\s+)?oral\b[^,]*/gi, 'kneeling, head tilted up, looking at camera');
   p = p.replace(/\bforced\s+head\b[^,]*/gi, 'head tilted back, neck arched');
-  p = p.replace(/\beyes\s+watering\b[^,]*/gi, 'eyes slightly glazed, intense expression');
+  p = p.replace(/\beyes\s+(rolling|rolled\s+back)[^,]*/gi, 'eyes partially closed, dreamy expression');
+  p = p.replace(/\breceiving\s+pleasure[^,]*/gi, 'eyes closed, absorbed in sensation');
   p = p.replace(/\bexplicit\s+intercourse\b[^,]*/gi, '');
   p = p.replace(/\bhips.*grinding[^,]*/gi, 'hips raised, arched back');
   p = p.replace(/\bpenetrat\w+[^,]*/gi, '');
   p = p.replace(/\bblowjob\b[^,]*/gi, '');
   p = p.replace(/\boral\s+sex\b[^,]*/gi, 'kneeling, looking up');
   p = p.replace(/\bsubmissive[^,]*/gi, 'kneeling, looking up at camera');
+  // Remove "on back in" que fica orphan após remoção de missionary
+  p = p.replace(/\bon\s+back\s+in\s+(?=lying|,)/gi, '');
   p = p.replace(/,\s*,/g, ',').replace(/\s{2,}/g,' ').trim();
   return p;
 }
@@ -9809,6 +9813,9 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // ── 3. Roupa — preset.roupa com limpeza; lingerie→shorts lycra para ChatGPT ──
   let roupaClean = safeClothing(preset.roupa || '');
   roupaClean = roupaClean
+    // Nudez explícita → substitui por lycra
+    .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
+    .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
@@ -9817,8 +9824,11 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
+    // Deduplicar se várias substituições geraram repetições
+    .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
     .replace(/,\s*,/g, ',').replace(/\s{2,}/g,' ').trim();
   const roupa = roupaClean || 'white short tight lycra shorts, fitted crop top';
 
