@@ -9682,6 +9682,21 @@ function safePoseForDALLE(pose){
   p = p.replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose');
   p = p.replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance');
   p = p.replace(/\bupskirt\b[^,]*/gi, 'low angle shot');
+  // Ângulos de câmera que implicitamente descrevem upskirt ou visão da virilha
+  p = p.replace(/camera\s+at\s+floor\s+level\s+pointing\s+upward[^,]*/gi, 'eye level editorial framing');
+  p = p.replace(/low\s+angle\s+from\s+floor\s+level[^,]*/gi, 'low angle editorial shot');
+  p = p.replace(/floor\s+level[^,]*(?:look\w*\s+up|upward|pointing)[^,]*/gi, 'eye level framing');
+  p = p.replace(/legs\s+filling\s+frame\s+on\s+both\s+sides[^,]*/gi, 'legs visible in frame');
+  p = p.replace(/wide\s+angle\s+dramatic\s+upward\s+perspective[^,]*/gi, 'wide angle editorial perspective');
+  p = p.replace(/looking\s+up\s+along\s+body\s+line[^,]*/gi, 'looking along body line');
+  p = p.replace(/from\s+below.*looking\s+up[^,]*/gi, 'low angle editorial framing');
+  // Expressões faciais sugestivas
+  p = p.replace(/\bbiting\s+(lower\s+)?lip\b[^,]*/gi, 'natural relaxed expression');
+  p = p.replace(/\bteeth\s+grazing\s+lip\b[^,]*/gi, 'natural relaxed expression');
+  p = p.replace(/\bheavy.?lidded\b[^,]*/gi, 'relaxed expression');
+  p = p.replace(/\binviting\s+(look|gaze|expression)\b[^,]*/gi, 'confident look');
+  p = p.replace(/\bvulnerable\s+(floor.level|look|gaze|expression)\b[^,]*/gi, 'candid natural look');
+  p = p.replace(/\bfloor.level\s+(intimacy|corridor|work|bedroom|bathroom)\b[^,]*/gi, 'floor-level candid');
   // Remove termos de posição sexual que podem estar no campo roupa também
   p = p.replace(/,?\s*missionary\s+position\b[^,]*/gi, '');
   p = p.replace(/,?\s*fully\s+nude\b[^,]*/gi, '');
