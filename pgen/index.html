@@ -9604,6 +9604,11 @@ function safePoseForDALLE(pose){
   p = p.replace(/\bblowjob\b[^,]*/gi, '');
   p = p.replace(/\boral\s+sex\b[^,]*/gi, 'kneeling, looking up');
   p = p.replace(/\bsubmissive[^,]*/gi, 'kneeling, looking up at camera');
+  // Remove termos de posição sexual que podem estar no campo roupa também
+  p = p.replace(/,?\s*missionary\s+position\b[^,]*/gi, '');
+  p = p.replace(/,?\s*fully\s+nude\b[^,]*/gi, '');
+  p = p.replace(/,?\s*completely\s+nude\b[^,]*/gi, '');
+  p = p.replace(/,?\s*intense\b(?!\s*(color|light|gaze|eye|look))[^,]*/gi, '');
   // Remove "on back in" que fica orphan após remoção de missionary
   p = p.replace(/\bon\s+back\s+in\s+(?=lying|,)/gi, '');
   p = p.replace(/,\s*,/g, ',').replace(/\s{2,}/g,' ').trim();
@@ -9811,7 +9816,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const camCombined = cleanForDALLE(safePillVal(anguloRaw || camRaw));
 
   // ── 3. Roupa — preset.roupa com limpeza; lingerie→shorts lycra para ChatGPT ──
-  let roupaClean = safeClothing(preset.roupa || '');
+  let roupaClean = safeClothing(safePoseForDALLE(preset.roupa || ''));
   roupaClean = roupaClean
     // Nudez explícita → substitui por lycra
     .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
