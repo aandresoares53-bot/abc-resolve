@@ -618,7 +618,7 @@ header{
 const DEFAULT_SEED = 419528731;
 
 // Midjourney --no (negative) base
-const MJ_NO = 'smooth skin, plastic skin, airbrushed, CGI, 3d render, digital art, cartoon, anime, perfect skin, poreless skin, doll, mannequin, studio lighting, editorial, high fashion, supermodel, beauty retouch, facetune, skin glow, dewy skin, rim lighting, clothed, dressed';
+const MJ_NO = 'smooth skin, plastic skin, airbrushed, CGI, 3d render, digital art, cartoon, anime, perfect skin, poreless skin, doll, mannequin, studio lighting, editorial, high fashion, supermodel, beauty retouch, facetune, skin glow, dewy skin, rim lighting, clothed, dressed, AI generated, artificial intelligence, machine learning, synthetic, deepfake, neural network, midjourney, stable diffusion, dall-e, generated image, fake photo, unrealistic, overly perfect, uncanny valley, digital artifact, compression artifact, texture glitch, hand errors, extra fingers, warped background, lens distortion, bad anatomy';
 
 // Midjourney suffix parameters (kept for reference; dynamic version built inside buildBlondePrompt)
 const MJ_PARAMS = '--ar 9:16 --v 6.1 --style raw --chaos 10 --s 0 --seed ' + DEFAULT_SEED;
@@ -678,8 +678,8 @@ function buildBlondePrompt(p, seedOverride){
   const filmTag = film + (film === 'Kodak Ultramax 800' ? ', expired film, heavy grain, light leak' : ', grain');
   desc.push('35mm snapshot, candid, circa 2006, available light, camera shake, ' + filmTag + (isMonochrome ? ', monochrome' : ''));
 
-  // 4. Referência de fotógrafo documentário (âncora de estilo)
-  desc.push('Nan Goldin, Larry Clark');
+  // 4. Referência de fotógrafo documentário (âncora de estilo) + âncora anti-IA
+  desc.push('Nan Goldin, Larry Clark, shot on film, authentic photograph, real person, not AI, not CGI, genuine candid photo');
 
   if(styleOverride)  desc.push(styleOverride);
   if(luzOverride)    desc.push(luzOverride);
@@ -9859,8 +9859,8 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // ── 9. Composição explícita + qualidade técnica ──
   const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, negative space above, feet visible or implied at bottom, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
 
-  // ── 10. Negative prompt em texto ──
-  const negatives = 'avoid: cartoon, illustration, anime, CGI, 3D render, distorted anatomy, extra limbs, blurry face, plastic skin, overprocessed skin, painted look, watercolor';
+  // ── 10. Negative prompt em texto — anti-IA + artefatos comuns ──
+  const negatives = 'avoid: AI generated look, artificial intelligence aesthetic, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed skin, airbrushed, too-perfect symmetry, uncanny valley, distorted anatomy, extra fingers, extra limbs, warped hands, blurry face, painted look, watercolor, deepfake, generated image, midjourney style, stable diffusion style, unreal engine render, video game render, bad anatomy, lens distortion artifacts, background warping';
 
   const lightFinal = luzPill || light;
 
@@ -9870,7 +9870,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // Remove frases duplicadas consecutivas (ex: "lying on back, legs raised, dramatic pose, lying on back, legs raised")
   details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
 
-  return `${genre}, photorealistic: ${details}. ${negatives}.`;
+  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
 }
 
 function getActivePillVal(group){
