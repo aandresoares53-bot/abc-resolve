@@ -9604,6 +9604,59 @@ function safePoseForDALLE(pose){
   p = p.replace(/\bblowjob\b[^,]*/gi, '');
   p = p.replace(/\boral\s+sex\b[^,]*/gi, 'kneeling, looking up');
   p = p.replace(/\bsubmissive[^,]*/gi, 'kneeling, looking up at camera');
+  // Posições sexuais adicionais
+  p = p.replace(/\banal\s+(sex|position|pleasure|intercourse|penetration)\b[^,]*/gi, 'from behind, back arched');
+  p = p.replace(/\bDP\s+(position|sex|scene)?\b[^,]*/gi, '');
+  p = p.replace(/\bdouble\s+penetration\b[^,]*/gi, '');
+  p = p.replace(/\bgang\s*bang\b[^,]*/gi, '');
+  p = p.replace(/\bcreampie\b[^,]*/gi, '');
+  p = p.replace(/\bejaculat\w*[^,]*/gi, '');
+  p = p.replace(/\bswallow(?:ing)?\b[^,]*/gi, 'kneeling, looking up');
+  p = p.replace(/\bself.?pleasur\w*[^,]*/gi, '');
+  p = p.replace(/\bmasturbat\w*[^,]*/gi, '');
+  p = p.replace(/\borgasm\w*[^,]*/gi, '');
+  // Expressões e atos orais/sexuais
+  p = p.replace(/\bmoaning\b[^,]*/gi, 'lips parted, absorbed in sensation');
+  p = p.replace(/\bgroaning\b[^,]*/gi, 'lips parted, eyes closed');
+  p = p.replace(/\bexplicit\s+oral\b[^,]*/gi, 'kneeling, looking up');
+  p = p.replace(/\bexplicit\s+sex\b[^,]*/gi, '');
+  p = p.replace(/\bexplicit\s+(position|content|act|scene|intercourse)\b[^,]*/gi, '');
+  p = p.replace(/\bsex\s+(position|scene|act|context)\b[^,]*/gi, 'intimate editorial pose');
+  p = p.replace(/\bsexual\s+(position|act|scene|content|context)\b[^,]*/gi, 'intimate editorial pose');
+  p = p.replace(/\bnsfw\b[^,]*/gi, '');
+  // Nudez explícita
+  p = p.replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, '');
+  p = p.replace(/\bnaked\b[^,]*/gi, '');
+  p = p.replace(/\bnudity\b[^,]*/gi, '');
+  p = p.replace(/\btopless\b[^,]*/gi, '');
+  p = p.replace(/\bnipples?\b[^,]*/gi, '');
+  p = p.replace(/\bbare\s+(ass|butt|buttocks|rear|chest|breast)\b[^,]*/gi, '');
+  p = p.replace(/\bpubic\b[^,]*/gi, '');
+  p = p.replace(/\bgenitals?\b[^,]*/gi, ''); p = p.replace(/\bgenitalia\b[^,]*/gi, '');
+  p = p.replace(/\bcrotch\b[^,]*/gi, ''); p = p.replace(/\bvulva\b[^,]*/gi, '');
+  p = p.replace(/\bvagina\b[^,]*/gi, ''); p = p.replace(/\bpenis\b[^,]*/gi, '');
+  // Palavrões/termos explícitos adicionais
+  p = p.replace(/\bcock\b[^,]*/gi, ''); p = p.replace(/\bdick\b[^,]*/gi, '');
+  p = p.replace(/\bpussy\b[^,]*/gi, ''); p = p.replace(/\bclit\b[^,]*/gi, '');
+  p = p.replace(/\bslut\b[^,]*/gi, ''); p = p.replace(/\bwhore\b[^,]*/gi, '');
+  p = p.replace(/\bcum\b[^,]*/gi, ''); p = p.replace(/\bhorny\b[^,]*/gi, '');
+  p = p.replace(/\bporn\w*[^,]*/gi, ''); p = p.replace(/\berect\b[^,]*/gi, '');
+  p = p.replace(/\bstriptease\b[^,]*/gi, '');
+  // "explicit" standalone como adjetivo/marcador — remover
+  p = p.replace(/,\s*explicit\b[^,]*/gi, '');
+  p = p.replace(/\bexplicit\b[^,]*/gi, '');
+  // Múltiplos parceiros
+  p = p.replace(/,?\s*multiple\s+partner[^,]*/gi, '');
+  p = p.replace(/,?\s*threesome\b[^,]*/gi, '');
+  p = p.replace(/,?\s*group\s+(sex|scene|pleasure)\b[^,]*/gi, '');
+  p = p.replace(/,?\s*orgy\b[^,]*/gi, '');
+  // Remover referências a parceiros (broader)
+  p = p.replace(/,?\s*(standing\s+)?partner\b[^,]*/gi, '');
+  p = p.replace(/,?\s*two\s+partner[^,]*/gi, '');
+  // BDSM
+  p = p.replace(/\bkinbaku\b[^,]*/gi, ''); p = p.replace(/\bhogties?\b[^,]*/gi, '');
+  p = p.replace(/\brope\s+(bondage|suspension|ties?)\b[^,]*/gi, '');
+  p = p.replace(/\bspreadeagle\b[^,]*/gi, 'lying spread out, dramatic pose');
   // Remove termos de posição sexual que podem estar no campo roupa também
   p = p.replace(/,?\s*missionary\s+position\b[^,]*/gi, '');
   p = p.replace(/,?\s*fully\s+nude\b[^,]*/gi, '');
@@ -9813,7 +9866,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // ── 2. Câmera / ângulo — pill tem prioridade, senão usa preset.cam ──
   const anguloRaw  = pills.activeAngulo || '';
   const camRaw     = pills.activeCam    || preset.cam || '';
-  const camCombined = cleanForDALLE(safePillVal(anguloRaw || camRaw));
+  const camCombined = cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw || camRaw)));
 
   // ── 3. Roupa — preset.roupa com limpeza; lingerie→shorts lycra para ChatGPT ──
   let roupaClean = safeClothing(safePoseForDALLE(preset.roupa || ''));
