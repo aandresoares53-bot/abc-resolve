@@ -9513,6 +9513,16 @@ function cleanForDALLE(text){
   t = t.replace(/\bcrotch\b[^,]*/gi, '');
   t = t.replace(/\bgenitals?\b[^,]*/gi, '');
 
+  // Corpo — termos que DALL-E bloqueia semanticamente
+  t = t.replace(/\b(large|full|big|huge|small|perky|round)\s+breasts?\b[^,]*/gi, 'natural chest');
+  t = t.replace(/\bbreasts?\b[^,]*/gi, 'chest');
+  t = t.replace(/\b(round|full|big|large|flat)\s+buttocks\b[^,]*/gi, 'natural curves');
+  t = t.replace(/\bbuttocks\b[^,]*/gi, 'curves');
+  t = t.replace(/\b(big|large|full|round|fat)\s+(ass|butt)\b[^,]*/gi, 'full curves');
+  t = t.replace(/\bhourglass\s+figure\b[^,]*/gi, 'athletic figure');
+  t = t.replace(/\bvoluptuous\b[^,]*/gi, 'athletic');
+  t = t.replace(/\bcurvy\b[^,]*/gi, 'athletic');
+
   // Mamilos em contexto explícito
   t = t.replace(/\bhardened\s+nipples?[^,]*/gi, '');
   t = t.replace(/\bnipples?\s+(visible|through|erect|hardened)[^,]*/gi, '');
@@ -9560,8 +9570,8 @@ function cleanForDALLE(text){
 function safePillVal(val){
   if(!val) return '';
 
-  // POV baixo — câmera entre pernas: verificar ANTES do crotch genérico para manter ângulo dramático
-  if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch.*fill|shot.*from.*below.*between/i.test(val)){
+  // POV baixo — câmera entre pernas ou foco em crotch/genitais (qualquer variação)
+  if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor.*level/i.test(val)){
     return 'low angle ground-level shot, camera at floor level pointing upward at subject, legs filling frame on both sides, wide angle dramatic upward perspective, fashion editorial';
   }
 
@@ -9570,9 +9580,9 @@ function safePillVal(val){
     return 'extreme low angle floor-level shot, camera directly below subject pointing straight up, wide angle lens, legs and full body from feet to face, dramatic upward fashion editorial';
   }
 
-  // Genitália explicitamente no centro do quadro (sem POV entre pernas)
-  if(/vulva|camel.?toe|pubic\s+mound|genitalia|crotch.*cent(?:er|ered)|genitals.*cent(?:er|ered)/i.test(val)){
-    return 'close-up fashion detail, fabric contour, tight athletic wear, low angle upward shot, legs filling frame';
+  // Genitália explicitamente no quadro (crotch, genitals, vulva, etc.)
+  if(/vulva|camel.?toe|pubic\s+mound|genitalia|\bcrotch\b|\bgenitals?\b.*cent(?:er|ered)|genitals?\s+and\s+thighs/i.test(val)){
+    return 'low angle upward fashion shot, legs filling frame, athletic wear detail, editorial framing';
   }
 
   // Bunda empurrada para câmera
@@ -10062,6 +10072,8 @@ function buildMJPromptForDALLE(preset){
     .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
     .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
+    .replace(/\bmatching\s+bra\b[^,]*/gi, 'matching sports top')
+    .replace(/\bbra\b[^,]*/gi, 'sports bra top')
     .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
   const roupa = roupaClean || 'white short tight lycra shorts, fitted crop top';
