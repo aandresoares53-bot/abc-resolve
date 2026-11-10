@@ -9561,25 +9561,49 @@ function safePillVal(val){
 
   // Genitália explicitamente no centro do quadro
   if(/vulva|camel.?toe|pubic\s+mound|genitalia|crotch.*cent(?:er|ered)|genitals.*cent(?:er|ered)/i.test(val)){
-    return 'close-up fashion detail, fabric contour, tight athletic wear, sports photography';
+    return 'close-up fashion detail, fabric contour, tight athletic wear, low angle upward shot, legs filling frame';
   }
 
-  // Câmera entre pernas apontando para genitália
+  // POV baixo — câmera entre pernas apontando para genitália → preserva ângulo baixo sem genitália
   if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch.*fill|shot.*from.*below.*between/i.test(val)){
-    return 'editorial low angle, wide angle lens, full body portrait feet to head, dramatic fashion perspective';
+    return 'low angle ground-level shot, camera at floor level pointing upward at subject, legs filling frame on both sides, wide angle dramatic upward perspective, fashion editorial';
   }
 
-  // POV de baixo entre as pernas olhando para cima
+  // POV extremo — direto para cima entre pernas
   if(/straight up between|floor between feet|extreme upward angle from floor|from below between legs/i.test(val)){
-    return 'editorial low angle, wide angle lens, full body portrait feet to head, dramatic fashion perspective';
+    return 'extreme low angle floor-level shot, camera directly below subject pointing straight up, wide angle lens, legs and full body from feet to face, dramatic upward fashion editorial';
   }
 
-  // Bunda empurrada para câmera explicitamente
+  // Bunda empurrada para câmera
   if(/buttocks.*pushed.*camera|torso folded forward.*buttocks.*toward camera/i.test(val)){
-    return 'bending forward at waist, back arched, side profile view, fashion editorial';
+    return 'bent forward at waist, back deeply arched, rear view, hips toward camera, fashion editorial rear shot';
   }
 
   return val;
+}
+
+// Sanitiza poses explícitas para ChatGPT — mantém posição corporal, remove atos sexuais e parceiro
+function safePoseForDALLE(pose){
+  if(!pose) return '';
+  let p = pose;
+  p = p.replace(/,?\s*partner\s+between[^,]*/gi, '');
+  p = p.replace(/,?\s*with\s+(a\s+)?(male\s+|female\s+)?partner[^,]*/gi, '');
+  p = p.replace(/\bmissionary\s+position\b[^,]*/gi, 'lying on back, legs raised, dramatic pose');
+  p = p.replace(/\bdoggy\s*[\-\s]*style\b[^,]*/gi, 'on hands and knees, back arched, looking back');
+  p = p.replace(/\bcowgirl\b[^,]*/gi, 'kneeling straddling, hands on thighs, upright torso');
+  p = p.replace(/\breverse\s+cowgirl\b[^,]*/gi, 'kneeling, back to camera, hands on knees');
+  p = p.replace(/\bperforming\s+oral\b[^,]*/gi, 'kneeling, looking up at camera');
+  p = p.replace(/\btaking\s+(extreme\s+)?oral\b[^,]*/gi, 'kneeling, head tilted up, looking at camera');
+  p = p.replace(/\bforced\s+head\b[^,]*/gi, 'head tilted back, neck arched');
+  p = p.replace(/\beyes\s+watering\b[^,]*/gi, 'eyes slightly glazed, intense expression');
+  p = p.replace(/\bexplicit\s+intercourse\b[^,]*/gi, '');
+  p = p.replace(/\bhips.*grinding[^,]*/gi, 'hips raised, arched back');
+  p = p.replace(/\bpenetrat\w+[^,]*/gi, '');
+  p = p.replace(/\bblowjob\b[^,]*/gi, '');
+  p = p.replace(/\boral\s+sex\b[^,]*/gi, 'kneeling, looking up');
+  p = p.replace(/\bsubmissive[^,]*/gi, 'kneeling, looking up at camera');
+  p = p.replace(/,\s*,/g, ',').replace(/\s{2,}/g,' ').trim();
+  return p;
 }
 
 // Remove apenas referências explícitas a nudez — preserva lingerie, corset, garter, etc.
@@ -9721,16 +9745,16 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   // ── 4. Estado corporal — pill ──
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
 
-  // ── 5. Pose — pill tem prioridade, senão usa preset.pose ──
+  // ── 5. Pose — pill tem prioridade, senão usa preset.pose; sanitiza atos explícitos ──
   const poseRaw = pills.activePose || preset.pose || '';
-  const pose = cleanForDALLE(safePillVal(poseRaw));
+  const pose = cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)));
 
-  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao ──
+  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao; sanitiza explícito ──
   const exprRaw = pills.activeExpr || preset.expressao || '';
-  const expr = cleanForDALLE(exprRaw) || 'natural relaxed expression';
+  const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression';
 
-  // ── 7. Cenário — usa preset.cenario diretamente ──
-  const scene = cleanForDALLE(preset.cenario || '');
+  // ── 7. Cenário — usa preset.cenario; remove referências explícitas ──
+  const scene = cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
 
   // ── 8. Clima + Iluminação + Estilo — pills ──
   const clima = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
