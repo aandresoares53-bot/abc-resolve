@@ -9712,38 +9712,49 @@ function safeClothing(roupa){
   return r;
 }
 
-// ── Roupas seguras por categoria (ignora preset.roupa completamente) ──
-const DALLE_CLOTHING = {
-  casual:      'wearing casual everyday outfit, jeans and fitted top',
-  praia:       'wearing colorful bikini swimwear, beach-ready',
-  academia:    'wearing athletic activewear, sports top and fitted leggings',
-  lingerie:    'wearing fitted bikini set, coordinated activewear',
-  banheiro:    'wearing cozy white bath robe, clean post-shower look',
-  boudoir:     'wearing satin slip dress, relaxed home wear',
-  fantasia:    'wearing stylish themed costume, full coverage',
-  locais:      'wearing casual chic outfit, everyday look',
-  tiktok:      'wearing trendy casual outfit',
-  selfie:      'wearing casual everyday clothes',
-  em_casa:     'wearing cozy home clothes, comfortable casual wear',
-  pos_banho:   'wearing white bath robe, post-shower',
-  dormindo:    'wearing comfortable casual pajamas',
-  urbano:      'wearing urban street style outfit',
-  no_carro:    'wearing casual chic outfit',
-  hotel:       'wearing elegant casual outfit',
-  foco_bunda:  'wearing athletic shorts and fitted crop top, activewear',
-  foco_pernas: 'wearing fitted jeans or athletic leggings, casual',
-  detalhe:     'wearing fitted casual outfit',
-  conteudo:    'wearing casual lifestyle outfit',
-  onlyfans:    'wearing colorful bikini or casual summer outfit',
-  sexting:     'wearing casual home outfit, comfortable clothes',
-  narrativa:   'wearing casual outfit appropriate for the setting',
-  poses_livres:'wearing casual everyday outfit',
-  ana:         'wearing casual outfit',
-  posicoes:    'wearing colorful two-piece swimwear, athletic bikini set',
-  extremo:     'wearing fitted athletic wear, sports top and shorts',
-  pov_extremo: 'wearing casual home loungewear, comfortable fitted outfit',
-  explicito_suave: 'wearing fitted casual summer outfit, light clothing',
+// ── Roupas seguras por categoria — múltiplas variações, escolhidas pelo hash do preset.key ──
+const DALLE_CLOTHING_VARIANTS = {
+  casual:      ['wearing casual jeans and fitted crop top, street style','wearing summer dress and sandals, casual look','wearing high-waist shorts and tucked-in blouse, casual chic','wearing relaxed-fit trousers and sleeveless top, everyday look'],
+  praia:       ['wearing colorful triangle bikini, beach style','wearing sporty one-piece swimsuit, poolside','wearing floral bikini set, vacation beach look','wearing high-waist bikini bottoms and bandeau top'],
+  academia:    ['wearing athletic leggings and fitted sports top, gym ready','wearing high-waist workout shorts and crop sports top, fitness','wearing fitted gym set, activewear look','wearing compression leggings and sleeveless training top'],
+  lingerie:    ['wearing fitted satin slip dress, elegant minimal','wearing colorful two-piece bikini set, vacation style','wearing fitted crop top and high-waist shorts, sporty','wearing athletic bodysuit and shorts, active lifestyle'],
+  banheiro:    ['wearing cozy white terry bath robe, post-shower','wearing wrapped white towel as dress, fresh look','wearing soft cotton robe, morning routine','wearing white bathrobe loosely tied, relaxed home moment'],
+  boudoir:     ['wearing fitted slip dress, relaxed elegant home wear','wearing casual oversized shirt as dress, home chic','wearing satin pajama set, stylish loungewear','wearing silk-look short dress, home elegance'],
+  fantasia:    ['wearing stylish fantasy costume, full coverage','wearing themed character outfit, complete look','wearing elegant period costume, full coverage','wearing creative themed outfit, complete styling'],
+  locais:      ['wearing casual chic outfit, city look','wearing smart casual ensemble, urban style','wearing stylish everyday outfit, street fashion','wearing relaxed fashion outfit, contemporary look'],
+  tiktok:      ['wearing trendy Y2K outfit, social media style','wearing casual chic streetwear look','wearing colorful fashion-forward outfit','wearing trendy casual outfit, influencer style'],
+  selfie:      ['wearing casual everyday clothes, natural look','wearing relaxed weekend outfit, candid','wearing simple but stylish casual look','wearing comfortable everyday fashion'],
+  em_casa:     ['wearing cozy oversized sweater and leggings, home comfort','wearing casual cotton pajama set, home style','wearing relaxed loungewear set, home chic','wearing comfortable fitted home clothes, casual ease'],
+  pos_banho:   ['wearing fluffy white bath robe, post-shower fresh','wearing white towel wrap, clean and fresh look','wearing soft cotton robe tied loosely, morning fresh','wearing cozy terry robe, relaxed post-shower'],
+  dormindo:    ['wearing comfortable cotton pajama set, sleep ready','wearing cozy long-sleeve sleepwear, restful','wearing casual loungewear pajamas, comfortable sleep style','wearing soft knit pajama set, bedtime comfort'],
+  urbano:      ['wearing urban streetwear, oversized hoodie and jeans','wearing chic city outfit, trench coat and boots','wearing edgy urban look, leather jacket and straight jeans','wearing contemporary street style, oversized blazer'],
+  no_carro:    ['wearing casual chic outfit, road trip style','wearing relaxed smart casual look, travel ready','wearing comfortable travel outfit, effortless chic','wearing casual fashion outfit, on-the-go look'],
+  hotel:       ['wearing elegant resort wear, vacation chic','wearing smart casual outfit, hotel lobby style','wearing relaxed elegant look, travel fashion','wearing stylish casual outfit, boutique hotel vibe'],
+  foco_bunda:  ['wearing athletic shorts and fitted crop top, activewear','wearing high-waist leggings and sports bra top, fitness look','wearing sporty fitted shorts and tank top, athletic style','wearing gym-ready shorts and fitted training top'],
+  foco_pernas: ['wearing fitted high-waist jeans, casual chic','wearing athletic leggings, activewear style','wearing mini skirt and fitted top, fashion editorial','wearing high-waist shorts and crop top, summer look'],
+  detalhe:     ['wearing fitted casual outfit, detail focus','wearing elegant minimal outfit, editorial style','wearing stylish close-up ready outfit, fashion detail','wearing chic fitted look, editorial detail shot'],
+  conteudo:    ['wearing casual lifestyle outfit, content creator look','wearing trendy casual ensemble, social media ready','wearing relaxed fashion look, lifestyle content','wearing stylish everyday outfit, creator aesthetic'],
+  onlyfans:    ['wearing colorful bikini, sunny outdoor look','wearing casual summer outfit, lifestyle vibe','wearing sporty two-piece activewear, beach-ready','wearing casual chic beach look, vacation style'],
+  sexting:     ['wearing cozy oversized shirt, casual home morning','wearing relaxed home outfit, comfortable loungewear','wearing casual cotton pajamas, morning at home','wearing fitted casual home clothes, relaxed look'],
+  narrativa:   ['wearing outfit appropriate for the setting, storytelling look','wearing casual clothes fitting the scene, natural','wearing contextual casual outfit, environmental portrait','wearing everyday outfit matching the scenario'],
+  poses_livres:['wearing casual everyday outfit, natural look','wearing relaxed fashion outfit, free pose','wearing comfortable casual clothes, lifestyle','wearing simple chic outfit, candid style'],
+  ana:         ['wearing casual fitted outfit, model pose','wearing simple chic clothes, editorial style','wearing relaxed casual look, natural pose','wearing everyday fashion, clean aesthetic'],
+  posicoes:    ['wearing colorful two-piece swimwear, athletic bikini','wearing sporty bikini set, active beach look','wearing fitness bikini, athletic style','wearing colorful athletic swimwear, sport beach style'],
+  extremo:     ['wearing fitted athletic wear, sport top and shorts','wearing sporty gym outfit, fitness look','wearing athletic crop top and leggings, training style','wearing fitted activewear, sport training look'],
+  pov_extremo: ['wearing casual home loungewear, comfortable fitted outfit','wearing relaxed casual home look, comfortable daily wear','wearing cozy fitted loungewear, home lifestyle','wearing casual everyday home outfit, relaxed'],
+  explicito_suave: ['wearing fitted casual summer outfit, light clothing','wearing relaxed summer look, casual and breezy','wearing simple fitted casual clothes, easy summer','wearing light casual summer outfit, effortless'],
 };
+
+// Função para escolher variação de roupa baseada no hash do preset.key (determinístico)
+function pickClothingVariant(cat, key){
+  const variants = DALLE_CLOTHING_VARIANTS[cat];
+  if(!variants) return 'wearing casual everyday outfit';
+  let hash=0; for(let i=0;i<(key||'').length;i++) hash=(hash*31+key.charCodeAt(i))&0xffff;
+  return variants[hash % variants.length];
+}
+
+// Mantido para compatibilidade (usado como fallback)
+const DALLE_CLOTHING = Object.fromEntries(Object.entries(DALLE_CLOTHING_VARIANTS).map(([k,v])=>[k,v[0]]));
 
 // ── Cenários seguros por categoria (substitui preset.cenario para cats íntimas) ──
 const DALLE_SCENE_OVERRIDE = {
@@ -9945,29 +9956,8 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
       ? (SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, editorial framing')
       : cleanForDALLE(safePoseForDALLE(safePillVal(preset.cam || '')));
 
-  // ── 3. Roupa — usa roupa do preset sanitizada; fallback para DALLE_CLOTHING da categoria ──
-  const roupaPreset = preset.roupa || '';
-  let roupaSafe = safeClothing(safePoseForDALLE(roupaPreset));
-  roupaSafe = roupaSafe
-    .replace(/\bcompletely\s+nude\b[^,]*/gi, '')
-    .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, '')
-    .replace(/\blingerie\b[^,]*/gi, 'fitted bodysuit')
-    .replace(/\bbustier\b[^,]*/gi, 'fitted strapless top')
-    .replace(/\bcorset\b[^,]*/gi, 'fitted waist-cinching top')
-    .replace(/\bgarter\s*belt\b[^,]*/gi, '').replace(/\bgarter\b[^,]*/gi, '')
-    .replace(/\bthong\b[^,]*/gi, 'bikini bottoms')
-    .replace(/\bg-string\b[^,]*/gi, 'bikini bottoms')
-    .replace(/\bpanties\b/gi, 'shorts').replace(/\bpanty\b/gi, 'shorts')
-    .replace(/\bbodystocking\b[^,]*/gi, 'sheer bodysuit')
-    .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'fitted bodysuit')
-    .replace(/\bmatching\s+bra\b/gi, 'matching sports bra').replace(/\bbra\b/gi, 'sports bra')
-    .replace(/\bnaked\b[^,]*/gi, '').replace(/\bnakedness\b[^,]*/gi, '')
-    .replace(/\bbare\s+(breasts?|chest)[^,]*/gi, 'bare shoulders')
-    .replace(/\bbare\s+(butt|buttocks|ass)[^,]*/gi, 'short shorts')
-    .replace(/\bexposed\s+(breasts?|chest|nipples?)[^,]*/gi, 'bare shoulders')
-    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim()
-    .replace(/^,|,$/g,'').trim();
-  const roupa = roupaSafe || DALLE_CLOTHING[cat] || 'casual fitted outfit';
+  // ── 3. Roupa — variação segura por preset (determinística pelo key) ──
+  const roupa = pickClothingVariant(cat, preset.key);
 
   // ── 4. Estado corporal — pill ──
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
@@ -10028,6 +10018,14 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
     .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
     .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
+    .replace(/\bpanties\b[^,]*/gi, 'shorts')
+    .replace(/\blingerie\s+store\b[^,]*/gi, 'clothing store')
+    .replace(/\blingerie\b[^,]*/gi, 'fashion outfit')
+    .replace(/\bvulva\b[^,]*/gi, '')
+    .replace(/\bvagina\b[^,]*/gi, '')
+    .replace(/\bnaked\b[^,]*/gi, '')
+    .replace(/\bnipple[^,]*/gi, '')
+    .replace(/\btopless\b[^,]*/gi, '')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
   return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
@@ -10166,30 +10164,8 @@ function buildMJPromptForDALLE(preset){
   const proporcao = getActivePillVal('proporcao') || '';
   const corpo = proporcao || 'natural feminine figure, athletic build, wide hips, real skin texture';
 
-  // Roupa — DALLE_CLOTHING por categoria para cats explícitas; senão sanitiza preset
-  const roupa = isMJExplicit
-    ? (DALLE_CLOTHING[cat] || 'white short tight lycra shorts, fitted crop top')
-    : (() => {
-        let rc = safeClothing(safePoseForDALLE(p.roupa || ''));
-        rc = rc
-          .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
-          .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bgarter\s*belt\b[^,]*/gi, '').replace(/\bgarter\b[^,]*/gi, '')
-          .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
-          .replace(/\bmatching\s+bra\b[^,]*/gi, 'matching sports top')
-          .replace(/\bbra\b[^,]*/gi, 'sports bra top')
-          .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
-          .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-        return rc || 'white short tight lycra shorts, fitted crop top';
-      })();
+  // Roupa — variação segura por preset (determinística pelo key)
+  const roupa = pickClothingVariant(cat, p.key);
 
   // Pose — pill tem prioridade; para cats explícitas usa safe pose
   const poseRaw = getActivePillVal('pose') || '';
@@ -10244,6 +10220,14 @@ function buildMJPromptForDALLE(preset){
     .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
     .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
     .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
+    .replace(/\bpanties\b[^,]*/gi, 'shorts')
+    .replace(/\blingerie\s+store\b[^,]*/gi, 'clothing store')
+    .replace(/\blingerie\b[^,]*/gi, 'fashion outfit')
+    .replace(/\bvulva\b[^,]*/gi, '')
+    .replace(/\bvagina\b[^,]*/gi, '')
+    .replace(/\bnaked\b[^,]*/gi, '')
+    .replace(/\bnipple[^,]*/gi, '')
+    .replace(/\btopless\b[^,]*/gi, '')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
   return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
