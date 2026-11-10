@@ -9577,17 +9577,17 @@ function safePillVal(val){
 
   // POV baixo — câmera entre pernas ou foco em crotch/genitais (qualquer variação)
   if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor.*level/i.test(val)){
-    return 'low angle ground-level shot, camera at floor level pointing upward at subject, legs filling frame on both sides, wide angle dramatic upward perspective, fashion editorial';
+    return 'POV baixo, ground-level upward shot, 24mm wide angle, camera on floor looking up at standing subject, both legs extending upward filling frame, dramatic upward fashion editorial framing, feet close to lens';
   }
 
   // POV extremo — direto para cima entre pernas
   if(/straight up between|floor between feet|extreme upward angle from floor|from below between legs/i.test(val)){
-    return 'extreme low angle floor-level shot, camera directly below subject pointing straight up, wide angle lens, legs and full body from feet to face, dramatic upward fashion editorial';
+    return 'POV baixo extremo, extreme ground-level upward shot, 14mm ultra-wide, camera flat on floor pointing straight up at standing subject, full body from feet to face in one continuous upward frame, maximum upward distortion, dramatic fashion editorial';
   }
 
   // Genitália explicitamente no quadro (crotch, genitals, vulva, etc.)
   if(/vulva|camel.?toe|pubic\s+mound|genitalia|\bcrotch\b|\bgenitals?\b.*cent(?:er|ered)|genitals?\s+and\s+thighs/i.test(val)){
-    return 'low angle upward fashion shot, legs filling frame, athletic wear detail, editorial framing';
+    return 'POV baixo close-up, tight ground-level upward shot, 35mm, camera close to floor looking up along legs toward subject, legs filling frame from feet upward, editorial fashion close-up framing';
   }
 
   // Bunda empurrada para câmera
