@@ -9864,9 +9864,11 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
 
   const lightFinal = luzPill || light;
 
-  const details = [subject, camSpec, camCombined, roupa, estado, pose, expr, scene, clima, lightFinal, palette, stylePill, composition]
+  let details = [subject, camSpec, camCombined, roupa, estado, pose, expr, scene, clima, lightFinal, palette, stylePill, composition]
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
+  // Remove frases duplicadas consecutivas (ex: "lying on back, legs raised, dramatic pose, lying on back, legs raised")
+  details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
 
   return `${genre}, photorealistic: ${details}. ${negatives}.`;
 }
