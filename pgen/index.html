@@ -9658,6 +9658,15 @@ function safePoseForDALLE(pose){
   p = p.replace(/\bkinbaku\b[^,]*/gi, ''); p = p.replace(/\bhogties?\b[^,]*/gi, '');
   p = p.replace(/\brope\s+(bondage|suspension|ties?)\b[^,]*/gi, '');
   p = p.replace(/\bspreadeagle\b[^,]*/gi, 'lying spread out, dramatic pose');
+  // Poses de pernas abertas / exposição de coxas
+  p = p.replace(/\blegs?\s+spread[^,]*/gi, 'legs extended, natural stance');
+  p = p.replace(/\bthighs?\s+open[^,]*/gi, 'relaxed seated pose');
+  p = p.replace(/\binner\s+thighs?\s+visible[^,]*/gi, 'legs visible');
+  p = p.replace(/\bopen\s+leg\s+position[^,]*/gi, 'natural seated position');
+  p = p.replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose');
+  p = p.replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose');
+  p = p.replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance');
+  p = p.replace(/\bupskirt\b[^,]*/gi, 'low angle shot');
   // Remove termos de posição sexual que podem estar no campo roupa também
   p = p.replace(/,?\s*missionary\s+position\b[^,]*/gi, '');
   p = p.replace(/,?\s*fully\s+nude\b[^,]*/gi, '');
@@ -9935,6 +9944,15 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     .replace(/\bsensual\b[^,]*/gi, 'confident')
     .replace(/\bsexual\b[^,]*/gi, '')
     .replace(/\bsex\b(?!\s*appeal)[^,]*/gi, '')
+    // Leg/thigh poses that imply upskirt or exposure
+    .replace(/\blegs?\s+spread[^,]*/gi, 'legs extended, natural stance')
+    .replace(/\bthighs?\s+open[^,]*/gi, 'relaxed seated pose')
+    .replace(/\binner\s+thighs?\s+visible[^,]*/gi, 'legs visible')
+    .replace(/\bopen\s+leg\s+position[^,]*/gi, 'natural seated position')
+    .replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose')
+    .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
+    .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
+    .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
   return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
@@ -10087,6 +10105,14 @@ function buildMJPromptForDALLE(preset){
     .replace(/\bsensual\b[^,]*/gi, 'confident')
     .replace(/\bsexual\b[^,]*/gi, '')
     .replace(/\bsex\b(?!\s*appeal)[^,]*/gi, '')
+    .replace(/\blegs?\s+spread[^,]*/gi, 'legs extended, natural stance')
+    .replace(/\bthighs?\s+open[^,]*/gi, 'relaxed seated pose')
+    .replace(/\binner\s+thighs?\s+visible[^,]*/gi, 'legs visible')
+    .replace(/\bopen\s+leg\s+position[^,]*/gi, 'natural seated position')
+    .replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose')
+    .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
+    .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
+    .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
   return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
