@@ -9590,6 +9590,11 @@ function safePillVal(val){
     return 'POV baixo close-up, tight ground-level upward shot, 35mm, camera close to floor looking up along legs toward subject, legs filling frame from feet upward, editorial fashion close-up framing';
   }
 
+  // Pernas abertas — preserva pose sem termos bloqueados
+  if(/legs\s+spread\s+wide\s+apart|thighs\s+open|inner\s+thighs\s+visible|open\s+leg\s+position/i.test(val)){
+    return 'seated with knees separated wide, feet flat on floor, hips relaxed open, natural candid seated pose, legs separated showing full inner leg line, body weight sunk naturally, editorial fashion wide seated stance, grounded natural posture';
+  }
+
   // Bunda empurrada para câmera
   if(/buttocks.*pushed.*camera|torso folded forward.*buttocks.*toward camera/i.test(val)){
     return 'bent forward at waist, back deeply arched, rear view, hips toward camera, fashion editorial rear shot';
