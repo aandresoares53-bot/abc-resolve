@@ -9892,46 +9892,81 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const subjectAge = idadeSafe || 'adult woman in her early 20s';
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
-  // ── 2. Câmera / ângulo — pill tem prioridade, senão usa preset.cam ──
-  const anguloRaw  = pills.activeAngulo || '';
-  const camRaw     = pills.activeCam    || preset.cam || '';
-  const camCombined = cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw || camRaw)));
+  // Categorias explícitas — pose/cam/cenário são completamente substituídos por versões seguras
+  const EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','lingerie','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
+  const isExplicitCat = EXPLICIT_CATS.has(cat);
 
-  // ── 3. Roupa — preset.roupa com limpeza; lingerie→shorts lycra para ChatGPT ──
-  let roupaClean = safeClothing(safePoseForDALLE(preset.roupa || ''));
-  roupaClean = roupaClean
-    // Nudez explícita → substitui por lycra
-    .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
-    .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bgarter\s*belt\b[^,]*/gi, '')
-    .replace(/\bgarter\b[^,]*/gi, '')
-    .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
-    // Deduplicar se várias substituições geraram repetições
-    .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
-    .replace(/,\s*,/g, ',').replace(/\s{2,}/g,' ').trim();
-  const roupa = roupaClean || 'white short tight lycra shorts, fitted crop top';
+  const SAFE_POSE = {
+    posicoes:        'standing, weight on one leg, hand on hip, confident editorial fashion pose',
+    extremo:         'standing facing camera, arms relaxed at sides, athletic editorial pose',
+    pov_extremo:     'standing, slight forward lean toward camera, natural candid lifestyle pose',
+    explicito_suave: 'sitting cross-legged, hands in lap, relaxed natural editorial pose',
+    ana:             'standing, side profile, one hand raised, editorial fashion pose',
+    onlyfans:        'standing facing camera, arms raised above head, lifestyle editorial pose',
+    sexting:         'sitting on bed, one knee up, candid natural lifestyle pose',
+    boudoir:         'sitting on bed edge, hands on knees, natural editorial lifestyle pose',
+    lingerie:        'standing, three-quarter turn, one hand on wall, editorial fashion pose',
+    foco_bunda:      'standing, back to camera, slight bend forward, athletic editorial pose',
+    foco_pernas:     'standing, full leg visible, one foot forward, editorial fashion pose',
+    detalhe:         'standing, close-up framing, editorial fashion detail pose',
+    conteudo:        'standing, natural lifestyle candid pose, looking at camera',
+    narrativa:       'natural editorial lifestyle pose, environmental portrait',
+    pos_banho:       'standing facing camera, natural post-shower lifestyle pose',
+    dormindo:        'lying on side, natural comfortable resting pose',
+    hotel:           'standing by window, natural editorial lifestyle pose',
+    banheiro:        'standing, facing mirror, natural lifestyle pose',
+    em_casa:         'sitting on couch, legs tucked, natural comfortable home pose',
+    no_carro:        'sitting in passenger seat, natural candid lifestyle pose',
+  };
+
+  const SAFE_CAM = {
+    posicoes:        'medium shot, 85mm f/1.4, eye level, editorial framing, subject centered',
+    extremo:         'medium shot, 50mm f/2, slightly low angle, wide editorial framing',
+    pov_extremo:     'medium shot, 35mm f/2, eye level, slight wide angle, lifestyle framing',
+    explicito_suave: 'medium shot, 85mm f/1.8, eye level, soft editorial framing',
+    pov_extremo:     'medium shot, 35mm, eye level, lifestyle candid framing',
+    onlyfans:        'medium shot, 35mm f/1.8, eye level, natural lifestyle framing',
+    sexting:         'medium shot, 35mm, slight high angle, candid lifestyle framing',
+    boudoir:         'medium shot, 85mm f/1.4, eye level, soft editorial framing',
+    lingerie:        'medium shot, 85mm f/1.4, eye level, fashion editorial framing',
+    foco_bunda:      'medium shot from behind, 85mm, slightly low angle, athletic editorial',
+    foco_pernas:     'full body shot, 50mm, eye level, editorial fashion framing',
+    hotel:           'medium shot, 50mm f/2, eye level, clean editorial hotel framing',
+    banheiro:        'medium shot, 35mm, eye level, lifestyle editorial framing',
+  };
+
+  // ── 2. Câmera / ângulo — pill tem prioridade; para cats explícitas usa safe cam ──
+  const anguloRaw  = pills.activeAngulo || '';
+  const camRaw     = pills.activeCam || '';
+  const camFromPill = anguloRaw || camRaw;
+  const camCombined = camFromPill
+    ? cleanForDALLE(safePoseForDALLE(safePillVal(camFromPill)))
+    : isExplicitCat
+      ? (SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, editorial framing')
+      : cleanForDALLE(safePoseForDALLE(safePillVal(preset.cam || '')));
+
+  // ── 3. Roupa — DALLE_CLOTHING por categoria (ignora preset); fallback com limpeza ──
+  const roupa = DALLE_CLOTHING[cat] || 'wearing casual everyday outfit, jeans and fitted top';
 
   // ── 4. Estado corporal — pill ──
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
 
-  // ── 5. Pose — pill tem prioridade, senão usa preset.pose; sanitiza atos explícitos ──
-  const poseRaw = pills.activePose || preset.pose || '';
-  const pose = cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)));
+  // ── 5. Pose — pill tem prioridade; para cats explícitas usa safe pose ──
+  const poseRaw = pills.activePose || '';
+  const pose = poseRaw
+    ? cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)))
+    : isExplicitCat
+      ? (SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
+      : cleanForDALLE(safePillVal(safePoseForDALLE(preset.pose || '')));
 
-  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao ──
+  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao com limpeza ──
   const exprRaw = pills.activeExpr || preset.expressao || '';
   const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
 
-  // ── 7. Cenário — usa preset.cenario; remove referências explícitas ──
-  const scene = cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
+  // ── 7. Cenário — usa DALLE_SCENE_OVERRIDE para cats explícitas; senão preset.cenario ──
+  const scene = DALLE_SCENE_OVERRIDE[cat]
+    ? DALLE_SCENE_OVERRIDE[cat]
+    : cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
 
   // ── 8. Clima + Iluminação pill (sobrescreve default se ativo) ──
   const clima     = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
@@ -10048,55 +10083,109 @@ function buildMJPromptForDALLE(preset){
     ? 'black and white film photography, high contrast, grain, analog'
     : `35mm analog photography, ${filmRaw} film, natural grain, candid snapshot, circa 2006`;
 
-  // Ângulo / câmera — pill ativa ou preset
-  const anguloRaw = getActivePillVal('angulo') || getActivePillVal('cam') || p.angulo || p.cam || '';
-  const camClean = cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw)));
+  // Categorias explícitas — pose/cam/roupa/cenário substituídos por versões seguras
+  const MJ_EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','lingerie','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
+  const isMJExplicit = MJ_EXPLICIT_CATS.has(cat);
 
-  // Corpo — sanitiza
+  const MJ_SAFE_POSE = {
+    posicoes:'standing, weight on one leg, hand on hip, confident editorial fashion pose',
+    extremo:'standing facing camera, arms relaxed at sides, athletic editorial pose',
+    pov_extremo:'standing, slight forward lean toward camera, natural candid lifestyle pose',
+    explicito_suave:'sitting cross-legged, hands in lap, relaxed natural editorial pose',
+    ana:'standing, side profile, one hand raised, editorial fashion pose',
+    onlyfans:'standing facing camera, arms raised above head, lifestyle editorial pose',
+    sexting:'sitting on bed, one knee up, candid natural lifestyle pose',
+    boudoir:'sitting on bed edge, hands on knees, natural editorial lifestyle pose',
+    lingerie:'standing, three-quarter turn, one hand on wall, editorial fashion pose',
+    foco_bunda:'standing, back to camera, slight bend forward, athletic editorial pose',
+    foco_pernas:'standing, full leg visible, one foot forward, editorial fashion pose',
+    detalhe:'standing, close-up framing, editorial fashion detail pose',
+    conteudo:'standing, natural lifestyle candid pose, looking at camera',
+    narrativa:'natural editorial lifestyle pose, environmental portrait',
+    pos_banho:'standing facing camera, natural post-shower lifestyle pose',
+    dormindo:'lying on side, natural comfortable resting pose',
+    hotel:'standing by window, natural editorial lifestyle pose',
+    banheiro:'standing, facing mirror, natural lifestyle pose',
+    em_casa:'sitting on couch, legs tucked, natural comfortable home pose',
+    no_carro:'sitting in passenger seat, natural candid lifestyle pose',
+  };
+
+  const MJ_SAFE_CAM = {
+    posicoes:'medium shot, 50mm f/2, eye level, editorial framing',
+    extremo:'medium shot, 50mm f/2, slightly low angle, wide editorial framing',
+    pov_extremo:'medium shot, 35mm f/2, eye level, slight wide angle, lifestyle framing',
+    explicito_suave:'medium shot, 85mm f/1.8, eye level, shallow depth of field',
+    ana:'three-quarter shot, 85mm f/1.4, side lighting, editorial framing',
+    onlyfans:'medium-wide shot, 35mm f/2.8, eye level, lifestyle framing',
+    sexting:'medium shot, 50mm f/2, slightly high angle, candid framing',
+    boudoir:'medium shot, 85mm f/1.4, natural window light, editorial framing',
+    lingerie:'full body shot, 85mm f/1.8, studio lighting, fashion editorial framing',
+    foco_bunda:'three-quarter back shot, 85mm f/2, low angle, athletic editorial',
+    foco_pernas:'full body shot, 85mm f/1.8, eye level, fashion editorial framing',
+    detalhe:'close-up shot, 100mm macro f/2.8, eye level, detail framing',
+    conteudo:'medium shot, 50mm f/2, eye level, lifestyle candid framing',
+    narrativa:'wide shot, 35mm f/2.8, eye level, environmental portrait',
+    pos_banho:'medium shot, 85mm f/1.4, natural light, lifestyle framing',
+    dormindo:'wide shot, 35mm f/2, slightly high angle, lifestyle framing',
+    hotel:'medium shot, 50mm f/2, natural window light, lifestyle editorial',
+    banheiro:'medium shot, 35mm f/2.8, bathroom light, candid lifestyle',
+    em_casa:'wide shot, 35mm f/2.8, natural home light, lifestyle framing',
+    no_carro:'medium shot, 50mm f/2, natural light, candid lifestyle',
+  };
+
+  // Ângulo / câmera — pill ativa tem prioridade; para cats explícitas usa safe cam
+  const anguloRaw = getActivePillVal('angulo') || getActivePillVal('cam') || '';
+  const camClean = anguloRaw
+    ? cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw)))
+    : isMJExplicit
+      ? (MJ_SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, editorial framing')
+      : cleanForDALLE(safePoseForDALLE(safePillVal(p.angulo || p.cam || '')));
+
+  // Corpo — sanitiza (apenas campos seguros)
   const proporcao = getActivePillVal('proporcao') || '';
-  const corpoBase = proporcao || 'natural feminine figure, athletic build, wide hips, real skin texture';
-  const corpoExtra = p.corpo && p.corpo !== 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body'
-    ? cleanForDALLE(safePoseForDALLE(p.corpo))
-        .replace(/\bbreasts?\b[^,]*/gi, 'chest')
-        .replace(/\bbuttocks\b[^,]*/gi, 'curves')
-        .replace(/\bbutt\b[^,]*/gi, 'curves')
-        .replace(/\bass\b[^,]*/gi, 'curves')
-        .replace(/\bbig\s+(ass|butt|buttocks)\b[^,]*/gi, 'full curves')
-        .trim()
-    : '';
-  const corpo = corpoExtra ? `${corpoBase}, ${corpoExtra}` : corpoBase;
+  const corpo = proporcao || 'natural feminine figure, athletic build, wide hips, real skin texture';
 
-  // Roupa — sanitiza e aplica substituições para DALL-E
-  let roupaClean = safeClothing(safePoseForDALLE(p.roupa || ''));
-  roupaClean = roupaClean
-    .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
-    .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bgarter\s*belt\b[^,]*/gi, '').replace(/\bgarter\b[^,]*/gi, '')
-    .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bmatching\s+bra\b[^,]*/gi, 'matching sports top')
-    .replace(/\bbra\b[^,]*/gi, 'sports bra top')
-    .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
-    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-  const roupa = roupaClean || 'white short tight lycra shorts, fitted crop top';
+  // Roupa — DALLE_CLOTHING por categoria para cats explícitas; senão sanitiza preset
+  const roupa = isMJExplicit
+    ? (DALLE_CLOTHING[cat] || 'white short tight lycra shorts, fitted crop top')
+    : (() => {
+        let rc = safeClothing(safePoseForDALLE(p.roupa || ''));
+        rc = rc
+          .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
+          .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bgarter\s*belt\b[^,]*/gi, '').replace(/\bgarter\b[^,]*/gi, '')
+          .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
+          .replace(/\bmatching\s+bra\b[^,]*/gi, 'matching sports top')
+          .replace(/\bbra\b[^,]*/gi, 'sports bra top')
+          .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
+          .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
+        return rc || 'white short tight lycra shorts, fitted crop top';
+      })();
 
-  // Pose (pill ou preset)
-  const poseRaw = getActivePillVal('pose') || p.pose || '';
-  const pose = cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)));
+  // Pose — pill tem prioridade; para cats explícitas usa safe pose
+  const poseRaw = getActivePillVal('pose') || '';
+  const pose = poseRaw
+    ? cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)))
+    : isMJExplicit
+      ? (MJ_SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
+      : cleanForDALLE(safePillVal(safePoseForDALLE(p.pose || '')));
 
   // Expressão (pill ou preset)
   const exprRaw = getActivePillVal('expressao2') || p.expressao || '';
   const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
 
-  // Cenário
-  const scene = cleanForDALLE(safePoseForDALLE(p.cenario || 'messy bedroom, rumpled sheets, window light'));
+  // Cenário — DALLE_SCENE_OVERRIDE para cats explícitas
+  const scene = isMJExplicit && DALLE_SCENE_OVERRIDE[cat]
+    ? DALLE_SCENE_OVERRIDE[cat]
+    : cleanForDALLE(safePoseForDALLE(p.cenario || 'messy bedroom, rumpled sheets, window light'));
 
   // Estado + clima
   const estado = getActivePillVal('estado') ? cleanForDALLE(getActivePillVal('estado')) : '';
