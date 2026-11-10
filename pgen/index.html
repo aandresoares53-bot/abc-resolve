@@ -9590,10 +9590,10 @@ function safePoseForDALLE(pose){
   p = p.replace(/,?\s*partner\s+between[^,]*/gi, '');
   p = p.replace(/,?\s*with\s+(a\s+)?(male\s+|female\s+)?partner[^,]*/gi, '');
   // Posições sexuais — substitui mas preserva posição corporal base
-  p = p.replace(/\b(on\s+back\s+in\s+)?missionary\s+position\b[^,]*/gi, 'lying on back, legs raised, dramatic pose');
-  p = p.replace(/\bdoggy\s*[\-\s]*style\b[^,]*/gi, 'on hands and knees, back arched, looking back');
-  p = p.replace(/\bcowgirl\b[^,]*/gi, 'kneeling straddling, hands on thighs, upright torso');
-  p = p.replace(/\breverse\s+cowgirl\b[^,]*/gi, 'kneeling, back to camera, hands on knees');
+  p = p.replace(/\b(on\s+back\s+in\s+)?missionary\s+position\b[^,]*/gi, 'lying on back, arms extended, dramatic editorial pose');
+  p = p.replace(/\bdoggy\s*[\-\s]*style\b[^,]*/gi, 'on hands and knees, back arched, looking over shoulder');
+  p = p.replace(/\bcowgirl\b[^,]*/gi, 'kneeling upright, hands on own thighs, facing camera');
+  p = p.replace(/\breverse\s+cowgirl\b[^,]*/gi, 'kneeling, back to camera, hands resting on knees');
   p = p.replace(/\bperforming\s+oral\b[^,]*/gi, 'kneeling, looking up at camera');
   p = p.replace(/\btaking\s+(extreme\s+)?oral\b[^,]*/gi, 'kneeling, head tilted up, looking at camera');
   p = p.replace(/\bforced\s+head\b[^,]*/gi, 'head tilted back, neck arched');
@@ -9742,21 +9742,21 @@ const DALLE_SCENE_OVERRIDE = {
 
 // ── Género fotográfico por categoria ──
 const DALLE_PHOTO_GENRE = {
-  lingerie:        'Professional boudoir and lingerie editorial photography, shot by Mert Alas, Vogue Italia aesthetic',
-  boudoir:         'Professional boudoir editorial photography, shot by Rankin, intimate editorial style',
+  lingerie:        'Professional fashion editorial photography, shot by Mert Alas, Vogue Italia aesthetic',
+  boudoir:         'Professional lifestyle editorial photography, shot by Rankin, editorial style',
   praia:           'Professional beach lifestyle and swimwear photography, Sports Illustrated aesthetic',
   academia:        'Professional fitness and athletic photography, Nike campaign aesthetic',
   foco_bunda:      'Professional fitness editorial photography, athletic editorial style',
   foco_pernas:     'Professional fitness and lifestyle photography, editorial campaign',
-  posicoes:        'Professional boudoir editorial photography, intimate lifestyle editorial',
-  extremo:         'Professional athletic and boudoir photography, editorial campaign',
-  pov_extremo:     'Professional boudoir editorial photography, intimate editorial style',
-  explicito_suave: 'Professional boudoir editorial photography, editorial intimate style',
-  onlyfans:        'Professional lifestyle and boudoir photography, editorial style',
+  posicoes:        'Professional lifestyle editorial photography, editorial campaign',
+  extremo:         'Professional athletic editorial photography, editorial campaign',
+  pov_extremo:     'Professional lifestyle editorial photography, editorial style',
+  explicito_suave: 'Professional lifestyle editorial photography, editorial style',
+  onlyfans:        'Professional lifestyle photography, editorial style',
   sexting:         'Professional casual lifestyle photography, candid editorial',
   banheiro:        'Professional lifestyle photography, editorial bathroom scene',
   pos_banho:       'Professional lifestyle photography, post-shower editorial',
-  dormindo:        'Professional intimate lifestyle photography, bedroom editorial',
+  dormindo:        'Professional lifestyle photography, bedroom editorial',
   hotel:           'Professional travel and lifestyle photography, hotel editorial',
   no_carro:        'Professional automotive lifestyle photography, editorial campaign',
   conteudo:        'Professional lifestyle photography, editorial campaign',
@@ -9921,8 +9921,21 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   let details = [subject, camSpec, camCombined, roupa, estado, pose, expr, scene, clima, lightFinal, palette, stylePill, composition]
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-  // Remove frases duplicadas consecutivas (ex: "lying on back, legs raised, dramatic pose, lying on back, legs raised")
+  // Remove frases duplicadas consecutivas
   details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
+  // Final semantic safety pass — catches anything that slipped through individual fields
+  details = details
+    .replace(/\bstraddling\b[^,]*/gi, 'kneeling upright')
+    .replace(/\bintimate\b[^,]*/gi, 'editorial')
+    .replace(/\bboudoir\b[^,]*/gi, 'lifestyle editorial')
+    .replace(/\bbreasts?\b[^,]*/gi, 'chest')
+    .replace(/\bbuttocks\b[^,]*/gi, 'curves')
+    .replace(/\bseductive\b[^,]*/gi, 'confident')
+    .replace(/\berotic\b[^,]*/gi, '')
+    .replace(/\bsensual\b[^,]*/gi, 'confident')
+    .replace(/\bsexual\b[^,]*/gi, '')
+    .replace(/\bsex\b(?!\s*appeal)[^,]*/gi, '')
+    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
   return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
 }
@@ -10004,9 +10017,16 @@ function buildMJPromptForDALLE(preset){
 
   // Corpo — sanitiza
   const proporcao = getActivePillVal('proporcao') || '';
-  const corpoBase = proporcao || 'natural body, medium breasts, wide hips, real skin';
+  const corpoBase = proporcao || 'natural feminine figure, athletic build, wide hips, real skin texture';
   const corpoExtra = p.corpo && p.corpo !== 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body'
-    ? cleanForDALLE(safePoseForDALLE(p.corpo)) : '';
+    ? cleanForDALLE(safePoseForDALLE(p.corpo))
+        .replace(/\bbreasts?\b[^,]*/gi, 'chest')
+        .replace(/\bbuttocks\b[^,]*/gi, 'curves')
+        .replace(/\bbutt\b[^,]*/gi, 'curves')
+        .replace(/\bass\b[^,]*/gi, 'curves')
+        .replace(/\bbig\s+(ass|butt|buttocks)\b[^,]*/gi, 'full curves')
+        .trim()
+    : '';
   const corpo = corpoExtra ? `${corpoBase}, ${corpoExtra}` : corpoBase;
 
   // Roupa — sanitiza e aplica substituições para DALL-E
@@ -10055,6 +10075,19 @@ function buildMJPromptForDALLE(preset){
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
   details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
+  // Final semantic safety pass
+  details = details
+    .replace(/\bstraddling\b[^,]*/gi, 'kneeling upright')
+    .replace(/\bintimate\b[^,]*/gi, 'editorial')
+    .replace(/\bboudoir\b[^,]*/gi, 'lifestyle editorial')
+    .replace(/\bbreasts?\b[^,]*/gi, 'chest')
+    .replace(/\bbuttocks\b[^,]*/gi, 'curves')
+    .replace(/\bseductive\b[^,]*/gi, 'confident')
+    .replace(/\berotic\b[^,]*/gi, '')
+    .replace(/\bsensual\b[^,]*/gi, 'confident')
+    .replace(/\bsexual\b[^,]*/gi, '')
+    .replace(/\bsex\b(?!\s*appeal)[^,]*/gi, '')
+    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
   return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
 }
