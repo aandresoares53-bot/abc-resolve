@@ -10395,10 +10395,10 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     ? LINGERIE_SAFE_EXPR
     : cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
 
-  // ── 7. Cenário — lingerie: estúdio editorial moda; explicit: override; default: preset ──
-  const LINGERIE_SAFE_SCENE = 'professional fashion photography studio, clean white cyclorama backdrop, studio three-point strobe lighting, Victoria\'s Secret catalog aesthetic, high-end fashion editorial set, professional lingerie campaign production';
+  // ── 7. Cenário — lingerie: cenário real do preset + sufixo editorial; explicit: override; default: preset ──
+  const LINGERIE_EDITORIAL_SUFFIX = ', professional lingerie editorial context, luxury fashion campaign photography, high-end brand catalog production';
   const scene = isLingerieCat
-    ? LINGERIE_SAFE_SCENE
+    ? (cleanForDALLE(safePoseForDALLE(preset.cenario || '')) || 'lifestyle setting') + LINGERIE_EDITORIAL_SUFFIX
     : DALLE_SCENE_OVERRIDE[cat]
       ? DALLE_SCENE_OVERRIDE[cat]
       : cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
@@ -10619,10 +10619,10 @@ function buildMJPromptForDALLE(preset){
     ? MJ_LINGERIE_SAFE_EXPR
     : cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
 
-  // Cenário — lingerie: studio editorial; explicit: DALLE_SCENE_OVERRIDE
-  const MJ_LINGERIE_SAFE_SCENE = 'professional fashion photography studio, clean white cyclorama backdrop, studio three-point strobe lighting, Victoria\'s Secret catalog aesthetic, high-end fashion editorial set, professional lingerie campaign production';
+  // Cenário — lingerie: cenário real do preset + sufixo editorial; explicit: DALLE_SCENE_OVERRIDE
+  const MJ_LINGERIE_EDITORIAL_SUFFIX = ', professional lingerie editorial context, luxury fashion campaign photography, high-end brand catalog production';
   const scene = isMJLingerie
-    ? MJ_LINGERIE_SAFE_SCENE
+    ? (cleanForDALLE(safePoseForDALLE(p.cenario || '')) || 'lifestyle setting') + MJ_LINGERIE_EDITORIAL_SUFFIX
     : isMJExplicit && DALLE_SCENE_OVERRIDE[cat]
       ? DALLE_SCENE_OVERRIDE[cat]
       : cleanForDALLE(safePoseForDALLE(p.cenario || 'messy bedroom, rumpled sheets, window light'));
