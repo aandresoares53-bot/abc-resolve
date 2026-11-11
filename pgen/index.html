@@ -10307,8 +10307,12 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
   // Categorias explícitas — pose/cam/cenário são completamente substituídos por versões seguras
-  const EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','lingerie','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
+  const EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
   const isExplicitCat = EXPLICIT_CATS.has(cat);
+
+  // Categorias de lingerie — roupa real do preset preservada, contexto reescrito como editorial de moda
+  const LINGERIE_CATS = new Set(['lingerie']);
+  const isLingerieCat = LINGERIE_CATS.has(cat);
 
   const SAFE_POSE = {
     posicoes:        'standing, weight on one leg, hand on hip, confident editorial fashion pose',
@@ -10355,35 +10359,49 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const camFromPill = anguloRaw || camRaw;
   const camCombined = camFromPill
     ? cleanForDALLE(safePoseForDALLE(safePillVal(camFromPill)))
-    : isExplicitCat
-      ? (SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, editorial framing')
+    : (isExplicitCat || isLingerieCat)
+      ? (SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, fashion editorial framing')
       : cleanForDALLE(safePoseForDALLE(safePillVal(preset.cam || '')));
 
-  // ── 3. Roupa — pills POV baixo forçam short lycra; senão variação segura por preset ──
+  // ── 3. Roupa ──
+  //   - Pills POV baixo: short lycra
+  //   - Lingerie cat: usa roupa real do preset (sanitizada) — editorial de moda aceita lingerie
+  //   - Cats explícitas: variação segura por hash
   const isPOVBaixo = /between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor|straight\s+up\s+between|floor\s+between\s+feet|extreme\s+upward\s+angle\s+from\s+floor|from\s+below\s+between\s+legs/i.test(pills.activeAngulo || '');
   const roupa = isPOVBaixo
     ? 'wearing white short tight lycra shorts'
-    : pickClothingVariant(cat, preset.key);
+    : isLingerieCat
+      ? safeClothing(preset.roupa || '')  // roupa real do preset, sem nudez
+      : pickClothingVariant(cat, preset.key);
 
   // ── 4. Estado corporal — pill ──
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
 
-  // ── 5. Pose — pill tem prioridade; para cats explícitas usa safe pose ──
+  // ── 5. Pose — pill tem prioridade; lingerie/explicit usam safe pose ──
   const poseRaw = pills.activePose || '';
+  const LINGERIE_SAFE_POSE = 'standing in three-quarter turn, one hand on hip, editorial model stance, professional fashion model posture, catalog pose';
   const pose = poseRaw
     ? cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)))
-    : isExplicitCat
-      ? (SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
-      : cleanForDALLE(safePillVal(safePoseForDALLE(preset.pose || '')));
+    : isLingerieCat
+      ? LINGERIE_SAFE_POSE
+      : isExplicitCat
+        ? (SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
+        : cleanForDALLE(safePillVal(safePoseForDALLE(preset.pose || '')));
 
-  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao com limpeza ──
-  const exprRaw = pills.activeExpr || preset.expressao || '';
-  const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
+  // ── 6. Expressão — pill tem prioridade; lingerie força expressão profissional de modelo ──
+  const exprRaw = pills.activeExpr || (!isLingerieCat ? preset.expressao : '') || '';
+  const LINGERIE_SAFE_EXPR = 'confident professional model expression, direct camera gaze, slight composed smile, editorial cool, fashion catalog look';
+  const expr = isLingerieCat && !pills.activeExpr
+    ? LINGERIE_SAFE_EXPR
+    : cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
 
-  // ── 7. Cenário — usa DALLE_SCENE_OVERRIDE para cats explícitas; senão preset.cenario ──
-  const scene = DALLE_SCENE_OVERRIDE[cat]
-    ? DALLE_SCENE_OVERRIDE[cat]
-    : cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
+  // ── 7. Cenário — lingerie: estúdio editorial moda; explicit: override; default: preset ──
+  const LINGERIE_SAFE_SCENE = 'professional fashion photography studio, clean white cyclorama backdrop, studio three-point strobe lighting, Victoria\'s Secret catalog aesthetic, high-end fashion editorial set, professional lingerie campaign production';
+  const scene = isLingerieCat
+    ? LINGERIE_SAFE_SCENE
+    : DALLE_SCENE_OVERRIDE[cat]
+      ? DALLE_SCENE_OVERRIDE[cat]
+      : cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
 
   // ── 8. Clima + Iluminação pill (sobrescreve default se ativo) ──
   const clima     = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
@@ -10426,7 +10444,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
     .replace(/\bpanties\b[^,]*/gi, 'shorts')
     .replace(/\blingerie\s+store\b[^,]*/gi, 'clothing store')
-    .replace(/\blingerie\b[^,]*/gi, 'fashion outfit')
+    .replace(/\blingerie\b[^,]*/gi, isLingerieCat ? '$&' : 'fashion outfit')
     .replace(/\bvulva\b[^,]*/gi, '')
     .replace(/\bvagina\b[^,]*/gi, '')
     .replace(/\bnaked\b[^,]*/gi, '')
@@ -10512,8 +10530,10 @@ function buildMJPromptForDALLE(preset){
     : `35mm analog photography, ${filmRaw} film, natural grain, candid snapshot, circa 2006`;
 
   // Categorias explícitas — pose/cam/roupa/cenário substituídos por versões seguras
-  const MJ_EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','lingerie','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
+  const MJ_EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
   const isMJExplicit = MJ_EXPLICIT_CATS.has(cat);
+  // Lingerie — roupa real preservada, contexto reescrito como editorial de moda profissional
+  const isMJLingerie = cat === 'lingerie';
 
   const MJ_SAFE_POSE = {
     posicoes:'standing, weight on one leg, hand on hip, confident editorial fashion pose',
@@ -10565,8 +10585,8 @@ function buildMJPromptForDALLE(preset){
   const anguloRaw = getActivePillVal('angulo') || getActivePillVal('cam') || '';
   const camClean = anguloRaw
     ? cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw)))
-    : isMJExplicit
-      ? (MJ_SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, editorial framing')
+    : (isMJExplicit || isMJLingerie)
+      ? (MJ_SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, fashion editorial framing')
       : cleanForDALLE(safePoseForDALLE(safePillVal(p.angulo || p.cam || '')));
 
   // Corpo — sanitiza (apenas campos seguros)
@@ -10577,24 +10597,35 @@ function buildMJPromptForDALLE(preset){
   const isMJPOVBaixo = /between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor|straight\s+up\s+between|floor\s+between\s+feet|extreme\s+upward\s+angle\s+from\s+floor|from\s+below\s+between\s+legs/i.test(anguloRaw || '');
   const roupa = isMJPOVBaixo
     ? 'wearing white short tight lycra shorts'
-    : pickClothingVariant(cat, p.key);
+    : isMJLingerie
+      ? safeClothing(p.roupa || '')
+      : pickClothingVariant(cat, p.key);
 
   // Pose — pill tem prioridade; para cats explícitas usa safe pose
   const poseRaw = getActivePillVal('pose') || '';
+  const MJ_LINGERIE_SAFE_POSE = 'standing in three-quarter turn, one hand on hip, editorial model stance, professional fashion model posture, catalog pose';
   const pose = poseRaw
     ? cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)))
-    : isMJExplicit
-      ? (MJ_SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
-      : cleanForDALLE(safePillVal(safePoseForDALLE(p.pose || '')));
+    : isMJLingerie
+      ? MJ_LINGERIE_SAFE_POSE
+      : isMJExplicit
+        ? (MJ_SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
+        : cleanForDALLE(safePillVal(safePoseForDALLE(p.pose || '')));
 
   // Expressão (pill ou preset)
-  const exprRaw = getActivePillVal('expressao2') || p.expressao || '';
-  const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
+  const exprRaw = getActivePillVal('expressao2') || (!isMJLingerie ? p.expressao : '') || '';
+  const MJ_LINGERIE_SAFE_EXPR = 'confident professional model expression, direct camera gaze, slight composed smile, editorial cool, fashion catalog look';
+  const expr = isMJLingerie && !getActivePillVal('expressao2')
+    ? MJ_LINGERIE_SAFE_EXPR
+    : cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
 
-  // Cenário — DALLE_SCENE_OVERRIDE para cats explícitas
-  const scene = isMJExplicit && DALLE_SCENE_OVERRIDE[cat]
-    ? DALLE_SCENE_OVERRIDE[cat]
-    : cleanForDALLE(safePoseForDALLE(p.cenario || 'messy bedroom, rumpled sheets, window light'));
+  // Cenário — lingerie: studio editorial; explicit: DALLE_SCENE_OVERRIDE
+  const MJ_LINGERIE_SAFE_SCENE = 'professional fashion photography studio, clean white cyclorama backdrop, studio three-point strobe lighting, Victoria\'s Secret catalog aesthetic, high-end fashion editorial set, professional lingerie campaign production';
+  const scene = isMJLingerie
+    ? MJ_LINGERIE_SAFE_SCENE
+    : isMJExplicit && DALLE_SCENE_OVERRIDE[cat]
+      ? DALLE_SCENE_OVERRIDE[cat]
+      : cleanForDALLE(safePoseForDALLE(p.cenario || 'messy bedroom, rumpled sheets, window light'));
 
   // Estado + clima
   const estado = getActivePillVal('estado') ? cleanForDALLE(getActivePillVal('estado')) : '';
@@ -10634,7 +10665,7 @@ function buildMJPromptForDALLE(preset){
     .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
     .replace(/\bpanties\b[^,]*/gi, 'shorts')
     .replace(/\blingerie\s+store\b[^,]*/gi, 'clothing store')
-    .replace(/\blingerie\b[^,]*/gi, 'fashion outfit')
+    .replace(/\blingerie\b[^,]*/gi, isMJLingerie ? '$&' : 'fashion outfit')
     .replace(/\bvulva\b[^,]*/gi, '')
     .replace(/\bvagina\b[^,]*/gi, '')
     .replace(/\bnaked\b[^,]*/gi, '')
