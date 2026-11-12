@@ -95,6 +95,8 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 #bottom-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,var(--bg) 30%);padding:20px 16px 20px;display:flex;justify-content:center;gap:10px;z-index:10}
 .bar-btn{padding:9px 20px;border-radius:var(--r-chip);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
 .bar-btn:hover{border-color:var(--border-lit);color:var(--text)}
+.bar-btn-surprise{border-color:var(--gold-dim);color:var(--gold)}
+.bar-btn-surprise:hover{background:var(--gold);color:#000;border-color:var(--gold)}
 
 /* ── History panel ── */
 #hist-panel{position:fixed;inset:0;background:rgba(5,5,10,.95);z-index:50;display:none;flex-direction:column}
@@ -149,6 +151,7 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 
 <div id="bottom-bar">
   <button class="bar-btn" onclick="openHist()">📜 Histórico</button>
+  <button class="bar-btn bar-btn-surprise" onclick="surpresaFlow()">🎲 Surpreenda-me</button>
   <button class="bar-btn" onclick="restartFlow()">↺ Recomeçar</button>
 </div>
 
@@ -10838,6 +10841,65 @@ function loadHistItem(i) {
 }
 
 // ── Restart ────────────────────────────────────────────────────────────────
+function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function surpresaFlow() {
+  answers = {};
+  selectedPreset = null;
+  generatedMJ = '';
+  generatedChatGPT = '';
+  currentStep = 0;
+  presetPage = 0;
+  chat.innerHTML = '';
+  updateProgress();
+
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('🎲 Modo aleatório! Escolhendo tudo por você...');
+
+    // Pick nivel (weighted: more explicit content in the pool)
+    const nivel = pickRandom(['sfw', 'sensual', 'explicit']);
+
+    // Pick a random preset filtered by nivel
+    const pool = PRESETS_RAW.filter(p => matchLevel(p.level, nivel));
+    if (!pool.length) { startFlow(); return; }
+    const preset = pickRandom(pool);
+
+    // Pick random angulo (skip __skip__)
+    const angulo = pickRandom(ANGULO_OPTS.filter(o => o.val !== '__skip__'));
+    // Pick random pose (skip __skip__)
+    const pose = pickRandom(POSE_OPTS.filter(o => o.val !== '__skip__'));
+    // Pick random idade (skip __skip__)
+    const idade = pickRandom(IDADE_OPTS.filter(o => o.val !== '__skip__'));
+
+    answers.nivel = nivel;
+    answers.cat = preset.cat;
+    answers.preset = preset.key;
+    answers.angulo = angulo.val;
+    answers.pose = pose.val;
+    answers.idade = idade.val;
+    selectedPreset = preset;
+
+    const nivelLabel = NIVEL_OPTS.find(o => o.val === nivel)?.label || nivel;
+    const catObj = CATS_CHAT.find(c => c.key === preset.cat);
+    const catLabel = catObj ? `${catObj.icon} ${catObj.name}` : preset.cat;
+
+    setTimeout(() => {
+      appendBotMsg(`
+        <strong>Nível:</strong> ${nivelLabel}<br>
+        <strong>Categoria:</strong> ${catLabel}<br>
+        <strong>Preset:</strong> ${preset.icon || '📸'} ${preset.name}<br>
+        <strong>Ângulo:</strong> ${angulo.label}<br>
+        <strong>Pose:</strong> ${pose.label}<br>
+        <strong>Idade:</strong> ${idade.label}
+      `);
+      currentStep = TOTAL_STEPS - 1;
+      setTimeout(() => showResult(), 600);
+    }, 400);
+  }, 500);
+}
+
 function restartFlow() {
   answers = {};
   selectedPreset = null;
