@@ -4,14 +4,15 @@ const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, hotels, context } = await req.json() as { message: string; hotels: unknown[]; context: string };
+    type Hotel = {name: string; price: number; rating: string; city: string; roomType: string; freeCancellation: boolean};
+    const { message, hotels, context } = await req.json() as { message: string; hotels: Hotel[]; context: string };
 
     if (!ANTHROPIC_API_KEY) {
       return NextResponse.json({ reply: 'Configure ANTHROPIC_API_KEY para usar o assistente IA.' });
     }
 
     const hotelsContext = hotels?.length
-      ? `\n\nHotéis disponíveis na busca atual:\n${hotels.slice(0, 10).map((h: {name: string; price: number; rating: string; city: string; roomType: string; freeCancellation: boolean}) =>
+      ? `\n\nHotéis disponíveis na busca atual:\n${hotels.slice(0, 10).map((h: Hotel) =>
           `- ${h.name} | R$${h.price}/noite | ${h.rating}⭐ | ${h.city} | ${h.roomType}${h.freeCancellation ? ' | Cancelamento grátis' : ''}`
         ).join('\n')}`
       : '';
