@@ -11058,177 +11058,33 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
   const cat = preset.cat || '';
 
-  const genre   = DALLE_PHOTO_GENRE[cat] || 'Professional editorial photography, award-winning style';
-  const camSpec = DALLE_CAMERA[cat]      || DALLE_CAMERA.default;
-  const light   = DALLE_LIGHTING[cat]    || DALLE_LIGHTING.default;
-  const palette = DALLE_PALETTE[cat]     || DALLE_PALETTE.default;
-
-  // ── 1. Sujeito — rosto consistente e detalhado ──
-  const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
-  const idadeSafe = idadePill
-    .replace(/\bwoman appearing\s+\d[\d\s]*to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s')
-    .replace(/\b(18|19)\b/g, '')
-    .replace(/\s{2,}/g,' ').trim();
-  const subjectAge = idadeSafe || 'adult woman in her early 20s';
+  // Sujeito consistente
+  const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade).replace(/\b(18|19)\b/g,'').trim() : '';
+  const subjectAge = idadePill || 'adult woman in her early 20s';
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
-  // Categorias explícitas — pose/cam/cenário são completamente substituídos por versões seguras
-  const EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
-  const isExplicitCat = EXPLICIT_CATS.has(cat);
-
-  // Categorias de lingerie — roupa real do preset preservada, contexto reescrito como editorial de moda
-  const LINGERIE_CATS = new Set(['lingerie']);
-  const isLingerieCat = LINGERIE_CATS.has(cat);
-
-  const SAFE_POSE = {
-    posicoes:        'standing, weight on one leg, hand on hip, confident editorial fashion pose',
-    extremo:         'standing facing camera, arms relaxed at sides, athletic editorial pose',
-    pov_extremo:     'standing, slight forward lean toward camera, natural candid lifestyle pose',
-    explicito_suave: 'sitting cross-legged, hands in lap, relaxed natural editorial pose',
-    ana:             'standing, side profile, one hand raised, editorial fashion pose',
-    onlyfans:        'standing facing camera, arms raised above head, lifestyle editorial pose',
-    sexting:         'sitting on bed, one knee up, candid natural lifestyle pose',
-    boudoir:         'sitting on bed edge, hands on knees, natural editorial lifestyle pose',
-    lingerie:        'standing, three-quarter turn, one hand on wall, editorial fashion pose',
-    foco_bunda:      'standing, back to camera, slight bend forward, athletic editorial pose',
-    foco_pernas:     'standing, full leg visible, one foot forward, editorial fashion pose',
-    detalhe:         'standing, close-up framing, editorial fashion detail pose',
-    conteudo:        'standing, natural lifestyle candid pose, looking at camera',
-    narrativa:       'natural editorial lifestyle pose, environmental portrait',
-    pos_banho:       'standing facing camera, natural post-shower lifestyle pose',
-    dormindo:        'lying on side, natural comfortable resting pose',
-    hotel:           'standing by window, natural editorial lifestyle pose',
-    banheiro:        'standing, facing mirror, natural lifestyle pose',
-    em_casa:         'sitting on couch, legs tucked, natural comfortable home pose',
-    no_carro:        'sitting in passenger seat, natural candid lifestyle pose',
-  };
-
-  const SAFE_CAM = {
-    posicoes:        'medium shot, 85mm f/1.4, eye level, editorial framing, subject centered',
-    extremo:         'medium shot, 50mm f/2, slightly low angle, wide editorial framing',
-    pov_extremo:     'medium shot, 35mm f/2, eye level, slight wide angle, lifestyle framing',
-    explicito_suave: 'medium shot, 85mm f/1.8, eye level, soft editorial framing',
-    pov_extremo:     'medium shot, 35mm, eye level, lifestyle candid framing',
-    onlyfans:        'medium shot, 35mm f/1.8, eye level, natural lifestyle framing',
-    sexting:         'medium shot, 35mm, slight high angle, candid lifestyle framing',
-    boudoir:         'medium shot, 85mm f/1.4, eye level, soft editorial framing',
-    lingerie:        'medium shot, 85mm f/1.4, eye level, fashion editorial framing',
-    foco_bunda:      'medium shot from behind, 85mm, slightly low angle, athletic editorial',
-    foco_pernas:     'full body shot, 50mm, eye level, editorial fashion framing',
-    hotel:           'medium shot, 50mm f/2, eye level, clean editorial hotel framing',
-    banheiro:        'medium shot, 35mm, eye level, lifestyle editorial framing',
-  };
-
-  // ── 2. Câmera / ângulo — pill tem prioridade; para cats explícitas usa safe cam ──
-  const anguloRaw  = pills.activeAngulo || '';
-  const camRaw     = pills.activeCam || '';
-  const camFromPill = anguloRaw || camRaw;
-  const camCombined = camFromPill
-    ? cleanForDALLE(safePoseForDALLE(safePillVal(camFromPill)))
-    : (isExplicitCat || isLingerieCat)
-      ? (SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, fashion editorial framing')
-      : cleanForDALLE(safePoseForDALLE(safePillVal(preset.cam || '')));
-
-  // ── 3. Roupa ──
-  //   - Pills POV baixo: short lycra
-  //   - Lingerie cat: usa roupa real do preset (sanitizada) — editorial de moda aceita lingerie
-  //   - Cats explícitas: variação segura por hash
-  const isPOVBaixo = /between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor|straight\s+up\s+between|floor\s+between\s+feet|extreme\s+upward\s+angle\s+from\s+floor|from\s+below\s+between\s+legs/i.test(pills.activeAngulo || '');
-  const roupa = isLingerieCat
-    ? safeClothing(preset.roupa || '')
-    : isPOVBaixo
-      ? (safeClothing(preset.roupa || '') || pickClothingVariant(cat, preset.key))
-      : pickClothingVariant(cat, preset.key);
-
-  // ── 4. Estado corporal — pill ──
+  // Campos do preset — usados diretamente, apenas cleanForDALLE
+  const cam    = cleanForDALLE(safePillVal(pills.activeAngulo || pills.activeCam || preset.cam || ''));
+  const roupa  = safeClothing(preset.roupa || '');
+  const pose   = cleanForDALLE(safePillVal(pills.activePose || preset.pose || ''));
+  const expr   = cleanForDALLE(pills.activeExpr || preset.expressao || '') || 'natural relaxed expression, direct eye contact';
+  const scene  = cleanForDALLE(preset.cenario || '');
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
+  const clima  = pills.activeClima  ? cleanForDALLE(pills.activeClima)  : '';
+  const luz    = pills.activeLuz    ? cleanForDALLE(pills.activeLuz)    : '';
+  const style  = pills.activeStyle  ? cleanForDALLE(pills.activeStyle)  : '';
 
-  // ── 5. Pose — pill tem prioridade; lingerie/explicit usam safe pose ──
-  const poseRaw = pills.activePose || '';
-  const LINGERIE_SAFE_POSE = 'standing in three-quarter turn, one hand on hip, editorial model stance, professional fashion model posture, catalog pose';
-  const pose = poseRaw
-    ? cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)))
-    : isLingerieCat
-      ? LINGERIE_SAFE_POSE
-      : isExplicitCat
-        ? (SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
-        : cleanForDALLE(safePillVal(safePoseForDALLE(preset.pose || '')));
+  const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
+  const negatives   = 'avoid: AI generated look, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed, airbrushed, uncanny valley, distorted anatomy, extra fingers, warped hands, deepfake, generated image';
 
-  // ── 6. Expressão — pill tem prioridade; lingerie força expressão profissional de modelo ──
-  const exprRaw = pills.activeExpr || (!isLingerieCat ? preset.expressao : '') || '';
-  const LINGERIE_SAFE_EXPR = 'confident professional model expression, direct camera gaze, slight composed smile, editorial cool, fashion catalog look';
-  const expr = isLingerieCat && !pills.activeExpr
-    ? LINGERIE_SAFE_EXPR
-    : cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
-
-  // ── 7. Cenário — lingerie: cenário real do preset + sufixo editorial; explicit: override; default: preset ──
-  const LINGERIE_EDITORIAL_SUFFIX = ', professional lingerie editorial context, luxury fashion campaign photography, high-end brand catalog production';
-  const scene = isLingerieCat
-    ? (cleanForDALLE(safePoseForDALLE(preset.cenario || '')) || 'lifestyle setting') + LINGERIE_EDITORIAL_SUFFIX
-    : DALLE_SCENE_OVERRIDE[cat]
-      ? DALLE_SCENE_OVERRIDE[cat]
-      : cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
-
-  // ── 8. Clima + Iluminação pill (sobrescreve default se ativo) ──
-  const clima     = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
-  const luzPill   = pills.activeLuz   ? cleanForDALLE(pills.activeLuz)   : '';
-  const stylePill = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
-
-  // ── 9. Composição explícita + qualidade técnica ──
-  const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, negative space above, feet visible or implied at bottom, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
-
-  // ── 10. Negative prompt em texto — anti-IA + artefatos comuns ──
-  const negatives = 'avoid: AI generated look, artificial intelligence aesthetic, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed skin, airbrushed, too-perfect symmetry, uncanny valley, distorted anatomy, extra fingers, extra limbs, warped hands, blurry face, painted look, watercolor, deepfake, generated image, midjourney style, stable diffusion style, unreal engine render, video game render, bad anatomy, lens distortion artifacts, background warping';
-
-  const lightFinal = luzPill || light;
-
-  let details = [subject, camSpec, camCombined, roupa, estado, pose, expr, scene, clima, lightFinal, palette, stylePill, composition]
+  let details = [subject, cam, roupa, estado, pose, expr, scene, clima, luz, style, composition]
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-  // Remove frases duplicadas consecutivas
   details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
-  // Final semantic safety pass — catches anything that slipped through individual fields
-  details = details
-    .replace(/\bstraddling\b[^,]*/gi, 'kneeling upright')
-    .replace(/\bintimate\b[^,]*/gi, 'editorial')
-    .replace(/\bboudoir\b[^,]*/gi, 'lifestyle editorial')
-    .replace(/\bbreasts?\b[^,]*/gi, 'chest')
-    .replace(/\bbuttocks\b[^,]*/gi, 'curves')
-    .replace(/\bseductive\b[^,]*/gi, 'confident')
-    .replace(/\berotic\b[^,]*/gi, '')
-    .replace(/\bsensual\b[^,]*/gi, 'confident')
-    .replace(/\bsexual\b[^,]*/gi, '')
-    .replace(/\bsex\b(?!\s*appeal)[^,]*/gi, '')
-    // Leg/thigh poses that imply upskirt or exposure
-    .replace(/\blegs?\s+spread[^,]*/gi, 'legs extended, natural stance')
-    .replace(/\bthighs?\s+open[^,]*/gi, 'relaxed seated pose')
-    .replace(/\binner\s+thighs?\s+visible[^,]*/gi, 'legs visible')
-    .replace(/\bopen\s+leg\s+position[^,]*/gi, 'natural seated position')
-    .replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose')
-    .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
-    .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
-    .replace(/\bno\s+head\b[^,]*/gi, '')
-    .replace(/,?\s*filling\s+(entire\s+)?frame\b[^,]*/gi, '')
-    .replace(/\bextreme\s+close-?up\s+of\s+(curves|buttocks|rear|bunda)[^,]*/gi, 'close-up editorial shot')
-    .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
-    .replace(/\bpanties\b[^,]*/gi, isLingerieCat ? '$&' : 'shorts')
-    .replace(/\bbra\b[^,]*/gi, isLingerieCat ? '$&' : 'top')
-    .replace(/\bthong\b[^,]*/gi, isLingerieCat ? '$&' : 'shorts')
-    .replace(/\bgarter\b[^,]*/gi, isLingerieCat ? '$&' : 'belt detail')
-    .replace(/\bcorset\b[^,]*/gi, isLingerieCat ? '$&' : 'fitted top')
-    .replace(/\blingerie\s+store\b[^,]*/gi, 'clothing store')
-    .replace(/\blingerie\b[^,]*/gi, isLingerieCat ? '$&' : 'fashion outfit')
-    .replace(/\bvulva\b[^,]*/gi, '')
-    .replace(/\bvagina\b[^,]*/gi, '')
-    .replace(/\bnaked\b[^,]*/gi, '')
-    .replace(/\bnipple[^,]*/gi, '')
-    .replace(/\btopless\b[^,]*/gi, '')
-    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
-  // Anti-AI-detection suffix — natural imperfections, film grain, real camera cues
-  const antiAI_chatgpt = 'shot on Sony A7IV mirrorless camera, 85mm f/1.8 prime lens, natural skin texture with pores and subtle imperfections visible, slight film grain ISO 800, micro-motion blur on hair strands, authentic candid moment, unretouched raw capture, real person not model, slight chromatic aberration on edges, natural asymmetry, not digitally perfected, handheld slight camera shake, real ambient light falloff, genuine candid photograph found online, not generated';
+  const antiAI = 'shot on Sony A7IV mirrorless camera, 85mm f/1.8 prime lens, natural skin texture with pores visible, slight film grain ISO 800, authentic candid moment, unretouched raw capture, natural asymmetry, not digitally generated, genuine photograph';
 
-  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI_chatgpt}. ${negatives}.`;
+  return `Professional editorial photography, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
 }
 
 function getActivePillVal(group){
@@ -11283,180 +11139,44 @@ function buildMJPromptForDALLE(preset){
   const p = preset;
   const cat = p.cat || '';
 
-  const genre = DALLE_PHOTO_GENRE[cat] || 'Professional editorial photography, award-winning style';
-  const light  = DALLE_LIGHTING[cat]   || DALLE_LIGHTING.default;
-  const palette= DALLE_PALETTE[cat]    || DALLE_PALETTE.default;
-
-  // Pega sobreposições de pills ativas
+  // Sujeito consistente
   const idadePill = getActivePillVal('idade');
   const subjectAge = idadePill
     ? cleanForDALLE(idadePill).replace(/\b(18|19)\b/g,'').trim() || 'adult woman in her early 20s'
     : 'adult woman in her early 20s';
-
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
-  // Filmstock do preset MJ → traduz para descrição DALL-E (sanitiza termos explícitos do film)
-  const filmRaw = cleanForDALLE(safePoseForDALLE(p.film || 'Kodak Ultramax 800'));
+  // Filmstock do preset MJ
+  const filmRaw = cleanForDALLE(p.film || 'Kodak Ultramax 800');
   const isMonochrome = /ilford|black.*white|monochrome/i.test(filmRaw);
   const filmDesc = isMonochrome
     ? 'black and white film photography, high contrast, grain, analog'
-    : `35mm analog photography, ${filmRaw} film, natural grain, candid snapshot, circa 2006`;
+    : `35mm analog photography, ${filmRaw} film, natural grain, candid snapshot`;
 
-  // Categorias explícitas — pose/cam/roupa/cenário substituídos por versões seguras
-  const MJ_EXPLICIT_CATS = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans','sexting','boudoir','foco_bunda','foco_pernas','detalhe','conteudo','narrativa','pos_banho','dormindo','hotel','banheiro','em_casa','no_carro']);
-  const isMJExplicit = MJ_EXPLICIT_CATS.has(cat);
-  // Lingerie — roupa real preservada, contexto reescrito como editorial de moda profissional
-  const isMJLingerie = cat === 'lingerie';
-
-  const MJ_SAFE_POSE = {
-    posicoes:'standing, weight on one leg, hand on hip, confident editorial fashion pose',
-    extremo:'standing facing camera, arms relaxed at sides, athletic editorial pose',
-    pov_extremo:'standing, slight forward lean toward camera, natural candid lifestyle pose',
-    explicito_suave:'sitting cross-legged, hands in lap, relaxed natural editorial pose',
-    ana:'standing, side profile, one hand raised, editorial fashion pose',
-    onlyfans:'standing facing camera, arms raised above head, lifestyle editorial pose',
-    sexting:'sitting on bed, one knee up, candid natural lifestyle pose',
-    boudoir:'sitting on bed edge, hands on knees, natural editorial lifestyle pose',
-    lingerie:'standing, three-quarter turn, one hand on wall, editorial fashion pose',
-    foco_bunda:'standing, back to camera, slight bend forward, athletic editorial pose',
-    foco_pernas:'standing, full leg visible, one foot forward, editorial fashion pose',
-    detalhe:'standing, close-up framing, editorial fashion detail pose',
-    conteudo:'standing, natural lifestyle candid pose, looking at camera',
-    narrativa:'natural editorial lifestyle pose, environmental portrait',
-    pos_banho:'standing facing camera, natural post-shower lifestyle pose',
-    dormindo:'lying on side, natural comfortable resting pose',
-    hotel:'standing by window, natural editorial lifestyle pose',
-    banheiro:'standing, facing mirror, natural lifestyle pose',
-    em_casa:'sitting on couch, legs tucked, natural comfortable home pose',
-    no_carro:'sitting in passenger seat, natural candid lifestyle pose',
-  };
-
-  const MJ_SAFE_CAM = {
-    posicoes:'medium shot, 50mm f/2, eye level, editorial framing',
-    extremo:'medium shot, 50mm f/2, slightly low angle, wide editorial framing',
-    pov_extremo:'medium shot, 35mm f/2, eye level, slight wide angle, lifestyle framing',
-    explicito_suave:'medium shot, 85mm f/1.8, eye level, shallow depth of field',
-    ana:'three-quarter shot, 85mm f/1.4, side lighting, editorial framing',
-    onlyfans:'medium-wide shot, 35mm f/2.8, eye level, lifestyle framing',
-    sexting:'medium shot, 50mm f/2, slightly high angle, candid framing',
-    boudoir:'medium shot, 85mm f/1.4, natural window light, editorial framing',
-    lingerie:'full body shot, 85mm f/1.8, studio lighting, fashion editorial framing',
-    foco_bunda:'three-quarter back shot, 85mm f/2, low angle, athletic editorial',
-    foco_pernas:'full body shot, 85mm f/1.8, eye level, fashion editorial framing',
-    detalhe:'close-up shot, 100mm macro f/2.8, eye level, detail framing',
-    conteudo:'medium shot, 50mm f/2, eye level, lifestyle candid framing',
-    narrativa:'wide shot, 35mm f/2.8, eye level, environmental portrait',
-    pos_banho:'medium shot, 85mm f/1.4, natural light, lifestyle framing',
-    dormindo:'wide shot, 35mm f/2, slightly high angle, lifestyle framing',
-    hotel:'medium shot, 50mm f/2, natural window light, lifestyle editorial',
-    banheiro:'medium shot, 35mm f/2.8, bathroom light, candid lifestyle',
-    em_casa:'wide shot, 35mm f/2.8, natural home light, lifestyle framing',
-    no_carro:'medium shot, 50mm f/2, natural light, candid lifestyle',
-  };
-
-  // Ângulo / câmera — pill ativa tem prioridade; para cats explícitas usa safe cam
+  // Campos do preset — usados diretamente, apenas cleanForDALLE
   const anguloRaw = getActivePillVal('angulo') || getActivePillVal('cam') || '';
-  const camClean = anguloRaw
-    ? cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw)))
-    : (isMJExplicit || isMJLingerie)
-      ? (MJ_SAFE_CAM[cat] || 'medium shot, 85mm f/1.4, eye level, fashion editorial framing')
-      : cleanForDALLE(safePoseForDALLE(safePillVal(p.angulo || p.cam || '')));
+  const cam   = cleanForDALLE(safePillVal(anguloRaw || p.angulo || p.cam || ''));
+  const roupa = safeClothing(p.roupa || '');
+  const pose  = cleanForDALLE(safePillVal(getActivePillVal('pose') || p.pose || ''));
+  const expr  = cleanForDALLE(getActivePillVal('expressao2') || p.expressao || '') || 'natural relaxed expression, direct eye contact';
+  const scene = cleanForDALLE(p.cenario || '');
 
-  // Corpo — sanitiza (apenas campos seguros)
-  const proporcao = getActivePillVal('proporcao') || '';
-  const corpo = proporcao || 'natural feminine figure, athletic build, wide hips, real skin texture';
-
-  // Roupa — pills POV baixo forçam short lycra; senão variação segura por preset
-  const isMJPOVBaixo = /between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor|straight\s+up\s+between|floor\s+between\s+feet|extreme\s+upward\s+angle\s+from\s+floor|from\s+below\s+between\s+legs/i.test(anguloRaw || '');
-  const roupa = isMJLingerie
-    ? safeClothing(p.roupa || '')
-    : isMJPOVBaixo
-      ? (safeClothing(p.roupa || '') || pickClothingVariant(cat, p.key))
-      : pickClothingVariant(cat, p.key);
-
-  // Pose — pill tem prioridade; para cats explícitas usa safe pose
-  const poseRaw = getActivePillVal('pose') || '';
-  const MJ_LINGERIE_SAFE_POSE = 'standing in three-quarter turn, one hand on hip, editorial model stance, professional fashion model posture, catalog pose';
-  const pose = poseRaw
-    ? cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)))
-    : isMJLingerie
-      ? MJ_LINGERIE_SAFE_POSE
-      : isMJExplicit
-        ? (MJ_SAFE_POSE[cat] || 'standing, natural editorial lifestyle pose, looking at camera')
-        : cleanForDALLE(safePillVal(safePoseForDALLE(p.pose || '')));
-
-  // Expressão (pill ou preset)
-  const exprRaw = getActivePillVal('expressao2') || (!isMJLingerie ? p.expressao : '') || '';
-  const MJ_LINGERIE_SAFE_EXPR = 'confident professional model expression, direct camera gaze, slight composed smile, editorial cool, fashion catalog look';
-  const expr = isMJLingerie && !getActivePillVal('expressao2')
-    ? MJ_LINGERIE_SAFE_EXPR
-    : cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
-
-  // Cenário — lingerie: cenário real do preset + sufixo editorial; explicit: DALLE_SCENE_OVERRIDE
-  const MJ_LINGERIE_EDITORIAL_SUFFIX = ', professional lingerie editorial context, luxury fashion campaign photography, high-end brand catalog production';
-  const scene = isMJLingerie
-    ? (cleanForDALLE(safePoseForDALLE(p.cenario || '')) || 'lifestyle setting') + MJ_LINGERIE_EDITORIAL_SUFFIX
-    : isMJExplicit && DALLE_SCENE_OVERRIDE[cat]
-      ? DALLE_SCENE_OVERRIDE[cat]
-      : cleanForDALLE(safePoseForDALLE(p.cenario || 'messy bedroom, rumpled sheets, window light'));
-
-  // Estado + clima
   const estado = getActivePillVal('estado') ? cleanForDALLE(getActivePillVal('estado')) : '';
   const clima  = getActivePillVal('clima')  ? cleanForDALLE(getActivePillVal('clima'))  : '';
-  const luzPill= getActivePillVal('luz2')   ? cleanForDALLE(getActivePillVal('luz2'))   : '';
-  const lightFinal = luzPill || light;
+  const luz    = getActivePillVal('luz2')   ? cleanForDALLE(getActivePillVal('luz2'))   : '';
 
-  // Âncora fotográfica estilo MJ
-  const photoAnchor = 'Nan Goldin, Larry Clark, shot on film, authentic photograph, real person, not AI, not CGI, genuine candid photo';
-
+  const photoAnchor = 'shot on film, authentic photograph, real person, not AI, not CGI, genuine candid photo';
   const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
-  const negatives = 'avoid: AI generated look, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed, airbrushed, uncanny valley, distorted anatomy, extra fingers, warped hands, deepfake, generated image, midjourney style, stable diffusion style, bad anatomy';
+  const negatives   = 'avoid: AI generated look, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed, airbrushed, uncanny valley, distorted anatomy, extra fingers, warped hands, deepfake, generated image, midjourney style, stable diffusion style, bad anatomy';
 
-  let details = [subject, filmDesc, photoAnchor, camClean, corpo, roupa, estado, pose, expr, scene, clima, lightFinal, palette, composition]
+  let details = [subject, filmDesc, photoAnchor, cam, roupa, estado, pose, expr, scene, clima, luz, composition]
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
   details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
-  // Final semantic safety pass
-  details = details
-    .replace(/\bstraddling\b[^,]*/gi, 'kneeling upright')
-    .replace(/\bintimate\b[^,]*/gi, 'editorial')
-    .replace(/\bboudoir\b[^,]*/gi, 'lifestyle editorial')
-    .replace(/\bbreasts?\b[^,]*/gi, 'chest')
-    .replace(/\bbuttocks\b[^,]*/gi, 'curves')
-    .replace(/\bseductive\b[^,]*/gi, 'confident')
-    .replace(/\berotic\b[^,]*/gi, '')
-    .replace(/\bsensual\b[^,]*/gi, 'confident')
-    .replace(/\bsexual\b[^,]*/gi, '')
-    .replace(/\bsex\b(?!\s*appeal)[^,]*/gi, '')
-    .replace(/\blegs?\s+spread[^,]*/gi, 'legs extended, natural stance')
-    .replace(/\bthighs?\s+open[^,]*/gi, 'relaxed seated pose')
-    .replace(/\binner\s+thighs?\s+visible[^,]*/gi, 'legs visible')
-    .replace(/\bopen\s+leg\s+position[^,]*/gi, 'natural seated position')
-    .replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose')
-    .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
-    .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
-    .replace(/\bno\s+head\b[^,]*/gi, '')
-    .replace(/,?\s*filling\s+(entire\s+)?frame\b[^,]*/gi, '')
-    .replace(/\bextreme\s+close-?up\s+of\s+(curves|buttocks|rear|bunda)[^,]*/gi, 'close-up editorial shot')
-    .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
-    .replace(/\bpanties\b[^,]*/gi, isMJLingerie ? '$&' : 'shorts')
-    .replace(/\bbra\b[^,]*/gi, isMJLingerie ? '$&' : 'top')
-    .replace(/\bthong\b[^,]*/gi, isMJLingerie ? '$&' : 'shorts')
-    .replace(/\bgarter\b[^,]*/gi, isMJLingerie ? '$&' : 'belt detail')
-    .replace(/\bcorset\b[^,]*/gi, isMJLingerie ? '$&' : 'fitted top')
-    .replace(/\blingerie\s+store\b[^,]*/gi, 'clothing store')
-    .replace(/\blingerie\b[^,]*/gi, isMJLingerie ? '$&' : 'fashion outfit')
-    .replace(/\bvulva\b[^,]*/gi, '')
-    .replace(/\bvagina\b[^,]*/gi, '')
-    .replace(/\bnaked\b[^,]*/gi, '')
-    .replace(/\bnipple[^,]*/gi, '')
-    .replace(/\btopless\b[^,]*/gi, '')
-    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
 
-  // Anti-AI-detection suffix — natural imperfections, film grain, real camera cues
-  const antiAI_mj = 'shot on Canon EOS R6 mirrorless, 50mm f/1.4 prime lens, visible skin pores and natural texture, slight film grain ISO 1000, authentic candid capture, real ambient environment light, natural asymmetry and slight imperfections, handheld micro-camera shake, genuine color fringing on high-contrast edges, unretouched unprocessed capture, real person photographed in real location, not digitally generated, found photograph documentary style';
+  const antiAI = 'shot on Canon EOS R6 mirrorless, 50mm f/1.4 prime lens, visible skin pores and natural texture, slight film grain ISO 1000, authentic candid capture, real ambient environment light, natural asymmetry and slight imperfections, handheld micro-camera shake, unretouched unprocessed capture, real person photographed in real location, not digitally generated';
 
-  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI_mj}. ${negatives}.`;
+  return `Professional editorial photography, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
 }
 
 function copyMJForDALLE(){
