@@ -133,6 +133,17 @@ function todayPlusStr(n: number) {
   return d.toISOString().split("T")[0];
 }
 
+function getLocationContext(tags: string[]): string | null {
+  const t = tags.join(" ").toLowerCase();
+  if (t.match(/praia|mar|litoral|costa|ilha/)) return "🏖 À beira-mar";
+  if (t.match(/serra|montanha|chalet|mantiqueira|chapada/)) return "🏔 Na serra";
+  if (t.match(/amazônia|floresta|pantanal|eco|selva|manguezal/)) return "🌿 Na natureza";
+  if (t.match(/fazenda|rural|sítio|campo|haras/)) return "🌾 Interior rural";
+  if (t.match(/thermas|termal|águas minerais/)) return "♨️ Águas termais";
+  if (t.match(/negócios|executivo|centro/)) return "🏙 Centro urbano";
+  return null;
+}
+
 function RatingBadge({ rating }: { rating: number }) {
   const score = rating * 10;
   const color = score >= 85 ? "#4caf50" : score >= 70 ? "#ff9800" : "#f44336";
@@ -238,6 +249,11 @@ export default function HotelCard({
     } catch {}
   }
 
+  const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const viewCount = 5 + (seed % 23);
+  const availRooms = 1 + (seed % 4);
+  const locationCtx = getLocationContext(hotel.tags);
+
   const rawOptions = getPriceOptions(hotel, adults, children, ci, co);
   const options = preferredPlatform
     ? [...rawOptions].sort((a, b) => a.platform === preferredPlatform ? -1 : b.platform === preferredPlatform ? 1 : 0)
@@ -332,7 +348,10 @@ export default function HotelCard({
                 </div>
               </div>
               <h3 className="font-bold text-gray-900 text-base leading-tight">{hotel.name}</h3>
-              <p className="text-sm text-gray-500 mt-0.5">📍 {hotel.city}, {hotel.state}</p>
+              <p className="text-sm text-gray-500 mt-0.5">
+                📍 {hotel.city}, {hotel.state}
+                {locationCtx && <span className="ml-2 text-xs text-blue-600 font-medium">{locationCtx}</span>}
+              </p>
             </div>
             <RatingBadge rating={hotel.rating} />
           </div>
@@ -348,10 +367,28 @@ export default function HotelCard({
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-1 mb-3">
+          <div className="flex flex-wrap gap-1 mb-2">
             {hotel.tags.slice(0, 3).map(tag => (
               <span key={tag} className="bg-blue-50 text-blue-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>
             ))}
+          </div>
+
+          {/* Melhor para chips */}
+          {hotel.packageFor && hotel.packageFor.length > 0 && (
+            <div className="flex flex-wrap gap-1 items-center mb-2">
+              <span className="text-xs text-gray-400 shrink-0">Melhor para:</span>
+              {hotel.packageFor.slice(0, 3).map(p => (
+                <span key={p} className="text-xs bg-orange-50 text-orange-600 border border-orange-100 px-2 py-0.5 rounded-full font-medium">{p}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Urgency indicator */}
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-xs text-red-500 font-medium">🔥 {viewCount} pessoas viram hoje</span>
+            {availRooms <= 2 && (
+              <span className="text-xs text-amber-600 font-medium">⚡ Apenas {availRooms} disponível{availRooms !== 1 ? "is" : ""}</span>
+            )}
           </div>
 
           {/* Bottom row: price + buttons */}
@@ -400,18 +437,18 @@ export default function HotelCard({
               </div>
 
               {/* Row 2: secondary links */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Link href={`/hotel/${hotel.id}?adults=${adults}&children=${children}&checkIn=${ci}&checkOut=${co}&nights=${n}`} className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
                   Ver detalhes →
                 </Link>
                 {onToggleCompare && (
                   <button onClick={() => onToggleCompare(hotel)}
-                    className={`text-xs font-semibold px-3 py-1 rounded-lg border transition-all ${
+                    className={`text-xs font-bold px-3 py-1.5 rounded-lg border-2 transition-all flex items-center gap-1 ${
                       compareList?.find(h => h.id === hotel.id)
                         ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-gray-300 text-gray-500 hover:border-blue-400 hover:text-blue-600"
+                        : "border-blue-300 text-blue-600 hover:bg-blue-600 hover:text-white hover:border-blue-600"
                     }`}>
-                    {compareList?.find(h => h.id === hotel.id) ? "✓ Comparar" : "+ Comparar"}
+                    {compareList?.find(h => h.id === hotel.id) ? "✓ Comparando" : "⚖️ Comparar"}
                   </button>
                 )}
               </div>

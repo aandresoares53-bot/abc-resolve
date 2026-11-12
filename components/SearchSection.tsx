@@ -1,9 +1,12 @@
 "use client";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, lazy, Suspense } from "react";
 import { Hotel } from "@/lib/hotels-data";
 import { regions, states, seasonalDates, packageTypes, hotelsData } from "@/lib/hotels-data";
 import HotelCard from "./HotelCard";
 import CompareBar from "./CompareBar";
+import dynamic from "next/dynamic";
+
+const MapView = dynamic(() => import("./MapView"), { ssr: false, loading: () => <div className="rounded-2xl bg-gray-100 animate-pulse" style={{ height: 480 }} /> });
 
 const allCities = Array.from(new Set(hotelsData.map(h => `${h.city}, ${h.state}`)));
 
@@ -66,6 +69,9 @@ export default function SearchSection() {
   const [sortBy, setSortBy] = useState<SortOption>("relevancia");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [preferredPlatform, setPreferredPlatform] = useState("");
+  const [showMap, setShowMap] = useState(false);
+  const [quickAmenity, setQuickAmenity] = useState<string | null>(null);
+  const [quickPackage, setQuickPackage] = useState<string | null>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [recentlyViewed, setRecentlyViewed] = useState<Hotel[]>([]);
@@ -159,6 +165,31 @@ export default function SearchSection() {
   }, []);
 
   const nights = Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000));
+
+  // Quick filtered results (applied on top of search results)
+  const quickFilteredResults = (() => {
+    if (!result) return [];
+    let arr = result.results;
+    if (quickAmenity) arr = arr.filter(h => h.amenities.some(a => a.toLowerCase().includes(quickAmenity.toLowerCase())));
+    if (quickPackage) arr = arr.filter(h => h.packageFor?.some(p => p.toLowerCase().includes(quickPackage.toLowerCase())));
+    return arr;
+  })();
+
+  // Price calendar: cheapest days in next 14 days
+  const priceCalendar = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(); d.setDate(d.getDate() + i + 1);
+    const dateStr = d.toISOString().split("T")[0];
+    const dow = d.getDay();
+    const isWeekend = dow === 0 || dow === 5 || dow === 6;
+    const baseMultiplier = isWeekend ? 1.25 : 0.95;
+    return {
+      date: dateStr,
+      label: d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      day: d.toLocaleDateString("pt-BR", { weekday: "short" }),
+      multiplier: baseMultiplier,
+      cheap: !isWeekend,
+    };
+  });
 
   const handleSearch = useCallback(async (overrideQuery?: string) => {
     const q = overrideQuery ?? query;
@@ -523,6 +554,34 @@ export default function SearchSection() {
               <div className="pt-3 border-t border-gray-100 mb-3">
                 <p className="text-xs text-gray-400 text-center">{nights} noite{nights !== 1 ? "s" : ""} selecionada{nights !== 1 ? "s" : ""}</p>
               </div>
+
+              {/* Price calendar hint */}
+              <div className="mb-3">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">💡 Melhores datas (próximos 14 dias)</p>
+                <div className="grid grid-cols-7 gap-1">
+                  {priceCalendar.map(day => (
+                    <button
+                      key={day.date}
+                      onClick={() => {
+                        setCheckIn(day.date);
+                        const next = new Date(day.date + "T12:00:00"); next.setDate(next.getDate() + nights);
+                        setCheckOut(toInputDate(next));
+                      }}
+                      className={`flex flex-col items-center p-1 rounded-lg text-center border transition-all ${
+                        checkIn === day.date ? "bg-orange-500 border-orange-500 text-white" :
+                        day.cheap ? "bg-green-50 border-green-200 text-green-700 hover:bg-green-100" :
+                        "bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100"
+                      }`}
+                    >
+                      <span className="text-[9px] font-medium">{day.day}</span>
+                      <span className="text-[10px] font-bold">{day.label}</span>
+                      <span className="text-[8px]">{day.cheap ? "✓" : "$$"}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-green-600 mt-1 text-center">✓ Verde = menor demanda (preços melhores)</p>
+              </div>
+
               <button onClick={() => setShowDates(false)} className="w-full py-2 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-colors">Confirmar</button>
             </div>
           )}
@@ -736,23 +795,66 @@ export default function SearchSection() {
 
       {/* Sort bar */}
       {!loading && searched && result && result.results.length > 1 && (
-        <div className="flex items-center gap-3 mb-6 flex-wrap">
-          <span className="text-sm text-gray-500 font-medium">{result.total} resultado{result.total !== 1 ? "s" : ""}. Ordenar por:</span>
-          {([
-            { value: "relevancia", label: "Relevância" },
-            { value: "menor-preco", label: "Menor preço" },
-            { value: "maior-avaliacao", label: "Melhor avaliação" },
-            { value: "maior-desconto", label: "Maior desconto" },
-            { value: "mais-estrelas", label: "Mais estrelas" },
-          ] as { value: SortOption; label: string }[]).map(opt => (
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <span className="text-sm text-gray-700 font-bold">{result.total} resultado{result.total !== 1 ? "s" : ""}</span>
+            <span className="text-gray-300">·</span>
+            <span className="text-xs text-gray-500">Ordenar:</span>
+            {([
+              { value: "relevancia", label: "✨ Relevância" },
+              { value: "menor-preco", label: "💰 Menor preço" },
+              { value: "maior-avaliacao", label: "⭐ Avaliação" },
+              { value: "maior-desconto", label: "🏷 Desconto" },
+              { value: "mais-estrelas", label: "🌟 Estrelas" },
+            ] as { value: SortOption; label: string }[]).map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => setSortBy(opt.value)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${sortBy === opt.value ? "bg-orange-500 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:border-orange-300 hover:text-orange-600"}`}
+              >
+                {opt.label}
+              </button>
+            ))}
             <button
-              key={opt.value}
-              onClick={() => setSortBy(opt.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${sortBy === opt.value ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+              onClick={() => setShowMap(v => !v)}
+              className={`ml-auto px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${showMap ? "bg-blue-600 text-white" : "bg-white border border-blue-300 text-blue-600 hover:bg-blue-50"}`}
             >
-              {opt.label}
+              {showMap ? "📋 Lista" : "🗺 Mapa"}
             </button>
-          ))}
+          </div>
+
+          {/* Quick filter chips */}
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-gray-400">Filtrar:</span>
+            {["Piscina", "Café da manhã", "Pet-friendly", "Spa"].map(a => (
+              <button key={a}
+                onClick={() => setQuickAmenity(quickAmenity === a ? null : a)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${quickAmenity === a ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"}`}
+              >
+                {a === "Piscina" ? "🏊 " : a === "Café da manhã" ? "☕ " : a === "Pet-friendly" ? "🐾 " : "💆 "}{a}
+              </button>
+            ))}
+            {["Casal", "Família", "Aventura", "Lua de Mel"].map(p => (
+              <button key={p}
+                onClick={() => setQuickPackage(quickPackage === p ? null : p)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${quickPackage === p ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-600 border-gray-200 hover:border-orange-300"}`}
+              >
+                {p === "Casal" ? "💑 " : p === "Família" ? "👨‍👩‍👧 " : p === "Aventura" ? "🧗 " : "💍 "}{p}
+              </button>
+            ))}
+            {(quickAmenity || quickPackage) && (
+              <button onClick={() => { setQuickAmenity(null); setQuickPackage(null); }}
+                className="px-3 py-1 rounded-full text-xs font-medium text-red-500 border border-red-200 hover:bg-red-50">
+                ✕ Limpar filtros
+              </button>
+            )}
+          </div>
+          {(quickAmenity || quickPackage) && (
+            <p className="text-xs text-blue-600 mt-1 font-medium">
+              Mostrando {quickFilteredResults.length} de {result.total} resultado{result.total !== 1 ? "s" : ""}
+              {quickAmenity && ` · ${quickAmenity}`}{quickPackage && ` · ${quickPackage}`}
+            </p>
+          )}
         </div>
       )}
 
@@ -798,13 +900,27 @@ export default function SearchSection() {
                 </div>
               )}
             </div>
+          ) : showMap ? (
+            <MapView
+              key={result.query}
+              hotels={sortedResults}
+              onHotelClick={hotel => {
+                setShowMap(false);
+                setTimeout(() => document.getElementById(`hotel-${hotel.id}`)?.scrollIntoView({ behavior: "smooth" }), 100);
+              }}
+            />
           ) : (
             <div className="flex flex-col gap-4">
-              {sortedResults.map((hotel, i) => (
-                <div key={hotel.id} className={`fade-in-up fade-in-up-${Math.min(i + 1, 6)}`}>
+              {(quickAmenity || quickPackage ? quickFilteredResults : sortedResults).map((hotel, i) => (
+                <div key={hotel.id} id={`hotel-${hotel.id}`} className={`fade-in-up fade-in-up-${Math.min(i + 1, 6)}`}>
                   <HotelCard hotel={hotel} adults={adults} children={children} checkIn={checkIn} checkOut={checkOut} nights={nights} compareList={compareList} onToggleCompare={toggleCompare} preferredPlatform={preferredPlatform} />
                 </div>
               ))}
+              {(quickAmenity || quickPackage) && quickFilteredResults.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">Nenhum hotel com esses filtros. <button onClick={() => { setQuickAmenity(null); setQuickPackage(null); }} className="text-blue-600 font-semibold">Limpar filtros</button></p>
+                </div>
+              )}
             </div>
           )}
         </>
