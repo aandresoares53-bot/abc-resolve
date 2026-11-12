@@ -48,6 +48,17 @@ for (const dir of dirs) {
   }
 }
 
+// 2b. Copy static directories from project root into assets
+const staticDirs = ['pgen', 'image-creator', 'espiritual', 'controle-casa'];
+for (const dir of staticDirs) {
+  const src = join(root, dir);
+  const dest = join(assets, dir);
+  if (existsSync(src)) {
+    cpSync(src, dest, { recursive: true });
+    console.log(`✓ Copied ${dir}/ → assets/${dir}/`);
+  }
+}
+
 // 3. Write .assetsignore so these worker files aren't exposed as static content
 const ignore = ['_worker.js', 'server-functions', 'middleware', 'cloudflare', '.build'].join('\n');
 writeFileSync(join(assets, '.assetsignore'), ignore, 'utf8');
