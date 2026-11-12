@@ -10347,7 +10347,7 @@ let generatedChatGPT = '';
 let presetPage = 0;
 const PRESETS_PER_PAGE = 20;
 
-const TOTAL_STEPS = 3; // nivel, cat, preset → result
+const TOTAL_STEPS = 4; // nivel, cat, preset, angulo → result
 
 const NIVEL_OPTS = [
   {label:'☀️ SFW — Fashion/Lifestyle', val:'sfw'},
@@ -10411,6 +10411,30 @@ function disableChips(wrap) {
   wrap.querySelectorAll('.chip').forEach(c => { c.disabled = true; c.style.opacity = '0.4'; });
 }
 
+const ANGULO_OPTS = [
+  {label:'— Usar padrão do preset', val:'__skip__'},
+  {label:'📸 Frontal direto', val:'straight-on frontal shot, direct camera angle, face centered in frame'},
+  {label:'↗️ 3/4 frontal', val:'three-quarter angle shot, 45 degree turn, face and body at angle to camera'},
+  {label:'👤 Perfil lateral', val:'side profile shot, 90 degree lateral angle, full profile view'},
+  {label:'🔙 Costas / Rear view', val:'rear view shot, back to camera, over-shoulder glance'},
+  {label:'⬇️ Câmera de cima (high angle)', val:'high angle shot, camera looking down at subject, bird\'s eye perspective'},
+  {label:'⬆️ Câmera de baixo (low angle)', val:'low angle shot, camera looking up at subject, worm\'s eye perspective, dramatic upward angle'},
+  {label:'🤳 POV — Ponto de vista', val:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view'},
+  {label:'📐 Dutch angle / Inclinado', val:'dutch angle shot, tilted camera, diagonal composition, dynamic tilt'},
+  {label:'🔍 Close-up rosto', val:'extreme close-up face shot, tight crop on face, 85mm portrait lens, face fills frame'},
+  {label:'👁️ Close-up olhos', val:'macro eye close-up, extreme detail shot, eyes filling the frame, 100mm macro lens'},
+  {label:'💋 Close-up boca/lábios', val:'macro lips close-up, tight crop on mouth, extreme detail shot, lips filling frame'},
+  {label:'🤲 Plano americano (waist up)', val:'medium shot waist up, American shot, subject from waist to head in frame'},
+  {label:'🧍 Corpo inteiro em pé', val:'full body standing shot, head to toe in frame, full figure portrait'},
+  {label:'🛋️ Corpo inteiro deitado', val:'full body lying down shot, horizontal composition, subject reclined and full length in frame'},
+  {label:'📷 Over-the-shoulder', val:'over-the-shoulder shot, camera behind subject\'s shoulder, partial back view with scene ahead'},
+  {label:'🪞 Reflexo no espelho', val:'mirror reflection shot, subject reflected in mirror, mirror framing composition'},
+  {label:'🌅 Contraluz / Silhueta', val:'backlit silhouette shot, strong backlight, subject as dark silhouette against bright background'},
+  {label:'🔭 Lente teleobjetiva (comprimida)', val:'telephoto compressed perspective, 200mm lens, background compression, shallow depth of field, subject isolated'},
+  {label:'🌐 Lente olho de peixe', val:'fisheye lens shot, extreme wide angle distortion, 8mm fisheye, curved horizon'},
+  {label:'📸 Grande angular (ambiental)', val:'wide angle environmental shot, 24mm lens, subject in full environment context, expansive scene'},
+];
+
 // ── Steps ──────────────────────────────────────────────────────────────────
 function showStep(idx) {
   currentStep = idx;
@@ -10418,6 +10442,7 @@ function showStep(idx) {
   if (idx === 0) showNivelStep();
   else if (idx === 1) showCatStep();
   else if (idx === 2) showPresetStep();
+  else if (idx === 3) showAnguloStep();
 }
 
 function showNivelStep() {
@@ -10501,7 +10526,7 @@ function renderPresetChips(presets) {
       answers.preset = p.key;
       selectedPreset = p;
       appendUserMsg(`${p.icon || '📸'} ${p.name}`);
-      setTimeout(() => showResult(), 400);
+      setTimeout(() => showStep(3), 400);
     };
     wrap.appendChild(btn);
   });
@@ -10534,6 +10559,30 @@ function addToHistory(name, mj, gpt) {
   saveHistory(h);
 }
 
+function showAnguloStep() {
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('Qual ângulo de câmera / POV?');
+    const wrap = document.createElement('div');
+    wrap.className = 'chips-wrap';
+    ANGULO_OPTS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        disableChips(wrap);
+        answers.angulo = opt.val === '__skip__' ? '' : opt.val;
+        appendUserMsg(opt.val === '__skip__' ? '— Usar padrão do preset —' : opt.label);
+        setTimeout(() => showResult(), 300);
+      };
+      wrap.appendChild(btn);
+    });
+    chat.appendChild(wrap);
+    scrollBot();
+  }, 400);
+}
+
 function escHtml(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -10545,8 +10594,11 @@ function showResult() {
   setTimeout(() => {
     removeTyping();
     const p = selectedPreset;
-    generatedMJ = buildBlondePrompt(p);
-    generatedChatGPT = buildChatGPTPromptFromPreset(p, {});
+    // Apply angle override: inject into a modified preset copy for MJ
+    const pMJ = answers.angulo ? Object.assign({}, p, {angulo: answers.angulo, cam: answers.angulo}) : p;
+    generatedMJ = buildBlondePrompt(pMJ);
+    const pillOverrides = answers.angulo ? {activeAngulo: answers.angulo} : {};
+    generatedChatGPT = buildChatGPTPromptFromPreset(p, pillOverrides);
     addToHistory(p.name, generatedMJ, generatedChatGPT);
 
     const card = document.createElement('div');
@@ -10634,6 +10686,7 @@ function restartFlow() {
   generatedChatGPT = '';
   currentStep = 0;
   presetPage = 0;
+  answers.angulo = '';
   chat.innerHTML = '';
   startFlow();
 }
