@@ -10347,7 +10347,7 @@ let generatedChatGPT = '';
 let presetPage = 0;
 const PRESETS_PER_PAGE = 20;
 
-const TOTAL_STEPS = 4; // nivel, cat, preset, angulo → result
+const TOTAL_STEPS = 5; // nivel, cat, preset, angulo, pose → result
 
 const NIVEL_OPTS = [
   {label:'☀️ SFW — Fashion/Lifestyle', val:'sfw'},
@@ -10435,6 +10435,30 @@ const ANGULO_OPTS = [
   {label:'📸 Grande angular (ambiental)', val:'wide angle environmental shot, 24mm lens, subject in full environment context, expansive scene'},
 ];
 
+const POSE_OPTS = [
+  {label:'— Usar pose padrão do preset', val:'__skip__'},
+  {label:'🧍 Em pé', val:'standing upright pose, full body standing, confident stance'},
+  {label:'🪑 Sentada', val:'seated pose, sitting position, natural seated posture'},
+  {label:'🛋️ Deitada de costas', val:'lying on back pose, supine position, reclined face-up'},
+  {label:'🙃 Deitada de bruços', val:'lying on stomach pose, prone position, face-down reclined'},
+  {label:'🦵 Pernas abertas (em pé)', val:'legs spread apart standing, wide stance, legs open pose'},
+  {label:'🦵 Pernas abertas (deitada)', val:'legs spread wide lying down, supine open legs pose, spread eagle position'},
+  {label:'🙇 De joelhos', val:'kneeling pose, on knees position, kneeling upright'},
+  {label:'🐕 De quatro (all fours)', val:'on all fours pose, hands and knees position, quadruped stance, doggy style pose'},
+  {label:'🍑 De quatro — rear facing', val:'on all fours rear-facing pose, hands and knees facing away, back arched, presented rear view'},
+  {label:'🤸 Agachada', val:'squatting pose, deep squat position, crouching down'},
+  {label:'🧎 Ajoelhada à frente', val:'kneeling forward pose, kneeling facing camera, submissive kneeling position'},
+  {label:'🛌 Deitada lateral', val:'lateral lying pose, side-lying position, reclined on side'},
+  {label:'🤲 Mãos e joelhos — arqueada', val:'hands and knees arched back pose, back arched upward, spine curved, presented position'},
+  {label:'🪢 Curvada para frente', val:'bent forward pose, leaning forward from waist, torso bent over'},
+  {label:'🦶 Pé na cama / apoiada', val:'one leg raised pose, foot on surface, leg elevated position'},
+  {label:'🤸 Pernas para o ar', val:'legs raised up pose, legs elevated, feet in air, reclined with legs vertical'},
+  {label:'🧘 Lótus / sentada no chão', val:'lotus seated pose, cross-legged floor sitting, grounded seated position'},
+  {label:'💃 Poses de dança / sensual', val:'sensual dance pose, exotic dancer posture, rhythmic body movement position'},
+  {label:'🪞 Contra a parede', val:'against the wall pose, back to wall, pressed against surface pose'},
+  {label:'🏊 Debruçada / apoiada', val:'leaning over pose, bent over surface, braced forward position'},
+];
+
 // ── Steps ──────────────────────────────────────────────────────────────────
 function showStep(idx) {
   currentStep = idx;
@@ -10443,6 +10467,7 @@ function showStep(idx) {
   else if (idx === 1) showCatStep();
   else if (idx === 2) showPresetStep();
   else if (idx === 3) showAnguloStep();
+  else if (idx === 4) showPoseStep();
 }
 
 function showNivelStep() {
@@ -10574,6 +10599,30 @@ function showAnguloStep() {
         disableChips(wrap);
         answers.angulo = opt.val === '__skip__' ? '' : opt.val;
         appendUserMsg(opt.val === '__skip__' ? '— Usar padrão do preset —' : opt.label);
+        setTimeout(() => showStep(4), 300);
+      };
+      wrap.appendChild(btn);
+    });
+    chat.appendChild(wrap);
+    scrollBot();
+  }, 400);
+}
+
+function showPoseStep() {
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('Qual pose / posição?');
+    const wrap = document.createElement('div');
+    wrap.className = 'chips-wrap';
+    POSE_OPTS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        disableChips(wrap);
+        answers.pose = opt.val === '__skip__' ? '' : opt.val;
+        appendUserMsg(opt.val === '__skip__' ? '— Usar pose padrão —' : opt.label);
         setTimeout(() => showResult(), 300);
       };
       wrap.appendChild(btn);
@@ -10594,10 +10643,15 @@ function showResult() {
   setTimeout(() => {
     removeTyping();
     const p = selectedPreset;
-    // Apply angle override: inject into a modified preset copy for MJ
-    const pMJ = answers.angulo ? Object.assign({}, p, {angulo: answers.angulo, cam: answers.angulo}) : p;
+    // Apply angle + pose overrides into a modified preset copy for MJ
+    const overrides = {};
+    if (answers.angulo) { overrides.angulo = answers.angulo; overrides.cam = answers.angulo; }
+    if (answers.pose) { overrides.pose = answers.pose; }
+    const pMJ = (answers.angulo || answers.pose) ? Object.assign({}, p, overrides) : p;
     generatedMJ = buildBlondePrompt(pMJ);
-    const pillOverrides = answers.angulo ? {activeAngulo: answers.angulo} : {};
+    const pillOverrides = {};
+    if (answers.angulo) pillOverrides.activeAngulo = answers.angulo;
+    if (answers.pose) pillOverrides.activePose = answers.pose;
     generatedChatGPT = buildChatGPTPromptFromPreset(p, pillOverrides);
     addToHistory(p.name, generatedMJ, generatedChatGPT);
 
