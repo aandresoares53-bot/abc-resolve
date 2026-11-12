@@ -4,7 +4,7 @@ const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, hotels, context } = await req.json();
+    const { message, hotels, context } = await req.json() as { message: string; hotels: unknown[]; context: string };
 
     if (!ANTHROPIC_API_KEY) {
       return NextResponse.json({ reply: 'Configure ANTHROPIC_API_KEY para usar o assistente IA.' });
