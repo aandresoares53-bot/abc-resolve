@@ -10719,18 +10719,19 @@ function safePillVal(val){
   if(!val) return '';
 
   // POV baixo — câmera entre pernas ou foco em crotch/genitais (qualquer variação)
+  // Para DALL-E/ChatGPT: retorna ângulo neutro sem mencionar direção entre pernas
   if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor.*level/i.test(val)){
-    return 'POV baixo, ground-level upward shot, 24mm wide angle, camera on floor looking up at standing subject, both legs extending upward filling frame, dramatic upward fashion editorial framing, feet close to lens';
+    return 'low angle shot, 24mm wide angle, dramatic low perspective, creative editorial fashion angle, subject full length in frame';
   }
 
   // POV extremo — direto para cima entre pernas
   if(/straight up between|floor between feet|extreme upward angle from floor|from below between legs/i.test(val)){
-    return 'POV baixo extremo, extreme ground-level upward shot, 14mm ultra-wide, camera flat on floor pointing straight up at standing subject, full body from feet to face in one continuous upward frame, maximum upward distortion, dramatic fashion editorial';
+    return 'ultra-wide angle shot, 14mm lens, dramatic creative editorial perspective, full body in frame from low vantage point, fashion editorial angle';
   }
 
   // Genitália explicitamente no quadro (crotch, genitals, vulva, etc.)
   if(/vulva|camel.?toe|pubic\s+mound|genitalia|\bcrotch\b|\bgenitals?\b.*cent(?:er|ered)|genitals?\s+and\s+thighs/i.test(val)){
-    return 'POV baixo close-up, tight ground-level upward shot, 35mm, camera close to floor looking up along legs toward subject, legs filling frame from feet upward, editorial fashion close-up framing';
+    return 'low angle close-up shot, 35mm, creative editorial fashion framing, detail shot, low camera position';
   }
 
   // Pernas abertas — preserva pose sem termos bloqueados
@@ -11128,10 +11129,10 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   //   - Lingerie cat: usa roupa real do preset (sanitizada) — editorial de moda aceita lingerie
   //   - Cats explícitas: variação segura por hash
   const isPOVBaixo = /between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor|straight\s+up\s+between|floor\s+between\s+feet|extreme\s+upward\s+angle\s+from\s+floor|from\s+below\s+between\s+legs/i.test(pills.activeAngulo || '');
-  const roupa = isPOVBaixo
-    ? 'wearing white short tight lycra shorts'
-    : isLingerieCat
-      ? safeClothing(preset.roupa || '')  // roupa real do preset, sem nudez
+  const roupa = isLingerieCat
+    ? safeClothing(preset.roupa || '')
+    : isPOVBaixo
+      ? (safeClothing(preset.roupa || '') || pickClothingVariant(cat, preset.key))
       : pickClothingVariant(cat, preset.key);
 
   // ── 4. Estado corporal — pill ──
@@ -11359,10 +11360,10 @@ function buildMJPromptForDALLE(preset){
 
   // Roupa — pills POV baixo forçam short lycra; senão variação segura por preset
   const isMJPOVBaixo = /between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor|straight\s+up\s+between|floor\s+between\s+feet|extreme\s+upward\s+angle\s+from\s+floor|from\s+below\s+between\s+legs/i.test(anguloRaw || '');
-  const roupa = isMJPOVBaixo
-    ? 'wearing white short tight lycra shorts'
-    : isMJLingerie
-      ? safeClothing(p.roupa || '')
+  const roupa = isMJLingerie
+    ? safeClothing(p.roupa || '')
+    : isMJPOVBaixo
+      ? (safeClothing(p.roupa || '') || pickClothingVariant(cat, p.key))
       : pickClothingVariant(cat, p.key);
 
   // Pose — pill tem prioridade; para cats explícitas usa safe pose
