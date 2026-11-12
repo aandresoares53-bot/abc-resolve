@@ -11802,6 +11802,8 @@ function openBatchPanel(){
   const panel = document.getElementById('batch-panel');
   if(panel) panel.classList.toggle('open');
 }
+// Store batch prompts for copy-by-index
+const _batchPrompts = [];
 function generateBatch(){
   const p = PRESETS_RAW.find(x=>x.key===selectedKey);
   if(!p){ showToast('Selecione um preset'); return; }
@@ -11809,17 +11811,36 @@ function generateBatch(){
   const count = parseInt(document.getElementById('batch-count-sel').value)||3;
   const grid = document.getElementById('batch-grid');
   grid.innerHTML = '';
+  _batchPrompts.length = 0;
   for(let i=0;i<count;i++){
     let prompt = '';
     if(mode==='chatgpt') prompt = buildChatGPTPromptFromPreset(p);
     else if(mode==='mj')  prompt = buildBlondePrompt(p);
     else                  prompt = buildMJPromptForDALLE(p);
+    _batchPrompts.push(prompt);
     const row = document.createElement('div');
     row.className='batch-row';
-    row.innerHTML='<span style="color:var(--txt3);min-width:16px">'+(i+1)+'.</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt2)">'+prompt.slice(0,120)+'…</span><button onclick="navigator.clipboard.writeText('+JSON.stringify(prompt)+').then(()=>showToast(\'Copiado #'+(i+1)+'\'))">📋</button>';
+    row.style.cssText='display:flex;flex-direction:column;gap:4px;padding:6px 0;border-bottom:1px solid var(--border)';
+    const header = document.createElement('div');
+    header.style.cssText='display:flex;align-items:center;gap:6px';
+    header.innerHTML='<span style="color:var(--txt3);min-width:18px;font-size:.7rem">'+(i+1)+'.</span>'
+      +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt2);font-size:.72rem;cursor:pointer" title="Clique para expandir" onclick="var ta=this.closest(\'.batch-row\').querySelector(\'textarea\');ta.style.display=ta.style.display===\'block\'?\'none\':\'block\'">'+prompt.slice(0,110)+'…</span>'
+      +'<button class="btn-action" style="font-size:.65rem;padding:2px 8px;white-space:nowrap" data-idx="'+i+'" onclick="copyBatchItem('+i+')">📋 Copiar</button>';
+    const full = document.createElement('textarea');
+    full.className='batch-full';
+    full.readOnly=true;
+    full.value=prompt;
+    full.style.cssText='display:none;width:100%;height:80px;font-size:.68rem;resize:vertical;background:var(--bg2);color:var(--txt);border:1px solid var(--border);border-radius:4px;padding:4px;box-sizing:border-box';
+    row.appendChild(header);
+    row.appendChild(full);
     grid.appendChild(row);
   }
   showToast('Batch de '+count+' prompts gerado');
+}
+function copyBatchItem(idx){
+  const prompt = _batchPrompts[idx];
+  if(!prompt) return;
+  navigator.clipboard.writeText(prompt).then(()=>showToast('✓ Copiado #'+(idx+1)));
 }
 function copyAllBatch(){
   const rows = document.querySelectorAll('#batch-grid .batch-row');
