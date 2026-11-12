@@ -10531,7 +10531,7 @@ function applyEdits(silent){
   // POV baixo / extremo: detect and inject pose + nsfw automatically
   const camToCheck = overrideAngulo || p.angulo || overrideCam || p.cam || '';
   const isPovBaixo   = /inner thighs.*crotch.*filling|close-up.*inner thighs.*crotch|thighs.*prominent.*foreground|upward floor-level|crotch.*dominating.*frame|floor-angle composition|low angle close-up from below.*tight frame|low angle upward shot.*shot from below/i.test(camToCheck);
-  const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame/i.test(camToCheck);
+  const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame|low angle extreme close-up from below|straight up between spread legs|crotch dominating entire frame/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
   const povInject = isPovExtremo ? {
     pose: 'standing with legs wide apart, feet planted on floor, shot from directly below between feet',
