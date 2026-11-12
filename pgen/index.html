@@ -10739,6 +10739,11 @@ function safePillVal(val){
     return 'seated with knees separated wide, feet flat on floor, hips relaxed open, natural candid seated pose, legs separated showing full inner leg line, body weight sunk naturally, editorial fashion wide seated stance, grounded natural posture';
   }
 
+  // Extreme close-up de bunda / rear sem cabeça
+  if(/extreme\s+close-up.*buttocks|buttocks.*filling.*frame|rear\s+view.*no\s+head|close-up.*rear.*view/i.test(val)){
+    return 'three-quarter back shot, 85mm f/1.8, natural light, athletic editorial rear view, full figure visible';
+  }
+
   // Bunda empurrada para câmera
   if(/buttocks.*pushed.*camera|torso folded forward.*buttocks.*toward camera/i.test(val)){
     return 'bent forward at waist, back deeply arched, rear view, hips toward camera, fashion editorial rear shot';
@@ -11202,6 +11207,9 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
     .replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose')
     .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
     .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
+    .replace(/\bno\s+head\b[^,]*/gi, '')
+    .replace(/,?\s*filling\s+(entire\s+)?frame\b[^,]*/gi, '')
+    .replace(/\bextreme\s+close-?up\s+of\s+(curves|buttocks|rear|bunda)[^,]*/gi, 'close-up editorial shot')
     .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
     .replace(/\bpanties\b[^,]*/gi, isLingerieCat ? '$&' : 'shorts')
     .replace(/\bbra\b[^,]*/gi, isLingerieCat ? '$&' : 'top')
@@ -11427,6 +11435,9 @@ function buildMJPromptForDALLE(preset){
     .replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose')
     .replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose')
     .replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance')
+    .replace(/\bno\s+head\b[^,]*/gi, '')
+    .replace(/,?\s*filling\s+(entire\s+)?frame\b[^,]*/gi, '')
+    .replace(/\bextreme\s+close-?up\s+of\s+(curves|buttocks|rear|bunda)[^,]*/gi, 'close-up editorial shot')
     .replace(/\bupskirt\b[^,]*/gi, 'low angle shot')
     .replace(/\bpanties\b[^,]*/gi, isMJLingerie ? '$&' : 'shorts')
     .replace(/\bbra\b[^,]*/gi, isMJLingerie ? '$&' : 'top')
