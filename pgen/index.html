@@ -161,23 +161,56 @@ header{
   font-size:.88rem;
 }
 
-/* ── RESULT PANEL ── */
+/* ── CHAT PANEL (result) ── */
 #result-panel{
-  flex-shrink:0;border-top:2px solid var(--acc);
-  background:var(--surface);display:none;
-  max-height:52vh;overflow-y:auto;
+  flex-shrink:0;display:none;
+  flex-direction:column;
+  border-top:2px solid var(--acc);
+  background:var(--bg);
+  max-height:58vh;
   box-shadow:0 -4px 24px rgba(0,0,0,.4);
 }
-#result-panel.open{display:block;}
-.result-header{
+#result-panel.open{display:flex;}
+/* Chat header */
+.chat-header{
   display:flex;align-items:center;gap:10px;
-  padding:10px 16px;border-bottom:1px solid var(--bdr);
-  position:sticky;top:0;background:var(--surface);z-index:5;
-  backdrop-filter:blur(4px);
+  padding:9px 14px;border-bottom:1px solid var(--bdr);
+  background:var(--surface);position:sticky;top:0;z-index:5;
+  backdrop-filter:blur(4px);flex-shrink:0;
 }
-.result-title{font-size:.85rem;font-weight:700;color:var(--acc);flex:1;
-  text-shadow:0 0 12px var(--acc-glow);}
-.result-body{padding:12px 16px;display:grid;gap:10px;}
+.chat-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--acc);display:flex;align-items:center;
+  justify-content:center;font-size:1rem;flex-shrink:0;
+}
+.chat-info{flex:1;min-width:0;}
+.result-title{font-size:.82rem;font-weight:700;color:var(--acc);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:0 0 10px var(--acc-glow);}
+.chat-subtitle{font-size:.6rem;color:var(--txt3);margin-top:1px;}
+/* Messages area */
+.chat-messages-area{
+  padding:12px 14px;overflow-y:auto;flex-shrink:0;
+}
+.chat-bubble-ai{
+  background:var(--surface);border:1px solid var(--bdr);
+  border-radius:4px 14px 14px 14px;
+  padding:12px 14px;display:grid;gap:8px;
+}
+/* Options / pills area */
+.chat-options-area{
+  border-top:1px solid var(--bdr);overflow-y:auto;
+  flex:1;min-height:0;background:var(--surface);
+}
+/* Chat action bar */
+.chat-actions-area{
+  padding:8px 14px;border-top:1px solid var(--bdr);
+  background:var(--surface);display:flex;gap:6px;
+  flex-wrap:wrap;flex-shrink:0;
+}
+/* keep legacy refs working */
+.result-header{display:none;}
+.result-body{display:contents;}
 .result-label{font-size:.65rem;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
 .edit-fields{background:var(--surface2);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;display:grid;gap:8px;}
 .edit-field{display:grid;gap:4px;}
@@ -357,17 +390,16 @@ header{
   .qlabel{flex-shrink:0;font-size:.7rem;}
   .qpick{flex-shrink:0;font-size:.67rem;padding:5px 10px;min-height:32px;white-space:nowrap;}
 
-  /* Result panel — full screen overlay */
+  /* Chat panel — full screen overlay on mobile */
   #result-panel{
     position:fixed!important;inset:0!important;z-index:90;
     width:100vw!important;max-width:none!important;
-    max-height:none!important;height:100vh!important;
-    overflow-y:auto;border-left:none!important;
-    display:none;
+    max-height:none!important;height:100dvh!important;
+    border-left:none!important;display:none;
   }
-  #result-panel.open{display:flex;flex-direction:column;}
-  .result-header{position:sticky;top:0;z-index:5;padding:10px 12px;}
-  .result-body{padding:8px 12px;flex:1;}
+  #result-panel.open{display:flex;}
+  .chat-messages-area{flex-shrink:0;}
+  .chat-options-area{flex:1;overflow-y:auto;}
   .result-ta{font-size:.74rem;}
   .btn-row{gap:6px;flex-wrap:wrap;}
   .btn-action{font-size:.71rem;padding:9px 12px;min-height:42px;}
@@ -461,13 +493,68 @@ header{
   <div class="main">
     <div class="grid-wrap" id="grid-wrap"></div>
 
-    <!-- Result Panel -->
+    <!-- Result Panel — Chat style -->
     <div id="result-panel">
-      <div class="result-header">
-        <div class="result-title" id="result-title">✅ Preset selecionado</div>
+
+      <!-- Chat header -->
+      <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-info">
+          <div class="result-title" id="result-title">Preset selecionado</div>
+          <div class="chat-subtitle">Gerador de prompts · MJ / ChatGPT / DALL-E</div>
+        </div>
         <button class="btn-close-result" onclick="closeResult()">✕</button>
       </div>
-      <div class="result-body">
+
+      <!-- AI response bubble (prompt output) -->
+      <div class="chat-messages-area">
+        <div class="chat-bubble-ai">
+          <div class="result-label">🎯 Prompt gerado</div>
+          <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
+            <span style="font-size:.66rem;color:var(--txt3)">🚫 Negativo (--no)</span>
+            <button class="btn-action" style="font-size:.63rem;padding:2px 8px" onclick="copyNeg()">📋 Copiar --no</button>
+          </div>
+          <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
+          <div class="gpt-fallback" id="gpt-fallback" onclick="applyGPTFallback()">
+            🤖 Este preset pode bloquear no ChatGPT. <strong>Clique para ver alternativa SFW →</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action bar -->
+      <div class="chat-actions-area">
+        <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 MJ</button>
+        <button class="btn-action" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;border:none" id="btn-copy-gpt" onclick="copyForChatGPT()">🤖 ChatGPT</button>
+        <button class="btn-action" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none" id="btn-copy-mj-dalle" onclick="copyMJForDALLE()">🎨 DALL-E</button>
+        <button class="btn-action" onclick="variation()">🔀 Variação</button>
+        <button class="btn-action" onclick="openBatchPanel()" id="btn-batch">📦 Batch</button>
+        <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
+        <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
+      </div>
+
+      <!-- Batch panel -->
+      <div class="batch-panel" id="batch-panel">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:.72rem;color:var(--txt2);font-weight:600">📦 Batch — gerar prompts em série</span>
+          <select id="batch-mode-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
+            <option value="chatgpt">ChatGPT</option>
+            <option value="mj">MidJourney</option>
+            <option value="dalle">MJ→DALL-E</option>
+          </select>
+          <select id="batch-count-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
+            <option value="3">3 variações</option>
+            <option value="5">5 variações</option>
+            <option value="10">10 variações</option>
+          </select>
+          <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="generateBatch()">▶ Gerar</button>
+          <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="copyAllBatch()">📋 Copiar todos</button>
+        </div>
+        <div class="batch-grid" id="batch-grid"></div>
+      </div>
+
+      <!-- Options / pills -->
+      <div class="chat-options-area">
 
         <!-- Pose row -->
         <div class="qrow">
@@ -616,52 +703,10 @@ header{
         <input type="hidden" id="edit-idade" value="">
         <input type="hidden" id="edit-proporcao" value="">
 
-        <!-- Prompt -->
-        <div style="padding:0 14px 6px">
-          <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
-          <div style="margin-top:4px;font-size:.68rem;color:var(--txt3);padding:2px 0;display:flex;align-items:center;justify-content:space-between">
-            <span>🚫 Negativo (--no)</span>
-            <button class="btn-action" style="font-size:.65rem;padding:3px 8px" onclick="copyNeg()">📋 Copiar --no</button>
-          </div>
-          <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
-          <!-- Sugestão fallback ChatGPT -->
-          <div class="gpt-fallback" id="gpt-fallback" onclick="applyGPTFallback()">
-            🤖 Este preset pode bloquear no ChatGPT. <strong>Clique para ver alternativa SFW →</strong>
-          </div>
-          <div class="btn-row" style="margin-top:6px">
-            <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar MJ</button>
-            <button class="btn-action" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;border:none" id="btn-copy-gpt" onclick="copyForChatGPT()">🤖 ChatGPT</button>
-            <button class="btn-action" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none" id="btn-copy-mj-dalle" onclick="copyMJForDALLE()">🎨 MJ→DALL-E</button>
-            <button class="btn-action" onclick="variation()">🔀 Variação</button>
-            <button class="btn-action" onclick="openBatchPanel()" id="btn-batch">📦 Batch</button>
-            <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
-            <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
-          </div>
-          <!-- Batch panel -->
-          <div class="batch-panel" id="batch-panel">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-              <span style="font-size:.72rem;color:var(--txt2);font-weight:600">📦 Batch — gerar prompts em série</span>
-              <select id="batch-mode-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
-                <option value="chatgpt">ChatGPT</option>
-                <option value="mj">MidJourney</option>
-                <option value="dalle">MJ→DALL-E</option>
-              </select>
-              <select id="batch-count-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
-                <option value="3">3 variações</option>
-                <option value="5">5 variações</option>
-                <option value="10">10 variações</option>
-              </select>
-              <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="generateBatch()">▶ Gerar</button>
-              <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="copyAllBatch()">📋 Copiar todos</button>
-            </div>
-            <div class="batch-grid" id="batch-grid"></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
+      </div><!-- end chat-options-area -->
+    </div><!-- end result-panel -->
+  </div><!-- end main -->
+</div><!-- end app -->
 
 <script>
 // ── MIDJOURNEY CONFIG ───────────────────────────────────────────────────────
