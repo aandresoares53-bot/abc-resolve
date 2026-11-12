@@ -1,712 +1,156 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RAWgen Loiras</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAWgen Loiras — Gerador Chat</title>
+<meta name="description" content="Gere prompts fotográficos profissionais passo a passo, estilo chat.">
 <meta name="theme-color" content="#e8a020">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --bg:#080808;--surface:#111116;--surface2:#18181f;--surface3:#1e1e28;
-  --bdr:#252530;--bdr2:#2e2e3a;
-  --acc:#e8a020;--acc2:#f0b840;--acc-glow:rgba(232,160,32,.18);
-  --txt:#ededf0;--txt2:#7a7a8a;--txt3:#44445a;
-  --green:#22c55e;--red:#ef4444;--orange:#f59e0b;
-  --r:14px;--r2:9px;--sidebar:270px;
+:root {
+  --bg:      #0a0a0f;
+  --surface: #111118;
+  --card:    #18181f;
+  --border:  #252530;
+  --border-lit: #5a4a1a;
+  --ember:   #e8a020;
+  --gold:    #e8a020;
+  --gold-dim:#7a5010;
+  --text:    #ededf0;
+  --muted:   #7a7a8a;
+  --dim:     #333340;
+  --bot-bg:  #111118;
+  --user-bg: #1a1a25;
+  --chip-bg: #18181f;
+  --chip-border: #35352a;
+  --chip-hover: #22221a;
+  --chip-active: #e8a020;
+  --radius: 14px;
+  --r-chip: 24px;
 }
-[data-theme="light"]{
-  --bg:#f2ede4;--surface:#fff;--surface2:#f5f0e8;--surface3:#ede8de;
-  --bdr:#ddd6c8;--bdr2:#ccc4b4;
-  --txt:#141414;--txt2:#666;--txt3:#aaa;
-}
-html,body{height:100%;font-family:'Inter',system-ui,sans-serif;}
-body{background:var(--bg);color:var(--txt);display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
 
-/* ── HEADER ── */
-header{
-  flex-shrink:0;display:flex;align-items:center;gap:12px;
-  padding:9px 16px;border-bottom:1px solid var(--bdr);
-  background:var(--surface);z-index:20;
-  box-shadow:0 1px 0 var(--bdr2);
-}
-.logo{font-size:1.1rem;font-weight:900;color:var(--acc);letter-spacing:-0.5px;white-space:nowrap;
-  text-shadow:0 0 20px var(--acc-glow);}
-.logo span{color:var(--txt3);font-weight:400;font-size:.78em;margin-left:5px;}
-.header-search{
-  flex:1;background:var(--bg);border:1px solid var(--bdr);
-  border-radius:var(--r2);color:var(--txt);padding:7px 13px;
-  font-size:.85rem;font-family:inherit;outline:none;max-width:440px;
-  transition:border-color .2s,box-shadow .2s;
-}
-.header-search:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-glow);}
-.header-search::placeholder{color:var(--txt3);}
-.hbtn{
-  background:var(--surface2);border:1px solid var(--bdr);
-  color:var(--txt2);border-radius:var(--r2);padding:6px 12px;
-  cursor:pointer;font-size:.75rem;font-weight:600;white-space:nowrap;
-  transition:all .15s;font-family:inherit;
-}
-.hbtn-random{background:var(--acc);border-color:var(--acc);color:#000;font-weight:700;}
-.hbtn-random:hover{background:var(--acc2);box-shadow:0 2px 10px var(--acc-glow);}
-.hbtn:hover{border-color:var(--acc);color:var(--acc);background:var(--surface3);}
+/* ── Header ── */
+header{text-align:center;padding:24px 16px 14px;border-bottom:1px solid var(--border)}
+.sigil-wrap{width:40px;height:40px;margin:0 auto 8px;opacity:.9}
+header h1{font-family:'Georgia',serif;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--text)}
+header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gold);margin-bottom:4px}
+.header-sub{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin-top:4px}
 
-/* ── LAYOUT ── */
-.app-body{display:flex;flex:1;overflow:hidden;}
+/* ── Progress bar ── */
+.progress-wrap{padding:10px 16px 0;max-width:700px;margin:0 auto;width:100%}
+.progress-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--ember),#f0c040);border-radius:2px;transition:width .4s ease}
+.progress-label{font-size:.65rem;color:var(--muted);letter-spacing:.15em;text-align:right;margin-top:4px;text-transform:uppercase}
 
-/* ── SIDEBAR ── */
-.sidebar{
-  width:var(--sidebar);min-width:var(--sidebar);
-  border-right:1px solid var(--bdr);background:var(--surface);
-  display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;
-}
-.level-pills{
-  display:flex;gap:5px;padding:10px 11px;border-bottom:1px solid var(--bdr);flex-wrap:wrap;
-}
-.pill{
-  background:var(--surface2);border:1px solid var(--bdr);
-  border-radius:20px;color:var(--txt2);font-size:.68rem;font-weight:700;
-  padding:4px 11px;cursor:pointer;transition:all .15s;white-space:nowrap;
-  letter-spacing:.02em;
-}
-.pill:hover{border-color:var(--acc);color:var(--acc);background:var(--surface3);}
-.pill.active{border-color:var(--acc);color:var(--acc);background:var(--acc-glow);
-  box-shadow:0 0 8px var(--acc-glow);}
-.cat-list{flex:1;overflow-y:auto;padding:6px 0;}
-.cat-list::-webkit-scrollbar{width:3px;}
-.cat-list::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
-.cat-item{
-  display:flex;align-items:center;gap:9px;
-  padding:8px 14px;cursor:pointer;transition:background .15s,border-color .15s;
-  font-size:.83rem;border-left:3px solid transparent;
-}
-.cat-item:hover{background:var(--surface2);}
-.cat-item.active{background:var(--acc-glow);border-left-color:var(--acc);color:var(--acc);}
-.cat-icon{font-size:.95rem;width:20px;text-align:center;flex-shrink:0;}
-.cat-name{flex:1;font-weight:600;}
-.cat-badge{
-  background:var(--surface3);border:1px solid var(--bdr2);
-  border-radius:20px;color:var(--txt3);font-size:.62rem;
-  font-weight:700;padding:1px 7px;
-}
-.cat-item.active .cat-badge{border-color:rgba(232,160,32,.5);color:var(--acc);}
+/* ── Chat window ── */
+#chat{flex:1;max-width:700px;width:100%;margin:0 auto;padding:16px 16px 120px;display:flex;flex-direction:column;gap:18px}
 
-/* ── MAIN ── */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.grid-wrap{flex:1;overflow-y:auto;padding:14px;}
-.grid-wrap::-webkit-scrollbar{width:4px;}
-.grid-wrap::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px;}
-.section-title{
-  font-size:.66rem;font-weight:800;color:var(--txt3);
-  text-transform:uppercase;letter-spacing:.1em;
-  margin:4px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--bdr);
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(195px,1fr));
-  gap:9px;margin-bottom:18px;
-}
-.card{
-  background:var(--surface);border:1px solid var(--bdr);
-  border-radius:var(--r);padding:13px 14px;cursor:pointer;
-  transition:border-color .18s,transform .18s,box-shadow .18s,background .18s;
-  position:relative;animation:fadeUp .3s ease both;
-  animation-delay:calc(var(--i,0) * 18ms);
-}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
-.card:hover{
-  border-color:var(--acc);transform:translateY(-3px);
-  box-shadow:0 6px 24px rgba(232,160,32,.12),0 1px 4px rgba(0,0,0,.4);
-  background:var(--surface2);
-}
-.card.selected{
-  border-color:var(--acc);background:var(--acc-glow);
-  box-shadow:0 0 0 1px var(--acc),0 6px 24px rgba(232,160,32,.15);
-}
-.card-icon{font-size:1.5rem;margin-bottom:7px;line-height:1;}
-.card-name{font-size:.83rem;font-weight:700;line-height:1.3;margin-bottom:4px;}
-.card-desc{font-size:.72rem;color:var(--txt2);line-height:1.45;}
-.card-badge{
-  display:inline-block;margin-top:8px;
-  border-radius:20px;font-size:.6rem;font-weight:700;
-  padding:2px 8px;border:1px solid;letter-spacing:.03em;
-}
-.badge-sfw{color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.07);}
-.badge-sensual{color:var(--orange);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.07);}
-.badge-explicit{color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07);}
-.badge-gpt-safe{color:#10a37f;border-color:rgba(16,163,127,.35);background:rgba(16,163,127,.08);margin-left:3px;}
-.badge-gpt-warn{color:#f59e0b;border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.07);margin-left:3px;}
-.badge-gpt-no{color:#ef4444;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07);margin-left:3px;}
-.badge-tt-safe{color:#ee1d52;border-color:rgba(238,29,82,.3);background:rgba(238,29,82,.07);margin-left:3px;}
-/* Saved pill combos */
-.pill-combo-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 14px 2px;border-top:1px solid var(--border);}
-.pill-combo-chip{font-size:.62rem;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--txt2);cursor:pointer;transition:.15s;}
-.pill-combo-chip:hover{border-color:var(--acc);color:var(--acc);}
-.pill-combo-chip.del-mode{border-color:var(--red);color:var(--red);}
-/* Batch panel */
-.batch-panel{padding:8px 14px;border-top:1px solid var(--border);display:none;}
-.batch-panel.open{display:block;}
-.batch-grid{display:flex;flex-direction:column;gap:4px;margin-top:6px;max-height:220px;overflow-y:auto;}
-.batch-row{display:flex;gap:6px;align-items:center;font-size:.7rem;padding:4px 8px;background:var(--surface2);border-radius:6px;}
-.batch-row button{font-size:.62rem;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--acc);cursor:pointer;}
-/* ChatGPT fallback suggestion */
-.gpt-fallback{margin:6px 14px;padding:7px 10px;border-radius:8px;border:1px solid rgba(16,163,127,.3);background:rgba(16,163,127,.07);font-size:.7rem;color:#10a37f;display:none;cursor:pointer;}
-.gpt-fallback.show{display:block;}
+/* ── Messages ── */
+.msg{display:flex;gap:10px;align-items:flex-start;animation:fadeUp .3s ease}
+.msg.bot{flex-direction:row}
+.msg.user{flex-direction:row-reverse}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.no-results{
-  text-align:center;padding:60px 20px;color:var(--txt3);
-  font-size:.88rem;
-}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.bot .avatar{background:var(--surface);border:1px solid var(--border-lit)}
+.user .avatar{background:var(--user-bg);border:1px solid var(--dim)}
 
-/* ── CHAT PANEL (result) ── */
-#result-panel{
-  flex-shrink:0;display:none;
-  flex-direction:column;
-  border-top:2px solid var(--acc);
-  background:var(--bg);
-  max-height:58vh;
-  box-shadow:0 -4px 24px rgba(0,0,0,.4);
-}
-#result-panel.open{display:flex;}
-/* Chat header */
-.chat-header{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 14px;border-bottom:1px solid var(--bdr);
-  background:var(--surface);position:sticky;top:0;z-index:5;
-  backdrop-filter:blur(4px);flex-shrink:0;
-}
-.chat-avatar{
-  width:34px;height:34px;border-radius:50%;
-  background:var(--acc);display:flex;align-items:center;
-  justify-content:center;font-size:1rem;flex-shrink:0;
-}
-.chat-info{flex:1;min-width:0;}
-.result-title{font-size:.82rem;font-weight:700;color:var(--acc);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  text-shadow:0 0 10px var(--acc-glow);}
-.chat-subtitle{font-size:.6rem;color:var(--txt3);margin-top:1px;}
-/* Messages area */
-.chat-messages-area{
-  padding:12px 14px;overflow-y:auto;flex-shrink:0;
-}
-.chat-bubble-ai{
-  background:var(--surface);border:1px solid var(--bdr);
-  border-radius:4px 14px 14px 14px;
-  padding:12px 14px;display:grid;gap:8px;
-}
-/* Options / pills area */
-.chat-options-area{
-  border-top:1px solid var(--bdr);overflow-y:auto;
-  flex:1;min-height:0;background:var(--surface);
-}
-/* Chat action bar */
-.chat-actions-area{
-  padding:8px 14px;border-top:1px solid var(--bdr);
-  background:var(--surface);display:flex;gap:6px;
-  flex-wrap:wrap;flex-shrink:0;
-}
-/* keep legacy refs working */
-.result-header{display:none;}
-.result-body{display:contents;}
-.result-label{font-size:.65rem;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
-.edit-fields{background:var(--surface2);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;display:grid;gap:8px;}
-.edit-field{display:grid;gap:4px;}
-.edit-label{font-size:.65rem;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;}
-.chip-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-.chip{background:var(--surface2);border:1px solid var(--bdr2);border-radius:20px;color:var(--txt2);padding:4px 10px;font-size:.72rem;font-family:inherit;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.chip:hover{border-color:var(--acc);color:var(--acc);}
-.chip.active{background:var(--acc);border-color:var(--acc);color:#000;font-weight:700;}
-.chip-section{font-size:.65rem;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;width:100%;margin-top:4px;}
-.edit-select:focus{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc-glow);}
-.edit-select option,.edit-select optgroup{background:var(--surface2);color:var(--txt);}
-.btn-apply{background:var(--surface3);border:1px solid var(--bdr2);border-radius:var(--r2);color:var(--acc);font-size:.75rem;font-weight:700;padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s;width:fit-content;}
-.btn-apply:hover{background:var(--acc);color:#000;border-color:var(--acc);}
-.result-ta{
-  width:100%;background:var(--bg);border:1px solid var(--bdr);
-  border-radius:var(--r2);color:var(--txt);padding:10px 12px;
-  font-size:.78rem;font-family:monospace;line-height:1.55;
-  resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;
-  min-height:80px;
-}
-.result-ta:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-glow);}
-.result-ta.neg{min-height:58px;color:var(--txt2);font-size:.71rem;}
-.btn-row{display:flex;gap:7px;flex-wrap:wrap;}
-.btn-action{
-  background:var(--surface2);border:1px solid var(--bdr);
-  color:var(--txt2);border-radius:var(--r2);padding:7px 14px;
-  cursor:pointer;font-size:.75rem;font-weight:600;
-  transition:all .15s;font-family:inherit;white-space:nowrap;
-}
-.btn-action:hover{border-color:var(--acc);color:var(--acc);background:var(--surface3);}
-.btn-action.primary{background:var(--acc);border-color:var(--acc);color:#000;font-weight:700;}
-.btn-action.primary:hover{background:var(--acc2);box-shadow:0 2px 12px var(--acc-glow);}
-.btn-action.ok{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green);}
-.btn-close-result{
-  background:none;border:1px solid var(--bdr);border-radius:6px;
-  color:var(--txt3);padding:4px 9px;cursor:pointer;font-size:.8rem;
-  transition:all .15s;
-}
-.btn-close-result:hover{border-color:var(--red);color:var(--red);}
+.bubble{padding:11px 16px;border-radius:var(--radius);font-size:.88rem;line-height:1.55;max-width:88%}
+.bot .bubble{background:var(--bot-bg);border:1px solid var(--border);border-top-left-radius:4px;color:var(--text)}
+.user .bubble{background:var(--user-bg);border:1px solid var(--dim);border-top-right-radius:4px;color:var(--muted)}
 
-/* ── QUICK PICKS ── */
-.qrow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:8px 14px 0;}
-.qlabel{font-size:.85rem;min-width:20px;}
-.qpick{
-  background:var(--surface2);border:1px solid var(--bdr);border-radius:20px;
-  color:var(--txt2);font-size:.7rem;font-weight:600;padding:4px 11px;cursor:pointer;
-  transition:background .15s,border-color .15s,color .15s;white-space:nowrap;
-}
-.qpick:hover{background:var(--surface3);color:var(--txt);}
-.qpick.active{background:var(--acc);border-color:var(--acc);color:#000;}
+/* ── Chips ── */
+.chips-wrap{padding:0 0 0 40px;display:flex;flex-wrap:wrap;gap:10px;animation:fadeUp .3s ease .1s both}
+.chip{padding:9px 18px;background:var(--chip-bg);border:1px solid var(--chip-border);border-radius:var(--r-chip);color:var(--text);font-family:Georgia,serif;font-size:.85rem;cursor:pointer;transition:all .18s;white-space:nowrap;outline:none}
+.chip:hover{background:var(--chip-hover);border-color:var(--border-lit);color:var(--text)}
+.chip.selected{background:var(--ember);border-color:var(--ember);color:#000}
+.chip.skip{border-color:var(--dim);color:var(--muted)}
+.chip.skip:hover{border-color:var(--border-lit);color:var(--text)}
 
-/* ── FAV BTN ── */
-.fav-btn{
-  position:absolute;top:8px;right:8px;background:none;border:none;
-  font-size:.95rem;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s;
-  padding:2px;line-height:1;
-}
-.fav-btn:hover{opacity:1;transform:scale(1.2);}
-.fav-btn.active{opacity:1;}
+/* ── Typing indicator ── */
+.typing{display:flex;align-items:center;gap:5px;padding:4px 2px}
+.dot{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:bounce .9s infinite}
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 
-/* ── MODAL ── */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity .2s;
-}
-.modal-overlay.open{opacity:1;pointer-events:all;}
-.modal-box{
-  background:var(--surface);border:1px solid var(--bdr);border-radius:var(--r);
-  width:min(560px,95vw);max-height:80vh;display:flex;flex-direction:column;
-  box-shadow:0 24px 80px rgba(0,0,0,.6);
-}
-.modal-header{
-  display:flex;align-items:center;gap:10px;padding:12px 16px;
-  border-bottom:1px solid var(--bdr);flex-shrink:0;
-}
-.modal-header h3{flex:1;font-size:.9rem;font-weight:700;color:var(--acc);}
-.modal-close{background:none;border:1px solid var(--bdr);border-radius:6px;
-  color:var(--txt3);padding:3px 8px;cursor:pointer;font-size:.8rem;}
-.modal-close:hover{border-color:var(--red);color:var(--red);}
-.modal-body{overflow-y:auto;padding:10px 14px;display:grid;gap:6px;}
-.modal-body::-webkit-scrollbar{width:3px;}
-.modal-body::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
-.hist-item{
-  background:var(--surface2);border:1px solid var(--bdr);border-radius:var(--r2);
-  padding:9px 12px;display:flex;align-items:center;gap:8px;
-}
-.hist-info{flex:1;min-width:0;}
-.hist-name{font-size:.75rem;font-weight:700;color:var(--acc);margin-bottom:2px;}
-.hist-text{font-size:.68rem;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hist-copy{background:var(--surface3);border:1px solid var(--bdr2);border-radius:6px;
-  color:var(--txt2);padding:4px 9px;cursor:pointer;font-size:.7rem;white-space:nowrap;flex-shrink:0;}
-.hist-copy:hover{border-color:var(--acc);color:var(--acc);}
+/* ── Result card ── */
+.result-card{background:var(--surface);border:1px solid var(--border-lit);border-radius:var(--radius);padding:20px;animation:fadeUp .35s ease}
+.result-card h3{font-family:Georgia,serif;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.result-card .entity-name{font-size:1.3rem;color:var(--gold);margin-bottom:4px;font-style:italic;font-family:Georgia,serif;font-weight:700;text-shadow:0 0 12px rgba(232,160,32,.35)}
+.result-card .entity-name-sub{font-size:.72rem;color:var(--text);letter-spacing:.1em;margin-bottom:16px;opacity:.7}
+.assinatura{margin-top:16px;padding-top:12px;border-top:1px solid var(--border-lit);text-align:center;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-family:Georgia,serif;font-style:italic}
+.prompt-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.prompt-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.78rem;line-height:1.55;color:var(--text);white-space:pre-wrap;word-break:break-word;margin-bottom:14px;font-family:monospace}
+.result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.btn-act{padding:8px 16px;border-radius:var(--r-chip);border:1px solid var(--border-lit);background:transparent;color:var(--text);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.btn-act:hover{background:var(--card);border-color:var(--gold)}
+.btn-act.primary{background:var(--ember);border-color:var(--ember);color:#000;font-weight:600}
+.btn-act.primary:hover{opacity:.9}
 
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--acc);color:#000;font-weight:700;font-size:.78rem;
-  padding:8px 20px;border-radius:20px;pointer-events:none;
-  opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* ── Bottom bar ── */
+#bottom-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,var(--bg) 30%);padding:20px 16px 20px;display:flex;justify-content:center;gap:10px;z-index:10}
+.bar-btn{padding:9px 20px;border-radius:var(--r-chip);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.bar-btn:hover{border-color:var(--border-lit);color:var(--text)}
 
-/* ── ROULETTE BTN ── */
-.hbtn-roulette.active{background:var(--red);border-color:var(--red);color:#fff;}
+/* ── History panel ── */
+#hist-panel{position:fixed;inset:0;background:rgba(5,5,10,.95);z-index:50;display:none;flex-direction:column}
+#hist-panel.open{display:flex}
+.hist-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.hist-header h2{font-family:Georgia,serif;font-size:1rem;letter-spacing:.15em;text-transform:uppercase;font-weight:400;color:var(--gold)}
+.hist-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px 8px}
+#hist-list{flex:1;overflow-y:auto;padding:16px}
+.hist-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
+.hist-item:hover{border-color:var(--border-lit)}
+.hist-item-name{font-size:.85rem;color:var(--text);margin-bottom:4px}
+.hist-item-meta{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
+.hist-item-preview{font-size:.72rem;color:var(--dim);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-empty{text-align:center;color:var(--muted);font-size:.82rem;padding:40px 0}
 
-/* ── HAMBURGER ── */
-.hamburger{
-  display:none;background:none;border:1px solid var(--bdr);border-radius:var(--r2);
-  color:var(--txt2);font-size:1.1rem;padding:5px 9px;cursor:pointer;
-  transition:all .15s;flex-shrink:0;line-height:1;min-width:36px;min-height:36px;
-  align-items:center;justify-content:center;
-}
-.hamburger:hover{border-color:var(--acc);color:var(--acc);}
-
-/* ── SIDEBAR BACKDROP ── */
-.sidebar-backdrop{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
-  z-index:49;backdrop-filter:blur(2px);
-}
-.sidebar-backdrop.open{display:block;}
-
-/* ── SIDEBAR CLOSE BTN (mobile) ── */
-.sidebar-close{
-  display:none;position:absolute;top:10px;right:10px;z-index:2;
-  background:var(--surface2);border:1px solid var(--bdr);border-radius:6px;
-  color:var(--txt3);font-size:.8rem;padding:4px 9px;cursor:pointer;
-}
-.sidebar-close:hover{border-color:var(--red);color:var(--red);}
-
-/* ── TABLET (640px–1024px) ── */
-@media(max-width:1024px){
-  :root{--sidebar:220px;}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
-  .header-search{max-width:260px;}
-}
-
-/* ── MOBILE (< 640px) ── */
-@media(max-width:640px){
-  /* Header */
-  header{padding:7px 10px;gap:7px;}
-  .hamburger{display:flex;}
-  .logo span{display:none;}
-  .hbtn{font-size:.7rem;padding:5px 9px;}
-  .header-search{max-width:none;flex:1;font-size:.8rem;padding:6px 10px;}
-  #hist-btn{display:none;}
-
-  /* Sidebar — off-canvas drawer (position:fixed stays) */
-  .sidebar{
-    position:fixed!important;top:0;left:0;bottom:0;z-index:100;
-    width:75vw!important;max-width:300px!important;min-width:0!important;
-    transform:translateX(-110%);transition:transform .28s cubic-bezier(.4,0,.2,1);
-    border-right:1px solid var(--bdr);
-    box-shadow:6px 0 32px rgba(0,0,0,.6);
-  }
-  .sidebar.drawer-open{transform:translateX(0)!important;}
-  .sidebar-close{display:block;}
-
-  /* Main takes full width since sidebar is out of flow */
-  .app-body{position:relative;}
-  .main{width:100%;overflow:hidden;}
-  .grid-wrap{padding:10px;}
-  .grid{grid-template-columns:1fr 1fr;gap:8px;}
-
-  /* Cards smaller */
-  .card{padding:10px 11px;}
-  .card-icon{font-size:1.2rem;margin-bottom:4px;}
-  .card-name{font-size:.76rem;}
-  .card-desc{font-size:.66rem;}
-
-  /* Quick-pick rows — horizontal scroll, no wrap */
-  .qrow{
-    flex-wrap:nowrap!important;overflow-x:auto;-webkit-overflow-scrolling:touch;
-    padding:5px 10px;gap:5px;scrollbar-width:none;
-  }
-  .qrow::-webkit-scrollbar{display:none;}
-  .qlabel{flex-shrink:0;font-size:.7rem;}
-  .qpick{flex-shrink:0;font-size:.67rem;padding:5px 10px;min-height:32px;white-space:nowrap;}
-
-  /* Chat panel — full screen overlay on mobile */
-  #result-panel{
-    position:fixed!important;inset:0!important;z-index:90;
-    width:100vw!important;max-width:none!important;
-    max-height:none!important;height:100dvh!important;
-    border-left:none!important;display:none;
-  }
-  #result-panel.open{display:flex;}
-  .chat-messages-area{flex-shrink:0;}
-  .chat-options-area{flex:1;overflow-y:auto;}
-  .result-ta{font-size:.74rem;}
-  .btn-row{gap:6px;flex-wrap:wrap;}
-  .btn-action{font-size:.71rem;padding:9px 12px;min-height:42px;}
-
-  /* Touch-friendly */
-  .cat-item{min-height:44px;padding:10px 14px;}
-  .hbtn{min-height:38px;}
-}
-
-/* ── VERY SMALL (< 380px) ── */
-@media(max-width:380px){
-  .grid{grid-template-columns:1fr;}
-  header{gap:4px;}
-  .hbtn:not(.hamburger){display:none;}
-  .header-search{font-size:.74rem;}
+@media(max-width:480px){
+  .bubble{font-size:.82rem}
+  .chip{font-size:.78rem;padding:8px 14px}
+  header h1{font-size:1rem}
 }
 </style>
 </head>
 <body>
 
 <header>
-  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
-  <div class="logo">RAWgen Loiras <span>🔞 preset browser</span></div>
-  <button class="hbtn hbtn-random" onclick="randomPreset()">🎲 Aleatório</button>
-  <button class="hbtn" onclick="toggleHistorico()" id="hist-btn">📜 Histórico</button>
-  <button class="hbtn" onclick="toggleComparar()" id="compare-btn">⚖️ Comparar</button>
-  <button class="hbtn hbtn-roulette" onclick="toggleRoulette()" id="roulette-btn">🎰 Roulette</button>
-  <input class="header-search" id="global-search" placeholder="🔍 Buscar preset…" oninput="filterPresets()" autocomplete="off">
-  <button class="hbtn" onclick="reiniciarTudo()" title="Limpa busca, categoria, pose, câmera e fecha o painel">↺ Reiniciar</button>
-  <button class="hbtn" onclick="toggleTheme()" id="theme-btn">☀ Claro</button>
+  <div class="sigil-wrap">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="22" cy="22" r="20" stroke="#e8a020" stroke-width="1.2"/>
+      <rect x="14" y="14" width="16" height="16" rx="3" fill="none" stroke="#e8a020" stroke-width="1.5"/>
+      <circle cx="22" cy="22" r="4" fill="#e8a020" opacity=".8"/>
+      <circle cx="22" cy="22" r="2" fill="#0a0a0f"/>
+    </svg>
+  </div>
+  <h1><span>RAWgen Loiras</span>Gerador de Prompts</h1>
+  <div class="header-sub">Midjourney · ChatGPT · DALL-E · Passo a passo</div>
 </header>
 
-<!-- Modal Histórico -->
-<div class="modal-overlay" id="modal-hist" onclick="e=>e.target===this&&toggleHistorico()">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>📜 Histórico de Prompts</h3>
-      <button class="modal-close" onclick="toggleHistorico()">✕ Fechar</button>
-    </div>
-    <div class="modal-body" id="modal-hist-body"></div>
-  </div>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">Etapa 1 de 4</div>
 </div>
 
-<!-- Modal Comparar -->
-<div class="modal-overlay" id="modal-compare" onclick="if(event.target===this)toggleComparar()">
-  <div class="modal-box" style="max-width:860px;width:95vw">
-    <div class="modal-header">
-      <h3>⚖️ Comparar Prompts</h3>
-      <button class="modal-close" onclick="toggleComparar()">✕ Fechar</button>
-    </div>
-    <div style="padding:10px 16px 6px;font-size:.8rem;color:var(--txt3)">
-      Fixe um prompt com <strong>📌 Fixar</strong>, depois selecione outro preset para comparar lado a lado.
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 16px" id="compare-grid">
-      <div>
-        <div style="font-size:.78rem;color:var(--txt3);margin-bottom:4px">📌 Fixado</div>
-        <div class="compare-name" id="compare-name-a" style="font-weight:600;font-size:.85rem;margin-bottom:6px;color:var(--acc)">—</div>
-        <textarea class="result-ta" id="compare-a" rows="10" readonly style="width:100%;font-size:.7rem"></textarea>
-        <button class="btn-action" style="margin-top:5px;width:100%" onclick="copyCompare('a')">📋 Copiar A</button>
-      </div>
-      <div>
-        <div style="font-size:.78rem;color:var(--txt3);margin-bottom:4px">🔵 Atual</div>
-        <div class="compare-name" id="compare-name-b" style="font-weight:600;font-size:.85rem;margin-bottom:6px;color:var(--txt)">—</div>
-        <textarea class="result-ta" id="compare-b" rows="10" readonly style="width:100%;font-size:.7rem"></textarea>
-        <button class="btn-action" style="margin-top:5px;width:100%" onclick="copyCompare('b')">📋 Copiar B</button>
-      </div>
-    </div>
-  </div>
+<div id="chat"></div>
+
+<div id="bottom-bar">
+  <button class="bar-btn" onclick="openHist()">📜 Histórico</button>
+  <button class="bar-btn" onclick="restartFlow()">↺ Recomeçar</button>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<!-- Sidebar backdrop (mobile) -->
-<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
-
-<div class="app-body">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <button class="sidebar-close" onclick="toggleSidebar()">✕ Fechar</button>
-    <div class="level-pills">
-      <button class="pill active" id="pill-todos" onclick="setLevel('todos')">Todos</button>
-      <button class="pill" id="pill-sfw" onclick="setLevel('sfw')">☀ SFW</button>
-      <button class="pill" id="pill-sensual" onclick="setLevel('sensual')">🔥 Sensual</button>
-      <button class="pill" id="pill-explicit" onclick="setLevel('explicit')">🔞 Explícito</button>
-    </div>
-    <nav class="cat-list" id="cat-list"></nav>
-  </aside>
-
-  <!-- Main -->
-  <div class="main">
-    <div class="grid-wrap" id="grid-wrap"></div>
-
-    <!-- Result Panel — Chat style -->
-    <div id="result-panel">
-
-      <!-- Chat header -->
-      <div class="chat-header">
-        <div class="chat-avatar">🤖</div>
-        <div class="chat-info">
-          <div class="result-title" id="result-title">Preset selecionado</div>
-          <div class="chat-subtitle">Gerador de prompts · MJ / ChatGPT / DALL-E</div>
-        </div>
-        <button class="btn-close-result" onclick="closeResult()">✕</button>
-      </div>
-
-      <!-- AI response bubble (prompt output) -->
-      <div class="chat-messages-area">
-        <div class="chat-bubble-ai">
-          <div class="result-label">🎯 Prompt gerado</div>
-          <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
-            <span style="font-size:.66rem;color:var(--txt3)">🚫 Negativo (--no)</span>
-            <button class="btn-action" style="font-size:.63rem;padding:2px 8px" onclick="copyNeg()">📋 Copiar --no</button>
-          </div>
-          <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
-          <div class="gpt-fallback" id="gpt-fallback" onclick="applyGPTFallback()">
-            🤖 Este preset pode bloquear no ChatGPT. <strong>Clique para ver alternativa SFW →</strong>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action bar -->
-      <div class="chat-actions-area">
-        <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 MJ</button>
-        <button class="btn-action" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;border:none" id="btn-copy-gpt" onclick="copyForChatGPT()">🤖 ChatGPT</button>
-        <button class="btn-action" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none" id="btn-copy-mj-dalle" onclick="copyMJForDALLE()">🎨 DALL-E</button>
-        <button class="btn-action" onclick="variation()">🔀 Variação</button>
-        <button class="btn-action" onclick="openBatchPanel()" id="btn-batch">📦 Batch</button>
-        <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
-        <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
-      </div>
-
-      <!-- Batch panel -->
-      <div class="batch-panel" id="batch-panel">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span style="font-size:.72rem;color:var(--txt2);font-weight:600">📦 Batch — gerar prompts em série</span>
-          <select id="batch-mode-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
-            <option value="chatgpt">ChatGPT</option>
-            <option value="mj">MidJourney</option>
-            <option value="dalle">MJ→DALL-E</option>
-          </select>
-          <select id="batch-count-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
-            <option value="3">3 variações</option>
-            <option value="5">5 variações</option>
-            <option value="10">10 variações</option>
-          </select>
-          <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="generateBatch()">▶ Gerar</button>
-          <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="copyAllBatch()">📋 Copiar todos</button>
-        </div>
-        <div class="batch-grid" id="batch-grid"></div>
-      </div>
-
-      <!-- Options / pills -->
-      <div class="chat-options-area">
-
-        <!-- Pose row -->
-        <div class="qrow">
-          <span class="qlabel">🕺</span>
-          <button class="qpick active" data-group="pose" data-val="">Padrão</button>
-          <button class="qpick" data-group="pose" data-val="standing relaxed, weight on one hip, arms loose, candid unposed, natural stance">Em pé</button>
-          <button class="qpick" data-group="pose" data-val="caught mid-motion looking back over shoulder, candid moment, natural unposed">Olhar ombro</button>
-          <button class="qpick" data-group="pose" data-val="facing away from camera, back to viewer, candid rear view, natural standing">De costas</button>
-          <button class="qpick" data-group="pose" data-val="sitting casually on edge of bed, legs crossed, relaxed candid moment">Sentada</button>
-          <button class="qpick" data-group="pose" data-val="lying on side naturally, head resting on arm, relaxed candid, unposed">Deitada</button>
-          <button class="qpick" data-group="pose" data-val="on hands and knees, candid unposed, natural body weight visible, looking back">De quatro</button>
-          <button class="qpick" data-group="pose" data-val="bent forward at waist, hands on surface, candid unposed, natural gravity on body">Curvada</button>
-          <button class="qpick" data-group="pose" data-val="kneeling on floor naturally, sitting back on heels, candid relaxed pose">Ajoelhada</button>
-          <button class="qpick" data-group="pose" data-val="squatting low, knees wide, candid unposed, natural body weight">Agachada</button>
-          <button class="qpick" data-group="pose" data-val="side profile, body turned 90 degrees, natural silhouette, candid moment, window light from front">Perfil lateral</button>
-          <button class="qpick" data-group="pose" data-val="legs spread wide apart, thighs open, candid unposed, inner thighs visible, natural body weight, open leg position">Pernas abertas</button>
-          <button class="qpick" data-group="pose" data-val="lying on stomach propped up on elbows, chest lifted, legs bent behind, relaxed candid, natural body weight pressing down, unposed">Sobre cotovelos</button>
-          <button class="qpick" data-group="pose" data-val="fabric pulled tight against vulva, camel toe clearly visible through fabric, underwear or clothing pressing against pubic mound, explicit fabric outline of genitalia">Vulva marcada 👙</button>
-        </div>
-
-        <!-- Ângulo row -->
-        <div class="qrow">
-          <span class="qlabel">🔭 Ângulo</span>
-          <button class="qpick active" data-group="angulo" data-val="">Padrão</button>
-          <button class="qpick" data-group="angulo" data-val="first person POV, handheld shaky, intimate candid angle, natural light">POV 1ª</button>
-          <button class="qpick" data-group="angulo" data-val="low angle upward shot, shot from below between legs, inner thighs and crotch filling center of frame, legs extending upward on both sides, floor-level close-up looking up">POV baixo</button>
-          <button class="qpick" data-group="angulo" data-val="low angle close-up from below, tight frame on inner thighs and crotch, upward angle from floor level, genitals and thighs centered, legs framing top of shot">POV baixo close-up</button>
-          <button class="qpick" data-group="angulo" data-val="low angle extreme close-up from below, shot straight up between spread legs, inner thighs and crotch dominating entire frame, extreme upward angle from floor between feet">POV baixo extremo</button>
-          <button class="qpick" data-group="angulo" data-val="high angle handheld above, looking down, available light, candid overhead">Alto</button>
-          <button class="qpick" data-group="angulo" data-val="side profile, natural window light from front, candid moment, no studio setup">Perfil</button>
-          <button class="qpick" data-group="angulo" data-val="facing away from camera, back to viewer, candid rear view">De costas</button>
-          <button class="qpick" data-group="angulo" data-val="bent over surface, torso folded forward, buttocks pushed toward camera, rear view, handheld, natural light, candid">Dobrada</button>
-        </div>
-
-        <!-- Lente row -->
-        <div class="qrow">
-          <span class="qlabel">📷 Lente</span>
-          <button class="qpick active" data-group="cam" data-val="">Padrão</button>
-          <button class="qpick" data-group="cam" data-val="50mm handheld, slight candid tilt, natural framing, available light, grain visible">50mm</button>
-          <button class="qpick" data-group="cam" data-val="85mm handheld, natural window light, slightly off-center composition, candid portrait, no studio light">85mm</button>
-          <button class="qpick" data-group="cam" data-val="full body head to toe, 28mm handheld, environmental candid, available light, real location">Corpo inteiro</button>
-          <button class="qpick" data-group="cam" data-val="candid close-up, face filling frame, slight handheld shake, natural available light, no beauty lighting">Close rosto</button>
-          <button class="qpick" data-group="cam" data-val="extreme close-up of buttocks filling frame, natural skin texture visible, slight grain, rear view, no head, available light">Close bunda</button>
-          <button class="qpick" data-group="cam" data-val="bathroom mirror selfie, phone visible in reflection, natural bathroom light, candid unposed">Espelho</button>
-        </div>
-
-        <!-- Estilo de foto row -->
-        <div class="qrow">
-          <span class="qlabel">🎞️</span>
-          <button class="qpick active" data-group="style" data-val="">Padrão</button>
-          <button class="qpick" data-group="style" data-val="film halation, color fringing, slight vignette, analog warmth">Analógica</button>
-          <button class="qpick" data-group="style" data-val="paparazzi, 200mm telephoto, caught off guard, harsh direct flash, real street, unposed, slight motion blur">Paparazzi</button>
-          <button class="qpick" data-group="style" data-val="bathroom mirror selfie, phone camera, natural bathroom light, candid unposed, slightly grainy phone photo">Selfie</button>
-          <button class="qpick" data-group="style" data-val="security camera footage, CCTV grain, fixed wide angle, harsh overhead fluorescent light, timestamp overlay, grainy low resolution">CCTV</button>
-          <button class="qpick" data-group="style" data-val="disposable camera, circa 2003, heavy grain, washed out colors, slightly overexposed, cheap flash, lo-fi aesthetic">Descartável</button>
-          <button class="qpick" data-group="style" data-val="Polaroid instant photo, square crop, faded colors, slight blur, vintage instant film grain, overexposed center">Polaroid</button>
-        </div>
-
-        <!-- Luz row -->
-        <div class="qrow">
-          <span class="qlabel">💡</span>
-          <button class="qpick active" data-group="luz2" data-val="">Padrão</button>
-          <button class="qpick" data-group="luz2" data-val="golden hour light, warm amber sunlight, long shadows, late afternoon sun raking through window">Golden hour</button>
-          <button class="qpick" data-group="luz2" data-val="dim available light, dark room, barely lit, low exposure, deep shadows, single weak light source">Luz baixa</button>
-          <button class="qpick" data-group="luz2" data-val="candlelight only, warm flickering orange glow, deep shadows, intimate moody lighting, no artificial light">Vela</button>
-          <button class="qpick" data-group="luz2" data-val="natural window light from side, soft diffused daylight, no artificial source, indoor natural light">Janela</button>
-          <button class="qpick" data-group="luz2" data-val="harsh direct camera flash, blown out highlights, red-eye, deep flat shadows behind subject, party photo look">Flash</button>
-          <button class="qpick" data-group="luz2" data-val="neon sign light, purple and pink color cast, urban night, neon glow on skin, wet reflective floor">Neon</button>
-          <button class="qpick" data-group="luz2" data-val="UV blacklight, fluorescent glow on white fabric, dark room, glowing highlights, black light party">Blacklight</button>
-        </div>
-
-        <!-- Expressão row -->
-        <div class="qrow">
-          <span class="qlabel">😮</span>
-          <button class="qpick active" data-group="expressao2" data-val="">Padrão</button>
-          <button class="qpick" data-group="expressao2" data-val="neutral blank expression, relaxed face, natural resting look, no smile, unposed candid face">Neutra</button>
-          <button class="qpick" data-group="expressao2" data-val="provocative smoldering gaze, half-lidded eyes staring directly into camera, lips slightly parted, intense look">Provocante</button>
-          <button class="qpick" data-group="expressao2" data-val="biting lower lip, teeth grazing lip, seductive expression, eyes slightly downcast">Mordendo lábio</button>
-          <button class="qpick" data-group="expressao2" data-val="expression of pleasure, eyes slightly rolled back, mouth open, breathless look, flushed cheeks">Prazer</button>
-          <button class="qpick" data-group="expressao2" data-val="surprised open mouth expression, wide eyes, caught off guard, candid shocked look">Surpresa</button>
-          <button class="qpick" data-group="expressao2" data-val="vacant empty stare, unfocused gaze, dreamy distant expression, detached look, thousand yard stare">Olhar vazio</button>
-        </div>
-
-        <!-- Estado row -->
-        <div class="qrow">
-          <span class="qlabel">🌡️</span>
-          <button class="qpick active" data-group="estado" data-val="">Padrão</button>
-          <button class="qpick" data-group="estado" data-val="sweaty glistening skin, visible sweat droplets, damp hair sticking to skin, sweat beads on chest and neck">Suada</button>
-          <button class="qpick" data-group="estado" data-val="wet skin, dripping water on body, soaked hair, water droplets running down skin, wet fabric clinging to body">Molhada</button>
-          <button class="qpick" data-group="estado" data-val="post-workout flushed skin, red cheeks, messy hair, slight sweat, tired expression, active wear disheveled">Pós-treino</button>
-          <button class="qpick" data-group="estado" data-val="tan lines visible, bronze sun-kissed skin, uneven tan, slight redness on shoulders, beach tan marks">Bronzeada</button>
-          <button class="qpick" data-group="estado" data-val="goosebumps on arms and thighs, cold skin, hardened nipples visible under fabric, shivering slightly, pale cold complexion">Arrepiada</button>
-        </div>
-
-        <!-- Clima row -->
-        <div class="qrow">
-          <span class="qlabel">🌦️ Clima</span>
-          <button class="qpick active" data-group="clima" data-val="">Padrão</button>
-          <button class="qpick" data-group="clima" data-val="blazing summer heat, harsh midday sun, heatwave light, warm golden ambient, summer atmosphere, sun glare">Verão</button>
-          <button class="qpick" data-group="clima" data-val="cold winter light, overcast sky, pale flat daylight, frost on surfaces, cold breath vapor, winter atmosphere, cool blue tones">Inverno</button>
-          <button class="qpick" data-group="clima" data-val="rainy day, rain falling, wet pavement reflections, gray overcast sky, raindrops on surfaces, rain-soaked atmosphere">Chuva</button>
-          <button class="qpick" data-group="clima" data-val="light snowfall, snow on surfaces, snowflakes in air, cold white ambient light, winter snow atmosphere">Neve</button>
-          <button class="qpick" data-group="clima" data-val="morning fog, low mist, diffused soft light, misty atmospheric haze, reduced visibility, ethereal foggy mood">Névoa</button>
-          <button class="qpick" data-group="clima" data-val="stormy dramatic sky, dark clouds, moody pre-storm light, wind in hair and clothes, atmospheric tension">Tempestade</button>
-        </div>
-
-        <!-- Idade aparente row -->
-        <div class="qrow">
-          <span class="qlabel">🎂 Idade</span>
-          <button class="qpick active" data-group="idade" data-val="">Padrão (19)</button>
-          <button class="qpick" data-group="idade" data-val="woman appearing 18 to 22 years old, youthful face, smooth young skin, fresh college-age appearance">18-22</button>
-          <button class="qpick" data-group="idade" data-val="woman appearing 25 to 30 years old, confident young adult face, slightly more defined features, natural maturity">25-30</button>
-          <button class="qpick" data-group="idade" data-val="woman appearing in her mid thirties, mature face, natural fine lines beginning, confident adult beauty, defined features">30s</button>
-          <button class="qpick" data-group="idade" data-val="woman appearing in her early forties, mature confident face, natural aging features, distinguished adult beauty, life experience visible">40s</button>
-        </div>
-
-        <!-- Proporções row -->
-        <div class="qrow">
-          <span class="qlabel">📐 Corpo</span>
-          <button class="qpick active" data-group="proporcao" data-val="">Padrão</button>
-          <button class="qpick" data-group="proporcao" data-val="very slender slim figure, lean limbs, narrow frame, minimal curves, slight build, thin waist and hips, small breasts">Magra</button>
-          <button class="qpick" data-group="proporcao" data-val="athletic muscular figure, defined muscles, toned arms and legs, flat stomach with visible abs, athletic build, fit physique">Atlética</button>
-          <button class="qpick" data-group="proporcao" data-val="curvy hourglass figure, large full breasts, wide hips, round full buttocks, defined waist, voluptuous curves, natural feminine shape">Curvilínea</button>
-          <button class="qpick" data-group="proporcao" data-val="plus size figure, full rounded body, large breasts, wide hips, thick thighs, soft belly, full arms, natural plus size curves, comfortable in skin">Plus size</button>
-          <button class="qpick" data-group="proporcao" data-val="petite compact figure, small frame, short stature, proportionally small features, petite curves, dainty build">Petite</button>
-        </div>
-
-        <!-- Pill combos salvas -->
-        <div class="pill-combo-bar" id="pill-combo-bar">
-          <span style="font-size:.62rem;color:var(--txt3);white-space:nowrap">💾 Combos:</span>
-          <div id="pill-combos-list" style="display:flex;gap:5px;flex-wrap:wrap;flex:1"></div>
-          <button class="pill-combo-chip" onclick="savePillCombo()" title="Salvar combinação atual de pills">＋ Salvar</button>
-        </div>
-
-        <!-- hidden inputs for JS compatibility -->
-        <input type="hidden" id="edit-pose" value="">
-        <input type="hidden" id="edit-angulo" value="">
-        <input type="hidden" id="edit-cam" value="">
-        <input type="hidden" id="edit-style" value="">
-        <input type="hidden" id="edit-luz" value="">
-        <input type="hidden" id="edit-filmstock" value="Kodak Ultramax 800, ISO 800, chunky warm grain">
-        <input type="hidden" id="edit-luz2" value="">
-        <input type="hidden" id="edit-expressao2" value="">
-        <input type="hidden" id="edit-estado" value="">
-        <input type="hidden" id="edit-clima" value="">
-        <input type="hidden" id="edit-idade" value="">
-        <input type="hidden" id="edit-proporcao" value="">
-
-      </div><!-- end chat-options-area -->
-    </div><!-- end result-panel -->
-  </div><!-- end main -->
-</div><!-- end app -->
+<div id="hist-panel">
+  <div class="hist-header">
+    <h2>📸 Histórico</h2>
+    <button class="hist-close" onclick="closeHist()">✕</button>
+  </div>
+  <div id="hist-list"></div>
+</div>
 
 <script>
 // ── MIDJOURNEY CONFIG ───────────────────────────────────────────────────────
@@ -841,7 +285,6 @@ const CATS = [
   {key:'plus_size',  icon:'💜', name:'Plus Size & Curvy'},
   {key:'etnias',     icon:'🌍', name:'Etnias & Diversidade'},
 ];
-
 // ── PRESETS ────────────────────────────────────────────────────────────────
 const PRESETS_RAW = [
   // ── CASUAL ──
@@ -10341,340 +9784,6 @@ const PRESETS_RAW = [
     cenario:'soft aesthetic room or cafe, pastel colors, flowers, clean and gentle environment',
     film:'Fujifilm Pro 400H, soft pastel rendering, gentle skin tones'},
 ];
-
-
-
-
-// ── STATE ──────────────────────────────────────────────────────────────────
-let currentCat = 'todos';
-let currentLevel = 'todos';
-let selectedKey = null;
-// FAVS initialized early so getCount can use it
-let FAVS = (()=>{ try{ return JSON.parse(localStorage.getItem('pgen_favs')||'[]'); }catch(e){ return []; } })();
-
-// ── INIT ───────────────────────────────────────────────────────────────────
-function getCount(cat, level){
-  return PRESETS_RAW.filter(p=>{
-    const catOk = cat==='todos' || (cat==='favoritos' ? FAVS.includes(p.key) : p.cat===cat);
-    const lvlOk = level==='todos' || p.level===level;
-    return catOk && lvlOk;
-  }).length;
-}
-
-function renderSidebar(){
-  const list = document.getElementById('cat-list');
-  list.innerHTML = '';
-  CATS.forEach(c=>{
-    const count = getCount(c.key, currentLevel);
-    const el = document.createElement('div');
-    el.className = 'cat-item' + (currentCat===c.key ? ' active' : '');
-    el.innerHTML = `<span class="cat-icon">${c.icon}</span><span class="cat-name">${c.name}</span><span class="cat-badge">${count}</span>`;
-    el.onclick = ()=>{ currentCat=c.key; renderSidebar(); filterPresets(); closeSidebarOnMobile(); };
-    list.appendChild(el);
-  });
-}
-
-function filterPresets(){
-  const q = (document.getElementById('global-search').value||'').toLowerCase().trim();
-  const filtered = PRESETS_RAW.filter(p=>{
-    const catOk = currentCat==='todos' || (currentCat==='favoritos' ? FAVS.includes(p.key) : p.cat===currentCat);
-    const lvlOk = currentLevel==='todos' || p.level===currentLevel;
-    const txtOk = !q || (p.name+' '+p.desc).toLowerCase().includes(q);
-    return catOk && lvlOk && txtOk;
-  });
-  renderGrid(filtered);
-}
-
-function renderGrid(presets){
-  const wrap = document.getElementById('grid-wrap');
-  wrap.innerHTML = '';
-  if(!presets.length){
-    wrap.innerHTML = '<div class="no-results">Nenhum preset encontrado 🔍</div>';
-    return;
-  }
-  // group by cat
-  const groups = {};
-  const catOrder = CATS.map(c=>c.key).filter(k=>k!=='todos');
-  presets.forEach(p=>{
-    if(!groups[p.cat]) groups[p.cat]=[]; groups[p.cat].push(p);
-  });
-  catOrder.forEach(catKey=>{
-    if(!groups[catKey]) return;
-    const catInfo = CATS.find(c=>c.key===catKey);
-    const section = document.createElement('div');
-    const title = document.createElement('div');
-    title.className='section-title';
-    title.textContent = (catInfo?catInfo.icon+' '+catInfo.name:catKey);
-    section.appendChild(title);
-    const grid = document.createElement('div');
-    grid.className='grid';
-    groups[catKey].forEach((p,i)=>{
-      const card = document.createElement('div');
-      card.className='card'+(selectedKey===p.key?' selected':'');
-      card.dataset.key=p.key;
-      card.style.setProperty('--i',i);
-      const badgeClass = p.level==='sfw'?'badge-sfw':p.level==='sensual'?'badge-sensual':'badge-explicit';
-      const badgeTxt = p.level==='sfw'?'☀ SFW':p.level==='sensual'?'🔥 Sensual':'🔞 Explícito';
-      const isFav = FAVS.includes(p.key);
-      const gptRisk = getGPTRisk(p);
-      const gptBadge = gptRisk==='safe'?'<span class="card-badge badge-gpt-safe" title="Aceito no ChatGPT">🤖✓</span>'
-                      :gptRisk==='warn'?'<span class="card-badge badge-gpt-warn" title="Pode bloquear no ChatGPT">🤖⚠</span>'
-                      :'<span class="card-badge badge-gpt-no" title="Bloqueia no ChatGPT — use MJ">🤖✗</span>';
-      const ttBadge = isTikTokSafe(p)?'<span class="card-badge badge-tt-safe" title="TikTok-safe">TT✓</span>':'';
-      card.innerHTML=`<button class="fav-btn${isFav?' active':''}" data-key="${p.key}" title="Favorito">❤</button><div class="card-icon">${p.icon||'📷'}</div><div class="card-name">${p.name}</div><div class="card-desc">${p.desc}</div><span class="card-badge ${badgeClass}">${badgeTxt}</span>${gptBadge}${ttBadge}`;
-      card.onclick=()=>selectPreset(p.key);
-      grid.appendChild(card);
-    });
-    section.appendChild(grid);
-    wrap.appendChild(section);
-  });
-}
-
-const DEFAULT_POSES = {
-  casual:   'standing relaxed, weight on one hip, arms loose',
-  praia:    'lying on towel, legs slightly bent, looking at camera',
-  academia: 'mid-exercise, dynamic stance, muscles engaged',
-  lingerie: 'sitting on edge of bed, legs crossed, looking over shoulder',
-  banheiro: 'leaning against wall, towel loosely wrapped, steam around',
-  boudoir:  'lying on side, head resting on hand, seductive look',
-  nude:     'standing, arms above head, back slightly arched',
-  fantasia: 'confident pose in costume, hands on hips',
-  locais:   'leaning on wall or railing, relaxed and candid',
-  explicito_suave: 'lying back, legs slightly open, hands on body',
-  posicoes: 'on all fours, looking back at camera',
-  extremo:  'submissive position, body fully exposed',
-};
-const DEFAULT_CAMS = {
-  casual:   'eye level, 50mm, slight candid tilt',
-  praia:    'low angle from sand level, wide shot',
-  academia: 'side profile, 35mm, dynamic angle',
-  lingerie: 'low angle POV, looking up at subject',
-  banheiro: 'over-the-shoulder, mirror reflection, steamy',
-  boudoir:  'top-down bird\'s eye, soft focus edges',
-  nude:     'side silhouette, backlit, wide shot',
-  fantasia: 'Dutch angle, dramatic low angle',
-  locais:   'wide establishing shot, subject in foreground',
-  explicito_suave: 'between-the-legs POV, low angle',
-  posicoes: 'from behind, low angle close-up',
-  extremo:  'extreme close-up POV, immersive angle',
-};
-function defaultPose(p){ return DEFAULT_POSES[p.cat] || 'natural standing pose, relaxed'; }
-function defaultCam(p){  return DEFAULT_CAMS[p.cat]  || 'eye level, 50mm, natural framing'; }
-function selectChip(group, val){
-  document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(c=>{
-    c.classList.toggle('active', c.dataset.val===val);
-  });
-  // sync quick picks (Padrão active when val empty)
-  document.querySelectorAll(`.qpick[data-group="${group}"]`).forEach(b=>{
-    b.classList.toggle('active', b.dataset.val===(val||'') && (b.dataset.val==='' ? !val : b.dataset.val===val));
-  });
-  const inp = document.getElementById('edit-'+group);
-  if(inp) inp.value = val||'';
-  // Auto-apply: update prompt immediately when chip changes
-  if(selectedKey) applyEdits(true);
-}
-function setSelectClosest(id, val){
-  const group = id.replace('edit-','');
-  selectChip(group, val||'');
-}
-// chip click handler (delegated)
-document.addEventListener('click', e=>{
-  const c = e.target.closest('.chip[data-group]');
-  if(!c) return;
-  const group = c.dataset.group;
-  const already = c.classList.contains('active');
-  selectChip(group, already ? '' : c.dataset.val);
-});
-
-// quick-pick click handler
-document.addEventListener('click', e=>{
-  const q = e.target.closest('.qpick[data-group]');
-  if(!q) return;
-  const group = q.dataset.group;
-  const val = q.dataset.val;
-  // toggle active on qpick buttons in this group
-  document.querySelectorAll(`.qpick[data-group="${group}"]`).forEach(b=>b.classList.toggle('active', b===q && val!==''));
-  // sync with hidden input and full chips
-  selectChip(group, val);
-});
-
-function selectPreset(key){
-  selectedKey = key;
-  document.querySelectorAll('.card').forEach(c=>c.classList.toggle('selected',c.dataset.key===key));
-  const p = PRESETS_RAW.find(x=>x.key===key);
-  if(!p) return;
-  const prompt = buildBlondePrompt(p);
-  document.getElementById('result-title').textContent = '✅ '+p.name;
-  document.getElementById('result-prompt').value = prompt;
-  const negMatch = prompt.match(/--no\s+(.+?)\s+--ar/);
-  if(negMatch) document.getElementById('result-neg').value = negMatch[1];
-  setSelectClosest('edit-pose', p.pose || defaultPose(p));
-  // Only reset cam pill if user hasn't explicitly chosen one (Padrão = no override)
-  const activeAnguloPill = document.querySelector('.qpick[data-group="angulo"].active');
-  const activeCamPill    = document.querySelector('.qpick[data-group="cam"].active');
-  const anguloPillIsDefault = !activeAnguloPill || activeAnguloPill.dataset.val === '';
-  const camPillIsDefault    = !activeCamPill    || activeCamPill.dataset.val    === '';
-  if(anguloPillIsDefault) {
-    setSelectClosest('edit-angulo', p.angulo || '');
-  }
-  if(camPillIsDefault) {
-    setSelectClosest('edit-cam', p.cam || defaultCam(p));
-  }
-  if(!anguloPillIsDefault || !camPillIsDefault) {
-    applyEdits(true);
-  }
-  // For POV extremo presets, always run applyEdits to inject upshot nsfw overrides
-  if(p.cat === 'pov_extremo') {
-    applyEdits(true);
-  }
-  const panel = document.getElementById('result-panel');
-  panel.classList.add('open');
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-  // Auto-copy
-  const finalPrompt = document.getElementById('result-prompt').value;
-  navigator.clipboard.writeText(finalPrompt).catch(()=>{});
-  showToast('✓ Copiado automaticamente');
-  // Save to history
-  saveHistory(p.key, p.name, finalPrompt);
-  // Update GPT fallback suggestion
-  updateGPTFallback(p);
-}
-
-function refreshCref(){
-  if(selectedKey) {
-    const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-    if(p) {
-      const curVal = document.getElementById('result-prompt').value;
-      const seedMatch = curVal.match(/--seed\s+(\d+)/);
-      const seed = seedMatch ? parseInt(seedMatch[1]) : undefined;
-      const newPrompt = buildBlondePrompt(p, seed);
-      document.getElementById('result-prompt').value = newPrompt;
-      const negM = newPrompt.match(/--no\s+(.+?)\s+--ar/);
-      if(negM) document.getElementById('result-neg').value = negM[1];
-    }
-  }
-}
-
-function clearAllChips(){
-  document.querySelectorAll('.chip.active,.qpick.active').forEach(c=>c.classList.remove('active'));
-  // restore "Padrão" active state
-  document.querySelectorAll('.qpick[data-val=""]').forEach(b=>b.classList.add('active'));
-  ['edit-pose','edit-angulo','edit-cam','edit-style','edit-luz','edit-filmstock'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  });
-  if(selectedKey) applyEdits(true);
-}
-
-function applyEdits(silent){
-  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-  if(!p) return;
-  const overridePose   = document.getElementById('edit-pose').value.trim();
-  const overrideAngulo = document.getElementById('edit-angulo').value.trim();
-  const overrideCam    = document.getElementById('edit-cam').value.trim();
-
-  // POV baixo / extremo: detect and inject pose + nsfw automatically
-  const camToCheck = overrideAngulo || p.angulo || overrideCam || p.cam || '';
-  const isPovBaixo   = /inner thighs.*crotch.*filling|close-up.*inner thighs.*crotch|thighs.*prominent.*foreground|upward floor-level|crotch.*dominating.*frame|floor-angle composition|low angle close-up from below.*tight frame|low angle upward shot.*shot from below/i.test(camToCheck);
-  const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame|low angle extreme close-up from below|straight up between spread legs|crotch dominating entire frame/i.test(camToCheck);
-  const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
-  const povInject = isPovExtremo ? {
-    pose: 'standing with legs wide apart, feet planted on floor, shot from directly below between feet',
-    nsfw: 'explicit upshot view from floor level, vulva fully visible from below, inner thighs framing the shot, legs spread apart, panties pulled aside exposing vulva, extreme close angle of genitals from below',
-    roupa: baseRoupa + ', panties pulled aside exposing vulva'
-  } : isPovBaixo ? {
-    pose: 'standing with legs wide apart, crotch and inner thighs prominent in center of frame, legs extending upward on both sides, feet at frame edges above'
-  } : {};
-
-  const merged = Object.assign({}, p,
-    overridePose   ? {pose:   overridePose}   : {},
-    overrideAngulo ? {angulo: overrideAngulo} : {},
-    overrideCam    ? {cam:    overrideCam}    : {},
-    povInject
-  );
-  // Preserve current seed
-  const curVal = document.getElementById('result-prompt').value;
-  const seedMatch = curVal.match(/--seed\s+(\d+)/);
-  const seed = seedMatch ? parseInt(seedMatch[1]) : undefined;
-  const newPrompt = buildBlondePrompt(merged, seed);
-  document.getElementById('result-prompt').value = newPrompt;
-  const negM = newPrompt.match(/--no\s+(.+?)\s+--ar/);
-  if(negM) document.getElementById('result-neg').value = negM[1];
-  navigator.clipboard.writeText(newPrompt).catch(()=>{});
-  if(!silent) showToast('✓ Copiado!');
-  // Update compare B if modal is open
-  if(document.getElementById('modal-compare').classList.contains('open')) updateCompareB();
-}
-
-function closeResult(){
-  document.getElementById('result-panel').classList.remove('open');
-  selectedKey=null;
-  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
-}
-
-function reiniciarTudo(){
-  // Fecha painel
-  closeResult();
-  // Limpa busca
-  const s=document.getElementById('global-search');
-  if(s) s.value='';
-  // Volta categoria para "todos"
-  currentCat='todos';
-  currentLevel='todos';
-  ['todos','sfw','sensual','explicit'].forEach(l=>{
-    const el=document.getElementById('pill-'+l);
-    if(el) el.classList.toggle('active',l==='todos');
-  });
-  // Limpa quick-picks (pose e câmera)
-  document.querySelectorAll('.qpick').forEach(b=>{
-    b.classList.toggle('active', b.dataset.val==='');
-  });
-  // Limpa campos ocultos
-  ['edit-pose','edit-angulo','edit-cam','edit-style','edit-luz','edit-filmstock','edit-luz2','edit-expressao2','edit-estado','edit-clima','edit-idade','edit-proporcao'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.value = id==='edit-filmstock' ? 'Kodak Ultramax 800' : '';
-  });
-  // Limpa cref
-  const cref=document.getElementById('cref-url');
-  if(cref) cref.value='';
-  // Limpa favoritos selecionados
-  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
-  renderSidebar();
-  filterPresets();
-  showToast('↺ Reiniciado!');
-}
-
-function setLevel(lv){
-  currentLevel=lv;
-  ['todos','sfw','sensual','explicit'].forEach(l=>{
-    const el=document.getElementById('pill-'+l);
-    if(el) el.classList.toggle('active',l===lv);
-  });
-  renderSidebar();
-  filterPresets();
-}
-
-function copyNeg(){
-  const ta=document.getElementById('result-neg');
-  if(!ta.value) return;
-  navigator.clipboard.writeText(ta.value).then(()=>{
-    showToast('✓ Negativo copiado!');
-  });
-}
-function copyPrompt(){
-  const ta=document.getElementById('result-prompt');
-  navigator.clipboard.writeText(ta.value).then(()=>{
-    const btn=document.getElementById('btn-copy-pos');
-    btn.textContent='✓ Copiado!'; btn.classList.add('ok');
-    setTimeout(()=>{ btn.innerHTML='📋 Copiar MJ'; btn.classList.remove('ok'); },2000);
-  });
-}
-
-// ── ChatGPT / DALL-E prompt builder ──────────────────────────────────────────
-// Constrói do zero a partir do preset — NÃO converte o prompt MJ.
-// Campo nsfw é completamente ignorado. Linguagem 100% segura para DALL-E.
-
-// Remove APENAS o que DALL-E 3 definitivamente bloqueia — atos sexuais, genitália, nudez total
 function cleanForDALLE(text){
   if(!text) return '';
   let t = text;
@@ -11224,447 +10333,322 @@ function buildMJPromptForDALLE(preset){
   return `Professional editorial photography, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
 }
 
-function copyMJForDALLE(){
-  const preset = PRESETS_RAW.find(x=>x.key===selectedKey);
-  if(!preset){ showToast('⚠ Selecione um preset primeiro'); return; }
+// ── CHAT WIZARD ────────────────────────────────────────────────────────────
 
-  const sexCats = ['nude'];
-  if(sexCats.includes(preset.cat)){
-    showToast('⚠ ChatGPT não aceita conteúdo explícito — use Midjourney');
-    return;
-  }
+// Stub: no pill UI in chat mode — all pill overrides are empty
+function getActivePillVal(){ return ''; }
 
-  const dallePrompt = buildMJPromptForDALLE(preset);
+// ── State ──────────────────────────────────────────────────────────────────
+let answers = {};
+let currentStep = 0;
+let selectedPreset = null;
+let generatedMJ = '';
+let generatedChatGPT = '';
+let presetPage = 0;
+const PRESETS_PER_PAGE = 20;
 
-  navigator.clipboard.writeText(dallePrompt).then(()=>{
-    const btn=document.getElementById('btn-copy-mj-dalle');
-    btn.textContent='✓ Copiado!';
-    setTimeout(()=>{ btn.innerHTML='🎨 MJ→DALL-E'; },2000);
-    showToast('🎨 Prompt MJ→DALL-E copiado!');
-  });
-}
+const TOTAL_STEPS = 3; // nivel, cat, preset → result
 
-function downloadTxt(){
-  const pos=document.getElementById('result-prompt').value;
-  const name=selectedKey||'mjprompt';
-  const blob=new Blob([pos],{type:'text/plain'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download=`${name}.txt`; a.click();
-}
-const RAND_CENARIOS = [
-  'messy bedroom, rumpled sheets, window light',
-  'bathroom, morning light, tile walls',
-  'kitchen counter, afternoon sunlight, lived-in',
-  'living room couch, TV glow, dim evening light',
-  'apartment hallway, warm lamp, wooden floor',
-  'bedroom floor, scattered clothes, morning light'
+const NIVEL_OPTS = [
+  {label:'☀️ SFW — Fashion/Lifestyle', val:'sfw'},
+  {label:'🔥 Sensual — Implícito', val:'sensual'},
+  {label:'🔞 Explícito — Adulto +18', val:'explicit'},
 ];
-function variation(){
-  if(!selectedKey) return;
-  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-  if(!p) return;
-  const seed = Math.floor(Math.random()*900000)+100000;
-  const randCenario = RAND_CENARIOS[Math.floor(Math.random()*RAND_CENARIOS.length)];
-  const varied = Object.assign({}, p, {cenario: randCenario});
-  const prompt = buildBlondePrompt(varied, seed);
-  document.getElementById('result-prompt').value = prompt;
-  const negMatch = prompt.match(/--no\s+(.+?)\s+--ar/);
-  if(negMatch) document.getElementById('result-neg').value = negMatch[1];
-  navigator.clipboard.writeText(prompt).catch(()=>{});
-  showToast('✓ Variação copiada!');
-}
-function toggleTheme(){
-  const html=document.documentElement;
-  const dark=html.getAttribute('data-theme')==='dark';
-  html.setAttribute('data-theme',dark?'light':'dark');
-  document.getElementById('theme-btn').textContent=dark?'🌙 Escuro':'☀ Claro';
+
+const CATS_CHAT = CATS.filter(c => c.key !== 'todos' && c.key !== 'favoritos');
+
+function matchLevel(presetLevel, selectedLevel) {
+  if (selectedLevel === 'sfw') return presetLevel === 'sfw';
+  if (selectedLevel === 'sensual') return presetLevel === 'sfw' || presetLevel === 'sensual';
+  return true; // explicit shows all
 }
 
-function toggleSidebar(){
-  const sidebar=document.getElementById('sidebar');
-  const backdrop=document.getElementById('sidebar-backdrop');
-  const open=sidebar.classList.toggle('drawer-open');
-  backdrop.classList.toggle('open',open);
-  document.body.style.overflow=open?'hidden':'';
+// ── Chat rendering ─────────────────────────────────────────────────────────
+const chat = document.getElementById('chat');
+
+function appendBotMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = `<div class="avatar">📸</div><div class="bubble">${text}</div>`;
+  chat.appendChild(div);
+  scrollBot();
 }
 
-// Close sidebar when a category is selected on mobile
-function closeSidebarOnMobile(){
-  if(window.innerWidth<=640){
-    const sidebar=document.getElementById('sidebar');
-    const backdrop=document.getElementById('sidebar-backdrop');
-    sidebar.classList.remove('drawer-open');
-    backdrop.classList.remove('open');
-    document.body.style.overflow='';
-  }
+function appendUserMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="bubble">${text}</div><div class="avatar">✦</div>`;
+  chat.appendChild(div);
+  scrollBot();
 }
 
-function randomPreset(){
-  // Respect current category + level filters
-  const pool = PRESETS_RAW.filter(p=>{
-    const catOk = currentCat==='todos' || (currentCat==='favoritos' ? FAVS.includes(p.key) : p.cat===currentCat);
-    const lvlOk = currentLevel==='todos' || p.level===currentLevel;
-    return catOk && lvlOk;
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="avatar">📸</div><div class="bubble"><div class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
+  chat.appendChild(div);
+  scrollBot();
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+function scrollBot() {
+  setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 50);
+}
+
+function updateProgress() {
+  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `Etapa ${Math.min(currentStep + 1, TOTAL_STEPS + 1)} de ${TOTAL_STEPS + 1}`;
+}
+
+function disableChips(wrap) {
+  if (!wrap) return;
+  wrap.querySelectorAll('.chip').forEach(c => { c.disabled = true; c.style.opacity = '0.4'; });
+}
+
+// ── Steps ──────────────────────────────────────────────────────────────────
+function showStep(idx) {
+  currentStep = idx;
+  updateProgress();
+  if (idx === 0) showNivelStep();
+  else if (idx === 1) showCatStep();
+  else if (idx === 2) showPresetStep();
+}
+
+function showNivelStep() {
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('Qual nível de conteúdo você quer gerar?');
+    const wrap = document.createElement('div');
+    wrap.className = 'chips-wrap';
+    NIVEL_OPTS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        disableChips(wrap);
+        answers.nivel = opt.val;
+        appendUserMsg(opt.label);
+        setTimeout(() => showStep(1), 300);
+      };
+      wrap.appendChild(btn);
+    });
+    chat.appendChild(wrap);
+    scrollBot();
+  }, 500);
+}
+
+function showCatStep() {
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('Qual categoria de cena?');
+    const wrap = document.createElement('div');
+    wrap.className = 'chips-wrap';
+    let added = 0;
+    CATS_CHAT.forEach(cat => {
+      const count = PRESETS_RAW.filter(p => p.cat === cat.key && matchLevel(p.level, answers.nivel)).length;
+      if (count === 0) return;
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = `${cat.icon} ${cat.name}`;
+      btn.onclick = () => {
+        disableChips(wrap);
+        answers.cat = cat.key;
+        appendUserMsg(`${cat.icon} ${cat.name}`);
+        setTimeout(() => showStep(2), 300);
+      };
+      wrap.appendChild(btn);
+      added++;
+    });
+    chat.appendChild(wrap);
+    scrollBot();
+  }, 400);
+}
+
+function showPresetStep() {
+  presetPage = 0;
+  const presets = PRESETS_RAW.filter(p => p.cat === answers.cat && matchLevel(p.level, answers.nivel));
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg(`Qual preset? (${presets.length} disponíveis)`);
+    renderPresetChips(presets);
+  }, 400);
+}
+
+function renderPresetChips(presets) {
+  const start = presetPage * PRESETS_PER_PAGE;
+  const page = presets.slice(start, start + PRESETS_PER_PAGE);
+  const wrap = document.createElement('div');
+  wrap.className = 'chips-wrap';
+  wrap.dataset.presetPage = presetPage;
+
+  page.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = `${p.icon || '📸'} ${p.name}`;
+    btn.title = p.desc || '';
+    btn.onclick = () => {
+      document.querySelectorAll('[data-preset-page]').forEach(w => disableChips(w));
+      document.querySelectorAll('.load-more-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.4'; });
+      answers.preset = p.key;
+      selectedPreset = p;
+      appendUserMsg(`${p.icon || '📸'} ${p.name}`);
+      setTimeout(() => showResult(), 400);
+    };
+    wrap.appendChild(btn);
   });
-  if(!pool.length) return;
-  const key = pool[Math.floor(Math.random()*pool.length)].key;
-  selectPreset(key);
-  setTimeout(()=>{
-    const text = document.getElementById('result-prompt').value;
-    if(text) navigator.clipboard.writeText(text).catch(()=>{});
-    const btn = document.querySelector('.hbtn-random');
-    if(btn){ const orig=btn.textContent; btn.textContent='✓ Copiado!'; setTimeout(()=>btn.textContent=orig,1500); }
-  }, 50);
-}
 
-// ── FAVORITES ──────────────────────────────────────────────────────────────
-function saveFavs(){ try{ localStorage.setItem('pgen_favs', JSON.stringify(FAVS)); }catch(e){} }
-function toggleFav(key, e){
-  e.stopPropagation();
-  const idx = FAVS.indexOf(key);
-  if(idx===-1) FAVS.push(key); else FAVS.splice(idx,1);
-  saveFavs();
-  // update the clicked button
-  const btn = e.currentTarget;
-  btn.classList.toggle('active', FAVS.includes(key));
-  if(currentCat==='favoritos') filterPresets();
-  showToast(FAVS.includes(key) ? '❤ Adicionado aos favoritos' : '💔 Removido dos favoritos');
-}
-
-// ── HISTORY ────────────────────────────────────────────────────────────────
-function saveHistory(key, name, prompt){
-  try{
-    let hist = JSON.parse(localStorage.getItem('pgen_history')||'[]');
-    hist.unshift({key, name, prompt, ts: Date.now()});
-    hist = hist.slice(0,20);
-    localStorage.setItem('pgen_history', JSON.stringify(hist));
-  }catch(e){}
-}
-function toggleHistorico(){
-  const overlay = document.getElementById('modal-hist');
-  const isOpen = overlay.classList.contains('open');
-  if(isOpen){ overlay.classList.remove('open'); return; }
-  // Build list
-  let hist = [];
-  try{ hist = JSON.parse(localStorage.getItem('pgen_history')||'[]'); }catch(e){}
-  const body = document.getElementById('modal-hist-body');
-  if(!hist.length){
-    body.innerHTML = '<div style="text-align:center;padding:30px;color:var(--txt3);font-size:.82rem;">Nenhum prompt gerado ainda.<br>Selecione um preset para começar.</div>';
-  } else {
-    body.innerHTML = hist.map((h,i)=>`
-      <div class="hist-item">
-        <div class="hist-info">
-          <div class="hist-name">${h.name||h.key}</div>
-          <div class="hist-text">${(h.prompt||'').slice(0,90)}…</div>
-        </div>
-        <div style="display:flex;gap:5px;flex-shrink:0">
-          ${h.key ? `<button class="hist-copy" style="background:var(--acc);border-color:var(--acc);color:#000" onclick="reuseHistItem(${i})">🔄 Reusar</button>` : ''}
-          <button class="hist-copy" onclick="copyHistItem(${i})">📋 Copiar</button>
-        </div>
-      </div>`).join('');
+  if (start + PRESETS_PER_PAGE < presets.length) {
+    const remaining = presets.length - start - PRESETS_PER_PAGE;
+    const moreBtn = document.createElement('button');
+    moreBtn.className = 'chip skip load-more-btn';
+    moreBtn.textContent = `↓ Ver mais (${remaining} restantes)`;
+    moreBtn.onclick = () => {
+      moreBtn.disabled = true;
+      moreBtn.style.opacity = '0.4';
+      presetPage++;
+      renderPresetChips(presets);
+    };
+    wrap.appendChild(moreBtn);
   }
-  overlay.classList.add('open');
-}
-function copyHistItem(i){
-  try{
-    const hist = JSON.parse(localStorage.getItem('pgen_history')||'[]');
-    if(hist[i]) navigator.clipboard.writeText(hist[i].prompt).then(()=>showToast('✓ Copiado!'));
-  }catch(e){}
-}
-function reuseHistItem(i){
-  try{
-    const hist = JSON.parse(localStorage.getItem('pgen_history')||'[]');
-    if(hist[i] && hist[i].key){
-      document.getElementById('modal-hist').classList.remove('open');
-      selectPreset(hist[i].key);
-      showToast('🔄 Preset reusado!');
-    }
-  }catch(e){}
-}
-// Close modal clicking overlay background
-document.getElementById('modal-hist').addEventListener('click', function(e){
-  if(e.target===this) this.classList.remove('open');
-});
 
-// ── TOAST ──────────────────────────────────────────────────────────────────
-let toastTimer;
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+  chat.appendChild(wrap);
+  scrollBot();
 }
 
-// ── ROULETTE ───────────────────────────────────────────────────────────────
-let rouletteTimer = null;
-let rouletteCount = 0;
-function toggleRoulette(){
-  const btn = document.getElementById('roulette-btn');
-  if(rouletteTimer){
-    clearInterval(rouletteTimer);
-    rouletteTimer = null;
-    btn.textContent = '🎰 Roulette';
-    btn.classList.remove('active');
-  } else {
-    btn.classList.add('active');
-    rouletteCount = 3;
-    btn.textContent = `⏹ Parar (${rouletteCount}s)`;
-    rouletteTimer = setInterval(()=>{
-      rouletteCount--;
-      if(rouletteCount<=0){
-        randomPreset();
-        rouletteCount=3;
-      }
-      if(rouletteTimer) btn.textContent = `⏹ Parar (${rouletteCount}s)`;
-    },1000);
-  }
+// ── Result ─────────────────────────────────────────────────────────────────
+const HIST_KEY = 'pgen_chat_hist';
+function getHistory() { try { return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); } catch { return []; } }
+function saveHistory(h) { try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,30))); } catch {} }
+function addToHistory(name, mj, gpt) {
+  const h = getHistory();
+  h.unshift({ ts: Date.now(), name, mj, gpt });
+  saveHistory(h);
 }
 
-// ── COMPARAR ───────────────────────────────────────────────────────────────
-let compareFixed = null; // {name, prompt}
-
-function pinToCompare(){
-  const prompt = document.getElementById('result-prompt').value;
-  if(!prompt){ showToast('Gere um prompt primeiro'); return; }
-  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-  compareFixed = { name: p ? p.name : 'Prompt', prompt };
-  // Update compare modal if open
-  document.getElementById('compare-name-a').textContent = compareFixed.name;
-  document.getElementById('compare-a').value = compareFixed.prompt;
-  const btn = document.getElementById('btn-pin-compare');
-  if(btn){ btn.textContent='✓ Fixado!'; setTimeout(()=>btn.textContent='📌 Fixar',1500); }
-  showToast('📌 Prompt fixado para comparar');
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function updateCompareB(){
-  const prompt = document.getElementById('result-prompt').value;
-  if(!prompt) return;
-  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-  document.getElementById('compare-name-b').textContent = p ? p.name : 'Atual';
-  document.getElementById('compare-b').value = prompt;
+function showResult() {
+  currentStep = TOTAL_STEPS;
+  updateProgress();
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const p = selectedPreset;
+    generatedMJ = buildBlondePrompt(p);
+    generatedChatGPT = buildChatGPTPromptFromPreset(p, {});
+    addToHistory(p.name, generatedMJ, generatedChatGPT);
+
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <h3>📸 Prompts Gerados</h3>
+      <div class="entity-name">${p.icon||'📸'} ${escHtml(p.name)}</div>
+      <div class="entity-name-sub">${escHtml(p.desc||'')}</div>
+
+      <div class="prompt-label">Prompt Midjourney</div>
+      <div class="prompt-box" id="box-mj">${escHtml(generatedMJ)}</div>
+
+      <div class="prompt-label">Prompt ChatGPT / DALL-E</div>
+      <div class="prompt-box" id="box-gpt">${escHtml(generatedChatGPT)}</div>
+
+      <div class="result-actions">
+        <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
+        <button class="btn-act" onclick="copyGPT(event)">🤖 Copiar GPT</button>
+        <button class="btn-act" onclick="restartFlow()">↺ Novo</button>
+      </div>
+      <div class="assinatura">✦ RAWgen Loiras ✦</div>
+    `;
+    chat.appendChild(card);
+    navigator.clipboard.writeText(generatedMJ).catch(()=>{});
+    scrollBot();
+  }, 600);
 }
 
-function toggleComparar(){
-  const overlay = document.getElementById('modal-compare');
-  const isOpen = overlay.classList.contains('open');
-  if(isOpen){ overlay.classList.remove('open'); return; }
-  // Populate A from fixed
-  if(compareFixed){
-    document.getElementById('compare-name-a').textContent = compareFixed.name;
-    document.getElementById('compare-a').value = compareFixed.prompt;
-  }
-  // Populate B from current
-  updateCompareB();
-  overlay.classList.add('open');
+function copyMJ(e) {
+  navigator.clipboard.writeText(generatedMJ).then(() => flashBtn(e.target, '✓ Copiado!'));
+}
+function copyGPT(e) {
+  navigator.clipboard.writeText(generatedChatGPT).then(() => flashBtn(e.target, '✓ Copiado!'));
+}
+function flashBtn(btn, msg) {
+  const prev = btn.textContent;
+  btn.textContent = msg;
+  setTimeout(() => btn.textContent = prev, 2000);
 }
 
-function copyCompare(side){
-  const ta = document.getElementById('compare-'+side);
-  if(ta && ta.value) navigator.clipboard.writeText(ta.value).then(()=>showToast(`✓ Prompt ${side.toUpperCase()} copiado!`));
+// ── History ────────────────────────────────────────────────────────────────
+function openHist() { renderHistList(); document.getElementById('hist-panel').classList.add('open'); }
+function closeHist() { document.getElementById('hist-panel').classList.remove('open'); }
+function renderHistList() {
+  const list = document.getElementById('hist-list');
+  const h = getHistory();
+  if (!h.length) { list.innerHTML = '<div class="hist-empty">Nenhum prompt gerado ainda.</div>'; return; }
+  list.innerHTML = h.map((item,i) => `
+    <div class="hist-item" onclick="loadHistItem(${i})">
+      <div class="hist-item-name">📸 ${escHtml(item.name)}</div>
+      <div class="hist-item-meta">${new Date(item.ts).toLocaleString('pt-BR')}</div>
+      <div class="hist-item-preview">${escHtml((item.mj||'').substring(0,100))}…</div>
+    </div>
+  `).join('');
+}
+function loadHistItem(i) {
+  const item = getHistory()[i];
+  if (!item) return;
+  generatedMJ = item.mj;
+  generatedChatGPT = item.gpt;
+  closeHist();
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `
+    <h3>📜 Do Histórico</h3>
+    <div class="entity-name">📸 ${escHtml(item.name)}</div>
+    <div class="prompt-label">Prompt MJ</div>
+    <div class="prompt-box">${escHtml(item.mj)}</div>
+    <div class="prompt-label">Prompt GPT</div>
+    <div class="prompt-box">${escHtml(item.gpt)}</div>
+    <div class="result-actions">
+      <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
+      <button class="btn-act" onclick="copyGPT(event)">🤖 Copiar GPT</button>
+    </div>
+  `;
+  chat.appendChild(card);
+  scrollBot();
 }
 
-// ── GPT RISK & TIKTOK SAFE ────────────────────────────────────────────────
-const GPT_SAFE_CATS = new Set(['selfie','casual','praia','academia','locais','moda','esportes','gotica','cosplay','etnias','plus_size','fantasia','tiktok']);
-const GPT_WARN_CATS = new Set(['lingerie','boudoir','em_casa','hotel','no_carro','banheiro','pos_banho','dormindo','foco_bunda','foco_pernas','detalhe','narrativa','sexting','conteudo','poses_livres','nude']);
-const GPT_NO_CATS   = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans']);
-function getGPTRisk(p){
-  if(GPT_NO_CATS.has(p.cat))   return 'no';
-  if(GPT_WARN_CATS.has(p.cat)) return 'warn';
-  if(GPT_SAFE_CATS.has(p.cat)) return 'safe';
-  return p.level==='sfw'?'safe':p.level==='sensual'?'warn':'no';
-}
-const TT_SAFE_CATS = new Set(['selfie','casual','academia','locais','moda','esportes','gotica','cosplay','etnias','plus_size','fantasia','tiktok','praia']);
-function isTikTokSafe(p){
-  return TT_SAFE_CATS.has(p.cat) && p.level==='sfw';
+// ── Restart ────────────────────────────────────────────────────────────────
+function restartFlow() {
+  answers = {};
+  selectedPreset = null;
+  generatedMJ = '';
+  generatedChatGPT = '';
+  currentStep = 0;
+  presetPage = 0;
+  chat.innerHTML = '';
+  startFlow();
 }
 
-// ── CHATGPT FALLBACK SUGGESTION ───────────────────────────────────────────
-const GPT_FALLBACK_MAP = {
-  posicoes:'gpt_gym_squat_pov', extremo:'gpt_gym_hip_thrust', pov_extremo:'gpt_beach_pov_low',
-  explicito_suave:'gpt_casual_mirror_outfit', ana:'gpt_selfie_golden_hour_outdoor',
-  onlyfans:'gpt_location_rooftop_sunset', sexting:'gpt_selfie_car',
-  boudoir:'gpt_casual_window_light', lingerie:'goth_lingerie_dark',
-  foco_bunda:'tt_butt_closeup_leggings', foco_pernas:'tt_pov_low_leggings',
-  detalhe:'gpt_gym_stretching_floor', conteudo:'gpt_selfie_gym_progress',
-  narrativa:'gpt_casual_couch_reading', pos_banho:'gpt_casual_window_light',
-  dormindo:'gpt_casual_couch_reading', hotel:'gpt_location_cafe_window',
-  banheiro:'gpt_location_art_gallery', em_casa:'gpt_casual_dancing_kitchen',
-  no_carro:'gpt_selfie_car', nude:'goth_dark_ballet', poses_livres:'gpt_gym_stretching_floor'
-};
-function updateGPTFallback(p){
-  const fb = document.getElementById('gpt-fallback');
-  if(!fb || !p) return;
-  const risk = getGPTRisk(p);
-  if(risk==='safe'){ fb.classList.remove('show'); return; }
-  const altKey = GPT_FALLBACK_MAP[p.cat];
-  const altPreset = altKey && PRESETS_RAW.find(x=>x.key===altKey);
-  if(altPreset){
-    fb.innerHTML = risk==='no'
-      ? '🤖✗ Bloqueado no ChatGPT. <strong>Alternativa SFW: '+altPreset.name+' →</strong>'
-      : '🤖⚠ Pode bloquear no ChatGPT. <strong>Alternativa segura: '+altPreset.name+' →</strong>';
-    fb.dataset.altKey = altKey;
-    fb.classList.add('show');
-  } else {
-    fb.classList.remove('show');
-  }
-}
-function applyGPTFallback(){
-  const fb = document.getElementById('gpt-fallback');
-  if(fb && fb.dataset.altKey) selectPreset(fb.dataset.altKey);
+function startFlow() {
+  updateProgress();
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('Bem-vindo ao RAWgen Loiras! Vou guiar você na criação de um prompt fotográfico passo a passo. 📸');
+    setTimeout(() => showStep(0), 600);
+  }, 500);
 }
 
-// ── PILL COMBOS SAVED ─────────────────────────────────────────────────────
-function getPillComboState(){
-  const groups = ['pose','angulo','cam','expressao2','estado','clima','luz2','proporcao','idade','style'];
-  const state = {};
-  groups.forEach(g=>{
-    const el = document.querySelector('.qpick[data-group="'+g+'"].active:not([data-val=""])');
-    if(el) state[g] = el.dataset.val;
-  });
-  return state;
-}
-function getPillComboLabel(state){
-  const names = [];
-  Object.keys(state).forEach(g=>{
-    const el = document.querySelector('.qpick[data-group="'+g+'"][data-val="'+CSS.escape(state[g])+'"]');
-    if(el) names.push(el.textContent.trim());
-  });
-  return names.slice(0,3).join(' + ') || 'Combo';
-}
-function savePillCombo(){
-  const state = getPillComboState();
-  if(!Object.keys(state).length){ showToast('Nenhum pill selecionado'); return; }
-  const label = prompt('Nome para este combo:', getPillComboLabel(state));
-  if(!label) return;
-  let combos = [];
-  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
-  combos.push({label, state, id: Date.now()});
-  localStorage.setItem('pgen_pill_combos', JSON.stringify(combos));
-  renderPillCombos();
-  showToast('💾 Combo "'+label+'" salvo');
-}
-function applyPillCombo(state){
-  // Reset all to Padrão first
-  document.querySelectorAll('.qpick').forEach(b=>{ if(b.dataset.val==='') b.classList.add('active'); else b.classList.remove('active'); });
-  Object.keys(state).forEach(g=>{
-    const btn = document.querySelector('.qpick[data-group="'+g+'"][data-val="'+CSS.escape(state[g])+'"]');
-    if(btn){
-      document.querySelectorAll('.qpick[data-group="'+g+'"]').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      const hiddenId = 'edit-'+g;
-      const hidden = document.getElementById(hiddenId);
-      if(hidden) hidden.value = state[g];
-    }
-  });
-  if(selectedKey) applyEdits(false);
-  showToast('Combo aplicado');
-}
-function deletePillCombo(id){
-  let combos = [];
-  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
-  combos = combos.filter(c=>c.id!==id);
-  localStorage.setItem('pgen_pill_combos', JSON.stringify(combos));
-  renderPillCombos();
-}
-function renderPillCombos(){
-  const list = document.getElementById('pill-combos-list');
-  if(!list) return;
-  let combos = [];
-  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
-  list.innerHTML = '';
-  combos.forEach(c=>{
-    const chip = document.createElement('span');
-    chip.className='pill-combo-chip';
-    chip.innerHTML = c.label+' <span style="opacity:.5;margin-left:3px;font-size:.9em" title="Remover" onclick="event.stopPropagation();deletePillCombo('+c.id+')">✕</span>';
-    chip.addEventListener('click', ()=>applyPillCombo(c.state));
-    list.appendChild(chip);
-  });
-}
-
-// ── BATCH GENERATE ────────────────────────────────────────────────────────
-function openBatchPanel(){
-  const panel = document.getElementById('batch-panel');
-  if(panel) panel.classList.toggle('open');
-}
-// Store batch prompts for copy-by-index
-const _batchPrompts = [];
-function generateBatch(){
-  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-  if(!p){ showToast('Selecione um preset'); return; }
-  const mode = document.getElementById('batch-mode-sel').value;
-  const count = parseInt(document.getElementById('batch-count-sel').value)||3;
-  const grid = document.getElementById('batch-grid');
-  grid.innerHTML = '';
-  _batchPrompts.length = 0;
-  for(let i=0;i<count;i++){
-    let prompt = '';
-    if(mode==='chatgpt') prompt = buildChatGPTPromptFromPreset(p);
-    else if(mode==='mj')  prompt = buildBlondePrompt(p);
-    else                  prompt = buildMJPromptForDALLE(p);
-    _batchPrompts.push(prompt);
-    const row = document.createElement('div');
-    row.className='batch-row';
-    row.style.cssText='display:flex;flex-direction:column;gap:4px;padding:6px 0;border-bottom:1px solid var(--border)';
-    const header = document.createElement('div');
-    header.style.cssText='display:flex;align-items:center;gap:6px';
-    header.innerHTML='<span style="color:var(--txt3);min-width:18px;font-size:.7rem">'+(i+1)+'.</span>'
-      +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt2);font-size:.72rem;cursor:pointer" title="Clique para expandir" onclick="var ta=this.closest(\'.batch-row\').querySelector(\'textarea\');ta.style.display=ta.style.display===\'block\'?\'none\':\'block\'">'+prompt.slice(0,110)+'…</span>'
-      +'<button class="btn-action" style="font-size:.65rem;padding:2px 8px;white-space:nowrap" data-idx="'+i+'" onclick="copyBatchItem('+i+')">📋 Copiar</button>';
-    const full = document.createElement('textarea');
-    full.className='batch-full';
-    full.readOnly=true;
-    full.value=prompt;
-    full.style.cssText='display:none;width:100%;height:80px;font-size:.68rem;resize:vertical;background:var(--bg2);color:var(--txt);border:1px solid var(--border);border-radius:4px;padding:4px;box-sizing:border-box';
-    row.appendChild(header);
-    row.appendChild(full);
-    grid.appendChild(row);
-  }
-  showToast('Batch de '+count+' prompts gerado');
-}
-function copyBatchItem(idx){
-  const prompt = _batchPrompts[idx];
-  if(!prompt) return;
-  navigator.clipboard.writeText(prompt).then(()=>showToast('✓ Copiado #'+(idx+1)));
-}
-function copyAllBatch(){
-  const rows = document.querySelectorAll('#batch-grid .batch-row');
-  if(!rows.length){ showToast('Gere o batch primeiro'); return; }
-  // Re-generate all and join
-  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
-  if(!p) return;
-  const mode = document.getElementById('batch-mode-sel').value;
-  const count = parseInt(document.getElementById('batch-count-sel').value)||3;
-  const prompts = [];
-  for(let i=0;i<count;i++){
-    if(mode==='chatgpt') prompts.push(buildChatGPTPromptFromPreset(p));
-    else if(mode==='mj')  prompts.push(buildBlondePrompt(p));
-    else                  prompts.push(buildMJPromptForDALLE(p));
-  }
-  navigator.clipboard.writeText(prompts.join('\n\n---\n\n')).then(()=>showToast('✓ '+count+' prompts copiados'));
-}
-
-// ── KEYBOARD SHORTCUTS ─────────────────────────────────────────────────────
-document.addEventListener('keydown', e=>{
-  if(e.target.matches('input,textarea,select')) return;
-  if(e.key===' '||e.code==='Space'){ e.preventDefault(); randomPreset(); }
-  if(e.key==='c'||e.key==='C'){ copyPrompt(); }
-  if(e.key==='v'||e.key==='V'){ variation(); }
-  if(e.key==='Escape'){ closeResult(); document.getElementById('modal-hist').classList.remove('open'); document.getElementById('modal-compare').classList.remove('open'); }
-  if(e.key==='h'||e.key==='H'){ toggleHistorico(); }
-  if(e.key==='f'||e.key==='F'){ currentCat='favoritos'; renderSidebar(); filterPresets(); }
-});
-
-// ── DELEGATE FAV BTN CLICKS ─────────────────────────────────────────────────
-document.addEventListener('click', e=>{
-  const fb = e.target.closest('.fav-btn');
-  if(fb){ toggleFav(fb.dataset.key, e); }
-});
-
-// ── START ──────────────────────────────────────────────────────────────────
-renderSidebar();
-filterPresets();
-renderPillCombos();
+startFlow();
 </script>
 </body>
 </html>
