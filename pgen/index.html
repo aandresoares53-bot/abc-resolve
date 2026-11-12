@@ -137,6 +137,24 @@ header{
 .badge-sfw{color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.07);}
 .badge-sensual{color:var(--orange);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.07);}
 .badge-explicit{color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07);}
+.badge-gpt-safe{color:#10a37f;border-color:rgba(16,163,127,.35);background:rgba(16,163,127,.08);margin-left:3px;}
+.badge-gpt-warn{color:#f59e0b;border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.07);margin-left:3px;}
+.badge-gpt-no{color:#ef4444;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07);margin-left:3px;}
+.badge-tt-safe{color:#ee1d52;border-color:rgba(238,29,82,.3);background:rgba(238,29,82,.07);margin-left:3px;}
+/* Saved pill combos */
+.pill-combo-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 14px 2px;border-top:1px solid var(--border);}
+.pill-combo-chip{font-size:.62rem;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--txt2);cursor:pointer;transition:.15s;}
+.pill-combo-chip:hover{border-color:var(--acc);color:var(--acc);}
+.pill-combo-chip.del-mode{border-color:var(--red);color:var(--red);}
+/* Batch panel */
+.batch-panel{padding:8px 14px;border-top:1px solid var(--border);display:none;}
+.batch-panel.open{display:block;}
+.batch-grid{display:flex;flex-direction:column;gap:4px;margin-top:6px;max-height:220px;overflow-y:auto;}
+.batch-row{display:flex;gap:6px;align-items:center;font-size:.7rem;padding:4px 8px;background:var(--surface2);border-radius:6px;}
+.batch-row button{font-size:.62rem;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--acc);cursor:pointer;}
+/* ChatGPT fallback suggestion */
+.gpt-fallback{margin:6px 14px;padding:7px 10px;border-radius:8px;border:1px solid rgba(16,163,127,.3);background:rgba(16,163,127,.07);font-size:.7rem;color:#10a37f;display:none;cursor:pointer;}
+.gpt-fallback.show{display:block;}
 
 .no-results{
   text-align:center;padding:60px 20px;color:var(--txt3);
@@ -577,6 +595,13 @@ header{
           <button class="qpick" data-group="proporcao" data-val="petite compact figure, small frame, short stature, proportionally small features, petite curves, dainty build">Petite</button>
         </div>
 
+        <!-- Pill combos salvas -->
+        <div class="pill-combo-bar" id="pill-combo-bar">
+          <span style="font-size:.62rem;color:var(--txt3);white-space:nowrap">💾 Combos:</span>
+          <div id="pill-combos-list" style="display:flex;gap:5px;flex-wrap:wrap;flex:1"></div>
+          <button class="pill-combo-chip" onclick="savePillCombo()" title="Salvar combinação atual de pills">＋ Salvar</button>
+        </div>
+
         <!-- hidden inputs for JS compatibility -->
         <input type="hidden" id="edit-pose" value="">
         <input type="hidden" id="edit-angulo" value="">
@@ -599,13 +624,37 @@ header{
             <button class="btn-action" style="font-size:.65rem;padding:3px 8px" onclick="copyNeg()">📋 Copiar --no</button>
           </div>
           <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
+          <!-- Sugestão fallback ChatGPT -->
+          <div class="gpt-fallback" id="gpt-fallback" onclick="applyGPTFallback()">
+            🤖 Este preset pode bloquear no ChatGPT. <strong>Clique para ver alternativa SFW →</strong>
+          </div>
           <div class="btn-row" style="margin-top:6px">
             <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar MJ</button>
             <button class="btn-action" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;border:none" id="btn-copy-gpt" onclick="copyForChatGPT()">🤖 ChatGPT</button>
             <button class="btn-action" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none" id="btn-copy-mj-dalle" onclick="copyMJForDALLE()">🎨 MJ→DALL-E</button>
             <button class="btn-action" onclick="variation()">🔀 Variação</button>
+            <button class="btn-action" onclick="openBatchPanel()" id="btn-batch">📦 Batch</button>
             <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
             <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
+          </div>
+          <!-- Batch panel -->
+          <div class="batch-panel" id="batch-panel">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="font-size:.72rem;color:var(--txt2);font-weight:600">📦 Batch — gerar prompts em série</span>
+              <select id="batch-mode-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
+                <option value="chatgpt">ChatGPT</option>
+                <option value="mj">MidJourney</option>
+                <option value="dalle">MJ→DALL-E</option>
+              </select>
+              <select id="batch-count-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
+                <option value="3">3 variações</option>
+                <option value="5">5 variações</option>
+                <option value="10">10 variações</option>
+              </select>
+              <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="generateBatch()">▶ Gerar</button>
+              <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="copyAllBatch()">📋 Copiar todos</button>
+            </div>
+            <div class="batch-grid" id="batch-grid"></div>
           </div>
         </div>
 
@@ -741,6 +790,11 @@ const CATS = [
   {key:'ana',        icon:'🌸', name:'Anãs'},
   {key:'tiktok',     icon:'🎵', name:'🔥 TikTok Viral'},
   {key:'gotica',     icon:'🖤', name:'Gótica & Dark'},
+  {key:'cosplay',    icon:'🎮', name:'Cosplay & Anime'},
+  {key:'esportes',   icon:'🏄', name:'Esportes & Ação'},
+  {key:'moda',       icon:'👗', name:'Moda Editorial'},
+  {key:'plus_size',  icon:'💜', name:'Plus Size & Curvy'},
+  {key:'etnias',     icon:'🌍', name:'Etnias & Diversidade'},
 ];
 
 // ── PRESETS ────────────────────────────────────────────────────────────────
@@ -9754,7 +9808,12 @@ function renderGrid(presets){
       const badgeClass = p.level==='sfw'?'badge-sfw':p.level==='sensual'?'badge-sensual':'badge-explicit';
       const badgeTxt = p.level==='sfw'?'☀ SFW':p.level==='sensual'?'🔥 Sensual':'🔞 Explícito';
       const isFav = FAVS.includes(p.key);
-      card.innerHTML=`<button class="fav-btn${isFav?' active':''}" data-key="${p.key}" title="Favorito">❤</button><div class="card-icon">${p.icon||'📷'}</div><div class="card-name">${p.name}</div><div class="card-desc">${p.desc}</div><span class="card-badge ${badgeClass}">${badgeTxt}</span>`;
+      const gptRisk = getGPTRisk(p);
+      const gptBadge = gptRisk==='safe'?'<span class="card-badge badge-gpt-safe" title="Aceito no ChatGPT">🤖✓</span>'
+                      :gptRisk==='warn'?'<span class="card-badge badge-gpt-warn" title="Pode bloquear no ChatGPT">🤖⚠</span>'
+                      :'<span class="card-badge badge-gpt-no" title="Bloqueia no ChatGPT — use MJ">🤖✗</span>';
+      const ttBadge = isTikTokSafe(p)?'<span class="card-badge badge-tt-safe" title="TikTok-safe">TT✓</span>':'';
+      card.innerHTML=`<button class="fav-btn${isFav?' active':''}" data-key="${p.key}" title="Favorito">❤</button><div class="card-icon">${p.icon||'📷'}</div><div class="card-name">${p.name}</div><div class="card-desc">${p.desc}</div><span class="card-badge ${badgeClass}">${badgeTxt}</span>${gptBadge}${ttBadge}`;
       card.onclick=()=>selectPreset(p.key);
       grid.appendChild(card);
     });
@@ -9869,6 +9928,8 @@ function selectPreset(key){
   showToast('✓ Copiado automaticamente');
   // Save to history
   saveHistory(p.key, p.name, finalPrompt);
+  // Update GPT fallback suggestion
+  updateGPTFallback(p);
 }
 
 function refreshCref(){
@@ -11055,6 +11116,165 @@ function copyCompare(side){
   if(ta && ta.value) navigator.clipboard.writeText(ta.value).then(()=>showToast(`✓ Prompt ${side.toUpperCase()} copiado!`));
 }
 
+// ── GPT RISK & TIKTOK SAFE ────────────────────────────────────────────────
+const GPT_SAFE_CATS = new Set(['selfie','casual','praia','academia','locais','moda','esportes','gotica','cosplay','etnias','plus_size','fantasia','tiktok']);
+const GPT_WARN_CATS = new Set(['lingerie','boudoir','em_casa','hotel','no_carro','banheiro','pos_banho','dormindo','foco_bunda','foco_pernas','detalhe','narrativa','sexting','conteudo','poses_livres','nude']);
+const GPT_NO_CATS   = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans']);
+function getGPTRisk(p){
+  if(GPT_NO_CATS.has(p.cat))   return 'no';
+  if(GPT_WARN_CATS.has(p.cat)) return 'warn';
+  if(GPT_SAFE_CATS.has(p.cat)) return 'safe';
+  return p.level==='sfw'?'safe':p.level==='sensual'?'warn':'no';
+}
+const TT_SAFE_CATS = new Set(['selfie','casual','academia','locais','moda','esportes','gotica','cosplay','etnias','plus_size','fantasia','tiktok','praia']);
+function isTikTokSafe(p){
+  return TT_SAFE_CATS.has(p.cat) && p.level==='sfw';
+}
+
+// ── CHATGPT FALLBACK SUGGESTION ───────────────────────────────────────────
+const GPT_FALLBACK_MAP = {
+  posicoes:'gpt_gym_squat_pov', extremo:'gpt_gym_hip_thrust', pov_extremo:'gpt_beach_pov_low',
+  explicito_suave:'gpt_casual_mirror_outfit', ana:'gpt_selfie_golden_hour_outdoor',
+  onlyfans:'gpt_location_rooftop_sunset', sexting:'gpt_selfie_car',
+  boudoir:'gpt_casual_window_light', lingerie:'goth_lingerie_dark',
+  foco_bunda:'tt_butt_closeup_leggings', foco_pernas:'tt_pov_low_leggings',
+  detalhe:'gpt_gym_stretching_floor', conteudo:'gpt_selfie_gym_progress',
+  narrativa:'gpt_casual_couch_reading', pos_banho:'gpt_casual_window_light',
+  dormindo:'gpt_casual_couch_reading', hotel:'gpt_location_cafe_window',
+  banheiro:'gpt_location_art_gallery', em_casa:'gpt_casual_dancing_kitchen',
+  no_carro:'gpt_selfie_car', nude:'goth_dark_ballet', poses_livres:'gpt_gym_stretching_floor'
+};
+function updateGPTFallback(p){
+  const fb = document.getElementById('gpt-fallback');
+  if(!fb || !p) return;
+  const risk = getGPTRisk(p);
+  if(risk==='safe'){ fb.classList.remove('show'); return; }
+  const altKey = GPT_FALLBACK_MAP[p.cat];
+  const altPreset = altKey && PRESETS_RAW.find(x=>x.key===altKey);
+  if(altPreset){
+    fb.innerHTML = risk==='no'
+      ? '🤖✗ Bloqueado no ChatGPT. <strong>Alternativa SFW: '+altPreset.name+' →</strong>'
+      : '🤖⚠ Pode bloquear no ChatGPT. <strong>Alternativa segura: '+altPreset.name+' →</strong>';
+    fb.dataset.altKey = altKey;
+    fb.classList.add('show');
+  } else {
+    fb.classList.remove('show');
+  }
+}
+function applyGPTFallback(){
+  const fb = document.getElementById('gpt-fallback');
+  if(fb && fb.dataset.altKey) selectPreset(fb.dataset.altKey);
+}
+
+// ── PILL COMBOS SAVED ─────────────────────────────────────────────────────
+function getPillComboState(){
+  const groups = ['pose','angulo','cam','expressao2','estado','clima','luz2','proporcao','idade','style'];
+  const state = {};
+  groups.forEach(g=>{
+    const el = document.querySelector('.qpick[data-group="'+g+'"].active:not([data-val=""])');
+    if(el) state[g] = el.dataset.val;
+  });
+  return state;
+}
+function getPillComboLabel(state){
+  const names = [];
+  Object.keys(state).forEach(g=>{
+    const el = document.querySelector('.qpick[data-group="'+g+'"][data-val="'+CSS.escape(state[g])+'"]');
+    if(el) names.push(el.textContent.trim());
+  });
+  return names.slice(0,3).join(' + ') || 'Combo';
+}
+function savePillCombo(){
+  const state = getPillComboState();
+  if(!Object.keys(state).length){ showToast('Nenhum pill selecionado'); return; }
+  const label = prompt('Nome para este combo:', getPillComboLabel(state));
+  if(!label) return;
+  let combos = [];
+  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
+  combos.push({label, state, id: Date.now()});
+  localStorage.setItem('pgen_pill_combos', JSON.stringify(combos));
+  renderPillCombos();
+  showToast('💾 Combo "'+label+'" salvo');
+}
+function applyPillCombo(state){
+  // Reset all to Padrão first
+  document.querySelectorAll('.qpick').forEach(b=>{ if(b.dataset.val==='') b.classList.add('active'); else b.classList.remove('active'); });
+  Object.keys(state).forEach(g=>{
+    const btn = document.querySelector('.qpick[data-group="'+g+'"][data-val="'+CSS.escape(state[g])+'"]');
+    if(btn){
+      document.querySelectorAll('.qpick[data-group="'+g+'"]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const hiddenId = 'edit-'+g;
+      const hidden = document.getElementById(hiddenId);
+      if(hidden) hidden.value = state[g];
+    }
+  });
+  if(selectedKey) applyEdits(false);
+  showToast('Combo aplicado');
+}
+function deletePillCombo(id){
+  let combos = [];
+  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
+  combos = combos.filter(c=>c.id!==id);
+  localStorage.setItem('pgen_pill_combos', JSON.stringify(combos));
+  renderPillCombos();
+}
+function renderPillCombos(){
+  const list = document.getElementById('pill-combos-list');
+  if(!list) return;
+  let combos = [];
+  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
+  list.innerHTML = '';
+  combos.forEach(c=>{
+    const chip = document.createElement('span');
+    chip.className='pill-combo-chip';
+    chip.innerHTML = c.label+' <span style="opacity:.5;margin-left:3px;font-size:.9em" title="Remover" onclick="event.stopPropagation();deletePillCombo('+c.id+')">✕</span>';
+    chip.addEventListener('click', ()=>applyPillCombo(c.state));
+    list.appendChild(chip);
+  });
+}
+
+// ── BATCH GENERATE ────────────────────────────────────────────────────────
+function openBatchPanel(){
+  const panel = document.getElementById('batch-panel');
+  if(panel) panel.classList.toggle('open');
+}
+function generateBatch(){
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  if(!p){ showToast('Selecione um preset'); return; }
+  const mode = document.getElementById('batch-mode-sel').value;
+  const count = parseInt(document.getElementById('batch-count-sel').value)||3;
+  const grid = document.getElementById('batch-grid');
+  grid.innerHTML = '';
+  for(let i=0;i<count;i++){
+    let prompt = '';
+    if(mode==='chatgpt') prompt = buildChatGPTPromptFromPreset(p);
+    else if(mode==='mj')  prompt = buildBlondePrompt(p);
+    else                  prompt = buildMJPromptForDALLE(p);
+    const row = document.createElement('div');
+    row.className='batch-row';
+    row.innerHTML='<span style="color:var(--txt3);min-width:16px">'+(i+1)+'.</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt2)">'+prompt.slice(0,120)+'…</span><button onclick="navigator.clipboard.writeText('+JSON.stringify(prompt)+').then(()=>showToast(\'Copiado #'+(i+1)+'\'))">📋</button>';
+    grid.appendChild(row);
+  }
+  showToast('Batch de '+count+' prompts gerado');
+}
+function copyAllBatch(){
+  const rows = document.querySelectorAll('#batch-grid .batch-row');
+  if(!rows.length){ showToast('Gere o batch primeiro'); return; }
+  // Re-generate all and join
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  if(!p) return;
+  const mode = document.getElementById('batch-mode-sel').value;
+  const count = parseInt(document.getElementById('batch-count-sel').value)||3;
+  const prompts = [];
+  for(let i=0;i<count;i++){
+    if(mode==='chatgpt') prompts.push(buildChatGPTPromptFromPreset(p));
+    else if(mode==='mj')  prompts.push(buildBlondePrompt(p));
+    else                  prompts.push(buildMJPromptForDALLE(p));
+  }
+  navigator.clipboard.writeText(prompts.join('\n\n---\n\n')).then(()=>showToast('✓ '+count+' prompts copiados'));
+}
+
 // ── KEYBOARD SHORTCUTS ─────────────────────────────────────────────────────
 document.addEventListener('keydown', e=>{
   if(e.target.matches('input,textarea,select')) return;
@@ -11075,6 +11295,7 @@ document.addEventListener('click', e=>{
 // ── START ──────────────────────────────────────────────────────────────────
 renderSidebar();
 filterPresets();
+renderPillCombos();
 </script>
 </body>
 </html>
