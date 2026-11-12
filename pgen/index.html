@@ -100,6 +100,25 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
 .chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
 
+/* ── Global search ── */
+#global-search-wrap{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 16px 6px;border-bottom:1px solid var(--border)}
+.gs-inner{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-chip);padding:8px 12px;transition:border-color .18s}
+.gs-inner:focus-within{border-color:var(--gold-dim)}
+.gs-icon{font-size:.9rem;opacity:.6;flex-shrink:0}
+#global-search{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:.85rem;font-family:Georgia,serif}
+#global-search::placeholder{color:var(--muted)}
+#gs-clear{cursor:pointer;opacity:.5;font-size:.75rem;flex-shrink:0;padding:2px 4px}
+#gs-clear:hover{opacity:1}
+#gs-results{margin-top:6px;display:flex;flex-direction:column;gap:4px;max-height:60vh;overflow-y:auto}
+.gs-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:border-color .15s,background .15s}
+.gs-item:hover{border-color:var(--gold-dim);background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.gs-item-icon{font-size:1.3rem;flex-shrink:0}
+.gs-item-info{min-width:0}
+.gs-item-name{font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-item-desc{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-item-cat{font-size:.65rem;color:var(--gold);opacity:.7;text-transform:uppercase;letter-spacing:.04em}
+.gs-empty{text-align:center;color:var(--muted);font-size:.8rem;padding:16px}
+
 /* ── History panel ── */
 #hist-panel{position:fixed;inset:0;background:rgba(5,5,10,.95);z-index:50;display:none;flex-direction:column}
 #hist-panel.open{display:flex}
@@ -143,6 +162,15 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
   <h1><span>RAWgen Loiras</span>Gerador de Prompts</h1>
   <div class="header-sub">Midjourney · ChatGPT · DALL-E · Passo a passo</div>
 </header>
+
+<div id="global-search-wrap">
+  <div class="gs-inner">
+    <span class="gs-icon">🔍</span>
+    <input id="global-search" type="text" placeholder="Buscar preset por palavra… (praia, lingerie, piscina…)" autocomplete="off" oninput="onGlobalSearch(this.value)" onfocus="onGlobalSearchFocus()" />
+    <span id="gs-clear" onclick="clearGlobalSearch()" style="display:none">✕</span>
+  </div>
+  <div id="gs-results" style="display:none"></div>
+</div>
 
 <div class="progress-wrap">
   <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
@@ -11068,6 +11096,64 @@ function restartFlow() {
   startFlow();
 }
 
+let gsTimer = null;
+function onGlobalSearch(val) {
+  const clear = document.getElementById('gs-clear');
+  clear.style.display = val ? '' : 'none';
+  clearTimeout(gsTimer);
+  gsTimer = setTimeout(() => renderGsResults(val), 200);
+}
+function onGlobalSearchFocus() {
+  const val = document.getElementById('global-search').value;
+  if (val) renderGsResults(val);
+}
+function clearGlobalSearch() {
+  document.getElementById('global-search').value = '';
+  document.getElementById('gs-clear').style.display = 'none';
+  document.getElementById('gs-results').style.display = 'none';
+}
+function renderGsResults(query) {
+  const box = document.getElementById('gs-results');
+  const q = query.trim().toLowerCase();
+  if (!q) { box.style.display = 'none'; return; }
+  const words = q.split(/\s+/);
+  const matches = PRESETS_RAW.filter(p => {
+    const hay = [p.name, p.desc, p.cat, p.corpo, p.cenario, p.pose, p.expressao, p.roupa]
+      .filter(Boolean).join(' ').toLowerCase();
+    return words.every(w => hay.includes(w));
+  }).slice(0, 20);
+  box.innerHTML = '';
+  if (!matches.length) {
+    box.innerHTML = '<div class="gs-empty">Nenhum preset encontrado para "' + escHtml(query) + '"</div>';
+  } else {
+    matches.forEach(p => {
+      const el = document.createElement('div');
+      el.className = 'gs-item';
+      el.innerHTML = `<div class="gs-item-icon">${p.icon || '📸'}</div><div class="gs-item-info"><div class="gs-item-name">${escHtml(p.name)}</div><div class="gs-item-desc">${escHtml(p.desc || '')}</div><div class="gs-item-cat">${p.cat}</div></div>`;
+      el.onclick = () => selectGsPreset(p);
+      box.appendChild(el);
+    });
+  }
+  box.style.display = '';
+}
+function selectGsPreset(p) {
+  clearGlobalSearch();
+  // Reset state
+  answers = {};
+  selectedPreset = null;
+  currentStep = 0;
+  presetPage = 0;
+  document.getElementById('chat').innerHTML = '';
+  // Set preset answers
+  answers.nivel = p.level || 'sfw';
+  answers.cat = p.cat;
+  answers.preset = p.key;
+  selectedPreset = p;
+  appendUserMsg(`${p.icon || '📸'} ${p.name}`);
+  updateProgress();
+  setTimeout(() => showStep(3), 300);
+}
+
 function startFlow() {
   updateProgress();
   showTyping();
@@ -11077,6 +11163,17 @@ function startFlow() {
     setTimeout(() => showStep(0), 600);
   }, 500);
 }
+
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('global-search-wrap');
+  if (!wrap.contains(e.target)) {
+    document.getElementById('gs-results').style.display = 'none';
+  }
+});
+document.getElementById('global-search').addEventListener('focus', () => {
+  const val = document.getElementById('global-search').value;
+  if (val) renderGsResults(val);
+});
 
 startFlow();
 </script>
