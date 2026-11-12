@@ -110,10 +110,18 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .hist-item-preview{font-size:.72rem;color:var(--dim);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hist-empty{text-align:center;color:var(--muted);font-size:.82rem;padding:40px 0}
 
+/* ── Search ── */
+.search-wrap{max-width:700px;width:100%;padding:0 0 0 40px;display:flex;align-items:center;gap:10px;animation:fadeUp .3s ease .05s both}
+.search-input{flex:1;background:var(--card);border:1px solid var(--border-lit);border-radius:var(--r-chip);color:var(--text);font-family:Georgia,serif;font-size:.88rem;padding:10px 18px;outline:none;transition:border-color .18s}
+.search-input::placeholder{color:var(--muted)}
+.search-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(232,160,32,.12)}
+.search-count{font-size:.65rem;color:var(--muted);letter-spacing:.1em;white-space:nowrap}
+
 @media(max-width:480px){
   .bubble{font-size:.82rem}
   .chip{font-size:.78rem;padding:8px 14px}
   header h1{font-size:1rem}
+  .search-wrap{padding-left:0}
 }
 </style>
 </head>
@@ -10514,6 +10522,18 @@ function showCatStep() {
     const wrap = document.createElement('div');
     wrap.className = 'chips-wrap';
     let added = 0;
+    // Buscar em todos
+    const searchBtn = document.createElement('button');
+    searchBtn.className = 'chip skip';
+    searchBtn.textContent = '🔍 Buscar em todos';
+    searchBtn.onclick = () => {
+      disableChips(wrap);
+      answers.cat = '__all__';
+      appendUserMsg('🔍 Buscar em todos');
+      setTimeout(() => showStep(2), 300);
+    };
+    wrap.appendChild(searchBtn);
+
     CATS_CHAT.forEach(cat => {
       const count = PRESETS_RAW.filter(p => p.cat === cat.key && matchLevel(p.level, answers.nivel)).length;
       if (count === 0) return;
@@ -10534,14 +10554,59 @@ function showCatStep() {
   }, 400);
 }
 
+let allPresetsForStep = [];
+
+function searchPresets(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return allPresetsForStep;
+  return allPresetsForStep.filter(p => {
+    const hay = [p.name, p.desc, p.corpo, p.cenario, p.pose, p.expressao, p.roupa]
+      .filter(Boolean).join(' ').toLowerCase();
+    return q.split(/\s+/).every(word => hay.includes(word));
+  });
+}
+
 function showPresetStep() {
   presetPage = 0;
-  const presets = PRESETS_RAW.filter(p => p.cat === answers.cat && matchLevel(p.level, answers.nivel));
+  allPresetsForStep = answers.cat === '__all__'
+    ? PRESETS_RAW.filter(p => matchLevel(p.level, answers.nivel))
+    : PRESETS_RAW.filter(p => p.cat === answers.cat && matchLevel(p.level, answers.nivel));
   showTyping();
   setTimeout(() => {
     removeTyping();
-    appendBotMsg(`Qual preset? (${presets.length} disponíveis)`);
-    renderPresetChips(presets);
+    const total = allPresetsForStep.length;
+    appendBotMsg(`Qual preset? (${total} disponíveis) — ou busque por palavra:`);
+
+    // ── Search input ──
+    const searchWrap = document.createElement('div');
+    searchWrap.className = 'search-wrap';
+    searchWrap.id = 'preset-search-wrap';
+    searchWrap.innerHTML = `
+      <input type="text" id="preset-search" class="search-input" placeholder="🔍 ex: praia, escritório, yoga..." autocomplete="off">
+      <div class="search-count" id="search-count">${total} presets</div>
+    `;
+    chat.appendChild(searchWrap);
+
+    const input = document.getElementById('preset-search');
+    const countEl = document.getElementById('search-count');
+
+    let searchTimer = null;
+    input.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        const results = searchPresets(input.value);
+        countEl.textContent = `${results.length} preset${results.length !== 1 ? 's' : ''}`;
+        // remove old chips
+        document.querySelectorAll('[data-preset-page]').forEach(el => el.remove());
+        document.querySelectorAll('.load-more-btn').forEach(el => el.remove());
+        presetPage = 0;
+        renderPresetChips(results);
+      }, 250);
+    });
+
+    renderPresetChips(allPresetsForStep);
+    input.focus();
+    scrollBot();
   }, 400);
 }
 
@@ -10558,6 +10623,7 @@ function renderPresetChips(presets) {
     btn.textContent = `${p.icon || '📸'} ${p.name}`;
     btn.title = p.desc || '';
     btn.onclick = () => {
+      document.getElementById('preset-search-wrap')?.remove();
       document.querySelectorAll('[data-preset-page]').forEach(w => disableChips(w));
       document.querySelectorAll('.load-more-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.4'; });
       answers.preset = p.key;
