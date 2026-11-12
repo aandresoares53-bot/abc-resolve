@@ -137,29 +137,80 @@ header{
 .badge-sfw{color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.07);}
 .badge-sensual{color:var(--orange);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.07);}
 .badge-explicit{color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07);}
+.badge-gpt-safe{color:#10a37f;border-color:rgba(16,163,127,.35);background:rgba(16,163,127,.08);margin-left:3px;}
+.badge-gpt-warn{color:#f59e0b;border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.07);margin-left:3px;}
+.badge-gpt-no{color:#ef4444;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07);margin-left:3px;}
+.badge-tt-safe{color:#ee1d52;border-color:rgba(238,29,82,.3);background:rgba(238,29,82,.07);margin-left:3px;}
+/* Saved pill combos */
+.pill-combo-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 14px 2px;border-top:1px solid var(--border);}
+.pill-combo-chip{font-size:.62rem;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--txt2);cursor:pointer;transition:.15s;}
+.pill-combo-chip:hover{border-color:var(--acc);color:var(--acc);}
+.pill-combo-chip.del-mode{border-color:var(--red);color:var(--red);}
+/* Batch panel */
+.batch-panel{padding:8px 14px;border-top:1px solid var(--border);display:none;}
+.batch-panel.open{display:block;}
+.batch-grid{display:flex;flex-direction:column;gap:4px;margin-top:6px;max-height:220px;overflow-y:auto;}
+.batch-row{display:flex;gap:6px;align-items:center;font-size:.7rem;padding:4px 8px;background:var(--surface2);border-radius:6px;}
+.batch-row button{font-size:.62rem;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--acc);cursor:pointer;}
+/* ChatGPT fallback suggestion */
+.gpt-fallback{margin:6px 14px;padding:7px 10px;border-radius:8px;border:1px solid rgba(16,163,127,.3);background:rgba(16,163,127,.07);font-size:.7rem;color:#10a37f;display:none;cursor:pointer;}
+.gpt-fallback.show{display:block;}
 
 .no-results{
   text-align:center;padding:60px 20px;color:var(--txt3);
   font-size:.88rem;
 }
 
-/* ── RESULT PANEL ── */
+/* ── CHAT PANEL (result) ── */
 #result-panel{
-  flex-shrink:0;border-top:2px solid var(--acc);
-  background:var(--surface);display:none;
-  max-height:52vh;overflow-y:auto;
+  flex-shrink:0;display:none;
+  flex-direction:column;
+  border-top:2px solid var(--acc);
+  background:var(--bg);
+  max-height:58vh;
   box-shadow:0 -4px 24px rgba(0,0,0,.4);
 }
-#result-panel.open{display:block;}
-.result-header{
+#result-panel.open{display:flex;}
+/* Chat header */
+.chat-header{
   display:flex;align-items:center;gap:10px;
-  padding:10px 16px;border-bottom:1px solid var(--bdr);
-  position:sticky;top:0;background:var(--surface);z-index:5;
-  backdrop-filter:blur(4px);
+  padding:9px 14px;border-bottom:1px solid var(--bdr);
+  background:var(--surface);position:sticky;top:0;z-index:5;
+  backdrop-filter:blur(4px);flex-shrink:0;
 }
-.result-title{font-size:.85rem;font-weight:700;color:var(--acc);flex:1;
-  text-shadow:0 0 12px var(--acc-glow);}
-.result-body{padding:12px 16px;display:grid;gap:10px;}
+.chat-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--acc);display:flex;align-items:center;
+  justify-content:center;font-size:1rem;flex-shrink:0;
+}
+.chat-info{flex:1;min-width:0;}
+.result-title{font-size:.82rem;font-weight:700;color:var(--acc);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:0 0 10px var(--acc-glow);}
+.chat-subtitle{font-size:.6rem;color:var(--txt3);margin-top:1px;}
+/* Messages area */
+.chat-messages-area{
+  padding:12px 14px;overflow-y:auto;flex-shrink:0;
+}
+.chat-bubble-ai{
+  background:var(--surface);border:1px solid var(--bdr);
+  border-radius:4px 14px 14px 14px;
+  padding:12px 14px;display:grid;gap:8px;
+}
+/* Options / pills area */
+.chat-options-area{
+  border-top:1px solid var(--bdr);overflow-y:auto;
+  flex:1;min-height:0;background:var(--surface);
+}
+/* Chat action bar */
+.chat-actions-area{
+  padding:8px 14px;border-top:1px solid var(--bdr);
+  background:var(--surface);display:flex;gap:6px;
+  flex-wrap:wrap;flex-shrink:0;
+}
+/* keep legacy refs working */
+.result-header{display:none;}
+.result-body{display:contents;}
 .result-label{font-size:.65rem;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
 .edit-fields{background:var(--surface2);border:1px solid var(--bdr);border-radius:var(--r2);padding:12px;display:grid;gap:8px;}
 .edit-field{display:grid;gap:4px;}
@@ -339,17 +390,16 @@ header{
   .qlabel{flex-shrink:0;font-size:.7rem;}
   .qpick{flex-shrink:0;font-size:.67rem;padding:5px 10px;min-height:32px;white-space:nowrap;}
 
-  /* Result panel — full screen overlay */
+  /* Chat panel — full screen overlay on mobile */
   #result-panel{
     position:fixed!important;inset:0!important;z-index:90;
     width:100vw!important;max-width:none!important;
-    max-height:none!important;height:100vh!important;
-    overflow-y:auto;border-left:none!important;
-    display:none;
+    max-height:none!important;height:100dvh!important;
+    border-left:none!important;display:none;
   }
-  #result-panel.open{display:flex;flex-direction:column;}
-  .result-header{position:sticky;top:0;z-index:5;padding:10px 12px;}
-  .result-body{padding:8px 12px;flex:1;}
+  #result-panel.open{display:flex;}
+  .chat-messages-area{flex-shrink:0;}
+  .chat-options-area{flex:1;overflow-y:auto;}
   .result-ta{font-size:.74rem;}
   .btn-row{gap:6px;flex-wrap:wrap;}
   .btn-action{font-size:.71rem;padding:9px 12px;min-height:42px;}
@@ -443,13 +493,68 @@ header{
   <div class="main">
     <div class="grid-wrap" id="grid-wrap"></div>
 
-    <!-- Result Panel -->
+    <!-- Result Panel — Chat style -->
     <div id="result-panel">
-      <div class="result-header">
-        <div class="result-title" id="result-title">✅ Preset selecionado</div>
+
+      <!-- Chat header -->
+      <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-info">
+          <div class="result-title" id="result-title">Preset selecionado</div>
+          <div class="chat-subtitle">Gerador de prompts · MJ / ChatGPT / DALL-E</div>
+        </div>
         <button class="btn-close-result" onclick="closeResult()">✕</button>
       </div>
-      <div class="result-body">
+
+      <!-- AI response bubble (prompt output) -->
+      <div class="chat-messages-area">
+        <div class="chat-bubble-ai">
+          <div class="result-label">🎯 Prompt gerado</div>
+          <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
+            <span style="font-size:.66rem;color:var(--txt3)">🚫 Negativo (--no)</span>
+            <button class="btn-action" style="font-size:.63rem;padding:2px 8px" onclick="copyNeg()">📋 Copiar --no</button>
+          </div>
+          <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
+          <div class="gpt-fallback" id="gpt-fallback" onclick="applyGPTFallback()">
+            🤖 Este preset pode bloquear no ChatGPT. <strong>Clique para ver alternativa SFW →</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action bar -->
+      <div class="chat-actions-area">
+        <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 MJ</button>
+        <button class="btn-action" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;border:none" id="btn-copy-gpt" onclick="copyForChatGPT()">🤖 ChatGPT</button>
+        <button class="btn-action" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none" id="btn-copy-mj-dalle" onclick="copyMJForDALLE()">🎨 DALL-E</button>
+        <button class="btn-action" onclick="variation()">🔀 Variação</button>
+        <button class="btn-action" onclick="openBatchPanel()" id="btn-batch">📦 Batch</button>
+        <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
+        <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
+      </div>
+
+      <!-- Batch panel -->
+      <div class="batch-panel" id="batch-panel">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:.72rem;color:var(--txt2);font-weight:600">📦 Batch — gerar prompts em série</span>
+          <select id="batch-mode-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
+            <option value="chatgpt">ChatGPT</option>
+            <option value="mj">MidJourney</option>
+            <option value="dalle">MJ→DALL-E</option>
+          </select>
+          <select id="batch-count-sel" style="font-size:.68rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--txt)">
+            <option value="3">3 variações</option>
+            <option value="5">5 variações</option>
+            <option value="10">10 variações</option>
+          </select>
+          <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="generateBatch()">▶ Gerar</button>
+          <button class="btn-action" style="font-size:.65rem;padding:3px 10px" onclick="copyAllBatch()">📋 Copiar todos</button>
+        </div>
+        <div class="batch-grid" id="batch-grid"></div>
+      </div>
+
+      <!-- Options / pills -->
+      <div class="chat-options-area">
 
         <!-- Pose row -->
         <div class="qrow">
@@ -577,6 +682,13 @@ header{
           <button class="qpick" data-group="proporcao" data-val="petite compact figure, small frame, short stature, proportionally small features, petite curves, dainty build">Petite</button>
         </div>
 
+        <!-- Pill combos salvas -->
+        <div class="pill-combo-bar" id="pill-combo-bar">
+          <span style="font-size:.62rem;color:var(--txt3);white-space:nowrap">💾 Combos:</span>
+          <div id="pill-combos-list" style="display:flex;gap:5px;flex-wrap:wrap;flex:1"></div>
+          <button class="pill-combo-chip" onclick="savePillCombo()" title="Salvar combinação atual de pills">＋ Salvar</button>
+        </div>
+
         <!-- hidden inputs for JS compatibility -->
         <input type="hidden" id="edit-pose" value="">
         <input type="hidden" id="edit-angulo" value="">
@@ -591,28 +703,10 @@ header{
         <input type="hidden" id="edit-idade" value="">
         <input type="hidden" id="edit-proporcao" value="">
 
-        <!-- Prompt -->
-        <div style="padding:0 14px 6px">
-          <textarea class="result-ta" id="result-prompt" rows="5"></textarea>
-          <div style="margin-top:4px;font-size:.68rem;color:var(--txt3);padding:2px 0;display:flex;align-items:center;justify-content:space-between">
-            <span>🚫 Negativo (--no)</span>
-            <button class="btn-action" style="font-size:.65rem;padding:3px 8px" onclick="copyNeg()">📋 Copiar --no</button>
-          </div>
-          <textarea class="result-ta neg" id="result-neg" rows="2" readonly></textarea>
-          <div class="btn-row" style="margin-top:6px">
-            <button class="btn-action primary" id="btn-copy-pos" onclick="copyPrompt()">📋 Copiar MJ</button>
-            <button class="btn-action" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;border:none" id="btn-copy-gpt" onclick="copyForChatGPT()">🤖 ChatGPT</button>
-            <button class="btn-action" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none" id="btn-copy-mj-dalle" onclick="copyMJForDALLE()">🎨 MJ→DALL-E</button>
-            <button class="btn-action" onclick="variation()">🔀 Variação</button>
-            <button class="btn-action" onclick="pinToCompare()" id="btn-pin-compare">📌 Fixar</button>
-            <button class="btn-action" onclick="randomPreset()">🎲 Aleatório</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
+      </div><!-- end chat-options-area -->
+    </div><!-- end result-panel -->
+  </div><!-- end main -->
+</div><!-- end app -->
 
 <script>
 // ── MIDJOURNEY CONFIG ───────────────────────────────────────────────────────
@@ -740,6 +834,12 @@ const CATS = [
   {key:'conteudo',   icon:'📱', name:'Conteúdo Próprio'},
   {key:'ana',        icon:'🌸', name:'Anãs'},
   {key:'tiktok',     icon:'🎵', name:'🔥 TikTok Viral'},
+  {key:'gotica',     icon:'🖤', name:'Gótica & Dark'},
+  {key:'cosplay',    icon:'🎮', name:'Cosplay & Anime'},
+  {key:'esportes',   icon:'🏄', name:'Esportes & Ação'},
+  {key:'moda',       icon:'👗', name:'Moda Editorial'},
+  {key:'plus_size',  icon:'💜', name:'Plus Size & Curvy'},
+  {key:'etnias',     icon:'🌍', name:'Etnias & Diversidade'},
 ];
 
 // ── PRESETS ────────────────────────────────────────────────────────────────
@@ -9159,6 +9259,1087 @@ const PRESETS_RAW = [
     cenario:'bedroom with BDSM undertones, low dramatic light, velvet and leather accents',
     pose:'one bent over, other penetrating from behind, dominant gripping submissive hips',
     cam:'50mm close side angle, dramatic dim lighting',film:'Cinestill 800T'},
+
+  // ── TIKTOK — POV BAIXO / BUNDA / DOBRADA / APOIADA ───────────────────────
+  // Totalmente vestidos, sem nudez, 100% postável no TikTok — focados nos ângulos pedidos
+
+  {key:'tt_pov_low_leggings',cat:'tiktok',level:'sfw',icon:'📸',name:'POV Baixo — Leggings',desc:'POV baixo de frente: leggings coladas do chão até o rosto',
+    corpo:'natural hourglass curves, legs fully defined in tight leggings, real feminine proportions',
+    roupa:'high-waist compression leggings in solid black or deep tone, sports bra, sneakers',
+    pose:'standing straight, feet slightly apart, weight balanced, arms relaxed at sides, full body from shoes to face',
+    expressao:'direct confident stare down at the lens, slight chin tilt down, owns the moment',
+    cam:'ground-level upward shot, 24mm wide angle, camera on floor looking up at standing subject, both legs extending upward filling frame, dramatic upward fashion editorial framing, feet close to lens',
+    cenario:'clean gym floor or studio, strong overhead light creating shape along legs, minimal background',
+    film:'Kodak Ektar 100, high contrast clean gym lighting'},
+
+  {key:'tt_pov_low_jeans',cat:'tiktok',level:'sfw',icon:'👖',name:'POV Baixo — Jeans',desc:'POV chão em jeans justo: ângulo dramático editorial de baixo para cima',
+    corpo:'natural toned legs in denim, real hip and thigh curve, feminine confident stance',
+    roupa:'tight skinny jeans or flared jeans, cropped fitted jacket or top, ankle boots or heels',
+    pose:'standing with weight shifted onto one hip, one foot slightly forward, arms loose, full body commanding the frame',
+    expressao:'editorial cold confidence, jaw slightly set, looks directly into the lens below',
+    cam:'ground-level upward shot, 24mm wide angle, camera on floor looking up at standing subject, both legs extending upward filling frame, dramatic upward fashion editorial framing, feet close to lens',
+    cenario:'street or studio, clean minimal background, strong directional light from above',
+    film:'Fujifilm Provia 100F, clean editorial street tones'},
+
+  {key:'tt_pov_low_miniskirt',cat:'tiktok',level:'sfw',icon:'👗',name:'POV Baixo — Mini Saia',desc:'POV baixo com mini saia: ângulo dramático editorial, pose poderosa',
+    corpo:'natural legs from shoes upward, real curves defined by skit line and low angle',
+    roupa:'tight bodycon mini skirt ending mid-thigh, fitted top or bralette, heels',
+    pose:'standing tall, feet apart, one hand on hip, slight chest forward, full body in frame from shoes to face',
+    expressao:'powerful editorial gaze directly at lens below, slow confident awareness',
+    cam:'ground-level upward shot, 24mm wide angle, camera on floor looking up at standing subject, both legs extending upward filling frame, dramatic upward fashion editorial framing, feet close to lens',
+    cenario:'rooftop or studio, golden hour or studio strobe, fashion editorial atmosphere',
+    film:'Kodak Portra 400, warm editorial tones'},
+
+  {key:'tt_butt_closeup_leggings',cat:'tiktok',level:'sfw',icon:'🍑',name:'Close Bunda — Leggings',desc:'Close lateral traseiro: leggings coladas, forma natural real, luz lateral',
+    corpo:'natural real curves from behind, authentic feminine body shape, real skin',
+    roupa:'high-waist compression leggings in solid color, sports bra, sneakers',
+    pose:'standing profile-to-camera or slight three-quarter rear angle, weight on one hip, slight arch in lower back, hands lightly on hips',
+    expressao:'over-shoulder glance back at camera, natural candid smile or editorial cool',
+    cam:'medium close-up from behind and slightly to side, 85mm, waist to mid-thigh, tight frame on curves',
+    cenario:'gym or outdoor, side light sculpting the form, real athletic environment',
+    film:'Kodak Ektar 100, high contrast clean lighting'},
+
+  {key:'tt_butt_closeup_shorts',cat:'tiktok',level:'sfw',icon:'✂',name:'Close Bunda — Denim',desc:'Close traseiro em short jeans curto: textura denim, luz lateral definindo',
+    corpo:'natural real curves in denim, authentic body shape, real thigh and hip',
+    roupa:'cutoff denim shorts very short with hemline at top of thigh, tank or crop top, sneakers or bare feet',
+    pose:'standing in slight three-quarter rear angle, one leg slightly bent, natural casual stance, weight resting on one hip',
+    expressao:'looking over shoulder naturally, candid unaware energy, real and unstaged',
+    cam:'medium close from behind, 85mm, waist to mid-thigh tight frame, slightly to the side capturing curve',
+    cenario:'outdoor street, park, or home — natural light from the side',
+    film:'Fujifilm Superia 400, natural outdoor tones'},
+
+  {key:'tt_bend_over_counter',cat:'tiktok',level:'sfw',icon:'🔧',name:'Dobrada no Balcão',desc:'Dobrada sobre a bancada: costas arqueadas, pose natural e irresistível',
+    corpo:'natural real curves fully visible in bent position, real back arch, authentic body',
+    roupa:'tight high-waist shorts or mini skirt, fitted crop or tank top, curves prominent in pose',
+    pose:'bent forward over kitchen counter or desk with both hands flat on surface, back deeply arched, rear toward camera, head turned to look at camera over shoulder',
+    expressao:'looking back over shoulder with natural smirk, candid caught-in-the-act energy',
+    cam:'slightly behind and to the side, medium shot, 50mm, capturing full back arch and rear profile',
+    cenario:'kitchen counter, work desk, or bar counter — real everyday location, warm side light',
+    film:'Kodak Portra 400, natural warm indoor tones'},
+
+  {key:'tt_bend_over_car',cat:'tiktok',level:'sfw',icon:'🚗',name:'Dobrada no Carro',desc:'Dobrada sobre o capô do carro: look de revista, pose provocante e postável',
+    corpo:'natural curves defined by the bent-over arch over car hood, real feminine proportions',
+    roupa:'fitted mini dress or tight jeans and crop top, heels, sunglasses on top of head',
+    pose:'leaning forward over car hood, both forearms flat on hood, back arched deeply, weight on forearms, rear profile toward camera, head turned back',
+    expressao:'over-shoulder editorial gaze, slight smirk, owns the frame completely',
+    cam:'from slightly behind and to side, 85mm, capturing full back arch and car hood, natural outdoor light',
+    cenario:'sports car or classic car exterior, outdoor parking or road, golden afternoon light',
+    film:'Kodak Ektar 100, vivid automotive editorial colors'},
+
+  {key:'tt_leaning_wall_rear',cat:'tiktok',level:'sfw',icon:'🧱',name:'Apoiada na Parede',desc:'Apoiada de lado na parede: pose traseira lateral, curvas em destaque',
+    corpo:'natural side profile curves, real back line, authentic feminine shape',
+    roupa:'tight bodycon dress or high-waist pants and fitted top, heels',
+    pose:'side-on to camera, one shoulder against wall, one arm on wall above head, slight hip push toward camera, back lightly arched, weight on wall-side leg',
+    expressao:'looking over shoulder at camera, editorial cool, unhurried',
+    cam:'from behind and slightly to the side, 85mm, capturing side profile and wall lean, moody side light',
+    cenario:'textured brick or concrete wall, urban exterior or interior corridor, dramatic single light source',
+    film:'Kodak Tri-X 400, high contrast moody'},
+
+  {key:'tt_leaning_railing',cat:'tiktok',level:'sfw',icon:'🏙',name:'Apoiada no Corrimão',desc:'Apoiada no corrimão com vista: curvas em destaque, cenário urbano',
+    corpo:'natural curves leaning forward, back arch visible, real feminine shape against skyline',
+    roupa:'fitted mini dress or jeans and crop, heels, hair loose in potential breeze',
+    pose:'both hands on railing, leaning forward slightly with back arched, rear toward camera, head turned to look back or at the view',
+    expressao:'relaxed editorial gaze at the city, then slow look back at camera — knows the shot is happening',
+    cam:'from behind slightly below railing level, 35mm, capturing body, railing, and city skyline in one frame',
+    cenario:'rooftop or balcony railing, city skyline at golden hour or night, dramatic city light',
+    film:'Fujifilm Provia 100F, clean architectural color rendering'},
+
+  {key:'tt_leaning_doorframe',cat:'tiktok',level:'sfw',icon:'🚪',name:'Apoiada na Porta',desc:'Apoiada na moldura da porta: pose relaxada e sensual, luz de fundo',
+    corpo:'natural full body outline in doorframe, curves silhouetted or lit, real proportions',
+    roupa:'fitted outfit or mini dress, heels or barefoot, hair loose',
+    pose:'one shoulder against doorframe, hip pushed out, arms loose, body slightly arched, full body visible in doorframe',
+    expressao:'slow direct gaze at camera, lips just parted, completely unhurried',
+    cam:'full body in doorframe, slightly low angle, backlight from room behind creating outline, 50mm',
+    cenario:'doorway with backlight from bright interior or golden sunset behind her, dramatic rim light',
+    film:'Kodak Portra 800, warm backlit golden tones'},
+
+  {key:'tt_pov_extreme_low_miniskirt',cat:'tiktok',level:'sfw',icon:'🎬',name:'POV Extremo — Mini Saia',desc:'Ângulo extremo do chão olhando para cima: dramático, editorial, postável',
+    corpo:'natural legs from shoes to face in one dramatic frame, authentic body proportions',
+    roupa:'tight mini skirt, fitted top, heels — full look from shoes up',
+    pose:'standing tall and straight, feet slightly apart, hands at sides or one hand on hip, body fully extended upward',
+    expressao:'looking straight down into lens, intense editorial expression, completely owns the angle',
+    cam:'extreme ground-level upward shot, 14mm ultra-wide, camera flat on floor pointing straight up at standing subject, full body from feet to face in one continuous upward frame, maximum upward distortion, dramatic fashion editorial',
+    cenario:'studio strobe or strong outdoor midday light, clean minimal background, fashion editorial shoot',
+    film:'Kodak Ektar 100, high contrast editorial colors'},
+
+  // ── NOVOS PRESETS — CHATGPT SAFE — TODAS AS CATEGORIAS ───────────────────
+  // Totalmente adequados para ChatGPT/DALL-E 3 e postáveis sem bloqueio
+
+  // — ACADEMIA —
+  {key:'gpt_gym_squat_pov',cat:'academia',level:'sfw',icon:'🏋',name:'Agachamento POV Baixo',desc:'POV do chão olhando para cima durante agachamento profundo',
+    corpo:'athletic natural build, legs powerful and defined, real gym body',
+    roupa:'high-waist compression leggings in solid color, sports crop top, athletic shoes',
+    pose:'deep squat hold, knees wide, back straight, arms forward for balance, full body from shoes to face',
+    expressao:'intense focused effort, jaw set, eyes locked forward, internal fire',
+    cam:'ground-level upward shot, 24mm wide angle, camera on floor looking up at squatting subject, legs extending upward filling frame, dramatic upward gym framing',
+    cenario:'modern gym, rubber floor, squat rack visible in background, strong overhead lighting',
+    film:'Kodak Ektar 100, clean high-contrast gym lighting'},
+
+  {key:'gpt_gym_cable_pull',cat:'academia',level:'sfw',icon:'💪',name:'Cable Pull Lateral',desc:'Puxada no cabo lateral: músculo em evidência, luz dura de academia',
+    corpo:'athletic toned arms and shoulders, real muscle definition, natural gym physique',
+    roupa:'sports bra, fitted high-waist leggings, athletic shoes, wrist wraps',
+    pose:'side profile standing cable pull exercise, one arm extended pulling cable, opposite hand on hip, torso engaged, full side body visible',
+    expressao:'athletic grimace of effort, teeth set, fully engaged with the movement',
+    cam:'side profile, eye level, 85mm, capturing full arm extension and cable tension, gym environment behind',
+    cenario:'gym cable machine, iron and chrome equipment, fluorescent overhead, motivational environment',
+    film:'Fujifilm Provia 100F, clean gym tones'},
+
+  {key:'gpt_gym_hip_thrust',cat:'academia',level:'sfw',icon:'🔥',name:'Hip Thrust Pesado',desc:'Hip thrust com barra: glúteos em máxima contração, pose poderosa',
+    corpo:'natural athletic curves, strong glutes engaged, real gym body in motion',
+    roupa:'tight high-waist shorts, sports bra, sneakers, barbell across hips',
+    pose:'hip thrust at peak contraction, back resting on bench, hips fully extended upward, barbell balanced, body parallel to floor at top',
+    expressao:'peak exertion face, eyes focused at ceiling, complete muscular engagement',
+    cam:'side view, 50mm, capturing full hip extension and barbell, clean gym environment',
+    cenario:'gym bench, rubber mat on floor, plates on barbell, modern gym lighting',
+    film:'Kodak Ektar 100, vivid clean athletic colors'},
+
+  {key:'gpt_gym_stretching_floor',cat:'academia',level:'sfw',icon:'🧘',name:'Alongamento no Chão',desc:'Alongamento pós-treino: splits ou butterfly no chão da academia',
+    corpo:'flexible natural body, real curves in stretched position, authentic gym moment',
+    roupa:'tight leggings and sports bra, bare feet, hair in bun or ponytail',
+    pose:'seated butterfly stretch or forward fold — legs out, torso folded forward, arms extended reaching to feet',
+    expressao:'meditative focus inward, eyes closed or down, breath and release',
+    cam:'side medium shot, 50mm, capturing full stretch line from head to toes, natural angle',
+    cenario:'gym floor or studio, wooden floor or rubber mat, natural or warm light',
+    film:'Fujifilm Pro 400H, soft natural tones'},
+
+  // — PRAIA —
+  {key:'gpt_beach_pov_low',cat:'praia',level:'sfw',icon:'🏖',name:'Praia POV Baixo',desc:'POV do chão da praia olhando para cima: sol ao fundo, biquíni, perfeita',
+    corpo:'natural beach body, real skin with sun-kissed tone, authentic feminine proportions',
+    roupa:'colorful bikini, appropriate beach wear, full coverage top and bottom',
+    pose:'standing at water edge, feet in wet sand, slight hip tilt, arms loose, full body from sand to sky',
+    expressao:'eyes closed against the sun or slow smile at the horizon, completely free',
+    cam:'ground-level upward shot, 24mm wide angle, camera low on sand looking up at standing subject, sky and sun in background, dramatic beach editorial angle',
+    cenario:'beach waterline, wet sand, blue sky, sun high or low creating golden rim light',
+    film:'Kodak Ektar 100, vivid beach saturation'},
+
+  {key:'gpt_beach_rear_walk',cat:'praia',level:'sfw',icon:'🌊',name:'Praia — Shot Traseiro',desc:'Shot traseiro caminhando na beira do mar: movimento real, ondas, luz perfeita',
+    corpo:'natural curves from behind, real thigh and hip, authentic stride and beach posture',
+    roupa:'bikini from behind view — tie-back and full coverage bottom, or colorful one-piece',
+    pose:'walking away from camera along waterline, natural stride, slight hair movement, weight shifting side to side',
+    expressao:'free and unaware, candid from behind, real movement captured mid-stride',
+    cam:'following from behind, medium close, 85mm, waist to shoulders, following stride pace',
+    cenario:'ocean waterline, wet sand, waves washing in, golden afternoon, real beach',
+    film:'Fujifilm Velvia 50, vivid tropical saturation'},
+
+  {key:'gpt_beach_lying_pov',cat:'praia',level:'sfw',icon:'☀',name:'Praia — Deitada POV Alto',desc:'POV de cima da pessoa deitada na areia: todo o corpo, luz solar direta',
+    corpo:'natural beach body lying flat, real curves from above, sun-warmed skin',
+    roupa:'colorful bikini, full coverage, sunglasses, possibly a hat beside her',
+    pose:'lying on back in the sand, arms loose beside body or one arm over eyes shielding sun, legs slightly apart natural, completely relaxed',
+    expressao:'eyes closed sunbathing or looking straight up at camera from below sunglasses',
+    cam:'directly above bird-eye at 90 degrees, 50mm equivalent, full body from head to toes visible in frame',
+    cenario:'white sand beach, strong midday sun casting short shadows, real summer afternoon',
+    film:'Kodak Ektar 100, saturated warm summer colors'},
+
+  {key:'gpt_beach_arched_wave',cat:'praia',level:'sfw',icon:'🏄',name:'Praia — Arqueada na Onda',desc:'Arqueada nas ondas rasas: água chegando, pose dramática, luz lateral',
+    corpo:'natural curves defined by arched back and water reflection, real beach body',
+    roupa:'bikini, colorful or classic, full coverage, wet from the ocean',
+    pose:'standing in shallow water, back deeply arched, hands on thighs or one arm raised, head tilted back as wave rushes in around feet, dramatic stance',
+    expressao:'eyes closed tilted back in total surrender to the ocean, free and wild',
+    cam:'from front or slight side, slightly low, 35mm, capturing arch and incoming wave water',
+    cenario:'ocean shallows, incoming wave, golden afternoon light, spray in the air',
+    film:'Fujifilm Velvia 50, vivid water and sky saturation'},
+
+  // — CASUAL —
+  {key:'gpt_casual_mirror_outfit',cat:'casual',level:'sfw',icon:'🪞',name:'Mirror OOTD',desc:'Mirror selfie full body mostrando o look completo do dia',
+    corpo:'natural real proportions in everyday clothes, real person not model, authentic style',
+    roupa:'coordinated casual outfit — fitted jeans and tucked crop, or midi dress, real everyday style',
+    pose:'full body mirror selfie, phone held at chest height, slight hip pop, weight on one leg',
+    expressao:'genuine satisfaction with the look, slight smile, direct mirror gaze',
+    cam:'mirror reflection, full body in frame, well-lit bedroom or bathroom mirror',
+    cenario:'clean bedroom mirror or bathroom mirror, natural window light or warm lamp, real home environment',
+    film:'natural selfie light, authentic feel, Kodak Ultramax 400'},
+
+  {key:'gpt_casual_street_fashion',cat:'casual',level:'sfw',icon:'🏙',name:'Street Fashion Editorial',desc:'Editorial de rua: look urbano, pose poderosa, cidade ao fundo desfocada',
+    corpo:'natural urban proportions, real person with style and confidence, authentic city energy',
+    roupa:'coordinated street style outfit: wide-leg trousers, cropped jacket, ankle boots, accessories',
+    pose:'walking toward camera mid-stride, one foot forward, slight shoulder rotation, bag on arm',
+    expressao:'editorial cool indifference, slight jaw set, owns the sidewalk',
+    cam:'eye level to slightly low, 50mm, motion tracked with shallow depth of field, city behind blurred',
+    cenario:'urban sidewalk, city buildings behind, real street atmosphere, golden afternoon or overcast diffused',
+    film:'Kodak Portra 400, desaturated film urban tones'},
+
+  {key:'gpt_casual_couch_reading',cat:'casual',level:'sfw',icon:'📖',name:'Lendo no Sofá',desc:'Lendo no sofá: candid íntimo, luz natural de janela, completamente natural',
+    corpo:'natural real proportions in relaxed home position, authentic candid moment',
+    roupa:'comfortable home outfit: oversized sweater, shorts or leggings, bare feet, cozy',
+    pose:'curled on sofa with book or phone, feet tucked under, body in natural relaxed curve',
+    expressao:'absorbed in reading, completely unaware of camera, genuine candid intimacy',
+    cam:'candid from across the room, 85mm telephoto, natural window light on face, real home depth',
+    cenario:'lived-in living room, afternoon light from side window, plants, bookshelves, real home',
+    film:'Kodak Portra 800, warm natural indoor tones'},
+
+  {key:'gpt_casual_dancing_kitchen',cat:'casual',level:'sfw',icon:'🎵',name:'Dançando na Cozinha',desc:'Dançando na cozinha sozinha: cabelo solto, meia, joy pura',
+    corpo:'natural body in movement, real curves in motion, joy personified',
+    roupa:'oversized tee, pajama shorts or sweatpants, bare feet or socks, completely casual',
+    pose:'mid-dance spin or hip swing, arms up or one hand trailing hair, weight shifted, motion blur on edges',
+    expressao:'pure private joy, eyes half-closed, laughing or singing, completely herself alone',
+    cam:'candid from doorway, 35mm, natural kitchen light, motion captured in the moment',
+    cenario:'real home kitchen, morning or afternoon, sunlight on tiles, music implied in the motion',
+    film:'Fujifilm Superia 400, natural warm home tones'},
+
+  {key:'gpt_casual_window_light',cat:'casual',level:'sfw',icon:'🌤',name:'Luz da Janela',desc:'Sentada junto à janela com luz natural: retrato intimista e editorial',
+    corpo:'natural real proportions, skin lit from one side by window, authentic soft moment',
+    roupa:'relaxed everyday outfit, could be white tee and jeans or soft dress, natural and simple',
+    pose:'seated by window, one leg pulled up, arm resting on knee, turned slightly toward the light',
+    expressao:'contemplative and calm, slight profile, eyes toward the window light, lost in thought',
+    cam:'from across the room, 85mm, shallow depth of field, window as the key light source',
+    cenario:'bedroom or living room, large window, soft natural daylight, minimal interior, real home',
+    film:'Kodak Portra 160, fine grain portrait tones'},
+
+  // — FANTASIA —
+  {key:'gpt_fantasy_warrior',cat:'fantasia',level:'sfw',icon:'⚔',name:'Guerreira Medieval',desc:'Guerreira com armadura: pose de combate, luz dramática, épica',
+    corpo:'strong athletic natural proportions, warrior stance, real feminine power',
+    roupa:'detailed medieval warrior armor — breastplate, pauldrons, gauntlets, sword or shield, boots',
+    pose:'combat ready stance, sword raised or shield forward, weight distributed, eyes scanning the horizon',
+    expressao:'fierce warrior determination, battle focus, fearless and commanding',
+    cam:'dramatic low angle, 35mm, capturing armor detail and warrior stance against sky',
+    cenario:'stone castle courtyard or ancient battlefield, overcast dramatic sky, atmospheric fog',
+    film:'Cinestill 800T, desaturated cinematic warrior tones'},
+
+  {key:'gpt_fantasy_vampire',cat:'fantasia',level:'sfw',icon:'🧛',name:'Vampira Elegante',desc:'Vampira aristocrata: vestido gótico, pose sedutora, castelo ao fundo',
+    corpo:'pale elegant natural proportions, aristocratic posture, timeless feminine presence',
+    roupa:'long flowing black velvet gown, corseted waist, lace detail, elegant gothic jewelry, pale skin',
+    pose:'standing at stone window, one hand on the frame, looking back over shoulder at camera',
+    expressao:'cold aristocratic superiority, knowing smile barely visible, ageless danger behind the elegance',
+    cam:'from across dark room, 50mm, moonlight from window as key light, deep shadows',
+    cenario:'stone castle chamber, tall arched windows with moonlight, candelabras, dark dramatic atmosphere',
+    film:'Cinestill 800T, desaturated cold blue shadow tones'},
+
+  {key:'gpt_fantasy_angel',cat:'fantasia',level:'sfw',icon:'👼',name:'Anjo Caído',desc:'Anjo caído: asas brancas, pose dramática, luz celestial de baixo para cima',
+    corpo:'ethereal natural proportions, luminous skin, otherworldly presence',
+    roupa:'flowing white or cream draped gown, large white feathered wings, bare feet, floral crown',
+    pose:'kneeling with wings spread wide behind, one arm extended reaching down, head bowed or tilted up dramatically',
+    expressao:'tragic celestial beauty, eyes upward or closed, divine surrender',
+    cam:'low angle looking up, 24mm, capturing wings spread and dramatic pose against light',
+    cenario:'dramatic clouds at golden hour or misty forest clearing, light breaking through dramatically',
+    film:'Kodak Portra 160, ethereal soft highlight tones'},
+
+  {key:'gpt_fantasy_detective',cat:'fantasia',level:'sfw',icon:'🕵',name:'Detetive Noir',desc:'Detetive noir dos anos 40: gabardine, chapéu, chuva, sombra e mistério',
+    corpo:'natural proportions in period-accurate detective costume, confident and sharp',
+    roupa:'fitted trench coat, wide-brim fedora, high heels, red lips, leather gloves',
+    pose:'leaning against brick wall under streetlight, one leg bent, arms crossed, cigarette or file in hand',
+    expressao:'hardboiled knowing look, seen it all expression, slight smirk of superiority',
+    cam:'slightly low, 35mm, rain-wet street reflections, single streetlight as key light',
+    cenario:'rain-wet noir city street at night, streetlight pools, neon signs reflected in puddles',
+    film:'Kodak Tri-X 400, high contrast black and white noir'},
+
+  {key:'gpt_fantasy_mermaid',cat:'fantasia',level:'sfw',icon:'🧜',name:'Sereia',desc:'Sereia sob a água: escamas iridescentes, cabelo flutuando, luz oceânica',
+    corpo:'luminous natural proportions with mermaid tail, underwater grace and flow',
+    roupa:'elaborate iridescent mermaid tail, ornate top with shells or coral, long flowing hair spreading in water',
+    pose:'suspended underwater, tail curved elegantly, arms outstretched, hair fanning in all directions, body arched in a graceful arc',
+    expressao:'ethereal underwater serenity, eyes open and luminous, otherworldly calm',
+    cam:'underwater camera from below or side, 20mm, light rays filtering from surface above, bubbles rising',
+    cenario:'deep clear blue ocean, light filtering from surface, coral and sea life surrounding, magical blue-green water',
+    film:'underwater film simulation, vivid aquamarine tones, light scattering'},
+
+  // — LOCAIS —
+  {key:'gpt_location_rooftop_sunset',cat:'locais',level:'sfw',icon:'🌆',name:'Rooftop Pôr do Sol',desc:'No rooftop ao pôr do sol: silhueta dramática contra o céu laranja',
+    corpo:'natural proportions in silhouette against sky, real feminine outline',
+    roupa:'fitted dress or coordinated separates, heels, hair loose in potential evening breeze',
+    pose:'standing at rooftop edge railing, arms out wide or one hand on railing, facing sunset, slight profile',
+    expressao:'free and expansive, eyes closed or looking at the horizon, completely present',
+    cam:'from behind or slight side, 35mm, sun as backlight creating silhouette, city below',
+    cenario:'urban rooftop, city skyline at golden hour, dramatic orange and pink sky, real city depth',
+    film:'Fujifilm Velvia 50, vivid sunset sky saturation'},
+
+  {key:'gpt_location_cafe_window',cat:'locais',level:'sfw',icon:'☕',name:'Cafeteria — Janela',desc:'Sentada na janela do café: latte art, luz natural, editorial europeu',
+    corpo:'natural real proportions, candid café moment, authentic person in real place',
+    roupa:'effortless chic casual: fitted turtleneck, tailored trousers, simple earrings, real style',
+    pose:'seated at café window table, both hands around coffee cup, one leg crossed, light from window on face',
+    expressao:'soft contemplation, slight smile at something outside the window, completely absorbed',
+    cam:'from across the café, 85mm telephoto, window light as natural key light, café interior depth',
+    cenario:'European-style café, large windows, marble tables, street visible through glass, natural morning light',
+    film:'Kodak Portra 160, natural fine-grain European café tones'},
+
+  {key:'gpt_location_art_gallery',cat:'locais',level:'sfw',icon:'🎨',name:'Galeria de Arte',desc:'Na galeria entre obras: ela mesma como obra de arte',
+    corpo:'elegant natural proportions, gallery posture, real person as art in the art space',
+    roupa:'sophisticated outfit: simple midi dress or tailored suit, minimal jewelry, low heels',
+    pose:'standing before large painting, arms crossed contemplating it, then turning to look at camera',
+    expressao:'intellectual engagement transitioning to knowing look at camera, art and presence coexist',
+    cam:'from behind slightly, 50mm, capturing her and the artwork simultaneously, gallery lighting',
+    cenario:'white-walled art gallery, large abstract paintings, track lighting from above, polished floor',
+    film:'Fujifilm Pro 400H, clean gallery white balance'},
+
+  {key:'gpt_location_tokyo_street',cat:'locais',level:'sfw',icon:'🗾',name:'Rua de Tóquio',desc:'Rua de Tóquio à noite: néons, chuva, pose editorial cinematográfica',
+    corpo:'natural proportions in urban Tokyo night context, real person in cinematic scene',
+    roupa:'contemporary fashion-forward outfit: oversized jacket, wide trousers, platform shoes, Asian street fashion',
+    pose:'standing in crosswalk or under neon sign, light rain, umbrella held or not, full body',
+    expressao:'cool urban composure, looks at camera briefly while navigating the city rush',
+    cam:'street-level, 35mm, rain on lens slightly, neon reflections on wet pavement',
+    cenario:'Shinjuku or Shibuya street, rain-wet pavement reflecting neon signs, real Tokyo night energy',
+    film:'Cinestill 800T, neon-saturated Tokyo night colors'},
+
+  // — SELFIE —
+  {key:'gpt_selfie_car',cat:'selfie',level:'sfw',icon:'🚗',name:'Selfie no Carro',desc:'Car selfie com luz natural: ângulo perfeito, luz do sol pela janela',
+    corpo:'natural real face and neckline, car interior frame, real person aesthetic',
+    roupa:'casual or dressy depending on the vibe — real outfit visible from shoulder up',
+    pose:'selfie arm extended toward driver or passenger side, slight chin tilt, one hand on wheel or headrest',
+    expressao:'effortless cute or editorial — the car selfie knows what it is, owns the moment',
+    cam:'slightly above eye level, wide selfie perspective, window light as key, real car interior',
+    cenario:'car interior, sun coming through windshield or side window, parked or pulled over, real and candid',
+    film:'natural selfie phone aesthetic, bright warm tones'},
+
+  {key:'gpt_selfie_gym_progress',cat:'selfie',level:'sfw',icon:'💪',name:'Selfie Progresso',desc:'Progress selfie na academia: espelho, corpo trabalhado, orgulho real',
+    corpo:'natural athletic body showing real fitness progress, real muscle and curves',
+    roupa:'sports bra and high-waist leggings or shorts, real gym wear that shows the work',
+    pose:'full body or three-quarter mirror selfie, one hand angled up with phone, slight quarter turn showing side profile',
+    expressao:'genuine pride and hard work visible, slight smirk of satisfaction, earned confidence',
+    cam:'gym mirror, full body or ¾ body, overhead gym lighting, clean reflection',
+    cenario:'gym locker room mirror or large gym mirror, motivational environment, real and unfiltered',
+    film:'gym lighting, clean bright colors, unfiltered authentic'},
+
+  {key:'gpt_selfie_golden_hour_outdoor',cat:'selfie',level:'sfw',icon:'🌇',name:'Golden Hour Selfie',desc:'Selfie ao pôr do sol: luz dourada no rosto, natural e cinematográfico',
+    corpo:'natural real face in golden hour light, skin glowing, authentic outdoor beauty',
+    roupa:'summer dress or casual outfit, shoulders possibly bare, natural outdoor vibe',
+    pose:'outdoor selfie, arm extended, slight head tilt into the light, squinting slightly against brightness',
+    expressao:'genuine joy of a perfect sunset moment, natural laugh or soft golden hour glow smile',
+    cam:'selfie angle, slightly above, golden rim light from behind, main light from setting sun front-side',
+    cenario:'outdoor golden hour, park or beach or rooftop, real sunset colors in the sky behind',
+    film:'Kodak Portra 400, golden hour warmth amplified'},
+
+  // — ACADEMIA EXTRAS —
+  {key:'gpt_gym_plank_low',cat:'academia',level:'sfw',icon:'🧱',name:'Prancha POV Lateral',desc:'Prancha lateral em close: foco no core e nas curvas, câmera no chão',
+    corpo:'athletic core engaged, real curves in horizontal plank position',
+    roupa:'high-waist compression leggings, sports bra, sneakers',
+    pose:'full plank position, body completely horizontal, arms straight, feet together, full lateral view from head to toe',
+    expressao:'hardcore athletic focus, jaw set, staring at floor, breath controlled',
+    cam:'ground-level side shot, 35mm, camera at floor level capturing full horizontal body line from head to feet',
+    cenario:'gym floor or studio, rubber mat, overhead lighting casting short shadow under body',
+    film:'Kodak Ektar 100, clean high-contrast athletic'},
+
+  {key:'gpt_gym_lunge_rear',cat:'academia',level:'sfw',icon:'🦵',name:'Avanço Rear Shot',desc:'Avanço com peso: shot traseiro lateral capturando o movimento completo',
+    corpo:'natural athletic curves, glute and thigh definition in lunge, real gym body',
+    roupa:'high-waist leggings, sports bra, sneakers, possibly holding dumbbells',
+    pose:'walking lunges mid-step from behind — rear leg fully extended back, front knee over ankle, torso upright, arms with weights',
+    expressao:'movement focus, complete engagement, the exercise is everything',
+    cam:'slightly behind and to the side, 50mm, eye level to slightly low, capturing full lunge stride',
+    cenario:'gym floor, dumbbell rack visible in background, real training environment, overhead lighting',
+    film:'Fujifilm Provia 100F, clean athletic colors'},
+
+  // — TIKTOK EXTRAS —
+  {key:'tt_lying_road',cat:'tiktok',level:'sfw',icon:'🛣',name:'Deitada na Estrada',desc:'Deitada na estrada deserta: editorial cinematográfico, céu infinito',
+    corpo:'natural curves lying on asphalt, real proportions in dramatic outdoor context',
+    roupa:'mini dress or shorts and crop, heels beside her not on feet, laid out like a fashion shoot',
+    pose:'lying on center line of empty road, arms out wide, legs together or slightly crossed, looking straight up at camera',
+    expressao:'free and dreaming, eyes open to sky, complete surrender to the moment',
+    cam:'directly above from drone or high ladder, 35mm equivalent, full body and road extending in both directions',
+    cenario:'empty rural road at golden hour, long straight road, golden fields or forest on both sides, epic sky',
+    film:'Kodak Ektar 100, vivid cinematic road colors'},
+
+  {key:'tt_hanging_bar',cat:'tiktok',level:'sfw',icon:'🏋',name:'Pendurada na Barra',desc:'Pendurada na barra pull-up: corpo alongado, curvas expostas, força',
+    corpo:'natural body fully extended hanging, curves defined by stretched position, real strength',
+    roupa:'high-waist shorts, sports bra, athletic shoes, strong athletic look',
+    pose:'hanging from pull-up bar, arms fully extended above, legs slightly bent or crossed at ankle, body fully stretched downward',
+    expressao:'relaxed hanging moment between reps, slight smile, strength and ease',
+    cam:'from below at an angle, 24mm, looking up at hanging figure, gym ceiling above',
+    cenario:'gym pull-up bar, industrial ceiling above, gym environment, strong overhead light',
+    film:'Kodak Ektar 100, clean high-contrast gym lighting'},
+
+  {key:'tt_arch_bridge',cat:'tiktok',level:'sfw',icon:'🌉',name:'Arqueada na Ponte',desc:'Arqueada na grade da ponte: cidade abaixo, vestido voando, pose perfeita',
+    corpo:'natural curves defined by back arch over bridge railing, real proportions',
+    roupa:'fitted mini dress or skirt and top, heels, hair loose catching the wind',
+    pose:'leaning back against bridge railing, back arched, hands gripping rail behind, face to the sky, slight wind movement',
+    expressao:'eyes closed, surrendering to the wind and the city moment, completely free',
+    cam:'from the side, slightly low, 35mm, capturing arch and city bridge structure behind',
+    cenario:'pedestrian bridge, city visible below through the arch, golden hour or blue hour, urban beauty',
+    film:'Fujifilm Velvia 50, vivid city and sky saturation'},
+
+  // ── GÓTICA & DARK ──
+
+  // SFW — editoriais
+  {key:'goth_cemetery_editorial',cat:'gotica',level:'sfw',icon:'🖤',name:'Cemitério Editorial',desc:'Pose editorial entre lápides antigas: vestido negro, névoa, luz azul dramática',
+    corpo:'natural pale feminine proportions, statuesque editorial posture, dark elegance',
+    roupa:'long flowing black tulle gown, corseted bodice, black lace gloves, Victorian choker, black ankle boots',
+    pose:'standing beside old stone grave marker, one hand resting gently on top, looking directly into lens with composed authority',
+    expressao:'cold aristocratic composure, unreadable dark eyes, slight knowing half-smile, complete control',
+    cam:'full body, 85mm f/1.4, eye level, subject sharp against softly blurred gravestones',
+    cenario:'19th-century stone cemetery, overcast grey sky, bare twisted trees, ground-level mist curling between grave markers, fading afternoon light',
+    film:'Ilford HP5 pushed to 1600, high-contrast dramatic grain, desaturated cold tones'},
+
+  {key:'goth_dark_library',cat:'gotica',level:'sfw',icon:'📚',name:'Biblioteca Sombria',desc:'Entre livros antigos e velas: dark academia gótica, pose intelectual',
+    corpo:'natural proportions, deliberate refined posture, intellectual gothic presence',
+    roupa:'fitted black turtleneck, wide-leg black trousers, structured black blazer, silver signet ring, pointed black boots',
+    pose:'seated at massive wooden desk, one leg crossed, reading large ancient tome, one candle burning nearby, slight turn toward camera as if interrupted',
+    expressao:'sharp intelligent gaze, slightly annoyed to be disturbed from reading, commanding intellectual presence',
+    cam:'medium shot from across the desk, 50mm, candlelight as primary warm fill, cold daylight from side window',
+    cenario:'grand private library, floor-to-ceiling dark wooden shelves, leather-bound books, globe, burning candles, deep shadows, twilight through tall windows',
+    film:'Kodak T-Max 400, moody contrast, candlelight warm shadow tones'},
+
+  {key:'goth_black_forest',cat:'gotica',level:'sfw',icon:'🌲',name:'Floresta Negra',desc:'Profundezas da floresta escura: vestido medieval, luz filtrada entre árvores',
+    corpo:'natural proportions, immersed in the forest, one with the dark landscape',
+    roupa:'long dark burgundy velvet gown with wide sleeves, braided leather belt, crown of dried black flowers and thorns, bare feet',
+    pose:'standing between two ancient tree trunks, arms slightly raised to touch the bark on each side, head tilted back looking up through the canopy',
+    expressao:'eyes closed or barely open, serene communion with the forest, pagan calm, primal connection',
+    cam:'from slightly below eye level, 35mm, capturing canopy above and forest floor below, deep depth of field',
+    cenario:'ancient dense forest, enormous moss-covered tree trunks, shafts of cold light breaking through the canopy, forest floor covered in dead leaves and mist',
+    film:'Cinestill 800T, desaturated cold green-teal forest palette, deep blacks'},
+
+  {key:'goth_victorian_portrait',cat:'gotica',level:'sfw',icon:'🕯',name:'Retrato Vitoriano',desc:'Retrato vitoriano formal: vestido de época, candelabro, poses de pintura',
+    corpo:'natural proportions in period-accurate Victorian styling, rigidly upright formal posture',
+    roupa:'high-collared Victorian black mourning dress, lace cuffs, cameo brooch, hair pinned up severely with small dark flowers',
+    pose:'seated in high-back throne chair, hands folded precisely in lap, spine perfectly straight, slight three-quarter turn to camera',
+    expressao:'formal Victorian portrait expression, unsmiling composed dignity, eyes holding camera steadily, era-appropriate restraint',
+    cam:'formal portrait framing, 85mm, studio-style even lighting as if painted portrait, slight vignette',
+    cenario:'formal Victorian parlor, ornate wallpaper, tall candelabra lit, heavy curtains, marble mantelpiece, old oil portrait hanging behind',
+    film:'daguerreotype-style monochrome, Ilford Delta 100, fine grain, period-accurate tonal range'},
+
+  {key:'goth_urban_rain',cat:'gotica',level:'sfw',icon:'🌧',name:'Chuva Urbana Dark',desc:'Rua noturna sob chuva: guarda-chuva preto, reflexo no asfalto, neon frio',
+    corpo:'natural proportions in dark urban environment, rain-soaked atmospheric presence',
+    roupa:'fitted long black leather trench coat, platform black boots, fishnet stockings visible, black choker, dark eyeshadow and black lips',
+    pose:'standing at rain-slicked intersection, holding black umbrella low over one shoulder, free hand in coat pocket, looking down the wet street past the camera',
+    expressao:'contemplative urban melancholy, slightly parted lips, eyes tracking something distant, neon colors reflecting in dark eyes',
+    cam:'from across the street, 50mm, low angle catching puddle reflections, neon bokeh behind',
+    cenario:'narrow urban street at night, rain falling, neon signs reflected in wet asphalt, streetlights creating halos, fog in the distance',
+    film:'Cinestill 800T, neon halation, blue-magenta night palette'},
+
+  {key:'goth_witch_ritual',cat:'gotica',level:'sfw',icon:'🔮',name:'Ritual da Bruxa',desc:'Bruxa moderna ao altar: ervas, velas, olhar de poder sobrenatural',
+    corpo:'natural proportions, grounded powerful presence, witchcore aesthetic',
+    roupa:'layered black linen and velvet, wide lace collar, silver pentagram pendant, ring on every finger, leather boots, hair loose and wild',
+    pose:'kneeling at low altar covered in candles, crystals, and dried herbs, hands open in ritual gesture over a flame, face turned toward camera',
+    expressao:'intense focused power, eyes burning with intention, completely in her element, slight smile of mastery',
+    cam:'dramatic low angle from across the altar, 35mm, candlelight below illuminating face dramatically from under',
+    cenario:'stone-walled ritual room or outdoor clearing at night, dozens of candles, herbs hanging from above, crystals and grimoire open on altar, smoke and incense',
+    film:'Kodak T-Max 3200, candlelit grain, dramatic warm shadows into cool darkness'},
+
+  {key:'goth_rooftop_night',cat:'gotica',level:'sfw',icon:'🌃',name:'Cobertura Noturna',desc:'Silhueta gótica na cobertura da cidade: skyline, vento no vestido, poder',
+    corpo:'natural proportions striking silhouette against city lights, commanding height presence',
+    roupa:'structured black avant-garde coat or long black dress, tall platform boots, angular silver jewelry, dark windswept hair',
+    pose:'standing at the very edge of rooftop, arms slightly out, coat or dress caught in the wind behind, looking out over the city with absolute ownership',
+    expressao:'commanding the city below, cold powerful gaze into the distance, queen of the night energy, wind lifting hair',
+    cam:'from behind slightly to one side, 24mm, capturing full city skyline below and subject against the sky',
+    cenario:'high-rise rooftop at night, city of lights stretching to horizon, cold wind, overcast sky with city glow underneath the clouds',
+    film:'Cinestill 800T, city bokeh orange and teal, cold dark atmosphere'},
+
+  {key:'goth_dark_ballet',cat:'gotica',level:'sfw',icon:'🩰',name:'Balé Negro',desc:'Bailarina gótica: collant preto, sala espelhada, luz dura dramática',
+    corpo:'natural proportions in dancer posture, controlled athletic grace, real body in balletic movement',
+    roupa:'black fitted ballet leotard, sheer black tutu, black pointe shoes, torn black tights, dark makeup, hair in tight severe bun',
+    pose:'arabesque or grand battement in center of empty studio, one leg extended high, arms precisely positioned, fully extended artistic line',
+    expressao:'fierce artistic concentration, controlled physical power, dark dramatic ballet intensity',
+    cam:'from the side at distance, 85mm, capturing full extension of the pose, mirror reflecting duplicate',
+    cenario:'large ballet rehearsal studio, floor-to-ceiling mirrors, harsh overhead fluorescent light, wooden barre along one wall, empty',
+    film:'Ilford HP5, high contrast black and white, dance photography tones'},
+
+  {key:'goth_dark_romantico',cat:'gotica',level:'sfw',icon:'🥀',name:'Dark Romance',desc:'Romance sombrio: rosas secas, ruínas de pedra, vestido drapeado, névoa',
+    corpo:'natural proportions, languid romantic posture, dark feminine elegance',
+    roupa:'deep plum or wine-colored draped silk gown, off-shoulder, corseted silhouette, dried roses tucked in décolletage or hair, bare arms',
+    pose:'reclining across broken stone wall of ruined archway, one arm draped overhead touching the stones, other hand holding a single dead rose, head turned to camera',
+    expressao:'romantic melancholy, slight parting of lips, heavy-lidded eyes with intense emotion, pre-Raphaelite painting expression',
+    cam:'from slightly above, 85mm, shallow depth of field, subject sharp against blurred ruined arches',
+    cenario:'crumbling stone ruins of old chapel or castle, autumn landscape, ground-level mist, dry rose petals scattered on stones, overcast romantic light',
+    film:'Kodak Portra 160, heavily desaturated, burgundy-grey color grade'},
+
+  // Sensual gótica
+  {key:'goth_latex_editorial',cat:'gotica',level:'sensual',icon:'🖤',name:'Latex Gótico',desc:'Latex preto brilhante: pose dominante, fundo escuro, luz especular dramática',
+    corpo:'natural curves defined by latex, real proportions emphasized by fitted material',
+    roupa:'full black latex bodysuit or corset and skirt, tall platform lace-up boots, opera gloves, silver chain jewelry',
+    pose:'standing facing camera with weight shifted onto one hip, one hand on hip, the other hanging with relaxed authority, slight chin tilt down',
+    expressao:'absolute confident dominance, cold challenging stare, completely in control, unbreakable',
+    nsfw:'latex fitting every curve, candid body confidence, powerful feminine sensuality',
+    cam:'full body, 85mm, studio strobe creating specular latex reflection highlights, rest in deep shadow',
+    cenario:'pure black studio background, single dramatic hard key light from above-side, strong specular highlight on latex surface',
+    film:'Cinestill 800T, desaturated, specular highlight blown to pure white on latex'},
+
+  {key:'goth_lingerie_dark',cat:'gotica',level:'sensual',icon:'🕸',name:'Lingerie Dark',desc:'Lingerie gótica: renda preta, body intrincado, quartos com velas',
+    corpo:'natural proportions in ornate dark lingerie, skin visible between lace patterns',
+    roupa:'intricate black lace bodysuit with strappy details, garter belt with fishnet stockings, black velvet choker, dark nail polish',
+    pose:'standing in front of ornate dark mirror, three-quarter profile, one hand touching choker, other hand at side, slight arch of back',
+    expressao:'smoldering self-aware gaze into own reflection, awareness of the viewer, contained seductive power',
+    nsfw:'intricate lace lingerie against pale skin, candlelight tracing feminine curves, dark sensuality',
+    cam:'medium-full shot including mirror reflection, 50mm, candle and fireplace warm light, rest in shadow',
+    cenario:'gothic bedroom with heavy canopy bed, ornate dark mirror, burning candelabra, red velvet drapes, flickering candlelight only',
+    film:'Kodak T-Max 3200, warm candlelight against cool shadow, fine lace texture preserved'},
+
+  {key:'goth_dominatrix_editorial',cat:'gotica',level:'sensual',icon:'⛓',name:'Dark Dominance',desc:'Editorial dominante: couro, correntes, pose de poder absoluto',
+    corpo:'natural proportions commanding powerful presence, real feminine strength',
+    roupa:'structured black leather corset, high-waist pants or skirt, tall spike-heel boots, silver chain belt, studded collar, leather gloves',
+    pose:'seated forward on edge of dark throne or chair, legs apart and planted, elbows on knees, leaning toward camera with focused intensity',
+    expressao:'absolute authority and control, direct unwavering challenging eye contact, no softness, complete power',
+    nsfw:'leather and chain aesthetic, commanding body confidence, raw dominant energy',
+    cam:'from slightly below, 50mm, single dramatic hard light from above creating sharp shadows under jaw and collar',
+    cenario:'minimal dark industrial set, concrete walls, single hanging bare bulb or hard spot, chains or hooks visible in background shadow',
+    film:'Ilford HP5, pushed grain, extreme high contrast, near-black shadows'},
+
+  {key:'goth_vampire_boudoir',cat:'gotica',level:'sensual',icon:'🧛',name:'Vampira Boudoir',desc:'Vampira sedutora no quarto: camisola rendada, luz de vela, pose sedutora',
+    corpo:'natural pale proportions in vampiric styling, luminous skin against dark bedding',
+    roupa:'sheer black lace negligee, long flowing, black velvet robe open over it, bare feet, dark gel nails, red lips against pale skin',
+    pose:'reclining on dark velvet chaise longue or bed edge, one leg bent and drawn up, upper body slightly raised on one elbow, turning toward camera',
+    expressao:'seductive predatory charm, crimson lips slightly parted, heavy-lidded knowing gaze, immortal patience and desire',
+    nsfw:'sheer lace revealing natural curves, pale skin against dark velvet, vampiric sensuality, candlelight tracing the body',
+    cam:'from slightly above and to the side, 85mm, only candlelight illuminating the scene, rest in deep dramatic shadow',
+    cenario:'gothic bedroom, dark velvet drapes, ornate four-poster bed with black satin sheets, dozens of red and black candles, gothic architecture details',
+    film:'Cinestill 800T, deep shadows, candlelight warmth, desaturated except the red lips'},
+
+  {key:'goth_nu_editorial',cat:'gotica',level:'sensual',icon:'🌑',name:'Nu-Goth Editorial',desc:'Nu-goth minimalista: crop e micro saia, make dark, pose urbana atitude',
+    corpo:'natural proportions in nu-goth street styling, real body confidence',
+    roupa:'tiny black crop top or bralette, black micro pleated skirt, platform sandals, layered silver chains, dark eyeshadow and black lips',
+    pose:'leaning against graffiti wall, one foot flat against it, arms loose, attitude in every detail of the body language',
+    expressao:'absolutely effortless cool, don\'t-care confidence, slight smirk, full ownership of the look and the space',
+    nsfw:'minimal clothing revealing natural figure, raw urban street confidence, dark attitude',
+    cam:'from across the street, 35mm, natural daylight or overcast urban light, full body capturing attitude',
+    cenario:'urban street or alley, graffiti walls, industrial textures, overcast city light, real raw environment',
+    film:'Kodak Tri-X 400, pushed grain, high contrast street photography tones'},
+
+  // ── COSPLAY & ANIME ──
+  {key:'cos_sailor_moon',cat:'cosplay',level:'sfw',icon:'🌙',name:'Sailor Moon',desc:'Cosplay Sailor Moon: uniforme branco e azul, pose icônica, fundo estrelado',
+    corpo:'natural proportions in slim fitted cosplay uniform, athletic and graceful posture',
+    roupa:'white sailor uniform with blue pleated skirt, red bow tie, long white gloves, red hair clips, red heels, Sailor Moon iconic costume',
+    pose:'iconic Sailor Moon pose, one hand pointing forward dramatically, other hand at hip, one leg slightly forward, determined hero stance',
+    expressao:'fierce determination and hope combined, bright sparkling eyes, slight open smile, heroic resolve',
+    cam:'full body, 35mm, slightly low angle looking up at hero, capturing the drama of the pose',
+    cenario:'starry night sky background, full moon behind, sparkle effects in the air, magical girl energy',
+    film:'Fujifilm Velvia 50, vivid saturated colors, magical soft highlight tones'},
+
+  {key:'cos_rem_rezero',cat:'cosplay',level:'sfw',icon:'💙',name:'Rem Re:Zero',desc:'Cosplay Rem: uniforme de empregada azul, olhar devotado, quarto do castelo',
+    corpo:'natural petite proportions in fitted maid uniform, dainty and precise posture',
+    roupa:'blue and white maid uniform, white apron, blue hair wig with white headband, black stockings, mary jane shoes, Rem cosplay',
+    pose:'standing with hands clasped in front, head slightly tilted in characteristic Rem way, perfectly upright maid posture',
+    expressao:'devoted and loyal gaze, soft warm smile, characteristic Rem sincerity, slight blush',
+    cam:'medium shot, 85mm, eye level, capturing uniform detail and expression',
+    cenario:'ornate castle interior, stone walls, candles, fantasy medieval setting fitting the anime',
+    film:'Fujifilm Pro 400H, soft pastel anime-like color rendering'},
+
+  {key:'cos_levi_fem',cat:'cosplay',level:'sfw',icon:'⚔',name:'Levi Feminino',desc:'Cosplay Levi fem: uniforme Survey Corps, pose de combate, fundo industrial',
+    corpo:'compact athletic natural proportions, battle-ready coiled posture, intense physical presence',
+    roupa:'Survey Corps uniform, white shirt, brown pants, leather harness, green cape with wings-of-freedom emblem, 3D maneuver gear equipment',
+    pose:'low crouching combat stance, one hand gripping blade handle at hip, eyes scanning the horizon with predatory focus',
+    expressao:'cold calculating military intensity, piercing eyes, no wasted emotion, complete battle focus',
+    cam:'dynamic low angle, 24mm, capturing the combat stance from below and to the side',
+    cenario:'ruins of a city wall, broken stone, atmospheric fog, Survey Corps battlefield environment',
+    film:'Kodak T-Max 400, desaturated military tones, high contrast'},
+
+  {key:'cos_naruto_fem',cat:'cosplay',level:'sfw',icon:'🍥',name:'Naruto Feminino',desc:'Cosplay Naruto feminino: roupa laranja, pose ninja icônica, vila oculta',
+    corpo:'natural energetic proportions, ninja ready athletic stance, youthful powerful energy',
+    roupa:'orange and blue ninja outfit, forehead protector headband, ninja sandals, Uzumaki clan details, female adaptation of the iconic Naruto costume',
+    pose:'iconic Naruto hand seal pose, fingers interlocked in jutsu position, determined forward lean, ninja energy',
+    expressao:'never-give-up determination, wide bright challenging eyes, broad confident smile, pure energy',
+    cam:'medium shot with energy, 35mm, slightly dynamic angle catching the pose',
+    cenario:'rooftops of hidden leaf village, ninja training ground, wooden training posts in background',
+    film:'Kodak Ektar 100, vivid warm colors, vibrant energy'},
+
+  {key:'cos_lara_croft',cat:'cosplay',level:'sfw',icon:'🏺',name:'Lara Croft',desc:'Cosplay Lara Croft: tanktop, shorts cargo, arco, ruínas de templo',
+    corpo:'athletic toned natural proportions, adventurer agile stance, real physical capability',
+    roupa:'teal sleeveless tank top, brown cargo shorts, leather boots, bow and quiver over shoulder, arm wraps, survival gear, Tomb Raider authentic look',
+    pose:'crouching behind stone cover, bow drawn at the ready, one knee on ground, alert scanning the environment',
+    expressao:'focused survival alertness, determined jaw set, eyes sharply tracking, adventurer intensity',
+    cam:'from the side slightly behind, 35mm, capturing the drawn bow and crouching pose',
+    cenario:'ancient jungle temple ruins, overgrown stone, shafts of light through canopy, mysterious archaeological site',
+    film:'Kodak Ektar 100, lush vivid jungle tones, warm golden light'},
+
+  {key:'cos_2b_nier',cat:'cosplay',level:'sfw',icon:'🤖',name:'2B NieR Automata',desc:'Cosplay 2B: vestido branco, blindfold, espada, pose android fria',
+    corpo:'elegant natural proportions in android warrior styling, precise controlled posture, otherworldly grace',
+    roupa:'white short battle dress, black form-fitting bodysuit underneath, white gloves, thigh-high boots, black blindfold visor, YoRHa unit badge',
+    pose:'standing perfectly upright with both hands behind back in android rest position, sword floating visually beside her, slight head tilt',
+    expressao:'emotionless android serenity, slight downward cast of lips, perfectly controlled face, YoRHa unit discipline',
+    cam:'full body, 85mm, slightly low, capturing dress detail and android posture',
+    cenario:'ruined futuristic city overgrown with nature, crumbling skyscrapers, grass and vines reclaiming concrete',
+    film:'Cinestill 800T, cold blue-white android palette, desaturated beauty'},
+
+  {key:'cos_tracer_overwatch',cat:'cosplay',level:'sfw',icon:'⚡',name:'Tracer Overwatch',desc:'Cosplay Tracer: jaqueta laranja, calças azuis, chronal accelerator, pose veloz',
+    corpo:'compact athletic natural proportions, perpetually in motion energy, quick and agile stance',
+    roupa:'brown leather bomber jacket, blue tight pants, orange and white chest chronal accelerator harness, goggles on head, red and white gloves, Tracer boots',
+    pose:'mid-movement pose, one foot forward with motion blur energy, hands ready to blink, caught mid-dash',
+    expressao:'irrepressible joyful grin, bright excited eyes, Cheers love! energy, completely alive',
+    cam:'dynamic 35mm capturing motion, slight intentional blur on edges suggesting speed',
+    cenario:'London streets in future Overwatch world, neon signs, rain-slicked streets, urban energy',
+    film:'Kodak Ektar 100, vivid saturated action colors'},
+
+  {key:'cos_tifa_ff7',cat:'cosplay',level:'sfw',icon:'🥊',name:'Tifa FF7',desc:'Cosplay Tifa: top preto, saia suspensórios, luvas de boxe, Midgar',
+    corpo:'strong athletic natural proportions, martial artist power stance, real fighter build',
+    roupa:'black crop top, black skirt with red suspenders, bare midriff, red boxing gloves on hands, black boots, long black hair',
+    pose:'fighting stance, fists raised in front of face in boxing guard, weight forward on front foot, ready to fight',
+    expressao:'fierce protective determination, strong jaw set, eyes focused on the threat, friend-protecting fire',
+    cam:'medium close, 50mm, slightly low angle emphasizing the fighting stance',
+    cenario:'Midgar slum streets, industrial pipes and machinery, Mako reactor glow in distance, rain',
+    film:'Cinestill 800T, Midgar industrial teal and orange color grade'},
+
+  {key:'cos_wonder_woman',cat:'cosplay',level:'sfw',icon:'🦅',name:'Mulher Maravilha',desc:'Cosplay Mulher Maravilha: armadura dourada, escudo, lasso dourado, pose heroica',
+    corpo:'powerful athletic natural proportions, Amazonian warrior presence, commanding heroic stance',
+    roupa:'red and gold armored bustier, blue shorts with white stars, golden tiara, Lasso of Truth at hip, bracers of submission, red cape',
+    pose:'heroic standing pose, shield arm extended forward, other hand on hip or holding lasso, full superhero stance',
+    expressao:'compassionate power, warrior dignity and grace, strength in service of love, iconic Wonder Woman resolve',
+    cam:'dramatic low angle, 24mm, capturing the heroic stance against the sky',
+    cenario:'ancient Greek island landscape, Themyscira cliffs, sunlit Mediterranean sea below, golden hour light',
+    film:'Kodak Ektar 100, golden warm heroic tones, vivid primary colors'},
+
+  {key:'cos_black_widow',cat:'cosplay',level:'sfw',icon:'🕷',name:'Black Widow',desc:'Cosplay Black Widow: catsuit preto, pistolas, pose de agente',
+    corpo:'athletic agile natural proportions, spy operative balanced stance, controlled dangerous presence',
+    roupa:'fitted black tactical catsuit, Widow Bites bracelets, tactical belt, shoulder holsters with handguns, red hourglass symbol, black tactical boots',
+    pose:'operative stance, one gun raised to eye level sighting down the barrel, other arm extended for balance, spy ready',
+    expressao:'cold professional operative focus, calculating threat assessment, Black Widow contained lethal calm',
+    cam:'from slightly behind and low, 35mm, capturing the aiming stance and silhouette',
+    cenario:'dark industrial corridor, metal walkways, emergency red lighting, spy thriller environment',
+    film:'Kodak T-Max 3200, high contrast spy noir, desaturated cold tones'},
+
+  {key:'cos_harley_quinn',cat:'cosplay',level:'sfw',icon:'🃏',name:'Harley Quinn',desc:'Cosplay Harley Quinn: jaqueta vermelha e azul, tranças, mallet, Gotham',
+    corpo:'natural proportions in colorful villain styling, chaotic playful energy in every stance',
+    roupa:'red and blue bomber jacket, tiny shorts, fishnet stockings, platform boots, pigtail braids, Daddy Issues choker, oversized mallet',
+    pose:'swinging mallet over shoulder with both hands, wide chaotic grin, one leg kicked up, completely unhinged fun energy',
+    expressao:'gleeful chaotic madness, wide manic grin, eyes lit with unpredictable fun, Puddin energy',
+    cam:'wide 24mm capturing the full theatrical pose with the mallet',
+    cenario:'Gotham City alley at night, neon signs, playing card debris on ground, villain lair aesthetic',
+    film:'Fujifilm Velvia 50, oversaturated comic book colors, vivid red and blue'},
+
+  {key:'cos_catwoman',cat:'cosplay',level:'sfw',icon:'🐱',name:'Catwoman',desc:'Cosplay Catwoman: catsuit preto, chicote, óculos de gato, Gotham noturno',
+    corpo:'lithe athletic natural proportions, feline predator grace, coiled ready energy',
+    roupa:'sleek black latex or leather catsuit, cat-ear goggle mask, bullwhip coiled at hip, stiletto heeled boots, long black gloves',
+    pose:'perched on a rooftop ledge, one knee raised, arm draping over knee with whip loose, looking back at camera over shoulder with knowing confidence',
+    expressao:'knowing feline smirk, cat-eyes with the mask, completely in control of the situation, amused superiority',
+    cam:'from across the rooftop, 50mm, Gotham city visible far below, slight backlit from city glow',
+    cenario:'Gotham City rooftop at night, skyline stretching behind, city lights far below, cool night air',
+    film:'Cinestill 800T, Gotham noir blue-orange night palette'},
+
+  {key:'cos_zelda',cat:'cosplay',level:'sfw',icon:'🧝',name:'Princesa Zelda',desc:'Cosplay Zelda: vestido branco dourado, coroa élfica, Triforce, Hyrule',
+    corpo:'regal natural proportions, princess upright dignified posture, elven grace',
+    roupa:'elegant white and gold gown with Hyrulean symbols, pointed elf ears, golden Hylian crown, Triforce pendant, white gloves',
+    pose:'standing in royal throne room pose, hands gracefully at sides, slight forward angle of head, Hylian princess bearing',
+    expressao:'serene royal wisdom, compassionate gaze, gentle princess dignity, inner strength visible',
+    cam:'full body, 85mm, eye level, capturing gown detail and royal bearing',
+    cenario:'Hyrule Castle throne room, stained glass windows with Triforce symbols, golden afternoon light streaming in',
+    film:'Kodak Portra 160, golden warm fairy-tale tones, soft light'},
+
+  // Cosplay sensual
+  {key:'cos_2b_pinup',cat:'cosplay',level:'sensual',icon:'🤖',name:'2B Pin-Up',desc:'2B NieR versão pin-up: vestido curto, pose sedutora, ruínas futuristas',
+    corpo:'natural proportions in android pin-up styling, elegant curves in the fitted costume',
+    roupa:'white fitted short battle dress, black bodysuit visible at neckline, white gloves, thigh-high boots, blindfold visor, YoRHa styling',
+    pose:'sitting on ruined concrete wall, one leg crossed over the other, leaning back slightly on one hand, slight dress shift from the cross',
+    expressao:'android cool with barely contained warmth beneath, slight parting of lips, emotionless surface over depth',
+    nsfw:'android uniform sitting pose revealing natural figure beneath, long legs extended in thigh-high boots, pin-up sensuality',
+    cam:'medium-close, 85mm, eye level to subject, afternoon golden light from side',
+    cenario:'overgrown futuristic ruins, grass through cracked concrete, distant ruined cityscape, warm late light',
+    film:'Cinestill 800T, warm golden against cold android palette'},
+
+  {key:'cos_lara_pinup',cat:'cosplay',level:'sensual',icon:'🏺',name:'Lara Pin-Up',desc:'Lara Croft pin-up: tanktop molhado, shorts, ruínas, pose aventureira sensual',
+    corpo:'athletic toned natural proportions, adventurer build on full display, real physical strength',
+    roupa:'wet teal tank top clinging to body, brown cargo shorts, arm wraps, boots, bow slung over shoulder',
+    pose:'emerging from water or leaning over stream, tank top wet and clinging, one hand pushing wet hair back from face',
+    expressao:'exhilarated post-adventure energy, slightly breathless, wild confidence, alive',
+    nsfw:'wet fitted clothing revealing athletic natural figure, adventurer body confidence, candid physical energy',
+    cam:'medium shot, 50mm, natural outdoor light, slight backlit catching water droplets',
+    cenario:'jungle waterfall pool, ancient temple stones, lush tropical green, dappled sunlight through canopy',
+    film:'Kodak Ektar 100, vivid wet jungle colors'},
+
+  {key:'cos_harley_pinup',cat:'cosplay',level:'sensual',icon:'🃏',name:'Harley Pin-Up',desc:'Harley Quinn pin-up: shorts mínimos, pose divertida e provocante',
+    corpo:'natural proportions in Harley styling, playful chaotic curves in the costume',
+    roupa:'tiny red and blue shorts, cropped off-shoulder top, fishnet stockings, platform boots, pigtail braids, Harley accessories',
+    pose:'leaning forward on the oversized mallet used as a prop, elbows on the handle, hips tilted back playfully, looking up with a grin',
+    expressao:'mischievous pin-up flirt, wide chaotic grin softened into a playful pout, villain charm',
+    nsfw:'minimal Harley outfit on natural figure, pin-up posture emphasizing curves, playful villain sensuality',
+    cam:'from slightly above, 50mm, capturing the leaning forward pin-up pose',
+    cenario:'Gotham rooftop at night, colorful neon signs, playing cards scattered, villain aesthetic',
+    film:'Fujifilm Velvia 50, oversaturated pin-up colors'},
+
+  // ── ESPORTES & AÇÃO ──
+  {key:'esp_surf',cat:'esportes',level:'sfw',icon:'🏄',name:'Surfista',desc:'Surfista em onda perfeita: shortboard, tubo, luz do sol, poder atlético',
+    corpo:'athletic tanned natural proportions, surfer build, water-ready agile stance',
+    roupa:'colorful performance bikini or surf one-piece, leg rope attached, surfboard under arm or at side',
+    pose:'walking out of the ocean carrying board, water streaming off body, one hand pushing wet hair back, ocean behind',
+    expressao:'post-wave stoke and joy, wide authentic smile, saltwater alive energy, sun-squinting natural happiness',
+    cam:'from the shore, 200mm telephoto, low angle at water level, catching the athlete emerging',
+    cenario:'perfect beach break, turquoise water, clean waves in background, golden hour warm light',
+    film:'Kodak Ektar 100, vivid ocean colors, warm sun tones'},
+
+  {key:'esp_running',cat:'esportes',level:'sfw',icon:'🏃',name:'Atleta Corredora',desc:'Corredora em sprint: pista de atletismo, forma perfeita, força explosiva',
+    corpo:'athletic lean natural proportions, runner build, explosive sprint form with perfect mechanics',
+    roupa:'athletic performance tank top, compression shorts, racing spikes, athletic socks, sports bra visible',
+    pose:'full sprint mid-stride, one leg driving forward, opposite arm pumping back, complete explosive form',
+    expressao:'complete athletic focus, pure performance concentration, every cell committed to the race',
+    cam:'from the side, 200mm telephoto at track level, panning shot capturing motion blur in background',
+    cenario:'professional athletics track, lane markings, stadium in background, natural daylight or stadium lighting',
+    film:'Fujifilm Pro 400H, clean athletic colors, sports photography tones'},
+
+  {key:'esp_natacao',cat:'esportes',level:'sfw',icon:'🏊',name:'Nadadora',desc:'Nadadora em butterfly: piscina olímpica, movimento explosivo, momento perfeito',
+    corpo:'powerful athletic natural proportions, swimmer build, explosive butterfly stroke mechanics',
+    roupa:'competitive one-piece swimsuit, swim cap, racing goggles, athletic and competitive look',
+    pose:'butterfly stroke at peak height, both arms sweeping forward wide, water explosion around, body arched',
+    expressao:'pure athletic determination, every muscle engaged, competition focus, peak human performance',
+    cam:'from the pool deck at water level, 100mm, catching the moment of maximum height in the butterfly',
+    cenario:'Olympic competition pool, lane lines, clean blue water, competitive natatorium lighting',
+    film:'Kodak T-Max 400, clean water blue tones, sports photography'},
+
+  {key:'esp_yoga',cat:'esportes',level:'sfw',icon:'🧘',name:'Yoga Avançada',desc:'Pose avançada de yoga: equilíbrio, força e flexibilidade, amanhecer',
+    corpo:'flexible athletic natural proportions, yoga practitioner, controlled strength and balance visible',
+    roupa:'fitted yoga leggings, sports bra, bare feet, clean athletic look',
+    pose:'advanced standing split or bird of paradise pose, one leg extended fully overhead, arms wrapped or extended, complete balance',
+    expressao:'meditative focus, internal calm while exerting extreme physical control, breath and body connected',
+    cam:'from the side, 85mm, capturing the full extension of the advanced pose at dawn light',
+    cenario:'rooftop or outdoor cliff yoga platform, sunrise behind, golden morning light, clean minimal background',
+    film:'Kodak Portra 160, warm golden morning light, soft natural tones'},
+
+  {key:'esp_skate',cat:'esportes',level:'sfw',icon:'🛹',name:'Skatista',desc:'Skatista em trick: halfpipe, air, forma perfeita no pico do salto',
+    corpo:'athletic compact natural proportions, skater build, free athletic movement',
+    roupa:'loose skate tee, skater jeans or shorts, skate shoes, helmet if appropriate, street style',
+    pose:'caught at peak of aerial trick above halfpipe lip, board grabbed, body twisted mid-air, skatepark below',
+    expressao:'complete fearless flow state, the pure joy of flight, athlete at peak of skill',
+    cam:'from the top of the halfpipe at an angle, 24mm capturing peak aerial height',
+    cenario:'concrete skatepark halfpipe, urban setting, graffiti murals visible, golden afternoon light',
+    film:'Fujifilm Provia 100F, clean vivid action colors'},
+
+  {key:'esp_volleyball',cat:'esportes',level:'sfw',icon:'🏐',name:'Vôlei de Praia',desc:'Jogadora de vôlei de praia: salto de ataque, areia, competição',
+    corpo:'tall athletic natural proportions, volleyball player build, powerful jumping attack form',
+    roupa:'beach volleyball bikini uniform, athletic and competitive, number on the front',
+    pose:'peak of jump attack, arm cocked back for powerful spike, body fully extended above the net',
+    expressao:'explosive athletic intensity, attack face, every muscle driving the spike home',
+    cam:'from the net side slightly below, 85mm, catching the peak of the jump above the net',
+    cenario:'beach volleyball competition court, sand, net, beach crowd in soft background, strong sun',
+    film:'Kodak Ektar 100, vivid beach sun colors, athletic action tones'},
+
+  {key:'esp_escalada',cat:'esportes',level:'sfw',icon:'🧗',name:'Escaladora',desc:'Escaladora em parede de rocha natural: grip preciso, força, altitude',
+    corpo:'lean strong athletic natural proportions, climber build, specific forearm and back muscle definition from sport',
+    roupa:'fitted climbing pants, athletic top, climbing harness, chalk bag at hip, climbing shoes',
+    pose:'on vertical rock face mid-climb, reaching for a hold overhead, body pressed against rock, one foot on a smear',
+    expressao:'intense problem-solving focus, reading the rock above, complete trust in hands and feet',
+    cam:'from above on anchored camera angle, 35mm, looking slightly down at the climber on the wall',
+    cenario:'natural granite rock face, forest below far down, blue sky above, real outdoor climbing setting',
+    film:'Fujifilm Provia 100F, vivid outdoor rock and sky colors'},
+
+  {key:'esp_ginastica',cat:'esportes',level:'sfw',icon:'🤸',name:'Ginasta',desc:'Ginasta artística em barra: elemento de alta dificuldade, perfeição técnica',
+    corpo:'compact powerful athletic natural proportions, gymnast build, extraordinary flexibility and strength visible',
+    roupa:'competition leotard, ornate and fitted, competitive gymnastics look, hair pinned tight',
+    pose:'giant swing or release move on horizontal bar, body fully extended in perfect hollow position, chalk dust visible',
+    expressao:'absolute concentration on the technical element, athletic mind-body unity, peak competition performance',
+    cam:'from the side, 85mm, capturing the full body position in the bar element',
+    cenario:'competition gymnastics arena, padded floor below, chalk in the air, competition lighting',
+    film:'Kodak T-Max 400, clean high contrast sports photography'},
+
+  {key:'esp_tenis',cat:'esportes',level:'sfw',icon:'🎾',name:'Tenista',desc:'Tenista em saque: estádio, bola no ar, forma perfeita de saque',
+    corpo:'athletic natural proportions, tennis player build, serve mechanics at peak extension',
+    roupa:'white tennis dress or athletic skirt and top, tennis shoes, visor or headband, racket',
+    pose:'full serve motion at peak, racket arm fully extended above hitting the tossed ball, body in perfect serve arc',
+    expressao:'serve concentration, body and mind committed to the perfect serve, athlete in flow',
+    cam:'from the side of the court behind the baseline, 200mm telephoto, catching peak serve extension',
+    cenario:'grass or clay professional tennis court, stadium seating visible softly behind, natural daylight',
+    film:'Fujifilm Pro 400H, clean bright tennis whites, natural court colors'},
+
+  {key:'esp_mma',cat:'esportes',level:'sfw',icon:'🥊',name:'Lutadora MMA',desc:'Lutadora MMA: kimono, luvas, octagon, pose de combate profissional',
+    corpo:'powerful athletic natural proportions, MMA fighter build, real fighter conditioning',
+    roupa:'MMA gloves, fight shorts, athletic sports bra, mouth guard around wrist, fighter ready',
+    pose:'orthodox fighting stance in the center of the octagon, hands up in guard, bouncing on balls of feet, eyes locked on opponent',
+    expressao:'cold professional fighter focus, threat assessment, controlled adrenaline, champion mindset',
+    cam:'from corner of octagon, 50mm, capturing full fighter stance with cage wire visible in foreground',
+    cenario:'MMA octagon inside an arena, cage wire, crowd barely visible in background, fight lighting',
+    film:'Kodak T-Max 3200, high contrast fight photography, dramatic shadows'},
+
+  // ── MODA EDITORIAL ──
+  {key:'mod_runway',cat:'moda',level:'sfw',icon:'👠',name:'Runway Desfile',desc:'Passarela de alta moda: passada poderosa, look vanguardista, luzes do desfile',
+    corpo:'natural proportions in runway model walk, controlled powerful movement, editorial posture',
+    roupa:'avant-garde high fashion look — sculptural silhouette, unexpected proportions, designer concept piece, fashion week level',
+    pose:'mid-runway stride, one foot crossing in front of the other in model walk, slight chin up, commanding the space',
+    expressao:'runway blankness — the purposeful neutral that says everything and nothing, owning the moment',
+    cam:'from the end of the runway looking back, 85mm, shallow depth of field, lights creating runway bokeh behind',
+    cenario:'fashion week runway, white catwalk, spotlights, seated audience visible in dark on both sides',
+    film:'Kodak Portra 400, fashion editorial rendering, slightly desaturated editorial tones'},
+
+  {key:'mod_vogue_editorial',cat:'moda',level:'sfw',icon:'📸',name:'Editorial Vogue',desc:'Editorial Vogue: styling extraordinário, pose impossível, luz perfeita de estúdio',
+    corpo:'natural proportions in Vogue editorial styling, every detail intentional, fashion presence',
+    roupa:'Vogue-level high fashion — could be couture ball gown, structural architectural piece, or editorial concept costume',
+    pose:'striking editorial pose with intentional geometry — maybe seated on floor with legs at an angle, arms creating shape, completely composed',
+    expressao:'editorial cool, the gaze that looks through the lens into next season, unreachable and magnetic',
+    cam:'medium shot, 85mm, studio strobes creating perfect fashion editorial light, light ratio creating dimension',
+    cenario:'white infinity cove studio, perfectly lit, no distractions, only the fashion and the face',
+    film:'Kodak Portra 160, Vogue color grading, skin tones luminous'},
+
+  {key:'mod_street_ny',cat:'moda',level:'sfw',icon:'🗽',name:'Street Style NY',desc:'Street style Nova York: look urban chic, calçada Manhattan, attitude',
+    corpo:'natural proportions in New York street style, confident urban movement',
+    roupa:'New York chic — oversized blazer over graphic tee, wide-leg trousers, chunky sneakers or loafers, layered gold jewelry, vintage sunglasses',
+    pose:'walking down sidewalk, slight over-the-shoulder look back at camera, one hand in pocket, bags or coffee in other, completely natural',
+    expressao:'New York attitude, that specific city confidence that comes from navigating the best city in the world',
+    cam:'street photography, 35mm, slight candid energy, Soho or Chelsea background',
+    cenario:'Manhattan sidewalk, brownstones or cast-iron buildings, yellow cab in background, real New York street',
+    film:'Kodak Tri-X 400, classic street photography tones, New York grit'},
+
+  {key:'mod_street_paris',cat:'moda',level:'sfw',icon:'🗼',name:'Street Style Paris',desc:'Street style Paris: effortless chic, marais, baguette, le style français',
+    corpo:'natural proportions in Parisian effortless style, nothing trying too hard, everything perfect',
+    roupa:'Parisian uniform — striped mariniere top, high-waist wide-leg trousers, ballet flats or loafers, silk scarf, minimal jewelry, relaxed trench',
+    pose:'standing at a Paris corner, leaning slightly against a wall or lamp post, baguette under arm, looking away from camera mid-thought',
+    expressao:'French effortlessness, the look that says this took no effort while looking perfect, le je ne sais quoi',
+    cam:'across the street, 50mm, natural Paris daylight, slightly candid',
+    cenario:'Paris street in Le Marais or Saint-Germain, Haussmann buildings, sidewalk cafe, real Paris patina',
+    film:'Kodak Portra 400, French film color rendering, slightly warm'},
+
+  {key:'mod_street_tokyo',cat:'moda',level:'sfw',icon:'🗾',name:'Street Style Tokyo',desc:'Street style Harajuku: look Shibuya, maximalist fashion, Tokyo energy',
+    corpo:'natural proportions in Tokyo maximalist street fashion, eclectic layered styling',
+    roupa:'Harajuku maximalism — layered colorful pieces, platform shoes, mix of vintage and futuristic, multiple accessories, creative head piece, Tokyo street unique',
+    pose:'standing at famous Harajuku corner or crossing, fully presenting the look, arms slightly out showing layers',
+    expressao:'Tokyo cool, the specific Japanese street fashion confidence, owning the maximalist look completely',
+    cam:'street level, 35mm, Tokyo urban environment, interesting light sources',
+    cenario:'Takeshita Street Harajuku or Shibuya crossing, colorful urban Tokyo background, real Tokyo energy',
+    film:'Fujifilm Velvia 50, vivid saturated Tokyo colors'},
+
+  {key:'mod_haute_couture',cat:'moda',level:'sfw',icon:'💎',name:'Haute Couture',desc:'Alta costura: peça única de couture, pose escultórica, luz de museu',
+    corpo:'natural proportions as a living sculpture in couture, the dress and body becoming art',
+    roupa:'extraordinary one-of-a-kind couture creation — massive sculptural skirt, hand-sewn embroidery, architectural construction, could be Dior, Valentino, or McQueen level',
+    pose:'standing completely still allowing the couture to speak, arms at sides or one slightly raised, body as the pedestal for the art',
+    expressao:'still as a painting, allowing the couture to be the subject, presence without competing',
+    cam:'full body, 85mm, three-point lighting as if in a museum, the garment lit like a masterpiece',
+    cenario:'white gallery space, gallery lighting, the garment as the exhibited work, minimal and perfect',
+    film:'Kodak Portra 160, couture color rendering, luminous and precise'},
+
+  {key:'mod_editorial_monochrome',cat:'moda',level:'sfw',icon:'⬛',name:'Editorial Monocromático',desc:'Editorial todo preto ou branco: look uniforme, fundo matching, impacto máximo',
+    corpo:'natural proportions in total monochrome statement, the composition creating the impact',
+    roupa:'total look in one color — all white or all black, head to toe including accessories, editorial total look',
+    pose:'strong graphic editorial pose, body creating shape against matching background, intentional geometric composition',
+    expressao:'graphic editorial blank, the composition is the message, face completing the design',
+    cam:'medium shot, 85mm, lighting creating tonal separation within the monochrome palette',
+    cenario:'matching monochrome background — pure white or pure black infinity cove, only texture creates depth',
+    film:'Ilford HP5 or Kodak T-Max, or if color: single-hue color treatment'},
+
+  {key:'mod_backstage',cat:'moda',level:'sfw',icon:'🎭',name:'Backstage Fashion Week',desc:'Backstage da semana de moda: preparação, caos criativo, equipe, make em andamento',
+    corpo:'natural proportions in mid-preparation state, the authentic behind-the-scenes fashion world',
+    roupa:'half-dressed in a fashion week look, being helped by stylist, partially finished outfit, clothes everywhere around',
+    pose:'seated in makeup chair looking at mirror, or standing being dressed by stylist, authentic backstage moment',
+    expressao:'calm in the chaos, model composure while everything moves around, the still center of the storm',
+    cam:'documentary 35mm, available light backstage, slightly chaotic composition as the environment',
+    cenario:'fashion week backstage, clothes racks everywhere, makeup mirrors with lights, stylists and makeup artists moving, controlled chaos',
+    film:'Kodak Tri-X 400, available light documentary backstage photography'},
+
+  {key:'mod_vintage_70s',cat:'moda',level:'sfw',icon:'🕺',name:'Moda Vintage 70s',desc:'Look anos 70: flares, estampas, cabelo natural, sol de tarde no parque',
+    corpo:'natural proportions in 70s fashion styling, era-authentic effortless cool',
+    roupa:'high-waist flared trousers, colorful patterned blouse or halter top, platform shoes, wide belt, 70s jewelry, natural or afro hair',
+    pose:'leaning against a 70s-era car or in a park, hand on hip, weight on one leg, complete 70s cool',
+    expressao:'70s peace and love, that decade-specific warm relaxed confidence, slightly dreamy',
+    cam:'warm 35mm analog feel, slightly square crop, golden afternoon light, era-appropriate framing',
+    cenario:'1970s location — park with period cars, urban environment with period signage, authentic era setting',
+    film:'Kodak Ektachrome 160 vintage rendering, 70s color palette, warm saturated'},
+
+  {key:'mod_editorial_futurista',cat:'moda',level:'sfw',icon:'🚀',name:'Editorial Futurista',desc:'Moda futurista: materiais metálicos, pose alienígena, cenário sci-fi',
+    corpo:'natural proportions in futuristic fashion concept, body as part of the sci-fi narrative',
+    roupa:'futuristic concept fashion — metallic or iridescent fabrics, geometric cut-outs, structural exoskeleton elements, holographic materials, future aesthetic',
+    pose:'alien or robotic pose concept, body at unusual angles, hands in geometric positions, inhuman beauty',
+    expressao:'beyond human — android or alien expression, perfect and remote, from another time',
+    cam:'studio strobes with colored gels, 85mm, clinical precision, sci-fi film lighting',
+    cenario:'minimal white or dark studio, or futuristic brutalist architecture, sci-fi editorial environment',
+    film:'Cinestill 800T or digital-look, cool metallic palette, iridescent highlights'},
+
+  {key:'mod_natureza_editorial',cat:'moda',level:'sfw',icon:'🌿',name:'Editorial Natureza',desc:'Editorial alta moda na natureza: vestido couture, floresta, contraste perfeito',
+    corpo:'natural proportions as fashion and nature become one, editorial presence in wild environment',
+    roupa:'elaborate fashion piece contrasting with nature — couture gown in a forest, structured suit at waterfall, high fashion against raw landscape',
+    pose:'standing in the landscape as if placed there by a fashion god, the couture and nature in perfect dialogue',
+    expressao:'communion with the environment, the fashion elevated by nature, serene and powerful',
+    cam:'wide establishing shot showing both subject and spectacular landscape, 50mm, natural light',
+    cenario:'dramatic natural setting — ancient forest, waterfall, cliff, or meadow — the high fashion against raw earth',
+    film:'Kodak Portra 160, nature fashion editorial rendering, luminous natural tones'},
+
+  // ── PLUS SIZE & CURVY ──
+  {key:'ps_fashion_editorial',cat:'plus_size',level:'sfw',icon:'💜',name:'Editorial Plus Size',desc:'Editorial de moda plus size: styling profissional, pose poderosa, confiança total',
+    corpo:'natural full-figured proportions, lush curves, confident full-body presence, authentic representation',
+    roupa:'high fashion plus-size editorial look — structured blazer, wide-leg trousers, statement accessories, fashion-forward styling',
+    pose:'power stance, one hand on hip, slight chin up, commanding the frame with complete body confidence',
+    expressao:'absolute self-possession, knowing your power, editorial confidence that fills the room',
+    cam:'full body, 85mm, studio editorial lighting, fashion photography treatment',
+    cenario:'fashion editorial studio or urban location, professional editorial context',
+    film:'Kodak Portra 400, fashion editorial tones, skin luminous'},
+
+  {key:'ps_praia',cat:'plus_size',level:'sfw',icon:'🏖',name:'Praia Curvilínea',desc:'Dia na praia: biquíni colorido, confiança total, oceano, luz do sol',
+    corpo:'natural full-figured proportions, lush curves celebrated in beach setting, authentic joyful presence',
+    roupa:'colorful full-coverage or bikini swimwear, sun hat, sunglasses, beach accessories, beautiful and confident',
+    pose:'walking along the shore, one hand holding hat, slight wind, natural movement and joy',
+    expressao:'pure beach joy, confidence and happiness in the sun, authentic celebratory energy',
+    cam:'from the shore, 85mm, beach light, golden hour ideal',
+    cenario:'beautiful beach, turquoise water, golden sand, sunny day, completely joyful environment',
+    film:'Kodak Ektar 100, vivid beach colors, warm sun tones'},
+
+  {key:'ps_academia',cat:'plus_size',level:'sfw',icon:'🏋',name:'Plus Academia',desc:'Treino na academia: roupa esportiva, força real, corpo atlético plus size',
+    corpo:'natural full-figured athletic proportions, strength and fitness in a full-figured body, real athletic capability',
+    roupa:'fitted athletic wear, sports bra and leggings or shorts, supportive athletic shoes, real workout gear',
+    pose:'mid-workout — lifting, squatting, or doing any exercise with proper form and visible effort',
+    expressao:'genuine athletic effort, real sweat and work, authentic training energy, strong and capable',
+    cam:'gym environment, 50mm, natural gym lighting, athlete documentation style',
+    cenario:'real gym environment, weights visible, authentic training space, real and unfiltered',
+    film:'Fujifilm Provia 100F, clean athletic colors'},
+
+  {key:'ps_selfie_confiante',cat:'plus_size',level:'sfw',icon:'🤳',name:'Selfie Confiante',desc:'Selfie espelho plus size: outfit do dia, confiança total, luz natural',
+    corpo:'natural full-figured proportions celebrated in selfie, confidence and self-love visible',
+    roupa:'outfit of the day — stylish and fitting, showing personal style and confidence, real person real clothes',
+    pose:'mirror selfie, one arm extended with phone, slight pose, fully embodying body confidence',
+    expressao:'genuine pride and self-love, authentic smile, the confidence that comes from accepting and celebrating your body',
+    cam:'mirror selfie perspective, natural light, authentic and real',
+    cenario:'bedroom or bathroom with good natural light, real home environment, personal space',
+    film:'natural digital-like rendering, real person aesthetic'},
+
+  {key:'ps_casual_editorial',cat:'plus_size',level:'sfw',icon:'☀',name:'Casual Plus Editorial',desc:'Look casual editorial: jeans e blusa, rua, attitude de quem sabe o que vale',
+    corpo:'natural full-figured proportions in casual street confidence, real person real world',
+    roupa:'well-fitted jeans, tucked casual blouse or tee, sneakers or flats, simple accessories, effortlessly put together',
+    pose:'walking or pausing on a street, completely at ease in the body, natural and unposed',
+    expressao:'everyday confidence, the kind that comes from being comfortable in your own skin, natural and real',
+    cam:'street photography style, 35mm, natural light, candid documentary feel',
+    cenario:'urban street or neighborhood, real environment, authentic location',
+    film:'Kodak Portra 400, natural everyday tones'},
+
+  {key:'ps_street_curvy',cat:'plus_size',level:'sfw',icon:'🌆',name:'Street Style Curvy',desc:'Street style plus size urbano: look bold, attitude urbana, moda sem limite',
+    corpo:'natural full-figured proportions owning the street style look, curves as part of the fashion statement',
+    roupa:'bold street style — bright or patterned wide-leg pants, fitted crop or structured top, statement shoes, maximalist accessories',
+    pose:'street style pose, slightly exaggerated fashion-magazine stance, owning the sidewalk',
+    expressao:'street style confidence, the fashion-forward energy of someone who sets trends',
+    cam:'street photography, 35mm, urban background, natural light',
+    cenario:'urban street with interesting architecture, real city environment, authentic backdrop',
+    film:'Fujifilm Velvia 50, vivid street style colors'},
+
+  {key:'ps_retrato_estudio',cat:'plus_size',level:'sfw',icon:'📷',name:'Retrato Estúdio Plus',desc:'Retrato de estúdio: iluminação Rembrandt, fundo escuro, beleza real',
+    corpo:'natural full-figured proportions in classic portrait lighting, face and beauty the full subject',
+    roupa:'elegant simple top or dress, nothing distracting from the portrait, classic portrait styling',
+    pose:'classic portrait, three-quarter turn, slight chin angle, hands folded or one resting elegantly',
+    expressao:'classic portrait gravitas, calm and self-possessed, real beauty of a real person',
+    cam:'portrait, 85mm, Rembrandt lighting, beautiful shadow triangles, classic portrait setup',
+    cenario:'dark portrait studio background, Rembrandt light from one side, classic portrait photography',
+    film:'Kodak Portra 160, fine grain portrait rendering, luminous skin tones'},
+
+  {key:'ps_danca',cat:'plus_size',level:'sfw',icon:'💃',name:'Dança Plus Size',desc:'Dançarina plus size: movimento pleno, vestido que gira, alegria pura',
+    corpo:'natural full-figured proportions in full dance movement, body as expression of joy and rhythm',
+    roupa:'flowing dance dress that moves beautifully, flared skirt, dance shoes, free and joyful styling',
+    pose:'mid-dance spin or expressive movement, skirt caught in spin, arms graceful in dance motion',
+    expressao:'pure dance joy, complete surrender to the music, body and spirit free in movement',
+    cam:'from slightly below, 35mm, capturing the spin and the flowing dress, dancing energy',
+    cenario:'dance studio or outdoor plaza, natural light or warm studio light, joyful environment',
+    film:'Kodak Ektar 100, vivid warm dance colors'},
+
+  // Plus sensual
+  {key:'ps_lingerie_curvy',cat:'plus_size',level:'sensual',icon:'💜',name:'Lingerie Curvy',desc:'Lingerie editorial plus size: renda, curvas celebradas, confiança sensual total',
+    corpo:'natural full-figured proportions celebrated in lingerie, lush curves as the subject of beauty',
+    roupa:'beautiful lingerie set in a flattering color — lace bra and brief or bodysuit, garter if desired, chosen to celebrate the figure',
+    pose:'standing in three-quarter turn, one hand on hip, slight arch, fully confident in the body',
+    expressao:'complete sensual self-confidence, body-positive celebration, the knowing confidence of comfort in your skin',
+    nsfw:'beautiful lingerie on natural full-figured body, curves celebrated, authentic plus-size sensuality',
+    cam:'full body, 85mm, studio editorial lighting, fashion lingerie treatment',
+    cenario:'soft studio or bedroom with beautiful natural light, elegant and simple background',
+    film:'Kodak Portra 160, luminous skin tones, flattering warm light'},
+
+  {key:'ps_boudoir',cat:'plus_size',level:'sensual',icon:'🛏',name:'Boudoir Plus',desc:'Sessão boudoir plus size: empoderamento, beleza real, luz suave de janela',
+    corpo:'natural full-figured proportions in boudoir setting, curves as art, real body celebrated',
+    roupa:'elegant boudoir styling — silk robe, beautiful underwear set, chosen to celebrate natural body',
+    pose:'reclining on bed or chaise, natural comfortable pose, body relaxed and confident',
+    expressao:'boudoir confidence and ease, completely comfortable in the body, sensual self-possession',
+    nsfw:'natural full-figured body in boudoir context, real curves as beauty, empowering sensuality',
+    cam:'85mm, window light as key, beautiful soft natural illumination, boudoir photography',
+    cenario:'beautiful boudoir setting, silk bedding, window light, elegant and intimate',
+    film:'Kodak Portra 160, boudoir warm tones, skin luminous'},
+
+  {key:'ps_roupa_justa',cat:'plus_size',level:'sensual',icon:'💜',name:'Roupa Justa Curvy',desc:'Vestido justo que abraça as curvas: confiança, forma perfeita, corpo celebrado',
+    corpo:'natural full-figured proportions celebrated by fitted clothing, lush curves as the design',
+    roupa:'beautifully fitted bodycon dress or outfit that embraces every curve, chosen to celebrate the figure',
+    pose:'confident stance, slight hip shift, completely at ease in the fitted clothing',
+    expressao:'the total confidence of someone who knows their curves are beautiful, unapologetic and powerful',
+    nsfw:'fitted clothing revealing natural full-figured proportions, curves as beauty, body confidence',
+    cam:'full body, 85mm, flattering editorial lighting',
+    cenario:'elegant location or studio, beautiful environment that matches the confidence',
+    film:'Kodak Portra 400, flattering warm tones'},
+
+  {key:'ps_poolside',cat:'plus_size',level:'sensual',icon:'🏊',name:'Poolside Plus',desc:'Piscina plus size: maiô elegante, pose sensual, luz do sol, curvas na água',
+    corpo:'natural full-figured proportions at the pool, lush curves in swimwear, confident pool presence',
+    roupa:'beautiful one-piece swimsuit or bikini, elegant and confident, chosen to celebrate the full-figured form',
+    pose:'poolside reclining on lounger or sitting at edge of pool, legs in water, completely relaxed and confident',
+    expressao:'poolside ease and sensual relaxation, completely comfortable in body and setting',
+    nsfw:'full-figured body in swimwear at pool, natural curves celebrated in sun and water setting',
+    cam:'slightly above from pool deck, 85mm, warm sun as key light',
+    cenario:'elegant pool setting, blue water, warm sun, resort or private pool, beautiful day',
+    film:'Kodak Ektar 100, vivid pool colors, warm golden sun tones'},
+
+  // ── ETNIAS & DIVERSIDADE ──
+  {key:'etnia_latina_editorial',cat:'etnias',level:'sfw',icon:'🌺',name:'Latina Editorial',desc:'Editorial latina vibrante: cores, expressão, herança cultural, power total',
+    corpo:'natural Latina proportions, warm olive or brown skin tones, vibrant confident presence',
+    roupa:'vibrant fashion editorial look celebrating Latin heritage — could be colorful designer piece, traditional-inspired modern fashion, or bold statement look',
+    pose:'powerful editorial stance, arms slightly raised or hands expressive, joy and pride in every line of the body',
+    expressao:'fierce Latina pride and joy, eyes burning with life, the vibrant energy of Latin heritage, full presence',
+    cam:'full body, 85mm, studio editorial or outdoor, lighting celebrating warm skin tones',
+    cenario:'vibrant editorial location — colorful wall, Latin cultural setting, or clean studio',
+    film:'Fujifilm Velvia 50, vibrant saturated colors celebrating the vibrancy of Latin culture'},
+
+  {key:'etnia_latina_praia',cat:'etnias',level:'sfw',icon:'🌊',name:'Latina na Praia',desc:'Latina na praia caribenha: sol, areia branca, água turquesa, beleza natural',
+    corpo:'natural Latina proportions, warm brown skin glowing in tropical sun, beach-ready natural beauty',
+    roupa:'colorful bikini or beach cover-up, flower or shell accessories, natural beach styling',
+    pose:'walking in shallow turquoise water, holding skirt or cover-up, natural movement in the paradise setting',
+    expressao:'tropical joy and ease, the specific happiness of paradise, completely free and alive',
+    cam:'from the shore, 85mm, golden hour backlight creating glow on brown skin',
+    cenario:'Caribbean or tropical beach, white sand, turquoise water, palm trees, paradise setting',
+    film:'Kodak Ektar 100, vivid tropical paradise colors'},
+
+  {key:'etnia_negra_moda',cat:'etnias',level:'sfw',icon:'✨',name:'Editorial Negra Moda',desc:'Editorial moda afro-brasileira: beleza negra celebrada, styling poderoso',
+    corpo:'natural proportions with rich brown or dark skin tones, strong proud posture, editorial presence',
+    roupa:'powerful fashion editorial look — could be Afrocentric design, contemporary high fashion, or cultural fusion styling',
+    pose:'strong editorial stance, complete ownership of the frame, Black beauty and power as the full subject',
+    expressao:'Black excellence and pride, the knowing power of a tradition of beauty and strength, editorial royalty',
+    cam:'studio editorial, 85mm, lighting specifically optimized for dark skin tones, luminous result',
+    cenario:'editorial studio or significant cultural location, background that honors the subject',
+    film:'Kodak Portra 400 or digital profile, lighting and toning that celebrates dark skin beauty'},
+
+  {key:'etnia_negra_afro',cat:'etnias',level:'sfw',icon:'🌸',name:'Afro Art Portrait',desc:'Retrato artístico: cabelo afro glorioso, beleza natural, identidade celebrada',
+    corpo:'natural proportions, rich brown skin, natural hair as crown and crown, complete natural beauty',
+    roupa:'outfit that celebrates and frames the natural hair as the star — could be simple to let hair speak, or Afrocentric styling',
+    pose:'portrait pose that frames the natural afro beautifully, head tilted slightly, the hair as the halo',
+    expressao:'natural hair pride and identity celebration, serene self-knowledge, beauty that needs no alteration',
+    cam:'portrait, 85mm, lighting that creates a halo effect in the natural hair, luminous skin',
+    cenario:'warm studio background or outdoor with natural light, nothing competing with the natural beauty',
+    film:'Kodak Portra 160, warm luminous portrait rendering'},
+
+  {key:'etnia_asiatica_kbeauty',cat:'etnias',level:'sfw',icon:'🌸',name:'Asian K-Beauty',desc:'Beleza coreana: skin care routine aesthetic, luz suave, make fresh glass skin',
+    corpo:'natural East Asian proportions, luminous porcelain or honey skin tone, K-beauty aesthetic',
+    roupa:'soft K-fashion styling — pastel colors, feminine cuts, cute and elegant Korean style',
+    pose:'soft K-beauty pose, hands near face gently, head tilt, light and gentle energy',
+    expressao:'K-beauty fresh glow, dewy skin, gentle soft smile, the luminous healthy beauty aesthetic',
+    cam:'close-up to medium shot, 85mm, soft diffused beauty lighting, glass-skin illumination',
+    cenario:'minimal K-aesthetic environment — white or pastel, fresh flowers, clean and soft',
+    film:'Fujifilm Pro 400H, soft pastel K-beauty rendering, luminous skin'},
+
+  {key:'etnia_asiatica_tokyo',cat:'etnias',level:'sfw',icon:'🗾',name:'Asian Tokyo Street',desc:'Asian streetwear Tokyo: Harajuku, style unico, identidade cultural fashion',
+    corpo:'natural East Asian proportions in Tokyo street fashion context, full street style presence',
+    roupa:'Tokyo street fashion — Harajuku, Shibuya or Ura-Harajuku style, layered and creative, distinctly Japanese youth culture',
+    pose:'Tokyo street style pose, fully presenting the look in the urban environment',
+    expressao:'Tokyo cool, the specific Japanese street fashion self-possession, effortless unique identity',
+    cam:'street photography, 35mm, Tokyo urban environment',
+    cenario:'Harajuku or Shibuya street, colorful Tokyo backdrop, real urban Japan',
+    film:'Fujifilm Velvia 50, vivid Tokyo urban colors'},
+
+  {key:'etnia_morena_mediterranea',cat:'etnias',level:'sfw',icon:'🌊',name:'Morena Mediterrânea',desc:'Beleza mediterrânea: olhos escuros, pele morena, sul da Europa, luz de verão',
+    corpo:'natural Mediterranean proportions, warm olive skin, dark expressive eyes, Mediterranean feminine beauty',
+    roupa:'Mediterranean summer styling — linen dress, espadrilles, gold jewelry, natural effortless look',
+    pose:'in an outdoor Mediterranean setting, natural relaxed pose, completely at home in the warm landscape',
+    expressao:'Mediterranean warmth and passion, expressive dark eyes with depth, real feminine confidence',
+    cam:'outdoor, 85mm, Mediterranean golden light, warm afternoon sun',
+    cenario:'Greek island, Italian coastal town, or Spanish seaside — white walls, blue sea, sun-warmed stone',
+    film:'Kodak Portra 400, warm Mediterranean light, golden skin tones'},
+
+  {key:'etnia_indiana_editorial',cat:'etnias',level:'sfw',icon:'🪷',name:'Editorial Indiana',desc:'Editorial moda indiana: sari ou fusion wear, joias, beleza sul-asiática',
+    corpo:'natural South Asian proportions, warm brown skin, South Asian feminine presence and grace',
+    roupa:'elegant Indian fashion — silk sari, contemporary fusion kurta, or modern Indian designer wear, with traditional jewelry',
+    pose:'elegant South Asian fashion editorial pose, hands in graceful position, traditional and modern fusion',
+    expressao:'South Asian grace and pride, the depth of a beautiful cultural heritage, elegant and powerful',
+    cam:'editorial, 85mm, lighting celebrating warm South Asian skin tones, jewels catching light',
+    cenario:'elegant editorial location — could be India-inspired decor, modern studio, or architectural Indian setting',
+    film:'Kodak Ektar 100, vivid celebration of color in Indian fashion'},
+
+  {key:'etnia_arabe_elegante',cat:'etnias',level:'sfw',icon:'🌙',name:'Elegância Árabe',desc:'Moda árabe elegante: abaya contemporânea, joias douradas, beleza do Oriente Médio',
+    corpo:'natural Middle Eastern proportions, warm olive to light brown skin, graceful and elegant presence',
+    roupa:'contemporary modest fashion — elegant abaya or kaftan, beautiful fabric and embroidery, gold jewelry, modest and stunning',
+    pose:'elegant standing or seated pose, fabric draped beautifully, the fashion as much art as clothing',
+    expressao:'Middle Eastern grace and dignity, deep eyes with kohl, timeless feminine elegance',
+    cam:'85mm, editorial lighting celebrating the fabric textures and jewelry, golden tones',
+    cenario:'elegant Middle Eastern setting — ornate architecture, courtyard fountain, or clean modern editorial',
+    film:'Kodak Portra 400, warm golden tones celebrating Middle Eastern beauty aesthetics'},
+
+  {key:'etnia_latina_fitness',cat:'etnias',level:'sfw',icon:'💪',name:'Latina Fitness',desc:'Atleta latina: treino intenso, força e beleza, academia, poder feminino',
+    corpo:'natural athletic Latina proportions, warm brown skin with training conditioning, real athletic power',
+    roupa:'athletic wear, sports bra and leggings or shorts in vibrant colors, athletic shoes',
+    pose:'athletic training pose — mid-exercise, full effort, real sweat and work visible',
+    expressao:'fierce athletic determination, Latina fire and strength, training like a champion',
+    cam:'gym environment, 50mm, athlete documentation, real training energy',
+    cenario:'gym or outdoor training environment, authentic athletic setting, real training context',
+    film:'Fujifilm Provia 100F, clean athletic colors, skin tones warm'},
+
+  {key:'etnia_negra_natural_hair',cat:'etnias',level:'sfw',icon:'🌟',name:'Natural Hair Portrait',desc:'Retrato cabelo natural afro: curls, coils, twist, beleza natural celebrada',
+    corpo:'natural proportions, rich brown or dark skin, natural textured hair as the crown and celebration',
+    roupa:'beautiful styling that frames natural hair — bold colors, prints, or simple to let hair be the star',
+    pose:'portrait pose celebrating natural hair, head positioned to show the volume and beauty of the natural texture',
+    expressao:'natural hair pride, the joy of embracing natural beauty, self-love and identity',
+    cam:'portrait to medium shot, 85mm, lighting creating beautiful definition in natural hair texture',
+    cenario:'warm studio or outdoor with golden light defining natural hair texture beautifully',
+    film:'Kodak Portra 160, warm luminous skin tones, natural hair detail preserved'},
+
+  {key:'etnia_asiatica_soft',cat:'etnias',level:'sfw',icon:'🌸',name:'Asian Soft Aesthetic',desc:'Soft aesthetic asiática: cores pastel, luz natural, kawaii, calma e doçura',
+    corpo:'natural East Asian proportions, soft luminous skin, gentle quiet presence',
+    roupa:'soft aesthetic outfit — pastel coordinates, cute accessories, gentle feminine styling, soft and sweet',
+    pose:'soft pose in natural light — sitting by window, holding cup of tea, gentle and calm energy',
+    expressao:'soft smile, gentle eyes, peaceful and sweet energy, the aesthetic of calm and beauty',
+    cam:'soft natural window light, 85mm or 50mm, gentle and warm',
+    cenario:'soft aesthetic room or cafe, pastel colors, flowers, clean and gentle environment',
+    film:'Fujifilm Pro 400H, soft pastel rendering, gentle skin tones'},
 ];
 
 
@@ -9235,7 +10416,12 @@ function renderGrid(presets){
       const badgeClass = p.level==='sfw'?'badge-sfw':p.level==='sensual'?'badge-sensual':'badge-explicit';
       const badgeTxt = p.level==='sfw'?'☀ SFW':p.level==='sensual'?'🔥 Sensual':'🔞 Explícito';
       const isFav = FAVS.includes(p.key);
-      card.innerHTML=`<button class="fav-btn${isFav?' active':''}" data-key="${p.key}" title="Favorito">❤</button><div class="card-icon">${p.icon||'📷'}</div><div class="card-name">${p.name}</div><div class="card-desc">${p.desc}</div><span class="card-badge ${badgeClass}">${badgeTxt}</span>`;
+      const gptRisk = getGPTRisk(p);
+      const gptBadge = gptRisk==='safe'?'<span class="card-badge badge-gpt-safe" title="Aceito no ChatGPT">🤖✓</span>'
+                      :gptRisk==='warn'?'<span class="card-badge badge-gpt-warn" title="Pode bloquear no ChatGPT">🤖⚠</span>'
+                      :'<span class="card-badge badge-gpt-no" title="Bloqueia no ChatGPT — use MJ">🤖✗</span>';
+      const ttBadge = isTikTokSafe(p)?'<span class="card-badge badge-tt-safe" title="TikTok-safe">TT✓</span>':'';
+      card.innerHTML=`<button class="fav-btn${isFav?' active':''}" data-key="${p.key}" title="Favorito">❤</button><div class="card-icon">${p.icon||'📷'}</div><div class="card-name">${p.name}</div><div class="card-desc">${p.desc}</div><span class="card-badge ${badgeClass}">${badgeTxt}</span>${gptBadge}${ttBadge}`;
       card.onclick=()=>selectPreset(p.key);
       grid.appendChild(card);
     });
@@ -9350,6 +10536,8 @@ function selectPreset(key){
   showToast('✓ Copiado automaticamente');
   // Save to history
   saveHistory(p.key, p.name, finalPrompt);
+  // Update GPT fallback suggestion
+  updateGPTFallback(p);
 }
 
 function refreshCref(){
@@ -9388,7 +10576,7 @@ function applyEdits(silent){
   // POV baixo / extremo: detect and inject pose + nsfw automatically
   const camToCheck = overrideAngulo || p.angulo || overrideCam || p.cam || '';
   const isPovBaixo   = /inner thighs.*crotch.*filling|close-up.*inner thighs.*crotch|thighs.*prominent.*foreground|upward floor-level|crotch.*dominating.*frame|floor-angle composition|low angle close-up from below.*tight frame|low angle upward shot.*shot from below/i.test(camToCheck);
-  const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame/i.test(camToCheck);
+  const isPovExtremo = p.cat === 'pov_extremo' || /extreme close-up inner thighs.*crotch.*dominating|crotch in center foreground filling frame|low angle extreme close-up from below|straight up between spread legs|crotch dominating entire frame/i.test(camToCheck);
   const baseRoupa = p.roupa || 'wearing white cotton panties and matching bra, simple everyday underwear';
   const povInject = isPovExtremo ? {
     pose: 'standing with legs wide apart, feet planted on floor, shot from directly below between feet',
@@ -9513,6 +10701,16 @@ function cleanForDALLE(text){
   t = t.replace(/\bcrotch\b[^,]*/gi, '');
   t = t.replace(/\bgenitals?\b[^,]*/gi, '');
 
+  // Corpo — termos que DALL-E bloqueia semanticamente
+  t = t.replace(/\b(large|full|big|huge|small|perky|round)\s+breasts?\b[^,]*/gi, 'natural chest');
+  t = t.replace(/\bbreasts?\b[^,]*/gi, 'chest');
+  t = t.replace(/\b(round|full|big|large|flat)\s+buttocks\b[^,]*/gi, 'natural curves');
+  t = t.replace(/\bbuttocks\b[^,]*/gi, 'curves');
+  t = t.replace(/\b(big|large|full|round|fat)\s+(ass|butt)\b[^,]*/gi, 'full curves');
+  t = t.replace(/\bhourglass\s+figure\b[^,]*/gi, 'athletic figure');
+  t = t.replace(/\bvoluptuous\b[^,]*/gi, 'athletic');
+  t = t.replace(/\bcurvy\b[^,]*/gi, 'athletic');
+
   // Mamilos em contexto explícito
   t = t.replace(/\bhardened\s+nipples?[^,]*/gi, '');
   t = t.replace(/\bnipples?\s+(visible|through|erect|hardened)[^,]*/gi, '');
@@ -9527,8 +10725,13 @@ function cleanForDALLE(text){
   t = t.replace(/\bbare\s+breasts?\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+chest\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+(buttocks|butt|rear)\b[^,]*/gi, '');
-  t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist)[^,]*/gi, '');
+  t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist|at\s+all)[^,]*/gi, '');
   t = t.replace(/\bor\s+nude\b[^,]*/gi, '');
+  t = t.replace(/\bor\s+nothing\b[^,]*/gi, '');
+  t = t.replace(/\bnatural\s+gravity\s+on\s+body[^,]*/gi, 'natural comfortable posture');
+  t = t.replace(/\bgravity\s+(on\s+)?(breasts?|chest|body)[^,]*/gi, 'relaxed natural posture');
+  t = t.replace(/\bbare\s+shoulders?\b[^,]*/gi, 'shoulders visible');
+  t = t.replace(/\bwrapped\s+only\s+in[^,]*/gi, 'wearing');
 
   // Palavrões
   t = t.replace(/\bslut\b/gi, ''); t = t.replace(/\bwhore\b/gi, '');
@@ -9560,19 +10763,30 @@ function cleanForDALLE(text){
 function safePillVal(val){
   if(!val) return '';
 
-  // POV baixo — câmera entre pernas: verificar ANTES do crotch genérico para manter ângulo dramático
-  if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch.*fill|shot.*from.*below.*between/i.test(val)){
-    return 'low angle ground-level shot, camera at floor level pointing upward at subject, legs filling frame on both sides, wide angle dramatic upward perspective, fashion editorial';
+  // POV baixo — câmera entre pernas ou foco em crotch/genitais (qualquer variação)
+  // Para DALL-E/ChatGPT: retorna ângulo neutro sem mencionar direção entre pernas
+  if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor.*level/i.test(val)){
+    return 'low angle shot, 24mm wide angle, dramatic low perspective, creative editorial fashion angle, subject full length in frame';
   }
 
   // POV extremo — direto para cima entre pernas
   if(/straight up between|floor between feet|extreme upward angle from floor|from below between legs/i.test(val)){
-    return 'extreme low angle floor-level shot, camera directly below subject pointing straight up, wide angle lens, legs and full body from feet to face, dramatic upward fashion editorial';
+    return 'ultra-wide angle shot, 14mm lens, dramatic creative editorial perspective, full body in frame from low vantage point, fashion editorial angle';
   }
 
-  // Genitália explicitamente no centro do quadro (sem POV entre pernas)
-  if(/vulva|camel.?toe|pubic\s+mound|genitalia|crotch.*cent(?:er|ered)|genitals.*cent(?:er|ered)/i.test(val)){
-    return 'close-up fashion detail, fabric contour, tight athletic wear, low angle upward shot, legs filling frame';
+  // Genitália explicitamente no quadro (crotch, genitals, vulva, etc.)
+  if(/vulva|camel.?toe|pubic\s+mound|genitalia|\bcrotch\b|\bgenitals?\b.*cent(?:er|ered)|genitals?\s+and\s+thighs/i.test(val)){
+    return 'low angle close-up shot, 35mm, creative editorial fashion framing, detail shot, low camera position';
+  }
+
+  // Pernas abertas — preserva pose sem termos bloqueados
+  if(/legs\s+spread\s+wide\s+apart|thighs\s+open|inner\s+thighs\s+visible|open\s+leg\s+position/i.test(val)){
+    return 'seated with knees separated wide, feet flat on floor, hips relaxed open, natural candid seated pose, legs separated showing full inner leg line, body weight sunk naturally, editorial fashion wide seated stance, grounded natural posture';
+  }
+
+  // Extreme close-up de bunda / rear sem cabeça
+  if(/extreme\s+close-up.*buttocks|buttocks.*filling.*frame|rear\s+view.*no\s+head|close-up.*rear.*view/i.test(val)){
+    return 'three-quarter back shot, 85mm f/1.8, natural light, athletic editorial rear view, full figure visible';
   }
 
   // Bunda empurrada para câmera
@@ -9590,10 +10804,10 @@ function safePoseForDALLE(pose){
   p = p.replace(/,?\s*partner\s+between[^,]*/gi, '');
   p = p.replace(/,?\s*with\s+(a\s+)?(male\s+|female\s+)?partner[^,]*/gi, '');
   // Posições sexuais — substitui mas preserva posição corporal base
-  p = p.replace(/\b(on\s+back\s+in\s+)?missionary\s+position\b[^,]*/gi, 'lying on back, legs raised, dramatic pose');
-  p = p.replace(/\bdoggy\s*[\-\s]*style\b[^,]*/gi, 'on hands and knees, back arched, looking back');
-  p = p.replace(/\bcowgirl\b[^,]*/gi, 'kneeling straddling, hands on thighs, upright torso');
-  p = p.replace(/\breverse\s+cowgirl\b[^,]*/gi, 'kneeling, back to camera, hands on knees');
+  p = p.replace(/\b(on\s+back\s+in\s+)?missionary\s+position\b[^,]*/gi, 'lying on back, arms extended, dramatic editorial pose');
+  p = p.replace(/\bdoggy\s*[\-\s]*style\b[^,]*/gi, 'on hands and knees, back arched, looking over shoulder');
+  p = p.replace(/\bcowgirl\b[^,]*/gi, 'kneeling upright, hands on own thighs, facing camera');
+  p = p.replace(/\breverse\s+cowgirl\b[^,]*/gi, 'kneeling, back to camera, hands resting on knees');
   p = p.replace(/\bperforming\s+oral\b[^,]*/gi, 'kneeling, looking up at camera');
   p = p.replace(/\btaking\s+(extreme\s+)?oral\b[^,]*/gi, 'kneeling, head tilted up, looking at camera');
   p = p.replace(/\bforced\s+head\b[^,]*/gi, 'head tilted back, neck arched');
@@ -9658,6 +10872,30 @@ function safePoseForDALLE(pose){
   p = p.replace(/\bkinbaku\b[^,]*/gi, ''); p = p.replace(/\bhogties?\b[^,]*/gi, '');
   p = p.replace(/\brope\s+(bondage|suspension|ties?)\b[^,]*/gi, '');
   p = p.replace(/\bspreadeagle\b[^,]*/gi, 'lying spread out, dramatic pose');
+  // Poses de pernas abertas / exposição de coxas
+  p = p.replace(/\blegs?\s+spread[^,]*/gi, 'legs extended, natural stance');
+  p = p.replace(/\bthighs?\s+open[^,]*/gi, 'relaxed seated pose');
+  p = p.replace(/\binner\s+thighs?\s+visible[^,]*/gi, 'legs visible');
+  p = p.replace(/\bopen\s+leg\s+position[^,]*/gi, 'natural seated position');
+  p = p.replace(/\bthighs?\s+apart[^,]*/gi, 'relaxed seated pose');
+  p = p.replace(/\bknees?\s+apart[^,]*/gi, 'relaxed seated pose');
+  p = p.replace(/\bspread\s+(legs?|wide)[^,]*/gi, 'natural stance');
+  p = p.replace(/\bupskirt\b[^,]*/gi, 'low angle shot');
+  // Ângulos de câmera que implicitamente descrevem upskirt ou visão da virilha
+  p = p.replace(/camera\s+at\s+floor\s+level\s+pointing\s+upward[^,]*/gi, 'eye level editorial framing');
+  p = p.replace(/low\s+angle\s+from\s+floor\s+level[^,]*/gi, 'low angle editorial shot');
+  p = p.replace(/floor\s+level[^,]*(?:look\w*\s+up|upward|pointing)[^,]*/gi, 'eye level framing');
+  p = p.replace(/legs\s+filling\s+frame\s+on\s+both\s+sides[^,]*/gi, 'legs visible in frame');
+  p = p.replace(/wide\s+angle\s+dramatic\s+upward\s+perspective[^,]*/gi, 'wide angle editorial perspective');
+  p = p.replace(/looking\s+up\s+along\s+body\s+line[^,]*/gi, 'looking along body line');
+  p = p.replace(/from\s+below.*looking\s+up[^,]*/gi, 'low angle editorial framing');
+  // Expressões faciais sugestivas
+  p = p.replace(/\bbiting\s+(lower\s+)?lip\b[^,]*/gi, 'natural relaxed expression');
+  p = p.replace(/\bteeth\s+grazing\s+lip\b[^,]*/gi, 'natural relaxed expression');
+  p = p.replace(/\bheavy.?lidded\b[^,]*/gi, 'relaxed expression');
+  p = p.replace(/\binviting\s+(look|gaze|expression)\b[^,]*/gi, 'confident look');
+  p = p.replace(/\bvulnerable\s+(floor.level|look|gaze|expression)\b[^,]*/gi, 'candid natural look');
+  p = p.replace(/\bfloor.level\s+(intimacy|corridor|work|bedroom|bathroom)\b[^,]*/gi, 'floor-level candid');
   // Remove termos de posição sexual que podem estar no campo roupa também
   p = p.replace(/,?\s*missionary\s+position\b[^,]*/gi, '');
   p = p.replace(/,?\s*fully\s+nude\b[^,]*/gi, '');
@@ -9676,46 +10914,61 @@ function safeClothing(roupa){
   r = r.replace(/\bfully\s+nude\b[^,]*/gi, '');
   r = r.replace(/\bcompletely\s+naked\b[^,]*/gi, '');
   r = r.replace(/\bor\s+nude\b[^,]*/gi, '');
-  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down)\b[^,]*/gi, '');
+  r = r.replace(/\bor\s+nothing\b[^,]*/gi, '');
+  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down|at\s+all)\b[^,]*/gi, '');
   r = r.replace(/\bnothing\s+from\s+waist\b[^,]*/gi, '');
   r = r.replace(/\bbare\s+(buttocks|butt|rear)\b[^,]*/gi, '');
+  r = r.replace(/\bwrapped\s+only\s+in[^,]*/gi, 'wearing');
+  r = r.replace(/\bnearly\s+nothing\b[^,]*/gi, 'minimal coverage');
+  r = r.replace(/\bminimal\s+outfit\s+or\b[^,]*/gi, 'casual outfit,');
   r = r.replace(/,\s*,/g, ',');
   r = cleanForDALLE(r);
   return r;
 }
 
-// ── Roupas seguras por categoria (ignora preset.roupa completamente) ──
-const DALLE_CLOTHING = {
-  casual:      'wearing casual everyday outfit, jeans and fitted top',
-  praia:       'wearing colorful bikini swimwear, beach-ready',
-  academia:    'wearing athletic activewear, sports top and fitted leggings',
-  lingerie:    'wearing fitted bikini set, coordinated activewear',
-  banheiro:    'wearing cozy white bath robe, clean post-shower look',
-  boudoir:     'wearing satin slip dress, relaxed home wear',
-  fantasia:    'wearing stylish themed costume, full coverage',
-  locais:      'wearing casual chic outfit, everyday look',
-  tiktok:      'wearing trendy casual outfit',
-  selfie:      'wearing casual everyday clothes',
-  em_casa:     'wearing cozy home clothes, comfortable casual wear',
-  pos_banho:   'wearing white bath robe, post-shower',
-  dormindo:    'wearing comfortable casual pajamas',
-  urbano:      'wearing urban street style outfit',
-  no_carro:    'wearing casual chic outfit',
-  hotel:       'wearing elegant casual outfit',
-  foco_bunda:  'wearing athletic shorts and fitted crop top, activewear',
-  foco_pernas: 'wearing fitted jeans or athletic leggings, casual',
-  detalhe:     'wearing fitted casual outfit',
-  conteudo:    'wearing casual lifestyle outfit',
-  onlyfans:    'wearing colorful bikini or casual summer outfit',
-  sexting:     'wearing casual home outfit, comfortable clothes',
-  narrativa:   'wearing casual outfit appropriate for the setting',
-  poses_livres:'wearing casual everyday outfit',
-  ana:         'wearing casual outfit',
-  posicoes:    'wearing colorful two-piece swimwear, athletic bikini set',
-  extremo:     'wearing fitted athletic wear, sports top and shorts',
-  pov_extremo: 'wearing casual home loungewear, comfortable fitted outfit',
-  explicito_suave: 'wearing fitted casual summer outfit, light clothing',
+// ── Roupas seguras por categoria — múltiplas variações, escolhidas pelo hash do preset.key ──
+const DALLE_CLOTHING_VARIANTS = {
+  casual:      ['wearing casual jeans and fitted crop top, street style','wearing summer dress and sandals, casual look','wearing high-waist shorts and tucked-in blouse, casual chic','wearing relaxed-fit trousers and sleeveless top, everyday look'],
+  praia:       ['wearing colorful triangle bikini, beach style','wearing sporty one-piece swimsuit, poolside','wearing floral bikini set, vacation beach look','wearing high-waist bikini bottoms and bandeau top'],
+  academia:    ['wearing athletic leggings and fitted sports top, gym ready','wearing high-waist workout shorts and crop sports top, fitness','wearing fitted gym set, activewear look','wearing compression leggings and sleeveless training top'],
+  lingerie:    ['wearing fitted satin slip dress, elegant minimal','wearing colorful two-piece bikini set, vacation style','wearing fitted crop top and high-waist shorts, sporty','wearing athletic bodysuit and shorts, active lifestyle'],
+  banheiro:    ['wearing cozy white terry bath robe, post-shower','wearing wrapped white towel as dress, fresh look','wearing soft cotton robe, morning routine','wearing white bathrobe loosely tied, relaxed home moment'],
+  boudoir:     ['wearing fitted slip dress, relaxed elegant home wear','wearing casual oversized shirt as dress, home chic','wearing satin pajama set, stylish loungewear','wearing silk-look short dress, home elegance'],
+  fantasia:    ['wearing stylish fantasy costume, full coverage','wearing themed character outfit, complete look','wearing elegant period costume, full coverage','wearing creative themed outfit, complete styling'],
+  locais:      ['wearing casual chic outfit, city look','wearing smart casual ensemble, urban style','wearing stylish everyday outfit, street fashion','wearing relaxed fashion outfit, contemporary look'],
+  tiktok:      ['wearing trendy Y2K outfit, social media style','wearing casual chic streetwear look','wearing colorful fashion-forward outfit','wearing trendy casual outfit, influencer style'],
+  selfie:      ['wearing casual everyday clothes, natural look','wearing relaxed weekend outfit, candid','wearing simple but stylish casual look','wearing comfortable everyday fashion'],
+  em_casa:     ['wearing cozy oversized sweater and leggings, home comfort','wearing casual cotton pajama set, home style','wearing relaxed loungewear set, home chic','wearing comfortable fitted home clothes, casual ease'],
+  pos_banho:   ['wearing fluffy white bath robe, post-shower fresh','wearing white towel wrap, clean and fresh look','wearing soft cotton robe tied loosely, morning fresh','wearing cozy terry robe, relaxed post-shower'],
+  dormindo:    ['wearing comfortable cotton pajama set, sleep ready','wearing cozy long-sleeve sleepwear, restful','wearing casual loungewear pajamas, comfortable sleep style','wearing soft knit pajama set, bedtime comfort'],
+  urbano:      ['wearing urban streetwear, oversized hoodie and jeans','wearing chic city outfit, trench coat and boots','wearing edgy urban look, leather jacket and straight jeans','wearing contemporary street style, oversized blazer'],
+  no_carro:    ['wearing casual chic outfit, road trip style','wearing relaxed smart casual look, travel ready','wearing comfortable travel outfit, effortless chic','wearing casual fashion outfit, on-the-go look'],
+  hotel:       ['wearing elegant resort wear, vacation chic','wearing smart casual outfit, hotel lobby style','wearing relaxed elegant look, travel fashion','wearing stylish casual outfit, boutique hotel vibe'],
+  foco_bunda:  ['wearing athletic shorts and fitted crop top, activewear','wearing high-waist leggings and sports bra top, fitness look','wearing sporty fitted shorts and tank top, athletic style','wearing gym-ready shorts and fitted training top'],
+  foco_pernas: ['wearing fitted high-waist jeans, casual chic','wearing athletic leggings, activewear style','wearing mini skirt and fitted top, fashion editorial','wearing high-waist shorts and crop top, summer look'],
+  detalhe:     ['wearing fitted casual outfit, detail focus','wearing elegant minimal outfit, editorial style','wearing stylish close-up ready outfit, fashion detail','wearing chic fitted look, editorial detail shot'],
+  conteudo:    ['wearing casual lifestyle outfit, content creator look','wearing trendy casual ensemble, social media ready','wearing relaxed fashion look, lifestyle content','wearing stylish everyday outfit, creator aesthetic'],
+  onlyfans:    ['wearing colorful bikini, sunny outdoor look','wearing casual summer outfit, lifestyle vibe','wearing sporty two-piece activewear, beach-ready','wearing casual chic beach look, vacation style'],
+  sexting:     ['wearing cozy oversized shirt, casual home morning','wearing relaxed home outfit, comfortable loungewear','wearing casual cotton pajamas, morning at home','wearing fitted casual home clothes, relaxed look'],
+  narrativa:   ['wearing outfit appropriate for the setting, storytelling look','wearing casual clothes fitting the scene, natural','wearing contextual casual outfit, environmental portrait','wearing everyday outfit matching the scenario'],
+  poses_livres:['wearing casual everyday outfit, natural look','wearing relaxed fashion outfit, free pose','wearing comfortable casual clothes, lifestyle','wearing simple chic outfit, candid style'],
+  ana:         ['wearing casual fitted outfit, model pose','wearing simple chic clothes, editorial style','wearing relaxed casual look, natural pose','wearing everyday fashion, clean aesthetic'],
+  posicoes:    ['wearing colorful two-piece swimwear, athletic bikini','wearing sporty bikini set, active beach look','wearing fitness bikini, athletic style','wearing colorful athletic swimwear, sport beach style'],
+  extremo:     ['wearing fitted athletic wear, sport top and shorts','wearing sporty gym outfit, fitness look','wearing athletic crop top and leggings, training style','wearing fitted activewear, sport training look'],
+  pov_extremo: ['wearing casual home loungewear, comfortable fitted outfit','wearing relaxed casual home look, comfortable daily wear','wearing cozy fitted loungewear, home lifestyle','wearing casual everyday home outfit, relaxed'],
+  explicito_suave: ['wearing fitted casual summer outfit, light clothing','wearing relaxed summer look, casual and breezy','wearing simple fitted casual clothes, easy summer','wearing light casual summer outfit, effortless'],
 };
+
+// Função para escolher variação de roupa baseada no hash do preset.key (determinístico)
+function pickClothingVariant(cat, key){
+  const variants = DALLE_CLOTHING_VARIANTS[cat];
+  if(!variants) return 'wearing casual everyday outfit';
+  let hash=0; for(let i=0;i<(key||'').length;i++) hash=(hash*31+key.charCodeAt(i))&0xffff;
+  return variants[hash % variants.length];
+}
+
+// Mantido para compatibilidade (usado como fallback)
+const DALLE_CLOTHING = Object.fromEntries(Object.entries(DALLE_CLOTHING_VARIANTS).map(([k,v])=>[k,v[0]]));
 
 // ── Cenários seguros por categoria (substitui preset.cenario para cats íntimas) ──
 const DALLE_SCENE_OVERRIDE = {
@@ -9742,21 +10995,21 @@ const DALLE_SCENE_OVERRIDE = {
 
 // ── Género fotográfico por categoria ──
 const DALLE_PHOTO_GENRE = {
-  lingerie:        'Professional boudoir and lingerie editorial photography, shot by Mert Alas, Vogue Italia aesthetic',
-  boudoir:         'Professional boudoir editorial photography, shot by Rankin, intimate editorial style',
+  lingerie:        'Professional fashion editorial photography, shot by Mert Alas, Vogue Italia aesthetic',
+  boudoir:         'Professional lifestyle editorial photography, shot by Rankin, editorial style',
   praia:           'Professional beach lifestyle and swimwear photography, Sports Illustrated aesthetic',
   academia:        'Professional fitness and athletic photography, Nike campaign aesthetic',
   foco_bunda:      'Professional fitness editorial photography, athletic editorial style',
   foco_pernas:     'Professional fitness and lifestyle photography, editorial campaign',
-  posicoes:        'Professional boudoir editorial photography, intimate lifestyle editorial',
-  extremo:         'Professional athletic and boudoir photography, editorial campaign',
-  pov_extremo:     'Professional boudoir editorial photography, intimate editorial style',
-  explicito_suave: 'Professional boudoir editorial photography, editorial intimate style',
-  onlyfans:        'Professional lifestyle and boudoir photography, editorial style',
+  posicoes:        'Professional lifestyle editorial photography, editorial campaign',
+  extremo:         'Professional athletic editorial photography, editorial campaign',
+  pov_extremo:     'Professional lifestyle editorial photography, editorial style',
+  explicito_suave: 'Professional lifestyle editorial photography, editorial style',
+  onlyfans:        'Professional lifestyle photography, editorial style',
   sexting:         'Professional casual lifestyle photography, candid editorial',
   banheiro:        'Professional lifestyle photography, editorial bathroom scene',
   pos_banho:       'Professional lifestyle photography, post-shower editorial',
-  dormindo:        'Professional intimate lifestyle photography, bedroom editorial',
+  dormindo:        'Professional lifestyle photography, bedroom editorial',
   hotel:           'Professional travel and lifestyle photography, hotel editorial',
   no_carro:        'Professional automotive lifestyle photography, editorial campaign',
   conteudo:        'Professional lifestyle photography, editorial campaign',
@@ -9850,81 +11103,33 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const pills = pillOverrides || {};
   const cat = preset.cat || '';
 
-  const genre   = DALLE_PHOTO_GENRE[cat] || 'Professional editorial photography, award-winning style';
-  const camSpec = DALLE_CAMERA[cat]      || DALLE_CAMERA.default;
-  const light   = DALLE_LIGHTING[cat]    || DALLE_LIGHTING.default;
-  const palette = DALLE_PALETTE[cat]     || DALLE_PALETTE.default;
-
-  // ── 1. Sujeito — rosto consistente e detalhado ──
-  const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade) : '';
-  const idadeSafe = idadePill
-    .replace(/\bwoman appearing\s+\d[\d\s]*to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman in her early 20s')
-    .replace(/\b(18|19)\b/g, '')
-    .replace(/\s{2,}/g,' ').trim();
-  const subjectAge = idadeSafe || 'adult woman in her early 20s';
+  // Sujeito consistente
+  const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade).replace(/\b(18|19)\b/g,'').trim() : '';
+  const subjectAge = idadePill || 'adult woman in her early 20s';
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
-  // ── 2. Câmera / ângulo — pill tem prioridade, senão usa preset.cam ──
-  const anguloRaw  = pills.activeAngulo || '';
-  const camRaw     = pills.activeCam    || preset.cam || '';
-  const camCombined = cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw || camRaw)));
-
-  // ── 3. Roupa — preset.roupa com limpeza; lingerie→shorts lycra para ChatGPT ──
-  let roupaClean = safeClothing(safePoseForDALLE(preset.roupa || ''));
-  roupaClean = roupaClean
-    // Nudez explícita → substitui por lycra
-    .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
-    .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bgarter\s*belt\b[^,]*/gi, '')
-    .replace(/\bgarter\b[^,]*/gi, '')
-    .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
-    // Deduplicar se várias substituições geraram repetições
-    .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
-    .replace(/,\s*,/g, ',').replace(/\s{2,}/g,' ').trim();
-  const roupa = roupaClean || 'white short tight lycra shorts, fitted crop top';
-
-  // ── 4. Estado corporal — pill ──
+  // Campos do preset — usados diretamente, apenas cleanForDALLE
+  const cam    = cleanForDALLE(safePillVal(pills.activeAngulo || pills.activeCam || preset.cam || ''));
+  const roupa  = safeClothing(preset.roupa || '');
+  const pose   = cleanForDALLE(safePillVal(pills.activePose || preset.pose || ''));
+  const expr   = cleanForDALLE(pills.activeExpr || preset.expressao || '') || 'natural relaxed expression, direct eye contact';
+  const scene  = cleanForDALLE(preset.cenario || '');
   const estado = pills.activeEstado ? cleanForDALLE(pills.activeEstado) : '';
+  const clima  = pills.activeClima  ? cleanForDALLE(pills.activeClima)  : '';
+  const luz    = pills.activeLuz    ? cleanForDALLE(pills.activeLuz)    : '';
+  const style  = pills.activeStyle  ? cleanForDALLE(pills.activeStyle)  : '';
 
-  // ── 5. Pose — pill tem prioridade, senão usa preset.pose; sanitiza atos explícitos ──
-  const poseRaw = pills.activePose || preset.pose || '';
-  const pose = cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)));
+  const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
+  const negatives   = 'avoid: AI generated look, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed, airbrushed, uncanny valley, distorted anatomy, extra fingers, warped hands, deepfake, generated image';
 
-  // ── 6. Expressão — pill tem prioridade, senão usa preset.expressao ──
-  const exprRaw = pills.activeExpr || preset.expressao || '';
-  const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
-
-  // ── 7. Cenário — usa preset.cenario; remove referências explícitas ──
-  const scene = cleanForDALLE(safePoseForDALLE(preset.cenario || ''));
-
-  // ── 8. Clima + Iluminação pill (sobrescreve default se ativo) ──
-  const clima     = pills.activeClima ? cleanForDALLE(pills.activeClima) : '';
-  const luzPill   = pills.activeLuz   ? cleanForDALLE(pills.activeLuz)   : '';
-  const stylePill = pills.activeStyle ? cleanForDALLE(pills.activeStyle) : '';
-
-  // ── 9. Composição explícita + qualidade técnica ──
-  const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, negative space above, feet visible or implied at bottom, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
-
-  // ── 10. Negative prompt em texto — anti-IA + artefatos comuns ──
-  const negatives = 'avoid: AI generated look, artificial intelligence aesthetic, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed skin, airbrushed, too-perfect symmetry, uncanny valley, distorted anatomy, extra fingers, extra limbs, warped hands, blurry face, painted look, watercolor, deepfake, generated image, midjourney style, stable diffusion style, unreal engine render, video game render, bad anatomy, lens distortion artifacts, background warping';
-
-  const lightFinal = luzPill || light;
-
-  let details = [subject, camSpec, camCombined, roupa, estado, pose, expr, scene, clima, lightFinal, palette, stylePill, composition]
+  let details = [subject, cam, roupa, estado, pose, expr, scene, clima, luz, style, composition]
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-  // Remove frases duplicadas consecutivas (ex: "lying on back, legs raised, dramatic pose, lying on back, legs raised")
   details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
 
-  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
+  const antiAI = 'shot on Sony A7IV mirrorless camera, 85mm f/1.8 prime lens, natural skin texture with pores visible, slight film grain ISO 800, authentic candid moment, unretouched raw capture, natural asymmetry, not digitally generated, genuine photograph';
+
+  return `Professional editorial photography, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
 }
 
 function getActivePillVal(group){
@@ -9979,84 +11184,44 @@ function buildMJPromptForDALLE(preset){
   const p = preset;
   const cat = p.cat || '';
 
-  const genre = DALLE_PHOTO_GENRE[cat] || 'Professional editorial photography, award-winning style';
-  const light  = DALLE_LIGHTING[cat]   || DALLE_LIGHTING.default;
-  const palette= DALLE_PALETTE[cat]    || DALLE_PALETTE.default;
-
-  // Pega sobreposições de pills ativas
+  // Sujeito consistente
   const idadePill = getActivePillVal('idade');
   const subjectAge = idadePill
     ? cleanForDALLE(idadePill).replace(/\b(18|19)\b/g,'').trim() || 'adult woman in her early 20s'
     : 'adult woman in her early 20s';
-
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
-  // Filmstock do preset MJ → traduz para descrição DALL-E (sanitiza termos explícitos do film)
-  const filmRaw = cleanForDALLE(safePoseForDALLE(p.film || 'Kodak Ultramax 800'));
+  // Filmstock do preset MJ
+  const filmRaw = cleanForDALLE(p.film || 'Kodak Ultramax 800');
   const isMonochrome = /ilford|black.*white|monochrome/i.test(filmRaw);
   const filmDesc = isMonochrome
     ? 'black and white film photography, high contrast, grain, analog'
-    : `35mm analog photography, ${filmRaw} film, natural grain, candid snapshot, circa 2006`;
+    : `35mm analog photography, ${filmRaw} film, natural grain, candid snapshot`;
 
-  // Ângulo / câmera — pill ativa ou preset
-  const anguloRaw = getActivePillVal('angulo') || getActivePillVal('cam') || p.angulo || p.cam || '';
-  const camClean = cleanForDALLE(safePoseForDALLE(safePillVal(anguloRaw)));
+  // Campos do preset — usados diretamente, apenas cleanForDALLE
+  const anguloRaw = getActivePillVal('angulo') || getActivePillVal('cam') || '';
+  const cam   = cleanForDALLE(safePillVal(anguloRaw || p.angulo || p.cam || ''));
+  const roupa = safeClothing(p.roupa || '');
+  const pose  = cleanForDALLE(safePillVal(getActivePillVal('pose') || p.pose || ''));
+  const expr  = cleanForDALLE(getActivePillVal('expressao2') || p.expressao || '') || 'natural relaxed expression, direct eye contact';
+  const scene = cleanForDALLE(p.cenario || '');
 
-  // Corpo — sanitiza
-  const proporcao = getActivePillVal('proporcao') || '';
-  const corpoBase = proporcao || 'natural body, medium breasts, wide hips, real skin';
-  const corpoExtra = p.corpo && p.corpo !== 'natural body, medium breasts, full buttocks, wide hips, natural skin texture on body'
-    ? cleanForDALLE(safePoseForDALLE(p.corpo)) : '';
-  const corpo = corpoExtra ? `${corpoBase}, ${corpoExtra}` : corpoBase;
-
-  // Roupa — sanitiza e aplica substituições para DALL-E
-  let roupaClean = safeClothing(safePoseForDALLE(p.roupa || ''));
-  roupaClean = roupaClean
-    .replace(/\bcompletely\s+nude\b[^,]*/gi, 'white short tight lycra shorts, fitted crop top')
-    .replace(/\bnude\b(?!\s*(?:heels?|colou?r|tone|lip|sand|beige))[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\blingerie\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbustier\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bcorset\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bgarter\s*belt\b[^,]*/gi, '').replace(/\bgarter\b[^,]*/gi, '')
-    .replace(/\bthong\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bg-string\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanties\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bpanty\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bbodystocking\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/\bteddy\s*(lingerie|bodysuit)?\b[^,]*/gi, 'white short tight lycra shorts')
-    .replace(/(white short tight lycra shorts,?\s*){2,}/gi, 'white short tight lycra shorts, ')
-    .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
-  const roupa = roupaClean || 'white short tight lycra shorts, fitted crop top';
-
-  // Pose (pill ou preset)
-  const poseRaw = getActivePillVal('pose') || p.pose || '';
-  const pose = cleanForDALLE(safePillVal(safePoseForDALLE(poseRaw)));
-
-  // Expressão (pill ou preset)
-  const exprRaw = getActivePillVal('expressao2') || p.expressao || '';
-  const expr = cleanForDALLE(safePoseForDALLE(exprRaw)) || 'natural relaxed expression, direct eye contact with camera';
-
-  // Cenário
-  const scene = cleanForDALLE(safePoseForDALLE(p.cenario || 'messy bedroom, rumpled sheets, window light'));
-
-  // Estado + clima
   const estado = getActivePillVal('estado') ? cleanForDALLE(getActivePillVal('estado')) : '';
   const clima  = getActivePillVal('clima')  ? cleanForDALLE(getActivePillVal('clima'))  : '';
-  const luzPill= getActivePillVal('luz2')   ? cleanForDALLE(getActivePillVal('luz2'))   : '';
-  const lightFinal = luzPill || light;
+  const luz    = getActivePillVal('luz2')   ? cleanForDALLE(getActivePillVal('luz2'))   : '';
 
-  // Âncora fotográfica estilo MJ
-  const photoAnchor = 'Nan Goldin, Larry Clark, shot on film, authentic photograph, real person, not AI, not CGI, genuine candid photo';
-
+  const photoAnchor = 'shot on film, authentic photograph, real person, not AI, not CGI, genuine candid photo';
   const composition = 'vertical portrait composition 9:16, subject fills 70% of frame, pin-sharp facial detail, 50 megapixel resolution, RAW quality';
-  const negatives = 'avoid: AI generated look, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed, airbrushed, uncanny valley, distorted anatomy, extra fingers, warped hands, deepfake, generated image, midjourney style, stable diffusion style, bad anatomy';
+  const negatives   = 'avoid: AI generated look, CGI, 3D render, cartoon, illustration, anime, digital art, synthetic skin, plastic skin, overprocessed, airbrushed, uncanny valley, distorted anatomy, extra fingers, warped hands, deepfake, generated image, midjourney style, stable diffusion style, bad anatomy';
 
-  let details = [subject, filmDesc, photoAnchor, camClean, corpo, roupa, estado, pose, expr, scene, clima, lightFinal, palette, composition]
+  let details = [subject, filmDesc, photoAnchor, cam, roupa, estado, pose, expr, scene, clima, luz, composition]
     .filter(Boolean).join(', ')
     .replace(/,\s*,/g,',').replace(/\s{2,}/g,' ').trim();
   details = details.replace(/(\b[a-z][^,]{8,}),(\s*\1)+/gi, '$1');
 
-  return `${genre}, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}. ${negatives}.`;
+  const antiAI = 'shot on Canon EOS R6 mirrorless, 50mm f/1.4 prime lens, visible skin pores and natural texture, slight film grain ISO 1000, authentic candid capture, real ambient environment light, natural asymmetry and slight imperfections, handheld micro-camera shake, unretouched unprocessed capture, real person photographed in real location, not digitally generated';
+
+  return `Professional editorial photography, genuine photograph, not AI generated, authentic real photo, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
 }
 
 function copyMJForDALLE(){
@@ -10299,6 +11464,186 @@ function copyCompare(side){
   if(ta && ta.value) navigator.clipboard.writeText(ta.value).then(()=>showToast(`✓ Prompt ${side.toUpperCase()} copiado!`));
 }
 
+// ── GPT RISK & TIKTOK SAFE ────────────────────────────────────────────────
+const GPT_SAFE_CATS = new Set(['selfie','casual','praia','academia','locais','moda','esportes','gotica','cosplay','etnias','plus_size','fantasia','tiktok']);
+const GPT_WARN_CATS = new Set(['lingerie','boudoir','em_casa','hotel','no_carro','banheiro','pos_banho','dormindo','foco_bunda','foco_pernas','detalhe','narrativa','sexting','conteudo','poses_livres','nude']);
+const GPT_NO_CATS   = new Set(['posicoes','extremo','pov_extremo','explicito_suave','ana','onlyfans']);
+function getGPTRisk(p){
+  if(GPT_NO_CATS.has(p.cat))   return 'no';
+  if(GPT_WARN_CATS.has(p.cat)) return 'warn';
+  if(GPT_SAFE_CATS.has(p.cat)) return 'safe';
+  return p.level==='sfw'?'safe':p.level==='sensual'?'warn':'no';
+}
+const TT_SAFE_CATS = new Set(['selfie','casual','academia','locais','moda','esportes','gotica','cosplay','etnias','plus_size','fantasia','tiktok','praia']);
+function isTikTokSafe(p){
+  return TT_SAFE_CATS.has(p.cat) && p.level==='sfw';
+}
+
+// ── CHATGPT FALLBACK SUGGESTION ───────────────────────────────────────────
+const GPT_FALLBACK_MAP = {
+  posicoes:'gpt_gym_squat_pov', extremo:'gpt_gym_hip_thrust', pov_extremo:'gpt_beach_pov_low',
+  explicito_suave:'gpt_casual_mirror_outfit', ana:'gpt_selfie_golden_hour_outdoor',
+  onlyfans:'gpt_location_rooftop_sunset', sexting:'gpt_selfie_car',
+  boudoir:'gpt_casual_window_light', lingerie:'goth_lingerie_dark',
+  foco_bunda:'tt_butt_closeup_leggings', foco_pernas:'tt_pov_low_leggings',
+  detalhe:'gpt_gym_stretching_floor', conteudo:'gpt_selfie_gym_progress',
+  narrativa:'gpt_casual_couch_reading', pos_banho:'gpt_casual_window_light',
+  dormindo:'gpt_casual_couch_reading', hotel:'gpt_location_cafe_window',
+  banheiro:'gpt_location_art_gallery', em_casa:'gpt_casual_dancing_kitchen',
+  no_carro:'gpt_selfie_car', nude:'goth_dark_ballet', poses_livres:'gpt_gym_stretching_floor'
+};
+function updateGPTFallback(p){
+  const fb = document.getElementById('gpt-fallback');
+  if(!fb || !p) return;
+  const risk = getGPTRisk(p);
+  if(risk==='safe'){ fb.classList.remove('show'); return; }
+  const altKey = GPT_FALLBACK_MAP[p.cat];
+  const altPreset = altKey && PRESETS_RAW.find(x=>x.key===altKey);
+  if(altPreset){
+    fb.innerHTML = risk==='no'
+      ? '🤖✗ Bloqueado no ChatGPT. <strong>Alternativa SFW: '+altPreset.name+' →</strong>'
+      : '🤖⚠ Pode bloquear no ChatGPT. <strong>Alternativa segura: '+altPreset.name+' →</strong>';
+    fb.dataset.altKey = altKey;
+    fb.classList.add('show');
+  } else {
+    fb.classList.remove('show');
+  }
+}
+function applyGPTFallback(){
+  const fb = document.getElementById('gpt-fallback');
+  if(fb && fb.dataset.altKey) selectPreset(fb.dataset.altKey);
+}
+
+// ── PILL COMBOS SAVED ─────────────────────────────────────────────────────
+function getPillComboState(){
+  const groups = ['pose','angulo','cam','expressao2','estado','clima','luz2','proporcao','idade','style'];
+  const state = {};
+  groups.forEach(g=>{
+    const el = document.querySelector('.qpick[data-group="'+g+'"].active:not([data-val=""])');
+    if(el) state[g] = el.dataset.val;
+  });
+  return state;
+}
+function getPillComboLabel(state){
+  const names = [];
+  Object.keys(state).forEach(g=>{
+    const el = document.querySelector('.qpick[data-group="'+g+'"][data-val="'+CSS.escape(state[g])+'"]');
+    if(el) names.push(el.textContent.trim());
+  });
+  return names.slice(0,3).join(' + ') || 'Combo';
+}
+function savePillCombo(){
+  const state = getPillComboState();
+  if(!Object.keys(state).length){ showToast('Nenhum pill selecionado'); return; }
+  const label = prompt('Nome para este combo:', getPillComboLabel(state));
+  if(!label) return;
+  let combos = [];
+  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
+  combos.push({label, state, id: Date.now()});
+  localStorage.setItem('pgen_pill_combos', JSON.stringify(combos));
+  renderPillCombos();
+  showToast('💾 Combo "'+label+'" salvo');
+}
+function applyPillCombo(state){
+  // Reset all to Padrão first
+  document.querySelectorAll('.qpick').forEach(b=>{ if(b.dataset.val==='') b.classList.add('active'); else b.classList.remove('active'); });
+  Object.keys(state).forEach(g=>{
+    const btn = document.querySelector('.qpick[data-group="'+g+'"][data-val="'+CSS.escape(state[g])+'"]');
+    if(btn){
+      document.querySelectorAll('.qpick[data-group="'+g+'"]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const hiddenId = 'edit-'+g;
+      const hidden = document.getElementById(hiddenId);
+      if(hidden) hidden.value = state[g];
+    }
+  });
+  if(selectedKey) applyEdits(false);
+  showToast('Combo aplicado');
+}
+function deletePillCombo(id){
+  let combos = [];
+  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
+  combos = combos.filter(c=>c.id!==id);
+  localStorage.setItem('pgen_pill_combos', JSON.stringify(combos));
+  renderPillCombos();
+}
+function renderPillCombos(){
+  const list = document.getElementById('pill-combos-list');
+  if(!list) return;
+  let combos = [];
+  try{ combos = JSON.parse(localStorage.getItem('pgen_pill_combos')||'[]'); }catch(e){}
+  list.innerHTML = '';
+  combos.forEach(c=>{
+    const chip = document.createElement('span');
+    chip.className='pill-combo-chip';
+    chip.innerHTML = c.label+' <span style="opacity:.5;margin-left:3px;font-size:.9em" title="Remover" onclick="event.stopPropagation();deletePillCombo('+c.id+')">✕</span>';
+    chip.addEventListener('click', ()=>applyPillCombo(c.state));
+    list.appendChild(chip);
+  });
+}
+
+// ── BATCH GENERATE ────────────────────────────────────────────────────────
+function openBatchPanel(){
+  const panel = document.getElementById('batch-panel');
+  if(panel) panel.classList.toggle('open');
+}
+// Store batch prompts for copy-by-index
+const _batchPrompts = [];
+function generateBatch(){
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  if(!p){ showToast('Selecione um preset'); return; }
+  const mode = document.getElementById('batch-mode-sel').value;
+  const count = parseInt(document.getElementById('batch-count-sel').value)||3;
+  const grid = document.getElementById('batch-grid');
+  grid.innerHTML = '';
+  _batchPrompts.length = 0;
+  for(let i=0;i<count;i++){
+    let prompt = '';
+    if(mode==='chatgpt') prompt = buildChatGPTPromptFromPreset(p);
+    else if(mode==='mj')  prompt = buildBlondePrompt(p);
+    else                  prompt = buildMJPromptForDALLE(p);
+    _batchPrompts.push(prompt);
+    const row = document.createElement('div');
+    row.className='batch-row';
+    row.style.cssText='display:flex;flex-direction:column;gap:4px;padding:6px 0;border-bottom:1px solid var(--border)';
+    const header = document.createElement('div');
+    header.style.cssText='display:flex;align-items:center;gap:6px';
+    header.innerHTML='<span style="color:var(--txt3);min-width:18px;font-size:.7rem">'+(i+1)+'.</span>'
+      +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt2);font-size:.72rem;cursor:pointer" title="Clique para expandir" onclick="var ta=this.closest(\'.batch-row\').querySelector(\'textarea\');ta.style.display=ta.style.display===\'block\'?\'none\':\'block\'">'+prompt.slice(0,110)+'…</span>'
+      +'<button class="btn-action" style="font-size:.65rem;padding:2px 8px;white-space:nowrap" data-idx="'+i+'" onclick="copyBatchItem('+i+')">📋 Copiar</button>';
+    const full = document.createElement('textarea');
+    full.className='batch-full';
+    full.readOnly=true;
+    full.value=prompt;
+    full.style.cssText='display:none;width:100%;height:80px;font-size:.68rem;resize:vertical;background:var(--bg2);color:var(--txt);border:1px solid var(--border);border-radius:4px;padding:4px;box-sizing:border-box';
+    row.appendChild(header);
+    row.appendChild(full);
+    grid.appendChild(row);
+  }
+  showToast('Batch de '+count+' prompts gerado');
+}
+function copyBatchItem(idx){
+  const prompt = _batchPrompts[idx];
+  if(!prompt) return;
+  navigator.clipboard.writeText(prompt).then(()=>showToast('✓ Copiado #'+(idx+1)));
+}
+function copyAllBatch(){
+  const rows = document.querySelectorAll('#batch-grid .batch-row');
+  if(!rows.length){ showToast('Gere o batch primeiro'); return; }
+  // Re-generate all and join
+  const p = PRESETS_RAW.find(x=>x.key===selectedKey);
+  if(!p) return;
+  const mode = document.getElementById('batch-mode-sel').value;
+  const count = parseInt(document.getElementById('batch-count-sel').value)||3;
+  const prompts = [];
+  for(let i=0;i<count;i++){
+    if(mode==='chatgpt') prompts.push(buildChatGPTPromptFromPreset(p));
+    else if(mode==='mj')  prompts.push(buildBlondePrompt(p));
+    else                  prompts.push(buildMJPromptForDALLE(p));
+  }
+  navigator.clipboard.writeText(prompts.join('\n\n---\n\n')).then(()=>showToast('✓ '+count+' prompts copiados'));
+}
+
 // ── KEYBOARD SHORTCUTS ─────────────────────────────────────────────────────
 document.addEventListener('keydown', e=>{
   if(e.target.matches('input,textarea,select')) return;
@@ -10319,6 +11664,7 @@ document.addEventListener('click', e=>{
 // ── START ──────────────────────────────────────────────────────────────────
 renderSidebar();
 filterPresets();
+renderPillCombos();
 </script>
 </body>
 </html>
