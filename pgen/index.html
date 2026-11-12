@@ -97,6 +97,8 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .bar-btn:hover{border-color:var(--border-lit);color:var(--text)}
 .bar-btn-surprise{border-color:var(--gold-dim);color:var(--gold)}
 .bar-btn-surprise:hover{background:var(--gold);color:#000;border-color:var(--gold)}
+.chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
+.chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
 
 /* ── History panel ── */
 #hist-panel{position:fixed;inset:0;background:rgba(5,5,10,.95);z-index:50;display:none;flex-direction:column}
@@ -10666,26 +10668,108 @@ function addToHistory(name, mj, gpt) {
   saveHistory(h);
 }
 
+const COMBOS_BY_CAT = {
+  casual: [
+    {label:'📸 Retrato espontâneo', ang:'straight-on frontal shot, direct camera angle, face centered in frame', pose:'standing upright pose, full body standing, confident stance'},
+    {label:'↗️ Look natural', ang:'three-quarter angle shot, 45 degree turn, face and body at angle to camera', pose:'seated pose, sitting position, natural seated posture'},
+    {label:'🌅 Silhueta ambiente', ang:'backlit silhouette shot, strong backlight, subject as dark silhouette against bright background', pose:'standing upright pose, full body standing, confident stance'},
+    {label:'📷 Lifestyle urbano', ang:'wide angle environmental shot, 24mm lens, subject in full environment context, expansive scene', pose:'leaning over pose, bent over surface, braced forward position'},
+  ],
+  praia: [
+    {label:'🌊 Full body praia', ang:'full body standing shot, head to toe in frame, full figure portrait', pose:'standing upright pose, full body standing, confident stance'},
+    {label:'⬇️ Deitada vista de cima', ang:'high angle shot, camera looking down at subject, bird\'s eye perspective', pose:'lying on back pose, supine position, reclined face-up'},
+    {label:'🤳 POV piscina', ang:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view', pose:'legs spread wide lying down, supine open legs pose, spread eagle position'},
+    {label:'🔙 Rear beach shot', ang:'rear view shot, back to camera, over-shoulder glance', pose:'standing back to camera pose, rear view standing, back facing forward'},
+  ],
+  academia: [
+    {label:'⬇️ Agachamento overhead', ang:'high angle shot, camera looking down at subject, bird\'s eye perspective', pose:'squatting pose, deep squat position, crouching down'},
+    {label:'⬆️ Power low angle', ang:'low angle shot, camera looking up at subject, worm\'s eye perspective, dramatic upward angle', pose:'standing upright pose, full body standing, confident stance'},
+    {label:'🪞 Mirror selfie', ang:'straight-on frontal shot, direct camera angle, face centered in frame', pose:'against the wall pose, back to wall, pressed against surface pose'},
+    {label:'🔙 Rear gym shot', ang:'rear view shot, back to camera, over-shoulder glance', pose:'standing back to camera pose, rear view standing, back facing forward'},
+  ],
+  lingerie: [
+    {label:'🛋️ Boudoir clássico', ang:'three-quarter angle shot, 45 degree turn, face and body at angle to camera', pose:'lying on stomach pose, prone position, face-down reclined'},
+    {label:'🤳 POV íntimo', ang:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view', pose:'kneeling forward pose, kneeling facing camera, submissive kneeling position'},
+    {label:'🪞 Reflexo sensual', ang:'mirror reflection shot, subject reflected in mirror, mirror framing composition', pose:'against the wall pose, back to wall, pressed against surface pose'},
+    {label:'⬆️ Dominância low angle', ang:'low angle shot, camera looking up at subject, worm\'s eye perspective, dramatic upward angle', pose:'standing upright pose, full body standing, confident stance'},
+  ],
+  banheiro: [
+    {label:'⬇️ Banheira aérea', ang:'high angle shot, camera looking down at subject, bird\'s eye perspective', pose:'lying on back pose, supine position, reclined face-up'},
+    {label:'🌐 Chuveiro angular', ang:'dutch angle shot, tilted camera, diagonal composition, dynamic tilt', pose:'against the wall pose, back to wall, pressed against surface pose'},
+    {label:'🤳 POV chuveiro', ang:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view', pose:'kneeling forward pose, kneeling facing camera, submissive kneeling position'},
+    {label:'🪞 Espelho banheiro', ang:'mirror reflection shot, subject reflected in mirror, mirror framing composition', pose:'standing upright pose, full body standing, confident stance'},
+  ],
+};
+const COMBOS_DEFAULT = [
+  {label:'📸 Frontal clássico', ang:'straight-on frontal shot, direct camera angle, face centered in frame', pose:'standing upright pose, full body standing, confident stance'},
+  {label:'🤳 POV envolvente', ang:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view', pose:'kneeling forward pose, kneeling facing camera, submissive kneeling position'},
+  {label:'↗️ 3/4 dinâmico', ang:'three-quarter angle shot, 45 degree turn, face and body at angle to camera', pose:'sensual dance pose, exotic dancer posture, rhythmic body movement position'},
+  {label:'🔙 Rear view', ang:'rear view shot, back to camera, over-shoulder glance', pose:'standing back to camera pose, rear view standing, back facing forward'},
+];
+
 function showAnguloStep() {
   showTyping();
   setTimeout(() => {
     removeTyping();
-    appendBotMsg('Qual ângulo de câmera / POV?');
-    const wrap = document.createElement('div');
-    wrap.className = 'chips-wrap';
+    const cat = selectedPreset ? selectedPreset.cat : null;
+    const combos = COMBOS_BY_CAT[cat] || COMBOS_DEFAULT;
+
+    // Sugestões rápidas
+    appendBotMsg('✨ Combinações recomendadas para este preset:');
+    const comboWrap = document.createElement('div');
+    comboWrap.className = 'chips-wrap combo-chips';
+    combos.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'chip chip-combo';
+      btn.textContent = c.label;
+      btn.onclick = () => {
+        disableChips(comboWrap);
+        disableChips(anguloWrap);
+        answers.angulo = c.ang;
+        answers.pose = c.pose;
+        appendUserMsg(c.label);
+        setTimeout(() => showStep(5), 300);
+      };
+      comboWrap.appendChild(btn);
+    });
+    // Botão pular sugestões
+    const skipCombo = document.createElement('button');
+    skipCombo.className = 'chip skip';
+    skipCombo.textContent = '— Escolher manualmente —';
+    skipCombo.onclick = () => {
+      disableChips(comboWrap);
+      anguloSection.style.display = '';
+      scrollBot();
+    };
+    comboWrap.appendChild(skipCombo);
+    chat.appendChild(comboWrap);
+    scrollBot();
+
+    // Seção de escolha manual (inicialmente oculta)
+    const anguloSection = document.createElement('div');
+    anguloSection.style.display = 'none';
+    const anguloWrap = document.createElement('div');
+    anguloWrap.className = 'chips-wrap';
+
+    const label = document.createElement('div');
+    label.className = 'bot-bubble';
+    label.textContent = 'Qual ângulo de câmera / POV?';
+    anguloSection.appendChild(label);
+
     ANGULO_OPTS.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
       btn.textContent = opt.label;
       btn.onclick = () => {
-        disableChips(wrap);
+        disableChips(anguloWrap);
         answers.angulo = opt.val === '__skip__' ? '' : opt.val;
         appendUserMsg(opt.val === '__skip__' ? '— Usar padrão do preset —' : opt.label);
         setTimeout(() => showStep(4), 300);
       };
-      wrap.appendChild(btn);
+      anguloWrap.appendChild(btn);
     });
-    chat.appendChild(wrap);
+    anguloSection.appendChild(anguloWrap);
+    chat.appendChild(anguloSection);
     scrollBot();
   }, 400);
 }
