@@ -76,7 +76,9 @@ function scoreHotel(hotel: Hotel, query: string, filters: {
 }
 
 function detectCityInQuery(query: string): string | null {
-  const normQuery = normalizeText(query);
+  // Strip common type keywords so "pousada em ilhéus" → "ilhéus"
+  const stripped = query.replace(/\b(pousada|hotel|hostel|resort|chalé|chale|hostel|espaço inteiro|espaco inteiro)\b/gi, "").trim();
+  const normQuery = normalizeText(stripped || query);
   const citySet = new Map<string, string>(); // normCity -> original city
   hotelsData.forEach(h => { citySet.set(normalizeText(h.city), h.city); });
 
@@ -98,6 +100,21 @@ function detectCityInQuery(query: string): string | null {
   }
 
   return null;
+}
+
+function detectHotelByName(query: string): Hotel | null {
+  const normQuery = normalizeText(query);
+  // If query closely matches a hotel name (name contained in query or query in name)
+  let best: Hotel | null = null;
+  let bestScore = 0;
+  for (const hotel of hotelsData) {
+    const normName = normalizeText(hotel.name);
+    if (normQuery.includes(normName) || normName.includes(normQuery)) {
+      const score = normName.length; // longer matches are more specific
+      if (score > bestScore) { bestScore = score; best = hotel; }
+    }
+  }
+  return bestScore >= 6 ? best : null; // ignore very short matches
 }
 
 export async function GET(request: NextRequest) {
@@ -139,25 +156,42 @@ export async function GET(request: NextRequest) {
   }
 
   const detectedCity = query ? detectCityInQuery(query) : null;
+  const detectedHotel = !detectedCity && query ? detectHotelByName(query) : null;
 
   let results: Hotel[];
 
-  if (detectedCity) {
+  if (detectedHotel && !detectedCity) {
+    // Direct hotel name search: put that hotel first, then similar hotels
+    const similar = hotelsData
+      .filter(h => h.id !== detectedHotel.id && (h.city === detectedHotel.city || h.state === detectedHotel.state))
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 8);
+    results = [detectedHotel, ...similar];
+  } else if (detectedCity) {
     // City detected: show ALL hotels from that city, sorted by featured+rating
-    // Apply only type filter on top (never spill into other cities)
     let cityHotels = hotelsData.filter(h => h.city === detectedCity);
     if (filters.type && filters.type !== "todos") {
       cityHotels = cityHotels.filter(h => matchesType(h, filters.type));
     }
-    results = cityHotels.sort((a, b) => {
+    const sorted = cityHotels.sort((a, b) => {
       if (a.featured && !b.featured) return -1;
       if (!a.featured && b.featured) return 1;
       return b.rating - a.rating;
     });
+
+    // If fewer than 5 results, expand to nearby cities (same state, same region)
+    if (sorted.length < 5) {
+      const nearby = hotelsData
+        .filter(h => h.city !== detectedCity && h.state === sorted[0]?.state || (h.region === sorted[0]?.region && h.state === sorted[0]?.state))
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 12 - sorted.length);
+      results = [...sorted, ...nearby];
+    } else {
+      results = sorted;
+    }
   } else {
     // No city detected: score across all hotels using filters
-    let pool = hotelsData;
-    const scored = pool.map(hotel => ({ hotel, score: scoreHotel(hotel, query, filters) }));
+    const scored = hotelsData.map(hotel => ({ hotel, score: scoreHotel(hotel, query, filters) }));
     results = scored
       .filter(({ score }) => score > 0)
       .sort((a, b) => b.score - a.score)
@@ -175,7 +209,9 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const aiSuggestion = generateAISuggestion(query, results.length, filters, detectedCity);
+  const cityCount = detectedCity ? hotelsData.filter(h => h.city === detectedCity).length : 0;
+  const hasNearby = detectedCity && results.length > cityCount;
+  const aiSuggestion = generateAISuggestion(query, results.length, filters, detectedCity, detectedHotel?.name, hasNearby ? cityCount : undefined);
 
   return NextResponse.json({
     results,
@@ -185,9 +221,10 @@ export async function GET(request: NextRequest) {
   });
 }
 
-function generateAISuggestion(query: string, count: number, filters: Record<string, string | number | undefined>, detectedCity?: string | null): string {
+function generateAISuggestion(query: string, count: number, filters: Record<string, string | number | undefined>, detectedCity?: string | null, detectedHotelName?: string, cityOnlyCount?: number): string {
   const parts: string[] = [];
   if (detectedCity) parts.push(`em ${detectedCity}`);
+  else if (detectedHotelName) parts.push(`"${detectedHotelName}"`);
   else if (query) parts.push(`"${query}"`);
   if (filters.region && filters.region !== "Todos") parts.push(`na região ${filters.region}`);
   if (filters.state && filters.state !== "Todos") parts.push(`no estado ${filters.state}`);
@@ -196,6 +233,10 @@ function generateAISuggestion(query: string, count: number, filters: Record<stri
 
   if (count === 0) {
     return `Não encontrei resultados para ${parts.join(", ")}. Tente ampliar os filtros ou buscar em outras regiões do Brasil.`;
+  }
+
+  if (cityOnlyCount !== undefined && cityOnlyCount < count) {
+    return `Encontrei ${cityOnlyCount} opção${cityOnlyCount !== 1 ? "s" : ""} em ${detectedCity}. Incluindo também ${count - cityOnlyCount} opção${count - cityOnlyCount !== 1 ? "s" : ""} em destinos próximos na mesma região.`;
   }
 
   return `Encontrei ${count} opção${count > 1 ? "s" : ""} ${parts.join(", ")}. Resultados ordenados por relevância e avaliação dos hóspedes.`;

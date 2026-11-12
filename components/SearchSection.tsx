@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 const MapView = dynamic(() => import("./MapView"), { ssr: false, loading: () => <div className="rounded-2xl bg-gray-100 animate-pulse" style={{ height: 480 }} /> });
 
 const allCities = Array.from(new Set(hotelsData.map(h => `${h.city}, ${h.state}`)));
+const allHotelNames = hotelsData.map(h => ({ name: h.name, city: h.city, state: h.state }));
 
 const AMENITY_OPTIONS = ["Wi-Fi", "Piscina", "Spa", "Café da manhã", "Estacionamento", "Restaurante", "Academia", "Pet-friendly"];
 
@@ -329,7 +330,12 @@ export default function SearchSection() {
                 setShowHistory(false);
                 if (e.target.value.length >= 2) {
                   const q = e.target.value.toLowerCase();
-                  setSuggestions(allCities.filter(c => c.toLowerCase().includes(q)).slice(0, 6));
+                  const citySuggestions = allCities.filter(c => c.toLowerCase().includes(q)).slice(0, 4);
+                  const hotelSuggestions = allHotelNames
+                    .filter(h => h.name.toLowerCase().includes(q))
+                    .slice(0, 3)
+                    .map(h => `🏨 ${h.name} — ${h.city}, ${h.state}`);
+                  setSuggestions([...citySuggestions, ...hotelSuggestions].slice(0, 6));
                   setShowSuggestions(true);
                 } else {
                   setShowSuggestions(false);
@@ -350,10 +356,15 @@ export default function SearchSection() {
                 {suggestions.map(s => (
                   <button
                     key={s}
-                    onMouseDown={() => { setQuery(s.split(",")[0]); setShowSuggestions(false); }}
+                    onMouseDown={() => {
+                      // For hotel name suggestions (start with 🏨), extract just the name
+                      const isHotel = s.startsWith("🏨 ");
+                      setQuery(isHotel ? s.replace(/^🏨 /, "").split(" — ")[0] : s.split(",")[0]);
+                      setShowSuggestions(false);
+                    }}
                     className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2 border-b border-gray-50 last:border-0"
                   >
-                    <span className="text-gray-400">📍</span> {s}
+                    {s.startsWith("🏨 ") ? null : <span className="text-gray-400">📍</span>} {s}
                   </button>
                 ))}
               </div>
