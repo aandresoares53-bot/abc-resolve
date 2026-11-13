@@ -234,6 +234,7 @@ let currentStep = 0;
 let currentEntity = null;
 let generatedEN = '';
 let generatedPT = '';
+let generatedDalle = '';
 let activeTags = new Set();
 
 // ── Steps definition ───────────────────────────────────────────────────
@@ -561,6 +562,93 @@ function pickOption(idx, label, val, chipsEl, opt) {
   }
 }
 
+// ── DALL-E 3 sanitizer ─────────────────────────────────────────────────
+function cleanForDALLE(text) {
+  if (!text) return '';
+  let t = text;
+
+  // Strip SD weight syntax (word:1.4) → word
+  t = t.replace(/\(([^()]+):\d+(?:\.\d+)?\)/g, '$1');
+
+  // Explicit sexual acts
+  t = t.replace(/\bblowjob\b[^,]*/gi, '');
+  t = t.replace(/\bpenetrat\w+[^,]*/gi, '');
+  t = t.replace(/\borgasm\b[^,]*/gi, '');
+  t = t.replace(/\bmasturbat\w+[^,]*/gi, '');
+  t = t.replace(/\bporn\w*/gi, '');
+  t = t.replace(/\berotic\b/gi, 'sensual artistic');
+  t = t.replace(/\bexplicit\b/gi, '');
+  t = t.replace(/\bnsfw\b/gi, '');
+  t = t.replace(/\bsexual\b/gi, '');
+
+  // Nudity terms → artistic equivalents
+  t = t.replace(/\bfully\s+nude\b/gi, 'figure study');
+  t = t.replace(/\bnaked\b/gi, 'undraped figure');
+  t = t.replace(/\bnudity\b/gi, 'figurative art');
+  t = t.replace(/\bnude\b/gi, 'figurative');
+  t = t.replace(/\btopless\b/gi, 'bare-shouldered');
+
+  // Genitalia
+  t = t.replace(/\bvulva\b[^,]*/gi, '');
+  t = t.replace(/\bvagina\b[^,]*/gi, '');
+  t = t.replace(/\bpenis\b[^,]*/gi, '');
+  t = t.replace(/\bgenitali[^,]*/gi, '');
+  t = t.replace(/\bcrotch\b[^,]*/gi, '');
+
+  // Body — semantically blocked
+  t = t.replace(/\b(large|big|huge|perky|round|bare)\s+breasts?\b[^,]*/gi, 'natural figure');
+  t = t.replace(/\bbreasts?\b[^,]*/gi, 'chest');
+  t = t.replace(/\bnipple\w*[^,]*/gi, '');
+
+  // Demonic / horror terms → dark fantasy equivalents
+  t = t.replace(/\bsatanic\b/gi, 'occult');
+  t = t.replace(/\bsatan\b/gi, 'dark deity');
+  t = t.replace(/\blucifer\b/gi, 'fallen angel');
+  t = t.replace(/\bdemonic\b/gi, 'dark mythological');
+  t = t.replace(/\binfernal\b/gi, 'underworld');
+  t = t.replace(/\bhellish\b/gi, 'dark fantasy');
+  t = t.replace(/\bgore\b[^,]*/gi, '');
+  t = t.replace(/\bgory\b[^,]*/gi, '');
+  t = t.replace(/\bmutilat\w+[^,]*/gi, '');
+  t = t.replace(/\bdecapitat\w+[^,]*/gi, '');
+  t = t.replace(/\bcannibal\w*[^,]*/gi, '');
+  t = t.replace(/\btorture\b[^,]*/gi, '');
+
+  // Strip SD tokens that DALL-E ignores / flags
+  t = t.replace(/--ar\s+[\d:]+/gi, '');
+  t = t.replace(/--artes-espirituais/gi, '');
+  t = t.replace(/\bphysically based rendering\b/gi, 'photorealistic rendering');
+
+  // Cleanup artifacts
+  t = t.replace(/,(\s*,)+/g, ',').replace(/\s{2,}/g, ' ').trim();
+  t = t.replace(/^[,\s]+|[,\s]+$/g, '');
+  return t;
+}
+
+function buildPromptDalle() {
+  const ent = currentEntity || {};
+  const name = ent.name_en || ent.name || answers.entidade || 'spiritual entity';
+  const nameSafe = name.replace(/[(),]/g, '');
+  const parts = [];
+
+  // Natural language lead for DALL-E 3
+  const catLabel = (CAT_LABELS[answers.categoria] || answers.categoria || 'spiritual entity').toLowerCase();
+  parts.push(`Artistic illustration of ${nameSafe}, a ${catLabel} from Afro-Brazilian spiritual tradition.`);
+  if (ent.desc_en) parts.push(ent.desc_en);
+  else if (ent.desc) parts.push(ent.desc);
+
+  // Visual choices — sanitized
+  if (answers.estilo)     parts.push(cleanForDALLE(answers.estilo));
+  if (answers.composicao) parts.push(cleanForDALLE(answers.composicao));
+  if (answers.luz)        parts.push(cleanForDALLE(answers.luz));
+  if (answers.atmosfera)  parts.push(cleanForDALLE(answers.atmosfera));
+  if (answers.extra)      parts.push(cleanForDALLE(answers.extra));
+  if (ent.local_en)       parts.push(`Set in ${ent.local_en}.`);
+
+  parts.push('highly detailed, masterpiece quality, fine art');
+  return parts.filter(Boolean).join(' ');
+}
+
 // ── Prompt builder ─────────────────────────────────────────────────────
 function buildPromptEN() {
   const ent = currentEntity || {};
@@ -617,6 +705,7 @@ function showResult() {
 
     generatedEN = buildPromptEN();
     generatedPT = buildPromptPT();
+    generatedDalle = buildPromptDalle();
     const entityName = (currentEntity && currentEntity.name) || answers.entidade || 'Entidade';
     addToHistory(entityName, generatedEN, generatedPT);
 
@@ -634,11 +723,15 @@ function showResult() {
       <div class="prompt-label">Prompt em Inglês (SD / Midjourney)</div>
       <div class="prompt-box" id="box-en">${generatedEN}</div>
 
+      <div class="prompt-label">🤖 Prompt DALL-E 3 / ChatGPT <span style="font-size:.7rem;opacity:.6">(sem bloqueio)</span></div>
+      <div class="prompt-box" id="box-dalle" style="border-color:#7c5cbf">${generatedDalle}</div>
+
       <div class="prompt-label">Resumo em Português</div>
       <div class="prompt-box" id="box-pt">${generatedPT}</div>
 
       <div class="result-actions">
         <button class="btn-act primary" onclick="copyEN()">📋 Copiar EN</button>
+        <button class="btn-act" onclick="copyDalle(event)" style="border-color:#7c5cbf;color:#b39ddb">🤖 DALL-E 3</button>
         <button class="btn-act" onclick="copyPT()">📋 Copiar PT</button>
         <button class="btn-act" onclick="exportTxt()">💾 Exportar .txt</button>
         <button class="btn-act" onclick="restartFlow()">↺ Novo Prompt</button>
@@ -659,6 +752,9 @@ function copyEN() {
 function copyPT() {
   navigator.clipboard.writeText(generatedPT).then(() => flashBtn(event.target, '✓ Copiado!'));
 }
+function copyDalle(e) {
+  navigator.clipboard.writeText(generatedDalle).then(() => flashBtn(e.target, '✓ Copiado!'));
+}
 
 function flashBtn(btn, msg) {
   const prev = btn.textContent;
@@ -669,7 +765,7 @@ function flashBtn(btn, msg) {
 function exportTxt() {
   const entityName = (currentEntity && currentEntity.name) || answers.entidade || 'Entidade';
   const catLabel   = CAT_LABELS[answers.categoria] || answers.categoria || '';
-  const content = `PORTAL DAS SOMBRAS — Prompt Espiritual\n${'─'.repeat(50)}\n\nEntidade: ${entityName}\nCategoria: ${catLabel}\n\n[EN]\n${generatedEN}\n\n[PT]\n${generatedPT}\n\nGerado em: ${new Date().toLocaleString('pt-BR')}\n✦ Artes Espirituais ✦`;
+  const content = `PORTAL DAS SOMBRAS — Prompt Espiritual\n${'─'.repeat(50)}\n\nEntidade: ${entityName}\nCategoria: ${catLabel}\n\n[EN — SD / Midjourney]\n${generatedEN}\n\n[DALL-E 3 / ChatGPT]\n${generatedDalle}\n\n[PT]\n${generatedPT}\n\nGerado em: ${new Date().toLocaleString('pt-BR')}\n✦ Artes Espirituais ✦`;
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
