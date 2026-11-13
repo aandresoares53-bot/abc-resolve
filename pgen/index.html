@@ -10061,6 +10061,20 @@ function safePoseForDALLE(pose){
 function safeClothing(roupa){
   if(!roupa) return '';
   let r = roupa;
+  // Lingerie → white short lycra (DALL-E não gera lingerie corretamente)
+  const LYCRA = 'wearing white short lycra shorts, tight fit';
+  if(/\blingerie\b|\bbodystocking\b|\bteddy\b|\bcorset\b|\bbustier\b|\bgarter\b|\bstockings?\b|\bnegligee\b|\bbabydoll\b/i.test(r)){
+    return LYCRA;
+  }
+  if(/\blace\s+(bra|set|bodysuit|thong|panties|underwear)\b|\bsatin\s+(bra|set|bodysuit|thong|lingerie)\b/i.test(r)){
+    return LYCRA;
+  }
+  if(/\b(bra\s+and\s+thong|thong\s+and\s+bra|bra\s+and\s+panties|panties\s+and\s+bra)\b/i.test(r)){
+    return LYCRA;
+  }
+  if(/\bonly\s+(a\s+)?(bra|thong|g[\s-]?string|pasties?)\b/i.test(r)){
+    return LYCRA;
+  }
   r = r.replace(/\bfully\s+nude\b[^,]*/gi, '');
   r = r.replace(/\bcompletely\s+naked\b[^,]*/gi, '');
   r = r.replace(/\bor\s+nude\b[^,]*/gi, '');
@@ -10096,7 +10110,7 @@ const DALLE_CLOTHING_VARIANTS = {
   casual:      ['wearing casual jeans and fitted crop top, street style','wearing summer dress and sandals, casual look','wearing high-waist shorts and tucked-in blouse, casual chic','wearing relaxed-fit trousers and sleeveless top, everyday look'],
   praia:       ['wearing colorful triangle bikini, beach style','wearing sporty one-piece swimsuit, poolside','wearing floral bikini set, vacation beach look','wearing high-waist bikini bottoms and bandeau top'],
   academia:    ['wearing athletic leggings and fitted sports top, gym ready','wearing high-waist workout shorts and crop sports top, fitness','wearing fitted gym set, activewear look','wearing compression leggings and sleeveless training top'],
-  lingerie:    ['wearing fitted satin slip dress, elegant minimal','wearing colorful two-piece bikini set, vacation style','wearing fitted crop top and high-waist shorts, sporty','wearing athletic bodysuit and shorts, active lifestyle'],
+  lingerie:    ['wearing white short lycra shorts, tight fit','wearing white short lycra shorts, tight fit','wearing white short lycra shorts, tight fit','wearing white short lycra shorts, tight fit'],
   banheiro:    ['wearing cozy white terry bath robe, post-shower','wearing wrapped white towel as dress, fresh look','wearing soft cotton robe, morning routine','wearing white bathrobe loosely tied, relaxed home moment'],
   boudoir:     ['wearing fitted slip dress, relaxed elegant home wear','wearing casual oversized shirt as dress, home chic','wearing satin pajama set, stylish loungewear','wearing silk-look short dress, home elegance'],
   fantasia:    ['wearing stylish fantasy costume, full coverage','wearing themed character outfit, complete look','wearing elegant period costume, full coverage','wearing creative themed outfit, complete styling'],
