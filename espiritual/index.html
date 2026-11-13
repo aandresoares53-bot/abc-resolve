@@ -108,6 +108,31 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .bar-btn{padding:9px 20px;border-radius:var(--r-chip);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
 .bar-btn:hover{border-color:var(--border-lit);color:var(--text)}
 .bar-btn.danger{border-color:var(--dim)}
+.bar-btn-surprise{border-color:var(--gold-dim);color:var(--gold)}
+.bar-btn-surprise:hover{background:var(--gold);color:#000;border-color:var(--gold)}
+
+/* ── Global search ── */
+#global-search-wrap{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 16px 6px;border-bottom:1px solid var(--border)}
+.gs-inner{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-chip);padding:8px 12px;transition:border-color .18s;max-width:700px;margin:0 auto}
+.gs-inner:focus-within{border-color:var(--border-lit)}
+.gs-icon{font-size:.9rem;opacity:.6;flex-shrink:0}
+#global-search{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:.85rem;font-family:Georgia,serif}
+#global-search::placeholder{color:var(--muted)}
+#gs-clear{cursor:pointer;opacity:.5;font-size:.75rem;flex-shrink:0;padding:2px 4px}
+#gs-clear:hover{opacity:1}
+#gs-results{max-width:700px;margin:6px auto 0;display:flex;flex-direction:column;gap:4px;max-height:60vh;overflow-y:auto}
+.gs-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:border-color .15s,background .15s}
+.gs-item:hover{border-color:var(--border-lit);background:color-mix(in srgb,var(--ember) 8%,transparent)}
+.gs-item-icon{font-size:1.3rem;flex-shrink:0}
+.gs-item-info{min-width:0}
+.gs-item-name{font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-item-desc{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-item-cat{font-size:.65rem;color:var(--gold);opacity:.7;text-transform:uppercase;letter-spacing:.04em}
+.gs-empty{text-align:center;color:var(--muted);font-size:.8rem;padding:16px}
+
+/* ── Combo chips ── */
+.chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
+.chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
 
 /* ── History panel ── */
 #hist-panel{position:fixed;inset:0;background:rgba(10,5,8,.92);z-index:50;display:none;flex-direction:column}
@@ -157,6 +182,15 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
   <div class="header-sub">Prompts para Umbanda · Quimbanda · Espiritualidade</div>
 </header>
 
+<div id="global-search-wrap">
+  <div class="gs-inner">
+    <span class="gs-icon">🔍</span>
+    <input id="global-search" type="text" placeholder="Buscar entidade… (Exu, Iemanjá, Pombagira…)" autocomplete="off" oninput="onGlobalSearch(this.value)" />
+    <span id="gs-clear" onclick="clearGlobalSearch()" style="display:none">✕</span>
+  </div>
+  <div id="gs-results" style="display:none"></div>
+</div>
+
 <div class="progress-wrap">
   <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
   <div class="progress-label" id="prog-label">Etapa 1 de 6</div>
@@ -166,6 +200,7 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 
 <div id="bottom-bar">
   <button class="bar-btn" onclick="openHist()">📜 Histórico</button>
+  <button class="bar-btn bar-btn-surprise" onclick="surpresaFlow()">🎲 Surpreenda-me</button>
   <button class="bar-btn danger" onclick="restartFlow()">↺ Recomeçar</button>
 </div>
 
@@ -519,7 +554,11 @@ function pickOption(idx, label, val, chipsEl, opt) {
     }
   }
 
-  setTimeout(() => showStep(idx + 1), 300);
+  if (step.id === 'entidade' && val !== '__skip__') {
+    setTimeout(() => showComboStep(), 300);
+  } else {
+    setTimeout(() => showStep(idx + 1), 300);
+  }
 }
 
 // ── Prompt builder ─────────────────────────────────────────────────────
@@ -690,6 +729,258 @@ function loadHistItem(i) {
   `;
   chat.appendChild(card);
   scrollBot();
+}
+
+// ── Combo suggestions (estilo + composicao + luz + atmosfera) ──────────
+const COMBOS_BY_CAT = {
+  orixa: [
+    {label:'🌊 Majestoso e divino', e:STEPS[2].qr[4].val, c:STEPS[3].qr[3].val, l:STEPS[4].qr[6].val, a:STEPS[5].qr[2].val},
+    {label:'⚡ Épico panorâmico', e:STEPS[2].qr[2].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[3].val},
+    {label:'👑 Simetria sagrada', e:STEPS[2].qr[0].val, c:STEPS[3].qr[8].val, l:STEPS[4].qr[12].val, a:STEPS[5].qr[1].val},
+    {label:'🌅 Contraluz crepuscular', e:STEPS[2].qr[0].val, c:STEPS[3].qr[3].val, l:STEPS[4].qr[9].val, a:STEPS[5].qr[2].val},
+    {label:'🕯️ Fotorrealismo ritual', e:STEPS[2].qr[0].val, c:STEPS[3].qr[1].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[3].val},
+    {label:'🌈 Vitrô celestial', e:STEPS[2].qr[11].val, c:STEPS[3].qr[8].val, l:STEPS[4].qr[11].val, a:STEPS[5].qr[3].val},
+  ],
+  exu: [
+    {label:'🔥 Infernal dramático', e:STEPS[2].qr[2].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[8].val, a:STEPS[5].qr[0].val},
+    {label:'🤳 POV intenso', e:STEPS[2].qr[0].val, c:STEPS[3].qr[0].val, l:STEPS[4].qr[3].val, a:STEPS[5].qr[9].val},
+    {label:'⬆️ Low angle poderoso', e:STEPS[2].qr[1].val, c:STEPS[3].qr[4].val, l:STEPS[4].qr[2].val, a:STEPS[5].qr[9].val},
+    {label:'🖤 Silhueta sombria', e:STEPS[2].qr[8].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[3].val, a:STEPS[5].qr[0].val},
+    {label:'⛧ Occult gravura', e:STEPS[2].qr[6].val, c:STEPS[3].qr[8].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[3].val},
+    {label:'💀 Horror atmosférico', e:STEPS[2].qr[12].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[5].val, a:STEPS[5].qr[4].val},
+  ],
+  pombo: [
+    {label:'🌹 Sensual e mística', e:STEPS[2].qr[0].val, c:STEPS[3].qr[1].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[12].val},
+    {label:'🪞 Reflexo dramático', e:STEPS[2].qr[2].val, c:STEPS[3].qr[8].val, l:STEPS[4].qr[3].val, a:STEPS[5].qr[12].val},
+    {label:'🌕 Lua e névoa', e:STEPS[2].qr[8].val, c:STEPS[3].qr[3].val, l:STEPS[4].qr[1].val, a:STEPS[5].qr[1].val},
+    {label:'🕯️ Boudoir ritual', e:STEPS[2].qr[0].val, c:STEPS[3].qr[2].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[8].val},
+    {label:'🌅 Silhueta crepúsculo', e:STEPS[2].qr[0].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[9].val, a:STEPS[5].qr[12].val},
+    {label:'💎 Mística etérea', e:STEPS[2].qr[7].val, c:STEPS[3].qr[10].val, l:STEPS[4].qr[4].val, a:STEPS[5].qr[1].val},
+  ],
+  bruxa: [
+    {label:'🌙 Noturna sombria', e:STEPS[2].qr[8].val, c:STEPS[3].qr[3].val, l:STEPS[4].qr[1].val, a:STEPS[5].qr[0].val},
+    {label:'⬆️ Low angle intimidante', e:STEPS[2].qr[2].val, c:STEPS[3].qr[4].val, l:STEPS[4].qr[5].val, a:STEPS[5].qr[4].val},
+    {label:'🌀 Surrealismo onírico', e:STEPS[2].qr[13].val, c:STEPS[3].qr[10].val, l:STEPS[4].qr[4].val, a:STEPS[5].qr[8].val},
+    {label:'🔥 Fogueira ritualística', e:STEPS[2].qr[0].val, c:STEPS[3].qr[3].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[3].val},
+    {label:'🕸️ Gótico sombrio', e:STEPS[2].qr[12].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[8].val, a:STEPS[5].qr[4].val},
+    {label:'🌿 Natural e ancestral', e:STEPS[2].qr[7].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[1].val, a:STEPS[5].qr[3].val},
+  ],
+  demonio: [
+    {label:'🔥 Inferno ardente', e:STEPS[2].qr[2].val, c:STEPS[3].qr[4].val, l:STEPS[4].qr[8].val, a:STEPS[5].qr[7].val},
+    {label:'💀 Horror abissal', e:STEPS[2].qr[12].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[8].val, a:STEPS[5].qr[4].val},
+    {label:'⬆️ Colossus low angle', e:STEPS[2].qr[1].val, c:STEPS[3].qr[4].val, l:STEPS[4].qr[2].val, a:STEPS[5].qr[7].val},
+    {label:'⚡ Tempestade elétrica', e:STEPS[2].qr[8].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[5].val, a:STEPS[5].qr[13].val},
+    {label:'🖤 Silhueta infernal', e:STEPS[2].qr[8].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[8].val, a:STEPS[5].qr[0].val},
+    {label:'🌀 Caos apocalíptico', e:STEPS[2].qr[14].val, c:STEPS[3].qr[11].val, l:STEPS[4].qr[5].val, a:STEPS[5].qr[7].val},
+  ],
+  preto: [
+    {label:'🕯️ Fotorrealismo íntimo', e:STEPS[2].qr[0].val, c:STEPS[3].qr[1].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[5].val},
+    {label:'📖 Iluminura sacra', e:STEPS[2].qr[9].val, c:STEPS[3].qr[8].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[3].val},
+    {label:'🌅 Crepúsculo sereno', e:STEPS[2].qr[0].val, c:STEPS[3].qr[3].val, l:STEPS[4].qr[9].val, a:STEPS[5].qr[5].val},
+    {label:'🎭 Narrativa ancestral', e:STEPS[2].qr[5].val, c:STEPS[3].qr[9].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[3].val},
+    {label:'🌿 Natural e contemplativo', e:STEPS[2].qr[7].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[9].val, a:STEPS[5].qr[5].val},
+    {label:'💡 Studio clássico', e:STEPS[2].qr[0].val, c:STEPS[3].qr[2].val, l:STEPS[4].qr[10].val, a:STEPS[5].qr[3].val},
+  ],
+  caboclo: [
+    {label:'🏹 Natureza épica', e:STEPS[2].qr[2].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[9].val, a:STEPS[5].qr[2].val},
+    {label:'🌾 Guerreiro panorâmico', e:STEPS[2].qr[0].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[9].val},
+    {label:'⬆️ Low angle heroico', e:STEPS[2].qr[2].val, c:STEPS[3].qr[4].val, l:STEPS[4].qr[9].val, a:STEPS[5].qr[9].val},
+    {label:'🌅 Silhueta pôr do sol', e:STEPS[2].qr[0].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[9].val, a:STEPS[5].qr[2].val},
+    {label:'🌿 Floresta ancestral', e:STEPS[2].qr[8].val, c:STEPS[3].qr[7].val, l:STEPS[4].qr[1].val, a:STEPS[5].qr[3].val},
+    {label:'⚡ Tempestade guerreira', e:STEPS[2].qr[8].val, c:STEPS[3].qr[11].val, l:STEPS[4].qr[5].val, a:STEPS[5].qr[9].val},
+  ],
+};
+const COMBOS_DEFAULT = [
+  {label:'🕯️ Fotorrealismo clássico', e:STEPS[2].qr[0].val, c:STEPS[3].qr[1].val, l:STEPS[4].qr[0].val, a:STEPS[5].qr[3].val},
+  {label:'⬆️ Majestoso low angle', e:STEPS[2].qr[2].val, c:STEPS[3].qr[4].val, l:STEPS[4].qr[6].val, a:STEPS[5].qr[2].val},
+  {label:'🖤 Sombrio e intenso', e:STEPS[2].qr[8].val, c:STEPS[3].qr[6].val, l:STEPS[4].qr[8].val, a:STEPS[5].qr[0].val},
+  {label:'🌕 Noturno e místico', e:STEPS[2].qr[8].val, c:STEPS[3].qr[3].val, l:STEPS[4].qr[1].val, a:STEPS[5].qr[1].val},
+  {label:'👑 Simétrico e sagrado', e:STEPS[2].qr[11].val, c:STEPS[3].qr[8].val, l:STEPS[4].qr[11].val, a:STEPS[5].qr[3].val},
+  {label:'🌀 Onírico e surreal', e:STEPS[2].qr[13].val, c:STEPS[3].qr[10].val, l:STEPS[4].qr[4].val, a:STEPS[5].qr[8].val},
+];
+
+function showComboStep() {
+  const cat = answers.categoria;
+  const combos = COMBOS_BY_CAT[cat] || COMBOS_DEFAULT;
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg('✨ Combinações de estilo recomendadas para esta entidade:');
+    const comboWrap = document.createElement('div');
+    comboWrap.className = 'chips-wrap combo-chips';
+
+    let manualSection = null;
+
+    combos.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'chip chip-combo';
+      btn.textContent = c.label;
+      btn.onclick = () => {
+        disableChipsEl(comboWrap);
+        answers.estilo = c.e;
+        answers.composicao = c.c;
+        answers.luz = c.l;
+        answers.atmosfera = c.a;
+        appendUserMsg(c.label);
+        setTimeout(() => showStep(STEPS.findIndex(s => s.id === 'extra')), 300);
+      };
+      comboWrap.appendChild(btn);
+    });
+
+    const skipBtn = document.createElement('button');
+    skipBtn.className = 'chip skip';
+    skipBtn.textContent = '— Escolher manualmente —';
+    skipBtn.onclick = () => {
+      disableChipsEl(comboWrap);
+      manualSection.style.display = '';
+      window.scrollTo(0, document.body.scrollHeight);
+    };
+    comboWrap.appendChild(skipBtn);
+    chat.appendChild(comboWrap);
+
+    // Manual section hidden initially
+    manualSection = document.createElement('div');
+    manualSection.style.display = 'none';
+    chat.appendChild(manualSection);
+
+    // Show steps 2,3,4,5 (estilo,composicao,luz,atmosfera) sequentially
+    function showManualStep(stepIdx, container) {
+      if (stepIdx > STEPS.findIndex(s => s.id === 'atmosfera')) {
+        setTimeout(() => showStep(STEPS.findIndex(s => s.id === 'extra')), 300);
+        return;
+      }
+      const step = STEPS[stepIdx];
+      const opts = withSuggestions(step.qr);
+      const lbl = document.createElement('div');
+      lbl.className = 'msg bot';
+      lbl.innerHTML = `<div class="avatar">⛧</div><div class="bubble">${step.ask}</div>`;
+      container.appendChild(lbl);
+      const wrap = document.createElement('div');
+      wrap.className = 'chips-wrap';
+      opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (opt._sugg ? ' sugg' : '');
+        btn.textContent = opt.label;
+        btn.onclick = () => {
+          disableChipsEl(wrap);
+          answers[step.id] = opt.val;
+          appendUserMsg(opt.label.replace(/^✦ /,''));
+          if (opt.tags) opt.tags.forEach(t => activeTags.add(t));
+          showManualStep(stepIdx + 1, container);
+        };
+        wrap.appendChild(btn);
+      });
+      container.appendChild(wrap);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    showManualStep(STEPS.findIndex(s => s.id === 'estilo'), manualSection);
+
+    scrollBot();
+  }, 400);
+}
+
+function disableChipsEl(wrap) {
+  wrap.querySelectorAll('.chip').forEach(c => { c.disabled = true; c.style.opacity = '0.4'; });
+}
+
+// ── Global search ───────────────────────────────────────────────────────
+let gsTimer = null;
+function onGlobalSearch(val) {
+  document.getElementById('gs-clear').style.display = val ? '' : 'none';
+  clearTimeout(gsTimer);
+  gsTimer = setTimeout(() => renderGsResults(val), 200);
+}
+function clearGlobalSearch() {
+  document.getElementById('global-search').value = '';
+  document.getElementById('gs-clear').style.display = 'none';
+  document.getElementById('gs-results').style.display = 'none';
+}
+function renderGsResults(query) {
+  const box = document.getElementById('gs-results');
+  const q = query.trim().toLowerCase();
+  if (!q) { box.style.display = 'none'; return; }
+  const words = q.split(/\s+/);
+  const matches = [];
+  Object.entries(ENTITIES).forEach(([cat, list]) => {
+    list.forEach(ent => {
+      const hay = [ent.name, ent.name_en, ent.desc, ent.desc_en, cat]
+        .filter(Boolean).join(' ').toLowerCase();
+      if (words.every(w => hay.includes(w))) {
+        matches.push({ ...ent, _cat: cat });
+      }
+    });
+  });
+  box.innerHTML = '';
+  if (!matches.length) {
+    box.innerHTML = `<div class="gs-empty">Nenhuma entidade encontrada para "${q}"</div>`;
+  } else {
+    matches.slice(0, 20).forEach(ent => {
+      const el = document.createElement('div');
+      el.className = 'gs-item';
+      const icon = CAT_ICONS[ent._cat] || '⛧';
+      const catLabel = CAT_LABELS[ent._cat] || ent._cat;
+      el.innerHTML = `<div class="gs-item-icon">${icon}</div><div class="gs-item-info"><div class="gs-item-name">${ent.name}</div><div class="gs-item-desc">${ent.desc || ent.desc_en || ''}</div><div class="gs-item-cat">${catLabel}</div></div>`;
+      el.onclick = () => selectGsEntity(ent);
+      box.appendChild(el);
+    });
+  }
+  box.style.display = '';
+}
+function selectGsEntity(ent) {
+  clearGlobalSearch();
+  answers = {};
+  currentEntity = null;
+  currentStep = 0;
+  activeTags.clear();
+  chat.innerHTML = '';
+  answers.categoria = ent._cat;
+  answers.entidade = ent.name;
+  currentEntity = ent;
+  appendUserMsg(`${CAT_ICONS[ent._cat] || '⛧'} ${ent.name}`);
+  updateProgress();
+  setTimeout(() => showComboStep(), 300);
+}
+document.addEventListener('click', e => {
+  if (!document.getElementById('global-search-wrap').contains(e.target))
+    document.getElementById('gs-results').style.display = 'none';
+});
+
+// ── Surpreenda-me ───────────────────────────────────────────────────────
+function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function surpresaFlow() {
+  answers = {};
+  currentEntity = null;
+  currentStep = 0;
+  activeTags.clear();
+  chat.innerHTML = '';
+  updateProgress();
+
+  // Pick random categoria that has entities
+  const catsWithEntities = Object.entries(ENTITIES).filter(([,list]) => list.length > 0);
+  if (!catsWithEntities.length) { startFlow(); return; }
+  const [cat, list] = pickRandom(catsWithEntities);
+  const ent = pickRandom(list);
+  answers.categoria = cat;
+  answers.entidade = ent.name;
+  currentEntity = ent;
+
+  // Pick random options for estilo, composicao, luz, atmosfera (skip extra)
+  const estiloOpts = STEPS[2].qr.filter(o => o.val !== '__skip__');
+  const compOpts   = STEPS[3].qr.filter(o => o.val !== '__skip__');
+  const luzOpts    = STEPS[4].qr.filter(o => o.val !== '__skip__');
+  const atmOpts    = STEPS[5].qr.filter(o => o.val !== '__skip__');
+  answers.estilo     = pickRandom(estiloOpts).val;
+  answers.composicao = pickRandom(compOpts).val;
+  answers.luz        = pickRandom(luzOpts).val;
+  answers.atmosfera  = pickRandom(atmOpts).val;
+  answers.extra      = '';
+
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendBotMsg(`🎲 Sorteado! Invocando <strong>${CAT_ICONS[cat] || '⛧'} ${ent.name}</strong> (${CAT_LABELS[cat]}) com estilo aleatório…`);
+    setTimeout(() => showResult(), 600);
+  }, 500);
 }
 
 // ── Restart ────────────────────────────────────────────────────────────
