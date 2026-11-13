@@ -11085,6 +11085,20 @@ const COMBOS_BY_CAT = {
     COMBOS_BY_CAT[k].push(POV_BAIXO_CLOSE, POV_BAIXO_EXT);
   });
 })();
+// Adiciona close-ups de todos os tipos em todas as categorias
+(function(){
+  const CLOSEUPS = [
+    {label:'🔍 Close-up rosto', ang:'extreme close-up portrait, macro lens face shot, tight crop on face, 85mm portrait lens, face filling frame', pose:'head tilted slightly, lips parted, eyes direct to camera, serene facial expression'},
+    {label:'👁️ Close-up olhos e lábios', ang:'macro close-up beauty shot, tight crop on eyes and lips, 100mm macro lens, cosmetic detail photography', pose:'eyes half-closed seductive gaze, lips slightly parted, chin tilted down, intense eye contact'},
+    {label:'👙 Close-up busto/decote', ang:'close-up chest shot, medium close-up torso, 50mm lens tight crop on neckline and bust area, beauty editorial framing', pose:'shoulders back, chest forward, slight arch of upper back, confident posture'},
+    {label:'🍑 Close-up bunda', ang:'tight close-up rear shot, macro perspective on glutes, 85mm lens cropped tightly on buttocks, editorial detail framing', pose:'standing leaning forward slightly, hands on thighs, weight on one hip, side profile rear emphasis'},
+    {label:'🦵 Close-up pernas e coxas', ang:'close-up legs shot, 85mm tight crop from hip to knee, editorial detail photography focusing on thighs and legs', pose:'legs slightly apart, standing straight, weight evenly distributed, smooth leg line'},
+    {label:'✨ Close-up detalhe corporal', ang:'macro beauty detail shot, extreme close-up body detail, 100mm macro lens, skin texture photography, intimate detail framing', pose:'relaxed natural pose, body detail emphasized, soft lighting on skin'},
+  ];
+  Object.keys(COMBOS_BY_CAT).forEach(k => {
+    COMBOS_BY_CAT[k].push(...CLOSEUPS);
+  });
+})();
 const COMBOS_DEFAULT = [
   {label:'📸 Frontal clássico', ang:'straight-on frontal shot, direct camera angle, face centered in frame', pose:'standing upright pose, full body standing, confident stance'},
   {label:'🤳 POV envolvente', ang:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view', pose:'kneeling forward pose, kneeling facing camera, submissive kneeling position'},
