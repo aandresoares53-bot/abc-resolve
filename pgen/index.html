@@ -9923,6 +9923,31 @@ function safePillVal(val){
     return 'extreme low angle floor-level shot, camera flat on ground pointing up, full figure towering above, dramatic ultra-low perspective, wide angle architectural upshot, subject dominant in frame from below';
   }
 
+  // Close-up entre pernas em pé — DALL-E seguro
+  if(/inner thigh close-up shot.*legs as natural frame.*standing|standing legs apart.*inner thigh.*editorial/i.test(val)){
+    return 'editorial fashion close-up, tight crop on upper legs, 50mm lens, natural leg framing composition, standing pose detail shot';
+  }
+  // Close-up entre pernas sentada — DALL-E seguro
+  if(/inner thigh close-up shot.*seated|seated.*legs apart.*inner thigh/i.test(val)){
+    return 'editorial fashion close-up seated, tight crop upper legs seated pose, 85mm lens, seated leg framing detail shot';
+  }
+  // Close-up entre pernas deitada — DALL-E seguro
+  if(/inner thigh close-up shot.*lying|lying on back.*inner thigh|foot of bed.*toward torso/i.test(val)){
+    return 'editorial fashion close-up reclined, tight crop on thighs lying down, 50mm lens from foot of bed, reclined leg detail shot';
+  }
+  // Close-up entre pernas de joelhos — DALL-E seguro
+  if(/inner thigh close-up shot.*kneeling|kneeling.*legs apart.*editorial/i.test(val)){
+    return 'editorial fashion close-up kneeling, tight crop upper legs kneeling pose, low angle 50mm lens, kneeling leg detail shot';
+  }
+  // Close-up entre pernas agachada — DALL-E seguro
+  if(/inner thigh close-up shot.*squatting|squat.*legs open.*editorial/i.test(val)){
+    return 'editorial fashion close-up squat pose, tight crop on thighs in deep squat, 50mm mid-level lens, squat leg detail shot';
+  }
+  // Close-up entre pernas quatro apoios — DALL-E seguro
+  if(/inner thigh close-up shot.*all fours|all fours.*rear editorial|low angle behind.*between legs/i.test(val)){
+    return 'editorial fashion close-up all fours, tight crop rear thigh area, 85mm lens low angle behind, all fours leg detail shot';
+  }
+
   // POV baixo — câmera entre pernas ou foco em crotch/genitais (qualquer variação)
   // Para DALL-E/ChatGPT: retorna ângulo neutro sem mencionar direção entre pernas
   if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor.*level/i.test(val)){
@@ -11094,6 +11119,12 @@ const COMBOS_BY_CAT = {
     {label:'🍑 Close-up bunda', ang:'tight close-up rear shot, macro perspective on glutes, 85mm lens cropped tightly on buttocks, editorial detail framing', pose:'standing leaning forward slightly, hands on thighs, weight on one hip, side profile rear emphasis'},
     {label:'🦵 Close-up pernas e coxas', ang:'close-up legs shot, 85mm tight crop from hip to knee, editorial detail photography focusing on thighs and legs', pose:'legs slightly apart, standing straight, weight evenly distributed, smooth leg line'},
     {label:'✨ Close-up detalhe corporal', ang:'macro beauty detail shot, extreme close-up body detail, 100mm macro lens, skin texture photography, intimate detail framing', pose:'relaxed natural pose, body detail emphasized, soft lighting on skin'},
+    {label:'🔥 Close-up entre pernas em pé', ang:'inner thigh close-up shot, legs as natural frame composition, standing legs apart editorial intimate framing, 50mm lens', pose:'standing legs apart, wide stance, weight on both feet, legs spread shoulder width'},
+    {label:'💺 Close-up entre pernas sentada', ang:'inner thigh close-up shot, seated legs apart editorial framing, camera at mid level, 85mm lens', pose:'seated with legs apart, sitting on edge of surface, legs open toward camera'},
+    {label:'🛌 Close-up entre pernas deitada', ang:'inner thigh close-up shot, lying on back legs apart editorial framing, camera at foot of bed looking toward torso, 50mm lens', pose:'lying on back with legs apart, knees bent and open, feet flat on surface'},
+    {label:'🙏 Close-up entre pernas de joelhos', ang:'inner thigh close-up shot, kneeling legs apart editorial framing, low camera angle, 50mm lens', pose:'kneeling upright with knees wide apart, sitting on heels, chest up and back straight'},
+    {label:'🧘 Close-up entre pernas agachada', ang:'inner thigh close-up shot, squat pose legs open editorial framing, camera at mid-level, 50mm lens', pose:'deep squat position, feet flat on floor, knees wide apart, hands resting on knees'},
+    {label:'🐾 Close-up entre pernas quatro apoios', ang:'inner thigh close-up shot, all fours position rear editorial framing, low angle behind, 85mm lens', pose:'on all fours, hands and knees on surface, back flat, knees apart'},
   ];
   Object.keys(COMBOS_BY_CAT).forEach(k => {
     COMBOS_BY_CAT[k].push(...CLOSEUPS);
