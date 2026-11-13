@@ -9913,6 +9913,16 @@ function cleanForDALLE(text){
 function safePillVal(val){
   if(!val) return '';
 
+  // POV baixo close-up — ângulo rente ao chão olhando para cima (versão DALL-E segura)
+  if(/worm.?s eye upshot|ankle level angled upward|foot level.*close-up low ground/i.test(val)){
+    return 'low angle ground-level shot looking up, feet and lower legs in foreground, subject standing tall, dramatic upward perspective, architectural low angle composition';
+  }
+
+  // POV baixo extremo — câmera flat no chão apontando para cima (versão DALL-E segura)
+  if(/extreme ground-level upshot|lying flat on floor pointing straight up|full body rising vertically in frame from below/i.test(val)){
+    return 'extreme low angle floor-level shot, camera flat on ground pointing up, full figure towering above, dramatic ultra-low perspective, wide angle architectural upshot, subject dominant in frame from below';
+  }
+
   // POV baixo — câmera entre pernas ou foco em crotch/genitais (qualquer variação)
   // Para DALL-E/ChatGPT: retorna ângulo neutro sem mencionar direção entre pernas
   if(/between.*legs.*crotch|crotch.*between.*legs|inner\s+thighs.*crotch|shot.*from.*below.*between|tight\s+frame\s+on\s+inner\s+thighs|upward.*angle.*from.*floor.*level/i.test(val)){
