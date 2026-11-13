@@ -10072,18 +10072,21 @@ function safeClothing(roupa){
   r = r.replace(/\b(buttocks|bare\s+butt)\s+(?:fully\s+)?visible\b[^,]*/gi, '');
   r = r.replace(/\wonly\s+a?\s*tiny\s+g[\s-]?string[^,]*/gi, 'wearing a g-string thong');
   r = r.replace(/\bwearing\s+only\s+(a\s+)?(tiny\s+)?thong\b[^,]*/gi, 'wearing a thong, rear view');
-  r = r.replace(/\bnipple\s+pasties?\b[^,]*/gi, 'decorative chest accessories');
-  r = r.replace(/\bonly\s+nipple\s+pasties?\b[^,]*/gi, 'wearing decorative chest accessories and');
-  r = r.replace(/\bsheer\s+transparent\s+bodysuit\b[^,]*/gi, 'sheer bodysuit');
-  r = r.replace(/\bsee-through\s+fabric\b[^,]*/gi, 'sheer delicate fabric');
+  // nipple pasties → lingerie top
+  r = r.replace(/\bonly\s+nipple\s+pasties?[^,]*/gi, 'wearing lace lingerie bra');
+  r = r.replace(/\bnipple\s+pasties?\b[^,]*/gi, 'lace lingerie bra');
+  // sheer/see-through → keep but soften
+  r = r.replace(/\bsheer\s+transparent\s+bodysuit\b/gi, 'sheer lingerie bodysuit');
+  r = r.replace(/\bsee-through\s+fabric\b/gi, 'sheer delicate fabric');
+  r = r.replace(/\btransparent\s+bodysuit\b/gi, 'sheer lingerie bodysuit');
   r = r.replace(/\bwrapped\s+only\s+in[^,]*/gi, 'wearing');
-  r = r.replace(/\bnearly\s+nothing\b[^,]*/gi, 'minimal coverage');
+  r = r.replace(/\bnearly\s+nothing\b[^,]*/gi, 'minimal lingerie');
   r = r.replace(/\bminimal\s+outfit\s+or\b[^,]*/gi, 'casual outfit,');
   r = r.replace(/,\s*,/g, ',');
   r = cleanForDALLE(r);
-  // If roupa was gutted to nearly nothing, provide a safe lingerie fallback
+  // If roupa was gutted to nearly nothing, fallback to white lycra (not generic casual)
   if(r.replace(/[,\s]/g,'').length < 15){
-    r = 'wearing elegant lace lingerie set, bra and matching panties, intimate apparel';
+    r = 'wearing white short lycra, tight fit';
   }
   return r;
 }
