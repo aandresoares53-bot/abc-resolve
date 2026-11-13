@@ -11077,6 +11077,14 @@ const COMBOS_BY_CAT = {
     {label:'↗️ 3/4 de quatro', ang:'three-quarter angle shot, 45 degree turn, face and body at angle to camera', pose:'on all fours rear-facing pose, hands and knees facing away, back arched, presented rear view'},
   ],
 };
+// Adiciona POV baixo em todas as categorias
+(function(){
+  const POV_BAIXO_CLOSE = {label:'📷 POV baixo close-up', ang:'worm\'s eye upshot, camera at ankle level angled upward along body, close-up low ground perspective, feet and legs in foreground, dramatic upward angle from floor', pose:'standing upright pose, full body standing, legs apart confident stance'};
+  const POV_BAIXO_EXT   = {label:'🔥 POV baixo extremo', ang:'extreme ground-level upshot, camera lying flat on floor pointing straight up, full body rising vertically in frame from below, ultra-low POV looking straight up along her standing figure', pose:'standing upright pose, full body standing, legs apart wide stance'};
+  Object.keys(COMBOS_BY_CAT).forEach(k => {
+    COMBOS_BY_CAT[k].push(POV_BAIXO_CLOSE, POV_BAIXO_EXT);
+  });
+})();
 const COMBOS_DEFAULT = [
   {label:'📸 Frontal clássico', ang:'straight-on frontal shot, direct camera angle, face centered in frame', pose:'standing upright pose, full body standing, confident stance'},
   {label:'🤳 POV envolvente', ang:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view', pose:'kneeling forward pose, kneeling facing camera, submissive kneeling position'},
