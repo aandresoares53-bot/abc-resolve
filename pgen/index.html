@@ -9920,6 +9920,11 @@ function cleanForDALLE(text){
   t = t.replace(/\bboudoir\b/gi, 'photography studio');
   t = t.replace(/\bintimate\s+(setting|atmosphere|mood|shot|framing)\b/gi, 'editorial setting');
 
+  // Tight fit / rumpled sheets — sinaliza risco em combinações
+  t = t.replace(/,\s*tight\s+fit\b[^,]*/gi, '');
+  t = t.replace(/\brumpled\s+sheets?[^,]*/gi, 'studio background');
+  t = t.replace(/\bsimple\s+headboard[^,]*/gi, '');
+
   // Pernas abertas — mantém editorial, remove sugestivo
   t = t.replace(/\bspread\s+(legs?|thighs?)\b/gi, 'legs apart');
   t = t.replace(/\blegs?\s+spread\s+(wide\s*)?(open\s*)?(apart\s*)?/gi, 'legs apart');
@@ -9958,8 +9963,10 @@ function finalSafetyPassForDALLE(prompt){
   const hasLegCloseup = /tight crop.*(?:upper leg|thigh|leg detail)|inner thigh|between.*leg|leg.*close.up/i.test(p);
   const hasLegsApart  = /legs apart|wide stance|legs open|knees.*apart|knees.*open|legs.*spread/i.test(p);
   const hasShortTight = /short lycra|tight.*shorts?|shorts.*tight/i.test(p);
-  const hasIntimate   = /\b(boudoir|bedroom|intimate|hotel\s+room|undress)\b/i.test(p);
+  const hasIntimate   = /\b(boudoir|bedroom|intimate|hotel\s+room|undress|rumpled\s+sheets?|headboard|on\s+a?\s+bed)\b/i.test(p);
   const hasAllFours   = /all fours|on all fours|four.*point|doggy/i.test(p);
+  const hasRearView   = /\b(rear view|back to camera|from behind)\b/i.test(p);
+  const hasLying      = /lying on stomach|prone position|face.?down|reclined|on her back|on his back/i.test(p);
 
   // ── Neutralizações por combinação ────────────────────────────────────────
 
@@ -10003,6 +10010,25 @@ function finalSafetyPassForDALLE(prompt){
   }
 
   // ── Limpeza de termos individuais residuais ──────────────────────────────
+  // ── REAR VIEW + LYING + QUARTO → ambiente neutro ─────────────────────────
+  if (hasRearView && (hasLying || hasIntimate)) {
+    p = p.replace(/\bbedroom\b/gi, 'photography studio');
+    p = p.replace(/rumpled\s+sheets?[^,]*/gi, 'studio background');
+    p = p.replace(/simple\s+headboard[^,]*/gi, '');
+    p = p.replace(/\bheadboard\b[^,]*/gi, '');
+    p = p.replace(/prone\s+position[^,]*/gi, 'relaxed editorial pose');
+    p = p.replace(/face.?down\s+reclined[^,]*/gi, 'relaxed editorial pose');
+    p = p.replace(/lying\s+on\s+stomach[^,]*/gi, 'reclined side-facing pose');
+    p = p.replace(/on\s+(a\s+)?bed\b[^,]*/gi, 'in studio');
+  }
+
+  // ── REAR VIEW + ROUPA CURTA/JUSTA → troca para menos reveladora ──────────
+  if (hasRearView && hasShortTight) {
+    p = p.replace(/wearing white short lycra shorts[^,]*/gi, 'wearing white casual athletic shorts');
+    p = p.replace(/white short lycra[^,]*/gi, 'white casual athletic shorts');
+    p = p.replace(/tight fit[^,]*/gi, '');
+  }
+
   // ── Close-up bunda + pose sugestionada → neutralizar ─────────────────────
   const hasRearCloseup = /tight close-up rear|rear.*close-up|macro.*(?:glut|curves|rear)|editorial rear fashion|rear fashion detail/i.test(p);
   if (hasRearCloseup) {
@@ -10228,7 +10254,7 @@ function safeClothing(roupa){
   if(!roupa) return '';
   let r = roupa;
   // Lingerie → white short lycra (DALL-E não gera lingerie corretamente)
-  const LYCRA = 'wearing white short lycra shorts, tight fit';
+  const LYCRA = 'wearing white casual athletic shorts';
   if(/\blingerie\b|\bbodystocking\b|\bteddy\b|\bcorset\b|\bbustier\b|\bgarter\b|\bstockings?\b|\bnegligee\b|\bbabydoll\b/i.test(r)){
     return LYCRA;
   }
