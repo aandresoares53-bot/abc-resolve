@@ -9916,6 +9916,9 @@ function cleanForDALLE(text){
   t = t.replace(/\bmoan\w*\b/gi, '');
   t = t.replace(/\bdesire\b/gi, 'confidence');
   t = t.replace(/\bpleasure\b/gi, '');
+  t = t.replace(/\bbedroom\s+eyes?\b/gi, 'confident direct gaze');
+  t = t.replace(/\bboudoir\b/gi, 'photography studio');
+  t = t.replace(/\bintimate\s+(setting|atmosphere|mood|shot|framing)\b/gi, 'editorial setting');
 
   // Pernas abertas — mantém editorial, remove sugestivo
   t = t.replace(/\bspread\s+(legs?|thighs?)\b/gi, 'legs apart');
@@ -9941,16 +9944,61 @@ function cleanForDALLE(text){
   return t;
 }
 
-// Passo final de segurança no prompt já montado — captura combinações que passam campo a campo
+// Passo final de segurança no prompt já montado — detecção de combinações de risco
 function finalSafetyPassForDALLE(prompt){
   let p = prompt;
-  // Combinações de ângulo+partes do corpo que disparam o classificador
-  p = p.replace(/low angle[^,]*(?:between|thigh|crotch|genitals?|pubic|pussy)[^,]*/gi, 'low angle editorial shot');
-  p = p.replace(/(?:between|thigh|inner)[^,]*low angle[^,]*/gi, 'editorial low angle shot');
-  // Expressão + pose sedutora juntas
-  p = p.replace(/(?:bedroom eyes|lustful gaze|seductive gaze)[^,]*/gi, 'confident direct gaze');
-  p = p.replace(/desire[^,]*(?:pose|look|expression)[^,]*/gi, 'confident pose');
-  // Palavras soltas que ainda escapam após os campos individuais
+
+  // ── Detecção de sinais de risco ──────────────────────────────────────────
+  const hasLowAngle   = /low angle|ground.level|floor.level|looking up|upward angle|upward perspective/i.test(p);
+  const hasLegCloseup = /tight crop.*(?:upper leg|thigh|leg detail)|inner thigh|between.*leg|leg.*close.up/i.test(p);
+  const hasLegsApart  = /legs apart|wide stance|legs open|knees.*apart|knees.*open|legs.*spread/i.test(p);
+  const hasShortTight = /short lycra|tight.*shorts?|shorts.*tight/i.test(p);
+  const hasIntimate   = /\b(boudoir|bedroom|intimate|hotel\s+room|undress)\b/i.test(p);
+  const hasAllFours   = /all fours|on all fours|four.*point|doggy/i.test(p);
+
+  // ── Neutralizações por combinação ────────────────────────────────────────
+
+  // LOW ANGLE + PERNAS ABERTAS → força pernas juntas
+  if (hasLowAngle && hasLegsApart) {
+    p = p.replace(/legs apart[^,]*/gi, 'legs together, standing straight');
+    p = p.replace(/wide stance[^,]*/gi, 'neutral stance');
+    p = p.replace(/knees (wide )?apart[^,]*/gi, 'knees together');
+    p = p.replace(/knees (wide )?open[^,]*/gi, 'knees together');
+    p = p.replace(/legs.*spread[^,]*/gi, 'legs straight');
+    p = p.replace(/legs open[^,]*/gi, 'legs straight');
+  }
+
+  // CLOSE-UP PERNAS + ROUPA CURTA/JUSTA → troca roupa por menos reveladora
+  if (hasLegCloseup && hasShortTight) {
+    p = p.replace(/wearing white short lycra shorts, tight fit/gi, 'wearing casual white shorts');
+    p = p.replace(/white short lycra[^,]*/gi, 'white casual shorts');
+  }
+
+  // CLOSE-UP PERNAS + PERNAS ABERTAS → força pernas juntas
+  if (hasLegCloseup && hasLegsApart) {
+    p = p.replace(/legs apart[^,]*/gi, 'legs together');
+    p = p.replace(/wide stance[^,]*/gi, 'neutral pose');
+    p = p.replace(/knees.*apart[^,]*/gi, 'knees together');
+    p = p.replace(/knees.*open[^,]*/gi, 'knees together');
+  }
+
+  // LOW ANGLE + CONTEXTO ÍNTIMO → troca cenário para neutro
+  if ((hasLowAngle || hasLegCloseup) && hasIntimate) {
+    p = p.replace(/\bboudoir\b/gi, 'photography studio');
+    p = p.replace(/\bintimate\b/gi, 'editorial');
+    p = p.replace(/hotel\s+room\b/gi, 'studio setting');
+    p = p.replace(/\bbedroom\b/gi, 'studio');
+    p = p.replace(/\bundress\w*\b/gi, '');
+  }
+
+  // QUATRO APOIOS + ROUPA CURTA → troca roupa
+  if (hasAllFours && hasShortTight) {
+    p = p.replace(/wearing white short lycra shorts, tight fit/gi, 'wearing casual athletic wear');
+    p = p.replace(/white short lycra[^,]*/gi, 'white athletic wear');
+  }
+
+  // ── Limpeza de termos individuais residuais ──────────────────────────────
+  p = p.replace(/(?:bedroom eyes|lustful gaze|seductive gaze|desire gaze)[^,]*/gi, 'confident direct gaze');
   p = p.replace(/\bsexy\b/gi,'confident').replace(/\bseductive\b/gi,'confident');
   p = p.replace(/\baroused?\b/gi,'').replace(/\blust\w*\b/gi,'');
   p = p.replace(/\bhorny\b/gi,'').replace(/\bmoan\w*\b/gi,'');
@@ -9959,6 +10007,7 @@ function finalSafetyPassForDALLE(prompt){
   p = p.replace(/\bnaked\b/gi,'').replace(/\bnudity\b/gi,'');
   p = p.replace(/\bcrotch\b/gi,'').replace(/\bgenitals?\b/gi,'');
   p = p.replace(/\bvulva\b/gi,'').replace(/\bvagina\b/gi,'');
+  p = p.replace(/\bthong\b/gi,'underwear').replace(/\bg.string\b/gi,'underwear');
   p = p.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
   return p;
 }
