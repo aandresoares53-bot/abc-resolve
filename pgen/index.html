@@ -10005,16 +10005,9 @@ function finalSafetyPassForDALLE(prompt){
     p = p.replace(/only\s+(a\s+)?(tiny|small|minimal|micro)?\s*(underwear|bra|bikini)[^,]*/gi, 'white casual athletic shorts and fitted top');
   }
 
-  // LOW ANGLE + CLOSE-UP ENTRE PERNAS → força pernas juntas (combinação mais perigosa)
-  // "legs apart" sozinho com low angle é editorial válido; só bloqueia com close-up real
-  if (hasLowAngle && hasLegCloseup && hasLegsApart) {
-    p = p.replace(/legs apart[^,]*/gi, 'legs together, standing straight');
-    p = p.replace(/wide stance[^,]*/gi, 'neutral stance');
-    p = p.replace(/knees (wide )?apart[^,]*/gi, 'knees together');
-    p = p.replace(/knees (wide )?open[^,]*/gi, 'knees together');
-    p = p.replace(/legs.*spread[^,]*/gi, 'legs straight');
-    p = p.replace(/legs open[^,]*/gi, 'legs straight');
-  }
+  // "legs apart" é pose editorial válida — não bloquear
+  // Só bloquear linguagem verdadeiramente anatômica/sexual (spread eagle, etc.)
+  // já tratada no cleanForDALLE
 
   // CLOSE-UP PERNAS + ROUPA CURTA/JUSTA → troca roupa por menos reveladora
   if (hasLegCloseup && hasShortTight) {
@@ -10022,13 +10015,7 @@ function finalSafetyPassForDALLE(prompt){
     p = p.replace(/white short lycra[^,]*/gi, 'white casual shorts');
   }
 
-  // CLOSE-UP PERNAS + PERNAS ABERTAS → força pernas juntas
-  if (hasLegCloseup && hasLegsApart) {
-    p = p.replace(/legs apart[^,]*/gi, 'legs together');
-    p = p.replace(/wide stance[^,]*/gi, 'neutral pose');
-    p = p.replace(/knees.*apart[^,]*/gi, 'knees together');
-    p = p.replace(/knees.*open[^,]*/gi, 'knees together');
-  }
+  // "legs apart" com close-up: mantém editorial, não bloqueia
 
   // LOW ANGLE + CONTEXTO ÍNTIMO → troca cenário para neutro
   if ((hasLowAngle || hasLegCloseup) && hasIntimate) {
