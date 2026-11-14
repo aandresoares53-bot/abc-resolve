@@ -2061,7 +2061,7 @@ const PRESETS_RAW = [
     expressao:'warm content expression, firelight in eyes, intimate warmth',cenario:'living room fireplace, warm orange glow, fur rug, winter cabin',
     pose:'sitting on fur rug before fireplace, knees hugged, firelight on face and body',film:'Cinestill 800T, warm orange fireplace grain'},
   {key:'bou_morning_stretch',cat:'boudoir',level:'sensual',icon:'☀',name:'Manhã Espreguiçando',desc:'Espreguiçando na cama ao amanhecer, nua, natural',
-    corpo:'natural body, real skin texture, everyday woman',roupa:'completely nude, just woke up, sheet partially covering',
+    corpo:'natural body, real skin texture, everyday woman',roupa:'white cotton sleep shirt, morning casual',
     nsfw:'nude morning stretch, bare body waking up, natural nudity',
     expressao:'authentic sleepy stretch expression, morning beauty',cenario:'bedroom dawn, first light through curtains, rumpled white sheets',
     pose:'lying on back arms stretched wide above head, back arching, morning stretch',film:'Fujifilm Pro 400H, early morning pale gold'},
@@ -9868,9 +9868,11 @@ function cleanForDALLE(text){
 
   // Nudez total
   t = t.replace(/\bfully\s+nude\b[^,]*/gi, '');
+  t = t.replace(/\bcompletely\s+nude\b[^,]*/gi, '');
   t = t.replace(/\bcompletely\s+naked\b[^,]*/gi, '');
   t = t.replace(/\bnaked\b[^,]*/gi, '');
   t = t.replace(/\bnudity\b[^,]*/gi, '');
+  t = t.replace(/\bnude\b[^,]*/gi, '');
   t = t.replace(/\btopless\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+breasts?\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+chest\b[^,]*/gi, '');
@@ -9878,6 +9880,15 @@ function cleanForDALLE(text){
   t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist|at\s+all|else)[^,]*/gi, '');
   t = t.replace(/\bor\s+nude\b[^,]*/gi, '');
   t = t.replace(/\bor\s+nothing\b[^,]*/gi, '');
+  // Lençol cobrindo = implica nudez
+  t = t.replace(/\bsheet\s+partially\s+covering[^,]*/gi, '');
+  t = t.replace(/\bjust\s+woke\s+up\b[^,]*/gi, 'morning editorial look');
+  // Câmera nos pés da cama apontando para cima
+  t = t.replace(/\b(from|at)\s+(the\s+)?foot\s+of\s+(the\s+)?bed[^,]*/gi, 'studio side angle');
+  t = t.replace(/\bfoot\s+of\s+bed\b[^,]*/gi, 'studio');
+  // Joelhos dobrados e abertos — pose sexual deitada
+  t = t.replace(/\bknees?\s+bent\s+and\s+open\b[^,]*/gi, 'legs relaxed editorial');
+  t = t.replace(/\bknees?\s+(wide\s+)?(open|apart)\b/gi, 'knees natural position');
   t = t.replace(/\bnatural\s+gravity\s+on\s+body[^,]*/gi, 'natural comfortable posture');
   t = t.replace(/\bgravity\s+(on\s+)?(breasts?|chest|body)[^,]*/gi, 'relaxed natural posture');
   t = t.replace(/\bbare\s+shoulders?\b[^,]*/gi, 'shoulders visible');
@@ -9988,6 +9999,8 @@ function finalSafetyPassForDALLE(prompt){
   const hasRearView   = /\b(rear view|back to camera|from behind|back\s+facing\s+camera)\b/i.test(p);
   const hasLying      = /lying on stomach|prone position|face.?down|reclined|on her back|on his back/i.test(p);
   const hasOnlyUnderwear = /wearing\s+only|only\s+(a\s+)?(tiny|small|minimal|micro)?\s*(underwear|bra|bikini)/i.test(p);
+  const hasNude         = /\b(nude|naked|nudity|completely\s+nude|fully\s+nude)\b/i.test(p);
+  const hasKneesOpen    = /knees?\s+(bent\s+and\s+)?(open|wide\s+apart)|lying\s+on\s+back.*knees/i.test(p);
 
   // ── Neutralizações por combinação ────────────────────────────────────────
 
@@ -9997,6 +10010,22 @@ function finalSafetyPassForDALLE(prompt){
     p = p.replace(/feet\s+in\s+(the\s+)?air[^,]*/gi, '');
     p = p.replace(/reclined\s+with\s+legs?\s+vertical[^,]*/gi, 'standing upright');
     p = p.replace(/\breclined\b[^,]*/gi, 'standing editorial pose');
+  }
+
+  // NUDEZ DETECTADA → força roupa
+  if (hasNude) {
+    p = p.replace(/\bcompletely\s+nude\b[^,]*/gi, 'wearing white casual athletic shorts and fitted top');
+    p = p.replace(/\bfully\s+nude\b[^,]*/gi, 'wearing white casual athletic shorts and fitted top');
+    p = p.replace(/\bnude\b[^,]*/gi, 'wearing white casual athletic shorts and fitted top');
+    p = p.replace(/\bnaked\b[^,]*/gi, '');
+    p = p.replace(/\bsheet\s+partially\s+covering[^,]*/gi, '');
+  }
+
+  // DEITADA + JOELHOS ABERTOS → neutraliza pose
+  if (hasLying && hasKneesOpen) {
+    p = p.replace(/knees?\s+(bent\s+and\s+)?(open|wide\s+apart)[^,]*/gi, 'legs relaxed to side');
+    p = p.replace(/lying\s+on\s+back\s+with\s+legs\s+apart[^,]*/gi, 'lying on side relaxed editorial');
+    p = p.replace(/feet\s+flat\s+on\s+surface[^,]*/gi, '');
   }
 
   // ONLY UNDERWEAR → força roupa completa
@@ -10114,7 +10143,7 @@ function safePillVal(val){
   }
   // Close-up entre pernas deitada — DALL-E seguro
   if(/inner thigh close-up shot.*lying|lying on back.*inner thigh|foot of bed.*toward torso/i.test(val)){
-    return 'editorial fashion close-up reclined, tight crop on thighs lying down, 50mm lens from foot of bed, reclined leg detail shot';
+    return 'editorial reclined pose close-up, 85mm lens side angle tight crop upper legs, reclined beauty framing studio lighting';
   }
   // Close-up entre pernas de joelhos — DALL-E seguro
   if(/inner thigh close-up shot.*kneeling|kneeling.*legs apart.*editorial/i.test(val)){
@@ -11336,7 +11365,7 @@ const COMBOS_BY_CAT = {
     {label:'✨ Close-up detalhe corporal', ang:'macro beauty detail shot, extreme close-up body detail, 100mm macro lens, skin texture photography, intimate detail framing', pose:'relaxed natural pose, body detail emphasized, soft lighting on skin'},
     {label:'🔥 Close-up entre pernas em pé', ang:'inner thigh close-up shot, legs as natural frame composition, standing legs apart editorial intimate framing, 50mm lens', pose:'standing legs apart, wide stance, weight on both feet, legs spread shoulder width'},
     {label:'💺 Close-up entre pernas sentada', ang:'inner thigh close-up shot, seated legs apart editorial framing, camera at mid level, 85mm lens', pose:'seated with legs apart, sitting on edge of surface, legs open toward camera'},
-    {label:'🛌 Close-up entre pernas deitada', ang:'inner thigh close-up shot, lying on back legs apart editorial framing, camera at foot of bed looking toward torso, 50mm lens', pose:'lying on back with legs apart, knees bent and open, feet flat on surface'},
+    {label:'🛌 Close-up entre pernas deitada', ang:'editorial reclined pose close-up, 85mm lens side angle tight crop upper legs, reclined beauty framing studio lighting', pose:'lying on side, legs together relaxed, one knee slightly forward, hand tucked under cheek, editorial expression'},
     {label:'🙏 Close-up entre pernas de joelhos', ang:'inner thigh close-up shot, kneeling legs apart editorial framing, low camera angle, 50mm lens', pose:'kneeling upright with knees wide apart, sitting on heels, chest up and back straight'},
     {label:'🧘 Close-up entre pernas agachada', ang:'inner thigh close-up shot, squat pose legs open editorial framing, camera at mid-level, 50mm lens', pose:'deep squat position, feet flat on floor, knees wide apart, hands resting on knees'},
     {label:'🐾 Close-up entre pernas quatro apoios', ang:'inner thigh close-up shot, all fours position rear editorial framing, low angle behind, 85mm lens', pose:'on all fours, hands and knees on surface, back flat, knees apart'},
