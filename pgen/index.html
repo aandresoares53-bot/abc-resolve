@@ -10630,7 +10630,7 @@ function buildMJPromptForDALLE(preset){
 function getActivePillVal(){ return ''; }
 
 // ── State ──────────────────────────────────────────────────────────────────
-let answers = {};
+let answers = {idade: '21 to 27 years old woman, mid-twenties, young woman in her twenties'};
 let currentStep = 0;
 let selectedPreset = null;
 let generatedMJ = '';
@@ -10638,7 +10638,7 @@ let generatedChatGPT = '';
 let presetPage = 0;
 const PRESETS_PER_PAGE = 20;
 
-const TOTAL_STEPS = 6; // nivel, cat, preset, angulo, pose, idade → result
+const TOTAL_STEPS = 3; // nivel, cat, preset → combo/angulo → result
 
 const NIVEL_OPTS = [
   {label:'☀️ SFW — Fashion/Lifestyle', val:'sfw'},
@@ -10773,8 +10773,6 @@ function showStep(idx) {
   else if (idx === 1) showCatStep();
   else if (idx === 2) showPresetStep();
   else if (idx === 3) showAnguloStep();
-  else if (idx === 4) showPoseStep();
-  else if (idx === 5) showIdadeStep();
 }
 
 function showNivelStep() {
@@ -11348,7 +11346,7 @@ function showAnguloStep() {
         answers.angulo = c.ang;
         answers.pose = c.pose;
         appendUserMsg(c.label);
-        setTimeout(() => showStep(5), 300);
+        setTimeout(() => showResult(), 300);
       };
       comboWrap.appendChild(btn);
     });
@@ -11384,7 +11382,7 @@ function showAnguloStep() {
         disableChips(anguloWrap);
         answers.angulo = opt.val === '__skip__' ? '' : opt.val;
         appendUserMsg(opt.val === '__skip__' ? '— Usar padrão do preset —' : opt.label);
-        setTimeout(() => showStep(4), 300);
+        setTimeout(() => showResult(), 300);
       };
       anguloWrap.appendChild(btn);
     });
