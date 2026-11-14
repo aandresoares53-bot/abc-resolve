@@ -9935,6 +9935,25 @@ function cleanForDALLE(text){
   t = t.replace(/\bg[\s-]?string\b/gi, 'underwear');
   t = t.replace(/\bpanties\b/gi, 'underwear');
 
+  // "only" + underwear → força roupa completa
+  t = t.replace(/wearing\s+only\s+(a\s+)?(tiny|small|minimal|micro|little)?\s*(underwear|bra|bikini|lingerie)[^,]*/gi, 'wearing white casual athletic shorts and fitted top');
+  t = t.replace(/\btiny\s+underwear\b/gi, 'underwear');
+
+  // Pernas levantadas / invertidas — sinal de risco com ângulo baixo
+  t = t.replace(/\blegs?\s+(raised|elevated|up|vertical|in\s+the\s+air|in\s+air)[^,]*/gi, 'legs straight editorial pose');
+  t = t.replace(/\bfeet\s+in\s+(the\s+)?air[^,]*/gi, '');
+  t = t.replace(/\breclined\s+with\s+legs?\s+vertical[^,]*/gi, 'standing editorial pose');
+  t = t.replace(/\blegs?\s+raised\s+up\s+pose\b[^,]*/gi, 'standing editorial pose');
+
+  // Expressão sexual — heavy-lidded, lips parted
+  t = t.replace(/\bheavy.?lidded\b[^,]*/gi, 'confident natural gaze');
+  t = t.replace(/\blips?\s+(slightly\s+)?(parted|open)\b/gi, 'natural expression');
+
+  // Ambiente íntimo genérico
+  t = t.replace(/\bminimalist\s+private\s+space\b/gi, 'photography studio');
+  t = t.replace(/\bprivate\s+space\b/gi, 'studio space');
+  t = t.replace(/\bwarm\s+ambient\s+light,\s*minimalist[^,]*/gi, 'studio lighting');
+
   // Standalone ass/butt/glutes/rear
   t = t.replace(/\b(big|round|fat|perfect|firm)?\s*ass\b/gi, 'curves');
   t = t.replace(/\b(big|round|fat|perfect|firm)?\s*butt\b/gi, 'curves');
@@ -9959,16 +9978,32 @@ function finalSafetyPassForDALLE(prompt){
   let p = prompt;
 
   // ── Detecção de sinais de risco ──────────────────────────────────────────
-  const hasLowAngle   = /low angle|ground.level|floor.level|looking up|upward angle|upward perspective/i.test(p);
+  const hasLowAngle   = /low angle|ground.level|floor.level|looking up|upward angle|upward perspective|worm.?s?\s+eye/i.test(p);
   const hasLegCloseup = /tight crop.*(?:upper leg|thigh|leg detail)|inner thigh|between.*leg|leg.*close.up/i.test(p);
   const hasLegsApart  = /legs apart|wide stance|legs open|knees.*apart|knees.*open|legs.*spread/i.test(p);
+  const hasLegsUp     = /legs?\s+(raised|elevated|up|vertical|in\s+(the\s+)?air)|feet\s+in\s+(the\s+)?air|reclined\s+with\s+legs?\s+vertical/i.test(p);
   const hasShortTight = /short lycra|tight.*shorts?|shorts.*tight/i.test(p);
-  const hasIntimate   = /\b(boudoir|bedroom|intimate|hotel\s+room|undress|rumpled\s+sheets?|headboard|on\s+a?\s+bed)\b/i.test(p);
+  const hasIntimate   = /\b(boudoir|bedroom|intimate|hotel\s+room|undress|rumpled\s+sheets?|headboard|on\s+a?\s+bed|private\s+space)\b/i.test(p);
   const hasAllFours   = /all fours|on all fours|four.*point|doggy/i.test(p);
-  const hasRearView   = /\b(rear view|back to camera|from behind)\b/i.test(p);
+  const hasRearView   = /\b(rear view|back to camera|from behind|back\s+facing\s+camera)\b/i.test(p);
   const hasLying      = /lying on stomach|prone position|face.?down|reclined|on her back|on his back/i.test(p);
+  const hasOnlyUnderwear = /wearing\s+only|only\s+(a\s+)?(tiny|small|minimal|micro)?\s*(underwear|bra|bikini)/i.test(p);
 
   // ── Neutralizações por combinação ────────────────────────────────────────
+
+  // LOW ANGLE + PERNAS LEVANTADAS → pose mais segura (câmera de baixo olhando pernas levantadas = bloqueio certo)
+  if (hasLowAngle && hasLegsUp) {
+    p = p.replace(/legs?\s+(raised|elevated|up|vertical|in\s+(the\s+)?air)[^,]*/gi, 'legs straight standing pose');
+    p = p.replace(/feet\s+in\s+(the\s+)?air[^,]*/gi, '');
+    p = p.replace(/reclined\s+with\s+legs?\s+vertical[^,]*/gi, 'standing upright');
+    p = p.replace(/\breclined\b[^,]*/gi, 'standing editorial pose');
+  }
+
+  // ONLY UNDERWEAR → força roupa completa
+  if (hasOnlyUnderwear) {
+    p = p.replace(/wearing\s+only\s+[^,]*/gi, 'wearing white casual athletic shorts and fitted top');
+    p = p.replace(/only\s+(a\s+)?(tiny|small|minimal|micro)?\s*(underwear|bra|bikini)[^,]*/gi, 'white casual athletic shorts and fitted top');
+  }
 
   // LOW ANGLE + PERNAS ABERTAS → força pernas juntas
   if (hasLowAngle && hasLegsApart) {
@@ -10052,6 +10087,12 @@ function finalSafetyPassForDALLE(prompt){
   p = p.replace(/\bglutes?\b/gi,'curves');
   p = p.replace(/\bmacro perspective on[^,]*/gi, 'editorial detail framing');
   p = p.replace(/\bnothing\s+else\b[^,]*/gi, '');
+  p = p.replace(/\bheavy.?lidded\b[^,]*/gi, 'confident natural gaze');
+  p = p.replace(/\blips?\s+(slightly\s+)?(parted|open)\b/gi, 'natural expression');
+  p = p.replace(/\bminimalist\s+private\s+space\b/gi, 'photography studio');
+  p = p.replace(/\bprivate\s+space\b/gi, 'studio space');
+  p = p.replace(/\btiny\s+underwear\b/gi, 'underwear');
+  p = p.replace(/\bworm.?s?\s+eye\s+perspective\b/gi, 'low angle shot');
   p = p.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
   return p;
 }
