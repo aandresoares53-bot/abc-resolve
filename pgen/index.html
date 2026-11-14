@@ -9913,13 +9913,18 @@ function cleanForDALLE(text){
 function safePillVal(val){
   if(!val) return '';
 
-  // POV baixo close-up — ângulo rente ao chão olhando para cima (versão DALL-E segura)
-  if(/worm.?s eye upshot|ankle level angled upward|foot level.*close-up low ground/i.test(val)){
-    return 'low angle ground-level shot looking up, feet and lower legs in foreground, subject standing tall, dramatic upward perspective, architectural low angle composition';
+  // POV baixo — low angle (versão DALL-E segura)
+  if(/^low angle shot, camera near ground level/i.test(val)){
+    return 'low angle shot, camera near ground level looking up at subject, dramatic upward perspective, architectural fashion angle, subject towering above camera';
   }
 
-  // POV baixo extremo — câmera flat no chão apontando para cima (versão DALL-E segura)
-  if(/extreme ground-level upshot|lying flat on floor pointing straight up|full body rising vertically in frame from below/i.test(val)){
+  // POV baixo close-up — low angle close-up (versão DALL-E segura)
+  if(/^low angle close-up shot, camera very close/i.test(val)){
+    return 'low angle close-up shot, tight crop from dramatic low vantage point, sharp upward angle, editorial detail from below, subject filling frame from ground-level perspective';
+  }
+
+  // POV baixo extremo — low angle extreme (versão DALL-E segura)
+  if(/^low angle extreme shot, camera flat on floor/i.test(val)){
     return 'extreme low angle floor-level shot, camera flat on ground pointing up, full figure towering above, dramatic ultra-low perspective, wide angle architectural upshot, subject dominant in frame from below';
   }
 
@@ -10524,8 +10529,9 @@ const ANGULO_OPTS = [
   {label:'🔙 Costas / Rear view', val:'rear view shot, back to camera, over-shoulder glance'},
   {label:'⬇️ Câmera de cima (high angle)', val:'high angle shot, camera looking down at subject, bird\'s eye perspective'},
   {label:'⬆️ Câmera de baixo (low angle)', val:'low angle shot, camera looking up at subject, worm\'s eye perspective, dramatic upward angle'},
-  {label:'📷 POV baixo close-up', val:'worm\'s eye upshot, camera at ankle level angled upward along body, viewer standing below looking up at subject from foot level, close-up low ground perspective, feet and legs in foreground'},
-  {label:'🔥 POV baixo extremo', val:'extreme ground-level upshot, camera lying flat on floor pointing straight up, immersive first-person angle from directly below subject, full body rising vertically in frame from below, ultra-low POV looking straight up along her standing figure'},
+  {label:'📷 POV baixo', val:'low angle shot, camera near ground level angled upward along body, dramatic low perspective looking up at subject'},
+  {label:'🔍 POV baixo close-up', val:'low angle close-up shot, camera very close to subject at ground level angled sharply upward, tight crop from low vantage point, dramatic upward close-up perspective'},
+  {label:'🔥 POV baixo extremo', val:'low angle extreme shot, camera flat on floor pointing straight up, ultra-low POV, full body rising vertically in frame from directly below, maximum upward distortion perspective'},
   {label:'🤳 POV — Ponto de vista', val:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view'},
   {label:'📐 Dutch angle / Inclinado', val:'dutch angle shot, tilted camera, diagonal composition, dynamic tilt'},
   {label:'🔍 Close-up rosto', val:'extreme close-up face shot, tight crop on face, 85mm portrait lens, face fills frame'},
@@ -11104,10 +11110,11 @@ const COMBOS_BY_CAT = {
 };
 // Adiciona POV baixo em todas as categorias
 (function(){
-  const POV_BAIXO_CLOSE = {label:'📷 POV baixo close-up', ang:'worm\'s eye upshot, camera at ankle level angled upward along body, close-up low ground perspective, feet and legs in foreground, dramatic upward angle from floor', pose:'standing upright pose, full body standing, legs apart confident stance'};
-  const POV_BAIXO_EXT   = {label:'🔥 POV baixo extremo', ang:'extreme ground-level upshot, camera lying flat on floor pointing straight up, full body rising vertically in frame from below, ultra-low POV looking straight up along her standing figure', pose:'standing upright pose, full body standing, legs apart wide stance'};
+  const POV_BAIXO       = {label:'📷 POV baixo', ang:'low angle shot, camera near ground level angled upward along body, dramatic low perspective looking up at subject', pose:'standing upright pose, full body standing, confident stance'};
+  const POV_BAIXO_CLOSE = {label:'🔍 POV baixo close-up', ang:'low angle close-up shot, camera very close to subject at ground level angled sharply upward, tight crop from low vantage point, dramatic upward close-up perspective', pose:'standing upright pose, legs apart, upper body visible, close framing'};
+  const POV_BAIXO_EXT   = {label:'🔥 POV baixo extremo', ang:'low angle extreme shot, camera flat on floor pointing straight up, ultra-low POV, full body rising vertically in frame from directly below, maximum upward distortion perspective', pose:'standing upright pose, full body standing, legs apart wide stance'};
   Object.keys(COMBOS_BY_CAT).forEach(k => {
-    COMBOS_BY_CAT[k].push(POV_BAIXO_CLOSE, POV_BAIXO_EXT);
+    COMBOS_BY_CAT[k].push(POV_BAIXO, POV_BAIXO_CLOSE, POV_BAIXO_EXT);
   });
 })();
 // Adiciona close-ups de todos os tipos em todas as categorias
