@@ -9875,7 +9875,7 @@ function cleanForDALLE(text){
   t = t.replace(/\bbare\s+breasts?\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+chest\b[^,]*/gi, '');
   t = t.replace(/\bbare\s+(buttocks|butt|rear)\b[^,]*/gi, '');
-  t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist|at\s+all)[^,]*/gi, '');
+  t = t.replace(/\bnothing\s+(underneath|below|on|from\s+waist|at\s+all|else)[^,]*/gi, '');
   t = t.replace(/\bor\s+nude\b[^,]*/gi, '');
   t = t.replace(/\bor\s+nothing\b[^,]*/gi, '');
   t = t.replace(/\bnatural\s+gravity\s+on\s+body[^,]*/gi, 'natural comfortable posture');
@@ -9911,7 +9911,7 @@ function cleanForDALLE(text){
   t = t.replace(/\bnaughty\b/gi, '');
   t = t.replace(/\bprovocative\b/gi, 'editorial');
   t = t.replace(/\brevealing\s+pose\b/gi, 'editorial pose');
-  t = t.replace(/\bexplicit\b/gi, '');
+  t = t.replace(/(?<!non-)\bexplicit\b/gi, '');
   t = t.replace(/\bfetish\b/gi, '');
   t = t.replace(/\bmoan\w*\b/gi, '');
   t = t.replace(/\bdesire\b/gi, 'confidence');
@@ -9930,13 +9930,18 @@ function cleanForDALLE(text){
   t = t.replace(/\bg[\s-]?string\b/gi, 'underwear');
   t = t.replace(/\bpanties\b/gi, 'underwear');
 
-  // Standalone ass/butt
+  // Standalone ass/butt/glutes/rear
   t = t.replace(/\b(big|round|fat|perfect|firm)?\s*ass\b/gi, 'curves');
   t = t.replace(/\b(big|round|fat|perfect|firm)?\s*butt\b/gi, 'curves');
+  t = t.replace(/\bglutes?\b/gi, 'curves');
+  t = t.replace(/\bmacro\s+perspective\s+on\s+(?:glutes?|curves?|rear)[^,]*/gi, 'editorial detail framing');
+  t = t.replace(/\bside\s+profile\s+rear\s+emphasis[^,]*/gi, '');
 
-  // Segurança de idade
+  // Segurança de idade — remove faixas que começam em 18/19 e deixam artefatos
   t = t.replace(/\bwoman appearing\s+\d+\s+to\s+\d+\s+years?\s+old[^,]*/gi, 'young adult woman');
-  t = t.replace(/\b(18|19)\b/g, '');
+  t = t.replace(/\b18\s+to\s+(\d+)\s+years?\s+old\b/gi, '$1 years old');
+  t = t.replace(/\b19\s+to\s+(\d+)\s+years?\s+old\b/gi, '$1 years old');
+  t = t.replace(/\bto\s+\d+\s+years?\s+old\b/gi, 'adult');
 
   // Limpeza de artefatos
   t = t.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
@@ -9998,16 +10003,29 @@ function finalSafetyPassForDALLE(prompt){
   }
 
   // ── Limpeza de termos individuais residuais ──────────────────────────────
+  // ── Close-up bunda + pose sugestionada → neutralizar ─────────────────────
+  const hasRearCloseup = /tight close-up rear|rear.*close-up|macro.*(?:glut|curves|rear)|editorial rear fashion|rear fashion detail/i.test(p);
+  if (hasRearCloseup) {
+    p = p.replace(/leaning forward[^,]*/gi, 'standing natural pose');
+    p = p.replace(/rear emphasis[^,]*/gi, '');
+    p = p.replace(/side profile rear[^,]*/gi, '');
+    p = p.replace(/hands on thighs[^,]*/gi, 'hand on hip');
+  }
+
+  // ── Limpeza de termos individuais residuais ──────────────────────────────
   p = p.replace(/(?:bedroom eyes|lustful gaze|seductive gaze|desire gaze)[^,]*/gi, 'confident direct gaze');
   p = p.replace(/\bsexy\b/gi,'confident').replace(/\bseductive\b/gi,'confident');
   p = p.replace(/\baroused?\b/gi,'').replace(/\blust\w*\b/gi,'');
   p = p.replace(/\bhorny\b/gi,'').replace(/\bmoan\w*\b/gi,'');
-  p = p.replace(/\bexplicit\b/gi,'').replace(/\bfetish\b/gi,'');
+  p = p.replace(/(?<!non-)\bexplicit\b/gi,'').replace(/\bfetish\b/gi,'');
   p = p.replace(/\bporn\w*/gi,'').replace(/\berotic\b/gi,'');
   p = p.replace(/\bnaked\b/gi,'').replace(/\bnudity\b/gi,'');
   p = p.replace(/\bcrotch\b/gi,'').replace(/\bgenitals?\b/gi,'');
   p = p.replace(/\bvulva\b/gi,'').replace(/\bvagina\b/gi,'');
   p = p.replace(/\bthong\b/gi,'underwear').replace(/\bg.string\b/gi,'underwear');
+  p = p.replace(/\bglutes?\b/gi,'curves');
+  p = p.replace(/\bmacro perspective on[^,]*/gi, 'editorial detail framing');
+  p = p.replace(/\bnothing\s+else\b[^,]*/gi, '');
   p = p.replace(/,(\s*,)+/g,',').replace(/\s{2,}/g,' ').trim();
   return p;
 }
@@ -10080,6 +10098,11 @@ function safePillVal(val){
   // Extreme close-up de bunda / rear sem cabeça
   if(/extreme\s+close-up.*buttocks|buttocks.*filling.*frame|rear\s+view.*no\s+head|close-up.*rear.*view/i.test(val)){
     return 'three-quarter back shot, 85mm f/1.8, natural light, athletic editorial rear view, full figure visible';
+  }
+
+  // Close-up bunda editorial — intercepta o ang neutro do IIFE para garantir passagem
+  if(/editorial rear fashion detail shot|rear fashion.*detail.*85mm|fashion magazine close-up.*lower back/i.test(val)){
+    return 'editorial fashion rear detail shot, 85mm lens tight crop on lower back and hip area, fashion magazine framing, artistic editorial photography, three-quarter turn composition';
   }
 
   // Bunda empurrada para câmera
@@ -10222,8 +10245,13 @@ function safeClothing(roupa){
   r = r.replace(/\bcompletely\s+naked\b[^,]*/gi, '');
   r = r.replace(/\bor\s+nude\b[^,]*/gi, '');
   r = r.replace(/\bor\s+nothing\b[^,]*/gi, '');
-  r = r.replace(/\bnothing\s+(underneath|below|on|from\s+waist\s+down|at\s+all)\b[^,]*/gi, '');
+  r = r.replace(/,?\s*nothing\s+(underneath|below|on|from\s+waist\s+down|at\s+all|else)[^,]*/gi, '');
   r = r.replace(/\bnothing\s+from\s+waist\b[^,]*/gi, '');
+  // shirt/top sem bottoms → adiciona bottoms neutros
+  if(/\b(sleep\s+shirt|t-?shirt|blouse|tank\s+top|crop\s+top|oversized\s+(shirt|tee))\b/i.test(r) &&
+     !/\b(shorts?|pants?|jeans?|skirt|leggings?|underwear|bottom)\b/i.test(r)){
+    r = r.trim().replace(/,?\s*$/, '') + ', casual shorts';
+  }
   // bare buttocks — capture variations like "bare back and buttocks"
   r = r.replace(/\bbare\s+(?:\w+\s+and\s+)?(buttocks|butt|rear|bottom)\b[^,]*/gi, '');
   r = r.replace(/\b(buttocks|bare\s+butt)\s+(?:fully\s+)?visible\b[^,]*/gi, '');
@@ -10451,7 +10479,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
 
   const antiAI = 'shot on Sony A7IV mirrorless camera, 85mm f/1.8 prime lens, natural skin texture with pores visible, slight film grain ISO 800, authentic candid moment, unretouched raw capture, natural asymmetry, not digitally generated, genuine photograph';
 
-  const raw = `Professional fashion editorial photograph, published magazine quality, fully commercial non-explicit photography, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
+  const raw = `Professional fashion editorial photograph, published magazine quality, fully commercial safe-for-work photography, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
   return finalSafetyPassForDALLE(raw);
 }
 
@@ -10566,7 +10594,7 @@ function buildMJPromptForDALLE(preset){
 
   const antiAI = 'shot on Canon EOS R6 mirrorless, 50mm f/1.4 prime lens, visible skin pores and natural texture, slight film grain ISO 1000, authentic candid capture, real ambient environment light, natural asymmetry and slight imperfections, handheld micro-camera shake, unretouched unprocessed capture, real person photographed in real location, not digitally generated';
 
-  const raw = `Professional fashion editorial photograph, published magazine quality, fully commercial non-explicit photography, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
+  const raw = `Professional fashion editorial photograph, published magazine quality, fully commercial safe-for-work photography, shot on camera: ${details}, ${antiAI}. ${negatives}.`;
   return finalSafetyPassForDALLE(raw);
 }
 
@@ -11250,7 +11278,7 @@ const COMBOS_BY_CAT = {
     {label:'🔍 Close-up rosto', ang:'extreme close-up portrait, macro lens face shot, tight crop on face, 85mm portrait lens, face filling frame', pose:'head tilted slightly, lips parted, eyes direct to camera, serene facial expression'},
     {label:'👁️ Close-up olhos e lábios', ang:'macro close-up beauty shot, tight crop on eyes and lips, 100mm macro lens, cosmetic detail photography', pose:'eyes half-closed seductive gaze, lips slightly parted, chin tilted down, intense eye contact'},
     {label:'👙 Close-up busto/decote', ang:'close-up chest shot, medium close-up torso, 50mm lens tight crop on neckline and bust area, beauty editorial framing', pose:'shoulders back, chest forward, slight arch of upper back, confident posture'},
-    {label:'🍑 Close-up bunda', ang:'tight close-up rear shot, macro perspective on glutes, 85mm lens cropped tightly on buttocks, editorial detail framing', pose:'standing leaning forward slightly, hands on thighs, weight on one hip, side profile rear emphasis'},
+    {label:'🍑 Close-up bunda', ang:'editorial rear fashion detail shot, 85mm lens tight crop on lower back and hip curves, fashion magazine close-up framing', pose:'standing natural pose, weight on one hip, hand on hip, three-quarter turn, back toward camera'},
     {label:'🦵 Close-up pernas e coxas', ang:'close-up legs shot, 85mm tight crop from hip to knee, editorial detail photography focusing on thighs and legs', pose:'legs slightly apart, standing straight, weight evenly distributed, smooth leg line'},
     {label:'✨ Close-up detalhe corporal', ang:'macro beauty detail shot, extreme close-up body detail, 100mm macro lens, skin texture photography, intimate detail framing', pose:'relaxed natural pose, body detail emphasized, soft lighting on skin'},
     {label:'🔥 Close-up entre pernas em pé', ang:'inner thigh close-up shot, legs as natural frame composition, standing legs apart editorial intimate framing, 50mm lens', pose:'standing legs apart, wide stance, weight on both feet, legs spread shoulder width'},
