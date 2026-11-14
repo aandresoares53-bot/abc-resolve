@@ -10005,8 +10005,9 @@ function finalSafetyPassForDALLE(prompt){
     p = p.replace(/only\s+(a\s+)?(tiny|small|minimal|micro)?\s*(underwear|bra|bikini)[^,]*/gi, 'white casual athletic shorts and fitted top');
   }
 
-  // LOW ANGLE + PERNAS ABERTAS → força pernas juntas
-  if (hasLowAngle && hasLegsApart) {
+  // LOW ANGLE + CLOSE-UP ENTRE PERNAS → força pernas juntas (combinação mais perigosa)
+  // "legs apart" sozinho com low angle é editorial válido; só bloqueia com close-up real
+  if (hasLowAngle && hasLegCloseup && hasLegsApart) {
     p = p.replace(/legs apart[^,]*/gi, 'legs together, standing straight');
     p = p.replace(/wide stance[^,]*/gi, 'neutral stance');
     p = p.replace(/knees (wide )?apart[^,]*/gi, 'knees together');
