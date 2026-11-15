@@ -39,11 +39,35 @@ header h1{font-family:'Georgia',serif;font-size:clamp(1.1rem,4vw,1.5rem);font-we
 header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gold);margin-bottom:4px}
 .header-sub{font-size:.72rem;color:var(--muted);letter-spacing:.08em;margin-top:4px}
 
-/* ── Progress bar ── */
-.progress-wrap{padding:10px 16px 0;max-width:700px;margin:0 auto;width:100%}
-.progress-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--ember),#f0c040);border-radius:2px;transition:width .4s ease}
-.progress-label{font-size:.65rem;color:var(--muted);letter-spacing:.15em;text-align:right;margin-top:4px;text-transform:uppercase}
+/* ── Browser toolbar ── */
+#browser-toolbar{max-width:700px;margin:0 auto;width:100%;padding:10px 16px 6px}
+.level-tabs{display:flex;gap:6px;margin-bottom:10px}
+.lvl-tab{flex:1;padding:9px 0;border-radius:var(--r-chip);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:.8rem;cursor:pointer;transition:all .18s;text-align:center}
+.lvl-tab.active{background:var(--ember);border-color:var(--ember);color:#000;font-weight:600}
+.lvl-tab:hover:not(.active){border-color:var(--border-lit);color:var(--text)}
+.cat-scroll{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-chip{padding:6px 13px;border-radius:var(--r-chip);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:Georgia,serif;font-size:.75rem;cursor:pointer;white-space:nowrap;transition:all .18s;flex-shrink:0}
+.cat-chip.active{border-color:var(--gold-dim);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.cat-chip:hover:not(.active){border-color:var(--border-lit);color:var(--text)}
+/* ── Preset grid ── */
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 0 140px}
+.preset-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px;cursor:pointer;transition:all .18s;display:flex;gap:11px;align-items:flex-start}
+.preset-card:hover{border-color:var(--gold-dim);background:color-mix(in srgb,var(--gold) 6%,transparent)}
+.preset-card.selected{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.preset-card-icon{font-size:1.5rem;flex-shrink:0;line-height:1;padding-top:1px}
+.preset-card-info{min-width:0}
+.preset-card-name{font-size:.8rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:3px}
+.preset-card-desc{font-size:.67rem;color:var(--muted);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* ── Combo panel ── */
+.combo-panel{background:var(--surface);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:16px;margin-bottom:10px;animation:fadeUp .25s ease}
+.combo-panel h4{font-family:Georgia,serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.combo-grid{display:flex;flex-wrap:wrap;gap:8px}
+/* ── Load more ── */
+.load-more-row{text-align:center;padding:14px 0 0}
+.load-more-btn2{padding:9px 24px;border-radius:var(--r-chip);border:1px solid var(--border-lit);background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.load-more-btn2:hover{border-color:var(--gold-dim);color:var(--text)}
+@media(max-width:480px){.preset-grid{grid-template-columns:1fr}}
 
 /* ── Chat window ── */
 #chat{flex:1;max-width:700px;width:100%;margin:0 auto;padding:16px 16px 120px;display:flex;flex-direction:column;gap:18px}
@@ -172,9 +196,13 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
   <div id="gs-results" style="display:none"></div>
 </div>
 
-<div class="progress-wrap">
-  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-  <div class="progress-label" id="prog-label">Etapa 1 de 4</div>
+<div id="browser-toolbar">
+  <div class="level-tabs">
+    <button class="lvl-tab active" data-lvl="sfw" onclick="setLevel('sfw')">☀️ SFW</button>
+    <button class="lvl-tab" data-lvl="sensual" onclick="setLevel('sensual')">🔥 Sensual</button>
+    <button class="lvl-tab" data-lvl="explicit" onclick="setLevel('explicit')">🔞 Explícito</button>
+  </div>
+  <div class="cat-scroll" id="cat-scroll"></div>
 </div>
 
 <div id="chat"></div>
@@ -10749,11 +10777,7 @@ function scrollBot() {
   setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 50);
 }
 
-function updateProgress() {
-  const pct = Math.round((currentStep / TOTAL_STEPS) * 100);
-  document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('prog-label').textContent = `Etapa ${Math.min(currentStep + 1, TOTAL_STEPS + 1)} de ${TOTAL_STEPS + 1}`;
-}
+function updateProgress() { /* no-op — browser UI has no step progress bar */ }
 
 function disableChips(wrap) {
   if (!wrap) return;
@@ -10823,176 +10847,128 @@ const IDADE_OPTS = [
   {label:'👑 55+ anos (experiente)', val:'55 years old and older mature woman, senior mature beauty, experienced elegant woman'},
 ];
 
-// ── Steps ──────────────────────────────────────────────────────────────────
-function showStep(idx) {
-  currentStep = idx;
-  updateProgress();
-  if (idx === 0) showNivelStep();
-  else if (idx === 1) showCatStep();
-  else if (idx === 2) showPresetStep();
-  else if (idx === 3) showAnguloStep();
-}
+// ── Preset Browser ─────────────────────────────────────────────────────────
+let browserNivel = 'sfw';
+let browserCat = '__all__';
+let browserPage = 0;
+const BROWSER_PER_PAGE = 24;
+let selectedCard = null;
 
-function showNivelStep() {
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    appendBotMsg('Qual nível de conteúdo você quer gerar?');
-    const wrap = document.createElement('div');
-    wrap.className = 'chips-wrap';
-    NIVEL_OPTS.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'chip';
-      btn.textContent = opt.label;
-      btn.onclick = () => {
-        disableChips(wrap);
-        answers.nivel = opt.val;
-        appendUserMsg(opt.label);
-        setTimeout(() => showStep(1), 300);
-      };
-      wrap.appendChild(btn);
-    });
-    chat.appendChild(wrap);
-    scrollBot();
-  }, 500);
-}
-
-function showCatStep() {
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    appendBotMsg('Qual categoria de cena?');
-    const wrap = document.createElement('div');
-    wrap.className = 'chips-wrap';
-    let added = 0;
-    // Buscar em todos
-    const searchBtn = document.createElement('button');
-    searchBtn.className = 'chip skip';
-    searchBtn.textContent = '🔍 Buscar em todos';
-    searchBtn.onclick = () => {
-      disableChips(wrap);
-      answers.cat = '__all__';
-      appendUserMsg('🔍 Buscar em todos');
-      setTimeout(() => showStep(2), 300);
-    };
-    wrap.appendChild(searchBtn);
-
-    CATS_CHAT.forEach(cat => {
-      const count = PRESETS_RAW.filter(p => p.cat === cat.key && matchLevel(p.level, answers.nivel)).length;
-      if (count === 0) return;
-      const btn = document.createElement('button');
-      btn.className = 'chip';
-      btn.textContent = `${cat.icon} ${cat.name}`;
-      btn.onclick = () => {
-        disableChips(wrap);
-        answers.cat = cat.key;
-        appendUserMsg(`${cat.icon} ${cat.name}`);
-        setTimeout(() => showStep(2), 300);
-      };
-      wrap.appendChild(btn);
-      added++;
-    });
-    chat.appendChild(wrap);
-    scrollBot();
-  }, 400);
-}
-
-let allPresetsForStep = [];
-
-function searchPresets(query) {
-  const q = query.trim().toLowerCase();
-  if (!q) return allPresetsForStep;
-  return allPresetsForStep.filter(p => {
-    const hay = [p.name, p.desc, p.corpo, p.cenario, p.pose, p.expressao, p.roupa]
-      .filter(Boolean).join(' ').toLowerCase();
-    return q.split(/\s+/).every(word => hay.includes(word));
+function setLevel(lvl) {
+  browserNivel = lvl;
+  browserCat = '__all__';
+  browserPage = 0;
+  document.querySelectorAll('.lvl-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.lvl === lvl);
   });
+  renderCatChips();
+  renderPresetGrid();
 }
 
-function showPresetStep() {
-  presetPage = 0;
-  allPresetsForStep = answers.cat === '__all__'
-    ? PRESETS_RAW.filter(p => matchLevel(p.level, answers.nivel))
-    : PRESETS_RAW.filter(p => p.cat === answers.cat && matchLevel(p.level, answers.nivel));
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    const total = allPresetsForStep.length;
-    appendBotMsg(`Qual preset? (${total} disponíveis) — ou busque por palavra:`);
-
-    // ── Search input ──
-    const searchWrap = document.createElement('div');
-    searchWrap.className = 'search-wrap';
-    searchWrap.id = 'preset-search-wrap';
-    searchWrap.innerHTML = `
-      <input type="text" id="preset-search" class="search-input" placeholder="🔍 ex: praia, escritório, yoga..." autocomplete="off">
-      <div class="search-count" id="search-count">${total} presets</div>
-    `;
-    chat.appendChild(searchWrap);
-
-    const input = document.getElementById('preset-search');
-    const countEl = document.getElementById('search-count');
-
-    let searchTimer = null;
-    input.addEventListener('input', () => {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => {
-        const results = searchPresets(input.value);
-        countEl.textContent = `${results.length} preset${results.length !== 1 ? 's' : ''}`;
-        // remove old chips
-        document.querySelectorAll('[data-preset-page]').forEach(el => el.remove());
-        document.querySelectorAll('.load-more-btn').forEach(el => el.remove());
-        presetPage = 0;
-        renderPresetChips(results);
-      }, 250);
-    });
-
-    renderPresetChips(allPresetsForStep);
-    input.focus();
-    scrollBot();
-  }, 400);
-}
-
-function renderPresetChips(presets) {
-  const start = presetPage * PRESETS_PER_PAGE;
-  const page = presets.slice(start, start + PRESETS_PER_PAGE);
-  const wrap = document.createElement('div');
-  wrap.className = 'chips-wrap';
-  wrap.dataset.presetPage = presetPage;
-
-  page.forEach(p => {
+function renderCatChips() {
+  const scroll = document.getElementById('cat-scroll');
+  if (!scroll) return;
+  scroll.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'cat-chip' + (browserCat === '__all__' ? ' active' : '');
+  allBtn.textContent = '⭐ Todos';
+  allBtn.onclick = () => { browserCat = '__all__'; browserPage = 0; renderCatChips(); renderPresetGrid(); };
+  scroll.appendChild(allBtn);
+  CATS_CHAT.forEach(cat => {
+    const count = PRESETS_RAW.filter(p => p.cat === cat.key && matchLevel(p.level, browserNivel)).length;
+    if (!count) return;
     const btn = document.createElement('button');
-    btn.className = 'chip';
-    btn.textContent = `${p.icon || '📸'} ${p.name}`;
-    btn.title = p.desc || '';
-    btn.onclick = () => {
-      document.getElementById('preset-search-wrap')?.remove();
-      document.querySelectorAll('[data-preset-page]').forEach(w => disableChips(w));
-      document.querySelectorAll('.load-more-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.4'; });
-      answers.preset = p.key;
-      selectedPreset = p;
-      appendUserMsg(`${p.icon || '📸'} ${p.name}`);
-      setTimeout(() => showStep(3), 400);
-    };
-    wrap.appendChild(btn);
+    btn.className = 'cat-chip' + (browserCat === cat.key ? ' active' : '');
+    btn.textContent = `${cat.icon} ${cat.name}`;
+    btn.onclick = () => { browserCat = cat.key; browserPage = 0; renderCatChips(); renderPresetGrid(); };
+    scroll.appendChild(btn);
   });
+}
 
-  if (start + PRESETS_PER_PAGE < presets.length) {
-    const remaining = presets.length - start - PRESETS_PER_PAGE;
-    const moreBtn = document.createElement('button');
-    moreBtn.className = 'chip skip load-more-btn';
-    moreBtn.textContent = `↓ Ver mais (${remaining} restantes)`;
-    moreBtn.onclick = () => {
-      moreBtn.disabled = true;
-      moreBtn.style.opacity = '0.4';
-      presetPage++;
-      renderPresetChips(presets);
-    };
-    wrap.appendChild(moreBtn);
+function getBrowserPresets() {
+  return PRESETS_RAW.filter(p => {
+    const levelOk = matchLevel(p.level, browserNivel);
+    const catOk = browserCat === '__all__' || p.cat === browserCat;
+    return levelOk && catOk;
+  });
+}
+
+function renderPresetGrid() {
+  chat.innerHTML = '';
+  selectedCard = null;
+  const presets = getBrowserPresets();
+  const pagePresets = presets.slice(0, (browserPage + 1) * BROWSER_PER_PAGE);
+  if (!presets.length) {
+    chat.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px 16px">Nenhum preset nesta categoria.</div>';
+    return;
   }
+  const grid = document.createElement('div');
+  grid.className = 'preset-grid';
+  pagePresets.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'preset-card';
+    card.innerHTML = `<div class="preset-card-icon">${p.icon || '📸'}</div><div class="preset-card-info"><div class="preset-card-name">${escHtml(p.name)}</div><div class="preset-card-desc">${escHtml(p.desc || '')}</div></div>`;
+    card.onclick = () => selectBrowserPreset(p, card, grid);
+    grid.appendChild(card);
+  });
+  chat.appendChild(grid);
+  if (presets.length > pagePresets.length) {
+    const row = document.createElement('div');
+    row.className = 'load-more-row';
+    const btn = document.createElement('button');
+    btn.className = 'load-more-btn2';
+    btn.textContent = `↓ Ver mais (${presets.length - pagePresets.length} restantes)`;
+    btn.onclick = () => { browserPage++; renderPresetGrid(); };
+    row.appendChild(btn);
+    chat.appendChild(row);
+  }
+}
 
-  chat.appendChild(wrap);
-  scrollBot();
+function selectBrowserPreset(p, card, grid) {
+  if (selectedCard) selectedCard.classList.remove('selected');
+  selectedCard = card;
+  card.classList.add('selected');
+  document.getElementById('combo-panel')?.remove();
+  selectedPreset = p;
+  answers.preset = p.key;
+  answers.nivel = p.level || 'sfw';
+  answers.cat = p.cat;
+  const combos = COMBOS_BY_CAT[p.cat] || COMBOS_DEFAULT;
+  const panel = document.createElement('div');
+  panel.className = 'combo-panel';
+  panel.id = 'combo-panel';
+  const title = document.createElement('h4');
+  title.textContent = `${p.icon || '📸'} ${p.name} — escolha ângulo + pose`;
+  panel.appendChild(title);
+  const cGrid = document.createElement('div');
+  cGrid.className = 'combo-grid';
+  combos.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'chip chip-combo';
+    btn.textContent = c.label;
+    btn.onclick = () => {
+      answers.angulo = c.ang;
+      answers.pose = c.pose;
+      panel.remove();
+      showResult();
+    };
+    cGrid.appendChild(btn);
+  });
+  panel.appendChild(cGrid);
+  chat.appendChild(panel);
+  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+}
+
+function showPresetBrowser() {
+  chat.innerHTML = '';
+  selectedCard = null;
+  renderCatChips();
+  renderPresetGrid();
+}
+
+// Legacy stub — kept for surpresaFlow compatibility
+function showStep(idx) {
+  if (idx === 3) showAnguloStep();
 }
 
 // ── Result ─────────────────────────────────────────────────────────────────
@@ -11383,120 +11359,7 @@ const COMBOS_DEFAULT = [
   {label:'🌅 Contraluz artístico', ang:'backlit silhouette shot, strong backlight, subject as dark silhouette against bright background', pose:'standing upright pose, full body standing, confident stance'},
 ];
 
-function showAnguloStep() {
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    const cat = selectedPreset ? selectedPreset.cat : null;
-    const combos = COMBOS_BY_CAT[cat] || COMBOS_DEFAULT;
-
-    // Sugestões rápidas
-    appendBotMsg('✨ Combinações recomendadas para este preset:');
-    const comboWrap = document.createElement('div');
-    comboWrap.className = 'chips-wrap combo-chips';
-    combos.forEach(c => {
-      const btn = document.createElement('button');
-      btn.className = 'chip chip-combo';
-      btn.textContent = c.label;
-      btn.onclick = () => {
-        disableChips(comboWrap);
-        disableChips(anguloWrap);
-        answers.angulo = c.ang;
-        answers.pose = c.pose;
-        appendUserMsg(c.label);
-        setTimeout(() => showResult(), 300);
-      };
-      comboWrap.appendChild(btn);
-    });
-    // Botão pular sugestões
-    const skipCombo = document.createElement('button');
-    skipCombo.className = 'chip skip';
-    skipCombo.textContent = '— Escolher manualmente —';
-    skipCombo.onclick = () => {
-      disableChips(comboWrap);
-      anguloSection.style.display = '';
-      scrollBot();
-    };
-    comboWrap.appendChild(skipCombo);
-    chat.appendChild(comboWrap);
-    scrollBot();
-
-    // Seção de escolha manual (inicialmente oculta)
-    const anguloSection = document.createElement('div');
-    anguloSection.style.display = 'none';
-    const anguloWrap = document.createElement('div');
-    anguloWrap.className = 'chips-wrap';
-
-    const label = document.createElement('div');
-    label.className = 'bot-bubble';
-    label.textContent = 'Qual ângulo de câmera / POV?';
-    anguloSection.appendChild(label);
-
-    ANGULO_OPTS.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
-      btn.textContent = opt.label;
-      btn.onclick = () => {
-        disableChips(anguloWrap);
-        answers.angulo = opt.val === '__skip__' ? '' : opt.val;
-        appendUserMsg(opt.val === '__skip__' ? '— Usar padrão do preset —' : opt.label);
-        setTimeout(() => showResult(), 300);
-      };
-      anguloWrap.appendChild(btn);
-    });
-    anguloSection.appendChild(anguloWrap);
-    chat.appendChild(anguloSection);
-    scrollBot();
-  }, 400);
-}
-
-function showPoseStep() {
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    appendBotMsg('Qual pose / posição?');
-    const wrap = document.createElement('div');
-    wrap.className = 'chips-wrap';
-    POSE_OPTS.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
-      btn.textContent = opt.label;
-      btn.onclick = () => {
-        disableChips(wrap);
-        answers.pose = opt.val === '__skip__' ? '' : opt.val;
-        appendUserMsg(opt.val === '__skip__' ? '— Usar pose padrão —' : opt.label);
-        setTimeout(() => showStep(5), 300);
-      };
-      wrap.appendChild(btn);
-    });
-    chat.appendChild(wrap);
-    scrollBot();
-  }, 400);
-}
-
-function showIdadeStep() {
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    appendBotMsg('Qual a faixa de idade da modelo? (apenas 18+)');
-    const wrap = document.createElement('div');
-    wrap.className = 'chips-wrap';
-    IDADE_OPTS.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'chip' + (opt.val === '__skip__' ? ' skip' : '');
-      btn.textContent = opt.label;
-      btn.onclick = () => {
-        disableChips(wrap);
-        answers.idade = opt.val === '__skip__' ? '' : opt.val;
-        appendUserMsg(opt.val === '__skip__' ? '— Usar padrão —' : opt.label);
-        setTimeout(() => showResult(), 300);
-      };
-      wrap.appendChild(btn);
-    });
-    chat.appendChild(wrap);
-    scrollBot();
-  }, 400);
-}
+// showAnguloStep, showPoseStep, showIdadeStep removed — replaced by browser combo panel
 
 function escHtml(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -11539,7 +11402,7 @@ function showResult() {
       <div class="result-actions">
         <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
         <button class="btn-act" onclick="copyGPT(event)">🤖 Copiar GPT</button>
-        <button class="btn-act" onclick="restartFlow()">↺ Novo</button>
+        <button class="btn-act" onclick="restartFlow()">← Voltar</button>
       </div>
       <div class="assinatura">✦ RAWgen Loiras ✦</div>
     `;
@@ -11608,10 +11471,8 @@ function surpresaFlow() {
   selectedPreset = null;
   generatedMJ = '';
   generatedChatGPT = '';
-  currentStep = 0;
-  presetPage = 0;
+  browserPage = 0;
   chat.innerHTML = '';
-  updateProgress();
 
   showTyping();
   setTimeout(() => {
@@ -11665,10 +11526,7 @@ function restartFlow() {
   selectedPreset = null;
   generatedMJ = '';
   generatedChatGPT = '';
-  currentStep = 0;
-  presetPage = 0;
-  answers.angulo = '';
-  chat.innerHTML = '';
+  browserPage = 0;
   startFlow();
 }
 
@@ -11714,30 +11572,25 @@ function renderGsResults(query) {
 }
 function selectGsPreset(p) {
   clearGlobalSearch();
-  // Reset state
   answers = {};
   selectedPreset = null;
-  currentStep = 0;
-  presetPage = 0;
-  document.getElementById('chat').innerHTML = '';
-  // Set preset answers
-  answers.nivel = p.level || 'sfw';
-  answers.cat = p.cat;
-  answers.preset = p.key;
-  selectedPreset = p;
-  appendUserMsg(`${p.icon || '📸'} ${p.name}`);
-  updateProgress();
-  setTimeout(() => showStep(3), 300);
+  browserNivel = p.level === 'explicit' ? 'explicit' : (p.level === 'sensual' ? 'sensual' : 'sfw');
+  browserCat = p.cat;
+  browserPage = 0;
+  document.querySelectorAll('.lvl-tab').forEach(t => t.classList.toggle('active', t.dataset.lvl === browserNivel));
+  renderCatChips();
+  renderPresetGrid();
+  // Auto-select the preset card after grid renders
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.preset-card');
+    const presets = getBrowserPresets();
+    const idx = presets.findIndex(pr => pr.key === p.key);
+    if (idx >= 0 && cards[idx]) selectBrowserPreset(p, cards[idx], null);
+  }, 100);
 }
 
 function startFlow() {
-  updateProgress();
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    appendBotMsg('Bem-vindo ao RAWgen Loiras! Vou guiar você na criação de um prompt fotográfico passo a passo. 📸');
-    setTimeout(() => showStep(0), 600);
-  }, 500);
+  showPresetBrowser();
 }
 
 document.addEventListener('click', e => {
