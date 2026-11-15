@@ -87,6 +87,19 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .btn-gerar-prompt{margin-top:16px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--gold);color:#000;font-family:Georgia,serif;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.06em;transition:opacity .2s,transform .1s}
 .btn-gerar-prompt:disabled{opacity:.35;cursor:not-allowed}
 .btn-gerar-prompt:not(:disabled):hover{opacity:.88;transform:translateY(-1px)}
+/* ── Featured combos ── */
+.featured-combos-title{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-family:Georgia,serif;margin-bottom:10px}
+.featured-combos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:520px){.featured-combos-grid{grid-template-columns:1fr}}
+.fc-card{background:color-mix(in srgb,var(--gold) 7%,transparent);border:1px solid var(--gold-dim);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .18s;text-align:center}
+.fc-card:hover{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 15%,transparent);transform:translateY(-2px)}
+.fc-emoji{font-size:1.5rem;margin-bottom:5px}
+.fc-label{font-family:Georgia,serif;font-size:.8rem;font-weight:700;color:var(--gold);margin-bottom:3px}
+.fc-desc{font-size:.7rem;color:var(--muted);line-height:1.35}
+.btn-pular{margin-top:4px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
+.btn-pular:hover{border-color:var(--gold-dim);color:var(--text)}
+.pose-section{animation:fadeUp .28s ease}
+.section-divider{border:none;border-top:1px solid var(--border);margin:14px 0 10px}
 .chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
 .chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
 .chip-combo.active{background:var(--gold)!important;color:#000!important;border-color:var(--gold)!important}
@@ -11223,41 +11236,99 @@ function selectBrowserPreset(p, card, grid) {
   card.classList.add('selected');
   document.getElementById('combo-panel')?.remove();
   document.getElementById('result-card-current')?.remove();
-  answers.angulo = '';
-  answers.pose = '';
+  answers.angulo = null;
+  answers.pose = null;
   setMainStep(2);
   selectedPreset = p;
   answers.preset = p.key;
   answers.nivel = p.level || 'sfw';
   answers.cat = p.cat;
+  _showCombosStep(p);
+}
 
+// ── Passo 1: Combos em destaque ────────────────────────────────────────────
+function _showCombosStep(p) {
   const panel = document.createElement('div');
   panel.className = 'combo-panel';
   panel.id = 'combo-panel';
 
-  const title = document.createElement('h4');
-  title.textContent = `${p.icon || '📸'} ${p.name}`;
-  panel.appendChild(title);
+  const h4 = document.createElement('h4');
+  h4.textContent = `${p.icon || '📸'} ${p.name}`;
+  panel.appendChild(h4);
 
-  // ── Seletor de Ângulo ──────────────────────────────────────────────────────
-  const angRow = makeSelectorRow('📷 Ângulo de câmera', ANGLES_LIST, val => {
-    answers.angulo = val;
-    showResult(true);
-  });
-  panel.appendChild(angRow.el);
+  const fcTitle = document.createElement('div');
+  fcTitle.className = 'featured-combos-title';
+  fcTitle.textContent = '✨ Combinações em destaque';
+  panel.appendChild(fcTitle);
 
-  // ── Seletor de Pose ────────────────────────────────────────────────────────
-  const poseRow = makeSelectorRow('🧘 Pose / Posição', POSES_LIST_FULL, val => {
-    answers.pose = val;
-    showResult(true);
+  const fcGrid = document.createElement('div');
+  fcGrid.className = 'featured-combos-grid';
+  FEATURED_COMBOS.forEach(combo => {
+    const fc = document.createElement('div');
+    fc.className = 'fc-card';
+    fc.innerHTML = `<div class="fc-emoji">${combo.emoji}</div><div class="fc-label">${combo.label}</div><div class="fc-desc">${combo.desc}</div>`;
+    fc.onclick = () => {
+      answers.angulo = combo.ang;
+      answers.pose = combo.pose;
+      document.getElementById('combo-panel')?.remove();
+      showResult(false);
+    };
+    fcGrid.appendChild(fc);
   });
-  panel.appendChild(poseRow.el);
+  panel.appendChild(fcGrid);
+
+  const pularBtn = document.createElement('button');
+  pularBtn.className = 'btn-pular';
+  pularBtn.textContent = '↓ Pular — escolher ângulo e pose manualmente';
+  pularBtn.onclick = () => _showAngleStep(panel);
+  panel.appendChild(pularBtn);
 
   chat.appendChild(panel);
   setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+}
 
-  // Gera prompt imediatamente ao selecionar preset
-  showResult(false);
+// ── Passo 2: Ângulo de câmera ──────────────────────────────────────────────
+function _showAngleStep(panel) {
+  // Remove combos section, keep panel
+  panel.querySelector('.featured-combos-title')?.remove();
+  panel.querySelector('.featured-combos-grid')?.remove();
+  panel.querySelector('.btn-pular')?.remove();
+
+  const hr = document.createElement('hr');
+  hr.className = 'section-divider';
+  panel.appendChild(hr);
+
+  const angWrap = document.createElement('div');
+  angWrap.id = 'ang-section';
+  const angRow = makeSelectorRow('📷 Ângulo de câmera', ANGLES_LIST, val => {
+    answers.angulo = val;
+    if (answers.pose !== null) {
+      showResult(true);
+    } else {
+      _showPoseStep(panel);
+    }
+  });
+  angWrap.appendChild(angRow.el);
+  panel.appendChild(angWrap);
+
+  setTimeout(() => angWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+}
+
+// ── Passo 3: Pose / Posição ────────────────────────────────────────────────
+function _showPoseStep(panel) {
+  if (document.getElementById('pose-section')) return;
+
+  const poseWrap = document.createElement('div');
+  poseWrap.id = 'pose-section';
+  poseWrap.className = 'pose-section';
+  const poseRow = makeSelectorRow('🧘 Pose / Posição', POSES_LIST_FULL, val => {
+    answers.pose = val;
+    showResult(false);
+  });
+  poseWrap.appendChild(poseRow.el);
+  panel.appendChild(poseWrap);
+
+  setTimeout(() => poseWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
 }
 
 function showPresetBrowser() {
@@ -11281,6 +11352,30 @@ function addToHistory(name, mj, gpt) {
   h.unshift({ ts: Date.now(), name, mj, gpt });
   saveHistory(h);
 }
+
+const FEATURED_COMBOS = [
+  {
+    emoji: '🤳',
+    label: 'Selfie POV',
+    desc: 'Close no rosto, olhando pra câmera',
+    ang: 'POV selfie, handheld camera angle, slightly above eye level, slight downward tilt',
+    pose: 'standing, one hand raised holding camera, slight head tilt, looking directly at lens, natural relaxed expression'
+  },
+  {
+    emoji: '💫',
+    label: '3/4 Encostada',
+    desc: 'Pose editorial — natural e estilosa',
+    ang: 'three-quarter angle, body turned 45 degrees from camera, slight over-shoulder look',
+    pose: 'leaning sideways against wall, one full side pressed to surface, hip pushing out, one hand on wall'
+  },
+  {
+    emoji: '🔥',
+    label: 'POV Baixo',
+    desc: 'Ângulo dramático de baixo pra cima',
+    ang: 'low angle POV shot, camera below waist level, shooting upward, slightly tilted up perspective',
+    pose: 'standing upright facing camera, full body frontal, weight evenly distributed, arms relaxed at sides, confident stance'
+  },
+];
 
 const ANGLES_LIST = [
   {label:'Padrão',         value:''},
@@ -11840,7 +11935,7 @@ function showResult(instant) {
     if (answers.pose) pillOverrides.activePose = answers.pose;
     if (answers.idade) pillOverrides.activeIdade = answers.idade;
     generatedChatGPT = buildChatGPTPromptFromPreset(p, pillOverrides);
-    if (!instant) addToHistory(p.name, generatedMJ, generatedChatGPT);
+    addToHistory(p.name, generatedMJ, generatedChatGPT);
 
     const cardHTML = `
       <h3>📸 Prompts Gerados</h3>
