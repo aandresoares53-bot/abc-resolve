@@ -84,6 +84,9 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .sel-chip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:Georgia,serif;font-size:.76rem;cursor:pointer;transition:all .17s;white-space:nowrap;flex-shrink:0}
 .sel-chip:hover{border-color:var(--gold-dim);background:color-mix(in srgb,var(--gold) 8%,transparent)}
 .sel-chip.active{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold);font-weight:700}
+.btn-gerar-prompt{margin-top:16px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--gold);color:#000;font-family:Georgia,serif;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.06em;transition:opacity .2s,transform .1s}
+.btn-gerar-prompt:disabled{opacity:.35;cursor:not-allowed}
+.btn-gerar-prompt:not(:disabled):hover{opacity:.88;transform:translateY(-1px)}
 .chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
 .chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
 .chip-combo.active{background:var(--gold)!important;color:#000!important;border-color:var(--gold)!important}
@@ -11248,22 +11251,31 @@ function selectBrowserPreset(p, card, grid) {
 
   // ── Seletor de Ângulo ──────────────────────────────────────────────────────
   const angRow = makeSelectorRow('📷 Ângulo de câmera', ANGLES_LIST, val => {
-    answers.angulo = val;
-    showResult();
+    answers.angulo = val; _angSelected = true;
+    updateGerarBtn();
   });
   panel.appendChild(angRow.el);
 
   // ── Seletor de Pose ────────────────────────────────────────────────────────
-  const poseRow = makeSelectorRow('🧘 Pose / Posição', POSES_LIST_SHORT, val => {
-    answers.pose = val;
-    showResult();
+  const poseRow = makeSelectorRow('🧘 Pose / Posição', POSES_LIST_FULL, val => {
+    answers.pose = val; _poseSelected = true;
+    updateGerarBtn();
   });
   panel.appendChild(poseRow.el);
 
-  const hintEl = document.createElement('div');
-  hintEl.className = 'combo-hint';
-  hintEl.style.marginTop = '8px';
-  hintEl.textContent = 'Escolha ângulo e pose independentemente — o prompt atualiza abaixo';
+  // ── Botão Gerar Prompt ─────────────────────────────────────────────────────
+  let _angSelected = false, _poseSelected = false;
+  const gerarBtn = document.createElement('button');
+  gerarBtn.id = 'btn-gerar-prompt';
+  gerarBtn.className = 'btn-gerar-prompt';
+  gerarBtn.textContent = '✨ Gerar Prompt';
+  gerarBtn.disabled = true;
+  gerarBtn.onclick = () => { setMainStep(3); showResult(); };
+  panel.appendChild(gerarBtn);
+
+  function updateGerarBtn() {
+    gerarBtn.disabled = !(_angSelected && _poseSelected);
+  }
 
   chat.appendChild(panel);
   setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
@@ -11292,21 +11304,32 @@ function addToHistory(name, mj, gpt) {
 }
 
 const ANGLES_LIST = [
-  {label:'Padrão',      value:''},
-  {label:'Frontal',     value:'straight-on frontal shot, direct camera angle, face centered in frame'},
-  {label:'3/4',         value:'three-quarter angle shot, 45 degree turn, face and body at angle to camera'},
-  {label:'Perfil',      value:'side profile shot, 90 degree lateral angle, full profile view'},
-  {label:'De cima',     value:'high angle shot, camera looking down at subject, bird\'s eye perspective'},
-  {label:'De baixo',    value:'low angle shot, camera looking up at subject, worm\'s eye perspective, dramatic upward angle'},
-  {label:'Costas',      value:'rear view shot, back to camera, over-shoulder glance'},
-  {label:'POV íntimo',  value:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view'},
-  {label:'Espelho',     value:'mirror reflection shot, subject reflected in mirror, mirror framing composition'},
-  {label:'Contra-luz',  value:'backlit silhouette shot, strong backlight, subject as dark silhouette against bright background'},
-  {label:'Full body',   value:'full body standing shot, head to toe in frame, full figure portrait'},
-  {label:'Close rosto', value:'extreme close-up face shot, tight crop on face, 85mm portrait lens, face fills frame'},
-  {label:'POV baixo',   value:'low angle shot, camera near ground level angled upward along body, dramatic low perspective looking up at subject'},
-  {label:'Bokeh',       value:'telephoto compressed perspective, 200mm lens, background compression, shallow depth of field, subject isolated'},
+  {label:'Padrão',         value:''},
+  {label:'Frontal',        value:'straight-on frontal shot, direct camera angle, face centered in frame'},
+  {label:'3/4',            value:'three-quarter angle shot, 45 degree turn, face and body at angle to camera'},
+  {label:'Perfil',         value:'side profile shot, 90 degree lateral angle, full profile view'},
+  {label:'Dois terços',    value:'two-thirds angle shot, body turned slightly less than 45 degrees, subtle off-center framing'},
+  {label:'De cima',        value:'high angle shot, camera looking down at subject, bird\'s eye perspective'},
+  {label:'De baixo',       value:'low angle shot, camera looking up at subject, worm\'s eye perspective, dramatic upward angle'},
+  {label:'POV baixo',      value:'low angle shot, camera near ground level angled upward along body, dramatic low perspective looking up at subject'},
+  {label:'Costas',         value:'rear view shot, back to camera, over-shoulder glance'},
+  {label:'Sobre o ombro',  value:'over-the-shoulder shot, camera behind subject looking past their shoulder, intimate backstage perspective'},
+  {label:'POV íntimo',     value:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view'},
+  {label:'POV selfie',     value:'selfie-angle POV, camera held above at arm\'s length, slight downward tilt, casual intimate selfie perspective'},
+  {label:'Espelho',        value:'mirror reflection shot, subject reflected in mirror, mirror framing composition'},
+  {label:'Contra-luz',     value:'backlit silhouette shot, strong backlight, subject as dark silhouette against bright background'},
+  {label:'Dutch tilt',     value:'dutch tilt camera angle, lens tilted 15-30 degrees, diagonal horizon, dramatic tilted frame'},
+  {label:'Full body',      value:'full body standing shot, head to toe in frame, full figure portrait'},
+  {label:'Plano americano',value:'american shot, framed from knees up, three-quarter body visible, classic movie framing'},
+  {label:'Meio corpo',     value:'medium shot, waist up framing, torso and face visible, standard portrait crop'},
+  {label:'Close busto',    value:'bust shot, chest and face framing, shoulders to top of head, tight upper body portrait'},
+  {label:'Close rosto',    value:'extreme close-up face shot, tight crop on face, 85mm portrait lens, face fills frame'},
+  {label:'Close lábios',   value:'extreme close-up lips shot, macro detail on mouth, lips filling most of frame'},
+  {label:'Close olhos',    value:'extreme close-up eyes shot, tight crop on eyes, detail and expression, eyes fill frame'},
+  {label:'Close corpo',    value:'body detail close-up, tight crop on torso or specific body area, abstract body form'},
+  {label:'Bokeh',          value:'telephoto compressed perspective, 200mm lens, background compression, shallow depth of field, subject isolated'},
   {label:'Grande angular', value:'wide angle environmental shot, 24mm lens, subject in full environment context, expansive scene'},
+  {label:'Aéreo',          value:'aerial overhead shot, camera directly above subject, bird\'s eye top-down view, flat lay perspective'},
 ];
 
 const POSES_LIST_SHORT = [
@@ -11325,6 +11348,57 @@ const POSES_LIST_SHORT = [
   {label:'Curvada',         value:'bending forward from waist, back arched, rear pushed back and up, hands on thighs or ankles'},
   {label:'Dançando',        value:'sensual dance pose mid-movement, one hip thrust to side, arms fluid and expressive, weight shifting'},
   {label:'Abraçando-se',    value:'arms wrapped around own torso, self-embrace, shoulders slightly forward, intimate self-hug pose'},
+];
+const POSES_LIST_FULL = [
+  {label:'Padrão',                   value:''},
+  // Em pé
+  {label:'Em pé — frente',           value:'standing upright facing camera, full body frontal, weight evenly distributed, arms relaxed at sides'},
+  {label:'Em pé — costas',           value:'standing back to camera, rear view full body, looking over shoulder slightly'},
+  {label:'Em pé — perfil',           value:'standing side profile, 90 degree lateral full body, weight on back foot'},
+  {label:'Em pé — 3/4',              value:'standing three-quarter angle, body turned 45 degrees from camera, one hip slightly cocked'},
+  {label:'Em pé — pernas abertas',   value:'standing legs spread apart wide, wide stance, hands on hips or thighs'},
+  {label:'Uma perna levantada',       value:'standing on one leg, other knee raised to hip height, arms for balance, dynamic standing pose'},
+  {label:'Andando — frente',         value:'mid-stride walk toward camera, one leg forward, arms in natural swing, dynamic walking pose'},
+  {label:'Andando — lateral',        value:'mid-stride walk, side profile, one leg extended forward, arm swing visible, candid walking moment'},
+  // Encostada
+  {label:'Na parede — costas',       value:'leaning back against wall, one shoulder blade pressed to surface, arms loose, one knee slightly bent'},
+  {label:'Na parede — lateral',      value:'leaning sideways against wall, one full side pressed to surface, hip pushing out, one hand on wall'},
+  {label:'Na parede — de frente',    value:'facing wall, hands pressed flat against surface, forehead near wall, back arched away from wall'},
+  // Sentada
+  {label:'Sentada — cadeira',        value:'seated on chair facing camera, back straight, hands on thighs, feet flat on floor'},
+  {label:'Sentada — pernas cruzadas',value:'seated on chair, legs crossed at knee, one hand on crossed knee, body slightly turned'},
+  {label:'Sentada — sofá',           value:'seated on sofa, one knee drawn up, arm draped over backrest, relaxed lounging sit'},
+  {label:'No chão — pernas cruzadas',value:'seated on floor cross-legged, back straight, hands resting on knees, grounded seated pose'},
+  {label:'No chão — pernas estendidas',value:'seated on floor, both legs extended straight forward, hands planted behind for support, leaning back slightly'},
+  {label:'Sentada — pernas abertas', value:'seated with legs spread wide apart, feet flat, hands between thighs or on knees, open seated pose'},
+  // De joelhos / agachada
+  {label:'De joelhos — frontal',     value:'kneeling on both knees facing camera, back straight, hands on thighs, tall kneeling pose'},
+  {label:'De joelhos — inclinada',   value:'kneeling with torso leaning forward, hands on floor in front, weight shifted forward'},
+  {label:'Agachada — funda',         value:'deep squat, knees wide apart, heels on floor, torso upright, hands between knees'},
+  {label:'Agachada — meio',          value:'half-squat position, mid-rise from crouch, hands sliding up thighs, weight on balls of feet'},
+  // Deitada de costas
+  {label:'Deitada — braços ao lado', value:'lying on back, arms relaxed at sides, legs together, face up, supine resting pose'},
+  {label:'Deitada — braços acima',   value:'lying on back, both arms raised above head, wrists crossed or palms up, legs together, supine stretched pose'},
+  {label:'Deitada — pernas abertas', value:'lying on back, legs spread apart wide, feet flat, arms at sides, open supine pose'},
+  {label:'Deitada — joelho levantado',value:'lying on back, one knee bent with foot flat, other leg extended, one arm above head'},
+  // Deitada de lado
+  {label:'Deitada de lado',          value:'lying on side, knees slightly bent, arm under head as pillow, other arm along torso'},
+  {label:'Deitada de lado — pernas empilhadas',value:'lying on side, legs stacked perfectly one on top of other, top arm draped along body'},
+  // Deitada de bruços
+  {label:'Deitada de bruços',        value:'lying face down prone, legs together, arms folded under chin, face toward camera'},
+  {label:'Deitada de bruços — arco', value:'lying face down, upper body arched off surface, arms pushing up, chest lifted, back arched, cobra-like pose'},
+  // De quatro
+  {label:'De quatro — frente',       value:'on hands and knees facing camera, back flat, arms straight, knees hip-width, tabletop position'},
+  {label:'De quatro — costas',       value:'on hands and knees facing away from camera, back arched, hips up, rear presented'},
+  // Poses expressivas
+  {label:'Curvada para frente',      value:'bending forward from waist, back arched, rear pushed back and up, hands on thighs or ankles'},
+  {label:'Dançando',                 value:'sensual dance pose mid-movement, one hip thrust to side, arms fluid and expressive, weight shifting'},
+  {label:'Abraçando-se',             value:'arms wrapped around own torso, self-embrace, shoulders slightly forward, intimate self-hug pose'},
+  {label:'Mãos no cabelo',           value:'both hands running through hair, elbows raised, chest forward, hair-toss mid-motion pose'},
+  {label:'Mãos no rosto',            value:'both hands framing face lightly, fingers near cheeks or chin, coy framing pose'},
+  {label:'Mãos nas coxas',           value:'both hands sliding down outer thighs, body slightly arched, hands pressing inward against legs'},
+  {label:'Perna levantada lateral',  value:'one leg raised straight out to side at hip height, arms extended for balance, standing split attempt'},
+  {label:'Pernas para o ar',         value:'seated on edge, both legs raised and extended forward in air at 45 degrees, hands braced on surface behind'},
 ];
 const POSES_LIST = [
   // ── Em pé ──────────────────────────────────────────────────────────────────
