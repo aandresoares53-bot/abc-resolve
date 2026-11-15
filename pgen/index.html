@@ -264,9 +264,9 @@ function buildBlondePrompt(p, seedOverride){
 
   // Subject depends on category (must be inside function where p is defined)
   const isAna = p.cat === 'ana';
-  const ageDesc = idadeOverride || '19 years old';
+  const ageDesc = idadeOverride || '21 years old';
   const MJ_SUBJECT = isAna
-    ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 19 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
+    ? 'woman with dwarfism, achondroplasia, little person, very short stature, proportionally short limbs, large head relative to body, 21 years old, long messy wavy blonde hair, light blue eyes, small nose, full natural lips, heart-shaped face, faint freckles, matte dry skin, everyday real woman not a professional model'
     : `woman, ${ageDesc}, long messy wavy blonde hair, loose tangled waves past shoulders, light blue eyes, delicate small nose, full soft lips, high cheekbones, heart-shaped face, symmetrical beautiful face, faint freckles, clear youthful skin, smooth natural complexion, subtle skin texture, luminous natural glow, naturally pretty, effortless beauty, everyday real woman not a professional model, not a model, not retouched`;
 
   const film = filmOverride || p.film || 'Kodak Ultramax 800';
@@ -10566,7 +10566,7 @@ function buildChatGPTPromptFromPreset(preset, pillOverrides){
   const cat = preset.cat || '';
 
   // Sujeito consistente
-  const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade).replace(/\b(18|19)\b/g,'').trim() : '';
+  const idadePill = pills.activeIdade ? cleanForDALLE(pills.activeIdade).replace(/\b(18|19)\b/g,'21').trim() : '';
   const subjectAge = idadePill || 'adult woman in her early 20s';
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
@@ -10672,8 +10672,8 @@ function buildMJPromptForDALLE(preset){
   // Sujeito consistente
   const idadePill = getActivePillVal('idade');
   const subjectAge = idadePill
-    ? cleanForDALLE(idadePill).replace(/\b(18|19)\b/g,'').trim() || 'adult woman in her early 20s'
-    : 'adult woman in her early 20s';
+    ? cleanForDALLE(idadePill).replace(/\b(18|19)\b/g,'21').trim() || '21 years old'
+    : '21 years old';
   const subject = `${subjectAge}, natural wavy blonde hair, light blue eyes, heart-shaped face, defined cupid's bow lips, slightly upturned nose, almond-shaped eyes, strong brow arch, high cheekbones, model-like symmetry, flawless clear skin, effortless natural beauty`;
 
   // Filmstock do preset MJ
@@ -11378,7 +11378,7 @@ function showResult() {
     const p = selectedPreset;
     // Apply angle + pose + age overrides
     const overrides = {};
-    if (answers.angulo) { overrides.angulo = answers.angulo; overrides.cam = answers.angulo; }
+    if (answers.angulo) { overrides.angulo = answers.angulo; overrides.cam = ''; }
     if (answers.pose) overrides.pose = answers.pose;
     const pMJ = (answers.angulo || answers.pose) ? Object.assign({}, p, overrides) : p;
     const agePfx = answers.idade ? answers.idade + ', ' : '';
