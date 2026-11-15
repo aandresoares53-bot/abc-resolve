@@ -11554,7 +11554,13 @@ function showResult() {
     if (answers.pose) overrides.pose = answers.pose;
     const pMJ = (answers.angulo || answers.pose) ? Object.assign({}, p, overrides) : p;
     const agePfx = answers.idade ? answers.idade + ', ' : '';
-    generatedMJ = agePfx + buildBlondePrompt(pMJ);
+    // POV/angulo SEMPRE primeiro — antes até do pill de idade
+    if (answers.angulo) {
+      const pNoAngulo = Object.assign({}, pMJ, {angulo: '', cam: ''});
+      generatedMJ = answers.angulo + ', ' + agePfx + buildBlondePrompt(pNoAngulo);
+    } else {
+      generatedMJ = agePfx + buildBlondePrompt(pMJ);
+    }
     const pillOverrides = {};
     if (answers.angulo) pillOverrides.activeAngulo = answers.angulo;
     if (answers.pose) pillOverrides.activePose = answers.pose;
