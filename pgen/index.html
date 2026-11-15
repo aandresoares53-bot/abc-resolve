@@ -87,19 +87,18 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .btn-gerar-prompt{margin-top:16px;width:100%;padding:12px;border-radius:10px;border:none;background:var(--gold);color:#000;font-family:Georgia,serif;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.06em;transition:opacity .2s,transform .1s}
 .btn-gerar-prompt:disabled{opacity:.35;cursor:not-allowed}
 .btn-gerar-prompt:not(:disabled):hover{opacity:.88;transform:translateY(-1px)}
-/* ── Featured combos ── */
-.featured-combos-title{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-family:Georgia,serif;margin-bottom:10px}
-.featured-combos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-@media(max-width:520px){.featured-combos-grid{grid-template-columns:1fr}}
-.fc-card{background:color-mix(in srgb,var(--gold) 7%,transparent);border:1px solid var(--gold-dim);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .18s;text-align:center}
-.fc-card:hover{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 15%,transparent);transform:translateY(-2px)}
-.fc-emoji{font-size:1.5rem;margin-bottom:5px}
-.fc-label{font-family:Georgia,serif;font-size:.8rem;font-weight:700;color:var(--gold);margin-bottom:3px}
-.fc-desc{font-size:.7rem;color:var(--muted);line-height:1.35}
-.btn-pular{margin-top:4px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
-.btn-pular:hover{border-color:var(--gold-dim);color:var(--text)}
-.pose-section{animation:fadeUp .28s ease}
-.section-divider{border:none;border-top:1px solid var(--border);margin:14px 0 10px}
+/* ── Combo picker ── */
+.combo-picker-label{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-family:Georgia,serif;margin-bottom:14px;opacity:.85}
+.combo-picker-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:540px){.combo-picker-grid{grid-template-columns:repeat(3,1fr)}}
+.combo-pick-card{background:transparent;border:1px solid var(--border);border-radius:12px;padding:14px 12px;cursor:pointer;transition:border-color .18s,background .18s,box-shadow .18s,transform .15s;text-align:left;position:relative;overflow:hidden}
+.combo-pick-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 12%,transparent),transparent 60%);opacity:0;transition:opacity .2s}
+.combo-pick-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 24px color-mix(in srgb,var(--gold) 18%,transparent)}
+.combo-pick-card:hover::before{opacity:1}
+.combo-pick-card:active{transform:translateY(0);box-shadow:none}
+.cpc-emoji{font-size:1.6rem;margin-bottom:7px;display:block}
+.cpc-label{font-family:Georgia,serif;font-size:.82rem;font-weight:700;color:var(--gold);margin-bottom:3px;line-height:1.2}
+.cpc-tag{font-size:.65rem;color:var(--muted);letter-spacing:.05em;line-height:1.4}
 .chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
 .chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
 .chip-combo.active{background:var(--gold)!important;color:#000!important;border-color:var(--gold)!important}
@@ -11246,89 +11245,45 @@ function selectBrowserPreset(p, card, grid) {
   _showCombosStep(p);
 }
 
-// ── Passo 1: Combos em destaque ────────────────────────────────────────────
+// ── Combinações (ângulo + pose juntos) ────────────────────────────────────
 function _showCombosStep(p) {
+  const catCombos = (COMBOS_BY_CAT[p.cat] || []).filter(c => c.ang && c.pose);
+  const allCombos = [
+    ...FEATURED_COMBOS.map(c => ({ emoji: c.emoji, label: c.label, tag: c.desc, ang: c.ang, pose: c.pose })),
+    ...COMBOS_DEFAULT.map(c => ({ emoji: c.label.match(/^\S+/)?.[0] || '📸', label: c.label.replace(/^\S+\s*/,''), tag: 'Universal', ang: c.ang, pose: c.pose })),
+    ...catCombos.map(c => ({ emoji: c.label.match(/^\S+/)?.[0] || '📸', label: c.label.replace(/^\S+\s*/,''), tag: p.name, ang: c.ang, pose: c.pose })),
+  ];
+  const seen = new Set();
+  const combos = allCombos.filter(c => { if (seen.has(c.label)) return false; seen.add(c.label); return true; });
+
   const panel = document.createElement('div');
   panel.className = 'combo-panel';
   panel.id = 'combo-panel';
 
-  const h4 = document.createElement('h4');
-  h4.textContent = `${p.icon || '📸'} ${p.name}`;
-  panel.appendChild(h4);
+  const header = document.createElement('div');
+  header.className = 'combo-picker-label';
+  header.textContent = `${p.icon || '📸'} ${p.name} — escolha o enquadramento`;
+  panel.appendChild(header);
 
-  const fcTitle = document.createElement('div');
-  fcTitle.className = 'featured-combos-title';
-  fcTitle.textContent = '✨ Combinações em destaque';
-  panel.appendChild(fcTitle);
+  const grid = document.createElement('div');
+  grid.className = 'combo-picker-grid';
 
-  const fcGrid = document.createElement('div');
-  fcGrid.className = 'featured-combos-grid';
-  FEATURED_COMBOS.forEach(combo => {
-    const fc = document.createElement('div');
-    fc.className = 'fc-card';
-    fc.innerHTML = `<div class="fc-emoji">${combo.emoji}</div><div class="fc-label">${combo.label}</div><div class="fc-desc">${combo.desc}</div>`;
-    fc.onclick = () => {
+  combos.forEach(combo => {
+    const card = document.createElement('div');
+    card.className = 'combo-pick-card';
+    card.innerHTML = `<span class="cpc-emoji">${combo.emoji}</span><div class="cpc-label">${combo.label}</div><div class="cpc-tag">${combo.tag}</div>`;
+    card.onclick = () => {
       answers.angulo = combo.ang;
       answers.pose = combo.pose;
       document.getElementById('combo-panel')?.remove();
       showResult(false);
     };
-    fcGrid.appendChild(fc);
+    grid.appendChild(card);
   });
-  panel.appendChild(fcGrid);
 
-  const pularBtn = document.createElement('button');
-  pularBtn.className = 'btn-pular';
-  pularBtn.textContent = '↓ Pular — escolher ângulo e pose manualmente';
-  pularBtn.onclick = () => _showAngleStep(panel);
-  panel.appendChild(pularBtn);
-
+  panel.appendChild(grid);
   chat.appendChild(panel);
   setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-}
-
-// ── Passo 2: Ângulo de câmera ──────────────────────────────────────────────
-function _showAngleStep(panel) {
-  // Remove combos section, keep panel
-  panel.querySelector('.featured-combos-title')?.remove();
-  panel.querySelector('.featured-combos-grid')?.remove();
-  panel.querySelector('.btn-pular')?.remove();
-
-  const hr = document.createElement('hr');
-  hr.className = 'section-divider';
-  panel.appendChild(hr);
-
-  const angWrap = document.createElement('div');
-  angWrap.id = 'ang-section';
-  const angRow = makeSelectorRow('📷 Ângulo de câmera', ANGLES_LIST, val => {
-    answers.angulo = val;
-    if (answers.pose !== null) {
-      showResult(true);
-    } else {
-      _showPoseStep(panel);
-    }
-  });
-  angWrap.appendChild(angRow.el);
-  panel.appendChild(angWrap);
-
-  setTimeout(() => angWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-}
-
-// ── Passo 3: Pose / Posição ────────────────────────────────────────────────
-function _showPoseStep(panel) {
-  if (document.getElementById('pose-section')) return;
-
-  const poseWrap = document.createElement('div');
-  poseWrap.id = 'pose-section';
-  poseWrap.className = 'pose-section';
-  const poseRow = makeSelectorRow('🧘 Pose / Posição', POSES_LIST_FULL, val => {
-    answers.pose = val;
-    showResult(false);
-  });
-  poseWrap.appendChild(poseRow.el);
-  panel.appendChild(poseWrap);
-
-  setTimeout(() => poseWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
 }
 
 function showPresetBrowser() {
