@@ -104,6 +104,7 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .msg.bot{flex-direction:row}
 .msg.user{flex-direction:row-reverse}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes promptPulse{0%{opacity:.4}100%{opacity:1}}
 
 .avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
 .bot .avatar{background:var(--surface);border:1px solid var(--border-lit)}
@@ -130,6 +131,7 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 
 /* ── Result card ── */
 .result-card{background:var(--surface);border:1px solid var(--border-lit);border-radius:var(--radius);padding:20px;animation:fadeUp .35s ease}
+.result-card.updating .prompt-box{animation:promptPulse .25s ease}
 .result-card h3{font-family:Georgia,serif;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 .result-card .entity-name{font-size:1.3rem;color:var(--gold);margin-bottom:4px;font-style:italic;font-family:Georgia,serif;font-weight:700;text-shadow:0 0 12px rgba(232,160,32,.35)}
 .result-card .entity-name-sub{font-size:.72rem;color:var(--text);letter-spacing:.1em;margin-bottom:16px;opacity:.7}
@@ -11233,57 +11235,29 @@ function selectBrowserPreset(p, card, grid) {
   panel.className = 'combo-panel';
   panel.id = 'combo-panel';
 
-  // Stepper — passo 2 ativo
-  const stepBar = document.createElement('div');
-  stepBar.className = 'step-bar';
-  stepBar.innerHTML = `
-    <div class="step-item done"><div class="step-num">✓</div><span class="step-label">Preset</span></div>
-    <div class="step-sep"></div>
-    <div class="step-item active"><div class="step-num">2</div><span class="step-label">Ângulo / Pose</span></div>
-    <div class="step-sep"></div>
-    <div class="step-item"><div class="step-num">3</div><span class="step-label">Prompt</span></div>
-  `;
-  panel.appendChild(stepBar);
-
   const title = document.createElement('h4');
   title.textContent = `${p.icon || '📸'} ${p.name}`;
   panel.appendChild(title);
 
   // ── Seletor de Ângulo ──────────────────────────────────────────────────────
   const angRow = makeSelectorRow('📷 Ângulo de câmera', ANGLES_LIST, val => {
-    answers.angulo = val; _angSelected = true;
-    updateGerarBtn();
+    answers.angulo = val;
+    showResult(true);
   });
   panel.appendChild(angRow.el);
 
   // ── Seletor de Pose ────────────────────────────────────────────────────────
   const poseRow = makeSelectorRow('🧘 Pose / Posição', POSES_LIST_FULL, val => {
-    answers.pose = val; _poseSelected = true;
-    updateGerarBtn();
+    answers.pose = val;
+    showResult(true);
   });
   panel.appendChild(poseRow.el);
 
-  // ── Botão Gerar Prompt ─────────────────────────────────────────────────────
-  // Padrão já visualmente selecionado em ambas as linhas → habilita de início
-  let _angSelected = true, _poseSelected = true;
-  const gerarBtn = document.createElement('button');
-  gerarBtn.id = 'btn-gerar-prompt';
-  gerarBtn.className = 'btn-gerar-prompt';
-  gerarBtn.textContent = '✨ Gerar Prompt';
-  gerarBtn.disabled = false;
-  gerarBtn.onclick = () => {
-    document.getElementById('combo-panel')?.remove();
-    document.getElementById('result-card-current')?.remove();
-    showResult();
-  };
-  panel.appendChild(gerarBtn);
-
-  function updateGerarBtn() {
-    gerarBtn.disabled = !(_angSelected && _poseSelected);
-  }
-
   chat.appendChild(panel);
   setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+
+  // Gera prompt imediatamente ao selecionar preset
+  showResult(false);
 }
 
 function showPresetBrowser() {
@@ -11838,12 +11812,14 @@ function escHtml(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function showResult() {
+let _showResultTimer = null;
+function showResult(instant) {
+  clearTimeout(_showResultTimer);
   currentStep = TOTAL_STEPS;
   updateProgress();
-  showTyping();
   setMainStep(3);
-  setTimeout(() => {
+  if (!instant) showTyping();
+  _showResultTimer = setTimeout(() => {
     removeTyping();
     const p = selectedPreset;
     // Apply angle + pose + age overrides
@@ -11864,16 +11840,9 @@ function showResult() {
     if (answers.pose) pillOverrides.activePose = answers.pose;
     if (answers.idade) pillOverrides.activeIdade = answers.idade;
     generatedChatGPT = buildChatGPTPromptFromPreset(p, pillOverrides);
-    addToHistory(p.name, generatedMJ, generatedChatGPT);
+    if (!instant) addToHistory(p.name, generatedMJ, generatedChatGPT);
 
     const cardHTML = `
-      <div class="step-bar">
-        <div class="step-item done"><div class="step-num">✓</div><span class="step-label">Preset</span></div>
-        <div class="step-sep"></div>
-        <div class="step-item done"><div class="step-num">✓</div><span class="step-label">Ângulo</span></div>
-        <div class="step-sep"></div>
-        <div class="step-item active"><div class="step-num">3</div><span class="step-label">Prompt</span></div>
-      </div>
       <h3>📸 Prompts Gerados</h3>
       <div class="entity-name">${p.icon||'📸'} ${escHtml(p.name)}</div>
       <div class="entity-name-sub">${escHtml(p.desc||'')}</div>
@@ -11895,7 +11864,9 @@ function showResult() {
     // Atualiza no lugar se já existir, senão cria
     let card = document.getElementById('result-card-current');
     if (card) {
+      card.classList.add('updating');
       card.innerHTML = cardHTML;
+      requestAnimationFrame(() => card.classList.remove('updating'));
     } else {
       card = document.createElement('div');
       card.className = 'result-card';
@@ -11904,8 +11875,8 @@ function showResult() {
       chat.appendChild(card);
     }
     navigator.clipboard.writeText(generatedMJ).catch(()=>{});
-    scrollBot();
-  }, 600);
+    if (!instant) scrollBot();
+  }, instant ? 0 : 500);
 }
 
 function copyMJ(e) {
