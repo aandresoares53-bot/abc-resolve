@@ -11808,6 +11808,7 @@ function showResult() {
       <div class="result-actions">
         <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
         <button class="btn-act" onclick="copyGPT(event)">🤖 Gerar no ChatGPT</button>
+        <button class="btn-act" onclick="openPerchance(event)">🎨 Gerar no Perchance</button>
         <button class="btn-act" onclick="restartFlow()">← Novo preset</button>
       </div>
       <div class="assinatura">✦ RAWgen Loiras ✦</div>
@@ -11833,10 +11834,15 @@ function copyMJ(e) {
 }
 function copyGPT(e) {
   const prompt = generatedChatGPT || '';
-  // Copia para clipboard e abre ChatGPT DALL-E com o prompt pré-preenchido
   navigator.clipboard.writeText(prompt).catch(() => {});
   const url = 'https://chatgpt.com/g/g-2fkFE8rbu-dall-e?q=' + encodeURIComponent(prompt);
   window.open(url, '_blank');
+  flashBtn(e.target, '🚀 Abrindo...');
+}
+function openPerchance(e) {
+  const prompt = generatedChatGPT || '';
+  navigator.clipboard.writeText(prompt).catch(() => {});
+  window.open('https://perchance.org/y06fzf5rev', '_blank');
   flashBtn(e.target, '🚀 Abrindo...');
 }
 function flashBtn(btn, msg) {
@@ -11878,6 +11884,7 @@ function loadHistItem(i) {
     <div class="result-actions">
       <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
       <button class="btn-act" onclick="copyGPT(event)">🤖 Gerar no ChatGPT</button>
+      <button class="btn-act" onclick="openPerchance(event)">🎨 Gerar no Perchance</button>
     </div>
   `;
   chat.appendChild(card);
