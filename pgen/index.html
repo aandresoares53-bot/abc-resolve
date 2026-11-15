@@ -59,10 +59,28 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .preset-card-info{min-width:0}
 .preset-card-name{font-size:.8rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:3px}
 .preset-card-desc{font-size:.67rem;color:var(--muted);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* ── Stepper ── */
+.step-bar{display:flex;align-items:center;gap:0;margin-bottom:14px}
+.step-item{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);font-family:Georgia,serif;letter-spacing:.04em}
+.step-num{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;transition:all .2s}
+.step-item.done .step-num{background:var(--gold);border-color:var(--gold);color:#000}
+.step-item.active .step-num{border-color:var(--gold);color:var(--gold)}
+.step-item.active .step-label{color:var(--text)}
+.step-sep{flex:1;height:1px;background:var(--border);margin:0 6px;min-width:12px}
 /* ── Combo panel ── */
 .combo-panel{background:var(--surface);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:16px;margin-bottom:10px;animation:fadeUp .25s ease}
 .combo-panel h4{font-family:Georgia,serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
-.combo-grid{display:flex;flex-wrap:wrap;gap:8px}
+.combo-grid{display:flex;flex-direction:column;gap:6px}
+.combo-tab{width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:Georgia,serif;font-size:.82rem;cursor:pointer;transition:all .17s;display:flex;align-items:center;gap:10px}
+.combo-tab:hover{border-color:var(--gold-dim);background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.combo-tab.active{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);color:var(--gold);font-weight:600}
+.combo-tab-label{flex:1}
+.combo-tab-check{font-size:.85rem;opacity:0;transition:opacity .15s}
+.combo-tab.active .combo-tab-check{opacity:1}
+.combo-hint{font-size:.74rem;color:var(--muted);padding:.5rem 0 .1rem;opacity:.75}
+.chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
+.chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
+.chip-combo.active{background:var(--gold)!important;color:#000!important;border-color:var(--gold)!important}
 /* ── Load more ── */
 .load-more-row{text-align:center;padding:14px 0 0}
 .load-more-btn2{padding:9px 24px;border-radius:var(--r-chip);border:1px solid var(--border-lit);background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.78rem;cursor:pointer;transition:all .18s}
@@ -199,6 +217,13 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 </div>
 
 <div id="browser-toolbar">
+  <div class="step-bar" id="main-stepper" style="max-width:340px;margin:0 auto 10px">
+    <div class="step-item active" id="stp1"><div class="step-num">1</div><span class="step-label">Preset</span></div>
+    <div class="step-sep"></div>
+    <div class="step-item" id="stp2"><div class="step-num">2</div><span class="step-label">Ângulo</span></div>
+    <div class="step-sep"></div>
+    <div class="step-item" id="stp3"><div class="step-num">3</div><span class="step-label">Prompt</span></div>
+  </div>
   <div class="level-tabs">
     <button class="lvl-tab active" data-lvl="sfw" onclick="setLevel('sfw')">☀️ SFW</button>
     <button class="lvl-tab" data-lvl="sensual" onclick="setLevel('sensual')">🔥 Sensual</button>
@@ -11098,6 +11123,17 @@ function renderPresetGrid() {
   }
 }
 
+function setMainStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('stp'+i);
+    if (!el) return;
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done'), el.querySelector('.step-num').textContent = '✓';
+    else if (i === n) el.classList.add('active'), el.querySelector('.step-num').textContent = String(i);
+    else el.querySelector('.step-num').textContent = String(i);
+  });
+}
+
 function selectBrowserPreset(p, card, grid) {
   if (selectedCard) selectedCard.classList.remove('selected');
   selectedCard = card;
@@ -11106,6 +11142,7 @@ function selectBrowserPreset(p, card, grid) {
   document.getElementById('result-card-current')?.remove();
   answers.angulo = '';
   answers.pose = '';
+  setMainStep(2);
   selectedPreset = p;
   answers.preset = p.key;
   answers.nivel = p.level || 'sfw';
@@ -11114,42 +11151,61 @@ function selectBrowserPreset(p, card, grid) {
   const panel = document.createElement('div');
   panel.className = 'combo-panel';
   panel.id = 'combo-panel';
+
+  // Stepper — passo 2 ativo
+  const stepBar = document.createElement('div');
+  stepBar.className = 'step-bar';
+  stepBar.innerHTML = `
+    <div class="step-item done"><div class="step-num">✓</div><span class="step-label">Preset</span></div>
+    <div class="step-sep"></div>
+    <div class="step-item active"><div class="step-num">2</div><span class="step-label">Ângulo / Pose</span></div>
+    <div class="step-sep"></div>
+    <div class="step-item"><div class="step-num">3</div><span class="step-label">Prompt</span></div>
+  `;
+  panel.appendChild(stepBar);
+
   const title = document.createElement('h4');
-  title.textContent = `${p.icon || '📸'} ${p.name} — escolha ângulo + pose`;
+  title.textContent = `${p.icon || '📸'} ${p.name}`;
   panel.appendChild(title);
+
   const cGrid = document.createElement('div');
   cGrid.className = 'combo-grid';
-  // Botão "Sem combo – preset padrão"
-  const btnDefault = document.createElement('button');
-  btnDefault.className = 'chip chip-combo';
-  btnDefault.textContent = '📋 Padrão do preset';
-  btnDefault.onclick = () => {
+
+  const allTabs = [];
+
+  // Aba "Padrão" (sem combo)
+  const tabDefault = document.createElement('button');
+  tabDefault.className = 'combo-tab';
+  tabDefault.innerHTML = `<span class="combo-tab-label">📋 Padrão do preset</span><span class="combo-tab-check">✓</span>`;
+  tabDefault.onclick = () => {
     answers.angulo = '';
     answers.pose = '';
-    cGrid.querySelectorAll('.chip-combo').forEach(b => b.classList.remove('active'));
-    btnDefault.classList.add('active');
+    allTabs.forEach(b => b.classList.remove('active'));
+    tabDefault.classList.add('active');
     showResult();
   };
-  cGrid.appendChild(btnDefault);
+  allTabs.push(tabDefault);
+  cGrid.appendChild(tabDefault);
 
   combos.forEach(c => {
-    const btn = document.createElement('button');
-    btn.className = 'chip chip-combo';
-    btn.textContent = c.label;
-    btn.onclick = () => {
+    const tab = document.createElement('button');
+    tab.className = 'combo-tab';
+    tab.innerHTML = `<span class="combo-tab-label">${escHtml(c.label)}</span><span class="combo-tab-check">✓</span>`;
+    tab.onclick = () => {
       answers.angulo = c.ang;
       answers.pose = c.pose;
-      cGrid.querySelectorAll('.chip-combo').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      allTabs.forEach(b => b.classList.remove('active'));
+      tab.classList.add('active');
       showResult();
     };
-    cGrid.appendChild(btn);
+    allTabs.push(tab);
+    cGrid.appendChild(tab);
   });
   panel.appendChild(cGrid);
 
   const hintEl = document.createElement('div');
   hintEl.className = 'combo-hint';
-  hintEl.textContent = 'Escolha um ângulo/pose — o prompt atualiza automaticamente';
+  hintEl.textContent = 'Escolha um ângulo — o prompt aparece abaixo automaticamente';
   panel.appendChild(hintEl);
 
   chat.appendChild(panel);
@@ -11570,6 +11626,7 @@ function showResult() {
   currentStep = TOTAL_STEPS;
   updateProgress();
   showTyping();
+  setMainStep(3);
   setTimeout(() => {
     removeTyping();
     const p = selectedPreset;
@@ -11594,6 +11651,13 @@ function showResult() {
     addToHistory(p.name, generatedMJ, generatedChatGPT);
 
     const cardHTML = `
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-num">✓</div><span class="step-label">Preset</span></div>
+        <div class="step-sep"></div>
+        <div class="step-item done"><div class="step-num">✓</div><span class="step-label">Ângulo</span></div>
+        <div class="step-sep"></div>
+        <div class="step-item active"><div class="step-num">3</div><span class="step-label">Prompt</span></div>
+      </div>
       <h3>📸 Prompts Gerados</h3>
       <div class="entity-name">${p.icon||'📸'} ${escHtml(p.name)}</div>
       <div class="entity-name-sub">${escHtml(p.desc||'')}</div>
@@ -11742,6 +11806,7 @@ function restartFlow() {
   generatedMJ = '';
   generatedChatGPT = '';
   browserPage = 0;
+  setMainStep(1);
   startFlow();
 }
 
