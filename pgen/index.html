@@ -11264,13 +11264,18 @@ function selectBrowserPreset(p, card, grid) {
   panel.appendChild(poseRow.el);
 
   // ── Botão Gerar Prompt ─────────────────────────────────────────────────────
-  let _angSelected = false, _poseSelected = false;
+  // Padrão já visualmente selecionado em ambas as linhas → habilita de início
+  let _angSelected = true, _poseSelected = true;
   const gerarBtn = document.createElement('button');
   gerarBtn.id = 'btn-gerar-prompt';
   gerarBtn.className = 'btn-gerar-prompt';
   gerarBtn.textContent = '✨ Gerar Prompt';
-  gerarBtn.disabled = true;
-  gerarBtn.onclick = () => { setMainStep(3); showResult(); };
+  gerarBtn.disabled = false;
+  gerarBtn.onclick = () => {
+    document.getElementById('combo-panel')?.remove();
+    document.getElementById('result-card-current')?.remove();
+    showResult();
+  };
   panel.appendChild(gerarBtn);
 
   function updateGerarBtn() {
