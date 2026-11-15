@@ -11185,8 +11185,6 @@ function setMainStep(n) {
 }
 
 function makeSelectorRow(label, items, onSelect) {
-  // items: [{label, value}]; onSelect(value) called on click
-  // Returns {el, setActive(value)}
   const wrap = document.createElement('div');
   wrap.className = 'sel-row-wrap';
   const lbl = document.createElement('div');
@@ -11210,11 +11208,8 @@ function makeSelectorRow(label, items, onSelect) {
     row.appendChild(btn);
   });
   wrap.appendChild(row);
-  const setActive = (val) => {
-    chips.forEach(b => b.classList.toggle('active', b.dataset.val === (val || '')));
-  };
-  setActive('');
-  return { el: wrap, setActive };
+  chips[0] && chips[0].classList.add('active');
+  return { el: wrap };
 }
 
 function selectBrowserPreset(p, card, grid) {
@@ -11269,7 +11264,6 @@ function selectBrowserPreset(p, card, grid) {
   hintEl.className = 'combo-hint';
   hintEl.style.marginTop = '8px';
   hintEl.textContent = 'Escolha ângulo e pose independentemente — o prompt atualiza abaixo';
-  panel.appendChild(hintEl);
 
   chat.appendChild(panel);
   setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
@@ -11332,7 +11326,6 @@ const POSES_LIST_SHORT = [
   {label:'Dançando',        value:'sensual dance pose mid-movement, one hip thrust to side, arms fluid and expressive, weight shifting'},
   {label:'Abraçando-se',    value:'arms wrapped around own torso, self-embrace, shoulders slightly forward, intimate self-hug pose'},
 ];
-
 const POSES_LIST = [
   // ── Em pé ──────────────────────────────────────────────────────────────────
   {label:'🧍 Em pé — de frente',       pose:'standing upright facing camera, full body frontal, weight evenly distributed, arms relaxed at sides'},
