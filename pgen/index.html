@@ -12083,12 +12083,24 @@ function selectGsPreset(p) {
   document.querySelectorAll('.lvl-tab').forEach(t => t.classList.toggle('active', t.dataset.lvl === browserNivel));
   renderCatChips();
   renderPresetGrid();
-  // Auto-select the preset card after grid renders
   setTimeout(() => {
-    const cards = document.querySelectorAll('.preset-card');
     const presets = getBrowserPresets();
     const idx = presets.findIndex(pr => pr.key === p.key);
-    if (idx >= 0 && cards[idx]) selectBrowserPreset(p, cards[idx], null);
+    // Expande páginas até o preset ficar visível
+    if (idx >= (browserPage + 1) * BROWSER_PER_PAGE) {
+      browserPage = Math.floor(idx / BROWSER_PER_PAGE);
+      renderPresetGrid();
+    }
+    const cards = document.querySelectorAll('.preset-card');
+    const card = idx >= 0 ? cards[idx % BROWSER_PER_PAGE] || cards[cards.length - 1] : null;
+    if (card) {
+      selectBrowserPreset(p, card, null);
+    } else {
+      // fallback: usa card temporário invisível
+      const dummy = document.createElement('div');
+      dummy.className = 'preset-card';
+      selectBrowserPreset(p, dummy, null);
+    }
   }, 100);
 }
 
