@@ -123,6 +123,8 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .bar-btn-surprise:hover{background:var(--gold);color:#000;border-color:var(--gold)}
 .chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
 .chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
+.chip-combo.active{background:var(--gold)!important;color:#000!important;border-color:var(--gold)!important}
+.combo-hint{font-size:.75rem;color:var(--muted);text-align:center;padding:.35rem 0 .1rem;opacity:.7}
 
 /* ── Global search ── */
 #global-search-wrap{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 16px 6px;border-bottom:1px solid var(--border)}
@@ -11101,6 +11103,9 @@ function selectBrowserPreset(p, card, grid) {
   selectedCard = card;
   card.classList.add('selected');
   document.getElementById('combo-panel')?.remove();
+  document.getElementById('result-card-current')?.remove();
+  answers.angulo = '';
+  answers.pose = '';
   selectedPreset = p;
   answers.preset = p.key;
   answers.nivel = p.level || 'sfw';
@@ -11114,6 +11119,19 @@ function selectBrowserPreset(p, card, grid) {
   panel.appendChild(title);
   const cGrid = document.createElement('div');
   cGrid.className = 'combo-grid';
+  // Botão "Sem combo – preset padrão"
+  const btnDefault = document.createElement('button');
+  btnDefault.className = 'chip chip-combo';
+  btnDefault.textContent = '📋 Padrão do preset';
+  btnDefault.onclick = () => {
+    answers.angulo = '';
+    answers.pose = '';
+    cGrid.querySelectorAll('.chip-combo').forEach(b => b.classList.remove('active'));
+    btnDefault.classList.add('active');
+    showResult();
+  };
+  cGrid.appendChild(btnDefault);
+
   combos.forEach(c => {
     const btn = document.createElement('button');
     btn.className = 'chip chip-combo';
@@ -11121,12 +11139,19 @@ function selectBrowserPreset(p, card, grid) {
     btn.onclick = () => {
       answers.angulo = c.ang;
       answers.pose = c.pose;
-      panel.remove();
+      cGrid.querySelectorAll('.chip-combo').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
       showResult();
     };
     cGrid.appendChild(btn);
   });
   panel.appendChild(cGrid);
+
+  const hintEl = document.createElement('div');
+  hintEl.className = 'combo-hint';
+  hintEl.textContent = 'Escolha um ângulo/pose — o prompt atualiza automaticamente';
+  panel.appendChild(hintEl);
+
   chat.appendChild(panel);
   setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
 }
@@ -11568,9 +11593,7 @@ function showResult() {
     generatedChatGPT = buildChatGPTPromptFromPreset(p, pillOverrides);
     addToHistory(p.name, generatedMJ, generatedChatGPT);
 
-    const card = document.createElement('div');
-    card.className = 'result-card';
-    card.innerHTML = `
+    const cardHTML = `
       <h3>📸 Prompts Gerados</h3>
       <div class="entity-name">${p.icon||'📸'} ${escHtml(p.name)}</div>
       <div class="entity-name-sub">${escHtml(p.desc||'')}</div>
@@ -11584,11 +11607,21 @@ function showResult() {
       <div class="result-actions">
         <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
         <button class="btn-act" onclick="copyGPT(event)">🤖 Copiar GPT</button>
-        <button class="btn-act" onclick="restartFlow()">← Voltar</button>
+        <button class="btn-act" onclick="restartFlow()">← Novo preset</button>
       </div>
       <div class="assinatura">✦ RAWgen Loiras ✦</div>
     `;
-    chat.appendChild(card);
+    // Atualiza no lugar se já existir, senão cria
+    let card = document.getElementById('result-card-current');
+    if (card) {
+      card.innerHTML = cardHTML;
+    } else {
+      card = document.createElement('div');
+      card.className = 'result-card';
+      card.id = 'result-card-current';
+      card.innerHTML = cardHTML;
+      chat.appendChild(card);
+    }
     navigator.clipboard.writeText(generatedMJ).catch(()=>{});
     scrollBot();
   }, 600);
