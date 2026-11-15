@@ -11247,17 +11247,12 @@ function selectBrowserPreset(p, card, grid) {
 
 // ── Combinações (ângulo + pose juntos) ────────────────────────────────────
 function _showCombosStep(p) {
-  _showCombosPanel(p);
-}
-
-function _showCombosPanel(p) {
   const catCombos = (COMBOS_BY_CAT[p.cat] || []).filter(c => c.ang && c.pose);
   const allCombos = [
     ...FEATURED_COMBOS.map(c => ({ emoji: c.emoji, label: c.label, tag: c.desc, ang: c.ang, pose: c.pose })),
     ...COMBOS_DEFAULT.map(c => ({ emoji: c.label.match(/^\S+/)?.[0] || '📸', label: c.label.replace(/^\S+\s*/,''), tag: 'Universal', ang: c.ang, pose: c.pose })),
     ...catCombos.map(c => ({ emoji: c.label.match(/^\S+/)?.[0] || '📸', label: c.label.replace(/^\S+\s*/,''), tag: p.name, ang: c.ang, pose: c.pose })),
   ];
-  // dedupe by label
   const seen = new Set();
   const combos = allCombos.filter(c => { if (seen.has(c.label)) return false; seen.add(c.label); return true; });
 
