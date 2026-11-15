@@ -11807,7 +11807,7 @@ function showResult() {
 
       <div class="result-actions">
         <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
-        <button class="btn-act" onclick="copyGPT(event)">🤖 Copiar GPT</button>
+        <button class="btn-act" onclick="copyGPT(event)">🤖 Gerar no ChatGPT</button>
         <button class="btn-act" onclick="restartFlow()">← Novo preset</button>
       </div>
       <div class="assinatura">✦ RAWgen Loiras ✦</div>
@@ -11832,7 +11832,12 @@ function copyMJ(e) {
   navigator.clipboard.writeText(generatedMJ).then(() => flashBtn(e.target, '✓ Copiado!'));
 }
 function copyGPT(e) {
-  navigator.clipboard.writeText(generatedChatGPT).then(() => flashBtn(e.target, '✓ Copiado!'));
+  const prompt = generatedChatGPT || '';
+  // Copia para clipboard e abre ChatGPT DALL-E com o prompt pré-preenchido
+  navigator.clipboard.writeText(prompt).catch(() => {});
+  const url = 'https://chatgpt.com/g/g-2fkFE8rbu-dall-e?q=' + encodeURIComponent(prompt);
+  window.open(url, '_blank');
+  flashBtn(e.target, '🚀 Abrindo...');
 }
 function flashBtn(btn, msg) {
   const prev = btn.textContent;
@@ -11872,7 +11877,7 @@ function loadHistItem(i) {
     <div class="prompt-box">${escHtml(item.gpt)}</div>
     <div class="result-actions">
       <button class="btn-act primary" onclick="copyMJ(event)">📋 Copiar MJ</button>
-      <button class="btn-act" onclick="copyGPT(event)">🤖 Copiar GPT</button>
+      <button class="btn-act" onclick="copyGPT(event)">🤖 Gerar no ChatGPT</button>
     </div>
   `;
   chat.appendChild(card);
