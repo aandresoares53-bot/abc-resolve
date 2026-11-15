@@ -78,6 +78,12 @@ header h1 span{display:block;font-size:.55em;letter-spacing:.3em;color:var(--gol
 .combo-tab-check{font-size:.85rem;opacity:0;transition:opacity .15s}
 .combo-tab.active .combo-tab-check{opacity:1}
 .combo-hint{font-size:.74rem;color:var(--muted);padding:.5rem 0 .1rem;opacity:.75}
+.sel-row-wrap{margin-bottom:12px}
+.sel-row-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-family:Georgia,serif;margin-bottom:6px}
+.sel-row{display:flex;flex-wrap:wrap;gap:6px}
+.sel-chip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:Georgia,serif;font-size:.76rem;cursor:pointer;transition:all .17s;white-space:nowrap;flex-shrink:0}
+.sel-chip:hover{border-color:var(--gold-dim);background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.sel-chip.active{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold);font-weight:700}
 .chip-combo{border-color:var(--gold-dim)!important;color:var(--gold)!important;font-weight:600}
 .chip-combo:hover{background:color-mix(in srgb,var(--gold) 15%,transparent)!important;border-color:var(--gold)!important}
 .chip-combo.active{background:var(--gold)!important;color:#000!important;border-color:var(--gold)!important}
@@ -11178,6 +11184,34 @@ function setMainStep(n) {
   });
 }
 
+function makeSelectorRow(label, items, onSelect) {
+  const wrap = document.createElement('div');
+  wrap.className = 'sel-row-wrap';
+  const lbl = document.createElement('div');
+  lbl.className = 'sel-row-label';
+  lbl.textContent = label;
+  wrap.appendChild(lbl);
+  const row = document.createElement('div');
+  row.className = 'sel-row';
+  const chips = [];
+  items.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'sel-chip';
+    btn.textContent = item.label;
+    btn.dataset.val = item.value || '';
+    btn.onclick = () => {
+      chips.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      onSelect(item.value || '');
+    };
+    chips.push(btn);
+    row.appendChild(btn);
+  });
+  wrap.appendChild(row);
+  chips[0] && chips[0].classList.add('active');
+  return { el: wrap };
+}
+
 function selectBrowserPreset(p, card, grid) {
   if (selectedCard) selectedCard.classList.remove('selected');
   selectedCard = card;
@@ -11191,7 +11225,7 @@ function selectBrowserPreset(p, card, grid) {
   answers.preset = p.key;
   answers.nivel = p.level || 'sfw';
   answers.cat = p.cat;
-  const combos = COMBOS_BY_CAT[p.cat] || COMBOS_DEFAULT;
+
   const panel = document.createElement('div');
   panel.className = 'combo-panel';
   panel.id = 'combo-panel';
@@ -11212,90 +11246,24 @@ function selectBrowserPreset(p, card, grid) {
   title.textContent = `${p.icon || '📸'} ${p.name}`;
   panel.appendChild(title);
 
-  const cGrid = document.createElement('div');
-  cGrid.className = 'combo-grid';
-
-  const allTabs = [];
-
-  // Aba "Padrão" (sem combo)
-  const tabDefault = document.createElement('button');
-  tabDefault.className = 'combo-tab';
-  tabDefault.innerHTML = `<span class="combo-tab-label">📋 Padrão do preset</span><span class="combo-tab-check">✓</span>`;
-  tabDefault.onclick = () => {
-    answers.angulo = '';
-    answers.pose = '';
-    allTabs.forEach(b => b.classList.remove('active'));
-    tabDefault.classList.add('active');
+  // ── Seletor de Ângulo ──────────────────────────────────────────────────────
+  const angRow = makeSelectorRow('📷 Ângulo de câmera', ANGLES_LIST, val => {
+    answers.angulo = val;
     showResult();
-  };
-  allTabs.push(tabDefault);
-  cGrid.appendChild(tabDefault);
-
-  combos.forEach(c => {
-    const tab = document.createElement('button');
-    tab.className = 'combo-tab';
-    tab.innerHTML = `<span class="combo-tab-label">${escHtml(c.label)}</span><span class="combo-tab-check">✓</span>`;
-    tab.onclick = () => {
-      answers.angulo = c.ang;
-      answers.pose = c.pose;
-      allTabs.forEach(b => b.classList.remove('active'));
-      tab.classList.add('active');
-      showResult();
-    };
-    allTabs.push(tab);
-    cGrid.appendChild(tab);
   });
-  panel.appendChild(cGrid);
+  panel.appendChild(angRow.el);
+
+  // ── Seletor de Pose ────────────────────────────────────────────────────────
+  const poseRow = makeSelectorRow('🧘 Pose / Posição', POSES_LIST_SHORT, val => {
+    answers.pose = val;
+    showResult();
+  });
+  panel.appendChild(poseRow.el);
 
   const hintEl = document.createElement('div');
   hintEl.className = 'combo-hint';
-  hintEl.textContent = 'Escolha um ângulo — o prompt aparece abaixo automaticamente';
-  panel.appendChild(hintEl);
-
-  // ── Seção de Poses ────────────────────────────────────────────────────────
-  const poseDivider = document.createElement('div');
-  poseDivider.style.cssText = 'border-top:1px solid var(--border);margin:14px 0 10px;';
-  panel.appendChild(poseDivider);
-
-  const poseTitle = document.createElement('h4');
-  poseTitle.textContent = '🧘 Pose / Posição';
-  panel.appendChild(poseTitle);
-
-  const poseHint = document.createElement('div');
-  poseHint.className = 'combo-hint';
-  poseHint.style.marginBottom = '8px';
-  poseHint.textContent = 'Sobrescreve só a pose — combina com qualquer ângulo acima';
-  panel.appendChild(poseHint);
-
-  const pGrid = document.createElement('div');
-  pGrid.className = 'combo-grid';
-
-  const posePadrao = document.createElement('button');
-  posePadrao.className = 'combo-tab';
-  posePadrao.innerHTML = `<span class="combo-tab-label">📋 Pose padrão do preset</span><span class="combo-tab-check">✓</span>`;
-  posePadrao.onclick = () => {
-    answers.pose = '';
-    allPoseTabs.forEach(b => b.classList.remove('active'));
-    posePadrao.classList.add('active');
-    showResult();
-  };
-  const allPoseTabs = [posePadrao];
-  pGrid.appendChild(posePadrao);
-
-  POSES_LIST.forEach(po => {
-    const ptab = document.createElement('button');
-    ptab.className = 'combo-tab';
-    ptab.innerHTML = `<span class="combo-tab-label">${escHtml(po.label)}</span><span class="combo-tab-check">✓</span>`;
-    ptab.onclick = () => {
-      answers.pose = po.pose;
-      allPoseTabs.forEach(b => b.classList.remove('active'));
-      ptab.classList.add('active');
-      showResult();
-    };
-    allPoseTabs.push(ptab);
-    pGrid.appendChild(ptab);
-  });
-  panel.appendChild(pGrid);
+  hintEl.style.marginTop = '8px';
+  hintEl.textContent = 'Escolha ângulo e pose independentemente — o prompt atualiza abaixo';
 
   chat.appendChild(panel);
   setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
@@ -11323,6 +11291,41 @@ function addToHistory(name, mj, gpt) {
   saveHistory(h);
 }
 
+const ANGLES_LIST = [
+  {label:'Padrão',      value:''},
+  {label:'Frontal',     value:'straight-on frontal shot, direct camera angle, face centered in frame'},
+  {label:'3/4',         value:'three-quarter angle shot, 45 degree turn, face and body at angle to camera'},
+  {label:'Perfil',      value:'side profile shot, 90 degree lateral angle, full profile view'},
+  {label:'De cima',     value:'high angle shot, camera looking down at subject, bird\'s eye perspective'},
+  {label:'De baixo',    value:'low angle shot, camera looking up at subject, worm\'s eye perspective, dramatic upward angle'},
+  {label:'Costas',      value:'rear view shot, back to camera, over-shoulder glance'},
+  {label:'POV íntimo',  value:'first-person POV shot, subjective camera, viewer\'s perspective, immersive point of view'},
+  {label:'Espelho',     value:'mirror reflection shot, subject reflected in mirror, mirror framing composition'},
+  {label:'Contra-luz',  value:'backlit silhouette shot, strong backlight, subject as dark silhouette against bright background'},
+  {label:'Full body',   value:'full body standing shot, head to toe in frame, full figure portrait'},
+  {label:'Close rosto', value:'extreme close-up face shot, tight crop on face, 85mm portrait lens, face fills frame'},
+  {label:'POV baixo',   value:'low angle shot, camera near ground level angled upward along body, dramatic low perspective looking up at subject'},
+  {label:'Bokeh',       value:'telephoto compressed perspective, 200mm lens, background compression, shallow depth of field, subject isolated'},
+  {label:'Grande angular', value:'wide angle environmental shot, 24mm lens, subject in full environment context, expansive scene'},
+];
+
+const POSES_LIST_SHORT = [
+  {label:'Padrão',          value:''},
+  {label:'Em pé',           value:'standing upright facing camera, full body frontal, weight evenly distributed, arms relaxed at sides'},
+  {label:'Em pé — costas',  value:'standing back to camera, rear view full body, looking over shoulder slightly'},
+  {label:'Sentada',         value:'seated on chair facing camera, back straight, hands on thighs, natural seated posture'},
+  {label:'No chão',         value:'seated on floor cross-legged, back straight, hands resting on knees, grounded seated pose'},
+  {label:'Deitada costas',  value:'lying on back, arms relaxed at sides, legs together, face up, supine resting pose'},
+  {label:'Deitada lado',    value:'lying on side, knees slightly bent, arm under head as pillow, other arm along torso'},
+  {label:'Deitada bruços',  value:'lying face down prone, legs together, arms folded under chin, face toward camera'},
+  {label:'De quatro',       value:'on hands and knees facing camera, back flat, arms straight, knees hip-width, tabletop position'},
+  {label:'De joelhos',      value:'kneeling on both knees facing camera, back straight, hands on thighs, tall kneeling pose'},
+  {label:'Agachada',        value:'deep squat, knees wide apart, heels on floor, torso upright, hands between knees'},
+  {label:'Na parede',       value:'leaning back against wall, one shoulder blade pressed to surface, arms loose, one knee slightly bent'},
+  {label:'Curvada',         value:'bending forward from waist, back arched, rear pushed back and up, hands on thighs or ankles'},
+  {label:'Dançando',        value:'sensual dance pose mid-movement, one hip thrust to side, arms fluid and expressive, weight shifting'},
+  {label:'Abraçando-se',    value:'arms wrapped around own torso, self-embrace, shoulders slightly forward, intimate self-hug pose'},
+];
 const POSES_LIST = [
   // ── Em pé ──────────────────────────────────────────────────────────────────
   {label:'🧍 Em pé — de frente',       pose:'standing upright facing camera, full body frontal, weight evenly distributed, arms relaxed at sides'},
