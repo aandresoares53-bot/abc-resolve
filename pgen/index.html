@@ -420,7 +420,7 @@ function buildGPT(enDesc, angle, pose, state) {
     'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no plastic skin, no CGI render',
     'no text in image',
   ];
-  return 'Generate a photorealistic image: ' + parts.filter(Boolean).join(', ') + '.';
+  return 'Generate a photorealistic image in 9:16 aspect ratio (portrait/vertical): ' + parts.filter(Boolean).join(', ') + '.';
 }
 
 // ── Translate ─────────────────────────────────────────────────────────────
