@@ -188,7 +188,6 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
       <button class="lvl-btn" onclick="setLevel(this,'bold')">⚡ Intenso</button>
     </div>
 
-    <button class="btn-continue" onclick="showSelectors()" id="btn-continue">Escolher Ângulo &amp; Pose →</button>
   </div>
 
   <!-- Step 2: Ângulo / Posição / Estado -->
@@ -369,7 +368,7 @@ function pick(group, key) {
 // ── Generate ──────────────────────────────────────────────────────────────
 async function generate() {
   const desc = document.getElementById('desc-input').value.trim();
-  if (!desc) return;
+  if (!desc) { showToast('Preencha a descrição da personagem primeiro ↑'); return; }
 
   const out = document.getElementById('output-area');
   out.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
@@ -534,6 +533,7 @@ function fmtTs(ts){
 }
 
 renderHistory();
+renderSelectors();
 </script>
 </body>
 </html>
