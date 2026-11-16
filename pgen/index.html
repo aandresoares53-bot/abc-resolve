@@ -181,90 +181,17 @@ let currentLevel = 'sfw';
 let generatedMJ  = '';
 let generatedGPT = '';
 
-// ── PT→EN light translator ────────────────────────────────────────────────
-const PT_EN = [
-  [/\bloira\b/gi,'blonde'],
-  [/\bmorena\b/gi,'brunette'],
-  [/\bruiva\b/gi,'redhead'],
-  [/\bpraia\b/gi,'beach'],
-  [/\bpiscina\b/gi,'swimming pool'],
-  [/\bquarto\b/gi,'bedroom'],
-  [/\bcama\b/gi,'bed'],
-  [/\bbanheiro\b/gi,'bathroom'],
-  [/\bcozinha\b/gi,'kitchen'],
-  [/\bvaranda\b/gi,'balcony'],
-  [/\bpor do sol\b/gi,'sunset'],
-  [/\bp[oô]r[-\s]do[-\s]sol\b/gi,'sunset'],
-  [/\bamanhecer\b/gi,'sunrise'],
-  [/\bnoite\b/gi,'night'],
-  [/\bdia\b/gi,'daylight'],
-  [/\bsol\b/gi,'sun'],
-  [/\bchuva\b/gi,'rain'],
-  [/\bneve\b/gi,'snow'],
-  [/\bfloresta\b/gi,'forest'],
-  [/\bcampo\b/gi,'countryside'],
-  [/\bcidade\b/gi,'city'],
-  [/\brua\b/gi,'street'],
-  [/\bcafé\b/gi,'café'],
-  [/\bescrit[oó]rio\b/gi,'office'],
-  [/\bgacademia\b/gi,'gym'],
-  [/\bpiscina\b/gi,'pool'],
-  [/\bpiscina\b/gi,'swimming pool'],
-  [/\byoga\b/gi,'yoga'],
-  [/\bcabelo ao vento\b/gi,'hair in the wind'],
-  [/\bcabelo longo\b/gi,'long hair'],
-  [/\bcabelo curto\b/gi,'short hair'],
-  [/\bcabelo cacheado\b/gi,'curly hair'],
-  [/\bcabelo liso\b/gi,'straight hair'],
-  [/\bolhos azuis\b/gi,'blue eyes'],
-  [/\bolhos verdes\b/gi,'green eyes'],
-  [/\bolhos castanhos\b/gi,'brown eyes'],
-  [/\bolhando\b/gi,'looking'],
-  [/\bsorrindo\b/gi,'smiling'],
-  [/\bdeitada\b/gi,'lying down'],
-  [/\bsentada\b/gi,'sitting'],
-  [/\bem p[eé]\b/gi,'standing'],
-  [/\bdançando\b/gi,'dancing'],
-  [/\bcorrendo\b/gi,'running'],
-  [/\bnaandando\b/gi,'swimming'],
-  [/\bnadando\b/gi,'swimming'],
-  [/\bvestido\b/gi,'dress'],
-  [/\bbiqui[nñ]i\b/gi,'bikini'],
-  [/\blingerie\b/gi,'lingerie'],
-  [/\bcamiseta\b/gi,'t-shirt'],
-  [/\bjeans\b/gi,'jeans'],
-  [/\bsaia\b/gi,'skirt'],
-  [/\bsutiã\b/gi,'bra'],
-  [/\bblusa\b/gi,'blouse'],
-  [/\bvemelh[oa]\b/gi,'red'],
-  [/\bvermelho\b/gi,'red'],
-  [/\bvermelha\b/gi,'red'],
-  [/\bazul\b/gi,'blue'],
-  [/\bverde\b/gi,'green'],
-  [/\bamarelo\b/gi,'yellow'],
-  [/\bpreto\b/gi,'black'],
-  [/\bbranco\b/gi,'white'],
-  [/\brosa\b/gi,'pink'],
-  [/\blaranja\b/gi,'orange'],
-  [/\bvioleta\b/gi,'purple'],
-  [/\bhorizonte\b/gi,'horizon'],
-  [/\bfundo\b/gi,'background'],
-  [/\b(com|e)\b/gi,''],
-  [/\bna\b/gi,'at the'],
-  [/\bno\b/gi,'at the'],
-  [/\bao\b/gi,'at'],
-  [/\bdo\b/gi,'of the'],
-  [/\bda\b/gi,'of the'],
-  [/\bem\b/gi,'in'],
-  [/\bpara\b/gi,'for'],
-  [/\bpro\b/gi,'toward'],
-  [/\b(uma|um)\b/gi,'a'],
-  [/\s{2,}/g,' '],
-];
-function translateDesc(desc) {
-  let s = desc;
-  for (const [pat, rep] of PT_EN) s = s.replace(pat, rep);
-  return s.trim().replace(/^,\s*/,'').replace(/,\s*,/g,',');
+// ── Translate PT→EN via Google Translate (free endpoint, no key) ──────────
+async function translateDesc(text) {
+  if (!text.trim()) return text;
+  try {
+    const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=' + encodeURIComponent(text);
+    const res = await fetch(url);
+    const data = await res.json();
+    return data[0].map(s => s[0]).join('');
+  } catch {
+    return text; // fallback: use original if translation fails
+  }
 }
 
 // ── Enhance modifiers ─────────────────────────────────────────────────────
@@ -295,41 +222,23 @@ function setLevel(btn, lvl) {
   currentLevel = lvl;
 }
 
-// ── Build prompt ──────────────────────────────────────────────────────────
-function buildMJPrompt(desc) {
+// ── Build prompts (receives already-translated desc) ──────────────────────
+function buildMJPrompt(enDesc) {
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   const lv = LEVEL_MAP[currentLevel];
-
-  const parts = [
-    translateDesc(desc.trim()),
-    'beautiful blonde woman',
-    lv.style,
-    ...chips,
-    'professional DSLR camera, sharp focus',
-  ];
-
+  const parts = [enDesc, 'beautiful blonde woman', lv.style, ...chips, 'professional DSLR camera, sharp focus'];
   return parts.filter(Boolean).join(', ') + ' ' + lv.params;
 }
 
-function buildGPTPrompt(desc) {
+function buildGPTPrompt(enDesc) {
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   const lv = LEVEL_MAP[currentLevel];
-
-  const parts = [
-    translateDesc(desc.trim()),
-    'beautiful blonde woman',
-    lv.style,
-    ...chips,
-    'professional DSLR camera, sharp focus',
-    'no text in image',
-  ];
-
+  const parts = [enDesc, 'beautiful blonde woman', lv.style, ...chips, 'professional DSLR camera, sharp focus', 'no text in image'];
   return 'Generate a photorealistic image: ' + parts.filter(Boolean).join(', ') + '.';
 }
 
 // ── Generate ──────────────────────────────────────────────────────────────
-let _genTimer = null;
-function generate() {
+async function generate() {
   const desc = document.getElementById('desc-input').value.trim();
   if (!desc) { showToast('Digite uma descrição primeiro'); return; }
 
@@ -340,19 +249,18 @@ function generate() {
   const out = document.getElementById('output-area');
   out.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
 
-  clearTimeout(_genTimer);
-  _genTimer = setTimeout(() => {
-    generatedMJ  = buildMJPrompt(desc);
-    generatedGPT = buildGPTPrompt(desc);
+  const enDesc = await translateDesc(desc);
 
-    saveToHistory(desc, generatedMJ, generatedGPT);
-    renderResult();
-    renderHistory();
+  generatedMJ  = buildMJPrompt(enDesc);
+  generatedGPT = buildGPTPrompt(enDesc);
 
-    btn.disabled = false;
-    btn.textContent = '✦ Gerar Novo';
-    navigator.clipboard.writeText(generatedMJ).catch(() => {});
-  }, 600);
+  saveToHistory(desc, generatedMJ, generatedGPT);
+  renderResult();
+  renderHistory();
+
+  btn.disabled = false;
+  btn.textContent = '✦ Gerar Novo';
+  navigator.clipboard.writeText(generatedMJ).catch(() => {});
 }
 
 function renderResult() {
