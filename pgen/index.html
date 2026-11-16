@@ -17,90 +17,120 @@ body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman
   font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center}
 
 /* ── Header ── */
-header{width:100%;text-align:center;padding:36px 16px 24px;border-bottom:1px solid var(--border)}
-.logo-ring{width:52px;height:52px;margin:0 auto 12px;border-radius:50%;
+header{width:100%;text-align:center;padding:28px 16px 18px;border-bottom:1px solid var(--border)}
+.logo-ring{width:46px;height:46px;margin:0 auto 10px;border-radius:50%;
   border:1.5px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;
   background:radial-gradient(circle at 50% 60%,color-mix(in srgb,var(--gold) 12%,transparent),transparent 70%)}
-.logo-ring svg{width:28px;height:28px;fill:var(--gold)}
-header h1{font-family:Georgia,serif;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:400;
+.logo-ring svg{width:24px;height:24px;fill:var(--gold)}
+header h1{font-family:Georgia,serif;font-size:clamp(1rem,3.5vw,1.35rem);font-weight:400;
   letter-spacing:.12em;text-transform:uppercase;color:var(--text)}
-header h1 span{display:block;font-size:.52em;letter-spacing:.35em;color:var(--gold);margin-bottom:5px}
-.header-sub{font-size:.7rem;color:var(--muted);letter-spacing:.08em;margin-top:5px}
+header h1 span{display:block;font-size:.52em;letter-spacing:.35em;color:var(--gold);margin-bottom:4px}
+.header-sub{font-size:.68rem;color:var(--muted);letter-spacing:.07em;margin-top:4px}
 
 /* ── Main ── */
-main{flex:1;width:100%;max-width:680px;padding:32px 16px 60px;display:flex;flex-direction:column;gap:24px}
+main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-direction:column;gap:20px}
 
-/* ── Input card ── */
-.input-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.input-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+/* ── Step pill ── */
+.step-pill{display:inline-flex;align-items:center;gap:6px;font-size:.6rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold);opacity:.8;margin-bottom:10px}
+.step-num{width:18px;height:18px;border-radius:50%;border:1px solid var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--gold)}
+
+/* ── Cards ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.card-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
   opacity:.8;margin-bottom:12px;display:block}
+
+/* ── Textarea ── */
 .desc-textarea{width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;
   color:var(--text);font-family:Georgia,serif;font-size:.92rem;line-height:1.65;
-  padding:14px 16px;resize:vertical;min-height:120px;outline:none;transition:border-color .2s;
+  padding:14px 16px;resize:vertical;min-height:100px;outline:none;transition:border-color .2s;
   caret-color:var(--gold)}
-.desc-textarea::placeholder{color:var(--muted);opacity:.6}
+.desc-textarea::placeholder{color:var(--muted);opacity:.55}
 .desc-textarea:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px var(--gold-glow)}
 
 /* ── Enhance chips ── */
 .enhance-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
-.enhance-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
-  width:100%;margin-bottom:2px}
-.echip{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;
-  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;
-  transition:all .15s;user-select:none}
+.enhance-label{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  width:100%;margin-bottom:1px}
+.echip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;
+  transition:all .14s;user-select:none}
 .echip:hover{border-color:var(--gold-dim);color:var(--text)}
-.echip.on{border-color:var(--gold);color:var(--gold);
-  background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.echip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
 
 /* ── Level row ── */
 .level-row{display:flex;gap:8px;margin-top:14px}
 .lvl-btn{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.78rem;
-  cursor:pointer;transition:all .17s;text-align:center}
+  background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.76rem;
+  cursor:pointer;transition:all .16s;text-align:center}
 .lvl-btn.active{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);
   color:var(--gold);font-weight:600}
 .lvl-btn:hover:not(.active){border-color:var(--gold-dim);color:var(--text)}
 
-/* ── Generate button ── */
-.btn-generate{width:100%;margin-top:16px;padding:14px;border-radius:12px;
-  border:none;cursor:pointer;font-family:Georgia,serif;font-size:.92rem;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;transition:all .18s;position:relative;overflow:hidden;
-  background:linear-gradient(135deg,#c47a10,var(--gold),#c47a10);
-  background-size:200% 100%;color:#0a0a0a}
-.btn-generate:hover{background-position:100% 0;box-shadow:0 4px 20px color-mix(in srgb,var(--gold) 35%,transparent);transform:translateY(-1px)}
-.btn-generate:active{transform:translateY(0)}
-.btn-generate:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+/* ── Continue button ── */
+.btn-continue{width:100%;margin-top:16px;padding:13px;border-radius:12px;border:none;
+  cursor:pointer;font-family:Georgia,serif;font-size:.88rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;transition:all .18s;
+  background:linear-gradient(135deg,#c47a10,var(--gold),#c47a10);background-size:200% 100%;color:#0a0a0a}
+.btn-continue:hover{background-position:100% 0;box-shadow:0 4px 20px var(--gold-glow);transform:translateY(-1px)}
+.btn-continue:active{transform:translateY(0)}
+.btn-continue:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ── Typing indicator ── */
+/* ── Preset grid ── */
+.preset-section{animation:fadeUp .28s ease}
+.preset-cats{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.pcat{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;transition:all .14s}
+.pcat.active{border-color:var(--gold-dim);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.pcat:hover:not(.active){border-color:var(--gold-dim);color:var(--text)}
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(min-width:520px){.preset-grid{grid-template-columns:repeat(3,1fr)}}
+.preset-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px 12px;cursor:pointer;transition:border-color .16s,background .16s,transform .14s,box-shadow .16s;
+  position:relative;overflow:hidden}
+.preset-card::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 10%,transparent),transparent 60%);
+  opacity:0;transition:opacity .18s}
+.preset-card:hover{border-color:var(--gold);transform:translateY(-2px);
+  box-shadow:0 6px 20px color-mix(in srgb,var(--gold) 15%,transparent)}
+.preset-card:hover::before{opacity:1}
+.preset-card:active{transform:translateY(0)}
+.preset-card.selected{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.pc-emoji{font-size:1.5rem;margin-bottom:6px;display:block}
+.pc-name{font-family:Georgia,serif;font-size:.8rem;font-weight:700;color:var(--gold);
+  margin-bottom:3px;line-height:1.2}
+.pc-desc{font-size:.65rem;color:var(--muted);line-height:1.35}
+
+/* ── Typing ── */
 .typing{display:flex;gap:5px;align-items:center;padding:14px 0;justify-content:center}
 .typing span{width:7px;height:7px;border-radius:50%;background:var(--gold);opacity:.3;animation:blink 1.2s ease-in-out infinite}
 .typing span:nth-child(2){animation-delay:.2s}
 .typing span:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,100%{opacity:.3;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Result card ── */
+/* ── Result ── */
 .result-card{background:var(--surface);border:1px solid var(--gold-dim);border-radius:var(--radius);
   padding:22px;animation:fadeUp .3s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.result-title{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);
+.result-title{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);
   opacity:.85;margin-bottom:16px}
 .prompt-block{margin-bottom:18px}
-.prompt-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
-  margin-bottom:7px}
+.prompt-label{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
 .prompt-box{background:#0d0d14;border:1px solid var(--border);border-radius:9px;
   padding:13px 15px;font-family:Georgia,serif;font-size:.82rem;line-height:1.65;
-  color:var(--text);white-space:pre-wrap;word-break:break-word;position:relative}
+  color:var(--text);white-space:pre-wrap;word-break:break-word}
 .result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .btn-act{padding:9px 16px;border-radius:9px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.76rem;
-  cursor:pointer;transition:all .15s}
+  background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.75rem;cursor:pointer;transition:all .14s}
 .btn-act:hover{border-color:var(--gold-dim);color:var(--text)}
-.btn-act.primary{border-color:var(--gold);color:var(--gold);
-  background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.btn-act.primary{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .btn-act.primary:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
 .btn-act.copied{border-color:#4caf50;color:#4caf50;background:rgba(76,175,80,.1)}
-.assinatura{text-align:center;font-size:.65rem;letter-spacing:.18em;color:var(--gold-dim);
-  margin-top:18px;opacity:.6}
+.btn-new{width:100%;margin-top:12px;padding:11px;border-radius:10px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.8rem;cursor:pointer;transition:all .14s}
+.btn-new:hover{border-color:var(--gold-dim);color:var(--text)}
+.assinatura{text-align:center;font-size:.63rem;letter-spacing:.18em;color:var(--gold-dim);margin-top:18px;opacity:.6}
 
 /* ── Toast ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -110,46 +140,44 @@ main{flex:1;width:100%;max-width:680px;padding:32px 16px 60px;display:flex;flex-
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── History ── */
-.hist-section{margin-top:8px}
-.hist-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
-  opacity:.7;margin-bottom:10px;display:block}
+.hist-section{margin-top:4px}
+.hist-label{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  opacity:.65;margin-bottom:10px;display:block}
 .hist-list{display:flex;flex-direction:column;gap:7px}
 .hist-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:11px 14px;cursor:pointer;transition:all .15s;display:flex;gap:10px;align-items:flex-start}
+  padding:11px 14px;cursor:pointer;transition:all .14s;display:flex;gap:10px;align-items:flex-start}
 .hist-item:hover{border-color:var(--gold-dim)}
-.hist-item-text{font-size:.77rem;color:var(--muted);line-height:1.4;flex:1;
+.hist-item-text{font-size:.76rem;color:var(--muted);line-height:1.4;flex:1;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.hist-item-ts{font-size:.62rem;color:var(--muted);opacity:.5;white-space:nowrap;margin-top:1px}
+.hist-item-ts{font-size:.6rem;color:var(--muted);opacity:.45;white-space:nowrap;margin-top:1px}
 
-@media(max-width:420px){
-  .result-actions{flex-direction:column}
-  .btn-act{text-align:center}
-}
+@media(max-width:420px){.result-actions,.level-row{flex-direction:column}.btn-act{text-align:center}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo-ring">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.3 4.7-3.3 6L17 22H7l1.3-7C6.3 13.7 5 11.5 5 9a7 7 0 0 1 7-7z"/>
-    </svg>
+    <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.3 4.7-3.3 6L17 22H7l1.3-7C6.3 13.7 5 11.5 5 9a7 7 0 0 1 7-7z"/></svg>
   </div>
   <h1><span>RAWgen</span>Gerador de Prompts</h1>
-  <p class="header-sub">Descreva a cena — receba o prompt profissional</p>
+  <p class="header-sub">Descreva a personagem · escolha o cenário · gere o prompt</p>
 </header>
 
 <main>
-  <div class="input-card">
-    <label class="input-label" for="desc-input">✦ Descreva a cena</label>
+
+  <!-- Step 1: Personagem -->
+  <div class="card" id="step1-card">
+    <span class="step-pill"><span class="step-num">1</span> Personagem</span>
+    <label class="card-label" for="desc-input">Descreva a personagem e o visual</label>
     <textarea id="desc-input" class="desc-textarea"
-      placeholder="Ex: loira na praia ao pôr do sol, biquíni vermelho, cabelo ao vento, olhando pro horizonte..."
-      rows="4"></textarea>
+      placeholder="Ex: loira de 19 anos apenas de calcinha e sutiã, cabelo longo, olhos claros..."
+      rows="3"></textarea>
 
     <div class="enhance-row">
-      <span class="enhance-label">Adicionar ao prompt →</span>
+      <span class="enhance-label">Adicionar →</span>
       <div class="echip on" data-key="photoreal">📷 Fotorrealista</div>
-      <div class="echip on" data-key="lighting">💡 Iluminação dramática</div>
+      <div class="echip on" data-key="lighting">💡 Luz dramática</div>
       <div class="echip" data-key="closeup">🎯 Close no rosto</div>
       <div class="echip" data-key="fullbody">🧍 Corpo inteiro</div>
       <div class="echip" data-key="cinematic">🎬 Cinemático</div>
@@ -157,53 +185,125 @@ main{flex:1;width:100%;max-width:680px;padding:32px 16px 60px;display:flex;flex-
     </div>
 
     <div class="level-row">
-      <button class="lvl-btn active" data-lvl="sfw" onclick="setLevel(this,'sfw')">🌸 Elegante</button>
-      <button class="lvl-btn" data-lvl="soft" onclick="setLevel(this,'soft')">🔥 Sensual</button>
-      <button class="lvl-btn" data-lvl="bold" onclick="setLevel(this,'bold')">⚡ Intenso</button>
+      <button class="lvl-btn active" onclick="setLevel(this,'sfw')">🌸 Elegante</button>
+      <button class="lvl-btn" onclick="setLevel(this,'soft')">🔥 Sensual</button>
+      <button class="lvl-btn" onclick="setLevel(this,'bold')">⚡ Intenso</button>
     </div>
 
-    <button class="btn-generate" onclick="generate()" id="btn-gen">✦ Gerar Prompt</button>
+    <button class="btn-continue" onclick="showPresets()" id="btn-continue">Escolher Cenário →</button>
   </div>
 
+  <!-- Step 2: Presets -->
+  <div id="step2-area"></div>
+
+  <!-- Step 3: Result -->
   <div id="output-area"></div>
 
+  <!-- History -->
   <div class="hist-section" id="hist-section" style="display:none">
     <span class="hist-label">— Histórico —</span>
     <div class="hist-list" id="hist-list"></div>
   </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ── State ─────────────────────────────────────────────────────────────────
-let currentLevel = 'sfw';
-let generatedMJ  = '';
-let generatedGPT = '';
+let currentLevel   = 'sfw';
+let generatedMJ    = '';
+let generatedGPT   = '';
+let selectedPreset = null;
 
-// ── Translate PT→EN via MyMemory (free, CORS-friendly, no key needed) ─────
-async function translateDesc(text) {
-  if (!text.trim()) return text;
-  try {
-    const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=pt|en';
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.responseStatus === 200) return data.responseData.translatedText;
-    throw new Error('bad status');
-  } catch {
-    // fallback: Google Translate free endpoint
-    try {
-      const url2 = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=' + encodeURIComponent(text);
-      const res2 = await fetch(url2);
-      const data2 = await res2.json();
-      return data2[0].map(s => s[0]).join('');
-    } catch {
-      return text;
-    }
-  }
-}
+// ── Presets ───────────────────────────────────────────────────────────────
+const PRESET_CATS = ['Todos','Exterior','Interior','Água','Urbano','Exótico'];
 
-// ── Enhance modifiers ─────────────────────────────────────────────────────
+const PRESETS = [
+  // Exterior
+  { cat:'Exterior', emoji:'🏖️', name:'Praia ao Pôr do Sol',
+    scenario:'on a tropical beach at golden hour sunset, warm sand, gentle waves',
+    angle:'three-quarter angle, body turned 45 degrees toward horizon',
+    pose:'standing on wet sand near water edge, weight on one hip, one hand brushing hair back' },
+  { cat:'Exterior', emoji:'🌿', name:'Jardim Secreto',
+    scenario:'in a lush secret garden, soft natural sunlight filtering through leaves, blooming flowers',
+    angle:'wide medium shot, slightly low angle looking up',
+    pose:'sitting on stone edge of fountain, one leg dangling, leaning back on both hands' },
+  { cat:'Exterior', emoji:'🌅', name:'Terraço ao Amanhecer',
+    scenario:'on a penthouse rooftop terrace at sunrise, city skyline in background, morning mist',
+    angle:'straight-on frontal, slight low angle',
+    pose:'leaning on railing facing camera, arms folded on rail, looking directly at lens' },
+  { cat:'Exterior', emoji:'🌲', name:'Floresta Mística',
+    scenario:'in an ancient forest clearing, shafts of light through tall trees, soft fog',
+    angle:'medium close-up, eye level',
+    pose:'standing against large tree trunk, one shoulder pressed to bark, face turned to camera' },
+
+  // Interior
+  { cat:'Interior', emoji:'🛋️', name:'Quarto Luxuoso',
+    scenario:'in a luxury hotel bedroom, white silk sheets, soft lamp light, minimalist decor',
+    angle:'low angle POV shot, camera just above bed level',
+    pose:'lying on stomach on bed, propped up on elbows, chin resting on hands, looking at camera' },
+  { cat:'Interior', emoji:'🪞', name:'Espelho do Banheiro',
+    scenario:'in an elegant marble bathroom, large lit mirror, warm vanity lighting',
+    angle:'over-shoulder reflection angle, capturing both subject and mirror image',
+    pose:'standing in front of mirror, one arm raised touching hair, slight hip tilt' },
+  { cat:'Interior', emoji:'🕯️', name:'Quarto à Luz de Velas',
+    scenario:'in a dimly lit bedroom with candles, warm flickering amber light, dark moody atmosphere',
+    angle:'soft close-up portrait, shallow depth of field',
+    pose:'sitting on bed edge, feet on floor, hands in lap, head slightly tilted' },
+  { cat:'Interior', emoji:'🛁', name:'Banheira de Luxo',
+    scenario:'in a freestanding clawfoot bathtub, bubbles and rose petals, soft bathroom lighting',
+    angle:'high angle overhead shot, camera looking straight down',
+    pose:'lying back in bathtub, arms along edges, eyes closed, serene expression' },
+  { cat:'Interior', emoji:'🪑', name:'Poltrona de Couro',
+    scenario:'in a sophisticated study or lounge, dark leather armchair, warm reading lamp',
+    angle:'three-quarter side profile, editorial framing',
+    pose:'sitting sideways in armchair, legs draped over one arm, back against other arm' },
+
+  // Água
+  { cat:'Água', emoji:'🏊', name:'Piscina Infinita',
+    scenario:'at an infinity pool overlooking sea or mountains, crystal clear blue water, daytime',
+    angle:'straight-on frontal, medium shot from pool deck level',
+    pose:'standing in pool at edge, arms resting on lip, upper body out of water, facing camera' },
+  { cat:'Água', emoji:'🌊', name:'Ondas do Mar',
+    scenario:'in shallow ocean waves, clear turquoise water, tropical beach, bright sunny day',
+    angle:'low angle, camera at water level, shooting upward',
+    pose:'walking through ankle-deep waves, slight look back over shoulder, hair caught in breeze' },
+  { cat:'Água', emoji:'🚿', name:'Ducha ao Ar Livre',
+    scenario:'under an outdoor shower on a tropical deck, water cascading down, natural daylight',
+    angle:'medium close shot, slightly high angle',
+    pose:'standing under shower spray, face tilted up toward water, hands running through wet hair' },
+
+  // Urbano
+  { cat:'Urbano', emoji:'🌃', name:'Cidade à Noite',
+    scenario:'on a city street at night, neon reflections on wet pavement, bokeh city lights',
+    angle:'straight-on medium shot, eye level, slight telephoto compression',
+    pose:'standing on sidewalk, one hip forward, slight lean, hands in coat pockets' },
+  { cat:'Urbano', emoji:'🏙️', name:'Cobertura Urbana',
+    scenario:'on a rooftop with city skyline at dusk, golden hour light, skyscrapers in background',
+    angle:'wide angle, subject in foreground with cityscape behind',
+    pose:'sitting on rooftop ledge, one knee up, arm resting on knee, looking at city' },
+  { cat:'Urbano', emoji:'☕', name:'Café Parisiense',
+    scenario:'at a sidewalk café table in Paris, cobblestone street, warm morning light',
+    angle:'candid-style medium shot, slight side angle',
+    pose:'sitting at café table, coffee cup in hand, elbow on table, relaxed natural expression' },
+
+  // Exótico
+  { cat:'Exótico', emoji:'🏜️', name:'Deserto ao Entardecer',
+    scenario:'in a desert landscape at sunset, golden sand dunes, long dramatic shadows, vivid sky',
+    angle:'wide dramatic low angle, sky filling upper frame',
+    pose:'standing atop sand dune, wind blowing hair and fabric, arms slightly out, silhouette-like' },
+  { cat:'Exótico', emoji:'🌸', name:'Jardim Japonês',
+    scenario:'in a Japanese garden, cherry blossoms falling, koi pond, stone lanterns, soft light',
+    angle:'medium shot, slightly elevated angle',
+    pose:'kneeling beside pond, one hand trailing in water, face in profile looking down' },
+  { cat:'Exótico', emoji:'🌴', name:'Cabana na Selva',
+    scenario:'inside a jungle eco-resort bungalow, open walls, tropical forest view, dappled light',
+    angle:'wide environmental shot, subject within lush frame',
+    pose:'standing in open doorway, one arm against frame, looking out into forest' },
+];
+
+// ── Enhance & Level ───────────────────────────────────────────────────────
 const ENHANCE_MAP = {
   photoreal: 'photorealistic, 8K resolution, ultra-detailed skin texture, professional photography',
   lighting:  'dramatic golden hour lighting, soft rim light, cinematic shadow play',
@@ -212,170 +312,229 @@ const ENHANCE_MAP = {
   cinematic: 'cinematic composition, 35mm film look, anamorphic lens flare',
   editorial: 'editorial fashion photography, Vogue-style framing, high-end magazine aesthetic',
 };
-
-// ── Level modifiers ───────────────────────────────────────────────────────
 const LEVEL_MAP = {
-  sfw:  { style: 'tasteful, elegant, artistic nude or clothed', params: '--ar 2:3 --v 6 --style raw --q 2' },
-  soft: { style: 'sensual, alluring, tastefully revealing, implied nudity allowed', params: '--ar 2:3 --v 6 --style raw --q 2 --no clothing' },
-  bold: { style: 'bold, explicit sensuality, raw and intense, unfiltered realism', params: '--ar 2:3 --v 6 --style raw --q 2' },
+  sfw:  { style:'tasteful, elegant, artistic',                                      params:'--ar 2:3 --v 6 --style raw --q 2' },
+  soft: { style:'sensual, alluring, tastefully revealing, implied nudity',          params:'--ar 2:3 --v 6 --style raw --q 2' },
+  bold: { style:'bold, explicit sensuality, raw and intense, unfiltered realism',   params:'--ar 2:3 --v 6 --style raw --q 2' },
 };
 
-// ── Chips toggle ──────────────────────────────────────────────────────────
-document.querySelectorAll('.echip').forEach(chip => {
-  chip.addEventListener('click', () => chip.classList.toggle('on'));
-});
-
+document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
 function setLevel(btn, lvl) {
   document.querySelectorAll('.lvl-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentLevel = lvl;
 }
 
-// ── Build prompts (receives already-translated desc) ──────────────────────
-function buildMJPrompt(enDesc) {
-  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  const lv = LEVEL_MAP[currentLevel];
-  const parts = [enDesc, 'beautiful blonde woman', lv.style, ...chips, 'professional DSLR camera, sharp focus'];
-  return parts.filter(Boolean).join(', ') + ' ' + lv.params;
+// ── Translate ─────────────────────────────────────────────────────────────
+async function translateDesc(text) {
+  if (!text.trim()) return text;
+  try {
+    const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=pt|en';
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.responseStatus === 200) return data.responseData.translatedText;
+    throw 0;
+  } catch {
+    try {
+      const url2 = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=' + encodeURIComponent(text);
+      const r2 = await fetch(url2);
+      const d2 = await r2.json();
+      return d2[0].map(s => s[0]).join('');
+    } catch { return text; }
+  }
 }
 
-function buildGPTPrompt(enDesc) {
-  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  const lv = LEVEL_MAP[currentLevel];
-  const parts = [enDesc, 'beautiful blonde woman', lv.style, ...chips, 'professional DSLR camera, sharp focus', 'no text in image'];
-  return 'Generate a photorealistic image: ' + parts.filter(Boolean).join(', ') + '.';
-}
-
-// ── Generate ──────────────────────────────────────────────────────────────
-async function generate() {
+// ── Show presets ──────────────────────────────────────────────────────────
+let currentCat = 'Todos';
+function showPresets() {
   const desc = document.getElementById('desc-input').value.trim();
-  if (!desc) { showToast('Digite uma descrição primeiro'); return; }
+  if (!desc) { showToast('Digite a descrição da personagem primeiro'); return; }
+  currentCat = 'Todos';
+  renderPresetSection();
+  setTimeout(() => document.getElementById('step2-area').scrollIntoView({behavior:'smooth',block:'start'}), 80);
+}
 
-  const btn = document.getElementById('btn-gen');
-  btn.disabled = true;
-  btn.textContent = '…';
+function renderPresetSection() {
+  const area = document.getElementById('step2-area');
+  const filtered = currentCat === 'Todos' ? PRESETS : PRESETS.filter(p => p.cat === currentCat);
+  const cats = area.innerHTML === '' ? '' : area.querySelector('.preset-cats')?.innerHTML || '';
+
+  area.innerHTML = `
+    <div class="card preset-section">
+      <span class="step-pill"><span class="step-num">2</span> Cenário · Ângulo · Pose</span>
+      <div class="preset-cats">
+        ${PRESET_CATS.map(c => `<div class="pcat${c===currentCat?' active':''}" onclick="filterCat('${c}')">${c}</div>`).join('')}
+      </div>
+      <div class="preset-grid">
+        ${filtered.map((p,i) => `
+          <div class="preset-card" onclick="selectPreset(${PRESETS.indexOf(p)})">
+            <span class="pc-emoji">${p.emoji}</span>
+            <div class="pc-name">${p.name}</div>
+            <div class="pc-desc">${p.cat}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function filterCat(cat) {
+  currentCat = cat;
+  renderPresetSection();
+}
+
+// ── Select preset → generate ───────────────────────────────────────────────
+async function selectPreset(idx) {
+  selectedPreset = PRESETS[idx];
+  // highlight card
+  document.querySelectorAll('.preset-card').forEach((c,i) => {
+    c.classList.toggle('selected', PRESETS.filter(p => currentCat==='Todos'||p.cat===currentCat).indexOf(selectedPreset) === i);
+  });
 
   const out = document.getElementById('output-area');
   out.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
+  setTimeout(() => out.scrollIntoView({behavior:'smooth',block:'nearest'}), 60);
 
-  const enDesc = await translateDesc(desc);
+  const rawDesc = document.getElementById('desc-input').value.trim();
+  const enDesc  = await translateDesc(rawDesc);
 
-  generatedMJ  = buildMJPrompt(enDesc);
-  generatedGPT = buildGPTPrompt(enDesc);
+  generatedMJ  = buildMJ(enDesc, selectedPreset);
+  generatedGPT = buildGPT(enDesc, selectedPreset);
 
-  saveToHistory(desc, generatedMJ, generatedGPT);
+  saveToHistory(rawDesc, selectedPreset.name, generatedMJ, generatedGPT);
   renderResult();
   renderHistory();
-
-  btn.disabled = false;
-  btn.textContent = '✦ Gerar Novo';
-  navigator.clipboard.writeText(generatedMJ).catch(() => {});
+  navigator.clipboard.writeText(generatedMJ).catch(()=>{});
 }
 
+// ── Build prompts ──────────────────────────────────────────────────────────
+function buildMJ(enDesc, preset) {
+  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
+  const lv = LEVEL_MAP[currentLevel];
+  const parts = [
+    enDesc,
+    'beautiful blonde woman',
+    preset.scenario,
+    preset.angle,
+    preset.pose,
+    lv.style,
+    ...chips,
+    'professional DSLR camera, sharp focus',
+  ];
+  return parts.filter(Boolean).join(', ') + ' ' + lv.params;
+}
+
+function buildGPT(enDesc, preset) {
+  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
+  const lv = LEVEL_MAP[currentLevel];
+  const parts = [
+    enDesc,
+    'beautiful blonde woman',
+    preset.scenario,
+    preset.angle,
+    preset.pose,
+    lv.style,
+    ...chips,
+    'professional DSLR camera, sharp focus',
+    'no text in image',
+  ];
+  return 'Generate a photorealistic image: ' + parts.filter(Boolean).join(', ') + '.';
+}
+
+// ── Render result ──────────────────────────────────────────────────────────
 function renderResult() {
   const out = document.getElementById('output-area');
   out.innerHTML = `
     <div class="result-card">
-      <div class="result-title">✦ Prompts Gerados</div>
+      <div class="result-title">✦ Prompts Gerados — ${esc(selectedPreset?.name||'')}</div>
       <div class="prompt-block">
         <div class="prompt-label">Midjourney</div>
-        <div class="prompt-box" id="box-mj">${esc(generatedMJ)}</div>
+        <div class="prompt-box">${esc(generatedMJ)}</div>
       </div>
       <div class="prompt-block">
         <div class="prompt-label">ChatGPT / DALL·E</div>
-        <div class="prompt-box" id="box-gpt">${esc(generatedGPT)}</div>
+        <div class="prompt-box">${esc(generatedGPT)}</div>
       </div>
       <div class="result-actions">
         <button class="btn-act primary" id="btn-copy-mj" onclick="copyMJ()">📋 Copiar MJ</button>
         <button class="btn-act" onclick="copyGPT()">🤖 Copiar ChatGPT</button>
         <button class="btn-act" onclick="openPerchance()">🎨 Perchance</button>
       </div>
+      <button class="btn-new" onclick="restart()">← Nova Personagem</button>
       <div class="assinatura">✦ RAWgen ✦</div>
     </div>`;
-  out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  out.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function esc(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ── Actions ───────────────────────────────────────────────────────────────
 function copyMJ() {
   navigator.clipboard.writeText(generatedMJ).then(() => {
     const btn = document.getElementById('btn-copy-mj');
-    if (btn) { btn.classList.add('copied'); btn.textContent = '✓ Copiado!'; setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copiar MJ'; }, 1800); }
+    if (btn){ btn.classList.add('copied'); btn.textContent='✓ Copiado!'; setTimeout(()=>{btn.classList.remove('copied');btn.textContent='📋 Copiar MJ';},1800); }
     showToast('Prompt MJ copiado ✓');
   });
 }
+function copyGPT(){ navigator.clipboard.writeText(generatedGPT).then(()=>showToast('Prompt ChatGPT copiado ✓')); }
+function openPerchance(){ window.open('https://perchance.org/ai-photo-generator?prompt='+encodeURIComponent(generatedMJ),'_blank'); }
 
-function copyGPT() {
-  navigator.clipboard.writeText(generatedGPT).then(() => showToast('Prompt ChatGPT copiado ✓'));
-}
-
-function openPerchance() {
-  const url = 'https://perchance.org/ai-photo-generator?prompt=' + encodeURIComponent(generatedMJ);
-  window.open(url, '_blank');
+function restart() {
+  document.getElementById('step2-area').innerHTML = '';
+  document.getElementById('output-area').innerHTML = '';
+  document.getElementById('desc-input').value = '';
+  document.getElementById('desc-input').focus();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────
-let _toastTimer = null;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+let _tt = null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
 // ── History ───────────────────────────────────────────────────────────────
-const HIST_KEY = 'rawgen_hist_v2';
-function getHistory() { try { return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); } catch { return []; } }
-function saveHistory(h) { try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,20))); } catch {} }
-
-function saveToHistory(desc, mj, gpt) {
+const HIST_KEY = 'rawgen_hist_v3';
+function getHistory(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); }catch{ return []; } }
+function saveHistory(h){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,20))); }catch{} }
+function saveToHistory(desc, preset, mj, gpt){
   const h = getHistory();
-  h.unshift({ ts: Date.now(), desc, mj, gpt });
+  h.unshift({ ts:Date.now(), desc, preset, mj, gpt });
   saveHistory(h);
 }
-
-function renderHistory() {
+function renderHistory(){
   const h = getHistory();
   const sec = document.getElementById('hist-section');
   const list = document.getElementById('hist-list');
-  if (!h.length) { sec.style.display = 'none'; return; }
-  sec.style.display = 'block';
-  list.innerHTML = h.slice(0,8).map((item, i) => `
+  if (!h.length){ sec.style.display='none'; return; }
+  sec.style.display='block';
+  list.innerHTML = h.slice(0,8).map((item,i)=>`
     <div class="hist-item" onclick="loadHistory(${i})">
       <div style="flex:1">
-        <div class="hist-item-text">${esc(item.desc)}</div>
+        <div class="hist-item-text">${esc(item.desc)} <span style="color:var(--gold);opacity:.7">· ${esc(item.preset||'')}</span></div>
       </div>
       <div class="hist-item-ts">${fmtTs(item.ts)}</div>
     </div>`).join('');
 }
-
-function loadHistory(i) {
-  const h = getHistory();
-  const item = h[i];
-  if (!item) return;
+function loadHistory(i){
+  const h=getHistory(); const item=h[i]; if(!item) return;
   document.getElementById('desc-input').value = item.desc;
-  generatedMJ  = item.mj;
-  generatedGPT = item.gpt;
+  generatedMJ=item.mj; generatedGPT=item.gpt;
+  selectedPreset = PRESETS.find(p=>p.name===item.preset)||null;
   renderResult();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function fmtTs(ts){
+  const d=new Date(ts);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
-function fmtTs(ts) {
-  const d = new Date(ts);
-  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' }) + ' ' +
-         d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-}
-
-// ── Enter key ─────────────────────────────────────────────────────────────
-document.getElementById('desc-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
+// ── Enter shortcut ─────────────────────────────────────────────────────────
+document.getElementById('desc-input').addEventListener('keydown', e=>{
+  if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)) showPresets();
 });
 
-// ── Init ──────────────────────────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────────────────────
 renderHistory();
 </script>
 </body>
