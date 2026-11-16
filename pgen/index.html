@@ -404,7 +404,7 @@ function buildMJ(enDesc, angle, pose, state) {
   const lv = LEVEL_MAP[currentLevel];
   const parts = [
     enDesc,
-    'beautiful blonde woman',
+    'same person consistent appearance, identical face and body throughout, exact same physical features',
     angle?.en,
     pose?.en,
     state?.en,
@@ -420,7 +420,7 @@ function buildGPT(enDesc, angle, pose, state) {
   const lv = LEVEL_MAP[currentLevel];
   const parts = [
     enDesc,
-    'beautiful blonde woman',
+    'same person, maintain exact consistent appearance: same face structure, same eye color, same hair color and length, same body proportions as described — do not alter any physical feature',
     angle?.en,
     pose?.en,
     state?.en,
@@ -429,7 +429,7 @@ function buildGPT(enDesc, angle, pose, state) {
     'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no plastic skin, no CGI render',
     'no text in image',
   ];
-  return 'Generate a photorealistic image in 9:16 aspect ratio (portrait/vertical): ' + parts.filter(Boolean).join(', ') + '.';
+  return 'Generate a photorealistic image in 9:16 aspect ratio (portrait/vertical) of the SAME CHARACTER with CONSISTENT physical features: ' + parts.filter(Boolean).join(', ') + '.';
 }
 
 // ── Translate ─────────────────────────────────────────────────────────────
