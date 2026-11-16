@@ -846,17 +846,20 @@ const PRESETS = [
 
 // ── Enhance & Level ───────────────────────────────────────────────────────
 const ENHANCE_MAP = {
-  photoreal: 'photorealistic, 8K resolution, ultra-detailed skin texture, professional photography',
-  lighting:  'dramatic golden hour lighting, soft rim light, cinematic shadow play',
-  closeup:   'close-up portrait, tight face frame, shallow depth of field',
-  fullbody:  'full body shot, head to toe, complete figure in frame',
-  cinematic: 'cinematic composition, 35mm film look, anamorphic lens flare',
-  editorial: 'editorial fashion photography, Vogue-style framing, high-end magazine aesthetic',
+  photoreal: 'shot on Canon EOS R5, 85mm f/1.4 lens, natural skin texture, real pores and imperfections, analog grain',
+  lighting:  'natural golden hour light, soft diffused ambient light, no artificial studio strobes',
+  closeup:   'tight face close-up, shallow depth of field, background fully blurred',
+  fullbody:  'full body in frame head to toe, environmental context visible',
+  cinematic: 'candid documentary feel, unstaged moment, natural body language',
+  editorial: 'high-end fashion editorial, shot on film, organic and unretouched look',
 };
 const LEVEL_MAP = {
-  sfw:  { style:'tasteful, elegant, artistic',                                      params:'--ar 2:3 --v 6 --style raw --q 2' },
-  soft: { style:'sensual, alluring, tastefully revealing, implied nudity',          params:'--ar 2:3 --v 6 --style raw --q 2' },
-  bold: { style:'bold, explicit sensuality, raw and intense, unfiltered realism',   params:'--ar 2:3 --v 6 --style raw --q 2' },
+  sfw:  { style:'hyperrealistic human photography, natural skin, real body proportions, no airbrushing, no CGI, no plastic skin, shot on film',
+          params:'--ar 2:3 --v 6 --style raw --q 2' },
+  soft: { style:'hyperrealistic human photography, natural skin texture with subtle imperfections, real pores, genuine human warmth, no airbrushing, no plastic look, candid intimacy',
+          params:'--ar 2:3 --v 6 --style raw --q 2' },
+  bold: { style:'hyperrealistic human photography, raw unfiltered realism, true-to-life skin texture, real human body, no digital smoothing, no plastic skin, no airbrushing, genuine and intense',
+          params:'--ar 2:3 --v 6 --style raw --q 2' },
 };
 
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
@@ -959,7 +962,7 @@ function buildMJ(enDesc, preset) {
     preset.pose,
     lv.style,
     ...chips,
-    'professional DSLR camera, sharp focus',
+    'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no plastic skin, no CGI render',
   ];
   return parts.filter(Boolean).join(', ') + ' ' + lv.params + (preset.seed ? ` --seed ${preset.seed}` : '');
 }
@@ -975,7 +978,7 @@ function buildGPT(enDesc, preset) {
     preset.pose,
     lv.style,
     ...chips,
-    'professional DSLR camera, sharp focus',
+    'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no plastic skin, no CGI render',
     'no text in image',
   ];
   return 'Generate a photorealistic image: ' + parts.filter(Boolean).join(', ') + '.';
