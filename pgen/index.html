@@ -220,8 +220,8 @@ const ANGLES = [
   { key:'frontal-fb',    label:'Frontal / corpo inteiro',   en:'straight-on full body shot, eye level, 50mm lens' },
   { key:'frontal-med',   label:'Frontal / médio',           en:'straight-on medium shot, eye level, natural framing' },
   { key:'frontal-close', label:'Frontal / close rosto',     en:'tight close-up portrait, face filling frame, shallow depth of field' },
-  { key:'rear-fb',       label:'Traseiro / corpo inteiro',  en:'from directly behind, full rear body shot, slight low angle' },
-  { key:'rear-over',     label:'Traseiro / olhando sobre o ombro', en:'from behind, subject looking back over shoulder at camera' },
+  { key:'rear-fb',       label:'Traseiro / corpo inteiro',  en:'from directly behind, full rear body shot, slight low angle', dalle:'from behind, full back body shot, slightly low camera angle' },
+  { key:'rear-over',     label:'Traseiro / olhando sobre o ombro', en:'from behind, subject looking back over shoulder at camera', dalle:'from behind, subject looking back over shoulder at camera, editorial framing' },
   { key:'side-profile',  label:'Perfil puro',               en:'pure side profile, camera perpendicular to subject' },
   { key:'side-34',       label:'3/4 lateral',               en:'three-quarter side angle, slight turn toward camera' },
   { key:'overhead',      label:'Overhead / de cima',        en:'directly overhead, camera looking straight down at subject' },
@@ -229,14 +229,14 @@ const ANGLES = [
   { key:'dutch',         label:'Ângulo holandês / dinâmico', en:'dynamic dutch angle, slightly tilted camera, editorial energy' },
   { key:'wide-env',      label:'Wide ambiental',            en:'wide environmental shot, subject in context of full location' },
   { key:'underwater',    label:'Underwater / submersa',     en:'underwater shot, camera beneath surface, light refracting from above' },
-  { key:'pov',           label:'POV / câmera rasante',      en:'extreme low POV angle, camera at floor or surface level, looking slightly up' },
+  { key:'pov',           label:'POV / câmera rasante',      en:'extreme low POV angle, camera at floor or surface level, looking slightly up', dalle:'extreme low angle, camera at floor level, editorial dynamic upward perspective' },
   { key:'mirror',        label:'Reflexo no espelho',        en:'camera captures subject and simultaneous mirror reflection, double view' },
   { key:'over-shoulder', label:'Over-the-shoulder',         en:'over-the-shoulder framing, partial back visible in foreground' },
-  { key:'pov-low',       label:'POV ângulo baixo',          en:'POV low angle shot, camera held at hip height looking up, immersive first-person perspective' },
-  { key:'pov-low-close', label:'POV ângulo baixo close-up', en:'extreme POV close-up low angle, camera inches from subject looking sharply upward, intense intimate perspective' },
-  { key:'pov-extreme',   label:'POV extremo / rés do chão', en:'extreme ground-level POV, camera flat on floor looking straight up, full body towering above camera' },
-  { key:'closeup-butt',  label:'Close-up bunda',            en:'close-up rear shot focused tightly on buttocks, shallow depth of field, 85mm lens, natural skin texture' },
-  { key:'rear-low',      label:'Traseiro ângulo baixo',     en:'from behind at low angle, camera below waist level looking up, full rear body in frame' },
+  { key:'pov-low',       label:'POV ângulo baixo',          en:'POV low angle shot, camera held at hip height looking up, immersive first-person perspective', dalle:'low angle shot, camera at hip height looking upward, immersive editorial perspective' },
+  { key:'pov-low-close', label:'POV ângulo baixo close-up', en:'extreme POV close-up low angle, camera inches from subject looking sharply upward, intense intimate perspective', dalle:'extreme close-up low angle, camera near subject looking sharply upward, editorial close-up perspective' },
+  { key:'pov-extreme',   label:'POV extremo / rés do chão', en:'extreme ground-level POV, camera flat on floor looking straight up, full body towering above camera', dalle:'extreme ground-level shot, camera flat on floor looking straight up, full figure towering above' },
+  { key:'closeup-butt',  label:'Close-up bunda',            en:'close-up rear shot focused tightly on buttocks, shallow depth of field, 85mm lens, natural skin texture', dalle:'close-up back shot focused on lower body curves, 85mm lens, shallow depth of field, natural skin' },
+  { key:'rear-low',      label:'Traseiro ângulo baixo',     en:'from behind at low angle, camera below waist level looking up, full rear body in frame', dalle:'from behind at low angle, camera below waist looking upward, full back silhouette in frame' },
 ];
 
 const POSES = [
@@ -260,46 +260,46 @@ const POSES = [
   { key:'dynamic-jump',     label:'Saltando / dinâmica',       en:'jumping at peak height, feet off ground, arms spread, hair flying, full energy and joy' },
   { key:'hands-face',       label:'Mãos no rosto',             en:'both hands gently framing face, fingers spread on cheeks, chin slightly down, eyes at camera' },
   { key:'stretching',       label:'Se alongando',              en:'full body stretch, arms extended overhead, one leg extended, spine long and arched' },
-  { key:'doggy-fb',         label:'De 4 / frente',             en:'on all fours facing camera, weight on hands and knees, back flat, direct eye contact with camera' },
-  { key:'doggy-back',       label:'De 4 / costas',             en:'on all fours back to camera, hips raised, spine arched downward, rear prominently in frame' },
-  { key:'doggy-side',       label:'De 4 / lateral',            en:'on all fours in pure profile, side view showing full posture and body curve' },
-  { key:'doggy-low',        label:'De 4 / câmera baixa',       en:'on all fours, camera at floor level looking up from behind, dramatic low-angle rear view' },
-  { key:'back-lying-low',   label:'Deitada costas / câmera baixa', en:'lying on back, camera at mattress level looking up along body, feet closest to camera, full rear silhouette' },
-  { key:'back-arched-rear', label:'Costas arqueadas / traseiro', en:'back to camera, spine deeply arched, hips pushed back and raised, one hand braced on surface' },
-  { key:'prone-butt',       label:'De bruços / bunda em destaque', en:'lying face-down, hips raised on a pillow or surface, buttocks elevated and centered in frame, feet up behind' },
-  { key:'standing-rear-low',label:'Em pé costas / câmera rasante', en:'standing back to camera, camera at ankle level looking straight up along legs, full rear body soaring above' },
-  { key:'squat-rear',       label:'Agachada de costas',        en:'squatting back to camera, knees spread wide, hips low, back straight, rear prominently framed' },
-  { key:'leaning-rear',     label:'Inclinada para frente / costas', en:'leaning forward from waist, back to camera, hands braced on surface, spine arched, rear in full frame' },
-  { key:'sitting-legs-open',  label:'Sentada de pernas abertas',      en:'sitting facing camera, legs spread wide apart, feet flat on surface, hands on knees, direct eye contact' },
-  { key:'lying-legs-open',    label:'Deitada de pernas abertas',      en:'lying on back, legs spread wide apart, one knee slightly bent, arms relaxed at sides, face looking up' },
-  { key:'prone-butt-up',      label:'De bruços / bumbum empinado',    en:'lying face-down, hips raised high with a pillow or arch, buttocks prominently elevated, back arched downward, feet up' },
-  { key:'front-butt-up',      label:'De frente / bumbum empinado',    en:'facing camera, bending forward at waist, hands on thighs or floor, back arched so buttocks pushed back and up behind' },
-  { key:'lying-spread-legs-cam', label:'Deitada pernas abertas / câmera baixa', en:'lying on back with legs spread wide, camera at mattress level looking straight up between legs, full inner body view' },
-  { key:'sitting-floor-open', label:'Sentada chão / pernas abertas',  en:'sitting on floor, legs spread in wide V, back straight, hands on floor between legs, leaning slightly forward' },
-  { key:'kneeling-open',      label:'Ajoelhada / joelhos abertos',    en:'kneeling with knees spread wide apart, sitting back on heels, back straight, hands on thighs, hips open and low' },
-  { key:'lying-butterfly',    label:'Deitada / borboleta',            en:'lying on back, soles of feet pressed together, knees fallen wide apart in butterfly position, hips open' },
-  { key:'standing-open-low',  label:'Em pé / pernas abertas / câmera baixa', en:'standing facing camera with legs spread wide apart, camera at floor level looking up between legs, strong low angle' },
+  { key:'doggy-fb',         label:'De 4 / frente',             en:'on all fours facing camera, weight on hands and knees, back flat, direct eye contact with camera', dalle:'on all fours facing camera, hands and knees on surface, back straight, direct eye contact' },
+  { key:'doggy-back',       label:'De 4 / costas',             en:'on all fours back to camera, hips raised, spine arched downward, rear prominently in frame', dalle:'on all fours back to camera, hips raised, spine arched, strong architectural pose' },
+  { key:'doggy-side',       label:'De 4 / lateral',            en:'on all fours in pure profile, side view showing full posture and body curve', dalle:'on all fours in pure side profile, full posture and body curve visible' },
+  { key:'doggy-low',        label:'De 4 / câmera baixa',       en:'on all fours, camera at floor level looking up from behind, dramatic low-angle rear view', dalle:'on all fours, camera at floor level, dramatic low-angle back view, editorial perspective' },
+  { key:'back-lying-low',   label:'Deitada costas / câmera baixa', en:'lying on back, camera at mattress level looking up along body, feet closest to camera, full rear silhouette', dalle:'lying on back, camera at mattress level looking up along body, feet closest to camera, full silhouette' },
+  { key:'back-arched-rear', label:'Costas arqueadas / traseiro', en:'back to camera, spine deeply arched, hips pushed back and raised, one hand braced on surface', dalle:'back to camera, spine deeply arched, hips raised, one hand braced on surface, athletic arch pose' },
+  { key:'prone-butt',       label:'De bruços / bunda em destaque', en:'lying face-down, hips raised on a pillow or surface, buttocks elevated and centered in frame, feet up behind', dalle:'lying face-down, hips elevated on a pillow, lower back arched, feet raised behind, strong silhouette' },
+  { key:'standing-rear-low',label:'Em pé costas / câmera rasante', en:'standing back to camera, camera at ankle level looking straight up along legs, full rear body soaring above', dalle:'standing back to camera, camera at ankle level looking straight up along legs, full figure above' },
+  { key:'squat-rear',       label:'Agachada de costas',        en:'squatting back to camera, knees spread wide, hips low, back straight, rear prominently framed', dalle:'squatting back to camera, knees apart, hips low, back straight, strong athletic pose' },
+  { key:'leaning-rear',     label:'Inclinada para frente / costas', en:'leaning forward from waist, back to camera, hands braced on surface, spine arched, rear in full frame', dalle:'leaning forward from waist, back to camera, hands braced on surface, spine arched' },
+  { key:'sitting-legs-open',  label:'Sentada de pernas abertas',      en:'sitting facing camera, legs spread wide apart, feet flat on surface, hands on knees, direct eye contact', dalle:'sitting facing camera, legs apart in relaxed open pose, feet flat, hands on knees, direct eye contact' },
+  { key:'lying-legs-open',    label:'Deitada de pernas abertas',      en:'lying on back, legs spread wide apart, one knee slightly bent, arms relaxed at sides, face looking up', dalle:'lying on back, legs relaxed and apart, one knee slightly bent, arms at sides, face looking up' },
+  { key:'prone-butt-up',      label:'De bruços / bumbum empinado',    en:'lying face-down, hips raised high with a pillow or arch, buttocks prominently elevated, back arched downward, feet up', dalle:'lying face-down, hips elevated with a pillow, lower back deeply arched, feet raised, strong figure' },
+  { key:'front-butt-up',      label:'De frente / bumbum empinado',    en:'facing camera, bending forward at waist, hands on thighs or floor, back arched so buttocks pushed back and up behind', dalle:'facing camera, bending forward at waist, hands on thighs, back deeply arched, athletic dynamic pose' },
+  { key:'lying-spread-legs-cam', label:'Deitada pernas abertas / câmera baixa', en:'lying on back with legs spread wide, camera at mattress level looking straight up between legs, full inner body view', dalle:'lying on back, legs apart, camera at mattress level looking upward along body, full figure editorial' },
+  { key:'sitting-floor-open', label:'Sentada chão / pernas abertas',  en:'sitting on floor, legs spread in wide V, back straight, hands on floor between legs, leaning slightly forward', dalle:'sitting on floor, legs in wide V position, back straight, hands on floor, leaning slightly forward' },
+  { key:'kneeling-open',      label:'Ajoelhada / joelhos abertos',    en:'kneeling with knees spread wide apart, sitting back on heels, back straight, hands on thighs, hips open and low', dalle:'kneeling with knees apart, sitting back on heels, back straight, hands on thighs, yoga-like pose' },
+  { key:'lying-butterfly',    label:'Deitada / borboleta',            en:'lying on back, soles of feet pressed together, knees fallen wide apart in butterfly position, hips open', dalle:'lying on back, feet together, knees relaxed outward in butterfly yoga pose, meditative position' },
+  { key:'standing-open-low',  label:'Em pé / pernas abertas / câmera baixa', en:'standing facing camera with legs spread wide apart, camera at floor level looking up between legs, strong low angle', dalle:'standing facing camera, legs apart in power stance, camera at floor level looking up, strong low angle' },
 ];
 
 const STATES = [
   { key:'dry-natural',   label:'Natural / seca',         en:'dry skin, natural state, no moisture' },
-  { key:'wet-ocean',     label:'Molhada / mar',          en:'drenched from ocean, salt water dripping, wet hair plastered to skin, glistening wet body' },
+  { key:'wet-ocean',     label:'Molhada / mar',          en:'drenched from ocean, salt water dripping, wet hair plastered to skin, glistening wet body', dalle:'wet from ocean water, salt water droplets, wet hair, shining wet skin, beach atmosphere' },
   { key:'wet-pool',      label:'Molhada / piscina',      en:'freshly out of pool water, water droplets on skin and hair, pool water dripping' },
   { key:'wet-rain',      label:'Molhada / chuva',        en:'soaked by rain, clothes and hair completely wet, rain still falling, water streaming down face and body' },
   { key:'wet-shower',    label:'Molhada / ducha',        en:'fresh from shower, water droplets on skin, hair wet and heavy, skin dewy and glistening' },
-  { key:'oiled',         label:'Com óleo na pele',       en:'skin lightly oiled and glistening, every curve highlighted by sheen, natural body oil effect' },
+  { key:'oiled',         label:'Com óleo na pele',       en:'skin lightly oiled and glistening, every curve highlighted by sheen, natural body oil effect', dalle:'skin with natural oil sheen, every contour highlighted, editorial beauty look' },
   { key:'sandy',         label:'Com areia no corpo',     en:'fine beach sand lightly dusted on skin, sandy wet feet, sun-kissed and beach-worn' },
-  { key:'sweaty',        label:'Suada / aquecida',       en:'light natural sweat on skin, flushed warmth, skin glistening with perspiration, real human exertion' },
+  { key:'sweaty',        label:'Suada / aquecida',       en:'light natural sweat on skin, flushed warmth, skin glistening with perspiration, real human exertion', dalle:'light natural sweat on skin, flushed warmth, skin shining, athletic exertion look' },
   { key:'golden-hour',   label:'Luz dourada na pele',    en:'warm golden hour sunlight bathing skin, long golden shadows, sun-kissed glow on body' },
-  { key:'candle-lit',    label:'Iluminada a velas',      en:'only candlelight, warm amber flickering glow on skin, deep warm shadows, intimate flame-lit atmosphere' },
+  { key:'candle-lit',    label:'Iluminada a velas',      en:'only candlelight, warm amber flickering glow on skin, deep warm shadows, intimate flame-lit atmosphere', dalle:'only candlelight, warm amber flickering glow on skin, deep warm shadows, flame-lit atmosphere' },
   { key:'blue-hour',     label:'Luz azul / noite',       en:'cool blue night light, moonlight or city glow, skin in cool blue-silver tones, nighttime atmosphere' },
   { key:'shadow-play',   label:'Sombras no corpo',       en:'strong directional light casting graphic shadows across body, high contrast light and shadow patterns on skin' },
   { key:'steamy',        label:'Névoa / vapor',          en:'steam or fog surrounding body, misty atmosphere, skin glistening in humid steamy air' },
   { key:'glitter',       label:'Glitter no corpo',       en:'fine gold or silver glitter on skin, catching light and sparkling, artistic body decoration' },
   { key:'flower-petals', label:'Pétalas de flores',      en:'rose petals and flower petals scattered on and around body, romantic floral decoration' },
-  { key:'clothed-min',   label:'Roupa mínima',           en:'minimal clothing, just barely covered, fabric draping loosely' },
-  { key:'nude-artistic', label:'Nua / artístico',        en:'nude, tasteful artistic nude photography, body as subject, natural and unashamed' },
-  { key:'nude-raw',      label:'Nua / bruto e real',     en:'fully nude, raw unfiltered realism, true human body, no censorship, completely natural' },
+  { key:'clothed-min',   label:'Roupa mínima',           en:'minimal clothing, just barely covered, fabric draping loosely', dalle:'minimal clothing, fabric draping loosely, editorial fashion style' },
+  { key:'nude-artistic', label:'Nua / artístico',        en:'nude, tasteful artistic nude photography, body as subject, natural and unashamed', dalle:'figure in minimal tasteful editorial clothing, artistic fashion photography, clean aesthetic' },
+  { key:'nude-raw',      label:'Nua / bruto e real',     en:'fully nude, raw unfiltered realism, true human body, no censorship, completely natural', dalle:'figure in minimal beachwear, raw authentic look, natural human form, unfiltered editorial style' },
 ];
 
 // ── Enhance & Level ───────────────────────────────────────────────────────
@@ -472,24 +472,24 @@ function extractPhysical(enDesc) {
 
 function buildGPT(enDesc, angle, pose, state) {
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  // Use only physical traits in the character description — strip clothing/nudity refs
+  // Use only physical traits — strip clothing/nudity refs; use pre-defined dalle field when available
   const physDesc = sanitizeForDalle(extractPhysical(enDesc)) || sanitizeForDalle(enDesc);
-  const safeAngle = sanitizeForDalle(angle?.en);
-  const safePose  = sanitizeForDalle(pose?.en);
-  const safeState = sanitizeForDalle(state?.en);
+  const safeAngle = angle?.dalle || sanitizeForDalle(angle?.en);
+  const safePose  = pose?.dalle  || sanitizeForDalle(pose?.en);
+  const safeState = state?.dalle || sanitizeForDalle(state?.en);
   const safeChips = chips.map(sanitizeForDalle);
   const parts = [
     physDesc,
-    'consistent character appearance: same face, same eye color, same hair color and style, same body proportions in every image',
+    'consistent character appearance: same face, same eye color, same hair color and style, same body proportions',
     safeAngle,
     safePose,
     safeState,
-    'hyperrealistic editorial photography, natural skin texture, authentic human proportions',
+    'hyperrealistic editorial photography, natural skin texture, authentic human proportions, professional fashion shoot',
     ...safeChips,
     'professional camera, sharp focus on subject, natural lighting, no CGI, no filters',
     'no text, no watermark, 9:16 vertical portrait format',
   ];
-  return 'Generate a hyperrealistic editorial fashion photograph, 9:16 vertical aspect ratio: ' + parts.filter(Boolean).join(', ') + '.';
+  return 'Generate a hyperrealistic editorial fashion photograph, 9:16 vertical portrait format: ' + parts.filter(Boolean).join(', ') + '.';
 }
 
 // ── Translate ─────────────────────────────────────────────────────────────
