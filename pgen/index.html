@@ -161,14 +161,17 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 [data-theme="light"] body{background:var(--bg)}
 
 /* ── Combos rápidos ── */
-.combos-section{margin-bottom:0}
-.combos-label{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
-  opacity:.65;margin-bottom:9px;display:block}
-.combos-grid{display:flex;flex-wrap:wrap;gap:7px}
-.combo-btn{padding:7px 13px;border-radius:22px;border:1px solid var(--border);background:transparent;
-  color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;
-  transition:all .15s;user-select:none;line-height:1.3}
+.combos-wrapper{display:flex;flex-direction:column;gap:14px}
+.combo-group-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.combo-group-title{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  opacity:.8;margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.combo-group-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.combo-group-grid{display:flex;flex-wrap:wrap;gap:7px}
+.combo-btn{padding:8px 15px;border-radius:22px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;
+  transition:all .15s;user-select:none;line-height:1.4;text-align:left}
 .combo-btn:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.combo-btn.active-combo{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}
 
 /* ── Avançado accordion ── */
 .advanced-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;
@@ -229,10 +232,7 @@ header{position:relative}
   </div>
 
   <!-- Combos rápidos -->
-  <div class="card combos-section" id="combos-card">
-    <span class="combos-label">⚡ Combos rápidos — um clique preenche tudo</span>
-    <div class="combos-grid" id="combos-grid"></div>
-  </div>
+  <div class="combos-wrapper" id="combos-grid"></div>
 
   <!-- Avançado: seletores manuais -->
   <button class="advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">
@@ -268,185 +268,175 @@ let selExpression = null;
 
 // ── Combos ────────────────────────────────────────────────────────────────
 const COMBOS = [
-  // ── Praia & Água ──
-  { label:'🏖 Praia / Em pé / Pôr do sol', level:'soft',
+  // ── Praia & Água ──────────────────────────────────────────────────────────
+  { group:'🏖 Praia & Água', label:'Em pé / Pôr do sol / Molhada', level:'soft',
     angle:'low-angle', pose:'standing-front', state:'wet-ocean', location:'beach', expression:'seductive' },
-  { label:'🌊 Praia / De 4 costas / Molhada', level:'bold',
-    angle:'doggy-low', pose:'doggy-back', state:'wet-ocean', location:'beach', expression:'natural' },
-  { label:'🏄 Praia / Deitada costas / Câmera baixa', level:'bold',
-    angle:'rear-low', pose:'back-lying-low', state:'wet-ocean', location:'beach', expression:'eyes-closed' },
-  { label:'🌅 Praia / Pernas abertas / Golden hour', level:'bold',
-    angle:'overhead', pose:'lying-legs-open', state:'golden-hour', location:'beach', expression:'lips-apart' },
-  { label:'🏊 Piscina / Underwater / Molhada', level:'soft',
-    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'eyes-closed' },
-  { label:'💦 Piscina / Em pé de costas / Molhada', level:'soft',
-    angle:'rear-over', pose:'standing-back', state:'wet-pool', location:'pool', expression:'looking-up' },
-  // ── Ducha & Banheiro ──
-  { label:'🛁 Ducha / Em pé / Braços levantados', level:'soft',
-    angle:'frontal-fb', pose:'standing-arms', state:'wet-shower', location:'shower', expression:'eyes-closed' },
-  { label:'🚿 Ducha / S-curve / Vapor', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'steamy', location:'shower', expression:'lips-apart' },
-  { label:'💧 Ducha / Encostada parede / Molhada', level:'bold',
-    angle:'frontal-med', pose:'standing-wall', state:'wet-shower', location:'shower', expression:'seductive' },
-  // ── Quarto & Sofá ──
-  { label:'🛏 Quarto / Deitada costas / Velas', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'candle-lit', location:'bedroom', expression:'soft-smile' },
-  { label:'🌙 Quarto / Deitada lado / Luz azul', level:'soft',
-    angle:'side-profile', pose:'lying-side', state:'blue-hour', location:'bedroom', expression:'eyes-closed' },
-  { label:'🕯 Quarto / De bruços / Velas', level:'bold',
-    angle:'rear-low', pose:'prone-butt', state:'candle-lit', location:'bedroom', expression:'lips-apart' },
-  { label:'🪞 Quarto / Espelho / S-curve', level:'sfw',
-    angle:'mirror', pose:'s-curve', state:'dry-natural', location:'bedroom', expression:'soft-smile' },
-  { label:'🛋 Sofá / Sentada borda / Velas', level:'soft',
-    angle:'side-34', pose:'sitting-edge', state:'candle-lit', location:'sofa', expression:'seductive' },
-  { label:'🛋 Sofá / Ajoelhada frente / Sombras', level:'bold',
-    angle:'low-angle', pose:'kneeling', state:'shadow-play', location:'sofa', expression:'serious' },
-  // ── Academia & Fitness ──
-  { label:'🏋️ Academia / Agachamento / Suada', level:'sfw',
-    angle:'frontal-fb', pose:'squat-front', state:'sweaty', location:'gym', expression:'serious' },
-  { label:'💪 Academia / Hip thrust / Suada', level:'bold',
-    angle:'side-profile', pose:'hip-thrust', state:'sweaty', location:'gym', expression:'serious' },
-  { label:'🧘 Academia / Prancha / Natural', level:'sfw',
-    angle:'side-profile', pose:'plank', state:'dry-natural', location:'gym', expression:'serious' },
-  { label:'🤸 Academia / Spagat / Suada', level:'sfw',
-    angle:'frontal-fb', pose:'split', state:'sweaty', location:'gym', expression:'mouth-open' },
-  // ── Yoga & Dança ──
-  { label:'🌿 Floresta / Yoga Cobra / Óleo', level:'soft',
-    angle:'side-profile', pose:'yoga-cobra', state:'oiled', location:'forest', expression:'eyes-closed' },
-  { label:'🧘 Estúdio / Yoga Guerreiro / Natural', level:'sfw',
-    angle:'side-34', pose:'yoga-warrior', state:'dry-natural', location:'studio', expression:'serious' },
-  { label:'🩰 Estúdio / Arabesque / Glitter', level:'sfw',
-    angle:'side-profile', pose:'dance-arabesque', state:'glitter', location:'studio', expression:'looking-up' },
-  { label:'💃 Cidade / Dança curvatura / Noite', level:'soft',
-    angle:'wide-env', pose:'dance-side-bend', state:'blue-hour', location:'urban', expression:'mouth-open' },
-  // ── Exterior & Natureza ──
-  { label:'🌧 Chuva / Em pé de costas / Molhada', level:'soft',
-    angle:'rear-fb', pose:'standing-back', state:'wet-rain', location:'rain-street', expression:'looking-up' },
-  { label:'🌆 Cidade / Caminhando / Seco', level:'sfw',
-    angle:'wide-env', pose:'walking', state:'dry-natural', location:'urban', expression:'serious' },
-  { label:'🌇 Rooftop / Em pé perfil / Noite', level:'soft',
-    angle:'side-profile', pose:'standing-side', state:'blue-hour', location:'rooftop', expression:'looking-up' },
-  { label:'🌲 Floresta / Sentada chão / Golden', level:'sfw',
-    angle:'side-34', pose:'sitting-floor', state:'golden-hour', location:'forest', expression:'soft-smile' },
-  // ── Estúdio ──
-  { label:'💡 Estúdio / Bridge / Glitter', level:'bold',
-    angle:'low-angle', pose:'arching', state:'glitter', location:'studio', expression:'mouth-open' },
-  { label:'📸 Estúdio / Frontal close / Natural', level:'sfw',
-    angle:'frontal-close', pose:'hands-face', state:'dry-natural', location:'studio', expression:'soft-smile' },
-  { label:'✨ Estúdio / Saltando / Pétalas', level:'sfw',
-    angle:'wide-env', pose:'dynamic-jump', state:'flower-petals', location:'studio', expression:'soft-smile' },
-  { label:'🖤 Estúdio / Over shoulder / Sombras', level:'soft',
-    angle:'over-shoulder', pose:'standing-back', state:'shadow-play', location:'studio', expression:'side-glance' },
-  // ── POV & Ângulos especiais ──
-  { label:'👁 POV baixo / Em pé / Contra-luz', level:'bold',
-    angle:'pov-low', pose:'standing-front', state:'golden-hour', location:'beach', expression:'seductive' },
-  { label:'📷 POV extremo / Em pé costas / Praia', level:'bold',
-    angle:'pov-extreme', pose:'standing-rear-low', state:'wet-ocean', location:'beach', expression:'natural' },
-  { label:'🎥 POV close / Ajoelhada / Velas', level:'bold',
-    angle:'pov-low-close', pose:'kneeling', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { label:'🔍 Close bunda / De bruços / Golden', level:'bold',
-    angle:'closeup-butt', pose:'prone-butt-up', state:'golden-hour', location:'golden-out', expression:'natural' },
-  // ── Poses abertas & Traseiro ──
-  { label:'🌙 Noite / De bruços bumbum / Azul', level:'bold',
-    angle:'rear-low', pose:'prone-butt', state:'blue-hour', location:'rooftop', expression:'lips-apart' },
-  { label:'🔥 Quarto / Costas arqueadas / Velas', level:'bold',
-    angle:'rear-fb', pose:'back-arched-rear', state:'candle-lit', location:'bedroom', expression:'natural' },
-  { label:'💦 Piscina / Sentada pernas abertas / Molhada', level:'bold',
-    angle:'frontal-fb', pose:'sitting-legs-open', state:'wet-pool', location:'pool', expression:'lips-apart' },
-  { label:'🌊 Praia / Borboleta / Golden hour', level:'bold',
-    angle:'overhead', pose:'lying-butterfly', state:'golden-hour', location:'beach', expression:'eyes-closed' },
-  { label:'🛏 Quarto / Agachada costas / Sombras', level:'bold',
-    angle:'rear-low', pose:'squat-rear', state:'shadow-play', location:'bedroom', expression:'natural' },
-  { label:'🌿 Floresta / Inclinada costas / Óleo', level:'bold',
-    angle:'over-shoulder', pose:'leaning-rear', state:'oiled', location:'forest', expression:'side-glance' },
-  { label:'🏖 Praia / Dobrada perfil / Molhada', level:'bold',
-    angle:'side-profile', pose:'bent-over-side', state:'wet-ocean', location:'beach', expression:'natural' },
-  // ── Especiais / mood ──
-  { label:'🌸 Estúdio / Alongando / Pétalas', level:'sfw',
-    angle:'wide-env', pose:'stretching', state:'flower-petals', location:'studio', expression:'eyes-closed' },
-  { label:'🌙 Quarto / Sentada cavalinha / Velas', level:'soft',
-    angle:'side-34', pose:'sitting-straddle', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { label:'🎞 Cidade / Dutch angle / Seco', level:'sfw',
-    angle:'dutch', pose:'walking', state:'dry-natural', location:'urban', expression:'serious' },
-  { label:'🌊 Underwater / Braços levantados / Pool', level:'soft',
-    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'eyes-closed' },
-
-  // ── Sensuais ChatGPT-safe ──
-  // Óleo & luz
-  { label:'🕯 Estúdio / S-curve / Óleo + Velas', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'oiled', location:'studio', expression:'lips-apart' },
-  { label:'✨ Quarto / Deitada lado / Óleo + Sombras', level:'soft',
-    angle:'side-34', pose:'lying-side', state:'oiled', location:'bedroom', expression:'seductive' },
-  { label:'🌿 Floresta / S-curve / Óleo + Golden', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'oiled', location:'forest', expression:'eyes-closed' },
-  { label:'🖤 Estúdio / Costas arqueadas / Óleo', level:'soft',
-    angle:'rear-fb', pose:'back-arched-rear', state:'oiled', location:'studio', expression:'natural' },
-  { label:'💫 Rooftop / Em pé perfil / Óleo + Noite', level:'soft',
-    angle:'side-34', pose:'standing-side', state:'oiled', location:'rooftop', expression:'side-glance' },
-
-  // Ducha / água sensual
-  { label:'🚿 Ducha / S-curve perfil / Vapor', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'steamy', location:'shower', expression:'eyes-closed' },
-  { label:'💧 Ducha / Deitada costas / Molhada', level:'soft',
-    angle:'side-34', pose:'lying-back', state:'wet-shower', location:'shower', expression:'lips-apart' },
-  { label:'🌊 Piscina / S-curve costas / Molhada', level:'soft',
-    angle:'rear-over', pose:'s-curve', state:'wet-pool', location:'pool', expression:'side-glance' },
-  { label:'🏖 Praia / S-curve frente / Molhada', level:'soft',
+  { group:'🏖 Praia & Água', label:'S-curve frente / Molhada', level:'soft',
     angle:'side-34', pose:'s-curve', state:'wet-ocean', location:'beach', expression:'seductive' },
-  { label:'💦 Praia / Encostada parede / Molhada', level:'soft',
+  { group:'🏖 Praia & Água', label:'Encostada / Molhada / Olhar direto', level:'soft',
     angle:'frontal-med', pose:'standing-wall', state:'wet-ocean', location:'beach', expression:'lips-apart' },
+  { group:'🏖 Praia & Água', label:'S-curve costas / Olhando sobre ombro', level:'soft',
+    angle:'rear-over', pose:'s-curve', state:'wet-ocean', location:'beach', expression:'side-glance' },
+  { group:'🏖 Praia & Água', label:'Deitada costas / Câmera baixa', level:'bold',
+    angle:'rear-low', pose:'back-lying-low', state:'wet-ocean', location:'beach', expression:'eyes-closed' },
+  { group:'🏖 Praia & Água', label:'Deitada / Pernas abertas / Golden', level:'soft',
+    angle:'overhead', pose:'lying-legs-open', state:'golden-hour', location:'beach', expression:'lips-apart' },
+  { group:'🏖 Praia & Água', label:'Piscina / Underwater / Molhada', level:'soft',
+    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'eyes-closed' },
+  { group:'🏖 Praia & Água', label:'Piscina / Em pé costas / Molhada', level:'soft',
+    angle:'rear-over', pose:'standing-back', state:'wet-pool', location:'pool', expression:'looking-up' },
+  { group:'🏖 Praia & Água', label:'Piscina / Sentada pernas abertas / Molhada', level:'soft',
+    angle:'frontal-fb', pose:'sitting-legs-open', state:'wet-pool', location:'pool', expression:'seductive' },
 
-  // Velas & quarto sensual
-  { label:'🕯 Quarto / S-curve espelho / Velas', level:'soft',
+  // ── Ducha & Vapor ─────────────────────────────────────────────────────────
+  { group:'🚿 Ducha & Vapor', label:'Em pé / Braços levantados / Molhada', level:'soft',
+    angle:'frontal-fb', pose:'standing-arms', state:'wet-shower', location:'shower', expression:'eyes-closed' },
+  { group:'🚿 Ducha & Vapor', label:'S-curve perfil / Vapor', level:'soft',
+    angle:'side-profile', pose:'s-curve', state:'steamy', location:'shower', expression:'lips-apart' },
+  { group:'🚿 Ducha & Vapor', label:'S-curve 3/4 / Vapor + olhar', level:'soft',
+    angle:'side-34', pose:'s-curve', state:'steamy', location:'shower', expression:'seductive' },
+  { group:'🚿 Ducha & Vapor', label:'Encostada parede / Molhada / Olhar', level:'soft',
+    angle:'frontal-med', pose:'standing-wall', state:'wet-shower', location:'shower', expression:'seductive' },
+  { group:'🚿 Ducha & Vapor', label:'Deitada costas / Molhada', level:'soft',
+    angle:'side-34', pose:'lying-back', state:'wet-shower', location:'shower', expression:'lips-apart' },
+
+  // ── Quarto & Velas ────────────────────────────────────────────────────────
+  { group:'🕯 Quarto & Velas', label:'Deitada costas / Velas / Sorriso', level:'soft',
+    angle:'overhead', pose:'lying-back', state:'candle-lit', location:'bedroom', expression:'soft-smile' },
+  { group:'🕯 Quarto & Velas', label:'Deitada lado / Luz azul', level:'soft',
+    angle:'side-profile', pose:'lying-side', state:'blue-hour', location:'bedroom', expression:'eyes-closed' },
+  { group:'🕯 Quarto & Velas', label:'Deitada lado / Velas / Lábios', level:'soft',
+    angle:'side-34', pose:'lying-side', state:'candle-lit', location:'bedroom', expression:'lips-apart' },
+  { group:'🕯 Quarto & Velas', label:'S-curve espelho / Velas', level:'soft',
     angle:'mirror', pose:'s-curve', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { label:'🌙 Quarto / Em pé de costas / Velas', level:'soft',
-    angle:'rear-over', pose:'standing-back', state:'candle-lit', location:'bedroom', expression:'looking-up' },
-  { label:'🔥 Quarto / Inclinada frente / Sombras', level:'soft',
-    angle:'side-34', pose:'leaning-rear', state:'shadow-play', location:'bedroom', expression:'side-glance' },
-  { label:'💋 Quarto / Sentada borda / Velas + olhar', level:'soft',
+  { group:'🕯 Quarto & Velas', label:'Sentada borda / Velas / Olhar', level:'soft',
     angle:'frontal-med', pose:'sitting-edge', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { label:'🌙 Sofá / Deitada lado / Velas', level:'soft',
-    angle:'side-profile', pose:'lying-side', state:'candle-lit', location:'sofa', expression:'lips-apart' },
+  { group:'🕯 Quarto & Velas', label:'Em pé costas / Velas', level:'soft',
+    angle:'rear-over', pose:'standing-back', state:'candle-lit', location:'bedroom', expression:'looking-up' },
+  { group:'🕯 Quarto & Velas', label:'Sentada cavalinha / Velas', level:'soft',
+    angle:'side-34', pose:'sitting-straddle', state:'candle-lit', location:'bedroom', expression:'seductive' },
+  { group:'🕯 Quarto & Velas', label:'Deitada costas / Glitter + Velas', level:'soft',
+    angle:'overhead', pose:'lying-back', state:'glitter', location:'bedroom', expression:'soft-smile' },
 
-  // Golden hour sensual
-  { label:'🌅 Exterior / S-curve / Golden + costas', level:'soft',
-    angle:'rear-over', pose:'s-curve', state:'golden-hour', location:'golden-out', expression:'looking-up' },
-  { label:'🌇 Rooftop / Deitada costas / Golden', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'golden-hour', location:'rooftop', expression:'eyes-closed' },
-  { label:'🌄 Floresta / Em pé perfil / Golden + Óleo', level:'soft',
-    angle:'side-profile', pose:'standing-side', state:'oiled', location:'forest', expression:'lips-apart' },
+  // ── Pernas abertas (ChatGPT-safe) ─────────────────────────────────────────
+  { group:'🦋 Pernas Abertas', label:'Sentada frente / Velas / Olhar direto', level:'soft',
+    angle:'frontal-fb', pose:'sitting-legs-open', state:'candle-lit', location:'bedroom', expression:'seductive' },
+  { group:'🦋 Pernas Abertas', label:'Sentada frente / Sombras / Poderosa', level:'soft',
+    angle:'frontal-med', pose:'sitting-legs-open', state:'shadow-play', location:'studio', expression:'serious' },
+  { group:'🦋 Pernas Abertas', label:'Sentada frente / Golden hour', level:'soft',
+    angle:'low-angle', pose:'sitting-legs-open', state:'golden-hour', location:'golden-out', expression:'lips-apart' },
+  { group:'🦋 Pernas Abertas', label:'Sentada frente / Molhada / Piscina', level:'soft',
+    angle:'frontal-fb', pose:'sitting-legs-open', state:'wet-pool', location:'pool', expression:'seductive' },
+  { group:'🦋 Pernas Abertas', label:'Sentada frente / Glitter / Estúdio', level:'soft',
+    angle:'frontal-fb', pose:'sitting-legs-open', state:'glitter', location:'studio', expression:'soft-smile' },
+  { group:'🦋 Pernas Abertas', label:'Deitada / Pernas abertas / Velas', level:'soft',
+    angle:'overhead', pose:'lying-legs-open', state:'candle-lit', location:'bedroom', expression:'lips-apart' },
+  { group:'🦋 Pernas Abertas', label:'Deitada / Pernas abertas / Sombras', level:'soft',
+    angle:'overhead', pose:'lying-legs-open', state:'shadow-play', location:'studio', expression:'seductive' },
+  { group:'🦋 Pernas Abertas', label:'Deitada / Pernas abertas / Noite', level:'soft',
+    angle:'overhead', pose:'lying-legs-open', state:'blue-hour', location:'rooftop', expression:'eyes-closed' },
+  { group:'🦋 Pernas Abertas', label:'Deitada / Borboleta yoga / Golden', level:'soft',
+    angle:'overhead', pose:'lying-butterfly', state:'golden-hour', location:'beach', expression:'eyes-closed' },
+  { group:'🦋 Pernas Abertas', label:'Deitada / Borboleta / Velas', level:'soft',
+    angle:'overhead', pose:'lying-butterfly', state:'candle-lit', location:'bedroom', expression:'soft-smile' },
 
-  // Sombras dramáticas
-  { label:'🖤 Estúdio / Em pé costas / Sombras', level:'soft',
-    angle:'rear-fb', pose:'standing-back', state:'shadow-play', location:'studio', expression:'natural' },
-  { label:'🌑 Estúdio / Deitada costas / Sombras', level:'soft',
-    angle:'side-profile', pose:'lying-back', state:'shadow-play', location:'studio', expression:'eyes-closed' },
-  { label:'🖤 Sofá / S-curve / Sombras + Noite', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'shadow-play', location:'sofa', expression:'seductive' },
-
-  // POV sensual
-  { label:'👁 POV baixo / S-curve / Golden', level:'soft',
-    angle:'pov-low', pose:'s-curve', state:'golden-hour', location:'beach', expression:'seductive' },
-  { label:'🎥 POV baixo / Em pé costas / Velas', level:'soft',
-    angle:'pov-low', pose:'standing-back', state:'candle-lit', location:'bedroom', expression:'natural' },
-  { label:'📷 Over-shoulder / S-curve / Óleo', level:'soft',
+  // ── Óleo & Luz Direcional ─────────────────────────────────────────────────
+  { group:'✨ Óleo & Luz', label:'S-curve perfil / Óleo + Velas', level:'soft',
+    angle:'side-profile', pose:'s-curve', state:'oiled', location:'studio', expression:'lips-apart' },
+  { group:'✨ Óleo & Luz', label:'S-curve 3/4 / Óleo + Golden', level:'soft',
+    angle:'side-34', pose:'s-curve', state:'oiled', location:'forest', expression:'eyes-closed' },
+  { group:'✨ Óleo & Luz', label:'Deitada lado / Óleo + Sombras', level:'soft',
+    angle:'side-34', pose:'lying-side', state:'oiled', location:'bedroom', expression:'seductive' },
+  { group:'✨ Óleo & Luz', label:'Costas arqueadas / Óleo / Estúdio', level:'soft',
+    angle:'rear-fb', pose:'back-arched-rear', state:'oiled', location:'studio', expression:'natural' },
+  { group:'✨ Óleo & Luz', label:'Em pé perfil / Óleo + Noite', level:'soft',
+    angle:'side-34', pose:'standing-side', state:'oiled', location:'rooftop', expression:'side-glance' },
+  { group:'✨ Óleo & Luz', label:'Bridge / Óleo + Sombras', level:'soft',
+    angle:'side-profile', pose:'arching', state:'oiled', location:'studio', expression:'lips-apart' },
+  { group:'✨ Óleo & Luz', label:'Floresta / Yoga Cobra / Óleo', level:'soft',
+    angle:'side-profile', pose:'yoga-cobra', state:'oiled', location:'forest', expression:'eyes-closed' },
+  { group:'✨ Óleo & Luz', label:'Over-shoulder / S-curve / Óleo', level:'soft',
     angle:'over-shoulder', pose:'s-curve', state:'oiled', location:'studio', expression:'side-glance' },
 
-  // Yoga / fitness sensual
-  { label:'🌿 Floresta / Yoga Cobra / Golden', level:'soft',
-    angle:'side-34', pose:'yoga-cobra', state:'golden-hour', location:'forest', expression:'eyes-closed' },
-  { label:'🧘 Estúdio / Bridge / Óleo + Sombras', level:'soft',
-    angle:'side-profile', pose:'arching', state:'oiled', location:'studio', expression:'lips-apart' },
-  { label:'💃 Estúdio / Dança curvatura / Glitter', level:'soft',
-    angle:'side-34', pose:'dance-side-bend', state:'glitter', location:'studio', expression:'mouth-open' },
+  // ── Sombras Dramáticas ────────────────────────────────────────────────────
+  { group:'🖤 Sombras Dramáticas', label:'S-curve / Sombras + Noite / Sofá', level:'soft',
+    angle:'side-34', pose:'s-curve', state:'shadow-play', location:'sofa', expression:'seductive' },
+  { group:'🖤 Sombras Dramáticas', label:'Em pé costas / Sombras / Estúdio', level:'soft',
+    angle:'rear-fb', pose:'standing-back', state:'shadow-play', location:'studio', expression:'natural' },
+  { group:'🖤 Sombras Dramáticas', label:'Deitada / Sombras / Estúdio', level:'soft',
+    angle:'side-profile', pose:'lying-back', state:'shadow-play', location:'studio', expression:'eyes-closed' },
+  { group:'🖤 Sombras Dramáticas', label:'Inclinada / Sombras / Quarto', level:'soft',
+    angle:'side-34', pose:'leaning-rear', state:'shadow-play', location:'bedroom', expression:'side-glance' },
+  { group:'🖤 Sombras Dramáticas', label:'Ajoelhada / Sombras / Sofá', level:'bold',
+    angle:'low-angle', pose:'kneeling', state:'shadow-play', location:'sofa', expression:'serious' },
 
-  // Glitter & pétalas sensual
-  { label:'✨ Quarto / Deitada costas / Glitter + Velas', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'glitter', location:'bedroom', expression:'soft-smile' },
-  { label:'🌸 Praia / Em pé / Pétalas + Golden', level:'soft',
-    angle:'wide-env', pose:'standing-arms', state:'flower-petals', location:'beach', expression:'eyes-closed' },
-  { label:'💫 Estúdio / S-curve / Glitter + Sombras', level:'soft',
+  // ── Golden Hour & Exterior ────────────────────────────────────────────────
+  { group:'🌅 Golden Hour', label:'S-curve costas / Golden / Exterior', level:'soft',
+    angle:'rear-over', pose:'s-curve', state:'golden-hour', location:'golden-out', expression:'looking-up' },
+  { group:'🌅 Golden Hour', label:'Deitada costas / Golden / Rooftop', level:'soft',
+    angle:'overhead', pose:'lying-back', state:'golden-hour', location:'rooftop', expression:'eyes-closed' },
+  { group:'🌅 Golden Hour', label:'Em pé perfil / Óleo + Golden / Floresta', level:'soft',
+    angle:'side-profile', pose:'standing-side', state:'oiled', location:'forest', expression:'lips-apart' },
+  { group:'🌅 Golden Hour', label:'POV baixo / Em pé / Golden / Praia', level:'soft',
+    angle:'pov-low', pose:'s-curve', state:'golden-hour', location:'beach', expression:'seductive' },
+  { group:'🌅 Golden Hour', label:'Floresta / Sentada chão / Golden', level:'sfw',
+    angle:'side-34', pose:'sitting-floor', state:'golden-hour', location:'forest', expression:'soft-smile' },
+
+  // ── Fitness & Dança ───────────────────────────────────────────────────────
+  { group:'💪 Fitness & Dança', label:'Hip thrust / Suada / Perfil', level:'soft',
+    angle:'side-profile', pose:'hip-thrust', state:'sweaty', location:'gym', expression:'serious' },
+  { group:'💪 Fitness & Dança', label:'Agachamento / Suada / Frente', level:'sfw',
+    angle:'frontal-fb', pose:'squat-front', state:'sweaty', location:'gym', expression:'serious' },
+  { group:'💪 Fitness & Dança', label:'Spagat / Suada / Estúdio', level:'sfw',
+    angle:'frontal-fb', pose:'split', state:'sweaty', location:'gym', expression:'mouth-open' },
+  { group:'💪 Fitness & Dança', label:'Bridge / Glitter / Estúdio', level:'soft',
+    angle:'low-angle', pose:'arching', state:'glitter', location:'studio', expression:'mouth-open' },
+  { group:'💪 Fitness & Dança', label:'Dança curvatura / Glitter / Estúdio', level:'soft',
+    angle:'side-34', pose:'dance-side-bend', state:'glitter', location:'studio', expression:'mouth-open' },
+  { group:'💪 Fitness & Dança', label:'Arabesque / Glitter / Estúdio', level:'sfw',
+    angle:'side-profile', pose:'dance-arabesque', state:'glitter', location:'studio', expression:'looking-up' },
+
+  // ── Estúdio Artístico ─────────────────────────────────────────────────────
+  { group:'📸 Estúdio Artístico', label:'Over shoulder / Sombras / Estúdio', level:'soft',
+    angle:'over-shoulder', pose:'standing-back', state:'shadow-play', location:'studio', expression:'side-glance' },
+  { group:'📸 Estúdio Artístico', label:'S-curve / Glitter + Sombras', level:'soft',
     angle:'side-profile', pose:'s-curve', state:'glitter', location:'studio', expression:'seductive' },
+  { group:'📸 Estúdio Artístico', label:'Saltando / Pétalas / Wide', level:'sfw',
+    angle:'wide-env', pose:'dynamic-jump', state:'flower-petals', location:'studio', expression:'soft-smile' },
+  { group:'📸 Estúdio Artístico', label:'Alongando / Pétalas / Olhos fechados', level:'sfw',
+    angle:'wide-env', pose:'stretching', state:'flower-petals', location:'studio', expression:'eyes-closed' },
+  { group:'📸 Estúdio Artístico', label:'Frontal close / Natural / Rosto', level:'sfw',
+    angle:'frontal-close', pose:'hands-face', state:'dry-natural', location:'studio', expression:'soft-smile' },
+  { group:'📸 Estúdio Artístico', label:'Espelho / S-curve / Quarto', level:'sfw',
+    angle:'mirror', pose:'s-curve', state:'dry-natural', location:'bedroom', expression:'soft-smile' },
+
+  // ── POV & Ângulos Extremos ────────────────────────────────────────────────
+  { group:'👁 POV & Extremos', label:'POV baixo / Em pé costas / Velas', level:'soft',
+    angle:'pov-low', pose:'standing-back', state:'candle-lit', location:'bedroom', expression:'natural' },
+  { group:'👁 POV & Extremos', label:'POV extremo / Em pé costas / Praia', level:'bold',
+    angle:'pov-extreme', pose:'standing-rear-low', state:'wet-ocean', location:'beach', expression:'natural' },
+  { group:'👁 POV & Extremos', label:'POV close / Ajoelhada / Velas', level:'bold',
+    angle:'pov-low-close', pose:'kneeling', state:'candle-lit', location:'bedroom', expression:'seductive' },
+  { group:'👁 POV & Extremos', label:'Dutch angle / Cidade / Caminhando', level:'sfw',
+    angle:'dutch', pose:'walking', state:'dry-natural', location:'urban', expression:'serious' },
+  { group:'👁 POV & Extremos', label:'Underwater / Braços levantados / Pool', level:'soft',
+    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'eyes-closed' },
+
+  // ── Traseiro & Poses Arquitetônicas ───────────────────────────────────────
+  { group:'🔥 Traseiro & Arquitetura', label:'De 4 costas / Câmera baixa / Molhada', level:'bold',
+    angle:'doggy-low', pose:'doggy-back', state:'wet-ocean', location:'beach', expression:'natural' },
+  { group:'🔥 Traseiro & Arquitetura', label:'De bruços / Velas / Quarto', level:'bold',
+    angle:'rear-low', pose:'prone-butt', state:'candle-lit', location:'bedroom', expression:'lips-apart' },
+  { group:'🔥 Traseiro & Arquitetura', label:'Costas arqueadas / Velas / Quarto', level:'bold',
+    angle:'rear-fb', pose:'back-arched-rear', state:'candle-lit', location:'bedroom', expression:'natural' },
+  { group:'🔥 Traseiro & Arquitetura', label:'Agachada costas / Sombras / Quarto', level:'bold',
+    angle:'rear-low', pose:'squat-rear', state:'shadow-play', location:'bedroom', expression:'natural' },
+  { group:'🔥 Traseiro & Arquitetura', label:'Inclinada costas / Óleo / Floresta', level:'bold',
+    angle:'over-shoulder', pose:'leaning-rear', state:'oiled', location:'forest', expression:'side-glance' },
+  { group:'🔥 Traseiro & Arquitetura', label:'Dobrada perfil / Molhada / Praia', level:'bold',
+    angle:'side-profile', pose:'bent-over-side', state:'wet-ocean', location:'beach', expression:'natural' },
+  { group:'🔥 Traseiro & Arquitetura', label:'Close bunda / Golden / Exterior', level:'bold',
+    angle:'closeup-butt', pose:'prone-butt-up', state:'golden-hour', location:'golden-out', expression:'natural' },
 ];
 
 function applyCombo(c) {
@@ -486,8 +476,21 @@ function openAdvanced() {
 function renderCombos() {
   const grid = document.getElementById('combos-grid');
   if (!grid) return;
-  grid.innerHTML = COMBOS.map((c,i) =>
-    `<button class="combo-btn" onclick="applyCombo(COMBOS[${i}])">${c.label}</button>`
+  const groups = {};
+  COMBOS.forEach((c, i) => {
+    const g = c.group || '✦ Outros';
+    if (!groups[g]) groups[g] = [];
+    groups[g].push({ c, i });
+  });
+  grid.innerHTML = Object.entries(groups).map(([title, items]) =>
+    `<div class="combo-group-card">
+      <div class="combo-group-title">${title}</div>
+      <div class="combo-group-grid">
+        ${items.map(({c,i}) =>
+          `<button class="combo-btn" onclick="applyCombo(COMBOS[${i}])">${c.label}</button>`
+        ).join('')}
+      </div>
+    </div>`
   ).join('');
 }
 
