@@ -16,7 +16,6 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;
   font-size:16px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center}
 
-/* ── Header ── */
 header{width:100%;text-align:center;padding:28px 16px 18px;border-bottom:1px solid var(--border)}
 .logo-ring{width:46px;height:46px;margin:0 auto 10px;border-radius:50%;
   border:1.5px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;
@@ -27,29 +26,19 @@ header h1{font-family:Georgia,serif;font-size:clamp(1rem,3.5vw,1.35rem);font-wei
 header h1 span{display:block;font-size:.52em;letter-spacing:.35em;color:var(--gold);margin-bottom:4px}
 .header-sub{font-size:.68rem;color:var(--muted);letter-spacing:.07em;margin-top:4px}
 
-/* ── Main ── */
 main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-direction:column;gap:20px}
 
-/* ── Step pill ── */
-.step-pill{display:inline-flex;align-items:center;gap:6px;font-size:.6rem;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--gold);opacity:.8;margin-bottom:10px}
-.step-num{width:18px;height:18px;border-radius:50%;border:1px solid var(--gold-dim);
-  display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--gold)}
-
-/* ── Cards ── */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
 .card-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
   opacity:.8;margin-bottom:12px;display:block}
 
-/* ── Textarea ── */
 .desc-textarea{width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;
   color:var(--text);font-family:Georgia,serif;font-size:.92rem;line-height:1.65;
-  padding:14px 16px;resize:vertical;min-height:100px;outline:none;transition:border-color .2s;
+  padding:14px 16px;resize:vertical;min-height:110px;outline:none;transition:border-color .2s;
   caret-color:var(--gold)}
 .desc-textarea::placeholder{color:var(--muted);opacity:.55}
 .desc-textarea:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px var(--gold-glow)}
 
-/* ── Enhance chips ── */
 .enhance-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
 .enhance-label{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
   width:100%;margin-bottom:1px}
@@ -59,48 +48,14 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .echip:hover{border-color:var(--gold-dim);color:var(--text)}
 .echip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
 
-/* ── Level row ── */
-.level-row{display:flex;gap:8px;margin-top:14px}
-.lvl-btn{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.76rem;
-  cursor:pointer;transition:all .16s;text-align:center}
-.lvl-btn.active{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);
-  color:var(--gold);font-weight:600}
-.lvl-btn:hover:not(.active){border-color:var(--gold-dim);color:var(--text)}
-
-/* ── Continue button ── */
-.btn-continue{width:100%;margin-top:16px;padding:13px;border-radius:12px;border:none;
+.btn-generate{width:100%;margin-top:16px;padding:13px;border-radius:12px;border:none;
   cursor:pointer;font-family:Georgia,serif;font-size:.88rem;font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;transition:all .18s;
   background:linear-gradient(135deg,#c47a10,var(--gold),#c47a10);background-size:200% 100%;color:#0a0a0a}
-.btn-continue:hover{background-position:100% 0;box-shadow:0 4px 20px var(--gold-glow);transform:translateY(-1px)}
-.btn-continue:active{transform:translateY(0)}
-.btn-continue:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-generate:hover{background-position:100% 0;box-shadow:0 4px 20px var(--gold-glow);transform:translateY(-1px)}
+.btn-generate:active{transform:translateY(0)}
+.btn-generate:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ── Selector groups ── */
-.selector-section{animation:fadeUp .28s ease}
-.sel-group{margin-bottom:20px}
-.sel-group-title{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
-  opacity:.85;margin-bottom:10px;display:flex;align-items:center;gap:7px}
-.sel-group-title span{opacity:.5;font-size:.85em}
-.sel-chips{display:flex;flex-wrap:wrap;gap:7px}
-.schap{padding:7px 14px;border-radius:22px;border:1px solid var(--border);background:transparent;
-  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;
-  transition:all .15s;user-select:none;line-height:1.3}
-.schap:hover{border-color:var(--gold-dim);color:var(--text)}
-.schap.sel{border-color:var(--gold);color:var(--gold);
-  background:color-mix(in srgb,var(--gold) 12%,transparent);font-weight:600}
-
-/* ── Generate button ── */
-.btn-gen{width:100%;margin-top:6px;padding:13px;border-radius:12px;border:none;
-  cursor:pointer;font-family:Georgia,serif;font-size:.88rem;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;transition:all .18s;
-  background:linear-gradient(135deg,#c47a10,var(--gold),#c47a10);background-size:200% 100%;color:#0a0a0a}
-.btn-gen:hover{background-position:100% 0;box-shadow:0 4px 20px var(--gold-glow);transform:translateY(-1px)}
-.btn-gen:active{transform:translateY(0)}
-.btn-gen:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
-
-/* ── Typing ── */
 .typing{display:flex;gap:5px;align-items:center;padding:14px 0;justify-content:center}
 .typing span{width:7px;height:7px;border-radius:50%;background:var(--gold);opacity:.3;animation:blink 1.2s ease-in-out infinite}
 .typing span:nth-child(2){animation-delay:.2s}
@@ -108,7 +63,6 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 @keyframes blink{0%,100%{opacity:.3;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Result ── */
 .result-card{background:var(--surface);border:1px solid var(--gold-dim);border-radius:var(--radius);
   padding:22px;animation:fadeUp .3s ease}
 .result-title{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);
@@ -130,14 +84,12 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .btn-new:hover{border-color:var(--gold-dim);color:var(--text)}
 .assinatura{text-align:center;font-size:.63rem;letter-spacing:.18em;color:var(--gold-dim);margin-top:18px;opacity:.6}
 
-/* ── Toast ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
   background:var(--card);border:1px solid var(--gold-dim);border-radius:9px;
   padding:10px 20px;font-size:.78rem;color:var(--text);opacity:0;
   transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── History ── */
 .hist-section{margin-top:4px}
 .hist-label{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
   opacity:.65;margin-bottom:10px;display:block}
@@ -149,9 +101,8 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .hist-item-ts{font-size:.6rem;color:var(--muted);opacity:.45;white-space:nowrap;margin-top:1px}
 
-@media(max-width:420px){.result-actions,.level-row{flex-direction:column}.btn-act{text-align:center}}
+@media(max-width:420px){.result-actions{flex-direction:column}.btn-act{text-align:center}}
 
-/* ── Light theme ── */
 [data-theme="light"]{
   --bg:#f4f3ee;--surface:#ffffff;--card:#ececea;--border:#d4d4c8;
   --gold:#b87800;--gold-dim:#a06800;--gold-glow:rgba(184,120,0,.14);
@@ -160,46 +111,6 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 [data-theme="light"] .desc-textarea,[data-theme="light"] .prompt-box{background:#f8f7f2;border-color:var(--border)}
 [data-theme="light"] body{background:var(--bg)}
 
-
-/* ── Combos rápidos ── */
-.combos-wrapper{display:flex;flex-direction:column;gap:14px}
-.combo-group-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
-.combo-group-title{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
-  opacity:.8;margin-bottom:11px;display:flex;align-items:center;gap:7px}
-.combo-group-title::after{content:'';flex:1;height:1px;background:var(--border)}
-.combo-group-grid{display:flex;flex-wrap:wrap;gap:7px}
-.combo-item{display:flex;align-items:center;gap:0}
-.combo-item .combo-btn{border-radius:22px 0 0 22px;border-right:none}
-.combo-item .fav-btn{padding:7px 9px;border-radius:0 22px 22px 0;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-size:.8rem;cursor:pointer;
-  transition:all .15s;line-height:1;border-left:none}
-.combo-item .fav-btn:hover,.combo-item .fav-btn.on{color:#e8c020;border-color:var(--gold-dim)}
-.combo-item.fav .combo-btn{border-color:color-mix(in srgb,var(--gold) 40%,var(--border))}
-.combo-btn{padding:8px 15px;border-radius:22px;border:1px solid var(--border);background:transparent;
-  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;
-  transition:all .15s;user-select:none;line-height:1.4;text-align:left}
-.combo-btn:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
-.combo-btn.active-combo{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}
-
-/* ── NSFW Section ── */
-.nsfw-gate{background:linear-gradient(135deg,rgba(180,0,0,.12),rgba(0,0,0,0));border:1px solid rgba(200,0,0,.35);border-radius:var(--radius);padding:16px 18px;margin-top:4px;display:none}
-.nsfw-gate.visible{display:block}
-.nsfw-warning{font-size:.68rem;color:#ff6060;letter-spacing:.1em;margin-bottom:12px;text-align:center;opacity:.9}
-.nsfw-combos-wrapper{display:flex;flex-direction:column;gap:14px}
-
-
-/* ── Avançado accordion ── */
-.advanced-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;
-  padding:11px 16px;border-radius:10px;border:1px solid var(--border);background:transparent;
-  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;letter-spacing:.1em;
-  text-transform:uppercase;cursor:pointer;transition:all .18s;margin-top:4px}
-.advanced-toggle:hover{border-color:var(--gold-dim);color:var(--text)}
-.advanced-toggle .adv-arrow{font-size:.65rem;transition:transform .22s}
-.advanced-toggle.open .adv-arrow{transform:rotate(180deg)}
-.advanced-body{overflow:hidden;max-height:0;transition:max-height .3s ease}
-.advanced-body.open{max-height:9999px}
-
-/* ── Theme toggle ── */
 .theme-toggle{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;
   border:1px solid var(--border);background:transparent;cursor:pointer;
   display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .18s;color:var(--muted)}
@@ -215,19 +126,16 @@ header{position:relative}
     <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.3 4.7-3.3 6L17 22H7l1.3-7C6.3 13.7 5 11.5 5 9a7 7 0 0 1 7-7z"/></svg>
   </div>
   <h1><span>RAWgen</span>Gerador de Prompts</h1>
-  <p class="header-sub">Descreva a personagem · escolha ângulo, posição, estado · gere o prompt</p>
+  <p class="header-sub">Descreva a cena · escolha opções · gere o prompt</p>
 </header>
 
 <main>
 
-  <!-- Step 1: Personagem -->
-  <div class="card" id="step1-card">
-    <span class="step-pill"><span class="step-num">1</span> Personagem</span>
-    <label class="card-label" for="desc-input">Descreva a personagem e o visual</label>
+  <div class="card" id="main-card">
+    <label class="card-label" for="desc-input">Descreva a personagem e a cena</label>
     <textarea id="desc-input" class="desc-textarea"
-      placeholder="Ex: loira de 19 anos apenas de calcinha e sutiã, cabelo longo, olhos claros..."
-      rows="3"></textarea>
-
+      placeholder="Ex: loira de 19 anos nua na beira da piscina, cabelo longo molhado, olhos claros, corpo bronzeado..."
+      rows="4"></textarea>
 
     <div class="enhance-row">
       <span class="enhance-label">Adicionar →</span>
@@ -239,36 +147,11 @@ header{position:relative}
       <div class="echip" data-key="editorial">✨ Editorial</div>
     </div>
 
-    <div class="level-row">
-      <button class="lvl-btn active" onclick="setLevel(this,'sfw')">🌸 Elegante</button>
-      <button class="lvl-btn" onclick="setLevel(this,'soft')">🔥 Sensual</button>
-      <button class="lvl-btn" onclick="setLevel(this,'bold')">⚡ Intenso</button>
-      <button class="lvl-btn" onclick="setLevel(this,'nsfw')">🔞 NSFW</button>
-    </div>
-
+    <button class="btn-generate" id="btn-gen" onclick="generate()">Gerar Prompt →</button>
   </div>
 
-  <!-- Combos rápidos -->
-  <div class="combos-wrapper" id="combos-grid"></div>
-
-  <!-- NSFW Section -->
-  <div class="nsfw-gate" id="nsfw-gate">
-    <div class="nsfw-warning">🔞 Conteúdo adulto — apenas Midjourney. Não use no ChatGPT/DALL·E.</div>
-    <div class="nsfw-combos-wrapper" id="nsfw-combos-grid"></div>
-  </div>
-
-  <!-- Avançado: seletores manuais -->
-  <button class="advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">
-    🎛 Avançado — ajuste manual <span class="adv-arrow">▼</span>
-  </button>
-  <div class="advanced-body" id="adv-body">
-    <div id="step2-area"></div>
-  </div>
-
-  <!-- Step 3: Result -->
   <div id="output-area"></div>
 
-  <!-- History -->
   <div class="hist-section" id="hist-section" style="display:none">
     <span class="hist-label">— Histórico —</span>
     <div class="hist-list" id="hist-list"></div>
@@ -279,848 +162,57 @@ header{position:relative}
 <div class="toast" id="toast"></div>
 
 <script>
-// ── State ─────────────────────────────────────────────────────────────────
-let currentLevel = 'sfw';
 let generatedMJ  = '';
 let generatedGPT = '';
-let selAngle     = null;
-let selPose      = null;
-let selState     = null;
-let selLocation  = null;
-let selExpression = null;
 
-// ── Combos ────────────────────────────────────────────────────────────────
-const COMBOS = [
-  // ── Praia & Água ──────────────────────────────────────────────────────────
-  { group:'🏖 Praia & Água', label:'Em pé / Pôr do sol / Molhada', level:'soft',
-    angle:'low-angle', pose:'standing-front', state:'wet-ocean', location:'beach', expression:'seductive' },
-  { group:'🏖 Praia & Água', label:'S-curve frente / Molhada', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'wet-ocean', location:'beach', expression:'seductive' },
-  { group:'🏖 Praia & Água', label:'Encostada / Molhada / Olhar direto', level:'soft',
-    angle:'frontal-med', pose:'standing-wall', state:'wet-ocean', location:'beach', expression:'lips-apart' },
-  { group:'🏖 Praia & Água', label:'S-curve costas / Olhando sobre ombro', level:'soft',
-    angle:'rear-over', pose:'s-curve', state:'wet-ocean', location:'beach', expression:'side-glance' },
-  { group:'🏖 Praia & Água', label:'Deitada costas / Câmera baixa', level:'bold',
-    angle:'rear-low', pose:'back-lying-low', state:'wet-ocean', location:'beach', expression:'eyes-closed' },
-  { group:'🏖 Praia & Água', label:'Deitada / Pernas abertas / Golden', level:'soft',
-    angle:'overhead', pose:'lying-legs-open', state:'golden-hour', location:'beach', expression:'lips-apart' },
-  { group:'🏖 Praia & Água', label:'Piscina / Underwater / Molhada', level:'soft',
-    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'eyes-closed' },
-  { group:'🏖 Praia & Água', label:'Piscina / Em pé costas / Molhada', level:'soft',
-    angle:'rear-over', pose:'standing-back', state:'wet-pool', location:'pool', expression:'looking-up' },
-  { group:'🏖 Praia & Água', label:'Piscina / Sentada pernas abertas / Molhada', level:'soft',
-    angle:'frontal-fb', pose:'sitting-legs-open', state:'wet-pool', location:'pool', expression:'seductive' },
-
-  // ── Ducha & Vapor ─────────────────────────────────────────────────────────
-  { group:'🚿 Ducha & Vapor', label:'Em pé / Braços levantados / Molhada', level:'soft',
-    angle:'frontal-fb', pose:'standing-arms', state:'wet-shower', location:'shower', expression:'eyes-closed' },
-  { group:'🚿 Ducha & Vapor', label:'S-curve perfil / Vapor', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'steamy', location:'shower', expression:'lips-apart' },
-  { group:'🚿 Ducha & Vapor', label:'S-curve 3/4 / Vapor + olhar', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'steamy', location:'shower', expression:'seductive' },
-  { group:'🚿 Ducha & Vapor', label:'Encostada parede / Molhada / Olhar', level:'soft',
-    angle:'frontal-med', pose:'standing-wall', state:'wet-shower', location:'shower', expression:'seductive' },
-  { group:'🚿 Ducha & Vapor', label:'Deitada costas / Molhada', level:'soft',
-    angle:'side-34', pose:'lying-back', state:'wet-shower', location:'shower', expression:'lips-apart' },
-
-  // ── Quarto & Velas ────────────────────────────────────────────────────────
-  { group:'🕯 Quarto & Velas', label:'Deitada costas / Velas / Sorriso', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'candle-lit', location:'bedroom', expression:'soft-smile' },
-  { group:'🕯 Quarto & Velas', label:'Deitada lado / Luz azul', level:'soft',
-    angle:'side-profile', pose:'lying-side', state:'blue-hour', location:'bedroom', expression:'eyes-closed' },
-  { group:'🕯 Quarto & Velas', label:'Deitada lado / Velas / Lábios', level:'soft',
-    angle:'side-34', pose:'lying-side', state:'candle-lit', location:'bedroom', expression:'lips-apart' },
-  { group:'🕯 Quarto & Velas', label:'S-curve espelho / Velas', level:'soft',
-    angle:'mirror', pose:'s-curve', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { group:'🕯 Quarto & Velas', label:'Sentada borda / Velas / Olhar', level:'soft',
-    angle:'frontal-med', pose:'sitting-edge', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { group:'🕯 Quarto & Velas', label:'Em pé costas / Velas', level:'soft',
-    angle:'rear-over', pose:'standing-back', state:'candle-lit', location:'bedroom', expression:'looking-up' },
-  { group:'🕯 Quarto & Velas', label:'Sentada cavalinha / Velas', level:'soft',
-    angle:'side-34', pose:'sitting-straddle', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { group:'🕯 Quarto & Velas', label:'Deitada costas / Glitter + Velas', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'glitter', location:'bedroom', expression:'soft-smile' },
-
-  // ── Pernas abertas (ChatGPT-safe) ─────────────────────────────────────────
-  { group:'🦋 Pernas Abertas', label:'Sentada frente / Velas / Olhar direto', level:'soft',
-    angle:'frontal-fb', pose:'sitting-legs-open', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { group:'🦋 Pernas Abertas', label:'Sentada frente / Sombras / Poderosa', level:'soft',
-    angle:'frontal-med', pose:'sitting-legs-open', state:'shadow-play', location:'studio', expression:'serious' },
-  { group:'🦋 Pernas Abertas', label:'Sentada frente / Golden hour', level:'soft',
-    angle:'low-angle', pose:'sitting-legs-open', state:'golden-hour', location:'golden-out', expression:'lips-apart' },
-  { group:'🦋 Pernas Abertas', label:'Sentada frente / Molhada / Piscina', level:'soft',
-    angle:'frontal-fb', pose:'sitting-legs-open', state:'wet-pool', location:'pool', expression:'seductive' },
-  { group:'🦋 Pernas Abertas', label:'Sentada frente / Glitter / Estúdio', level:'soft',
-    angle:'frontal-fb', pose:'sitting-legs-open', state:'glitter', location:'studio', expression:'soft-smile' },
-  { group:'🦋 Pernas Abertas', label:'Deitada / Pernas abertas / Velas', level:'soft',
-    angle:'overhead', pose:'lying-legs-open', state:'candle-lit', location:'bedroom', expression:'lips-apart' },
-  { group:'🦋 Pernas Abertas', label:'Deitada / Pernas abertas / Sombras', level:'soft',
-    angle:'overhead', pose:'lying-legs-open', state:'shadow-play', location:'studio', expression:'seductive' },
-  { group:'🦋 Pernas Abertas', label:'Deitada / Pernas abertas / Noite', level:'soft',
-    angle:'overhead', pose:'lying-legs-open', state:'blue-hour', location:'rooftop', expression:'eyes-closed' },
-  { group:'🦋 Pernas Abertas', label:'Deitada / Borboleta yoga / Golden', level:'soft',
-    angle:'overhead', pose:'lying-butterfly', state:'golden-hour', location:'beach', expression:'eyes-closed' },
-  { group:'🦋 Pernas Abertas', label:'Deitada / Borboleta / Velas', level:'soft',
-    angle:'overhead', pose:'lying-butterfly', state:'candle-lit', location:'bedroom', expression:'soft-smile' },
-
-  // ── Óleo & Luz Direcional ─────────────────────────────────────────────────
-  { group:'✨ Óleo & Luz', label:'S-curve perfil / Óleo + Velas', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'oiled', location:'studio', expression:'lips-apart' },
-  { group:'✨ Óleo & Luz', label:'S-curve 3/4 / Óleo + Golden', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'oiled', location:'forest', expression:'eyes-closed' },
-  { group:'✨ Óleo & Luz', label:'Deitada lado / Óleo + Sombras', level:'soft',
-    angle:'side-34', pose:'lying-side', state:'oiled', location:'bedroom', expression:'seductive' },
-  { group:'✨ Óleo & Luz', label:'Costas arqueadas / Óleo / Estúdio', level:'soft',
-    angle:'rear-fb', pose:'back-arched-rear', state:'oiled', location:'studio', expression:'natural' },
-  { group:'✨ Óleo & Luz', label:'Em pé perfil / Óleo + Noite', level:'soft',
-    angle:'side-34', pose:'standing-side', state:'oiled', location:'rooftop', expression:'side-glance' },
-  { group:'✨ Óleo & Luz', label:'Bridge / Óleo + Sombras', level:'soft',
-    angle:'side-profile', pose:'arching', state:'oiled', location:'studio', expression:'lips-apart' },
-  { group:'✨ Óleo & Luz', label:'Floresta / Yoga Cobra / Óleo', level:'soft',
-    angle:'side-profile', pose:'yoga-cobra', state:'oiled', location:'forest', expression:'eyes-closed' },
-  { group:'✨ Óleo & Luz', label:'Over-shoulder / S-curve / Óleo', level:'soft',
-    angle:'over-shoulder', pose:'s-curve', state:'oiled', location:'studio', expression:'side-glance' },
-
-  // ── Sombras Dramáticas ────────────────────────────────────────────────────
-  { group:'🖤 Sombras Dramáticas', label:'S-curve / Sombras + Noite / Sofá', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'shadow-play', location:'sofa', expression:'seductive' },
-  { group:'🖤 Sombras Dramáticas', label:'Em pé costas / Sombras / Estúdio', level:'soft',
-    angle:'rear-fb', pose:'standing-back', state:'shadow-play', location:'studio', expression:'natural' },
-  { group:'🖤 Sombras Dramáticas', label:'Deitada / Sombras / Estúdio', level:'soft',
-    angle:'side-profile', pose:'lying-back', state:'shadow-play', location:'studio', expression:'eyes-closed' },
-  { group:'🖤 Sombras Dramáticas', label:'Inclinada / Sombras / Quarto', level:'soft',
-    angle:'side-34', pose:'leaning-rear', state:'shadow-play', location:'bedroom', expression:'side-glance' },
-  { group:'🖤 Sombras Dramáticas', label:'Ajoelhada / Sombras / Sofá', level:'bold',
-    angle:'low-angle', pose:'kneeling', state:'shadow-play', location:'sofa', expression:'serious' },
-
-  // ── Golden Hour & Exterior ────────────────────────────────────────────────
-  { group:'🌅 Golden Hour', label:'S-curve costas / Golden / Exterior', level:'soft',
-    angle:'rear-over', pose:'s-curve', state:'golden-hour', location:'golden-out', expression:'looking-up' },
-  { group:'🌅 Golden Hour', label:'Deitada costas / Golden / Rooftop', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'golden-hour', location:'rooftop', expression:'eyes-closed' },
-  { group:'🌅 Golden Hour', label:'Em pé perfil / Óleo + Golden / Floresta', level:'soft',
-    angle:'side-profile', pose:'standing-side', state:'oiled', location:'forest', expression:'lips-apart' },
-  { group:'🌅 Golden Hour', label:'POV baixo / Em pé / Golden / Praia', level:'soft',
-    angle:'pov-low', pose:'s-curve', state:'golden-hour', location:'beach', expression:'seductive' },
-  { group:'🌅 Golden Hour', label:'Floresta / Sentada chão / Golden', level:'sfw',
-    angle:'side-34', pose:'sitting-floor', state:'golden-hour', location:'forest', expression:'soft-smile' },
-
-  // ── Fitness & Dança ───────────────────────────────────────────────────────
-  { group:'💪 Fitness & Dança', label:'Hip thrust / Suada / Perfil', level:'soft',
-    angle:'side-profile', pose:'hip-thrust', state:'sweaty', location:'gym', expression:'serious' },
-  { group:'💪 Fitness & Dança', label:'Agachamento / Suada / Frente', level:'sfw',
-    angle:'frontal-fb', pose:'squat-front', state:'sweaty', location:'gym', expression:'serious' },
-  { group:'💪 Fitness & Dança', label:'Spagat / Suada / Estúdio', level:'sfw',
-    angle:'frontal-fb', pose:'split', state:'sweaty', location:'gym', expression:'mouth-open' },
-  { group:'💪 Fitness & Dança', label:'Bridge / Glitter / Estúdio', level:'soft',
-    angle:'low-angle', pose:'arching', state:'glitter', location:'studio', expression:'mouth-open' },
-  { group:'💪 Fitness & Dança', label:'Dança curvatura / Glitter / Estúdio', level:'soft',
-    angle:'side-34', pose:'dance-side-bend', state:'glitter', location:'studio', expression:'mouth-open' },
-  { group:'💪 Fitness & Dança', label:'Arabesque / Glitter / Estúdio', level:'sfw',
-    angle:'side-profile', pose:'dance-arabesque', state:'glitter', location:'studio', expression:'looking-up' },
-
-  // ── Estúdio Artístico ─────────────────────────────────────────────────────
-  { group:'📸 Estúdio Artístico', label:'Over shoulder / Sombras / Estúdio', level:'soft',
-    angle:'over-shoulder', pose:'standing-back', state:'shadow-play', location:'studio', expression:'side-glance' },
-  { group:'📸 Estúdio Artístico', label:'S-curve / Glitter + Sombras', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'glitter', location:'studio', expression:'seductive' },
-  { group:'📸 Estúdio Artístico', label:'Saltando / Pétalas / Wide', level:'sfw',
-    angle:'wide-env', pose:'dynamic-jump', state:'flower-petals', location:'studio', expression:'soft-smile' },
-  { group:'📸 Estúdio Artístico', label:'Alongando / Pétalas / Olhos fechados', level:'sfw',
-    angle:'wide-env', pose:'stretching', state:'flower-petals', location:'studio', expression:'eyes-closed' },
-  { group:'📸 Estúdio Artístico', label:'Frontal close / Natural / Rosto', level:'sfw',
-    angle:'frontal-close', pose:'hands-face', state:'dry-natural', location:'studio', expression:'soft-smile' },
-  { group:'📸 Estúdio Artístico', label:'Espelho / S-curve / Quarto', level:'sfw',
-    angle:'mirror', pose:'s-curve', state:'dry-natural', location:'bedroom', expression:'soft-smile' },
-
-  // ── POV & Ângulos Extremos ────────────────────────────────────────────────
-  { group:'👁 POV & Extremos', label:'POV baixo / Em pé costas / Velas', level:'soft',
-    angle:'pov-low', pose:'standing-back', state:'candle-lit', location:'bedroom', expression:'natural' },
-  { group:'👁 POV & Extremos', label:'POV extremo / Em pé costas / Praia', level:'bold',
-    angle:'pov-extreme', pose:'standing-rear-low', state:'wet-ocean', location:'beach', expression:'natural' },
-  { group:'👁 POV & Extremos', label:'POV close / Ajoelhada / Velas', level:'bold',
-    angle:'pov-low-close', pose:'kneeling', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { group:'👁 POV & Extremos', label:'Dutch angle / Cidade / Caminhando', level:'sfw',
-    angle:'dutch', pose:'walking', state:'dry-natural', location:'urban', expression:'serious' },
-  { group:'👁 POV & Extremos', label:'Underwater / Braços levantados / Pool', level:'soft',
-    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'eyes-closed' },
-
-  // ── Traseiro & Poses Arquitetônicas ───────────────────────────────────────
-  { group:'🔥 Traseiro & Arquitetura', label:'De 4 costas / Câmera baixa / Molhada', level:'bold',
-    angle:'doggy-low', pose:'doggy-back', state:'wet-ocean', location:'beach', expression:'natural' },
-  { group:'🔥 Traseiro & Arquitetura', label:'De bruços / Velas / Quarto', level:'bold',
-    angle:'rear-low', pose:'prone-butt', state:'candle-lit', location:'bedroom', expression:'lips-apart' },
-  { group:'🔥 Traseiro & Arquitetura', label:'Costas arqueadas / Velas / Quarto', level:'bold',
-    angle:'rear-fb', pose:'back-arched-rear', state:'candle-lit', location:'bedroom', expression:'natural' },
-  { group:'🔥 Traseiro & Arquitetura', label:'Agachada costas / Sombras / Quarto', level:'bold',
-    angle:'rear-low', pose:'squat-rear', state:'shadow-play', location:'bedroom', expression:'natural' },
-  { group:'🔥 Traseiro & Arquitetura', label:'Inclinada costas / Óleo / Floresta', level:'bold',
-    angle:'over-shoulder', pose:'leaning-rear', state:'oiled', location:'forest', expression:'side-glance' },
-  { group:'🔥 Traseiro & Arquitetura', label:'Dobrada perfil / Molhada / Praia', level:'bold',
-    angle:'side-profile', pose:'bent-over-side', state:'wet-ocean', location:'beach', expression:'natural' },
-  { group:'🔥 Traseiro & Arquitetura', label:'Close bunda / Golden / Exterior', level:'bold',
-    angle:'closeup-butt', pose:'prone-butt-up', state:'golden-hour', location:'golden-out', expression:'natural' },
-
-  // ── Sala & Ambientes Internos ─────────────────────────────────────────────
-  { group:'🛋 Sala & Ambientes Internos', label:'Sala / S-curve / Luz natural', level:'sfw',
-    angle:'side-34', pose:'s-curve', state:'dry-natural', location:'living-room', expression:'soft-smile' },
-  { group:'🛋 Sala & Ambientes Internos', label:'Sala / Deitada sofá / Velas', level:'soft',
-    angle:'side-profile', pose:'lying-side', state:'candle-lit', location:'sofa', expression:'seductive' },
-  { group:'🛋 Sala & Ambientes Internos', label:'Sala / Sentada chão / Golden', level:'sfw',
-    angle:'side-34', pose:'sitting-floor', state:'golden-hour', location:'living-room', expression:'eyes-closed' },
-  { group:'🛋 Sala & Ambientes Internos', label:'Sala / Em pé perfil / Sombras', level:'soft',
-    angle:'side-profile', pose:'standing-side', state:'shadow-play', location:'living-room', expression:'side-glance' },
-  { group:'🛋 Sala & Ambientes Internos', label:'Sala / Espelho / S-curve', level:'sfw',
-    angle:'mirror', pose:'s-curve', state:'dry-natural', location:'mirror-room', expression:'soft-smile' },
-  { group:'🛋 Sala & Ambientes Internos', label:'Sala / Espelho / Óleo + Sombras', level:'soft',
-    angle:'mirror', pose:'s-curve', state:'oiled', location:'mirror-room', expression:'seductive' },
-
-  // ── Cozinha ───────────────────────────────────────────────────────────────
-  { group:'🍳 Cozinha', label:'Cozinha / Em pé / Luz natural', level:'sfw',
-    angle:'side-34', pose:'standing-front', state:'dry-natural', location:'kitchen', expression:'soft-smile' },
-  { group:'🍳 Cozinha', label:'Cozinha / Encostada bancada / Olhar', level:'sfw',
-    angle:'frontal-med', pose:'standing-wall', state:'dry-natural', location:'kitchen', expression:'seductive' },
-  { group:'🍳 Cozinha', label:'Cozinha / S-curve / Luz lateral', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'golden-hour', location:'kitchen', expression:'soft-smile' },
-  { group:'🍳 Cozinha', label:'Cozinha / Sentada bancada / Natural', level:'sfw',
-    angle:'frontal-fb', pose:'sitting-edge', state:'dry-natural', location:'kitchen', expression:'natural' },
-
-  // ── Escritório ────────────────────────────────────────────────────────────
-  { group:'💼 Escritório', label:'Escritório / Em pé / Profissional', level:'sfw',
-    angle:'side-34', pose:'standing-front', state:'dry-natural', location:'office', expression:'serious' },
-  { group:'💼 Escritório', label:'Escritório / Sentada / Olhar direto', level:'sfw',
-    angle:'frontal-med', pose:'sitting-edge', state:'dry-natural', location:'office', expression:'seductive' },
-  { group:'💼 Escritório', label:'Escritório / S-curve / Janela', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'golden-hour', location:'office', expression:'side-glance' },
-  { group:'💼 Escritório', label:'Escritório / Over-shoulder / Noite', level:'soft',
-    angle:'over-shoulder', pose:'standing-back', state:'blue-hour', location:'office', expression:'side-glance' },
-
-  // ── Shopping & Moda ───────────────────────────────────────────────────────
-  { group:'🛍 Shopping & Moda', label:'Shopping / Em pé / Frontal', level:'sfw',
-    angle:'frontal-fb', pose:'standing-front', state:'dry-natural', location:'shopping', expression:'serious' },
-  { group:'🛍 Shopping & Moda', label:'Shopping / Caminhando / Wide', level:'sfw',
-    angle:'wide-env', pose:'walking', state:'dry-natural', location:'shopping', expression:'soft-smile' },
-  { group:'🛍 Shopping & Moda', label:'Shopping / S-curve / Vitrine', level:'sfw',
-    angle:'side-34', pose:'s-curve', state:'dry-natural', location:'shopping', expression:'side-glance' },
-  { group:'🛍 Shopping & Moda', label:'Galeria / S-curve / Artístico', level:'sfw',
-    angle:'side-34', pose:'s-curve', state:'dry-natural', location:'art-gallery', expression:'serious' },
-  { group:'🛍 Shopping & Moda', label:'Galeria / Saltando / Pétalas', level:'sfw',
-    angle:'wide-env', pose:'dynamic-jump', state:'flower-petals', location:'art-gallery', expression:'soft-smile' },
-
-  // ── Restaurante & Hotel ───────────────────────────────────────────────────
-  { group:'🍷 Restaurante & Hotel', label:'Restaurante / Sentada / Noite', level:'soft',
-    angle:'frontal-med', pose:'sitting-edge', state:'candle-lit', location:'restaurant', expression:'seductive' },
-  { group:'🍷 Restaurante & Hotel', label:'Restaurante / S-curve / Velas', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'candle-lit', location:'restaurant', expression:'soft-smile' },
-  { group:'🍷 Restaurante & Hotel', label:'Hotel lobby / Em pé / Elegante', level:'sfw',
-    angle:'wide-env', pose:'standing-front', state:'dry-natural', location:'hotel-lobby', expression:'serious' },
-  { group:'🍷 Restaurante & Hotel', label:'Hotel / S-curve / Mármores', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'golden-hour', location:'hotel-lobby', expression:'soft-smile' },
-  { group:'🍷 Restaurante & Hotel', label:'Hotel / Over-shoulder / Corredor', level:'soft',
-    angle:'over-shoulder', pose:'standing-back', state:'shadow-play', location:'hotel-lobby', expression:'side-glance' },
-
-  // ── Escadaria & Arquitetura ───────────────────────────────────────────────
-  { group:'🏛 Escadaria & Arquitetura', label:'Escadaria / S-curve / Luz lateral', level:'sfw',
-    angle:'side-34', pose:'s-curve', state:'golden-hour', location:'staircase', expression:'soft-smile' },
-  { group:'🏛 Escadaria & Arquitetura', label:'Escadaria / Em pé costas / Olhando', level:'soft',
-    angle:'rear-over', pose:'standing-back', state:'dry-natural', location:'staircase', expression:'side-glance' },
-  { group:'🏛 Escadaria & Arquitetura', label:'Escadaria / Sentada / Elegante', level:'sfw',
-    angle:'side-34', pose:'sitting-floor', state:'dry-natural', location:'staircase', expression:'seductive' },
-  { group:'🏛 Escadaria & Arquitetura', label:'Escadaria / Saltando / Dinâmica', level:'sfw',
-    angle:'wide-env', pose:'dynamic-jump', state:'dry-natural', location:'staircase', expression:'mouth-open' },
-
-  // ── Jardim & Ar Livre ─────────────────────────────────────────────────────
-  { group:'🌸 Jardim & Ar Livre', label:'Jardim / S-curve / Golden', level:'sfw',
-    angle:'side-34', pose:'s-curve', state:'golden-hour', location:'garden', expression:'soft-smile' },
-  { group:'🌸 Jardim & Ar Livre', label:'Jardim / Deitada / Pétalas', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'flower-petals', location:'garden', expression:'eyes-closed' },
-  { group:'🌸 Jardim & Ar Livre', label:'Jardim / Yoga Cobra / Natural', level:'sfw',
-    angle:'side-profile', pose:'yoga-cobra', state:'dry-natural', location:'garden', expression:'eyes-closed' },
-  { group:'🌸 Jardim & Ar Livre', label:'Jardim / Em pé / Florido', level:'sfw',
-    angle:'wide-env', pose:'standing-arms', state:'flower-petals', location:'garden', expression:'soft-smile' },
-
-  // ── Carro & Editorial ─────────────────────────────────────────────────────
-  { group:'🚗 Carro & Editorial', label:'Carro / Encostada / Exterior', level:'sfw',
-    angle:'side-34', pose:'standing-wall', state:'golden-hour', location:'car', expression:'serious' },
-  { group:'🚗 Carro & Editorial', label:'Carro / S-curve / Lateral', level:'sfw',
-    angle:'side-profile', pose:'s-curve', state:'dry-natural', location:'car', expression:'seductive' },
-  { group:'🚗 Carro & Editorial', label:'Carro / Em pé costas / Noite', level:'soft',
-    angle:'rear-over', pose:'standing-back', state:'blue-hour', location:'car', expression:'natural' },
-  { group:'🚗 Carro & Editorial', label:'Carro / Over-shoulder / Golden', level:'soft',
-    angle:'over-shoulder', pose:'standing-back', state:'golden-hour', location:'car', expression:'side-glance' },
-
-  // ── Looks & Roupas ────────────────────────────────────────────────────────
-  { group:'👗 Looks & Roupas', label:'Vestido / Em pé / Golden', level:'sfw',
-    angle:'side-34', pose:'standing-front', state:'golden-hour', location:'golden-out', expression:'soft-smile' },
-  { group:'👗 Looks & Roupas', label:'Vestido / S-curve / Galeria', level:'sfw',
-    angle:'side-profile', pose:'s-curve', state:'dry-natural', location:'art-gallery', expression:'serious' },
-  { group:'👗 Looks & Roupas', label:'Vestido / Caminhando / Shopping', level:'sfw',
-    angle:'wide-env', pose:'walking', state:'dry-natural', location:'shopping', expression:'soft-smile' },
-  { group:'👗 Looks & Roupas', label:'Lingerie / S-curve / Velas', level:'soft',
-    angle:'side-profile', pose:'s-curve', state:'candle-lit', location:'bedroom', expression:'seductive' },
-  { group:'👗 Looks & Roupas', label:'Lingerie / Deitada / Óleo + Velas', level:'soft',
-    angle:'overhead', pose:'lying-back', state:'oiled', location:'bedroom', expression:'lips-apart' },
-  { group:'👗 Looks & Roupas', label:'Traje de banho / Praia / Golden', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'golden-hour', location:'beach', expression:'seductive' },
-  { group:'👗 Looks & Roupas', label:'Traje de banho / Piscina / Molhada', level:'soft',
-    angle:'frontal-fb', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'soft-smile' },
-
-  // ── Festas & Noite ────────────────────────────────────────────────────────
-  { group:'🎉 Festas & Noite', label:'Balada / Em pé / Luzes azuis', level:'sfw',
-    angle:'wide-env', pose:'standing-front', state:'blue-hour', location:'urban', expression:'soft-smile' },
-  { group:'🎉 Festas & Noite', label:'Balada / Dança / Glitter', level:'soft',
-    angle:'side-34', pose:'dance-side-bend', state:'glitter', location:'studio', expression:'mouth-open' },
-  { group:'🎉 Festas & Noite', label:'Restaurante / Sentada / Elegante', level:'sfw',
-    angle:'frontal-med', pose:'sitting-edge', state:'candle-lit', location:'restaurant', expression:'soft-smile' },
-  { group:'🎉 Festas & Noite', label:'Bar / S-curve / Noite', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'blue-hour', location:'restaurant', expression:'seductive' },
-  { group:'🎉 Festas & Noite', label:'Balada / Saltando / Glitter', level:'sfw',
-    angle:'wide-env', pose:'dynamic-jump', state:'glitter', location:'studio', expression:'mouth-open' },
-  { group:'🎉 Festas & Noite', label:'Rooftop / S-curve / Noite', level:'soft',
-    angle:'side-34', pose:'s-curve', state:'blue-hour', location:'rooftop', expression:'seductive' },
-
-  // ── Academia Avançada ─────────────────────────────────────────────────────
-  { group:'🏋️ Academia Avançada', label:'Hip thrust / Close costas / Suada', level:'bold',
-    angle:'rear-low', pose:'hip-thrust', state:'sweaty', location:'gym', expression:'serious' },
-  { group:'🏋️ Academia Avançada', label:'Spagat lateral / Suada / Estúdio', level:'sfw',
-    angle:'side-profile', pose:'split', state:'sweaty', location:'studio', expression:'serious' },
-  { group:'🏋️ Academia Avançada', label:'Prancha / Perfil / Natural', level:'sfw',
-    angle:'side-profile', pose:'plank', state:'dry-natural', location:'gym', expression:'serious' },
-  { group:'🏋️ Academia Avançada', label:'Agachamento costas / Suada', level:'bold',
-    angle:'rear-low', pose:'squat-rear', state:'sweaty', location:'gym', expression:'serious' },
-  { group:'🏋️ Academia Avançada', label:'Bridge / Óleo / Academia', level:'soft',
-    angle:'side-profile', pose:'arching', state:'oiled', location:'gym', expression:'lips-apart' },
-  { group:'🏋️ Academia Avançada', label:'Yoga Cobra / Suada / Academia', level:'sfw',
-    angle:'side-34', pose:'yoga-cobra', state:'sweaty', location:'gym', expression:'eyes-closed' },
-];
-
-// ── NSFW Combos (Midjourney only) ─────────────────────────────────────────
-const NSFW_COMBOS = [
-  { group:'🔥 Clássicos', label:'Frontal / Em pé / Nua completa', level:'nsfw',
-    angle:'frontal-fb', pose:'standing-front', state:'nude-raw', location:'studio', expression:'seductive' },
-  { group:'🔥 Clássicos', label:'S-curve perfil / Nua / Estúdio', level:'nsfw',
-    angle:'side-profile', pose:'s-curve', state:'nude-raw', location:'studio', expression:'lips-apart' },
-  { group:'🔥 Clássicos', label:'S-curve 3/4 / Nua / Velas', level:'nsfw',
-    angle:'side-34', pose:'s-curve', state:'nude-raw', location:'bedroom', expression:'seductive' },
-  { group:'🔥 Clássicos', label:'Costas / Encurvada / Nua', level:'nsfw',
-    angle:'rear-fb', pose:'back-arched-rear', state:'nude-raw', location:'studio', expression:'natural' },
-  { group:'🔥 Clássicos', label:'Em pé costas / Golden / Nua', level:'nsfw',
-    angle:'rear-over', pose:'standing-back', state:'golden-hour', location:'golden-out', expression:'looking-up' },
-
-  { group:'💧 Molhada & Óleo', label:'S-curve / Óleo / Nua', level:'nsfw',
-    angle:'side-34', pose:'s-curve', state:'oiled', location:'studio', expression:'lips-apart' },
-  { group:'💧 Molhada & Óleo', label:'Ducha / Nua / Vapor', level:'nsfw',
-    angle:'frontal-fb', pose:'standing-arms', state:'wet-shower', location:'shower', expression:'eyes-closed' },
-  { group:'💧 Molhada & Óleo', label:'Piscina / Nua / Molhada', level:'nsfw',
-    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'seductive' },
-  { group:'💧 Molhada & Óleo', label:'Praia / Nua / Ondas', level:'nsfw',
-    angle:'low-angle', pose:'standing-front', state:'wet-ocean', location:'beach', expression:'seductive' },
-
-  { group:'🌸 Deitada', label:'Deitada costas / Nua / Velas', level:'nsfw',
-    angle:'overhead', pose:'lying-back', state:'nude-raw', location:'bedroom', expression:'soft-smile' },
-  { group:'🌸 Deitada', label:'Deitada lado / Nua / Sombras', level:'nsfw',
-    angle:'side-profile', pose:'lying-side', state:'nude-raw', location:'bedroom', expression:'eyes-closed' },
-  { group:'🌸 Deitada', label:'Deitada / Pernas abertas / Nua', level:'nsfw',
-    angle:'overhead', pose:'lying-legs-open', state:'nude-raw', location:'bedroom', expression:'seductive' },
-  { group:'🌸 Deitada', label:'Deitada / Borboleta / Nua', level:'nsfw',
-    angle:'overhead', pose:'lying-butterfly', state:'nude-raw', location:'bedroom', expression:'lips-apart' },
-  { group:'🌸 Deitada', label:'Bridge / Óleo / Nua', level:'nsfw',
-    angle:'side-profile', pose:'arching', state:'oiled', location:'studio', expression:'eyes-closed' },
-
-  { group:'🏛 Poses Artísticas', label:'Yoga cobra / Nua / Floresta', level:'nsfw',
-    angle:'side-profile', pose:'yoga-cobra', state:'nude-raw', location:'forest', expression:'eyes-closed' },
-  { group:'🏛 Poses Artísticas', label:'Sentada cavalinha / Nua / Espelho', level:'nsfw',
-    angle:'mirror', pose:'sitting-straddle', state:'nude-raw', location:'bedroom', expression:'seductive' },
-  { group:'🏛 Poses Artísticas', label:'Sentada pernas abertas / Nua / Velas', level:'nsfw',
-    angle:'frontal-fb', pose:'sitting-legs-open', state:'nude-raw', location:'bedroom', expression:'lips-apart' },
-  { group:'🏛 Poses Artísticas', label:'Ajoelhada / Nua / Estúdio', level:'nsfw',
-    angle:'low-angle', pose:'kneeling', state:'nude-raw', location:'studio', expression:'serious' },
-  { group:'🏛 Poses Artísticas', label:'Over-shoulder / S-curve / Nua', level:'nsfw',
-    angle:'over-shoulder', pose:'s-curve', state:'nude-raw', location:'studio', expression:'side-glance' },
-];
-
-function applyCombo(c) {
-  const desc = document.getElementById('desc-input').value.trim();
-  if (!desc) { showToast('Preencha a descrição da personagem primeiro ↑'); return; }
-  // set level
-  const lvlBtns = document.querySelectorAll('.lvl-btn');
-  const lvlMap = {sfw:0, soft:1, bold:2};
-  lvlBtns.forEach((b,i) => { b.classList.toggle('active', i === (lvlMap[c.level]||0)); });
-  currentLevel = c.level || 'sfw';
-  // set selections
-  selAngle      = c.angle      || null;
-  selPose       = c.pose       || null;
-  selState      = c.state      || null;
-  selLocation   = c.location   || null;
-  selExpression = c.expression || null;
-  renderSelectors();
-  openAdvanced();
-  generate();
-  setTimeout(() => document.getElementById('output-area').scrollIntoView({behavior:'smooth',block:'start'}), 80);
-}
-
-function toggleAdvanced() {
-  const btn  = document.getElementById('adv-toggle');
-  const body = document.getElementById('adv-body');
-  const isOpen = body.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
-}
-
-function openAdvanced() {
-  const btn  = document.getElementById('adv-toggle');
-  const body = document.getElementById('adv-body');
-  body.classList.add('open');
-  btn.classList.add('open');
-}
-
-function comboItemHTML(c, i) {
-  return `<button class="combo-btn" onclick="applyCombo(COMBOS[${i}])">${c.label}</button>`;
-}
-
-function renderCombos() {
-  const grid = document.getElementById('combos-grid');
-  if (!grid) return;
-  const groups = {};
-  COMBOS.forEach((c, i) => {
-    const g = c.group || '✦ Outros';
-    if (!groups[g]) groups[g] = [];
-    groups[g].push({ c, i });
-  });
-  grid.innerHTML = Object.entries(groups).map(([title, items]) =>
-    `<div class="combo-group-card">
-      <div class="combo-group-title">${title}</div>
-      <div class="combo-group-grid">
-        ${items.map(({c,i}) => comboItemHTML(c, i)).join('')}
-      </div>
-    </div>`
-  ).join('');
-}
-
-
-// ── Selector data ──────────────────────────────────────────────────────────
-const ANGLES = [
-  { key:'frontal-fb',    label:'Frontal / corpo inteiro',   en:'straight-on full body shot, eye level, 50mm lens' },
-  { key:'frontal-med',   label:'Frontal / médio',           en:'straight-on medium shot, eye level, natural framing' },
-  { key:'frontal-close', label:'Frontal / close rosto',     en:'tight close-up portrait, face filling frame, shallow depth of field' },
-  { key:'rear-fb',       label:'Traseiro / corpo inteiro',  en:'from directly behind, full rear body shot, slight low angle', dalle:'from behind, full back body shot, slightly low camera angle' },
-  { key:'rear-over',     label:'Traseiro / olhando sobre o ombro', en:'from behind, subject looking back over shoulder at camera', dalle:'from behind, subject looking back over shoulder at camera, editorial framing' },
-  { key:'side-profile',  label:'Perfil puro',               en:'pure side profile, camera perpendicular to subject' },
-  { key:'side-34',       label:'3/4 lateral',               en:'three-quarter side angle, slight turn toward camera' },
-  { key:'overhead',      label:'Overhead / de cima',        en:'directly overhead, camera looking straight down at subject' },
-  { key:'low-angle',     label:'Câmera baixa / contra-luz', en:'low angle shot, camera close to ground looking up, strong backlight halo' },
-  { key:'dutch',         label:'Ângulo holandês / dinâmico', en:'dynamic dutch angle, slightly tilted camera, editorial energy' },
-  { key:'wide-env',      label:'Wide ambiental',            en:'wide environmental shot, subject in context of full location' },
-  { key:'underwater',    label:'Underwater / submersa',     en:'underwater shot, camera beneath surface, light refracting from above' },
-  { key:'pov',           label:'POV / câmera rasante',      en:'extreme low POV angle, camera at floor or surface level, looking slightly up', dalle:'extreme low angle, camera at floor level, editorial dynamic upward perspective' },
-  { key:'mirror',        label:'Reflexo no espelho',        en:'camera captures subject and simultaneous mirror reflection, double view' },
-  { key:'over-shoulder', label:'Over-the-shoulder',         en:'over-the-shoulder framing, partial back visible in foreground' },
-  { key:'pov-low',       label:'POV ângulo baixo',          en:'POV low angle shot, camera held at hip height looking up, immersive first-person perspective', dalle:'low angle shot, camera at hip height looking upward, immersive editorial perspective' },
-  { key:'pov-low-close', label:'POV ângulo baixo close-up', en:'extreme POV close-up low angle, camera inches from subject looking sharply upward, intense intimate perspective', dalle:'extreme close-up low angle, camera near subject looking sharply upward, editorial close-up perspective' },
-  { key:'pov-extreme',   label:'POV extremo / rés do chão', en:'extreme ground-level POV, camera flat on floor looking straight up, full body towering above camera', dalle:'extreme ground-level shot, camera flat on floor looking straight up, full figure towering above' },
-  { key:'closeup-butt',  label:'Close-up bunda',            en:'close-up rear shot focused tightly on buttocks, shallow depth of field, 85mm lens, natural skin texture', dalle:'close-up back shot focused on lower body curves, 85mm lens, shallow depth of field, natural skin' },
-  { key:'rear-low',      label:'Traseiro ângulo baixo',     en:'from behind at low angle, camera below waist level looking up, full rear body in frame', dalle:'from behind at low angle, camera below waist looking upward, full back silhouette in frame' },
-];
-
-const POSES = [
-  { key:'standing-front',   label:'Em pé de frente',           en:'standing facing camera, weight on one hip, arms relaxed at sides, direct gaze' },
-  { key:'standing-back',    label:'Em pé de costas',           en:'standing back to camera, one hip raised, arms loose, slow head turn over shoulder' },
-  { key:'standing-side',    label:'Em pé de perfil',           en:'standing in profile, chin raised, body elongated' },
-  { key:'standing-wall',    label:'Encostada na parede',       en:'back flat against wall, one knee bent with foot on wall, arms loose' },
-  { key:'standing-arms',    label:'Braços levantados',         en:'both arms raised above head, body stretched long, slight lean back' },
-  { key:'walking',          label:'Caminhando / editorial',    en:'mid-stride walking, one leg forward, arms in natural swing, chin up, editorial pace' },
-  { key:'sitting-floor',    label:'Sentada no chão',           en:'sitting on floor, knees bent to one side, one arm propped, face toward camera' },
-  { key:'sitting-edge',     label:'Sentada na borda',          en:'sitting on edge of surface, feet dangling, hands beside hips, slight forward lean' },
-  { key:'sitting-straddle', label:'Sentada cavalinha',         en:'sitting backwards straddling a chair, arms folded on chair back, chin resting on arms' },
-  { key:'lying-back',       label:'Deitada de costas',         en:'lying on back, arms loosely above head, one knee bent, face looking up at camera' },
-  { key:'lying-side',       label:'Deitada de lado',           en:'lying on side facing camera, bottom arm extended as pillow, top leg slightly forward, long S-curve' },
-  { key:'lying-front',      label:'Deitada de bruços',         en:'lying face-down, propped on both elbows, back arched, feet raised behind, face toward camera' },
-  { key:'kneeling',         label:'Ajoelhada de frente',       en:'kneeling on both knees, back straight, hands on thighs, chin up, direct camera gaze' },
-  { key:'kneeling-back',    label:'Ajoelhada de costas',       en:'kneeling back to camera, back straight, arms at sides, head bowed or slow turn to profile' },
-  { key:'crouching',        label:'Agachada',                  en:'crouching low, knees bent and spread, hands on knees or ground, face up at camera' },
-  { key:'arching',          label:'Arco do corpo / bridge',    en:'full back-bridge arch, hands and feet on surface, hips raised high, head dropped back' },
-  { key:'s-curve',          label:'S-curve clássico',          en:'classic S-curve, weight on one leg, opposite hip pushed out, one shoulder lower, body at 45 degrees' },
-  { key:'dynamic-jump',     label:'Saltando / dinâmica',       en:'jumping at peak height, feet off ground, arms spread, hair flying, full energy and joy' },
-  { key:'hands-face',       label:'Mãos no rosto',             en:'both hands gently framing face, fingers spread on cheeks, chin slightly down, eyes at camera' },
-  { key:'stretching',       label:'Se alongando',              en:'full body stretch, arms extended overhead, one leg extended, spine long and arched' },
-  { key:'doggy-fb',         label:'De 4 / frente',             en:'on all fours facing camera, weight on hands and knees, back flat, direct eye contact with camera', dalle:'on all fours facing camera, hands and knees on surface, back straight, direct eye contact' },
-  { key:'doggy-back',       label:'De 4 / costas',             en:'on all fours back to camera, hips raised, spine arched downward, rear prominently in frame', dalle:'on all fours back to camera, hips raised, spine arched, strong architectural pose' },
-  { key:'doggy-side',       label:'De 4 / lateral',            en:'on all fours in pure profile, side view showing full posture and body curve', dalle:'on all fours in pure side profile, full posture and body curve visible' },
-  { key:'doggy-low',        label:'De 4 / câmera baixa',       en:'on all fours, camera at floor level looking up from behind, dramatic low-angle rear view', dalle:'on all fours, camera at floor level, dramatic low-angle back view, editorial perspective' },
-  { key:'back-lying-low',   label:'Deitada costas / câmera baixa', en:'lying on back, camera at mattress level looking up along body, feet closest to camera, full rear silhouette', dalle:'lying on back, camera at mattress level looking up along body, feet closest to camera, full silhouette' },
-  { key:'back-arched-rear', label:'Costas arqueadas / traseiro', en:'back to camera, spine deeply arched, hips pushed back and raised, one hand braced on surface', dalle:'back to camera, spine deeply arched, hips raised, one hand braced on surface, athletic arch pose' },
-  { key:'prone-butt',       label:'De bruços / bunda em destaque', en:'lying face-down, hips raised on a pillow or surface, buttocks elevated and centered in frame, feet up behind', dalle:'lying face-down, hips elevated on a pillow, lower back arched, feet raised behind, strong silhouette' },
-  { key:'standing-rear-low',label:'Em pé costas / câmera rasante', en:'standing back to camera, camera at ankle level looking straight up along legs, full rear body soaring above', dalle:'standing back to camera, camera at ankle level looking straight up along legs, full figure above' },
-  { key:'squat-rear',       label:'Agachada de costas',        en:'squatting back to camera, knees spread wide, hips low, back straight, rear prominently framed', dalle:'squatting back to camera, knees apart, hips low, back straight, strong athletic pose' },
-  { key:'leaning-rear',     label:'Inclinada para frente / costas', en:'leaning forward from waist, back to camera, hands braced on surface, spine arched, rear in full frame', dalle:'leaning forward from waist, back to camera, hands braced on surface, spine arched' },
-  { key:'bent-over-side',   label:'Dobrada sobre superfície / perfil', en:'bent forward at the waist over a surface in pure side profile, arms resting on surface, spine parallel to ground, legs straight, full lateral silhouette', dalle:'bent forward at the waist over a surface in pure side profile, arms resting on surface, spine horizontal, legs straight, clean lateral silhouette' },
-  { key:'sitting-legs-open',  label:'Sentada de pernas abertas',      en:'sitting facing camera, legs spread wide apart, feet flat on surface, hands on knees, direct eye contact', dalle:'sitting facing camera, legs apart in relaxed open pose, feet flat, hands on knees, direct eye contact' },
-  { key:'lying-legs-open',    label:'Deitada de pernas abertas',      en:'lying on back, legs spread wide apart, one knee slightly bent, arms relaxed at sides, face looking up', dalle:'lying on back, legs relaxed and apart, one knee slightly bent, arms at sides, face looking up' },
-  { key:'prone-butt-up',      label:'De bruços / bumbum empinado',    en:'lying face-down, hips raised high with a pillow or arch, buttocks prominently elevated, back arched downward, feet up', dalle:'lying face-down, hips elevated with a pillow, lower back deeply arched, feet raised, strong figure' },
-  { key:'front-butt-up',      label:'De frente / bumbum empinado',    en:'facing camera, bending forward at waist, hands on thighs or floor, back arched so buttocks pushed back and up behind', dalle:'facing camera, bending forward at waist, hands on thighs, back deeply arched, athletic dynamic pose' },
-  { key:'lying-spread-legs-cam', label:'Deitada pernas abertas / câmera baixa', en:'lying on back with legs spread wide, camera at mattress level looking straight up between legs, full inner body view', dalle:'lying on back, legs apart, camera at mattress level looking upward along body, full figure editorial' },
-  { key:'sitting-floor-open', label:'Sentada chão / pernas abertas',  en:'sitting on floor, legs spread in wide V, back straight, hands on floor between legs, leaning slightly forward', dalle:'sitting on floor, legs in wide V position, back straight, hands on floor, leaning slightly forward' },
-  { key:'kneeling-open',      label:'Ajoelhada / joelhos abertos',    en:'kneeling with knees spread wide apart, sitting back on heels, back straight, hands on thighs, hips open and low', dalle:'kneeling with knees apart, sitting back on heels, back straight, hands on thighs, yoga-like pose' },
-  { key:'lying-butterfly',    label:'Deitada / borboleta',            en:'lying on back, soles of feet pressed together, knees fallen wide apart in butterfly position, hips open', dalle:'lying on back, feet together, knees relaxed outward in butterfly yoga pose, meditative position' },
-  { key:'standing-open-low',  label:'Em pé / pernas abertas / câmera baixa', en:'standing facing camera with legs spread wide apart, camera at floor level looking up between legs, strong low angle', dalle:'standing facing camera, legs apart in power stance, camera at floor level looking up, strong low angle' },
-  // Academia / Yoga / Dança
-  { key:'squat-front',      label:'Agachamento / frente',     en:'deep squat facing camera, knees wide, back straight, arms forward for balance, athletic power pose', dalle:'deep squat facing camera, knees wide, back straight, arms forward, athletic power pose' },
-  { key:'hip-thrust',       label:'Hip thrust / elevação',    en:'lying back on bench, hips fully thrust upward, body forming a bridge, feet flat on floor, full hip extension', dalle:'lying back on bench, hips elevated in bridge position, feet flat, full hip extension, fitness pose' },
-  { key:'plank',            label:'Prancha / plank',          en:'front plank position, body perfectly horizontal, arms straight, toes on ground, core engaged, full side view', dalle:'front plank position, body perfectly horizontal, arms straight, toes on ground, full side profile' },
-  { key:'split',            label:'Spagat / abertura total',  en:'full splits on floor, one leg forward and one back, body perfectly level, hands on floor for support, extreme flexibility', dalle:'full splits on floor, one leg forward one back, body level, hands on floor, extreme flexibility pose' },
-  { key:'yoga-cobra',       label:'Yoga / cobra',             en:'yoga cobra pose, lying face down, arms straight pushing chest up, head back, spine deeply arched upward, full front view', dalle:'yoga cobra pose, lying face down, arms straight, chest lifted, head back, spine arched upward' },
-  { key:'yoga-warrior',     label:'Yoga / guerreiro',         en:'yoga warrior II pose, one leg lunged forward with knee bent, other leg extended back, arms stretched wide to each side, side profile', dalle:'yoga warrior II pose, one leg forward bent, other extended back, arms wide to each side, strong stance' },
-  { key:'dance-arabesque',  label:'Dança / arabesque',        en:'dance arabesque, standing on one leg, opposite leg extended straight behind horizontal, arms gracefully extended, full side profile, ballet elegance', dalle:'dance arabesque pose, one leg raised straight behind, arms gracefully extended, ballet elegant side profile' },
-  { key:'dance-side-bend',  label:'Dança / curvatura lateral', en:'standing side bend in dance style, one arm arched overhead, body curving to the side, one hip pushed out, full front view', dalle:'standing side bend in dance style, one arm arched overhead, body curving sideways, hip pushed out' },
-];
-
-const STATES = [
-  { key:'dry-natural',   label:'Natural / seca',         en:'dry skin, natural state, no moisture' },
-  { key:'wet-ocean',     label:'Molhada / mar',          en:'drenched from ocean, salt water dripping, wet hair plastered to skin, glistening wet body', dalle:'wet from ocean water, salt water droplets, wet hair, shining wet skin, beach atmosphere' },
-  { key:'wet-pool',      label:'Molhada / piscina',      en:'freshly out of pool water, water droplets on skin and hair, pool water dripping', dalle:'freshly emerged from pool, water droplets on skin and hair, editorial poolside look' },
-  { key:'wet-rain',      label:'Molhada / chuva',        en:'soaked by rain, clothes and hair completely wet, rain still falling, water streaming down face and body', dalle:'soaked by rain, hair completely wet, rain falling, water on face, dramatic weather editorial' },
-  { key:'wet-shower',    label:'Molhada / ducha',        en:'fresh from shower, water droplets on skin, hair wet and heavy, skin dewy and glistening', dalle:'fresh from shower, water droplets on skin, hair wet and heavy, dewy skin, clean editorial look' },
-  { key:'oiled',         label:'Com óleo na pele',       en:'skin lightly oiled and glistening, every curve highlighted by sheen, natural body oil effect', dalle:'skin with a subtle natural sheen, elegant editorial beauty look, luminous skin' },
-  { key:'sandy',         label:'Com areia no corpo',     en:'fine beach sand lightly dusted on skin, sandy wet feet, sun-kissed and beach-worn', dalle:'fine beach sand lightly dusted on skin, sandy feet, sun-kissed beach look' },
-  { key:'sweaty',        label:'Suada / aquecida',       en:'light natural sweat on skin, flushed warmth, skin glistening with perspiration, real human exertion', dalle:'light natural sweat on skin, flushed warmth, skin shining, athletic exertion look' },
-  { key:'golden-hour',   label:'Luz dourada na pele',    en:'warm golden hour sunlight bathing skin, long golden shadows, sun-kissed glow on body', dalle:'warm golden hour sunlight, long golden shadows, sun-kissed glow, editorial natural light' },
-  { key:'candle-lit',    label:'Iluminada a velas',      en:'only candlelight, warm amber flickering glow on skin, deep warm shadows, intimate flame-lit atmosphere', dalle:'only candlelight, warm amber flickering glow on skin, deep warm shadows, flame-lit atmosphere' },
-  { key:'blue-hour',     label:'Luz azul / noite',       en:'cool blue night light, moonlight or city glow, skin in cool blue-silver tones, nighttime atmosphere', dalle:'cool blue night light, moonlight or city glow, blue-silver tones, nighttime editorial atmosphere' },
-  { key:'shadow-play',   label:'Sombras no corpo',       en:'strong directional light casting graphic shadows across body, high contrast light and shadow patterns on skin', dalle:'strong directional light casting graphic shadows, high contrast light and shadow patterns, editorial lighting' },
-  { key:'steamy',        label:'Névoa / vapor',          en:'steam or fog surrounding body, misty atmosphere, skin glistening in humid steamy air', dalle:'steam and fog in the air, misty atmosphere, humid environment, editorial spa-like feel' },
-  { key:'glitter',       label:'Glitter no corpo',       en:'fine gold or silver glitter on skin, catching light and sparkling, artistic body decoration', dalle:'fine gold and silver glitter on skin, catching light and sparkling, artistic editorial decoration' },
-  { key:'flower-petals', label:'Pétalas de flores',      en:'rose petals and flower petals scattered on and around body, romantic floral decoration', dalle:'rose petals and flower petals scattered around the subject, romantic floral editorial decoration' },
-  { key:'clothed-min',   label:'Roupa mínima',           en:'minimal clothing, just barely covered, fabric draping loosely', dalle:'wearing minimal fashionable attire, flowing editorial fashion, elegant coverage' },
-  { key:'nude-artistic', label:'Nua / artístico',        en:'nude, tasteful artistic nude photography, body as subject, natural and unashamed', dalle:'wearing elegant minimal fashion attire, artistic fashion photography, clean editorial aesthetic' },
-  { key:'nude-raw',      label:'Nua / bruto e real',     en:'fully nude, raw unfiltered realism, true human body, no censorship, completely natural', dalle:'wearing minimal beachwear, raw authentic look, natural editorial style' },
-];
-
-const LOCATIONS = [
-  { key:'beach',        label:'Praia / areia',          en:'on a sandy beach, natural ocean waves in background, golden sand, coastal atmosphere', dalle:'on a sandy beach, ocean waves in background, golden sand, coastal natural light' },
-  { key:'pool',         label:'Piscina / água',          en:'by or in a swimming pool, turquoise water, poolside tiles, summer atmosphere', dalle:'by a swimming pool, turquoise water, poolside tiles, bright summer daylight' },
-  { key:'bedroom',      label:'Quarto / cama',           en:'in a stylish bedroom, soft bed linens, warm ambient light, intimate private space', dalle:'in a stylish bedroom, soft bed linens, warm ambient lighting, editorial bedroom setting' },
-  { key:'shower',       label:'Chuveiro / banheiro',     en:'in a luxury shower or bathroom, wet tiles, steam, water streaming, modern bathroom', dalle:'in a luxury shower setting, wet tiles, steam, water streaming, modern bathroom editorial' },
-  { key:'forest',       label:'Floresta / natureza',     en:'in a lush forest, dappled sunlight through leaves, natural green environment, outdoor natural setting', dalle:'in a lush forest, dappled sunlight, green leaves, natural outdoor environment' },
-  { key:'urban',        label:'Cidade / rua',            en:'urban street setting, city buildings, concrete and glass, street photography atmosphere', dalle:'urban street setting, city buildings background, concrete, editorial street photography' },
-  { key:'studio',       label:'Estúdio / fundo clean',   en:'minimalist photography studio, clean white or neutral background, professional studio lighting', dalle:'minimalist photography studio, clean neutral background, professional studio editorial' },
-  { key:'golden-out',   label:'Exterior / golden hour',  en:'outdoor at golden hour, warm sunset light, long shadows, sun-kissed natural environment', dalle:'outdoor at golden hour, warm sunset light, long golden shadows, natural sun-kissed setting' },
-  { key:'rain-street',  label:'Chuva / rua molhada',     en:'rainy street scene, wet pavement reflections, rain falling, moody urban atmosphere', dalle:'rainy street scene, wet pavement with reflections, rain atmosphere, moody urban editorial' },
-  { key:'gym',          label:'Academia / gym',          en:'modern gym or fitness studio, gym equipment in background, fitness atmosphere, athletic environment', dalle:'modern gym setting, fitness equipment background, athletic studio atmosphere' },
-  { key:'rooftop',      label:'Terraço / rooftop',       en:'rooftop setting, city skyline in background, open sky, urban elevated perspective', dalle:'rooftop setting, city skyline background, open sky, elevated urban editorial' },
-  { key:'sofa',         label:'Sofá / sala',             en:'on or beside a stylish sofa in a modern living room, interior design setting, warm home atmosphere', dalle:'on a stylish sofa in modern living room, interior design setting, warm home editorial' },
-  { key:'living-room',  label:'Sala de estar',           en:'in a beautifully decorated living room, modern furniture, ambient interior lighting, home lifestyle setting', dalle:'in a beautifully decorated living room, modern furniture, warm ambient interior lighting, lifestyle editorial' },
-  { key:'kitchen',      label:'Cozinha',                 en:'in a modern kitchen, marble countertops, clean contemporary design, natural light through window, culinary setting', dalle:'in a modern kitchen, marble countertops, contemporary design, natural window light, lifestyle editorial' },
-  { key:'office',       label:'Escritório',              en:'in a stylish home office or corporate office, desk and bookshelves, professional modern interior, editorial business setting', dalle:'in a stylish office setting, desk and bookshelves background, professional modern interior, editorial' },
-  { key:'shopping',     label:'Shopping / loja',         en:'inside a luxury shopping mall or boutique store, modern retail interior, glass and marble, editorial fashion setting', dalle:'inside a luxury shopping mall or boutique, modern retail interior, glass and marble, fashion editorial' },
-  { key:'restaurant',   label:'Restaurante / bar',       en:'in an upscale restaurant or cocktail bar, ambient dim lighting, elegant table setting, sophisticated evening atmosphere', dalle:'in an upscale restaurant or bar, ambient dim lighting, elegant setting, sophisticated evening editorial' },
-  { key:'hotel-lobby',  label:'Hotel / lobby',           en:'in a luxury hotel lobby or corridor, marble floors, grand interior design, high-end hospitality atmosphere', dalle:'in a luxury hotel lobby, marble floors, grand interior design, high-end hospitality editorial' },
-  { key:'staircase',    label:'Escadaria',               en:'on a dramatic staircase, architectural lines, grand steps, elegant editorial setting, perspective looking up or down', dalle:'on a dramatic staircase, architectural lines, grand steps, elegant perspective editorial' },
-  { key:'car',          label:'Carro / interior',        en:'inside or leaning on a luxury car, automotive editorial, leather interior, moody ambient light, fashion automotive setting', dalle:'inside or beside a luxury car, automotive editorial, leather interior, fashion automotive photography' },
-  { key:'garden',       label:'Jardim / pátio',          en:'in a lush garden or patio, flowers and green plants, natural daylight, elegant outdoor home setting', dalle:'in a lush garden or patio, flowers and green plants, natural daylight, elegant outdoor editorial' },
-  { key:'mirror-room',  label:'Quarto / espelho grande', en:'in a room with large mirrors, reflections multiplying the subject, elegant mirrored interior, editorial reflections', dalle:'in a room with large mirrors, editorial reflections, elegant mirrored interior setting' },
-  { key:'art-gallery',  label:'Galeria / museu',         en:'inside a contemporary art gallery or museum, white walls with artwork, modern cultural space, editorial fashion setting', dalle:'inside a contemporary art gallery, white walls with artwork, modern cultural space, fashion editorial' },
-];
-
-const EXPRESSIONS = [
-  { key:'natural',      label:'Natural / relaxada',      en:'natural relaxed expression, mouth slightly closed, eyes soft and open, completely at ease' },
-  { key:'seductive',    label:'Sedutora / olhar direto',  en:'seductive direct gaze into camera, eyes slightly narrowed, lips together, commanding presence' },
-  { key:'soft-smile',   label:'Sorrindo suave',           en:'soft genuine smile, eyes slightly crinkled, warm and approachable, natural happiness' },
-  { key:'lips-apart',   label:'Lábios entreabertos',      en:'lips slightly parted, breath visible, intense focused gaze, quiet sensual energy', dalle:'lips slightly parted, breath visible, intense focused gaze, editorial expression' },
-  { key:'side-glance',  label:'Olhando de soslaio',       en:'sideways glance at camera, head slightly turned away, eyes cutting to the side, mysterious and playful' },
-  { key:'serious',      label:'Séria / poderosa',         en:'strong serious expression, jaw set, eyes direct and confident, powerful and commanding presence' },
-  { key:'eyes-closed',  label:'Olhos fechados / serena',  en:'eyes gently closed, serene and peaceful expression, face relaxed, contemplative and tranquil' },
-  { key:'looking-up',   label:'Olhando para cima',        en:'head tilted slightly back, eyes looking upward, vulnerable and open expression, neck elongated' },
-  { key:'looking-down', label:'Olhando para baixo',       en:'head slightly bowed, eyes cast downward, introspective and intimate expression, long lashes visible', dalle:'head slightly bowed, eyes cast downward, introspective expression, long lashes visible' },
-  { key:'mouth-open',   label:'Boca aberta / surpresa',   en:'mouth open in surprise or expression, eyes wide, spontaneous unguarded moment' },
-];
-
-// ── Enhance & Level ───────────────────────────────────────────────────────
 const ENHANCE_MAP = {
-  photoreal: 'shot on Canon EOS R5, 85mm f/1.4 lens, natural skin texture, real pores and imperfections, analog grain',
-  lighting:  'natural golden hour light, soft diffused ambient light, no artificial studio strobes',
-  closeup:   'tight face close-up, shallow depth of field, background fully blurred',
-  fullbody:  'full body in frame head to toe, environmental context visible',
-  candid:    'candid documentary feel, unstaged moment, natural body language',
-  editorial: 'high-end fashion editorial, shot on film, organic and unretouched look',
-};
-const LEVEL_MAP = {
-  sfw:  { style:'hyperrealistic human photography, natural skin, real body proportions, no airbrushing, no CGI, no plastic skin, shot on film',
-          params:'--ar 9:16 --v 6 --style raw --q 2' },
-  soft: { style:'hyperrealistic human photography, natural skin texture with subtle imperfections, real pores, genuine human warmth, no airbrushing, no plastic look, candid intimacy',
-          params:'--ar 9:16 --v 6 --style raw --q 2' },
-  bold: { style:'hyperrealistic human photography, raw unfiltered realism, true-to-life skin texture, real human body, no digital smoothing, no plastic skin, no airbrushing, genuine and intense',
-          params:'--ar 9:16 --v 6 --style raw --q 2' },
-  nsfw: { style:'fully nude, explicit artistic nude, raw unfiltered realism, no censorship, true human body',
-          params:'--ar 2:3 --style raw --v 6' },
+  photoreal: 'shot on DSLR, photorealistic, natural skin texture',
+  lighting:  'natural light, soft golden hour lighting',
+  closeup:   'close-up on face, shallow depth of field',
+  fullbody:  'full body shot',
+  candid:    'candid natural moment, authentic expression',
+  editorial: 'high-end editorial photography',
 };
 
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
-function setLevel(btn, lvl) {
-  document.querySelectorAll('.lvl-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentLevel = lvl;
-  const gate = document.getElementById('nsfw-gate');
-  const grid = document.getElementById('combos-grid');
-  if (lvl === 'nsfw') {
-    if (gate) gate.classList.add('visible');
-    if (grid) grid.style.display = 'none';
-    renderNSFWCombos();
-  } else {
-    if (gate) gate.classList.remove('visible');
-    if (grid) grid.style.display = '';
-  }
-}
 
-function renderNSFWCombos() {
-  const grid = document.getElementById('nsfw-combos-grid');
-  if (!grid) return;
-  const groups = {};
-  NSFW_COMBOS.forEach((c, i) => {
-    const g = c.group || '🔞 NSFW';
-    if (!groups[g]) groups[g] = [];
-    groups[g].push({ c, i });
-  });
-  grid.innerHTML = Object.entries(groups).map(([title, items]) =>
-    `<div class="combo-group-card">
-      <div class="combo-group-title">${title}</div>
-      <div class="combo-group-grid">
-        ${items.map(({c,i}) =>
-          `<button class="combo-btn" onclick="applyNSFWCombo(NSFW_COMBOS[${i}])">${c.label}</button>`
-        ).join('')}
-      </div>
-    </div>`
-  ).join('');
-}
-
-function applyNSFWCombo(c) {
-  const desc = document.getElementById('desc-input').value.trim();
-  if (!desc) { showToast('Preencha a descrição da personagem primeiro ↑'); return; }
-  selAngle      = c.angle      || null;
-  selPose       = c.pose       || null;
-  selState      = c.state      || null;
-  selLocation   = c.location   || null;
-  selExpression = c.expression || null;
-  document.querySelectorAll('.combo-group-card .combo-btn.active-combo').forEach(b => b.classList.remove('active-combo'));
-  document.querySelectorAll('#nsfw-combos-grid .combo-btn').forEach(b => { if (b.textContent === c.label) b.classList.add('active-combo'); });
-  renderSelectors();
-  generate();
-  document.getElementById('adv-body')?.classList.add('open');
-  document.getElementById('adv-toggle')?.classList.add('open');
-}
-
-// ── Show selectors ────────────────────────────────────────────────────────
-function showSelectors() {
-  const desc = document.getElementById('desc-input').value.trim();
-  if (!desc) { showToast('Digite a descrição da personagem primeiro'); return; }
-  renderSelectors();
-  setTimeout(() => document.getElementById('step2-area').scrollIntoView({behavior:'smooth',block:'start'}), 80);
-}
-
-function renderSelectors() {
-  const area = document.getElementById('step2-area');
-  area.innerHTML = `
-    <div class="card selector-section">
-      <span class="step-pill"><span class="step-num">2</span> Ângulo · Posição · Estado</span>
-
-      <div class="sel-group">
-        <div class="sel-group-title">📐 Ângulo de câmera <span>escolha um</span></div>
-        <div class="sel-chips" id="chips-angle">
-          ${ANGLES.map(a=>`<div class="schap${selAngle===a.key?' sel':''}" onclick="pick('angle','${a.key}')">${a.label}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="sel-group">
-        <div class="sel-group-title">🧍 Posição / pose <span>escolha uma</span></div>
-        <div class="sel-chips" id="chips-pose">
-          ${POSES.map(p=>`<div class="schap${selPose===p.key?' sel':''}" onclick="pick('pose','${p.key}')">${p.label}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="sel-group">
-        <div class="sel-group-title">✨ Estado / condição <span>escolha um</span></div>
-        <div class="sel-chips" id="chips-state">
-          ${STATES.map(s=>`<div class="schap${selState===s.key?' sel':''}" onclick="pick('state','${s.key}')">${s.label}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="sel-group">
-        <div class="sel-group-title">📍 Cenário / locação <span>opcional</span></div>
-        <div class="sel-chips" id="chips-location">
-          ${LOCATIONS.map(l=>`<div class="schap${selLocation===l.key?' sel':''}" onclick="pick('location','${l.key}')">${l.label}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="sel-group">
-        <div class="sel-group-title">😶 Expressão / olhar <span>opcional</span></div>
-        <div class="sel-chips" id="chips-expression">
-          ${EXPRESSIONS.map(e=>`<div class="schap${selExpression===e.key?' sel':''}" onclick="pick('expression','${e.key}')">${e.label}</div>`).join('')}
-        </div>
-      </div>
-
-      <button class="btn-gen" id="btn-gen" onclick="generate()" ${selAngle||selPose||selState||selLocation||selExpression?'':'disabled'}>Gerar Prompt →</button>
-    </div>`;
-}
-
-function pick(group, key) {
-  if (group === 'angle')      selAngle      = selAngle      === key ? null : key;
-  if (group === 'pose')       selPose       = selPose       === key ? null : key;
-  if (group === 'state')      selState      = selState      === key ? null : key;
-  if (group === 'location')   selLocation   = selLocation   === key ? null : key;
-  if (group === 'expression') selExpression = selExpression === key ? null : key;
-  renderSelectors();
-  if (selAngle || selPose || selState || selLocation || selExpression) generate();
-}
-
-// ── Generate ──────────────────────────────────────────────────────────────
 async function generate() {
   const desc = document.getElementById('desc-input').value.trim();
-  if (!desc) { showToast('Preencha a descrição da personagem primeiro ↑'); return; }
+  if (!desc) { showToast('Digite a descrição primeiro'); return; }
+
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = true;
 
   const out = document.getElementById('output-area');
   out.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
   setTimeout(() => out.scrollIntoView({behavior:'smooth',block:'nearest'}), 60);
 
   const enDesc = await translateDesc(desc);
-  const angleObj    = ANGLES.find(a=>a.key===selAngle);
-  const poseObj     = POSES.find(p=>p.key===selPose);
-  const stateObj    = STATES.find(s=>s.key===selState);
-  const locationObj = LOCATIONS.find(l=>l.key===selLocation);
-  const exprObj     = EXPRESSIONS.find(e=>e.key===selExpression);
+  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
 
-  generatedMJ  = buildMJ(enDesc, angleObj, poseObj, stateObj, locationObj, exprObj);
-  generatedGPT = buildGPT(enDesc, angleObj, poseObj, stateObj, locationObj, exprObj);
+  generatedMJ  = buildMJ(enDesc, chips);
+  generatedGPT = buildGPT(enDesc, chips);
 
-  const label = [angleObj?.label, poseObj?.label, stateObj?.label, locationObj?.label, exprObj?.label].filter(Boolean).join(' · ');
-  saveToHistory(desc, label, generatedMJ, generatedGPT);
-  renderResult(label);
+  saveToHistory(desc, generatedMJ, generatedGPT);
+  renderResult(desc);
   renderHistory();
   navigator.clipboard.writeText(generatedMJ).catch(()=>{});
+  btn.disabled = false;
 }
 
-// ── Build prompts ──────────────────────────────────────────────────────────
-function buildMJ(enDesc, angle, pose, state, location, expr) {
-  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  const lv = LEVEL_MAP[currentLevel];
-  const parts = [
-    enDesc,
-    'same person consistent appearance, identical face and body throughout, exact same physical features',
-    expr?.en,
-    angle?.en,
-    pose?.en,
-    state?.en,
-    location?.en,
-    lv.style,
-    ...chips,
-    'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no plastic skin, no CGI render',
-  ];
-  return parts.filter(Boolean).join(', ') + ' ' + lv.params;
+function buildMJ(enDesc, chips) {
+  const parts = [enDesc, ...chips,
+    'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no CGI render'];
+  return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6';
 }
 
-// Deep sanitize for DALL-E — converts everything to editorial/fashion safe language
-function sanitizeForDalle(text) {
-  if (!text) return text;
-  return text
-    // Nudity
-    .replace(/\bfully nude\b/gi, 'in a tasteful artistic pose')
-    .replace(/\bartistic nude\b/gi, 'in a tasteful editorial pose')
-    .replace(/\bnude\b/gi, 'wearing appropriate clothing')
-    .replace(/\bnaked\b/gi, 'wearing appropriate clothing')
-    .replace(/no censorship/gi, 'editorial style')
-    .replace(/true human body/gi, 'natural human form')
-    .replace(/unashamed/gi, 'confident')
-    // Clothing / coverage
-    .replace(/minimal clothing[^,.]*/gi, 'wearing fashionable clothing')
-    .replace(/barely covered[^,.]*/gi, 'wearing appropriate attire')
-    .replace(/just barely covered[^,.]*/gi, 'wearing appropriate attire')
-    .replace(/fabric draping loosely[^,.]*/gi, 'in flowing editorial fashion')
-    .replace(/only in (panties?|underwear|bra|thong|bikini bottom)/gi, 'in appropriate swimwear')
-    .replace(/(panties?|thong)\s*(and\s*bra)?/gi, 'appropriate swimwear')
-    .replace(/\bbra\b/gi, 'crop top')
-    .replace(/\blingerie\b/gi, 'elegant fashion')
-    .replace(/calcinha|sutiã/gi, 'swimwear')
-    // Sensuality / tone words that trigger filters
-    .replace(/\bsensual\b/gi, 'confident')
-    .replace(/\bsexy\b/gi, 'stylish')
-    .replace(/\berotic\b/gi, 'editorial')
-    .replace(/\bsuggestive\b/gi, 'expressive')
-    .replace(/\bexplicit\b/gi, 'editorial')
-    .replace(/\bsexual\b/gi, 'editorial')
-    .replace(/every curve highlighted/gi, 'elegant contours visible')
-    .replace(/every contour highlighted/gi, 'elegant form highlighted')
-    .replace(/contour[s]? highlighted/gi, 'form highlighted in editorial light')
-    // Body parts (explicit context)
-    .replace(/buttocks prominently (elevated|in frame|centered|raised)/gi, 'curved back silhouette highlighted')
-    .replace(/buttocks/gi, 'lower body')
-    .replace(/rear prominently/gi, 'back prominently')
-    .replace(/hips raised high/gi, 'hips elevated')
-    .replace(/full rear (body|silhouette)/gi, 'full back body')
-    .replace(/rear (view|shot|body)/gi, 'back $1')
-    .replace(/\bpenis\b|\bvagina\b|\bgenitals?\b/gi, '')
-    // Explicit pose language
-    .replace(/legs spread wide apart/gi, 'legs in a wide relaxed stance')
-    .replace(/legs spread wide/gi, 'legs in a wide stance')
-    .replace(/legs spread/gi, 'legs apart in a natural pose')
-    .replace(/legs relaxed and apart/gi, 'legs in a relaxed open pose')
-    .replace(/legs apart in relaxed open pose/gi, 'legs in a relaxed open pose')
-    .replace(/knees spread wide/gi, 'knees apart in a natural pose')
-    .replace(/knees fallen wide apart/gi, 'knees relaxed outward')
-    .replace(/soles of feet pressed together/gi, 'feet together')
-    .replace(/hips open and low/gi, 'hips low and relaxed')
-    .replace(/inner body view/gi, 'full body low angle')
-    .replace(/between legs/gi, 'upward along body')
-    .replace(/full inner body/gi, 'full body')
-    .replace(/straddling/gi, 'sitting across')
-    // Intensity / explicit style
-    .replace(/raw unfiltered realism/gi, 'natural realism')
-    .replace(/genuine and intense/gi, 'genuine and confident')
-    .replace(/candid intimacy/gi, 'candid natural moment')
-    .replace(/\bintimate\b/gi, 'personal')
-    .replace(/no airbrushing, no CGI, no plastic skin/gi, 'natural skin, no filters')
-    .replace(/no digital smoothing, no plastic skin, no airbrushing/gi, 'natural authentic skin')
-    .replace(/no CGI render/gi, 'no CGI')
-    // Misc
-    .replace(/glisten(ing|s)?/gi, 'shining')
-    .replace(/drenched/gi, 'wet')
-    .replace(/\boiled\b/gi, 'with a natural skin sheen')
-    .replace(/skin lightly oiled/gi, 'skin with a natural sheen');
+function buildGPT(enDesc, chips) {
+  const parts = [enDesc, ...chips,
+    'professional photography, natural skin, sharp focus, no CGI, no filters',
+    'no text, no watermark, 9:16 vertical portrait format'];
+  return parts.filter(Boolean).join(', ') + '.';
 }
 
-// Extract only the physical description (age, hair, eyes, body) — strip clothing/pose context
-function extractPhysical(enDesc) {
-  return enDesc
-    .replace(/only in\b[^,]*/gi, '')
-    .replace(/\b(wearing|dressed in|in just|just|barely)[^,]*/gi, '')
-    .replace(/\b(panties?|thong|bra|bikini|lingerie|underwear|naked|nude|topless|sensual|sexy|erotic|sexual|provocative)[^,]*/gi, '')
-    .replace(/,\s*,/g, ',').replace(/,\s*$/,'').trim();
-}
-
-function buildGPT(enDesc, angle, pose, state, location, expr) {
-  if (currentLevel === 'nsfw') return '⚠️ Seção NSFW: use apenas no Midjourney. Não envie para ChatGPT/DALL·E.';
-  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  const physDesc = sanitizeForDalle(extractPhysical(enDesc)) || sanitizeForDalle(enDesc);
-  // Always sanitize — including dalle fields, to catch any residual triggering language
-  const safeAngle  = sanitizeForDalle(angle?.dalle    || angle?.en);
-  const safePose   = sanitizeForDalle(pose?.dalle     || pose?.en);
-  const safeState  = sanitizeForDalle(state?.dalle    || state?.en);
-  const safeLoc    = sanitizeForDalle(location?.dalle || location?.en);
-  const safeExpr   = sanitizeForDalle(expr?.dalle     || expr?.en);
-  const safeChips  = chips.map(sanitizeForDalle);
-  const parts = [
-    physDesc,
-    'consistent character appearance: same face, same eye color, same hair color and style, same body proportions',
-    safeExpr,
-    safeAngle,
-    safePose,
-    safeState,
-    safeLoc,
-    'high-end fashion editorial photography, natural skin texture, authentic human proportions, professional fashion shoot, all subjects fully clothed or in appropriate attire',
-    ...safeChips,
-    'professional camera, sharp focus on subject, natural lighting, no CGI, no filters',
-    'no text, no watermark, 9:16 vertical portrait format',
-  ];
-  return 'Professional fashion editorial photograph, non-sexual, fully clothed or appropriate attire only, suitable for a fashion magazine: ' + parts.filter(Boolean).join(', ') + '.';
-}
-
-// ── Translate ─────────────────────────────────────────────────────────────
 async function translateDesc(text) {
   if (!text.trim()) return text;
   try {
@@ -1139,12 +231,11 @@ async function translateDesc(text) {
   }
 }
 
-// ── Render result ──────────────────────────────────────────────────────────
-function renderResult(label) {
+function renderResult(desc) {
   const out = document.getElementById('output-area');
   out.innerHTML = `
     <div class="result-card">
-      <div class="result-title">✦ Prompts Gerados${label ? ' — ' + esc(label) : ''}</div>
+      <div class="result-title">✦ Prompts Gerados</div>
       <div class="prompt-block">
         <div class="prompt-label">Midjourney</div>
         <div class="prompt-box">${esc(generatedMJ)}</div>
@@ -1158,7 +249,7 @@ function renderResult(label) {
         <button class="btn-act" onclick="copyGPT()">🤖 Copiar ChatGPT</button>
         <button class="btn-act" onclick="openPerchance()">🎨 Perchance</button>
       </div>
-      <button class="btn-new" onclick="restart()">← Nova Personagem</button>
+      <button class="btn-new" onclick="restart()">← Nova descrição</button>
       <div class="assinatura">✦ RAWgen ✦</div>
     </div>`;
   out.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -1166,7 +257,6 @@ function renderResult(label) {
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── Actions ───────────────────────────────────────────────────────────────
 function copyMJ() {
   navigator.clipboard.writeText(generatedMJ).then(() => {
     const btn = document.getElementById('btn-copy-mj');
@@ -1178,10 +268,8 @@ function copyGPT(){ navigator.clipboard.writeText(generatedGPT).then(()=>showToa
 function openPerchance(){ window.open('https://perchance.org/ai-photo-generator?prompt='+encodeURIComponent(generatedMJ),'_blank'); }
 
 function restart() {
-  document.getElementById('step2-area').innerHTML = '';
   document.getElementById('output-area').innerHTML = '';
   document.getElementById('desc-input').value = '';
-  selAngle = null; selPose = null; selState = null; selLocation = null; selExpression = null;
   document.getElementById('desc-input').focus();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1206,7 +294,6 @@ function toggleTheme() {
   } catch {}
 })();
 
-// ── Toast ─────────────────────────────────────────────────────────────────
 let _tt = null;
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -1214,14 +301,12 @@ function showToast(msg){
   clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-// ── History ───────────────────────────────────────────────────────────────
-const HIST_KEY = 'rawgen_hist_v4';
+const HIST_KEY = 'rawgen_hist_v5';
 function getHistory(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); }catch{ return []; } }
 function saveHistory(h){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,20))); }catch{} }
-function saveToHistory(desc, label, mj, gpt){
+function saveToHistory(desc, mj, gpt){
   const h = getHistory();
-  h.unshift({ ts:Date.now(), desc, preset:label, mj, gpt,
-    angle:selAngle, pose:selPose, state:selState, location:selLocation, expression:selExpression });
+  h.unshift({ ts:Date.now(), desc, mj, gpt });
   saveHistory(h);
 }
 function renderHistory(){
@@ -1233,7 +318,7 @@ function renderHistory(){
   list.innerHTML = h.slice(0,8).map((item,i)=>`
     <div class="hist-item" onclick="loadHistory(${i})">
       <div style="flex:1">
-        <div class="hist-item-text">${esc(item.desc)} <span style="color:var(--gold);opacity:.7">· ${esc(item.preset||'')}</span></div>
+        <div class="hist-item-text">${esc(item.desc)}</div>
       </div>
       <div class="hist-item-ts">${fmtTs(item.ts)}</div>
     </div>`).join('');
@@ -1242,10 +327,7 @@ function loadHistory(i){
   const h=getHistory(); const item=h[i]; if(!item) return;
   document.getElementById('desc-input').value = item.desc;
   generatedMJ=item.mj; generatedGPT=item.gpt;
-  selAngle=item.angle||null; selPose=item.pose||null; selState=item.state||null;
-  selLocation=item.location||null; selExpression=item.expression||null;
-  renderSelectors();
-  renderResult(item.preset||'');
+  renderResult(item.desc);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function fmtTs(ts){
@@ -1254,9 +336,6 @@ function fmtTs(ts){
 }
 
 renderHistory();
-renderSelectors();
-renderCombos();
-renderNSFWCombos();
 </script>
 </body>
 </html>
