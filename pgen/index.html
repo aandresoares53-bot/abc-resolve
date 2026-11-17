@@ -493,19 +493,19 @@ const POSES = [
 const STATES = [
   { key:'dry-natural',   label:'Natural / seca',         en:'dry skin, natural state, no moisture' },
   { key:'wet-ocean',     label:'Molhada / mar',          en:'drenched from ocean, salt water dripping, wet hair plastered to skin, glistening wet body', dalle:'wet from ocean water, salt water droplets, wet hair, shining wet skin, beach atmosphere' },
-  { key:'wet-pool',      label:'Molhada / piscina',      en:'freshly out of pool water, water droplets on skin and hair, pool water dripping' },
-  { key:'wet-rain',      label:'Molhada / chuva',        en:'soaked by rain, clothes and hair completely wet, rain still falling, water streaming down face and body' },
-  { key:'wet-shower',    label:'Molhada / ducha',        en:'fresh from shower, water droplets on skin, hair wet and heavy, skin dewy and glistening' },
+  { key:'wet-pool',      label:'Molhada / piscina',      en:'freshly out of pool water, water droplets on skin and hair, pool water dripping', dalle:'freshly emerged from pool, water droplets on skin and hair, editorial poolside look' },
+  { key:'wet-rain',      label:'Molhada / chuva',        en:'soaked by rain, clothes and hair completely wet, rain still falling, water streaming down face and body', dalle:'soaked by rain, hair completely wet, rain falling, water on face, dramatic weather editorial' },
+  { key:'wet-shower',    label:'Molhada / ducha',        en:'fresh from shower, water droplets on skin, hair wet and heavy, skin dewy and glistening', dalle:'fresh from shower, water droplets on skin, hair wet and heavy, dewy skin, clean editorial look' },
   { key:'oiled',         label:'Com óleo na pele',       en:'skin lightly oiled and glistening, every curve highlighted by sheen, natural body oil effect', dalle:'skin with natural oil sheen, every contour highlighted, editorial beauty look' },
-  { key:'sandy',         label:'Com areia no corpo',     en:'fine beach sand lightly dusted on skin, sandy wet feet, sun-kissed and beach-worn' },
+  { key:'sandy',         label:'Com areia no corpo',     en:'fine beach sand lightly dusted on skin, sandy wet feet, sun-kissed and beach-worn', dalle:'fine beach sand lightly dusted on skin, sandy feet, sun-kissed beach look' },
   { key:'sweaty',        label:'Suada / aquecida',       en:'light natural sweat on skin, flushed warmth, skin glistening with perspiration, real human exertion', dalle:'light natural sweat on skin, flushed warmth, skin shining, athletic exertion look' },
-  { key:'golden-hour',   label:'Luz dourada na pele',    en:'warm golden hour sunlight bathing skin, long golden shadows, sun-kissed glow on body' },
+  { key:'golden-hour',   label:'Luz dourada na pele',    en:'warm golden hour sunlight bathing skin, long golden shadows, sun-kissed glow on body', dalle:'warm golden hour sunlight, long golden shadows, sun-kissed glow, editorial natural light' },
   { key:'candle-lit',    label:'Iluminada a velas',      en:'only candlelight, warm amber flickering glow on skin, deep warm shadows, intimate flame-lit atmosphere', dalle:'only candlelight, warm amber flickering glow on skin, deep warm shadows, flame-lit atmosphere' },
-  { key:'blue-hour',     label:'Luz azul / noite',       en:'cool blue night light, moonlight or city glow, skin in cool blue-silver tones, nighttime atmosphere' },
-  { key:'shadow-play',   label:'Sombras no corpo',       en:'strong directional light casting graphic shadows across body, high contrast light and shadow patterns on skin' },
-  { key:'steamy',        label:'Névoa / vapor',          en:'steam or fog surrounding body, misty atmosphere, skin glistening in humid steamy air' },
-  { key:'glitter',       label:'Glitter no corpo',       en:'fine gold or silver glitter on skin, catching light and sparkling, artistic body decoration' },
-  { key:'flower-petals', label:'Pétalas de flores',      en:'rose petals and flower petals scattered on and around body, romantic floral decoration' },
+  { key:'blue-hour',     label:'Luz azul / noite',       en:'cool blue night light, moonlight or city glow, skin in cool blue-silver tones, nighttime atmosphere', dalle:'cool blue night light, moonlight or city glow, blue-silver tones, nighttime editorial atmosphere' },
+  { key:'shadow-play',   label:'Sombras no corpo',       en:'strong directional light casting graphic shadows across body, high contrast light and shadow patterns on skin', dalle:'strong directional light casting graphic shadows, high contrast light and shadow patterns, editorial lighting' },
+  { key:'steamy',        label:'Névoa / vapor',          en:'steam or fog surrounding body, misty atmosphere, skin glistening in humid steamy air', dalle:'steam and fog in the air, misty atmosphere, humid environment, editorial spa-like feel' },
+  { key:'glitter',       label:'Glitter no corpo',       en:'fine gold or silver glitter on skin, catching light and sparkling, artistic body decoration', dalle:'fine gold and silver glitter on skin, catching light and sparkling, artistic editorial decoration' },
+  { key:'flower-petals', label:'Pétalas de flores',      en:'rose petals and flower petals scattered on and around body, romantic floral decoration', dalle:'rose petals and flower petals scattered around the subject, romantic floral editorial decoration' },
   { key:'clothed-min',   label:'Roupa mínima',           en:'minimal clothing, just barely covered, fabric draping loosely', dalle:'minimal clothing, fabric draping loosely, editorial fashion style' },
   { key:'nude-artistic', label:'Nua / artístico',        en:'nude, tasteful artistic nude photography, body as subject, natural and unashamed', dalle:'figure in minimal tasteful editorial clothing, artistic fashion photography, clean aesthetic' },
   { key:'nude-raw',      label:'Nua / bruto e real',     en:'fully nude, raw unfiltered realism, true human body, no censorship, completely natural', dalle:'figure in minimal beachwear, raw authentic look, natural human form, unfiltered editorial style' },
@@ -530,12 +530,12 @@ const EXPRESSIONS = [
   { key:'natural',      label:'Natural / relaxada',      en:'natural relaxed expression, mouth slightly closed, eyes soft and open, completely at ease' },
   { key:'seductive',    label:'Sedutora / olhar direto',  en:'seductive direct gaze into camera, eyes slightly narrowed, lips together, commanding presence' },
   { key:'soft-smile',   label:'Sorrindo suave',           en:'soft genuine smile, eyes slightly crinkled, warm and approachable, natural happiness' },
-  { key:'lips-apart',   label:'Lábios entreabertos',      en:'lips slightly parted, breath visible, intense focused gaze, quiet sensual energy' },
+  { key:'lips-apart',   label:'Lábios entreabertos',      en:'lips slightly parted, breath visible, intense focused gaze, quiet sensual energy', dalle:'lips slightly parted, breath visible, intense focused gaze, editorial expression' },
   { key:'side-glance',  label:'Olhando de soslaio',       en:'sideways glance at camera, head slightly turned away, eyes cutting to the side, mysterious and playful' },
   { key:'serious',      label:'Séria / poderosa',         en:'strong serious expression, jaw set, eyes direct and confident, powerful and commanding presence' },
   { key:'eyes-closed',  label:'Olhos fechados / serena',  en:'eyes gently closed, serene and peaceful expression, face relaxed, contemplative and tranquil' },
   { key:'looking-up',   label:'Olhando para cima',        en:'head tilted slightly back, eyes looking upward, vulnerable and open expression, neck elongated' },
-  { key:'looking-down', label:'Olhando para baixo',       en:'head slightly bowed, eyes cast downward, introspective and intimate expression, long lashes visible' },
+  { key:'looking-down', label:'Olhando para baixo',       en:'head slightly bowed, eyes cast downward, introspective and intimate expression, long lashes visible', dalle:'head slightly bowed, eyes cast downward, introspective expression, long lashes visible' },
   { key:'mouth-open',   label:'Boca aberta / surpresa',   en:'mouth open in surprise or expression, eyes wide, spontaneous unguarded moment' },
 ];
 
@@ -729,13 +729,12 @@ function extractPhysical(enDesc) {
 
 function buildGPT(enDesc, angle, pose, state, location, expr) {
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  // Use only physical traits — strip clothing/nudity refs; use pre-defined dalle field when available
   const physDesc   = sanitizeForDalle(extractPhysical(enDesc)) || sanitizeForDalle(enDesc);
   const safeAngle  = angle?.dalle    || sanitizeForDalle(angle?.en);
   const safePose   = pose?.dalle     || sanitizeForDalle(pose?.en);
   const safeState  = state?.dalle    || sanitizeForDalle(state?.en);
   const safeLoc    = location?.dalle || sanitizeForDalle(location?.en);
-  const safeExpr   = sanitizeForDalle(expr?.en);
+  const safeExpr   = expr?.dalle     || sanitizeForDalle(expr?.en);
   const safeChips  = chips.map(sanitizeForDalle);
   const parts = [
     physDesc,
@@ -745,12 +744,12 @@ function buildGPT(enDesc, angle, pose, state, location, expr) {
     safePose,
     safeState,
     safeLoc,
-    'hyperrealistic editorial photography, natural skin texture, authentic human proportions, professional fashion shoot',
+    'high-end fashion editorial photography, natural skin texture, authentic human proportions, professional fashion shoot, all subjects fully clothed or in appropriate swimwear',
     ...safeChips,
     'professional camera, sharp focus on subject, natural lighting, no CGI, no filters',
     'no text, no watermark, 9:16 vertical portrait format',
   ];
-  return 'Generate a hyperrealistic editorial fashion photograph, 9:16 vertical portrait format: ' + parts.filter(Boolean).join(', ') + '.';
+  return 'Professional high-end fashion editorial photograph for a magazine, 9:16 vertical portrait format, fully clothed or appropriate swimwear only: ' + parts.filter(Boolean).join(', ') + '.';
 }
 
 // ── Translate ─────────────────────────────────────────────────────────────
