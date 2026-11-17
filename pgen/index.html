@@ -150,16 +150,33 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .hist-item-ts{font-size:.6rem;color:var(--muted);opacity:.45;white-space:nowrap;margin-top:1px}
 
 @media(max-width:420px){.result-actions,.level-row{flex-direction:column}.btn-act{text-align:center}}
+
+/* ── Light theme ── */
+[data-theme="light"]{
+  --bg:#f4f3ee;--surface:#ffffff;--card:#ececea;--border:#d4d4c8;
+  --gold:#b87800;--gold-dim:#a06800;--gold-glow:rgba(184,120,0,.14);
+  --text:#1a1a22;--muted:#606070;
+}
+[data-theme="light"] .desc-textarea,[data-theme="light"] .prompt-box{background:#f8f7f2;border-color:var(--border)}
+[data-theme="light"] body{background:var(--bg)}
+
+/* ── Theme toggle ── */
+.theme-toggle{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--border);background:transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .18s;color:var(--muted)}
+.theme-toggle:hover{border-color:var(--gold-dim);color:var(--text)}
+header{position:relative}
 </style>
 </head>
 <body>
 
 <header>
+  <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
   <div class="logo-ring">
     <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.3 4.7-3.3 6L17 22H7l1.3-7C6.3 13.7 5 11.5 5 9a7 7 0 0 1 7-7z"/></svg>
   </div>
   <h1><span>RAWgen</span>Gerador de Prompts</h1>
-  <p class="header-sub">Descreva a personagem · escolha ângulo, posição e estado · gere o prompt</p>
+  <p class="header-sub">Descreva a personagem · escolha ângulo, posição, estado · gere o prompt</p>
 </header>
 
 <main>
@@ -214,6 +231,8 @@ let generatedGPT = '';
 let selAngle     = null;
 let selPose      = null;
 let selState     = null;
+let selLocation  = null;
+let selExpression = null;
 
 // ── Selector data ──────────────────────────────────────────────────────────
 const ANGLES = [
@@ -280,6 +299,15 @@ const POSES = [
   { key:'kneeling-open',      label:'Ajoelhada / joelhos abertos',    en:'kneeling with knees spread wide apart, sitting back on heels, back straight, hands on thighs, hips open and low', dalle:'kneeling with knees apart, sitting back on heels, back straight, hands on thighs, yoga-like pose' },
   { key:'lying-butterfly',    label:'Deitada / borboleta',            en:'lying on back, soles of feet pressed together, knees fallen wide apart in butterfly position, hips open', dalle:'lying on back, feet together, knees relaxed outward in butterfly yoga pose, meditative position' },
   { key:'standing-open-low',  label:'Em pé / pernas abertas / câmera baixa', en:'standing facing camera with legs spread wide apart, camera at floor level looking up between legs, strong low angle', dalle:'standing facing camera, legs apart in power stance, camera at floor level looking up, strong low angle' },
+  // Academia / Yoga / Dança
+  { key:'squat-front',      label:'Agachamento / frente',     en:'deep squat facing camera, knees wide, back straight, arms forward for balance, athletic power pose', dalle:'deep squat facing camera, knees wide, back straight, arms forward, athletic power pose' },
+  { key:'hip-thrust',       label:'Hip thrust / elevação',    en:'lying back on bench, hips fully thrust upward, body forming a bridge, feet flat on floor, full hip extension', dalle:'lying back on bench, hips elevated in bridge position, feet flat, full hip extension, fitness pose' },
+  { key:'plank',            label:'Prancha / plank',          en:'front plank position, body perfectly horizontal, arms straight, toes on ground, core engaged, full side view', dalle:'front plank position, body perfectly horizontal, arms straight, toes on ground, full side profile' },
+  { key:'split',            label:'Spagat / abertura total',  en:'full splits on floor, one leg forward and one back, body perfectly level, hands on floor for support, extreme flexibility', dalle:'full splits on floor, one leg forward one back, body level, hands on floor, extreme flexibility pose' },
+  { key:'yoga-cobra',       label:'Yoga / cobra',             en:'yoga cobra pose, lying face down, arms straight pushing chest up, head back, spine deeply arched upward, full front view', dalle:'yoga cobra pose, lying face down, arms straight, chest lifted, head back, spine arched upward' },
+  { key:'yoga-warrior',     label:'Yoga / guerreiro',         en:'yoga warrior II pose, one leg lunged forward with knee bent, other leg extended back, arms stretched wide to each side, side profile', dalle:'yoga warrior II pose, one leg forward bent, other extended back, arms wide to each side, strong stance' },
+  { key:'dance-arabesque',  label:'Dança / arabesque',        en:'dance arabesque, standing on one leg, opposite leg extended straight behind horizontal, arms gracefully extended, full side profile, ballet elegance', dalle:'dance arabesque pose, one leg raised straight behind, arms gracefully extended, ballet elegant side profile' },
+  { key:'dance-side-bend',  label:'Dança / curvatura lateral', en:'standing side bend in dance style, one arm arched overhead, body curving to the side, one hip pushed out, full front view', dalle:'standing side bend in dance style, one arm arched overhead, body curving sideways, hip pushed out' },
 ];
 
 const STATES = [
@@ -301,6 +329,34 @@ const STATES = [
   { key:'clothed-min',   label:'Roupa mínima',           en:'minimal clothing, just barely covered, fabric draping loosely', dalle:'minimal clothing, fabric draping loosely, editorial fashion style' },
   { key:'nude-artistic', label:'Nua / artístico',        en:'nude, tasteful artistic nude photography, body as subject, natural and unashamed', dalle:'figure in minimal tasteful editorial clothing, artistic fashion photography, clean aesthetic' },
   { key:'nude-raw',      label:'Nua / bruto e real',     en:'fully nude, raw unfiltered realism, true human body, no censorship, completely natural', dalle:'figure in minimal beachwear, raw authentic look, natural human form, unfiltered editorial style' },
+];
+
+const LOCATIONS = [
+  { key:'beach',        label:'Praia / areia',          en:'on a sandy beach, natural ocean waves in background, golden sand, coastal atmosphere', dalle:'on a sandy beach, ocean waves in background, golden sand, coastal natural light' },
+  { key:'pool',         label:'Piscina / água',          en:'by or in a swimming pool, turquoise water, poolside tiles, summer atmosphere', dalle:'by a swimming pool, turquoise water, poolside tiles, bright summer daylight' },
+  { key:'bedroom',      label:'Quarto / cama',           en:'in a stylish bedroom, soft bed linens, warm ambient light, intimate private space', dalle:'in a stylish bedroom, soft bed linens, warm ambient lighting, editorial bedroom setting' },
+  { key:'shower',       label:'Chuveiro / banheiro',     en:'in a luxury shower or bathroom, wet tiles, steam, water streaming, modern bathroom', dalle:'in a luxury shower setting, wet tiles, steam, water streaming, modern bathroom editorial' },
+  { key:'forest',       label:'Floresta / natureza',     en:'in a lush forest, dappled sunlight through leaves, natural green environment, outdoor natural setting', dalle:'in a lush forest, dappled sunlight, green leaves, natural outdoor environment' },
+  { key:'urban',        label:'Cidade / rua',            en:'urban street setting, city buildings, concrete and glass, street photography atmosphere', dalle:'urban street setting, city buildings background, concrete, editorial street photography' },
+  { key:'studio',       label:'Estúdio / fundo clean',   en:'minimalist photography studio, clean white or neutral background, professional studio lighting', dalle:'minimalist photography studio, clean neutral background, professional studio editorial' },
+  { key:'golden-out',   label:'Exterior / golden hour',  en:'outdoor at golden hour, warm sunset light, long shadows, sun-kissed natural environment', dalle:'outdoor at golden hour, warm sunset light, long golden shadows, natural sun-kissed setting' },
+  { key:'rain-street',  label:'Chuva / rua molhada',     en:'rainy street scene, wet pavement reflections, rain falling, moody urban atmosphere', dalle:'rainy street scene, wet pavement with reflections, rain atmosphere, moody urban editorial' },
+  { key:'gym',          label:'Academia / gym',          en:'modern gym or fitness studio, gym equipment in background, fitness atmosphere, athletic environment', dalle:'modern gym setting, fitness equipment background, athletic studio atmosphere' },
+  { key:'rooftop',      label:'Terraço / rooftop',       en:'rooftop setting, city skyline in background, open sky, urban elevated perspective', dalle:'rooftop setting, city skyline background, open sky, elevated urban editorial' },
+  { key:'sofa',         label:'Sofá / sala',             en:'on or beside a stylish sofa in a modern living room, interior design setting, warm home atmosphere', dalle:'on a stylish sofa in modern living room, interior design setting, warm home editorial' },
+];
+
+const EXPRESSIONS = [
+  { key:'natural',      label:'Natural / relaxada',      en:'natural relaxed expression, mouth slightly closed, eyes soft and open, completely at ease' },
+  { key:'seductive',    label:'Sedutora / olhar direto',  en:'seductive direct gaze into camera, eyes slightly narrowed, lips together, commanding presence' },
+  { key:'soft-smile',   label:'Sorrindo suave',           en:'soft genuine smile, eyes slightly crinkled, warm and approachable, natural happiness' },
+  { key:'lips-apart',   label:'Lábios entreabertos',      en:'lips slightly parted, breath visible, intense focused gaze, quiet sensual energy' },
+  { key:'side-glance',  label:'Olhando de soslaio',       en:'sideways glance at camera, head slightly turned away, eyes cutting to the side, mysterious and playful' },
+  { key:'serious',      label:'Séria / poderosa',         en:'strong serious expression, jaw set, eyes direct and confident, powerful and commanding presence' },
+  { key:'eyes-closed',  label:'Olhos fechados / serena',  en:'eyes gently closed, serene and peaceful expression, face relaxed, contemplative and tranquil' },
+  { key:'looking-up',   label:'Olhando para cima',        en:'head tilted slightly back, eyes looking upward, vulnerable and open expression, neck elongated' },
+  { key:'looking-down', label:'Olhando para baixo',       en:'head slightly bowed, eyes cast downward, introspective and intimate expression, long lashes visible' },
+  { key:'mouth-open',   label:'Boca aberta / surpresa',   en:'mouth open in surprise or expression, eyes wide, spontaneous unguarded moment' },
 ];
 
 // ── Enhance & Level ───────────────────────────────────────────────────────
@@ -363,16 +419,32 @@ function renderSelectors() {
         </div>
       </div>
 
-      <button class="btn-gen" id="btn-gen" onclick="generate()" ${selAngle||selPose||selState?'':'disabled'}>Gerar Prompt →</button>
+      <div class="sel-group">
+        <div class="sel-group-title">📍 Cenário / locação <span>opcional</span></div>
+        <div class="sel-chips" id="chips-location">
+          ${LOCATIONS.map(l=>`<div class="schap${selLocation===l.key?' sel':''}" onclick="pick('location','${l.key}')">${l.label}</div>`).join('')}
+        </div>
+      </div>
+
+      <div class="sel-group">
+        <div class="sel-group-title">😶 Expressão / olhar <span>opcional</span></div>
+        <div class="sel-chips" id="chips-expression">
+          ${EXPRESSIONS.map(e=>`<div class="schap${selExpression===e.key?' sel':''}" onclick="pick('expression','${e.key}')">${e.label}</div>`).join('')}
+        </div>
+      </div>
+
+      <button class="btn-gen" id="btn-gen" onclick="generate()" ${selAngle||selPose||selState||selLocation||selExpression?'':'disabled'}>Gerar Prompt →</button>
     </div>`;
 }
 
 function pick(group, key) {
-  if (group === 'angle') selAngle = selAngle === key ? null : key;
-  if (group === 'pose')  selPose  = selPose  === key ? null : key;
-  if (group === 'state') selState = selState === key ? null : key;
+  if (group === 'angle')      selAngle      = selAngle      === key ? null : key;
+  if (group === 'pose')       selPose       = selPose       === key ? null : key;
+  if (group === 'state')      selState      = selState      === key ? null : key;
+  if (group === 'location')   selLocation   = selLocation   === key ? null : key;
+  if (group === 'expression') selExpression = selExpression === key ? null : key;
   renderSelectors();
-  if (selAngle || selPose || selState) generate();
+  if (selAngle || selPose || selState || selLocation || selExpression) generate();
 }
 
 // ── Generate ──────────────────────────────────────────────────────────────
@@ -385,14 +457,16 @@ async function generate() {
   setTimeout(() => out.scrollIntoView({behavior:'smooth',block:'nearest'}), 60);
 
   const enDesc = await translateDesc(desc);
-  const angleObj = ANGLES.find(a=>a.key===selAngle);
-  const poseObj  = POSES.find(p=>p.key===selPose);
-  const stateObj = STATES.find(s=>s.key===selState);
+  const angleObj    = ANGLES.find(a=>a.key===selAngle);
+  const poseObj     = POSES.find(p=>p.key===selPose);
+  const stateObj    = STATES.find(s=>s.key===selState);
+  const locationObj = LOCATIONS.find(l=>l.key===selLocation);
+  const exprObj     = EXPRESSIONS.find(e=>e.key===selExpression);
 
-  generatedMJ  = buildMJ(enDesc, angleObj, poseObj, stateObj);
-  generatedGPT = buildGPT(enDesc, angleObj, poseObj, stateObj);
+  generatedMJ  = buildMJ(enDesc, angleObj, poseObj, stateObj, locationObj, exprObj);
+  generatedGPT = buildGPT(enDesc, angleObj, poseObj, stateObj, locationObj, exprObj);
 
-  const label = [angleObj?.label, poseObj?.label, stateObj?.label].filter(Boolean).join(' · ');
+  const label = [angleObj?.label, poseObj?.label, stateObj?.label, locationObj?.label, exprObj?.label].filter(Boolean).join(' · ');
   saveToHistory(desc, label, generatedMJ, generatedGPT);
   renderResult(label);
   renderHistory();
@@ -400,15 +474,17 @@ async function generate() {
 }
 
 // ── Build prompts ──────────────────────────────────────────────────────────
-function buildMJ(enDesc, angle, pose, state) {
+function buildMJ(enDesc, angle, pose, state, location, expr) {
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   const lv = LEVEL_MAP[currentLevel];
   const parts = [
     enDesc,
     'same person consistent appearance, identical face and body throughout, exact same physical features',
+    expr?.en,
     angle?.en,
     pose?.en,
     state?.en,
+    location?.en,
     lv.style,
     ...chips,
     'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no plastic skin, no CGI render',
@@ -471,20 +547,24 @@ function extractPhysical(enDesc) {
     .replace(/,\s*,/g, ',').replace(/,\s*$/,'').trim();
 }
 
-function buildGPT(enDesc, angle, pose, state) {
+function buildGPT(enDesc, angle, pose, state, location, expr) {
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   // Use only physical traits — strip clothing/nudity refs; use pre-defined dalle field when available
-  const physDesc = sanitizeForDalle(extractPhysical(enDesc)) || sanitizeForDalle(enDesc);
-  const safeAngle = angle?.dalle || sanitizeForDalle(angle?.en);
-  const safePose  = pose?.dalle  || sanitizeForDalle(pose?.en);
-  const safeState = state?.dalle || sanitizeForDalle(state?.en);
-  const safeChips = chips.map(sanitizeForDalle);
+  const physDesc   = sanitizeForDalle(extractPhysical(enDesc)) || sanitizeForDalle(enDesc);
+  const safeAngle  = angle?.dalle    || sanitizeForDalle(angle?.en);
+  const safePose   = pose?.dalle     || sanitizeForDalle(pose?.en);
+  const safeState  = state?.dalle    || sanitizeForDalle(state?.en);
+  const safeLoc    = location?.dalle || sanitizeForDalle(location?.en);
+  const safeExpr   = sanitizeForDalle(expr?.en);
+  const safeChips  = chips.map(sanitizeForDalle);
   const parts = [
     physDesc,
     'consistent character appearance: same face, same eye color, same hair color and style, same body proportions',
+    safeExpr,
     safeAngle,
     safePose,
     safeState,
+    safeLoc,
     'hyperrealistic editorial photography, natural skin texture, authentic human proportions, professional fashion shoot',
     ...safeChips,
     'professional camera, sharp focus on subject, natural lighting, no CGI, no filters',
@@ -554,10 +634,30 @@ function restart() {
   document.getElementById('step2-area').innerHTML = '';
   document.getElementById('output-area').innerHTML = '';
   document.getElementById('desc-input').value = '';
-  selAngle = null; selPose = null; selState = null;
+  selAngle = null; selPose = null; selState = null; selLocation = null; selExpression = null;
   document.getElementById('desc-input').focus();
   window.scrollTo({top:0,behavior:'smooth'});
 }
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  document.getElementById('theme-btn').textContent = next === 'light' ? '🌙' : '☀️';
+  try { localStorage.setItem('rawgen_theme', next); } catch {}
+}
+(function initTheme() {
+  try {
+    const saved = localStorage.getItem('rawgen_theme');
+    if (saved === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('theme-btn');
+        if (btn) btn.textContent = '🌙';
+      });
+    }
+  } catch {}
+})();
 
 // ── Toast ─────────────────────────────────────────────────────────────────
 let _tt = null;
@@ -573,7 +673,8 @@ function getHistory(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[
 function saveHistory(h){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,20))); }catch{} }
 function saveToHistory(desc, label, mj, gpt){
   const h = getHistory();
-  h.unshift({ ts:Date.now(), desc, preset:label, mj, gpt });
+  h.unshift({ ts:Date.now(), desc, preset:label, mj, gpt,
+    angle:selAngle, pose:selPose, state:selState, location:selLocation, expression:selExpression });
   saveHistory(h);
 }
 function renderHistory(){
@@ -594,6 +695,9 @@ function loadHistory(i){
   const h=getHistory(); const item=h[i]; if(!item) return;
   document.getElementById('desc-input').value = item.desc;
   generatedMJ=item.mj; generatedGPT=item.gpt;
+  selAngle=item.angle||null; selPose=item.pose||null; selState=item.state||null;
+  selLocation=item.location||null; selExpression=item.expression||null;
+  renderSelectors();
   renderResult(item.preset||'');
   window.scrollTo({top:0,behavior:'smooth'});
 }
