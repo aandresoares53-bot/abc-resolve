@@ -160,18 +160,6 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 [data-theme="light"] .desc-textarea,[data-theme="light"] .prompt-box{background:#f8f7f2;border-color:var(--border)}
 [data-theme="light"] body{background:var(--bg)}
 
-/* ── Combo controls (search + filter) ── */
-.combo-controls{display:flex;flex-direction:column;gap:9px;margin-bottom:4px}
-.combo-search{width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;
-  color:var(--text);font-family:Georgia,serif;font-size:.85rem;padding:10px 14px;outline:none;
-  transition:border-color .2s;caret-color:var(--gold)}
-.combo-search:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px var(--gold-glow)}
-.combo-search::placeholder{color:var(--muted);opacity:.55}
-.combo-level-filters{display:flex;gap:7px;flex-wrap:wrap}
-.clf-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;
-  color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;transition:all .14s}
-.clf-btn:hover{border-color:var(--gold-dim);color:var(--text)}
-.clf-btn.active{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
 
 /* ── Combos rápidos ── */
 .combos-wrapper{display:flex;flex-direction:column;gap:14px}
@@ -193,16 +181,12 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .combo-btn:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
 .combo-btn.active-combo{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}
 
-/* ── Detalhes físicos ── */
-.phys-row{margin-top:12px}
-.phys-chips-row{margin-bottom:7px}
-.phys-group-label{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
-  display:block;margin-bottom:4px;opacity:.7}
-.phys-chips{display:flex;flex-wrap:wrap;gap:5px}
-.pchip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
-  color:var(--muted);font-family:Georgia,serif;font-size:.68rem;cursor:pointer;transition:all .14s}
-.pchip:hover{border-color:var(--gold-dim);color:var(--text)}
-.pchip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+/* ── NSFW Section ── */
+.nsfw-gate{background:linear-gradient(135deg,rgba(180,0,0,.12),rgba(0,0,0,0));border:1px solid rgba(200,0,0,.35);border-radius:var(--radius);padding:16px 18px;margin-top:4px;display:none}
+.nsfw-gate.visible{display:block}
+.nsfw-warning{font-size:.68rem;color:#ff6060;letter-spacing:.1em;margin-bottom:12px;text-align:center;opacity:.9}
+.nsfw-combos-wrapper{display:flex;flex-direction:column;gap:14px}
+
 
 /* ── Avançado accordion ── */
 .advanced-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;
@@ -244,53 +228,6 @@ header{position:relative}
       placeholder="Ex: loira de 19 anos apenas de calcinha e sutiã, cabelo longo, olhos claros..."
       rows="3"></textarea>
 
-    <!-- Detalhes físicos da personagem -->
-    <div class="phys-row" id="phys-row">
-      <span class="enhance-label">Detalhes físicos (opcional)</span>
-      <div class="phys-chips-row">
-        <span class="phys-group-label">Etnia</span>
-        <div class="phys-chips" data-group="ethnicity">
-          <button class="pchip" data-val="Brazilian">🇧🇷 Brasileira</button>
-          <button class="pchip" data-val="Latina">🌺 Latina</button>
-          <button class="pchip" data-val="European">🌍 Europeia</button>
-          <button class="pchip" data-val="Asian">🌸 Asiática</button>
-          <button class="pchip" data-val="Black">✨ Negra</button>
-          <button class="pchip" data-val="Mixed race">🌈 Mestiça</button>
-        </div>
-      </div>
-      <div class="phys-chips-row">
-        <span class="phys-group-label">Olhos</span>
-        <div class="phys-chips" data-group="eyes">
-          <button class="pchip" data-val="brown eyes">Castanhos</button>
-          <button class="pchip" data-val="green eyes">Verdes</button>
-          <button class="pchip" data-val="blue eyes">Azuis</button>
-          <button class="pchip" data-val="light hazel eyes">Mel</button>
-          <button class="pchip" data-val="dark eyes">Escuros</button>
-        </div>
-      </div>
-      <div class="phys-chips-row">
-        <span class="phys-group-label">Cabelo</span>
-        <div class="phys-chips" data-group="hair">
-          <button class="pchip" data-val="long straight black hair">Liso preto longo</button>
-          <button class="pchip" data-val="long wavy brown hair">Ondulado castanho</button>
-          <button class="pchip" data-val="long blonde hair">Loiro longo</button>
-          <button class="pchip" data-val="short dark hair">Curto escuro</button>
-          <button class="pchip" data-val="curly black hair">Cacheado preto</button>
-          <button class="pchip" data-val="red hair">Ruivo</button>
-        </div>
-      </div>
-      <div class="phys-chips-row">
-        <span class="phys-group-label">Biótipo</span>
-        <div class="phys-chips" data-group="body">
-          <button class="pchip" data-val="slender athletic build">Atlética magra</button>
-          <button class="pchip" data-val="curvy hourglass figure">Curvilínea ampulheta</button>
-          <button class="pchip" data-val="petite slim build">Petite</button>
-          <button class="pchip" data-val="tall slim build">Alta e magra</button>
-          <button class="pchip" data-val="voluptuous full figure">Voluptuosa</button>
-          <button class="pchip" data-val="fit muscular build">Musculosa fitness</button>
-        </div>
-      </div>
-    </div>
 
     <div class="enhance-row">
       <span class="enhance-label">Adicionar →</span>
@@ -306,23 +243,19 @@ header{position:relative}
       <button class="lvl-btn active" onclick="setLevel(this,'sfw')">🌸 Elegante</button>
       <button class="lvl-btn" onclick="setLevel(this,'soft')">🔥 Sensual</button>
       <button class="lvl-btn" onclick="setLevel(this,'bold')">⚡ Intenso</button>
+      <button class="lvl-btn" onclick="setLevel(this,'nsfw')">🔞 NSFW</button>
     </div>
 
-  </div>
-
-  <!-- Combos search + filter -->
-  <div class="combo-controls" id="combo-controls">
-    <input class="combo-search" id="combo-search" type="text" placeholder="🔍 Buscar combo..." oninput="filterCombos()" autocomplete="off">
-    <div class="combo-level-filters">
-      <button class="clf-btn active" data-lvl="all" onclick="setCLF(this)">Todos</button>
-      <button class="clf-btn" data-lvl="sfw" onclick="setCLF(this)">🌸 Elegante</button>
-      <button class="clf-btn" data-lvl="soft" onclick="setCLF(this)">🔥 Sensual</button>
-      <button class="clf-btn" data-lvl="bold" onclick="setCLF(this)">⚡ Intenso</button>
-    </div>
   </div>
 
   <!-- Combos rápidos -->
   <div class="combos-wrapper" id="combos-grid"></div>
+
+  <!-- NSFW Section -->
+  <div class="nsfw-gate" id="nsfw-gate">
+    <div class="nsfw-warning">🔞 Conteúdo adulto — apenas Midjourney. Não use no ChatGPT/DALL·E.</div>
+    <div class="nsfw-combos-wrapper" id="nsfw-combos-grid"></div>
+  </div>
 
   <!-- Avançado: seletores manuais -->
   <button class="advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">
@@ -661,6 +594,51 @@ const COMBOS = [
     angle:'side-34', pose:'yoga-cobra', state:'sweaty', location:'gym', expression:'eyes-closed' },
 ];
 
+// ── NSFW Combos (Midjourney only) ─────────────────────────────────────────
+const NSFW_COMBOS = [
+  { group:'🔥 Clássicos', label:'Frontal / Em pé / Nua completa', level:'nsfw',
+    angle:'frontal-fb', pose:'standing-front', state:'nude-raw', location:'studio', expression:'seductive' },
+  { group:'🔥 Clássicos', label:'S-curve perfil / Nua / Estúdio', level:'nsfw',
+    angle:'side-profile', pose:'s-curve', state:'nude-raw', location:'studio', expression:'lips-apart' },
+  { group:'🔥 Clássicos', label:'S-curve 3/4 / Nua / Velas', level:'nsfw',
+    angle:'side-34', pose:'s-curve', state:'nude-raw', location:'bedroom', expression:'seductive' },
+  { group:'🔥 Clássicos', label:'Costas / Encurvada / Nua', level:'nsfw',
+    angle:'rear-fb', pose:'back-arched-rear', state:'nude-raw', location:'studio', expression:'natural' },
+  { group:'🔥 Clássicos', label:'Em pé costas / Golden / Nua', level:'nsfw',
+    angle:'rear-over', pose:'standing-back', state:'golden-hour', location:'golden-out', expression:'looking-up' },
+
+  { group:'💧 Molhada & Óleo', label:'S-curve / Óleo / Nua', level:'nsfw',
+    angle:'side-34', pose:'s-curve', state:'oiled', location:'studio', expression:'lips-apart' },
+  { group:'💧 Molhada & Óleo', label:'Ducha / Nua / Vapor', level:'nsfw',
+    angle:'frontal-fb', pose:'standing-arms', state:'wet-shower', location:'shower', expression:'eyes-closed' },
+  { group:'💧 Molhada & Óleo', label:'Piscina / Nua / Molhada', level:'nsfw',
+    angle:'underwater', pose:'standing-arms', state:'wet-pool', location:'pool', expression:'seductive' },
+  { group:'💧 Molhada & Óleo', label:'Praia / Nua / Ondas', level:'nsfw',
+    angle:'low-angle', pose:'standing-front', state:'wet-ocean', location:'beach', expression:'seductive' },
+
+  { group:'🌸 Deitada', label:'Deitada costas / Nua / Velas', level:'nsfw',
+    angle:'overhead', pose:'lying-back', state:'nude-raw', location:'bedroom', expression:'soft-smile' },
+  { group:'🌸 Deitada', label:'Deitada lado / Nua / Sombras', level:'nsfw',
+    angle:'side-profile', pose:'lying-side', state:'nude-raw', location:'bedroom', expression:'eyes-closed' },
+  { group:'🌸 Deitada', label:'Deitada / Pernas abertas / Nua', level:'nsfw',
+    angle:'overhead', pose:'lying-legs-open', state:'nude-raw', location:'bedroom', expression:'seductive' },
+  { group:'🌸 Deitada', label:'Deitada / Borboleta / Nua', level:'nsfw',
+    angle:'overhead', pose:'lying-butterfly', state:'nude-raw', location:'bedroom', expression:'lips-apart' },
+  { group:'🌸 Deitada', label:'Bridge / Óleo / Nua', level:'nsfw',
+    angle:'side-profile', pose:'arching', state:'oiled', location:'studio', expression:'eyes-closed' },
+
+  { group:'🏛 Poses Artísticas', label:'Yoga cobra / Nua / Floresta', level:'nsfw',
+    angle:'side-profile', pose:'yoga-cobra', state:'nude-raw', location:'forest', expression:'eyes-closed' },
+  { group:'🏛 Poses Artísticas', label:'Sentada cavalinha / Nua / Espelho', level:'nsfw',
+    angle:'mirror', pose:'sitting-straddle', state:'nude-raw', location:'bedroom', expression:'seductive' },
+  { group:'🏛 Poses Artísticas', label:'Sentada pernas abertas / Nua / Velas', level:'nsfw',
+    angle:'frontal-fb', pose:'sitting-legs-open', state:'nude-raw', location:'bedroom', expression:'lips-apart' },
+  { group:'🏛 Poses Artísticas', label:'Ajoelhada / Nua / Estúdio', level:'nsfw',
+    angle:'low-angle', pose:'kneeling', state:'nude-raw', location:'studio', expression:'serious' },
+  { group:'🏛 Poses Artísticas', label:'Over-shoulder / S-curve / Nua', level:'nsfw',
+    angle:'over-shoulder', pose:'s-curve', state:'nude-raw', location:'studio', expression:'side-glance' },
+];
+
 function applyCombo(c) {
   const desc = document.getElementById('desc-input').value.trim();
   if (!desc) { showToast('Preencha a descrição da personagem primeiro ↑'); return; }
@@ -695,105 +673,29 @@ function openAdvanced() {
   btn.classList.add('open');
 }
 
-function loadFavs() {
-  try { return new Set(JSON.parse(localStorage.getItem('rawgen_favs') || '[]')); }
-  catch { return new Set(); }
-}
-function saveFavs(favs) {
-  try { localStorage.setItem('rawgen_favs', JSON.stringify([...favs])); } catch {}
-}
-function toggleFav(idx, btn) {
-  const c = COMBOS[idx];
-  const favs = loadFavs();
-  if (favs.has(c.label)) favs.delete(c.label); else favs.add(c.label);
-  saveFavs(favs);
-  renderCombos();
-  filterCombos();
-}
-
-function comboItemHTML(c, i, favs) {
-  const isFav = favs.has(c.label);
-  return `<div class="combo-item ${isFav ? 'fav' : ''}" data-idx="${i}">
-    <button class="combo-btn" data-idx="${i}" onclick="applyCombo(COMBOS[${i}])">${c.label}</button>
-    <button class="fav-btn ${isFav ? 'on' : ''}" title="Favoritar" onclick="toggleFav(${i},this)">★</button>
-  </div>`;
+function comboItemHTML(c, i) {
+  return `<button class="combo-btn" onclick="applyCombo(COMBOS[${i}])">${c.label}</button>`;
 }
 
 function renderCombos() {
   const grid = document.getElementById('combos-grid');
   if (!grid) return;
-  const favs = loadFavs();
   const groups = {};
   COMBOS.forEach((c, i) => {
     const g = c.group || '✦ Outros';
     if (!groups[g]) groups[g] = [];
     groups[g].push({ c, i });
   });
-  let html = '';
-  const favItems = COMBOS.map((c,i) => ({c,i})).filter(({c}) => favs.has(c.label));
-  if (favItems.length) {
-    html += `<div class="combo-group-card" id="favs-group">
-      <div class="combo-group-title">⭐ Favoritos</div>
-      <div class="combo-group-grid">
-        ${favItems.map(({c,i}) => comboItemHTML(c, i, favs)).join('')}
-      </div>
-    </div>`;
-  }
-  html += Object.entries(groups).map(([title, items]) =>
+  grid.innerHTML = Object.entries(groups).map(([title, items]) =>
     `<div class="combo-group-card">
       <div class="combo-group-title">${title}</div>
       <div class="combo-group-grid">
-        ${items.map(({c,i}) => comboItemHTML(c, i, favs)).join('')}
+        ${items.map(({c,i}) => comboItemHTML(c, i)).join('')}
       </div>
     </div>`
   ).join('');
-  grid.innerHTML = html;
 }
 
-let clfLevel = 'all';
-
-function setCLF(btn) {
-  document.querySelectorAll('.clf-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  clfLevel = btn.dataset.lvl;
-  filterCombos();
-}
-
-function filterCombos() {
-  const q = (document.getElementById('combo-search')?.value || '').toLowerCase().trim();
-  document.querySelectorAll('.combo-group-card').forEach(card => {
-    let anyVisible = false;
-    card.querySelectorAll('.combo-btn').forEach(btn => {
-      const idx = parseInt(btn.dataset.idx);
-      const c = COMBOS[idx];
-      if (!c) { btn.closest('.combo-item')?.style && (btn.closest('.combo-item').style.display = ''); return; }
-      const matchLevel = clfLevel === 'all' || c.level === clfLevel;
-      const matchText  = !q || btn.textContent.toLowerCase().includes(q) || (c.group||'').toLowerCase().includes(q);
-      const show = matchLevel && matchText;
-      const item = btn.closest('.combo-item') || btn;
-      item.style.display = show ? '' : 'none';
-      if (show) anyVisible = true;
-    });
-    card.style.display = anyVisible ? '' : 'none';
-  });
-}
-
-function getPhysTraits() {
-  const parts = [];
-  document.querySelectorAll('.phys-chips').forEach(group => {
-    const on = group.querySelector('.pchip.on');
-    if (on) parts.push(on.dataset.val);
-  });
-  return parts.join(', ');
-}
-
-document.addEventListener('click', e => {
-  if (!e.target.classList.contains('pchip')) return;
-  const group = e.target.closest('.phys-chips');
-  if (!group) return;
-  group.querySelectorAll('.pchip').forEach(p => p.classList.remove('on'));
-  e.target.classList.add('on');
-});
 
 // ── Selector data ──────────────────────────────────────────────────────────
 const ANGLES = [
@@ -947,6 +849,8 @@ const LEVEL_MAP = {
           params:'--ar 9:16 --v 6 --style raw --q 2' },
   bold: { style:'hyperrealistic human photography, raw unfiltered realism, true-to-life skin texture, real human body, no digital smoothing, no plastic skin, no airbrushing, genuine and intense',
           params:'--ar 9:16 --v 6 --style raw --q 2' },
+  nsfw: { style:'fully nude, explicit artistic nude, raw unfiltered realism, no censorship, true human body',
+          params:'--ar 2:3 --style raw --v 6' },
 };
 
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
@@ -954,6 +858,53 @@ function setLevel(btn, lvl) {
   document.querySelectorAll('.lvl-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentLevel = lvl;
+  const gate = document.getElementById('nsfw-gate');
+  const grid = document.getElementById('combos-grid');
+  if (lvl === 'nsfw') {
+    if (gate) gate.classList.add('visible');
+    if (grid) grid.style.display = 'none';
+    renderNSFWCombos();
+  } else {
+    if (gate) gate.classList.remove('visible');
+    if (grid) grid.style.display = '';
+  }
+}
+
+function renderNSFWCombos() {
+  const grid = document.getElementById('nsfw-combos-grid');
+  if (!grid) return;
+  const groups = {};
+  NSFW_COMBOS.forEach((c, i) => {
+    const g = c.group || '🔞 NSFW';
+    if (!groups[g]) groups[g] = [];
+    groups[g].push({ c, i });
+  });
+  grid.innerHTML = Object.entries(groups).map(([title, items]) =>
+    `<div class="combo-group-card">
+      <div class="combo-group-title">${title}</div>
+      <div class="combo-group-grid">
+        ${items.map(({c,i}) =>
+          `<button class="combo-btn" onclick="applyNSFWCombo(NSFW_COMBOS[${i}])">${c.label}</button>`
+        ).join('')}
+      </div>
+    </div>`
+  ).join('');
+}
+
+function applyNSFWCombo(c) {
+  const desc = document.getElementById('desc-input').value.trim();
+  if (!desc) { showToast('Preencha a descrição da personagem primeiro ↑'); return; }
+  selAngle      = c.angle      || null;
+  selPose       = c.pose       || null;
+  selState      = c.state      || null;
+  selLocation   = c.location   || null;
+  selExpression = c.expression || null;
+  document.querySelectorAll('.combo-group-card .combo-btn.active-combo').forEach(b => b.classList.remove('active-combo'));
+  document.querySelectorAll('#nsfw-combos-grid .combo-btn').forEach(b => { if (b.textContent === c.label) b.classList.add('active-combo'); });
+  renderSelectors();
+  generate();
+  document.getElementById('adv-body')?.classList.add('open');
+  document.getElementById('adv-toggle')?.classList.add('open');
 }
 
 // ── Show selectors ────────────────────────────────────────────────────────
@@ -1049,10 +1000,8 @@ async function generate() {
 function buildMJ(enDesc, angle, pose, state, location, expr) {
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   const lv = LEVEL_MAP[currentLevel];
-  const physTraits = getPhysTraits();
-  const fullDesc = physTraits ? physTraits + ', ' + enDesc : enDesc;
   const parts = [
-    fullDesc,
+    enDesc,
     'same person consistent appearance, identical face and body throughout, exact same physical features',
     expr?.en,
     angle?.en,
@@ -1145,10 +1094,9 @@ function extractPhysical(enDesc) {
 }
 
 function buildGPT(enDesc, angle, pose, state, location, expr) {
+  if (currentLevel === 'nsfw') return '⚠️ Seção NSFW: use apenas no Midjourney. Não envie para ChatGPT/DALL·E.';
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  const physTraits = getPhysTraits();
-  const rawDesc = physTraits ? physTraits + ', ' + enDesc : enDesc;
-  const physDesc   = sanitizeForDalle(extractPhysical(rawDesc)) || sanitizeForDalle(rawDesc);
+  const physDesc = sanitizeForDalle(extractPhysical(enDesc)) || sanitizeForDalle(enDesc);
   // Always sanitize — including dalle fields, to catch any residual triggering language
   const safeAngle  = sanitizeForDalle(angle?.dalle    || angle?.en);
   const safePose   = sanitizeForDalle(pose?.dalle     || pose?.en);
@@ -1308,6 +1256,7 @@ function fmtTs(ts){
 renderHistory();
 renderSelectors();
 renderCombos();
+renderNSFWCombos();
 </script>
 </body>
 </html>
