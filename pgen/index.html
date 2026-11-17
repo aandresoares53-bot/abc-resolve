@@ -170,6 +170,17 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
   transition:all .15s;user-select:none;line-height:1.3}
 .combo-btn:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
 
+/* ── Avançado accordion ── */
+.advanced-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;border-radius:10px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;transition:all .18s;margin-top:4px}
+.advanced-toggle:hover{border-color:var(--gold-dim);color:var(--text)}
+.advanced-toggle .adv-arrow{font-size:.65rem;transition:transform .22s}
+.advanced-toggle.open .adv-arrow{transform:rotate(180deg)}
+.advanced-body{overflow:hidden;max-height:0;transition:max-height .3s ease}
+.advanced-body.open{max-height:9999px}
+
 /* ── Theme toggle ── */
 .theme-toggle{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;
   border:1px solid var(--border);background:transparent;cursor:pointer;
@@ -223,8 +234,13 @@ header{position:relative}
     <div class="combos-grid" id="combos-grid"></div>
   </div>
 
-  <!-- Step 2: Ângulo / Posição / Estado -->
-  <div id="step2-area"></div>
+  <!-- Avançado: seletores manuais -->
+  <button class="advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">
+    🎛 Avançado — ajuste manual <span class="adv-arrow">▼</span>
+  </button>
+  <div class="advanced-body" id="adv-body">
+    <div id="step2-area"></div>
+  </div>
 
   <!-- Step 3: Result -->
   <div id="output-area"></div>
@@ -371,8 +387,23 @@ function applyCombo(c) {
   selLocation   = c.location   || null;
   selExpression = c.expression || null;
   renderSelectors();
+  openAdvanced();
   generate();
-  setTimeout(() => document.getElementById('step2-area').scrollIntoView({behavior:'smooth',block:'start'}), 80);
+  setTimeout(() => document.getElementById('output-area').scrollIntoView({behavior:'smooth',block:'start'}), 80);
+}
+
+function toggleAdvanced() {
+  const btn  = document.getElementById('adv-toggle');
+  const body = document.getElementById('adv-body');
+  const isOpen = body.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+}
+
+function openAdvanced() {
+  const btn  = document.getElementById('adv-toggle');
+  const body = document.getElementById('adv-body');
+  body.classList.add('open');
+  btn.classList.add('open');
 }
 
 function renderCombos() {
