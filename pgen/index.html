@@ -157,6 +157,7 @@ header{position:relative}
       <div class="achip" data-angle="high">🔼 Ângulo alto</div>
       <div class="achip" data-angle="overhead">🛸 Aéreo/Top</div>
       <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
+      <div class="achip" data-angle="bentover">🫦 Perfil dobrada</div>
     </div>
 
     <div class="enhance-row">
@@ -225,6 +226,7 @@ const ANGLE_MAP = {
   high:         'high angle shot, shot from above looking down',
   overhead:     'overhead bird\'s-eye view, top-down shot',
   shoulder:     'over-the-shoulder shot, behind subject perspective',
+  bentover:     'side profile, subject leaning forward with hands on surface, arched back pose, low angle behind',
 };
 
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
