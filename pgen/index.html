@@ -207,10 +207,33 @@ function buildMJ(enDesc, chips) {
   return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6 ' + neg;
 }
 
+function sanitizeGPT(text) {
+  if (!text) return text;
+  return text
+    .replace(/\b(fully\s+)?nude\b/gi, 'wearing minimal clothing')
+    .replace(/\bnaked\b/gi, 'wearing minimal clothing')
+    .replace(/\btopless\b/gi, 'wearing a top')
+    .replace(/\bsem roupa\b/gi, 'wearing minimal clothing')
+    .replace(/\bsem calcinha\b/gi, 'wearing underwear')
+    .replace(/\bcalcinha\b/gi, 'underwear')
+    .replace(/\bsutiã\b/gi, 'bra')
+    .replace(/\bpenis\b|\bvagina\b|\bgenitais?\b|\bpau\b|\bpica\b|\bpussyb/gi, '')
+    .replace(/\bexplicit\b|\berotic\b|\bsexual\b/gi, 'sensual')
+    .replace(/\bporno\b|\bpornô\b|\bxxx\b/gi, 'adult')
+    .replace(/\b(seios?\s+)?à\s+mostra\b/gi, 'visible')
+    .replace(/\b(peitos?|seios?)\s+(à\s+mostra|expostos?|nus?)\b/gi, 'chest')
+    .replace(/,\s*,/g, ',').trim();
+}
+
 function buildGPT(enDesc, chips) {
-  const parts = [enDesc, ...chips,
-    'professional photography, natural skin texture, sharp focus, no CGI, no filters, no digital retouching, no plastic skin, authentic human skin, photorealistic',
-    'no text, no watermark, 9:16 vertical portrait format'];
+  const safeDesc = sanitizeGPT(enDesc);
+  const parts = [
+    'Professional portrait photograph, editorial style, tasteful and artistic',
+    safeDesc,
+    ...chips,
+    'natural skin texture, authentic human proportions, sharp focus, photorealistic, no CGI, no filters, no digital retouching',
+    'no text, no watermark, 9:16 vertical portrait'
+  ];
   return parts.filter(Boolean).join(', ') + '.';
 }
 
