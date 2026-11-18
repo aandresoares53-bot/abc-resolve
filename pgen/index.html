@@ -48,6 +48,12 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .echip:hover{border-color:var(--gold-dim);color:var(--text)}
 .echip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
 
+.achip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;
+  transition:all .14s;user-select:none}
+.achip:hover{border-color:#4a8aff55;color:var(--text)}
+.achip.on{border-color:#4a8aff;color:#4a8aff;background:rgba(74,138,255,.12)}
+
 .btn-generate{width:100%;margin-top:16px;padding:13px;border-radius:12px;border:none;
   cursor:pointer;font-family:Georgia,serif;font-size:.88rem;font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;transition:all .18s;
@@ -137,8 +143,24 @@ header{position:relative}
       placeholder="Ex: loira de 19 anos nua na beira da piscina, cabelo longo molhado, olhos claros, corpo bronzeado..."
       rows="4"></textarea>
 
+    <div class="enhance-row" id="angle-row">
+      <span class="enhance-label">Ângulo da câmera →</span>
+      <div class="achip" data-angle="frontal">👁️ Frontal</div>
+      <div class="achip" data-angle="closeup_face">🎯 Close rosto</div>
+      <div class="achip" data-angle="bust">🪞 Busto</div>
+      <div class="achip" data-angle="waist">📸 Meio corpo</div>
+      <div class="achip" data-angle="american">🎬 Plano americano</div>
+      <div class="achip" data-angle="fullbody_a">🧍 Corpo inteiro</div>
+      <div class="achip" data-angle="profile">👤 Perfil</div>
+      <div class="achip" data-angle="threequarter">🔄 3/4</div>
+      <div class="achip" data-angle="low">🔽 Ângulo baixo</div>
+      <div class="achip" data-angle="high">🔼 Ângulo alto</div>
+      <div class="achip" data-angle="overhead">🛸 Aéreo/Top</div>
+      <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
+    </div>
+
     <div class="enhance-row">
-      <span class="enhance-label">Adicionar →</span>
+      <span class="enhance-label">Estilo / Ambiente →</span>
       <div class="echip on" data-key="photoreal">📷 Fotorrealista</div>
       <div class="echip on" data-key="lighting">💡 Luz natural</div>
       <div class="echip" data-key="closeup">🎯 Close no rosto</div>
@@ -190,7 +212,27 @@ const ENHANCE_MAP = {
   editorial: 'high-end editorial photography',
 };
 
+const ANGLE_MAP = {
+  frontal:      'straight-on shot, eye-level framing',
+  closeup_face: 'extreme close-up portrait, tight face framing, shallow depth of field',
+  bust:         'bust shot, chest-up framing',
+  waist:        'medium shot, waist-up framing',
+  american:     'American shot, knee-up framing',
+  fullbody_a:   'full body shot, head to toe, wide framing',
+  profile:      'side profile shot, 90-degree angle',
+  threequarter: 'three-quarter view, 45-degree angle',
+  low:          'low angle shot, shot from below looking up',
+  high:         'high angle shot, shot from above looking down',
+  overhead:     'overhead bird\'s-eye view, top-down shot',
+  shoulder:     'over-the-shoulder shot, behind subject perspective',
+};
+
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
+document.querySelectorAll('.achip').forEach(c => c.addEventListener('click', () => {
+  const wasOn = c.classList.contains('on');
+  document.querySelectorAll('.achip').forEach(a => a.classList.remove('on'));
+  if (!wasOn) c.classList.add('on');
+}));
 
 async function generate() {
   const desc = document.getElementById('desc-input').value.trim();
@@ -206,9 +248,11 @@ async function generate() {
   const safeDesc = sanitizeGPT(desc);
   const enDesc = await translateDesc(safeDesc);
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
+  const angleChip = document.querySelector('.achip.on');
+  const angle = angleChip ? ANGLE_MAP[angleChip.dataset.angle] : '';
 
-  generatedMJ  = buildMJ(enDesc, chips);
-  generatedGPT = buildGPT(enDesc, chips);
+  generatedMJ  = buildMJ(enDesc, chips, angle);
+  generatedGPT = buildGPT(enDesc, chips, angle);
 
   saveToHistory(desc, generatedMJ, generatedGPT);
   renderResult(desc);
@@ -217,8 +261,8 @@ async function generate() {
   btn.disabled = false;
 }
 
-function buildMJ(enDesc, chips) {
-  const parts = [enDesc, ...chips,
+function buildMJ(enDesc, chips, angle) {
+  const parts = [angle, enDesc, ...chips,
     'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no CGI render'];
   const neg = '--no ai art, cgi, 3d render, plastic skin, airbrushed, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, over-smoothed skin, artificial lighting, studio background, watermark, text';
   return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6 ' + neg;
@@ -278,10 +322,11 @@ function sanitizeGPT(text) {
     .trim();
 }
 
-function buildGPT(enDesc, chips) {
+function buildGPT(enDesc, chips, angle) {
   const safeDesc = sanitizeGPT(enDesc);
   const parts = [
     'Professional fashion photography, Vogue magazine editorial, fully clothed model, tasteful and artistic, safe for work',
+    angle,
     safeDesc,
     ...chips,
     'natural skin texture, authentic human proportions, sharp focus, photorealistic',
