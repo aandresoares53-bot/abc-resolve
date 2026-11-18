@@ -54,6 +54,19 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .achip:hover{border-color:#4a8aff55;color:var(--text)}
 .achip.on{border-color:#4a8aff;color:#4a8aff;background:rgba(74,138,255,.12)}
 
+.suggest-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.sqchip{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.68rem;cursor:pointer;
+  transition:all .14s;user-select:none}
+.sqchip:hover{border-color:#2ecc7155;color:var(--text)}
+.sqchip:active{background:rgba(46,204,113,.12);border-color:#2ecc71;color:#2ecc71}
+
+.bottom-row{display:flex;gap:8px;margin-top:14px}
+.btn-mode{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;transition:all .14s}
+.btn-mode:hover{border-color:var(--gold-dim);color:var(--text)}
+.btn-mode.on{border-color:var(--gold);color:var(--gold);background:var(--gold-glow)}
+
 .btn-generate{width:100%;margin-top:16px;padding:13px;border-radius:12px;border:none;
   cursor:pointer;font-family:Georgia,serif;font-size:.88rem;font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;transition:all .18s;
@@ -139,8 +152,19 @@ header{position:relative}
 
   <div class="card" id="main-card">
     <label class="card-label" for="desc-input">Descreva a personagem e a cena</label>
+
+    <div class="suggest-row">
+      <span class="enhance-label">Sugestão rápida →</span>
+      <div class="sqchip" data-fill="loira de 19 anos, cabelo longo liso, olhos azuis, pele bronzeada">👱 Loira jovem</div>
+      <div class="sqchip" data-fill="morena de 25 anos, cabelo escuro ondulado, olhos castanhos, lábios carnudos">🟤 Morena</div>
+      <div class="sqchip" data-fill="ruiva de 22 anos, cabelo ruivo cacheado, olhos verdes, pele clara com sardas">🔴 Ruiva</div>
+      <div class="sqchip" data-fill="asiática de 20 anos, cabelo preto liso, olhos amendoados, pele porcelana">🌸 Asiática</div>
+      <div class="sqchip" data-fill="latina de 23 anos, cabelo castanho longo, curvas pronunciadas, pele morena clara">💃 Latina</div>
+      <div class="sqchip" data-fill="milf de 35 anos, cabelo loiro platinado, corpo voluptuoso, lábios sensuais">👄 Madura</div>
+    </div>
+
     <textarea id="desc-input" class="desc-textarea"
-      placeholder="Ex: loira de 19 anos nua na beira da piscina, cabelo longo molhado, olhos claros, corpo bronzeado..."
+      placeholder="Ex: loira de 19 anos na beira da piscina, cabelo longo molhado, olhos claros, corpo bronzeado..."
       rows="4"></textarea>
 
     <div class="enhance-row" id="angle-row">
@@ -179,6 +203,11 @@ header{position:relative}
       <div class="echip" data-key="bw">🖤 Preto e Branco</div>
     </div>
 
+    <div class="bottom-row">
+      <button class="btn-mode" id="btn-loira" onclick="toggleLoira()" title="Fixar loira em todos os prompts">👱 Loira fixa: OFF</button>
+      <button class="btn-mode" id="btn-rand" onclick="randomize()" title="Aleatorizar chips">🎲 Aleatorizar</button>
+    </div>
+
     <button class="btn-generate" id="btn-gen" onclick="generate()">Gerar Prompt →</button>
   </div>
 
@@ -196,6 +225,7 @@ header{position:relative}
 <script>
 let generatedMJ  = '';
 let generatedGPT = '';
+let loiraFixed   = false;
 
 const ENHANCE_MAP = {
   photoreal: 'shot on DSLR, photorealistic, natural skin texture',
@@ -237,6 +267,29 @@ document.querySelectorAll('.achip').forEach(c => c.addEventListener('click', () 
   document.querySelectorAll('.achip').forEach(a => a.classList.remove('on'));
   if (!wasOn) c.classList.add('on');
 }));
+document.querySelectorAll('.sqchip').forEach(c => c.addEventListener('click', () => {
+  document.getElementById('desc-input').value = c.dataset.fill;
+  document.getElementById('desc-input').focus();
+}));
+
+function toggleLoira() {
+  loiraFixed = !loiraFixed;
+  const btn = document.getElementById('btn-loira');
+  btn.textContent = loiraFixed ? '👱 Loira fixa: ON' : '👱 Loira fixa: OFF';
+  btn.classList.toggle('on', loiraFixed);
+}
+
+function randomize() {
+  const echips = [...document.querySelectorAll('.echip')];
+  echips.forEach(c => c.classList.remove('on'));
+  const count = 2 + Math.floor(Math.random() * 3);
+  const shuffled = echips.sort(() => Math.random() - .5);
+  shuffled.slice(0, count).forEach(c => c.classList.add('on'));
+  const achips = [...document.querySelectorAll('.achip')];
+  achips.forEach(a => a.classList.remove('on'));
+  achips[Math.floor(Math.random() * achips.length)].classList.add('on');
+  showToast('Chips aleatorizados!');
+}
 
 async function generate() {
   const desc = document.getElementById('desc-input').value.trim();
@@ -266,7 +319,8 @@ async function generate() {
 }
 
 function buildMJ(enDesc, chips, angle) {
-  const parts = [angle, enDesc, ...chips,
+  const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
+  const parts = [angle, loiraPrefix, enDesc, ...chips,
     'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no CGI render'];
   const neg = '--no ai art, cgi, 3d render, plastic skin, airbrushed, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, over-smoothed skin, artificial lighting, studio background, watermark, text';
   return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6 ' + neg;
@@ -328,9 +382,11 @@ function sanitizeGPT(text) {
 
 function buildGPT(enDesc, chips, angle) {
   const safeDesc = sanitizeGPT(enDesc);
+  const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const parts = [
     'Professional fashion photography, Vogue magazine editorial, fully clothed model, tasteful and artistic, safe for work',
     angle,
+    loiraPrefix,
     safeDesc,
     ...chips,
     'natural skin texture, authentic human proportions, sharp focus, photorealistic',
