@@ -183,6 +183,12 @@ header{position:relative}
       <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
       <div class="achip" data-angle="bentover">🫦 Perfil dobrada</div>
       <div class="achip" data-angle="proneup">🍑 Deitada de bruços</div>
+      <div class="achip" data-angle="backshot">🔙 De costas</div>
+      <div class="achip" data-angle="sitting">🪑 Sentada frontal</div>
+      <div class="achip" data-angle="sitlegs">🦵 Sentada pernas abertas</div>
+      <div class="achip" data-angle="squat">⬇️ Agachada</div>
+      <div class="achip" data-angle="wallon">🧱 Apoiada na parede</div>
+      <div class="achip" data-angle="lyingback">😴 Deitada de costas</div>
     </div>
 
     <div class="enhance-row">
@@ -201,6 +207,14 @@ header{position:relative}
       <div class="echip" data-key="nature">🌿 Natureza</div>
       <div class="echip" data-key="film">🎞️ Película/Film</div>
       <div class="echip" data-key="bw">🖤 Preto e Branco</div>
+      <div class="echip" data-key="beach">🏖️ Praia</div>
+      <div class="echip" data-key="pool">🏊 Piscina</div>
+      <div class="echip" data-key="luxury">🛋️ Interior luxuoso</div>
+      <div class="echip" data-key="rain">🌧️ Chuva</div>
+      <div class="echip" data-key="fog">🌫️ Névoa/Fumaça</div>
+      <div class="echip" data-key="mirror">🪞 Espelho</div>
+      <div class="echip" data-key="wet">💧 Molhada</div>
+      <div class="echip" data-key="vintage">📻 Vintage/Retrô</div>
     </div>
 
     <div class="bottom-row">
@@ -242,6 +256,14 @@ const ENHANCE_MAP = {
   fullbody:  'full body shot',
   candid:    'candid natural moment, authentic expression',
   editorial: 'high-end editorial photography',
+  beach:     'beach setting, sandy shore, ocean waves, tropical outdoor environment',
+  pool:      'poolside setting, swimming pool, water reflection, luxury outdoor atmosphere',
+  luxury:    'luxurious indoor setting, elegant interior, upscale décor, marble and gold tones',
+  rain:      'rainy scene, wet streets, rain drops, moody atmospheric weather',
+  fog:       'misty foggy atmosphere, soft haze, ethereal smoke or fog diffusion',
+  mirror:    'mirror reflection composition, reflective surface, double exposure effect',
+  wet:       'wet skin and hair, water droplets on skin, drenched look, glistening wet texture',
+  vintage:   'vintage retro aesthetic, 70s or 80s color grading, retro fashion and mood',
 };
 
 const ANGLE_MAP = {
@@ -259,6 +281,12 @@ const ANGLE_MAP = {
   shoulder:     'over-the-shoulder shot, behind subject perspective',
   bentover:     'side profile, subject leaning forward with hands on surface, arched back pose, low angle behind',
   proneup:      'lying face down prone position, upper body propped up on elbows, chest and face toward camera, hips and buttocks raised, low angle front-facing shot',
+  backshot:     'back-facing shot, rear view, subject facing away from camera, full back visible',
+  sitting:      'sitting pose, front-facing, legs together, seated on floor or surface, eye-level shot',
+  sitlegs:      'seated pose, legs spread apart, front-facing, low eye-level framing',
+  squat:        'squatting pose, low crouch, knees bent, front-facing, low angle shot',
+  wallon:       'subject leaning back against wall, full body, side or three-quarter angle, casual pose',
+  lyingback:    'lying on back, face up, relaxed supine position, overhead or slight high-angle shot',
 };
 
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
