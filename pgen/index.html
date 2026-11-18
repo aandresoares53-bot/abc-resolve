@@ -203,12 +203,13 @@ async function generate() {
 function buildMJ(enDesc, chips) {
   const parts = [enDesc, ...chips,
     'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no CGI render'];
-  return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6';
+  const neg = '--no ai art, cgi, 3d render, plastic skin, airbrushed, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, over-smoothed skin, artificial lighting, studio background, watermark, text';
+  return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6 ' + neg;
 }
 
 function buildGPT(enDesc, chips) {
   const parts = [enDesc, ...chips,
-    'professional photography, natural skin, sharp focus, no CGI, no filters',
+    'professional photography, natural skin texture, sharp focus, no CGI, no filters, no digital retouching, no plastic skin, authentic human skin, photorealistic',
     'no text, no watermark, 9:16 vertical portrait format'];
   return parts.filter(Boolean).join(', ') + '.';
 }
