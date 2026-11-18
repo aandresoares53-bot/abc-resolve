@@ -145,6 +145,14 @@ header{position:relative}
       <div class="echip" data-key="fullbody">🧍 Corpo inteiro</div>
       <div class="echip" data-key="candid">🎞 Candid/Natural</div>
       <div class="echip" data-key="editorial">✨ Editorial</div>
+      <div class="echip" data-key="fashion">👗 Fashion</div>
+      <div class="echip" data-key="boudoir">🛁 Boudoir</div>
+      <div class="echip" data-key="sunset">🌅 Pôr do sol</div>
+      <div class="echip" data-key="night">🌃 Noturno</div>
+      <div class="echip" data-key="urban">🏙️ Urbano</div>
+      <div class="echip" data-key="nature">🌿 Natureza</div>
+      <div class="echip" data-key="film">🎞️ Película/Film</div>
+      <div class="echip" data-key="bw">🖤 Preto e Branco</div>
     </div>
 
     <button class="btn-generate" id="btn-gen" onclick="generate()">Gerar Prompt →</button>
@@ -168,6 +176,14 @@ let generatedGPT = '';
 const ENHANCE_MAP = {
   photoreal: 'shot on DSLR, photorealistic, natural skin texture',
   lighting:  'natural light, soft golden hour lighting',
+  fashion:   'high fashion photography, Vogue editorial style, luxury fashion shoot',
+  boudoir:   'boudoir photography, intimate setting, soft bedroom lighting, tasteful and sensual',
+  sunset:    'golden hour sunset, warm orange tones, backlit silhouette, magic hour light',
+  night:     'night photography, ambient city lights, neon reflections, long exposure atmosphere',
+  urban:     'urban environment, city backdrop, street photography, concrete and glass',
+  nature:    'outdoor nature setting, lush greenery, natural environment, forest or beach',
+  film:      'analog film photography, Kodak grain, vintage film look, 35mm aesthetic',
+  bw:        'black and white photography, dramatic contrast, monochrome, timeless classic portrait',
   closeup:   'close-up on face, shallow depth of field',
   fullbody:  'full body shot',
   candid:    'candid natural moment, authentic expression',
