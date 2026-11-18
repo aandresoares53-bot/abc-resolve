@@ -203,7 +203,8 @@ async function generate() {
   out.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
   setTimeout(() => out.scrollIntoView({behavior:'smooth',block:'nearest'}), 60);
 
-  const enDesc = await translateDesc(desc);
+  const safeDesc = sanitizeGPT(desc);
+  const enDesc = await translateDesc(safeDesc);
   const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
 
   generatedMJ  = buildMJ(enDesc, chips);
@@ -226,28 +227,50 @@ function buildMJ(enDesc, chips) {
 function sanitizeGPT(text) {
   if (!text) return text;
   return text
-    .replace(/\b(fully\s+)?nude\b/gi, 'wearing minimal clothing')
-    .replace(/\bnaked\b/gi, 'wearing minimal clothing')
-    .replace(/\btopless\b/gi, 'wearing a top')
-    .replace(/\bsem roupa\b/gi, 'wearing minimal clothing')
-    .replace(/\bsem calcinha\b/gi, 'wearing underwear')
-    .replace(/\bcalcinha\b/gi, 'underwear')
-    .replace(/\bsutiã\b/gi, 'bra')
-    .replace(/\bpenis\b|\bvagina\b|\bgenitais?\b|\bpau\b|\bpica\b|\bpussyb/gi, '')
-    .replace(/\bexplicit\b|\berotic\b|\bsexual\b/gi, 'sensual')
-    .replace(/\bporno\b|\bpornô\b|\bxxx\b/gi, 'adult')
-    .replace(/\b(seios?\s+)?à\s+mostra\b/gi, 'visible')
-    .replace(/\b(peitos?|seios?)\s+(à\s+mostra|expostos?|nus?)\b/gi, 'chest')
-    .replace(/,\s*,/g, ',').trim();
+    // nudity
+    .replace(/\b(fully\s+)?nude\b/gi, 'wearing an elegant outfit')
+    .replace(/\bnaked\b/gi, 'wearing an elegant outfit')
+    .replace(/\btopless\b/gi, 'wearing a stylish top')
+    .replace(/\bshirtless\b/gi, 'in a fitted shirt')
+    .replace(/\bbare\s+(chest|skin|body|breasts?)\b/gi, 'natural skin')
+    .replace(/\bexposed?\s+(breasts?|chest|nipples?|skin)\b/gi, 'tasteful neckline')
+    .replace(/\bnipples?\b/gi, 'neckline')
+    .replace(/\bbreasts?\b/gi, 'chest area')
+    .replace(/\bbikini\s+top\s*off\b/gi, 'wearing a bikini top')
+    // underwear/lingerie
+    .replace(/\blingerie\b/gi, 'elegant fashion wear')
+    .replace(/\bthong\b/gi, 'fitted shorts')
+    .replace(/\bg.string\b/gi, 'fitted shorts')
+    .replace(/\bpanties\b/gi, 'shorts')
+    .replace(/\bunderwear\b/gi, 'fitted clothing')
+    .replace(/\bbra\b/gi, 'top')
+    // genitals
+    .replace(/\b(penis|vagina|genitals?|cock|dick|pussy|clit\w*|vulva|ass\s+hole|anus|anal)\b/gi, '')
+    // sexual acts/context
+    .replace(/\b(sex|sexual|intercourse|penetrat\w+|orgasm|masturbat\w+)\b/gi, 'artistic pose')
+    .replace(/\b(erotic|explicit|adult\s+content|nsfw|xxx|pornographic?|porn)\b/gi, 'artistic')
+    .replace(/\b(horny|aroused|turned\s+on)\b/gi, 'confident')
+    // portuguese terms (pre-translation fallback)
+    .replace(/\b(sem\s+roupa|pelada?|nua?|desnuda?)\b/gi, 'wearing an elegant outfit')
+    .replace(/\b(calcinha|sutiã|lingerie)\b/gi, 'elegant fashion wear')
+    .replace(/\b(seios?|peitos?|mamas?)\s*(nus?|expostos?|à\s+mostra)?\b/gi, 'chest area')
+    .replace(/\b(pênis|vagina|genitais?|pau|pica|buceta|ppk)\b/gi, '')
+    .replace(/\b(sexo|pornô|putaria|safada?)\b/gi, 'artistic')
+    // cleanup
+    .replace(/\s{2,}/g, ' ')
+    .replace(/,\s*,/g, ',')
+    .replace(/(,\s*)+\./g, '.')
+    .trim();
 }
 
 function buildGPT(enDesc, chips) {
   const safeDesc = sanitizeGPT(enDesc);
   const parts = [
-    'Professional portrait photograph, editorial style, tasteful and artistic',
+    'Fashion editorial photograph for a high-end magazine, tasteful and artistic',
     safeDesc,
     ...chips,
-    'natural skin texture, authentic human proportions, sharp focus, photorealistic, no CGI, no filters, no digital retouching',
+    'natural skin texture, authentic human proportions, sharp focus, photorealistic',
+    'fully clothed or elegantly dressed unless specified, no nudity, safe for work',
     'no text, no watermark, 9:16 vertical portrait'
   ];
   return parts.filter(Boolean).join(', ') + '.';
