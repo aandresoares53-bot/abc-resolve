@@ -237,6 +237,20 @@ function sanitizeGPT(text) {
     .replace(/\bnipples?\b/gi, 'neckline')
     .replace(/\bbreasts?\b/gi, 'chest area')
     .replace(/\bbikini\s+top\s*off\b/gi, 'wearing a bikini top')
+    // swimwear — keep but neutralize suggestive context
+    .replace(/\bbikini\b/gi, 'swimwear')
+    .replace(/\bswimsuit\b/gi, 'one-piece swimsuit')
+    // intimate locations — these trigger blocks in combination with minimal clothing
+    .replace(/\bbedroom\b/gi, 'bright sunlit studio')
+    .replace(/\bbed\b/gi, 'studio seat')
+    .replace(/\bbathroom\b/gi, 'outdoor terrace')
+    .replace(/\bshower\b/gi, 'outdoor fountain')
+    .replace(/\bbathtub?\b/gi, 'outdoor pool')
+    // suggestive camera angles
+    .replace(/\bextreme\s+low\s+angle\b/gi, 'dynamic low angle')
+    .replace(/\bupskirt\b/gi, 'low angle')
+    .replace(/\bcrotch[\s-]?level\b/gi, 'low angle')
+    .replace(/\bup\s*skirt\b/gi, 'low angle')
     // underwear/lingerie
     .replace(/\blingerie\b/gi, 'elegant fashion wear')
     .replace(/\bthong\b/gi, 'fitted shorts')
@@ -249,13 +263,14 @@ function sanitizeGPT(text) {
     // sexual acts/context
     .replace(/\b(sex|sexual|intercourse|penetrat\w+|orgasm|masturbat\w+)\b/gi, 'artistic pose')
     .replace(/\b(erotic|explicit|adult\s+content|nsfw|xxx|pornographic?|porn)\b/gi, 'artistic')
-    .replace(/\b(horny|aroused|turned\s+on)\b/gi, 'confident')
+    .replace(/\b(horny|aroused|turned\s+on|seductive)\b/gi, 'confident')
     // portuguese terms (pre-translation fallback)
     .replace(/\b(sem\s+roupa|pelada?|nua?|desnuda?)\b/gi, 'wearing an elegant outfit')
     .replace(/\b(calcinha|sutiã|lingerie)\b/gi, 'elegant fashion wear')
     .replace(/\b(seios?|peitos?|mamas?)\s*(nus?|expostos?|à\s+mostra)?\b/gi, 'chest area')
     .replace(/\b(pênis|vagina|genitais?|pau|pica|buceta|ppk)\b/gi, '')
     .replace(/\b(sexo|pornô|putaria|safada?)\b/gi, 'artistic')
+    .replace(/\b(quarto|banheiro|cama|chuveiro)\b/gi, 'estúdio ensolarado')
     // cleanup
     .replace(/\s{2,}/g, ' ')
     .replace(/,\s*,/g, ',')
@@ -266,11 +281,10 @@ function sanitizeGPT(text) {
 function buildGPT(enDesc, chips) {
   const safeDesc = sanitizeGPT(enDesc);
   const parts = [
-    'Fashion editorial photograph for a high-end magazine, tasteful and artistic',
+    'Professional fashion photography, Vogue magazine editorial, fully clothed model, tasteful and artistic, safe for work',
     safeDesc,
     ...chips,
     'natural skin texture, authentic human proportions, sharp focus, photorealistic',
-    'fully clothed or elegantly dressed unless specified, no nudity, safe for work',
     'no text, no watermark, 9:16 vertical portrait'
   ];
   return parts.filter(Boolean).join(', ') + '.';
