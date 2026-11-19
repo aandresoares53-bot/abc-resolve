@@ -54,6 +54,27 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .achip:hover{border-color:#4a8aff55;color:var(--text)}
 .achip.on{border-color:#4a8aff;color:#4a8aff;background:rgba(74,138,255,.12)}
 
+/* outfit chips — purple */
+.ochip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;
+  transition:all .14s;user-select:none}
+.ochip:hover{border-color:#9b59b655;color:var(--text)}
+.ochip.on{border-color:#9b59b6;color:#9b59b6;background:rgba(155,89,182,.12)}
+
+/* hair chips — pink */
+.hchip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;
+  transition:all .14s;user-select:none}
+.hchip:hover{border-color:#e91e6355;color:var(--text)}
+.hchip.on{border-color:#e91e63;color:#e91e63;background:rgba(233,30,99,.12)}
+
+/* body chips — teal */
+.bchip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;
+  transition:all .14s;user-select:none}
+.bchip:hover{border-color:#1abc9c55;color:var(--text)}
+.bchip.on{border-color:#1abc9c;color:#1abc9c;background:rgba(26,188,156,.12)}
+
 .suggest-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .sqchip{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;
   color:var(--muted);font-family:Georgia,serif;font-size:.68rem;cursor:pointer;
@@ -61,11 +82,35 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .sqchip:hover{border-color:#2ecc7155;color:var(--text)}
 .sqchip:active{background:rgba(46,204,113,.12);border-color:#2ecc71;color:#2ecc71}
 
-.bottom-row{display:flex;gap:8px;margin-top:14px}
-.btn-mode{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:transparent;
+/* MJ params row */
+.params-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center}
+.param-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
+.param-group label{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.param-group input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer}
+.param-group select{background:#0d0d14;border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:Georgia,serif;font-size:.75rem;padding:5px 8px;cursor:pointer;outline:none}
+.param-group select:focus{border-color:var(--gold-dim)}
+.param-val{font-size:.65rem;color:var(--gold);text-align:right}
+
+/* sref row */
+.sref-row{display:flex;gap:8px;align-items:center;margin-top:12px}
+.sref-row label{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.sref-input{flex:1;background:#0d0d14;border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:Georgia,serif;font-size:.78rem;padding:7px 11px;outline:none;
+  transition:border-color .2s;caret-color:var(--gold)}
+.sref-input::placeholder{color:var(--muted);opacity:.45}
+.sref-input:focus{border-color:var(--gold-dim);box-shadow:0 0 0 2px var(--gold-glow)}
+.sref-clear{padding:6px 10px;border-radius:7px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-size:.7rem;cursor:pointer;transition:all .14s}
+.sref-clear:hover{border-color:#e74c3c88;color:#e74c3c}
+
+.bottom-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-mode{flex:1;min-width:110px;padding:8px;border-radius:10px;border:1px solid var(--border);background:transparent;
   color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;transition:all .14s}
 .btn-mode:hover{border-color:var(--gold-dim);color:var(--text)}
 .btn-mode.on{border-color:var(--gold);color:var(--gold);background:var(--gold-glow)}
+.btn-mode.realismo{border-color:#e74c3c88;color:#c0392b}
+.btn-mode.realismo.on{border-color:#e74c3c;color:#e74c3c;background:rgba(231,76,60,.12)}
 
 .btn-generate{width:100%;margin-top:16px;padding:13px;border-radius:12px;border:none;
   cursor:pointer;font-family:Georgia,serif;font-size:.88rem;font-weight:700;
@@ -74,6 +119,9 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .btn-generate:hover{background-position:100% 0;box-shadow:0 4px 20px var(--gold-glow);transform:translateY(-1px)}
 .btn-generate:active{transform:translateY(0)}
 .btn-generate:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+.char-counter{font-size:.58rem;color:var(--muted);text-align:right;margin-top:4px;opacity:.6}
+.char-counter.warn{color:#e8a020}
 
 .typing{display:flex;gap:5px;align-items:center;padding:14px 0;justify-content:center}
 .typing span{width:7px;height:7px;border-radius:50%;background:var(--gold);opacity:.3;animation:blink 1.2s ease-in-out infinite}
@@ -91,6 +139,7 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .prompt-box{background:#0d0d14;border:1px solid var(--border);border-radius:9px;
   padding:13px 15px;font-family:Georgia,serif;font-size:.82rem;line-height:1.65;
   color:var(--text);white-space:pre-wrap;word-break:break-word}
+.prompt-meta{font-size:.58rem;color:var(--muted);opacity:.5;margin-top:5px;text-align:right}
 .result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .btn-act{padding:9px 16px;border-radius:9px;border:1px solid var(--border);
   background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.75rem;cursor:pointer;transition:all .14s}
@@ -98,6 +147,7 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .btn-act.primary{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .btn-act.primary:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
 .btn-act.copied{border-color:#4caf50;color:#4caf50;background:rgba(76,175,80,.1)}
+.btn-act.fav{border-color:#e91e63;color:#e91e63;background:rgba(233,30,99,.1)}
 .btn-new{width:100%;margin-top:12px;padding:11px;border-radius:10px;border:1px solid var(--border);
   background:transparent;color:var(--muted);font-family:Georgia,serif;font-size:.8rem;cursor:pointer;transition:all .14s}
 .btn-new:hover{border-color:var(--gold-dim);color:var(--text)}
@@ -112,13 +162,20 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .hist-section{margin-top:4px}
 .hist-label{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
   opacity:.65;margin-bottom:10px;display:block}
+.hist-tabs{display:flex;gap:6px;margin-bottom:10px}
+.hist-tab{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.65rem;cursor:pointer;transition:all .14s}
+.hist-tab.on{border-color:var(--gold);color:var(--gold)}
 .hist-list{display:flex;flex-direction:column;gap:7px}
 .hist-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;
   padding:11px 14px;cursor:pointer;transition:all .14s;display:flex;gap:10px;align-items:flex-start}
 .hist-item:hover{border-color:var(--gold-dim)}
+.hist-item.starred{border-color:#e91e6355}
 .hist-item-text{font-size:.76rem;color:var(--muted);line-height:1.4;flex:1;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .hist-item-ts{font-size:.6rem;color:var(--muted);opacity:.45;white-space:nowrap;margin-top:1px}
+.hist-item-star{font-size:.85rem;cursor:pointer;opacity:.4;transition:opacity .14s;padding:0 2px}
+.hist-item-star:hover,.hist-item-star.on{opacity:1}
 
 @media(max-width:420px){.result-actions{flex-direction:column}.btn-act{text-align:center}}
 
@@ -127,7 +184,8 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
   --gold:#b87800;--gold-dim:#a06800;--gold-glow:rgba(184,120,0,.14);
   --text:#1a1a22;--muted:#606070;
 }
-[data-theme="light"] .desc-textarea,[data-theme="light"] .prompt-box{background:#f8f7f2;border-color:var(--border)}
+[data-theme="light"] .desc-textarea,[data-theme="light"] .prompt-box,
+[data-theme="light"] .sref-input,[data-theme="light"] .param-group select{background:#f8f7f2;border-color:var(--border)}
 [data-theme="light"] body{background:var(--bg)}
 
 .theme-toggle{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;
@@ -135,6 +193,9 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
   display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .18s;color:var(--muted)}
 .theme-toggle:hover{border-color:var(--gold-dim);color:var(--text)}
 header{position:relative}
+
+.kbd-hint{font-size:.56rem;color:var(--muted);opacity:.4;margin-top:6px;text-align:right}
+kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:monospace;font-size:.62rem}
 </style>
 </head>
 <body>
@@ -165,8 +226,10 @@ header{position:relative}
 
     <textarea id="desc-input" class="desc-textarea"
       placeholder="Ex: loira de 19 anos na beira da piscina, cabelo longo molhado, olhos claros, corpo bronzeado..."
-      rows="4"></textarea>
+      rows="4" oninput="updateCharCount()"></textarea>
+    <div class="char-counter" id="char-counter">0 caracteres</div>
 
+    <!-- Ângulo da câmera -->
     <div class="enhance-row" id="angle-row">
       <span class="enhance-label">Ângulo da câmera →</span>
       <div class="achip" data-angle="frontal">👁️ Frontal</div>
@@ -196,13 +259,62 @@ header{position:relative}
       <div class="achip" data-angle="lyingside">🌙 Deitada de lado</div>
       <div class="achip" data-angle="arch">🌉 Arqueada</div>
       <div class="achip" data-angle="handsknees">🐆 De quatro</div>
-      <div class="achip" data-angle="handskneesbk">🐆 De quatro de costas</div>
+      <div class="achip" data-angle="handskneesbk">🐆 De quatro costas</div>
       <div class="achip" data-angle="straddling">🪑 Sentada cavalgando</div>
       <div class="achip" data-angle="leanback">🛋️ Reclinada</div>
       <div class="achip" data-angle="floorarched">🌊 Arqueada no chão</div>
       <div class="achip" data-angle="overtable">🍽️ Sobre a mesa</div>
     </div>
 
+    <!-- Roupa -->
+    <div class="enhance-row">
+      <span class="enhance-label">Roupa →</span>
+      <div class="ochip" data-outfit="bikini">👙 Biquíni</div>
+      <div class="ochip" data-outfit="lingerie">🩱 Lingerie</div>
+      <div class="ochip" data-outfit="dress">👗 Vestido</div>
+      <div class="ochip" data-outfit="miniskirt">🩴 Mini saia</div>
+      <div class="ochip" data-outfit="jeans">👖 Jeans</div>
+      <div class="ochip" data-outfit="shorts">🩳 Shorts</div>
+      <div class="ochip" data-outfit="crop">👕 Cropped</div>
+      <div class="ochip" data-outfit="swimsuit">🏊 Maiô</div>
+      <div class="ochip" data-outfit="nude">🌿 Nua (MJ)</div>
+      <div class="ochip" data-outfit="topless">🌸 Topless (MJ)</div>
+      <div class="ochip" data-outfit="yoga">🧘 Yoga/Legging</div>
+      <div class="ochip" data-outfit="leather">🖤 Couro</div>
+      <div class="ochip" data-outfit="bodysuit">💜 Body</div>
+    </div>
+
+    <!-- Cabelo -->
+    <div class="enhance-row">
+      <span class="enhance-label">Cabelo →</span>
+      <div class="hchip" data-hair="blonde">👱 Loiro</div>
+      <div class="hchip" data-hair="brunette">🟤 Castanho</div>
+      <div class="hchip" data-hair="black">🖤 Preto</div>
+      <div class="hchip" data-hair="redhead">🔴 Ruivo</div>
+      <div class="hchip" data-hair="platinum">⚪ Platinado</div>
+      <div class="hchip" data-hair="long">🌊 Longo liso</div>
+      <div class="hchip" data-hair="curly">🌀 Cacheado</div>
+      <div class="hchip" data-hair="short">✂️ Curto</div>
+      <div class="hchip" data-hair="wet_hair">💧 Molhado</div>
+    </div>
+
+    <!-- Corpo / Etnia -->
+    <div class="enhance-row">
+      <span class="enhance-label">Corpo / Etnia →</span>
+      <div class="bchip" data-body="slim">🪶 Magra</div>
+      <div class="bchip" data-body="curvy">🍑 Curvilínea</div>
+      <div class="bchip" data-body="athletic">💪 Atlética</div>
+      <div class="bchip" data-body="petite">🌸 Petite</div>
+      <div class="bchip" data-body="voluptuous">🔥 Voluptuosa</div>
+      <div class="bchip" data-body="light">🏖️ Pele clara</div>
+      <div class="bchip" data-body="tan">🌅 Pele bronzeada</div>
+      <div class="bchip" data-body="brown">🤎 Morena</div>
+      <div class="bchip" data-body="dark">🌙 Pele negra</div>
+      <div class="bchip" data-body="asian">🌸 Asiática</div>
+      <div class="bchip" data-body="latina">💃 Latina</div>
+    </div>
+
+    <!-- Estilo / Ambiente -->
     <div class="enhance-row">
       <span class="enhance-label">Estilo / Ambiente →</span>
       <div class="echip on" data-key="photoreal">📷 Fotorrealista</div>
@@ -236,18 +348,56 @@ header{position:relative}
       <div class="echip" data-key="lowkey">🌑 Low key</div>
     </div>
 
+    <!-- Parâmetros MJ -->
+    <div class="params-row">
+      <div class="param-group">
+        <label>Proporção (--ar)</label>
+        <select id="param-ar">
+          <option value="2:3" selected>2:3 — retrato</option>
+          <option value="9:16">9:16 — celular</option>
+          <option value="3:4">3:4 — foto</option>
+          <option value="1:1">1:1 — quadrado</option>
+          <option value="4:3">4:3 — paisagem</option>
+          <option value="16:9">16:9 — widescreen</option>
+        </select>
+      </div>
+      <div class="param-group">
+        <label>Estilização (--stylize) <span class="param-val" id="stylize-val">100</span></label>
+        <input type="range" id="param-stylize" min="0" max="1000" step="50" value="100"
+          oninput="document.getElementById('stylize-val').textContent=this.value">
+      </div>
+      <div class="param-group">
+        <label>Caos (--chaos) <span class="param-val" id="chaos-val">0</span></label>
+        <input type="range" id="param-chaos" min="0" max="100" step="5" value="0"
+          oninput="document.getElementById('chaos-val').textContent=this.value">
+      </div>
+    </div>
+
+    <!-- --sref -->
+    <div class="sref-row">
+      <label>--sref URL</label>
+      <input type="url" id="sref-input" class="sref-input" placeholder="Cole URL de imagem de referência de estilo (opcional)">
+      <button class="sref-clear" onclick="document.getElementById('sref-input').value=''" title="Limpar">✕</button>
+    </div>
+
     <div class="bottom-row">
       <button class="btn-mode" id="btn-loira" onclick="toggleLoira()" title="Fixar loira em todos os prompts">👱 Loira fixa: OFF</button>
+      <button class="btn-mode realismo" id="btn-realismo" onclick="toggleRealismo()" title="Modo realismo máximo">📸 Realismo máx: OFF</button>
       <button class="btn-mode" id="btn-rand" onclick="randomize()" title="Aleatorizar chips">🎲 Aleatorizar</button>
     </div>
 
     <button class="btn-generate" id="btn-gen" onclick="generate()">Gerar Prompt →</button>
+    <div class="kbd-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> gera · <kbd>Ctrl</kbd>+<kbd>M</kbd> copia MJ · <kbd>Ctrl</kbd>+<kbd>G</kbd> copia GPT</div>
   </div>
 
   <div id="output-area"></div>
 
   <div class="hist-section" id="hist-section" style="display:none">
     <span class="hist-label">— Histórico —</span>
+    <div class="hist-tabs">
+      <button class="hist-tab on" id="tab-all" onclick="switchHistTab('all')">Todos</button>
+      <button class="hist-tab" id="tab-fav" onclick="switchHistTab('fav')">⭐ Favoritos</button>
+    </div>
     <div class="hist-list" id="hist-list"></div>
   </div>
 
@@ -259,6 +409,50 @@ header{position:relative}
 let generatedMJ  = '';
 let generatedGPT = '';
 let loiraFixed   = false;
+let realismoMax  = false;
+let histTab      = 'all';
+
+const OUTFIT_MAP = {
+  bikini:   { mj: 'wearing a tiny bikini', gpt: 'wearing a swimsuit' },
+  lingerie: { mj: 'wearing lingerie, lace boudoir set', gpt: 'wearing elegant fashion wear' },
+  dress:    { mj: 'wearing a fitted dress', gpt: 'wearing a fitted dress' },
+  miniskirt:{ mj: 'wearing a mini skirt and crop top', gpt: 'wearing a mini skirt and crop top' },
+  jeans:    { mj: 'wearing tight jeans', gpt: 'wearing tight jeans' },
+  shorts:   { mj: 'wearing denim shorts', gpt: 'wearing denim shorts' },
+  crop:     { mj: 'wearing a crop top', gpt: 'wearing a crop top' },
+  swimsuit: { mj: 'wearing a one-piece swimsuit', gpt: 'wearing a one-piece swimsuit' },
+  nude:     { mj: 'nude, bare skin, tasteful artistic nudity', gpt: 'wearing a minimal elegant outfit' },
+  topless:  { mj: 'topless, bare chest, tasteful boudoir', gpt: 'wearing a stylish strapless top' },
+  yoga:     { mj: 'wearing yoga pants and sports bra', gpt: 'wearing yoga pants and sports bra' },
+  leather:  { mj: 'wearing black leather outfit', gpt: 'wearing black leather outfit' },
+  bodysuit: { mj: 'wearing a fitted bodysuit', gpt: 'wearing a fitted bodysuit' },
+};
+
+const HAIR_MAP = {
+  blonde:   'long blonde hair',
+  brunette: 'long brunette hair',
+  black:    'long black hair',
+  redhead:  'red hair',
+  platinum: 'platinum blonde hair',
+  long:     'long straight hair',
+  curly:    'curly wavy hair',
+  short:    'short hair',
+  wet_hair: 'wet hair, damp strands',
+};
+
+const BODY_MAP = {
+  slim:       'slim slender figure',
+  curvy:      'curvy hourglass figure',
+  athletic:   'athletic toned body',
+  petite:     'petite small frame',
+  voluptuous: 'voluptuous full figure, large bust and hips',
+  light:      'fair light skin',
+  tan:        'tanned bronzed skin',
+  brown:      'light brown skin, morena',
+  dark:       'dark skin, deep brown complexion',
+  asian:      'east Asian features, porcelain skin',
+  latina:     'latina features, olive warm skin tone',
+};
 
 const ENHANCE_MAP = {
   photoreal: 'RAW photograph, real human skin texture, natural pores and imperfections, photorealistic, no CGI',
@@ -327,16 +521,36 @@ const ANGLE_MAP = {
   overtable:    'bent over surface or table, hands flat on surface, back arched, low side angle',
 };
 
+// --- chip event listeners ---
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
 document.querySelectorAll('.achip').forEach(c => c.addEventListener('click', () => {
   const wasOn = c.classList.contains('on');
   document.querySelectorAll('.achip').forEach(a => a.classList.remove('on'));
   if (!wasOn) c.classList.add('on');
 }));
+document.querySelectorAll('.ochip').forEach(c => c.addEventListener('click', () => {
+  const wasOn = c.classList.contains('on');
+  document.querySelectorAll('.ochip').forEach(a => a.classList.remove('on'));
+  if (!wasOn) c.classList.add('on');
+}));
+document.querySelectorAll('.hchip').forEach(c => c.addEventListener('click', () => {
+  const wasOn = c.classList.contains('on');
+  document.querySelectorAll('.hchip').forEach(a => a.classList.remove('on'));
+  if (!wasOn) c.classList.add('on');
+}));
+document.querySelectorAll('.bchip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
 document.querySelectorAll('.sqchip').forEach(c => c.addEventListener('click', () => {
   document.getElementById('desc-input').value = c.dataset.fill;
   document.getElementById('desc-input').focus();
+  updateCharCount();
 }));
+
+function updateCharCount() {
+  const len = document.getElementById('desc-input').value.length;
+  const el = document.getElementById('char-counter');
+  el.textContent = len + ' caracteres';
+  el.classList.toggle('warn', len > 300);
+}
 
 function toggleLoira() {
   loiraFixed = !loiraFixed;
@@ -345,12 +559,23 @@ function toggleLoira() {
   btn.classList.toggle('on', loiraFixed);
 }
 
+function toggleRealismo() {
+  realismoMax = !realismoMax;
+  const btn = document.getElementById('btn-realismo');
+  btn.textContent = realismoMax ? '📸 Realismo máx: ON' : '📸 Realismo máx: OFF';
+  btn.classList.toggle('on', realismoMax);
+  if (realismoMax) {
+    document.getElementById('param-stylize').value = 50;
+    document.getElementById('stylize-val').textContent = '50';
+    showToast('Realismo máximo: stylize reduzido para 50');
+  }
+}
+
 function randomize() {
   const echips = [...document.querySelectorAll('.echip')];
   echips.forEach(c => c.classList.remove('on'));
   const count = 2 + Math.floor(Math.random() * 3);
-  const shuffled = echips.sort(() => Math.random() - .5);
-  shuffled.slice(0, count).forEach(c => c.classList.add('on'));
+  [...echips].sort(() => Math.random() - .5).slice(0, count).forEach(c => c.classList.add('on'));
   const achips = [...document.querySelectorAll('.achip')];
   achips.forEach(a => a.classList.remove('on'));
   achips[Math.floor(Math.random() * achips.length)].classList.add('on');
@@ -370,40 +595,63 @@ async function generate() {
 
   const safeDesc = sanitizeGPT(desc);
   const enDesc = await translateDesc(safeDesc);
-  const chips = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
-  const angleChip = document.querySelector('.achip.on');
-  const angle = angleChip ? ANGLE_MAP[angleChip.dataset.angle] : '';
 
-  generatedMJ  = buildMJ(enDesc, chips, angle);
-  generatedGPT = buildGPT(enDesc, chips, angle);
+  const chips      = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
+  const angleChip  = document.querySelector('.achip.on');
+  const angle      = angleChip ? ANGLE_MAP[angleChip.dataset.angle] : '';
+  const outfitChip = document.querySelector('.ochip.on');
+  const hairChip   = document.querySelector('.hchip.on');
+  const bodyChips  = [...document.querySelectorAll('.bchip.on')].map(c => BODY_MAP[c.dataset.body]).filter(Boolean);
+
+  const outfitMJ  = outfitChip ? OUTFIT_MAP[outfitChip.dataset.outfit]?.mj  : '';
+  const outfitGPT = outfitChip ? OUTFIT_MAP[outfitChip.dataset.outfit]?.gpt : '';
+  const hair      = hairChip   ? HAIR_MAP[hairChip.dataset.hair]             : '';
+
+  const mjParams = {
+    ar:       document.getElementById('param-ar').value,
+    stylize:  document.getElementById('param-stylize').value,
+    chaos:    document.getElementById('param-chaos').value,
+    sref:     document.getElementById('sref-input').value.trim(),
+  };
+
+  generatedMJ  = buildMJ(enDesc, chips, angle, outfitMJ,  hair, bodyChips, mjParams);
+  generatedGPT = buildGPT(enDesc, chips, angle, outfitGPT, hair, bodyChips);
 
   saveToHistory(desc, generatedMJ, generatedGPT);
-  renderResult(desc);
+  renderResult(desc, generatedMJ.length);
   renderHistory();
   navigator.clipboard.writeText(generatedMJ).catch(()=>{});
   btn.disabled = false;
 }
 
-function buildMJ(enDesc, chips, angle) {
-  const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
+function buildMJ(enDesc, chips, angle, outfit, hair, bodyArr, params) {
+  const loiraPrefix   = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
+  const realismoExtra = realismoMax
+    ? 'extreme hyperrealism, ultra-detailed skin texture, every pore visible, 100MP medium format camera, Hasselblad X2D, Zeiss 110mm f/2 lens'
+    : 'real human photography, shot on Canon EOS R5 85mm f/1.4 lens, RAW photo, ISO 400';
+
   const parts = [
-    angle,
-    loiraPrefix,
-    enDesc,
+    angle, loiraPrefix, hair, ...bodyArr, enDesc, outfit,
     ...chips,
-    'real human photography, shot on Canon EOS R5 85mm f/1.4 lens, RAW photo, ISO 400',
+    realismoExtra,
     'real skin pores, natural skin imperfections, authentic human skin texture, subsurface skin scattering',
     'candid documentary style, unretouched film, sharp focus on eyes, natural facial asymmetry',
     'hyperrealistic, photojournalism quality, no filters, no post-processing'
   ];
+
   const neg = '--no ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
-  return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6.1 ' + neg;
+
+  let cmd = parts.filter(Boolean).join(', ')
+    + ` --ar ${params.ar} --style raw --v 6.1 --stylize ${params.stylize}`;
+  if (+params.chaos > 0) cmd += ` --chaos ${params.chaos}`;
+  if (params.sref)        cmd += ` --sref ${params.sref}`;
+  cmd += ' ' + neg;
+  return cmd;
 }
 
 function sanitizeGPT(text) {
   if (!text) return text;
   return text
-    // nudity
     .replace(/\b(fully\s+)?nude\b/gi, 'wearing an elegant outfit')
     .replace(/\bnaked\b/gi, 'wearing an elegant outfit')
     .replace(/\btopless\b/gi, 'wearing a stylish top')
@@ -413,55 +661,46 @@ function sanitizeGPT(text) {
     .replace(/\bnipples?\b/gi, 'neckline')
     .replace(/\bbreasts?\b/gi, 'chest area')
     .replace(/\bbikini\s+top\s*off\b/gi, 'wearing a bikini top')
-    // swimwear — keep but neutralize suggestive context
     .replace(/\bbikini\b/gi, 'swimwear')
     .replace(/\bswimsuit\b/gi, 'one-piece swimsuit')
-    // intimate locations — these trigger blocks in combination with minimal clothing
     .replace(/\bbedroom\b/gi, 'bright sunlit studio')
     .replace(/\bbed\b/gi, 'studio seat')
     .replace(/\bbathroom\b/gi, 'outdoor terrace')
     .replace(/\bshower\b/gi, 'outdoor fountain')
     .replace(/\bbathtub?\b/gi, 'outdoor pool')
-    // suggestive camera angles
     .replace(/\bextreme\s+low\s+angle\b/gi, 'dynamic low angle')
     .replace(/\bupskirt\b/gi, 'low angle')
     .replace(/\bcrotch[\s-]?level\b/gi, 'low angle')
     .replace(/\bup\s*skirt\b/gi, 'low angle')
-    // underwear/lingerie
     .replace(/\blingerie\b/gi, 'elegant fashion wear')
     .replace(/\bthong\b/gi, 'fitted shorts')
     .replace(/\bg.string\b/gi, 'fitted shorts')
     .replace(/\bpanties\b/gi, 'shorts')
     .replace(/\bunderwear\b/gi, 'fitted clothing')
     .replace(/\bbra\b/gi, 'top')
-    // genitals
     .replace(/\b(penis|vagina|genitals?|cock|dick|pussy|clit\w*|vulva|ass\s+hole|anus|anal)\b/gi, '')
-    // sexual acts/context
     .replace(/\b(sex|sexual|intercourse|penetrat\w+|orgasm|masturbat\w+)\b/gi, 'artistic pose')
     .replace(/\b(erotic|explicit|adult\s+content|nsfw|xxx|pornographic?|porn)\b/gi, 'artistic')
     .replace(/\b(horny|aroused|turned\s+on|seductive)\b/gi, 'confident')
-    // portuguese terms (pre-translation fallback)
     .replace(/\b(sem\s+roupa|pelada?|nua?|desnuda?)\b/gi, 'wearing an elegant outfit')
     .replace(/\b(calcinha|sutiã|lingerie)\b/gi, 'elegant fashion wear')
     .replace(/\b(seios?|peitos?|mamas?)\s*(nus?|expostos?|à\s+mostra)?\b/gi, 'chest area')
     .replace(/\b(pênis|vagina|genitais?|pau|pica|buceta|ppk)\b/gi, '')
     .replace(/\b(sexo|pornô|putaria|safada?)\b/gi, 'artistic')
     .replace(/\b(quarto|banheiro|cama|chuveiro)\b/gi, 'estúdio ensolarado')
-    // cleanup
     .replace(/\s{2,}/g, ' ')
     .replace(/,\s*,/g, ',')
     .replace(/(,\s*)+\./g, '.')
     .trim();
 }
 
-function buildGPT(enDesc, chips, angle) {
-  const safeDesc = sanitizeGPT(enDesc);
+function buildGPT(enDesc, chips, angle, outfit, hair, bodyArr) {
+  const safeDesc    = sanitizeGPT(enDesc);
+  const safeOutfit  = sanitizeGPT(outfit || '');
   const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const parts = [
     'Professional fashion photography, Vogue magazine editorial, fully clothed model, tasteful and artistic, safe for work',
-    angle,
-    loiraPrefix,
-    safeDesc,
+    angle, loiraPrefix, hair, ...bodyArr, safeDesc, safeOutfit,
     ...chips,
     'natural skin texture, authentic human proportions, sharp focus, photorealistic',
     'no text, no watermark, 9:16 vertical portrait'
@@ -487,7 +726,7 @@ async function translateDesc(text) {
   }
 }
 
-function renderResult(desc) {
+function renderResult(desc, mjLen) {
   const out = document.getElementById('output-area');
   out.innerHTML = `
     <div class="result-card">
@@ -495,6 +734,7 @@ function renderResult(desc) {
       <div class="prompt-block">
         <div class="prompt-label">Midjourney</div>
         <div class="prompt-box">${esc(generatedMJ)}</div>
+        <div class="prompt-meta">${mjLen} caracteres</div>
       </div>
       <div class="prompt-block">
         <div class="prompt-label">ChatGPT / DALL·E</div>
@@ -502,8 +742,9 @@ function renderResult(desc) {
       </div>
       <div class="result-actions">
         <button class="btn-act primary" id="btn-copy-mj" onclick="copyMJ()">📋 Copiar MJ</button>
-        <button class="btn-act" onclick="copyGPT()">🤖 Copiar ChatGPT</button>
+        <button class="btn-act" id="btn-copy-gpt" onclick="copyGPT()">🤖 Copiar ChatGPT</button>
         <button class="btn-act" onclick="openPerchance()">🎨 Perchance</button>
+        <button class="btn-act" id="btn-fav-cur" onclick="favCurrent()">⭐ Favoritar</button>
       </div>
       <button class="btn-new" onclick="restart()">← Nova descrição</button>
       <div class="assinatura">✦ RAWgen ✦</div>
@@ -520,12 +761,33 @@ function copyMJ() {
     showToast('Prompt MJ copiado ✓');
   });
 }
-function copyGPT(){ navigator.clipboard.writeText(generatedGPT).then(()=>showToast('Prompt ChatGPT copiado ✓')); }
+function copyGPT() {
+  navigator.clipboard.writeText(generatedGPT).then(() => {
+    const btn = document.getElementById('btn-copy-gpt');
+    if (btn){ btn.classList.add('copied'); btn.textContent='✓ Copiado!'; setTimeout(()=>{btn.classList.remove('copied');btn.textContent='🤖 Copiar ChatGPT';},1800); }
+    showToast('Prompt ChatGPT copiado ✓');
+  });
+}
 function openPerchance(){ window.open('https://perchance.org/ai-photo-generator?prompt='+encodeURIComponent(generatedMJ),'_blank'); }
+
+function favCurrent() {
+  const h = getHistory();
+  if (!h.length) return;
+  h[0].starred = !h[0].starred;
+  saveHistory(h);
+  renderHistory();
+  const btn = document.getElementById('btn-fav-cur');
+  if (btn) {
+    btn.textContent = h[0].starred ? '★ Favoritado!' : '⭐ Favoritar';
+    btn.classList.toggle('fav', h[0].starred);
+  }
+  showToast(h[0].starred ? 'Adicionado aos favoritos ★' : 'Removido dos favoritos');
+}
 
 function restart() {
   document.getElementById('output-area').innerHTML = '';
   document.getElementById('desc-input').value = '';
+  updateCharCount();
   document.getElementById('desc-input').focus();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -557,33 +819,73 @@ function showToast(msg){
   clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-const HIST_KEY = 'rawgen_hist_v5';
+// keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'Enter') { e.preventDefault(); generate(); }
+    if (e.key === 'm' || e.key === 'M') { e.preventDefault(); if (generatedMJ) copyMJ(); }
+    if (e.key === 'g' || e.key === 'G') { e.preventDefault(); if (generatedGPT) copyGPT(); }
+  }
+});
+
+// history with favorites
+const HIST_KEY = 'rawgen_hist_v6';
 function getHistory(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); }catch{ return []; } }
-function saveHistory(h){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,20))); }catch{} }
+function saveHistory(h){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,30))); }catch{} }
 function saveToHistory(desc, mj, gpt){
   const h = getHistory();
-  h.unshift({ ts:Date.now(), desc, mj, gpt });
+  h.unshift({ ts:Date.now(), desc, mj, gpt, starred:false });
   saveHistory(h);
 }
+
+function switchHistTab(tab) {
+  histTab = tab;
+  document.getElementById('tab-all').classList.toggle('on', tab === 'all');
+  document.getElementById('tab-fav').classList.toggle('on', tab === 'fav');
+  renderHistory();
+}
+
 function renderHistory(){
   const h = getHistory();
   const sec = document.getElementById('hist-section');
   const list = document.getElementById('hist-list');
   if (!h.length){ sec.style.display='none'; return; }
   sec.style.display='block';
-  list.innerHTML = h.slice(0,8).map((item,i)=>`
-    <div class="hist-item" onclick="loadHistory(${i})">
-      <div style="flex:1">
+  const items = histTab === 'fav' ? h.filter(i => i.starred) : h;
+  if (!items.length) {
+    list.innerHTML = '<div style="font-size:.75rem;color:var(--muted);padding:8px 0">Nenhum favorito ainda</div>';
+    return;
+  }
+  list.innerHTML = items.slice(0,10).map((item, i) => {
+    const realIdx = h.indexOf(item);
+    return `
+    <div class="hist-item${item.starred?' starred':''}" >
+      <div style="flex:1" onclick="loadHistory(${realIdx})">
         <div class="hist-item-text">${esc(item.desc)}</div>
       </div>
-      <div class="hist-item-ts">${fmtTs(item.ts)}</div>
-    </div>`).join('');
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div class="hist-item-ts">${fmtTs(item.ts)}</div>
+        <span class="hist-item-star${item.starred?' on':''}" onclick="toggleStar(${realIdx})" title="Favoritar">${item.starred?'★':'☆'}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
+
+function toggleStar(i) {
+  const h = getHistory();
+  if (!h[i]) return;
+  h[i].starred = !h[i].starred;
+  saveHistory(h);
+  renderHistory();
+  showToast(h[i].starred ? '★ Favoritado' : 'Removido dos favoritos');
+}
+
 function loadHistory(i){
   const h=getHistory(); const item=h[i]; if(!item) return;
   document.getElementById('desc-input').value = item.desc;
+  updateCharCount();
   generatedMJ=item.mj; generatedGPT=item.gpt;
-  renderResult(item.desc);
+  renderResult(item.desc, item.mj.length);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function fmtTs(ts){
