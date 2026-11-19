@@ -408,6 +408,7 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
 <script>
 let generatedMJ  = '';
 let generatedGPT = '';
+let generatedNEG = '';
 let loiraFixed   = false;
 let realismoMax  = false;
 let histTab      = 'all';
@@ -617,7 +618,7 @@ async function generate() {
   generatedMJ  = buildMJ(enDesc, chips, angle, outfitMJ,  hair, bodyChips, mjParams);
   generatedGPT = buildGPT(enDesc, chips, angle, outfitGPT, hair, bodyChips);
 
-  saveToHistory(desc, generatedMJ, generatedGPT);
+  saveToHistory(desc, generatedMJ, generatedGPT, generatedNEG);
   renderResult(desc, generatedMJ.length);
   renderHistory();
   navigator.clipboard.writeText(generatedMJ).catch(()=>{});
@@ -640,6 +641,7 @@ function buildMJ(enDesc, chips, angle, outfit, hair, bodyArr, params) {
   ];
 
   const neg = '--no ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
+  generatedNEG = 'ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
 
   let cmd = parts.filter(Boolean).join(', ')
     + ` --ar ${params.ar} --style raw --v 6.1 --stylize ${params.stylize}`;
@@ -740,9 +742,14 @@ function renderResult(desc, mjLen) {
         <div class="prompt-label">ChatGPT / DALL·E</div>
         <div class="prompt-box">${esc(generatedGPT)}</div>
       </div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt Negativo (SD / DALL·E / Flux)</div>
+        <div class="prompt-box" id="neg-box">${esc(generatedNEG)}</div>
+      </div>
       <div class="result-actions">
         <button class="btn-act primary" id="btn-copy-mj" onclick="copyMJ()">📋 Copiar MJ</button>
         <button class="btn-act" id="btn-copy-gpt" onclick="copyGPT()">🤖 Copiar ChatGPT</button>
+        <button class="btn-act" id="btn-copy-neg" onclick="copyNEG()">🚫 Copiar Negativo</button>
         <button class="btn-act" onclick="openPerchance()">🎨 Perchance</button>
         <button class="btn-act" id="btn-fav-cur" onclick="favCurrent()">⭐ Favoritar</button>
       </div>
@@ -766,6 +773,13 @@ function copyGPT() {
     const btn = document.getElementById('btn-copy-gpt');
     if (btn){ btn.classList.add('copied'); btn.textContent='✓ Copiado!'; setTimeout(()=>{btn.classList.remove('copied');btn.textContent='🤖 Copiar ChatGPT';},1800); }
     showToast('Prompt ChatGPT copiado ✓');
+  });
+}
+function copyNEG() {
+  navigator.clipboard.writeText(generatedNEG).then(() => {
+    const btn = document.getElementById('btn-copy-neg');
+    if (btn){ btn.classList.add('copied'); btn.textContent='✓ Copiado!'; setTimeout(()=>{btn.classList.remove('copied');btn.textContent='🚫 Copiar Negativo';},1800); }
+    showToast('Prompt negativo copiado ✓');
   });
 }
 function openPerchance(){ window.open('https://perchance.org/ai-photo-generator?prompt='+encodeURIComponent(generatedMJ),'_blank'); }
@@ -832,9 +846,9 @@ document.addEventListener('keydown', e => {
 const HIST_KEY = 'rawgen_hist_v6';
 function getHistory(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); }catch{ return []; } }
 function saveHistory(h){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,30))); }catch{} }
-function saveToHistory(desc, mj, gpt){
+function saveToHistory(desc, mj, gpt, neg){
   const h = getHistory();
-  h.unshift({ ts:Date.now(), desc, mj, gpt, starred:false });
+  h.unshift({ ts:Date.now(), desc, mj, gpt, neg, starred:false });
   saveHistory(h);
 }
 
@@ -884,7 +898,7 @@ function loadHistory(i){
   const h=getHistory(); const item=h[i]; if(!item) return;
   document.getElementById('desc-input').value = item.desc;
   updateCharCount();
-  generatedMJ=item.mj; generatedGPT=item.gpt;
+  generatedMJ=item.mj; generatedGPT=item.gpt; generatedNEG=item.neg||'';
   renderResult(item.desc, item.mj.length);
   window.scrollTo({top:0,behavior:'smooth'});
 }
