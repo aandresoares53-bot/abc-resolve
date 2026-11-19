@@ -189,6 +189,12 @@ header{position:relative}
       <div class="achip" data-angle="squat">⬇️ Agachada</div>
       <div class="achip" data-angle="wallon">🧱 Apoiada na parede</div>
       <div class="achip" data-angle="lyingback">😴 Deitada de costas</div>
+      <div class="achip" data-angle="kneeling">🧎 De joelhos</div>
+      <div class="achip" data-angle="backover">↩️ Costas olhando</div>
+      <div class="achip" data-angle="crosslegs">🧘 Pernas cruzadas</div>
+      <div class="achip" data-angle="window">🪟 Debruçada janela</div>
+      <div class="achip" data-angle="lyingside">🌙 Deitada de lado</div>
+      <div class="achip" data-angle="arch">🌉 Arqueada</div>
     </div>
 
     <div class="enhance-row">
@@ -215,6 +221,13 @@ header{position:relative}
       <div class="echip" data-key="mirror">🪞 Espelho</div>
       <div class="echip" data-key="wet">💧 Molhada</div>
       <div class="echip" data-key="vintage">📻 Vintage/Retrô</div>
+      <div class="echip" data-key="smoke">🌬️ Efeito fumaça</div>
+      <div class="echip" data-key="neon">🔮 Neon/Cyberpunk</div>
+      <div class="echip" data-key="glamour">💎 Glamour</div>
+      <div class="echip" data-key="sport">🏃 Esportiva</div>
+      <div class="echip" data-key="casual">👕 Casual/Street</div>
+      <div class="echip" data-key="dramatic">🎭 Iluminação dramática</div>
+      <div class="echip" data-key="lowkey">🌑 Low key</div>
     </div>
 
     <div class="bottom-row">
@@ -264,6 +277,13 @@ const ENHANCE_MAP = {
   mirror:    'mirror reflection composition, reflective surface, double exposure effect',
   wet:       'wet skin and hair, water droplets on skin, drenched look, glistening wet texture',
   vintage:   'vintage retro aesthetic, 70s or 80s color grading, retro fashion and mood',
+  smoke:     'artistic smoke or fog effect, wispy smoke tendrils, moody atmospheric haze',
+  neon:      'neon lights, cyberpunk color palette, vibrant neon glow, futuristic urban night',
+  glamour:   'glamour photography, high-gloss finish, polished Hollywood lighting, luxury feel',
+  sport:     'athletic sporty style, dynamic movement, activewear, energetic pose',
+  casual:    'casual street style, relaxed everyday outfit, urban casual fashion photography',
+  dramatic:  'dramatic chiaroscuro lighting, high contrast shadows, bold theatrical light',
+  lowkey:    'low key photography, dark background, single light source, moody dark tones',
 };
 
 const ANGLE_MAP = {
@@ -287,6 +307,12 @@ const ANGLE_MAP = {
   squat:        'squatting pose, low crouch, knees bent, front-facing, low angle shot',
   wallon:       'subject leaning back against wall, full body, side or three-quarter angle, casual pose',
   lyingback:    'lying on back, face up, relaxed supine position, overhead or slight high-angle shot',
+  kneeling:     'kneeling pose, both knees on ground, upright torso, eye-level or slight high-angle shot',
+  backover:     'standing back-facing, subject looking back over shoulder toward camera, three-quarter rear view',
+  crosslegs:    'seated cross-legged on floor, relaxed pose, eye-level front-facing shot',
+  window:       'leaning on windowsill or balcony railing, upper body forward, natural window light',
+  lyingside:    'lying on side, full lateral pose, head propped on hand or arm, low eye-level shot',
+  arch:         'standing arched back pose, spine curved, chest forward, dramatic full-body framing',
 };
 
 document.querySelectorAll('.echip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
