@@ -261,7 +261,7 @@ let generatedGPT = '';
 let loiraFixed   = false;
 
 const ENHANCE_MAP = {
-  photoreal: 'shot on DSLR, photorealistic, natural skin texture',
+  photoreal: 'RAW photograph, real human skin texture, natural pores and imperfections, photorealistic, no CGI',
   lighting:  'natural light, soft golden hour lighting',
   fashion:   'high fashion photography, Vogue editorial style, luxury fashion shoot',
   boudoir:   'boudoir photography, intimate setting, soft bedroom lighting, tasteful and sensual',
@@ -386,10 +386,18 @@ async function generate() {
 
 function buildMJ(enDesc, chips, angle) {
   const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
-  const parts = [angle, loiraPrefix, enDesc, ...chips,
-    'shot on DSLR, natural lens, sharp focus on subject, no digital retouching, no CGI render'];
-  const neg = '--no ai art, cgi, 3d render, plastic skin, airbrushed, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, over-smoothed skin, artificial lighting, studio background, watermark, text';
-  return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6 ' + neg;
+  const parts = [
+    angle,
+    loiraPrefix,
+    enDesc,
+    ...chips,
+    'real human photography, shot on Canon EOS R5 85mm f/1.4 lens, RAW photo, ISO 400',
+    'real skin pores, natural skin imperfections, authentic human skin texture, subsurface skin scattering',
+    'candid documentary style, unretouched film, sharp focus on eyes, natural facial asymmetry',
+    'hyperrealistic, photojournalism quality, no filters, no post-processing'
+  ];
+  const neg = '--no ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
+  return parts.filter(Boolean).join(', ') + ' --ar 2:3 --style raw --v 6.1 ' + neg;
 }
 
 function sanitizeGPT(text) {
