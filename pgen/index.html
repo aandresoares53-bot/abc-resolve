@@ -122,6 +122,9 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .btn-clear{padding:13px 16px;border-radius:12px;border:1px solid #555;background:rgba(255,255,255,.06);
   color:var(--muted);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .18s;white-space:nowrap}
 .btn-clear:hover{border-color:#e74c3c;color:#e74c3c;background:rgba(231,76,60,.1)}
+.btn-clear-hist{padding:4px 10px;border-radius:8px;border:1px solid #444;background:transparent;
+  color:var(--muted);cursor:pointer;font-size:.72rem;transition:all .15s}
+.btn-clear-hist:hover{border-color:#e74c3c;color:#e74c3c;background:rgba(231,76,60,.08)}
 
 .char-counter{font-size:.58rem;color:var(--muted);text-align:right;margin-top:4px;opacity:.6}
 .char-counter.warn{color:#e8a020}
@@ -455,7 +458,10 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
   <div id="output-area"></div>
 
   <div class="hist-section" id="hist-section" style="display:none">
-    <span class="hist-label">— Histórico —</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span class="hist-label" style="margin-bottom:0">— Histórico —</span>
+      <button class="btn-clear-hist" onclick="clearHistory()" title="Apagar todo o histórico">🗑️ Limpar histórico</button>
+    </div>
     <div class="hist-tabs">
       <button class="hist-tab on" id="tab-all" onclick="switchHistTab('all')">Todos</button>
       <button class="hist-tab" id="tab-fav" onclick="switchHistTab('fav')">⭐ Favoritos</button>
@@ -986,6 +992,12 @@ function switchHistTab(tab) {
   document.getElementById('tab-all').classList.toggle('on', tab === 'all');
   document.getElementById('tab-fav').classList.toggle('on', tab === 'fav');
   renderHistory();
+}
+function clearHistory() {
+  if (!confirm('Apagar todo o histórico?')) return;
+  saveHistory([]);
+  renderHistory();
+  showToast('Histórico apagado ✓');
 }
 
 function renderHistory(){
