@@ -786,10 +786,10 @@ function sanitizeGPT(text) {
     .replace(/\bnipples?\b/gi, 'neckline')
     .replace(/\bbreasts?\b/gi, 'chest area')
     .replace(/\bbikini\s+top\s*off\b/gi, 'wearing a bikini top')
-    .replace(/\bbikini\b/gi, 'swimwear')
+    .replace(/\bbikini\b/gi, 'two-piece swimsuit')
     .replace(/\bswimsuit\b/gi, 'one-piece swimsuit')
-    .replace(/\bbedroom\b/gi, 'bright sunlit studio')
-    .replace(/\bbed\b/gi, 'studio seat')
+    .replace(/\bbedroom\b/gi, 'sunlit room')
+    .replace(/\bbed\b/gi, 'couch')
     .replace(/\bbathroom\b/gi, 'outdoor terrace')
     .replace(/\bshower\b/gi, 'outdoor fountain')
     .replace(/\bbathtub?\b/gi, 'outdoor pool')
@@ -797,7 +797,7 @@ function sanitizeGPT(text) {
     .replace(/\bupskirt\b/gi, 'low angle')
     .replace(/\bcrotch[\s-]?level\b/gi, 'low angle')
     .replace(/\bup\s*skirt\b/gi, 'low angle')
-    .replace(/\blingerie\b/gi, 'elegant fashion wear')
+    .replace(/\blingerie\b/gi, 'fitted fashion wear')
     .replace(/\bthong\b/gi, 'fitted shorts')
     .replace(/\bg.string\b/gi, 'fitted shorts')
     .replace(/\bpanties\b/gi, 'shorts')
@@ -824,11 +824,11 @@ function buildGPT(enDesc, chips, angle, outfit, hair, bodyArr) {
   const safeOutfit  = sanitizeGPT(outfit || '');
   const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const parts = [
-    'Professional fashion photography, Vogue magazine editorial, fully clothed model, tasteful and artistic, safe for work',
+    'Professional fashion photography, Vogue editorial portrait',
     angle, loiraPrefix, hair, ...bodyArr, safeDesc, safeOutfit,
     ...chips,
-    'natural skin texture, authentic human proportions, sharp focus, photorealistic',
-    'no text, no watermark, 9:16 vertical portrait'
+    'sharp focus, photorealistic, high resolution',
+    'no text, no watermark, 9:16 vertical'
   ];
   return parts.filter(Boolean).join(', ') + '.';
 }
