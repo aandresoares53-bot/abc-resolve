@@ -119,6 +119,9 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .btn-generate:hover{background-position:100% 0;box-shadow:0 4px 20px var(--gold-glow);transform:translateY(-1px)}
 .btn-generate:active{transform:translateY(0)}
 .btn-generate:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-clear{padding:13px 16px;border-radius:12px;border:1px solid #555;background:rgba(255,255,255,.06);
+  color:var(--muted);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .18s;white-space:nowrap}
+.btn-clear:hover{border-color:#e74c3c;color:#e74c3c;background:rgba(231,76,60,.1)}
 
 .char-counter{font-size:.58rem;color:var(--muted);text-align:right;margin-top:4px;opacity:.6}
 .char-counter.warn{color:#e8a020}
@@ -442,7 +445,10 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <button class="btn-mode" id="btn-rand" onclick="randomize()" title="Aleatorizar chips">🎲 Aleatorizar</button>
     </div>
 
-    <button class="btn-generate" id="btn-gen" onclick="generate()">Gerar Prompt →</button>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-generate" id="btn-gen" onclick="generate()" style="margin-top:0;flex:1">Gerar Prompt →</button>
+      <button class="btn-clear" onclick="clearAll()" title="Limpar tudo">🗑️ Limpar</button>
+    </div>
     <div class="kbd-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> gera · <kbd>Ctrl</kbd>+<kbd>M</kbd> copia MJ · <kbd>Ctrl</kbd>+<kbd>G</kbd> copia GPT</div>
   </div>
 
@@ -872,6 +878,18 @@ function renderResult(desc, mjLen) {
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+function clearAll() {
+  document.getElementById('desc').value = '';
+  document.querySelectorAll('.echip.on,.achip.on,.ochip.on,.hchip.on,.bchip.on').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('.sqchip').forEach(c => { c.value = ''; c.dispatchEvent(new Event('input')); });
+  ['ar','stylize','chaos'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.selectedIndex = 0;
+  });
+  const sref = document.getElementById('sref'); if(sref) sref.value = '';
+  const rm = document.getElementById('btn-realismo'); if(rm && rm.classList.contains('on')) rm.click();
+  document.getElementById('result-section').style.display = 'none';
+  showToast('Campos limpos ✓');
+}
 function copyMJ() {
   navigator.clipboard.writeText(generatedMJ).then(() => {
     const btn = document.getElementById('btn-copy-mj');
