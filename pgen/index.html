@@ -48,11 +48,13 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .echip:hover{border-color:var(--gold-dim);color:var(--text)}
 .echip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
 
-.achip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
+.achip,.pchip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
   color:var(--muted);font-family:Georgia,serif;font-size:.7rem;cursor:pointer;
   transition:all .14s;user-select:none}
 .achip:hover{border-color:#4a8aff55;color:var(--text)}
 .achip.on{border-color:#4a8aff;color:#4a8aff;background:rgba(74,138,255,.12)}
+.pchip:hover{border-color:#ff8c4255;color:var(--text)}
+.pchip.on{border-color:#ff8c42;color:#ff8c42;background:rgba(255,140,66,.12)}
 
 /* outfit chips — purple */
 .ochip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;
@@ -250,26 +252,6 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="achip" data-angle="high">🔼 Ângulo alto</div>
       <div class="achip" data-angle="overhead">🛸 Aéreo/Top</div>
       <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
-      <div class="achip" data-angle="bentover">🫦 Perfil dobrada</div>
-      <div class="achip" data-angle="proneup">🍑 Deitada de bruços</div>
-      <div class="achip" data-angle="backshot">🔙 De costas</div>
-      <div class="achip" data-angle="sitting">🪑 Sentada frontal</div>
-      <div class="achip" data-angle="sitlegs">🦵 Sentada pernas abertas</div>
-      <div class="achip" data-angle="squat">⬇️ Agachada</div>
-      <div class="achip" data-angle="wallon">🧱 Apoiada na parede</div>
-      <div class="achip" data-angle="lyingback">😴 Deitada de costas</div>
-      <div class="achip" data-angle="kneeling">🧎 De joelhos</div>
-      <div class="achip" data-angle="backover">↩️ Costas olhando</div>
-      <div class="achip" data-angle="crosslegs">🧘 Pernas cruzadas</div>
-      <div class="achip" data-angle="window">🪟 Debruçada janela</div>
-      <div class="achip" data-angle="lyingside">🌙 Deitada de lado</div>
-      <div class="achip" data-angle="arch">🌉 Arqueada</div>
-      <div class="achip" data-angle="handsknees">🐆 De quatro</div>
-      <div class="achip" data-angle="handskneesbk">🐆 De quatro costas</div>
-      <div class="achip" data-angle="straddling">🪑 Sentada cavalgando</div>
-      <div class="achip" data-angle="leanback">🛋️ Reclinada</div>
-      <div class="achip" data-angle="floorarched">🌊 Arqueada no chão</div>
-      <div class="achip" data-angle="overtable">🍽️ Sobre a mesa</div>
       <span class="enhance-label" style="margin-top:8px">Close-ups →</span>
       <div class="achip" data-angle="closeup_lips">👄 Close lábios</div>
       <div class="achip" data-angle="closeup_eyes">👁️ Close olhos</div>
@@ -282,6 +264,31 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="achip" data-angle="closeup_feet">👣 Close pés</div>
       <div class="achip" data-angle="closeup_back">🌊 Close costas</div>
       <div class="achip" data-angle="closeup_hands">🤲 Close mãos</div>
+    </div>
+
+    <!-- Poses e posições -->
+    <div class="enhance-row" id="pose-row">
+      <span class="enhance-label">Pose / Posição →</span>
+      <div class="pchip" data-pose="backshot">🔙 De costas</div>
+      <div class="pchip" data-pose="sitting">🪑 Sentada frontal</div>
+      <div class="pchip" data-pose="sitlegs">🦵 Sentada pernas abertas</div>
+      <div class="pchip" data-pose="squat">⬇️ Agachada</div>
+      <div class="pchip" data-pose="wallon">🧱 Apoiada na parede</div>
+      <div class="pchip" data-pose="lyingback">😴 Deitada de costas</div>
+      <div class="pchip" data-pose="kneeling">🧎 De joelhos</div>
+      <div class="pchip" data-pose="backover">↩️ Costas olhando</div>
+      <div class="pchip" data-pose="crosslegs">🧘 Pernas cruzadas</div>
+      <div class="pchip" data-pose="window">🪟 Debruçada janela</div>
+      <div class="pchip" data-pose="lyingside">🌙 Deitada de lado</div>
+      <div class="pchip" data-pose="arch">🌉 Arqueada</div>
+      <div class="pchip" data-pose="bentover">🫦 Dobrada p/ frente</div>
+      <div class="pchip" data-pose="proneup">🍑 Deitada de bruços</div>
+      <div class="pchip" data-pose="handsknees">🐆 De quatro</div>
+      <div class="pchip" data-pose="handskneesbk">🐆 De quatro costas</div>
+      <div class="pchip" data-pose="straddling">🪑 Sentada cavalgando</div>
+      <div class="pchip" data-pose="leanback">🛋️ Reclinada</div>
+      <div class="pchip" data-pose="floorarched">🌊 Arqueada no chão</div>
+      <div class="pchip" data-pose="overtable">🍽️ Sobre a mesa</div>
     </div>
 
     <!-- Roupa -->
@@ -652,6 +659,11 @@ document.querySelectorAll('.achip').forEach(c => c.addEventListener('click', () 
   document.querySelectorAll('.achip').forEach(a => a.classList.remove('on'));
   if (!wasOn) c.classList.add('on');
 }));
+document.querySelectorAll('.pchip').forEach(c => c.addEventListener('click', () => {
+  const wasOn = c.classList.contains('on');
+  document.querySelectorAll('.pchip').forEach(a => a.classList.remove('on'));
+  if (!wasOn) c.classList.add('on');
+}));
 document.querySelectorAll('.ochip').forEach(c => c.addEventListener('click', () => {
   const wasOn = c.classList.contains('on');
   document.querySelectorAll('.ochip').forEach(a => a.classList.remove('on'));
@@ -703,6 +715,9 @@ function randomize() {
   const achips = [...document.querySelectorAll('.achip')];
   achips.forEach(a => a.classList.remove('on'));
   achips[Math.floor(Math.random() * achips.length)].classList.add('on');
+  const pchips = [...document.querySelectorAll('.pchip')];
+  pchips.forEach(a => a.classList.remove('on'));
+  if (Math.random() > .4) pchips[Math.floor(Math.random() * pchips.length)].classList.add('on');
   showToast('Chips aleatorizados!');
 }
 
@@ -722,7 +737,10 @@ async function generate() {
 
   const chips      = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   const angleChip  = document.querySelector('.achip.on');
-  const angle      = angleChip ? ANGLE_MAP[angleChip.dataset.angle] : '';
+  const poseChip   = document.querySelector('.pchip.on');
+  const anglePart  = angleChip ? ANGLE_MAP[angleChip.dataset.angle] : '';
+  const posePart   = poseChip  ? ANGLE_MAP[poseChip.dataset.pose]   : '';
+  const angle      = [anglePart, posePart].filter(Boolean).join(', ');
   const outfitChip = document.querySelector('.ochip.on');
   const hairChip   = document.querySelector('.hchip.on');
   const bodyChips  = [...document.querySelectorAll('.bchip.on')].map(c => BODY_MAP[c.dataset.body]).filter(Boolean);
@@ -886,7 +904,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 
 function clearAll() {
   document.getElementById('desc').value = '';
-  document.querySelectorAll('.echip.on,.achip.on,.ochip.on,.hchip.on,.bchip.on').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('.echip.on,.achip.on,.pchip.on,.ochip.on,.hchip.on,.bchip.on').forEach(c => c.classList.remove('on'));
   document.querySelectorAll('.sqchip').forEach(c => { c.value = ''; c.dispatchEvent(new Event('input')); });
   ['ar','stylize','chaos'].forEach(id => {
     const el = document.getElementById(id); if(el) el.selectedIndex = 0;
