@@ -308,6 +308,18 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="ochip" data-outfit="stockings">🦵 Meia-calça/Collant</div>
       <div class="ochip" data-outfit="overalls">👗 Macacão</div>
       <div class="ochip" data-outfit="schoolgirl">🎓 Colegial/Saia plissada</div>
+      <div class="ochip" data-outfit="nurse">💊 Enfermeira</div>
+      <div class="ochip" data-outfit="police">👮 Policial</div>
+      <div class="ochip" data-outfit="secretary">💼 Secretária</div>
+      <div class="ochip" data-outfit="dancer">💃 Dançarina/Pole</div>
+      <div class="ochip" data-outfit="catsuit">🐈 Macacão colado</div>
+      <div class="ochip" data-outfit="mesh">🕸️ Mesh/Rede</div>
+      <div class="ochip" data-outfit="nightgown">🌙 Camisola</div>
+      <div class="ochip" data-outfit="swimcover">🌊 Saída de praia</div>
+      <div class="ochip" data-outfit="tshirtonly">👕 Só camiseta (MJ)</div>
+      <div class="ochip" data-outfit="choker">🖤 Choker + top</div>
+      <div class="ochip" data-outfit="gown">👑 Vestido de gala</div>
+      <div class="ochip" data-outfit="denim_jacket">🧥 Jaqueta jeans</div>
     </div>
 
     <!-- Cabelo -->
@@ -372,6 +384,18 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="echip" data-key="casual">👕 Casual/Street</div>
       <div class="echip" data-key="dramatic">🎭 Iluminação dramática</div>
       <div class="echip" data-key="lowkey">🌑 Low key</div>
+      <div class="echip" data-key="yacht">⛵ Iate/Veleiro</div>
+      <div class="echip" data-key="rooftop">🏙️ Rooftop/Terraço</div>
+      <div class="echip" data-key="waterfall">🌊 Cachoeira</div>
+      <div class="echip" data-key="desert">🏜️ Deserto/Dunas</div>
+      <div class="echip" data-key="snow">❄️ Neve/Inverno</div>
+      <div class="echip" data-key="hotel">🛎️ Quarto de hotel</div>
+      <div class="echip" data-key="gym">🏋️ Academia/Gym</div>
+      <div class="echip" data-key="club">🎵 Boate/Club</div>
+      <div class="echip" data-key="garden">🌷 Jardim/Flores</div>
+      <div class="echip" data-key="car">🚗 Dentro do carro</div>
+      <div class="echip" data-key="studio">📸 Estúdio fundo branco</div>
+      <div class="echip" data-key="darkroom">🕯️ Quarto escuro/velas</div>
     </div>
 
     <!-- Parâmetros MJ -->
@@ -467,6 +491,18 @@ const OUTFIT_MAP = {
   stockings:   { mj: 'wearing stockings and garter belt, sheer thigh-highs', gpt: 'wearing elegant stockings' },
   overalls:    { mj: 'wearing denim overalls with no shirt underneath', gpt: 'wearing denim overalls' },
   schoolgirl:  { mj: 'wearing a pleated mini skirt and white shirt tied at waist, schoolgirl style', gpt: 'wearing a pleated skirt and white blouse' },
+  nurse:       { mj: 'wearing a sexy nurse costume, short white dress with red cross', gpt: 'wearing a nurse uniform' },
+  police:      { mj: 'wearing a sexy police officer costume, tight uniform, badge', gpt: 'wearing a police uniform' },
+  secretary:   { mj: 'wearing a tight pencil skirt and button-up blouse, office secretary style', gpt: 'wearing a professional pencil skirt and blouse' },
+  dancer:      { mj: 'wearing a pole dancer outfit, sequined crop top and booty shorts', gpt: 'wearing a dance performance outfit' },
+  catsuit:     { mj: 'wearing a skin-tight catsuit, full body fitted jumpsuit', gpt: 'wearing a fitted jumpsuit' },
+  mesh:        { mj: 'wearing a sheer mesh fishnet bodysuit, see-through net fabric', gpt: 'wearing an artistic mesh top' },
+  nightgown:   { mj: 'wearing a sheer silk nightgown, flowing thin fabric', gpt: 'wearing an elegant silk nightgown' },
+  swimcover:   { mj: 'wearing a beach cover-up sarong over a bikini, sheer and breezy', gpt: 'wearing a beach cover-up over a swimsuit' },
+  tshirtonly:  { mj: 'wearing only an oversized t-shirt, bare legs, no pants', gpt: 'wearing an oversized t-shirt and shorts' },
+  choker:      { mj: 'wearing a choker necklace and crop top, edgy aesthetic', gpt: 'wearing a stylish crop top and choker' },
+  gown:        { mj: 'wearing an elegant floor-length gala evening gown, luxury formal wear', gpt: 'wearing an elegant floor-length evening gown' },
+  denim_jacket:{ mj: 'wearing a denim jacket open with nothing underneath, casual chic', gpt: 'wearing a denim jacket over a simple top' },
 };
 
 const HAIR_MAP = {
@@ -525,6 +561,18 @@ const ENHANCE_MAP = {
   casual:    'casual street style, relaxed everyday outfit, urban casual fashion photography',
   dramatic:  'dramatic chiaroscuro lighting, high contrast shadows, bold theatrical light',
   lowkey:    'low key photography, dark background, single light source, moody dark tones',
+  yacht:     'luxury yacht or sailboat setting, ocean background, nautical glamour, blue sea and sky',
+  rooftop:   'rooftop terrace setting, city skyline background, golden hour urban landscape',
+  waterfall: 'tropical waterfall setting, lush jungle, water cascading, natural outdoor environment',
+  desert:    'desert dunes setting, golden sand, arid landscape, harsh sun and shadows',
+  snow:      'winter snow setting, cold outdoor environment, snowflakes, icy breath, cozy or dramatic winter mood',
+  hotel:     'luxury hotel room setting, premium bedding, elegant interior, ambient lamp lighting',
+  gym:       'gym or fitness studio setting, mirrors, equipment, athletic environment, motivational lighting',
+  club:      'nightclub or lounge setting, colorful strobe lights, dark ambient, dance floor atmosphere',
+  garden:    'garden or floral setting, blooming flowers, soft natural light, botanical environment',
+  car:       'inside a luxury car setting, leather seats, dashboard ambient light, automotive glamour',
+  studio:    'clean white studio backdrop, professional studio lighting, minimalist photography setup',
+  darkroom:  'dark moody room with candles, candlelight only, intimate warm flickering shadows',
 };
 
 const ANGLE_MAP = {
