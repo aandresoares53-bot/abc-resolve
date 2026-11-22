@@ -254,6 +254,12 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="achip" data-angle="high">🔼 Ângulo alto</div>
       <div class="achip" data-angle="overhead">🛸 Aéreo/Top</div>
       <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
+      <div class="achip" data-angle="dutch">📐 Dutch angle</div>
+      <div class="achip" data-angle="through_glass">🪟 Através do vidro</div>
+      <div class="achip" data-angle="reflection">🪞 Reflexo/Espelho</div>
+      <div class="achip" data-angle="macro_skin">🔬 Macro pele</div>
+      <div class="achip" data-angle="telephoto">🔭 Teleobjetiva</div>
+      <div class="achip" data-angle="wide_angle">🌐 Grande angular</div>
       <span class="enhance-label" style="margin-top:8px">Close-ups (multi) →</span>
       <div class="cchip" data-angle="closeup_lips">👄 Close lábios</div>
       <div class="cchip" data-angle="closeup_eyes">👁️ Close olhos</div>
@@ -291,6 +297,14 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="pchip" data-pose="leanback">🛋️ Reclinada</div>
       <div class="pchip" data-pose="floorarched">🌊 Arqueada no chão</div>
       <div class="pchip" data-pose="overtable">🍽️ Sobre a mesa</div>
+      <div class="pchip" data-pose="standing_split">🤸 Divisão em pé</div>
+      <div class="pchip" data-pose="bridge">🌉 Ponte/Bridge</div>
+      <div class="pchip" data-pose="seated_side">🌙 Sentada de lado</div>
+      <div class="pchip" data-pose="hands_wall">🧱 Mãos na parede</div>
+      <div class="pchip" data-pose="dancing">💃 Dançando</div>
+      <div class="pchip" data-pose="crawling">🐈 Rastejando</div>
+      <div class="pchip" data-pose="tiptoe">👠 Na ponta dos pés</div>
+      <div class="pchip" data-pose="hugging_pillow">🛌 Abraçando travesseiro</div>
     </div>
 
     <!-- Roupa -->
@@ -341,6 +355,25 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="ochip" data-outfit="gaming_chair">🪑 Na cadeira gamer</div>
       <div class="ochip" data-outfit="esport_jersey">⚡ Jersey e-sport</div>
       <div class="ochip" data-outfit="headset_only">🎧 Headset + top</div>
+      <span class="enhance-label" style="margin-top:8px">Moletons →</span>
+      <div class="ochip" data-outfit="hoodie_oversized">🤍 Hoodie oversized</div>
+      <div class="ochip" data-outfit="zip_hoodie">🤐 Hoodie aberto (zip)</div>
+      <div class="ochip" data-outfit="molletom_set">👕 Conjunto moletom</div>
+      <div class="ochip" data-outfit="molletom_open">🧥 Moletom aberto sem camisa</div>
+      <div class="ochip" data-outfit="uni_sweat">🎓 Moletom universitário</div>
+      <span class="enhance-label" style="margin-top:8px">Fantasias →</span>
+      <div class="ochip" data-outfit="superheroine">🦸 Super-heroína</div>
+      <div class="ochip" data-outfit="angel">👼 Anjo</div>
+      <div class="ochip" data-outfit="devil">😈 Diabinha</div>
+      <div class="ochip" data-outfit="witch">🧙 Bruxa</div>
+      <div class="ochip" data-outfit="bunny">🐰 Coelhinha</div>
+      <div class="ochip" data-outfit="maid">🧹 Empregada (maid)</div>
+      <div class="ochip" data-outfit="fairy">🧚 Fada</div>
+      <div class="ochip" data-outfit="vampire">🧛 Vampira</div>
+      <div class="ochip" data-outfit="cheerleader">📣 Cheerleader</div>
+      <div class="ochip" data-outfit="pirate">🏴‍☠️ Pirata</div>
+      <div class="ochip" data-outfit="warrior">⚔️ Guerreira</div>
+      <div class="ochip" data-outfit="elven">🌿 Elfa</div>
     </div>
 
     <!-- Cabelo -->
@@ -417,6 +450,18 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="echip" data-key="car">🚗 Dentro do carro</div>
       <div class="echip" data-key="studio">📸 Estúdio fundo branco</div>
       <div class="echip" data-key="darkroom">🕯️ Quarto escuro/velas</div>
+      <div class="echip" data-key="forest_night">🌲 Floresta noturna</div>
+      <div class="echip" data-key="castle">🏰 Castelo/Palácio</div>
+      <div class="echip" data-key="bathtub">🛁 Banheira de luxo</div>
+      <div class="echip" data-key="night_beach">🌊 Praia noturna</div>
+      <div class="echip" data-key="neon_party">🎉 Festa neon</div>
+      <div class="echip" data-key="infinity_pool">🌅 Piscina infinita</div>
+      <div class="echip" data-key="loft">🏭 Loft industrial</div>
+      <div class="echip" data-key="mountain">⛰️ Montanha/Penhasco</div>
+      <div class="echip" data-key="cabin">🪵 Cabine de madeira</div>
+      <div class="echip" data-key="ocean_sunset">🌊 Pôr do sol no mar</div>
+      <div class="echip" data-key="library">📚 Biblioteca/Livraria</div>
+      <div class="echip" data-key="cathedral">⛪ Catedral/Igreja</div>
     </div>
 
     <!-- Parâmetros MJ -->
@@ -536,6 +581,23 @@ const OUTFIT_MAP = {
   gaming_chair:  { mj: 'sitting in a gaming chair wearing a tiny crop top and shorts, RGB lights behind her', gpt: 'sitting in a gaming chair wearing casual clothes' },
   esport_jersey: { mj: 'wearing an e-sport team jersey, fitted and cropped, athletic gamer wear', gpt: 'wearing an e-sport team jersey' },
   headset_only:  { mj: 'wearing a gaming headset and a tiny crop top, music producer or streamer vibe', gpt: 'wearing a gaming headset and a stylish top' },
+  hoodie_oversized: { mj: 'wearing a huge oversized hoodie that barely covers, cozy aesthetic, no pants visible', gpt: 'wearing an oversized hoodie' },
+  zip_hoodie:    { mj: 'wearing an open zip-up hoodie with nothing underneath, zipper down revealing bare skin', gpt: 'wearing an open zip hoodie over a top' },
+  molletom_set:  { mj: 'wearing a matching sweatshirt and sweatpants co-ord set, cozy loungewear look', gpt: 'wearing a matching sweatsuit set' },
+  molletom_open: { mj: 'wearing an open sweatshirt with nothing underneath, bare midriff, casual street style', gpt: 'wearing an open sweatshirt and casual pants' },
+  uni_sweat:     { mj: 'wearing a fitted university college crewneck sweatshirt, cropped at waist, collegiate style', gpt: 'wearing a college crewneck sweatshirt' },
+  superheroine:  { mj: 'wearing a skin-tight superheroine costume, spandex bodysuit, cape, bold colors, heroic pose', gpt: 'wearing a superhero costume' },
+  angel:         { mj: 'wearing an angel costume, white flowing mini dress, feathered wings, halo, ethereal glow', gpt: 'wearing an angel costume with white dress and wings' },
+  devil:         { mj: 'wearing a devil costume, red mini dress, devil horns, pointed tail, seductive Halloween look', gpt: 'wearing a devil Halloween costume' },
+  witch:         { mj: 'wearing a sexy witch costume, black mini dress, pointed hat, fishnet stockings, broomstick prop', gpt: 'wearing a witch Halloween costume' },
+  bunny:         { mj: 'wearing a Playboy bunny costume, strapless bodysuit, bunny ears, fluffy tail, fishnet stockings', gpt: 'wearing a bunny girl costume with bunny ears' },
+  maid:          { mj: 'wearing a French maid costume, black and white mini dress with apron, lace headpiece', gpt: 'wearing a maid costume' },
+  fairy:         { mj: 'wearing a fairy costume, iridescent mini dress, translucent butterfly wings, flower crown, magical shimmer', gpt: 'wearing a fairy costume with wings' },
+  vampire:       { mj: 'wearing a vampire costume, black velvet mini dress, cape collar, pale skin, fangs, gothic elegance', gpt: 'wearing a vampire Halloween costume' },
+  cheerleader:   { mj: 'wearing a cheerleader uniform, pleated micro skirt and crop top, pom-poms, team colors', gpt: 'wearing a cheerleader uniform' },
+  pirate:        { mj: 'wearing a sexy pirate costume, corset top, ripped mini skirt, bandana, boots, cutlass prop', gpt: 'wearing a pirate costume' },
+  warrior:       { mj: 'wearing a fantasy warrior armor bikini, leather straps and metal plates, sword, battle stance', gpt: 'wearing warrior armor costume' },
+  elven:         { mj: 'wearing an elf princess costume, long flowy ethereal dress, pointed ears, flower wreath, nature fairy vibes', gpt: 'wearing an elf fantasy costume' },
 };
 
 const HAIR_MAP = {
@@ -606,6 +668,18 @@ const ENHANCE_MAP = {
   car:       'inside a luxury car setting, leather seats, dashboard ambient light, automotive glamour',
   studio:    'clean white studio backdrop, professional studio lighting, minimalist photography setup',
   darkroom:  'dark moody room with candles, candlelight only, intimate warm flickering shadows',
+  forest_night: 'dark enchanted forest at night, moonlight through trees, mysterious atmospheric woods',
+  castle:    'majestic castle or palace interior, stone arches, stained glass, royal medieval atmosphere',
+  bathtub:   'luxury bathtub or clawfoot tub setting, rose petals, candles, foam and steam, opulent bathroom',
+  night_beach: 'night beach setting, moonlit ocean waves, stars reflection on water, bonfire glow, tropical night',
+  neon_party:  'vibrant neon party scene, colorful UV lights, disco balls, confetti, nightclub energy',
+  infinity_pool: 'infinity pool at sunset, edge overlooking ocean or city skyline, luxury resort atmosphere',
+  loft:      'industrial loft space, exposed brick walls, steel beams, large windows, urban artistic atmosphere',
+  mountain:  'dramatic mountain cliff or peak, wide open sky, natural wilderness, epic landscape backdrop',
+  cabin:     'cozy wooden log cabin interior, fireplace glow, warm wood textures, rustic countryside vibe',
+  ocean_sunset: 'dramatic ocean sunset, golden and pink sky, waves at horizon, warm sea breeze atmosphere',
+  library:   'grand library setting, tall bookshelves, vintage books, warm reading lamp, intellectual ambiance',
+  cathedral: 'gothic cathedral or church interior, stained glass windows, stone arches, divine ethereal light',
 };
 
 const ANGLE_MAP = {
@@ -621,6 +695,12 @@ const ANGLE_MAP = {
   high:         'high angle shot, shot from above looking down',
   overhead:     'overhead bird\'s-eye view, top-down shot',
   shoulder:     'over-the-shoulder shot, behind subject perspective',
+  dutch:        'dutch angle tilt, camera rotated 20-30 degrees, dynamic off-kilter framing',
+  through_glass:'shot through glass or window, condensation or reflections, voyeuristic framing',
+  reflection:   'mirror or reflective surface composition, subject and reflection visible, double image effect',
+  macro_skin:   'macro photography, extreme close skin texture, pores and fine details visible, clinical intimacy',
+  telephoto:    'telephoto compressed perspective, shallow depth of field, background bokeh, subject isolated',
+  wide_angle:   'ultra wide angle lens, slight barrel distortion, environmental context, immersive framing',
   bentover:     'side profile, subject leaning forward with hands on surface, arched back pose, low angle behind',
   proneup:      'lying face down prone position, upper body propped up on elbows, chest and face toward camera, hips and buttocks raised, low angle front-facing shot',
   backshot:     'back-facing shot, rear view, subject facing away from camera, full back visible',
@@ -641,6 +721,14 @@ const ANGLE_MAP = {
   leanback:     'reclined leaning back pose, weight on hands behind, chest forward, legs extended, low eye-level',
   floorarched:  'lying on floor arched back, hips raised, full body arch, low dramatic angle',
   overtable:    'bent over surface or table, hands flat on surface, back arched, low side angle',
+  standing_split: 'standing vertical split, one leg raised straight up, flexible pose, full body side view',
+  bridge:       'full body bridge pose, back arched, hands and feet on floor, hips raised high, dynamic yoga pose',
+  seated_side:  'seated sideways on surface, legs curled to one side, upper body turned toward camera, elegant pose',
+  hands_wall:   'hands pressed flat against wall, face close to wall, back arched, body leaning forward, dramatic angle',
+  dancing:      'mid-dance pose, fluid movement, one leg raised or arms extended, natural dynamic motion captured',
+  crawling:     'crawling on floor toward camera, low angle front shot, eyes locked on camera, feline seductive energy',
+  tiptoe:       'standing on tiptoes, legs fully extended, body elongated, reaching or stretching pose, full body shot',
+  hugging_pillow: 'lying in bed hugging a pillow, face peeking over pillow, cozy intimate pose, overhead soft angle',
   closeup_lips: 'extreme close-up on lips and mouth, macro lens, shallow depth of field, sharp lip detail',
   closeup_eyes: 'extreme close-up on eyes, macro portrait, sharp iris and lashes detail, shallow depth of field',
   closeup_neck: 'close-up on neck and collarbone, intimate portrait framing, soft light on skin',
