@@ -540,14 +540,32 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
     <div class="enhance-row" style="margin-top:16px">
       <span class="combo-label">⚡ Quick combo →</span>
       <div class="combo-row" style="width:100%">
+        <span class="enhance-label" style="margin-bottom:3px">SFW →</span>
         <button class="mbtn" onclick="applyCombo('editorial')">✨ Editorial</button>
-        <button class="mbtn" onclick="applyCombo('sensual')">🔥 Sensual</button>
         <button class="mbtn" onclick="applyCombo('praia')">🏖️ Praia verão</button>
         <button class="mbtn" onclick="applyCombo('gamer')">🎮 Gamer night</button>
         <button class="mbtn" onclick="applyCombo('dark')">🌑 Dark / Gótico</button>
-        <button class="mbtn" onclick="applyCombo('boudoir')">🛁 Boudoir íntimo</button>
         <button class="mbtn" onclick="applyCombo('fantasy')">🧙 Fantasia mágica</button>
         <button class="mbtn" onclick="applyCombo('sport')">💪 Fit / Sport</button>
+        <button class="mbtn" onclick="applyCombo('vintage_glam')">📻 Vintage Glam</button>
+        <button class="mbtn" onclick="applyCombo('neon_cyberpunk')">🔮 Cyberpunk</button>
+        <button class="mbtn" onclick="applyCombo('pool_party')">🌊 Pool Party</button>
+        <button class="mbtn" onclick="applyCombo('angel_fantasy')">👼 Anjo / Fada</button>
+        <button class="mbtn" onclick="applyCombo('devil_bad')">😈 Diabinha</button>
+        <button class="mbtn" onclick="applyCombo('yacht_luxury')">⛵ Luxury Yacht</button>
+        <span class="enhance-label" style="margin-top:8px;margin-bottom:3px">NSFW (MJ) →</span>
+        <button class="mbtn" onclick="applyCombo('sensual')">🔥 Sensual</button>
+        <button class="mbtn" onclick="applyCombo('boudoir')">🛁 Boudoir</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_beach')">🌊 Praia NSFW</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_latex')">🖤 Latex/BDSM</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_shower')">🚿 Shower</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_nude_art')">🌿 Nude art</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_topless')">🌸 Topless outdoor</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_pole')">💃 Pole dancer</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_schoolgirl')">🎓 Colegial</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_maid')">🧹 Maid</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_nurse')">💊 Enfermeira</button>
+        <button class="mbtn" onclick="applyCombo('nsfw_bunny')">🐰 Bunny</button>
       </div>
     </div>
 
@@ -1265,6 +1283,87 @@ const COMBOS = {
     echips: ['photoreal','gym','sport','lighting','casual'],
     achip:  'fullbody_a', pchip: 'squat', cchips: [],
     ochip:  'yoga', hchip: 'brunette',
+  },
+  vintage_glam: {
+    echips: ['photoreal','vintage','glamour','film','bw'],
+    achip:  'threequarter', pchip: 'leanback', cchips: [],
+    ochip:  'gown', hchip: 'platinum',
+  },
+  neon_cyberpunk: {
+    echips: ['photoreal','neon','night','urban','dramatic'],
+    achip:  'low', pchip: 'wallon', cchips: [],
+    ochip:  'latex', hchip: 'short',
+  },
+  pool_party: {
+    echips: ['photoreal','pool','sunset','wet','luxury'],
+    achip:  'fullbody_a', pchip: 'sitting', cchips: [],
+    ochip:  'bikini', hchip: 'wet_hair',
+  },
+  angel_fantasy: {
+    echips: ['photoreal','castle','fog','lighting'],
+    achip:  'fullbody_a', pchip: 'tiptoe', cchips: [],
+    ochip:  'fairy', hchip: 'platinum',
+  },
+  devil_bad: {
+    echips: ['photoreal','darkroom','smoke','dramatic','neon'],
+    achip:  'low', pchip: 'arch', cchips: [],
+    ochip:  'devil', hchip: 'black',
+  },
+  yacht_luxury: {
+    echips: ['photoreal','yacht','sunset','glamour','luxury'],
+    achip:  'fullbody_a', pchip: 'leanback', cchips: [],
+    ochip:  'bikini', hchip: 'blonde',
+  },
+  // NSFW combos
+  nsfw_beach: {
+    echips: ['photoreal','beach','sunset','wet','candid'],
+    achip:  'low', pchip: 'proneup', cchips: ['closeup_butt'],
+    ochip:  'microbikini', hchip: 'wet_hair',
+  },
+  nsfw_latex: {
+    echips: ['photoreal','darkroom','dramatic','lowkey','smoke'],
+    achip:  'fullbody_a', pchip: 'wallon', cchips: [],
+    ochip:  'latex', hchip: 'black',
+  },
+  nsfw_shower: {
+    echips: ['photoreal','wet','mirror','fog','lowkey'],
+    achip:  'bust', pchip: 'arch', cchips: ['closeup_chest','closeup_waist'],
+    ochip:  'wetshirt', hchip: 'wet_hair',
+  },
+  nsfw_nude_art: {
+    echips: ['photoreal','boudoir','nature','waterfall','lighting'],
+    achip:  'fullbody_a', pchip: 'arch', cchips: [],
+    ochip:  'nude', hchip: 'long',
+  },
+  nsfw_topless: {
+    echips: ['photoreal','beach','sunset','candid','wet'],
+    achip:  'bust', pchip: 'backshot', cchips: ['closeup_back'],
+    ochip:  'topless', hchip: 'wet_hair',
+  },
+  nsfw_pole: {
+    echips: ['photoreal','club','neon','dramatic','lowkey'],
+    achip:  'fullbody_a', pchip: 'arch', cchips: [],
+    ochip:  'dancer', hchip: 'long',
+  },
+  nsfw_schoolgirl: {
+    echips: ['photoreal','casual','lighting','candid'],
+    achip:  'low', pchip: 'sitlegs', cchips: ['closeup_legs'],
+    ochip:  'schoolgirl', hchip: 'long',
+  },
+  nsfw_maid: {
+    echips: ['photoreal','hotel','luxury','lighting'],
+    achip:  'low', pchip: 'bentover', cchips: ['closeup_butt','closeup_legs'],
+    ochip:  'maid', hchip: 'short',
+  },
+  nsfw_nurse: {
+    echips: ['photoreal','studio','lighting','dramatic'],
+    achip:  'american', pchip: 'wallon', cchips: [],
+    ochip:  'nurse', hchip: 'short',
+  },
+  nsfw_bunny: {
+    echips: ['photoreal','club','neon','night','glamour'],
+    achip:  'fullbody_a', pchip: 'tiptoe', cchips: [],
+    ochip:  'bunny', hchip: 'blonde',
   },
 };
 
