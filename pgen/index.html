@@ -894,7 +894,7 @@ const BODY_MAP = {
 };
 
 const ENHANCE_MAP = {
-  photoreal: 'RAW photograph, real human skin texture, natural pores and imperfections, photorealistic, no CGI',
+  photoreal: 'RAW photograph, Canon EOS R5, 85mm f/1.4 lens, ISO 400, real human skin texture, natural pores and fine lines, no retouching',
   lighting:  'natural light, soft golden hour lighting',
   fashion:   'high fashion photography, Vogue editorial style, luxury fashion shoot',
   boudoir:   'boudoir photography, intimate setting, soft bedroom lighting, tasteful and sensual',
@@ -1145,20 +1145,20 @@ async function generate() {
 function buildMJ(enDesc, chips, angle, outfit, hair, bodyArr, params) {
   const loiraPrefix   = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const realismoExtra = realismoMax
-    ? 'extreme hyperrealism, ultra-detailed skin texture, every pore visible, 100MP medium format camera, Hasselblad X2D, Zeiss 110mm f/2 lens'
-    : 'real human photography, shot on Canon EOS R5 85mm f/1.4 lens, RAW photo, ISO 400';
+    ? 'shot on Hasselblad X2D 100C, 110mm f/2 Zeiss lens, 100MP medium format, Kodak Portra 400 film scan, natural grain'
+    : 'shot on Canon EOS R5, 85mm f/1.4 prime lens, RAW file, ISO 400, natural grain';
 
   const parts = [
     angle, loiraPrefix, hair, ...bodyArr, enDesc, outfit,
     ...chips,
     realismoExtra,
-    'real skin pores, natural skin imperfections, authentic human skin texture, subsurface skin scattering',
-    'candid documentary style, unretouched film, sharp focus on eyes, natural facial asymmetry',
-    'hyperrealistic, photojournalism quality, no filters, no post-processing'
+    'real skin pores, visible fine lines, natural skin imperfections, subsurface scattering',
+    'candid unposed moment, documentary photography, unretouched, natural facial asymmetry',
+    'editorial photography, no filters, no post-processing, authentic'
   ];
 
-  const neg = '--no ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
-  generatedNEG = 'ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
+  const neg = '--no plastic skin, waxy skin, airbrushed, over-smoothed, ai art, cgi, 3d render, hyperrealistic render, photorealistic render, digital painting, illustration, anime, cartoon, mannequin, doll, porcelain skin, beauty filter, instagram filter, oversharpened, HDR oversaturated, watermark, text, logo, fake skin, smooth skin, flawless skin, perfect skin';
+  generatedNEG = 'plastic skin, waxy skin, airbrushed, over-smoothed, ai art, cgi, 3d render, hyperrealistic render, photorealistic render, digital painting, illustration, anime, cartoon, mannequin, doll, porcelain skin, beauty filter, instagram filter, oversharpened, HDR oversaturated, watermark, text, logo, fake skin, smooth skin, flawless skin, perfect skin';
 
   let cmd = parts.filter(Boolean).join(', ')
     + ` --ar ${params.ar} --style raw --v 6.1 --stylize ${params.stylize}`;
@@ -1221,7 +1221,7 @@ function buildGPT(enDesc, chips, angle, outfit, hair, bodyArr) {
     'Professional fashion photography, Vogue editorial portrait',
     angle, loiraPrefix, hair, ...bodyArr, safeDesc, safeOutfit,
     ...chips,
-    'sharp focus, photorealistic, high resolution',
+    'sharp focus, editorial photography, high resolution, natural skin',
     'no text, no watermark, 9:16 vertical'
   ];
   return parts.filter(Boolean).join(', ') + '.';
