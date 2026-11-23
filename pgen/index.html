@@ -206,6 +206,40 @@ header{position:relative}
 
 .kbd-hint{font-size:.56rem;color:var(--muted);opacity:.4;margin-top:6px;text-align:right}
 kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:monospace;font-size:.62rem}
+
+/* Quick combos */
+.combo-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.combo-label{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);width:100%;margin-bottom:1px}
+.mbtn{padding:6px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.72rem;cursor:pointer;
+  transition:all .16s;user-select:none}
+.mbtn:hover{border-color:var(--gold-dim);color:var(--text);background:var(--gold-glow)}
+.mbtn:active{transform:scale(.96)}
+
+/* Presets */
+.preset-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.preset-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.preset-title{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);opacity:.8}
+.preset-save-row{display:flex;gap:7px;margin-bottom:10px}
+.preset-name-input{flex:1;background:#0d0d14;border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:Georgia,serif;font-size:.76rem;padding:6px 10px;outline:none;
+  transition:border-color .2s;caret-color:var(--gold)}
+.preset-name-input::placeholder{color:var(--muted);opacity:.45}
+.preset-name-input:focus{border-color:var(--gold-dim)}
+.btn-save-preset{padding:6px 14px;border-radius:8px;border:1px solid var(--gold-dim);
+  background:transparent;color:var(--gold);font-family:Georgia,serif;font-size:.72rem;
+  cursor:pointer;white-space:nowrap;transition:all .15s}
+.btn-save-preset:hover{background:var(--gold-glow)}
+.preset-list{display:flex;flex-wrap:wrap;gap:6px}
+.preset-chip{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;
+  border:1px solid var(--border);background:transparent;cursor:pointer;transition:all .14s}
+.preset-chip:hover{border-color:var(--gold-dim)}
+.preset-chip-name{font-family:Georgia,serif;font-size:.7rem;color:var(--muted)}
+.preset-chip:hover .preset-chip-name{color:var(--text)}
+.preset-chip-del{font-size:.65rem;color:var(--muted);opacity:.4;padding:0 2px;
+  cursor:pointer;transition:opacity .12s;line-height:1}
+.preset-chip-del:hover{opacity:1;color:#e74c3c}
+.preset-empty{font-size:.68rem;color:var(--muted);opacity:.4;font-style:italic}
 </style>
 </head>
 <body>
@@ -502,11 +536,40 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <button class="btn-mode" id="btn-rand" onclick="randomize()" title="Aleatorizar chips">🎲 Aleatorizar</button>
     </div>
 
+    <!-- Quick combos -->
+    <div class="enhance-row" style="margin-top:16px">
+      <span class="combo-label">⚡ Quick combo →</span>
+      <div class="combo-row" style="width:100%">
+        <button class="mbtn" onclick="applyCombo('editorial')">✨ Editorial</button>
+        <button class="mbtn" onclick="applyCombo('sensual')">🔥 Sensual</button>
+        <button class="mbtn" onclick="applyCombo('praia')">🏖️ Praia verão</button>
+        <button class="mbtn" onclick="applyCombo('gamer')">🎮 Gamer night</button>
+        <button class="mbtn" onclick="applyCombo('dark')">🌑 Dark / Gótico</button>
+        <button class="mbtn" onclick="applyCombo('boudoir')">🛁 Boudoir íntimo</button>
+        <button class="mbtn" onclick="applyCombo('fantasy')">🧙 Fantasia mágica</button>
+        <button class="mbtn" onclick="applyCombo('sport')">💪 Fit / Sport</button>
+      </div>
+    </div>
+
     <div style="display:flex;gap:8px;margin-top:16px">
       <button class="btn-generate" id="btn-gen" onclick="generate()" style="margin-top:0;flex:1">Gerar Prompt →</button>
       <button class="btn-clear" onclick="clearAll()" title="Limpar tudo">🗑️ Limpar</button>
     </div>
     <div class="kbd-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> gera · <kbd>Ctrl</kbd>+<kbd>M</kbd> copia MJ · <kbd>Ctrl</kbd>+<kbd>G</kbd> copia GPT</div>
+  </div>
+
+  <!-- Presets -->
+  <div class="preset-section" id="preset-section">
+    <div class="preset-header">
+      <span class="preset-title">💾 Looks salvos</span>
+    </div>
+    <div class="preset-save-row">
+      <input type="text" class="preset-name-input" id="preset-name" placeholder="Nome do look (ex: Boudoir noturno)..." maxlength="40">
+      <button class="btn-save-preset" onclick="savePreset()">Salvar look atual</button>
+    </div>
+    <div class="preset-list" id="preset-list">
+      <span class="preset-empty" id="preset-empty">Nenhum look salvo ainda.</span>
+    </div>
   </div>
 
   <div id="output-area"></div>
@@ -1160,6 +1223,168 @@ function fmtTs(ts){
 }
 
 renderHistory();
+
+// ── Quick Combos ──────────────────────────────────────────────────────────────
+const COMBOS = {
+  editorial: {
+    echips: ['photoreal','lighting','editorial','fashion','glamour'],
+    achip:  'threequarter', pchip: null, cchips: [],
+    ochip:  'dress', hchip: 'long',
+  },
+  sensual: {
+    echips: ['photoreal','boudoir','lowkey','dramatic'],
+    achip:  'bust', pchip: 'leanback', cchips: [],
+    ochip:  'lingerie', hchip: 'long',
+  },
+  praia: {
+    echips: ['photoreal','beach','sunset','wet','candid'],
+    achip:  'fullbody_a', pchip: 'wallon', cchips: [],
+    ochip:  'bikini', hchip: 'wet_hair',
+  },
+  gamer: {
+    echips: ['photoreal','neon','night','lowkey'],
+    achip:  'threequarter', pchip: 'sitting', cchips: [],
+    ochip:  'streamer_set', hchip: null,
+  },
+  dark: {
+    echips: ['photoreal','darkroom','smoke','dramatic','lowkey','vintage'],
+    achip:  'bust', pchip: 'arch', cchips: [],
+    ochip:  'latex', hchip: 'black',
+  },
+  boudoir: {
+    echips: ['photoreal','boudoir','hotel','fog','mirror'],
+    achip:  'low', pchip: 'lyingback', cchips: [],
+    ochip:  'babydoll', hchip: 'blonde',
+  },
+  fantasy: {
+    echips: ['photoreal','castle','smoke','dramatic'],
+    achip:  'fullbody_a', pchip: 'arch', cchips: [],
+    ochip:  'angel', hchip: 'platinum',
+  },
+  sport: {
+    echips: ['photoreal','gym','sport','lighting','casual'],
+    achip:  'fullbody_a', pchip: 'squat', cchips: [],
+    ochip:  'yoga', hchip: 'brunette',
+  },
+};
+
+function applyCombo(key) {
+  const c = COMBOS[key];
+  if (!c) return;
+  // echips
+  document.querySelectorAll('.echip').forEach(el => {
+    el.classList.toggle('on', c.echips.includes(el.dataset.key));
+  });
+  // achip
+  document.querySelectorAll('.achip').forEach(el => {
+    el.classList.toggle('on', el.dataset.angle === c.achip);
+  });
+  // pchip
+  document.querySelectorAll('.pchip').forEach(el => {
+    el.classList.toggle('on', el.dataset.pose === c.pchip);
+  });
+  // cchips
+  document.querySelectorAll('.cchip').forEach(el => {
+    el.classList.toggle('on', (c.cchips||[]).includes(el.dataset.angle));
+  });
+  // ochip
+  document.querySelectorAll('.ochip').forEach(el => {
+    el.classList.toggle('on', el.dataset.outfit === c.ochip);
+  });
+  // hchip
+  document.querySelectorAll('.hchip').forEach(el => {
+    el.classList.toggle('on', el.dataset.hair === c.hchip);
+  });
+  showToast('Look aplicado ✓');
+}
+
+// ── Presets ───────────────────────────────────────────────────────────────────
+const PRESET_KEY = 'rawgen_presets_v1';
+function getPresets(){ try{ return JSON.parse(localStorage.getItem(PRESET_KEY)||'[]'); }catch{ return []; } }
+function savePresets(p){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(p)); }catch{} }
+
+function captureState() {
+  return {
+    desc:    document.getElementById('desc-input').value,
+    echips:  [...document.querySelectorAll('.echip.on')].map(e => e.dataset.key),
+    achip:   document.querySelector('.achip.on')?.dataset.angle || null,
+    pchip:   document.querySelector('.pchip.on')?.dataset.pose  || null,
+    cchips:  [...document.querySelectorAll('.cchip.on')].map(e => e.dataset.angle),
+    ochip:   document.querySelector('.ochip.on')?.dataset.outfit || null,
+    hchip:   document.querySelector('.hchip.on')?.dataset.hair   || null,
+    bchips:  [...document.querySelectorAll('.bchip.on')].map(e => e.dataset.body),
+    ar:      document.getElementById('param-ar').value,
+    stylize: document.getElementById('param-stylize').value,
+    chaos:   document.getElementById('param-chaos').value,
+    sref:    document.getElementById('sref-input').value,
+    loira:   loiraFixed,
+    realismo:realismoMax,
+  };
+}
+
+function applyState(s) {
+  if (s.desc !== undefined) { document.getElementById('desc-input').value = s.desc; updateCharCount(); }
+  document.querySelectorAll('.echip').forEach(el => el.classList.toggle('on', (s.echips||[]).includes(el.dataset.key)));
+  document.querySelectorAll('.achip').forEach(el => el.classList.toggle('on', el.dataset.angle === s.achip));
+  document.querySelectorAll('.pchip').forEach(el => el.classList.toggle('on', el.dataset.pose  === s.pchip));
+  document.querySelectorAll('.cchip').forEach(el => el.classList.toggle('on', (s.cchips||[]).includes(el.dataset.angle)));
+  document.querySelectorAll('.ochip').forEach(el => el.classList.toggle('on', el.dataset.outfit === s.ochip));
+  document.querySelectorAll('.hchip').forEach(el => el.classList.toggle('on', el.dataset.hair   === s.hchip));
+  document.querySelectorAll('.bchip').forEach(el => el.classList.toggle('on', (s.bchips||[]).includes(el.dataset.body)));
+  if (s.ar)      document.getElementById('param-ar').value = s.ar;
+  if (s.stylize) { document.getElementById('param-stylize').value = s.stylize; document.getElementById('stylize-val').textContent = s.stylize; }
+  if (s.chaos)   { document.getElementById('param-chaos').value   = s.chaos;   document.getElementById('chaos-val').textContent   = s.chaos; }
+  if (s.sref !== undefined) document.getElementById('sref-input').value = s.sref;
+  if (s.loira    !== undefined && s.loira    !== loiraFixed)    toggleLoira();
+  if (s.realismo !== undefined && s.realismo !== realismoMax) toggleRealismo();
+}
+
+function savePreset() {
+  const name = document.getElementById('preset-name').value.trim();
+  if (!name) { showToast('Digite um nome para o look'); return; }
+  const presets = getPresets();
+  if (presets.find(p => p.name === name)) { showToast('Já existe um look com esse nome'); return; }
+  presets.unshift({ name, state: captureState(), ts: Date.now() });
+  savePresets(presets);
+  document.getElementById('preset-name').value = '';
+  renderPresets();
+  showToast('Look salvo: ' + name + ' ✓');
+}
+
+function loadPreset(name) {
+  const presets = getPresets();
+  const p = presets.find(x => x.name === name);
+  if (!p) return;
+  applyState(p.state);
+  showToast('Look carregado: ' + name);
+}
+
+function deletePreset(name) {
+  const presets = getPresets().filter(p => p.name !== name);
+  savePresets(presets);
+  renderPresets();
+  showToast('Look removido ✓');
+}
+
+function renderPresets() {
+  const list    = document.getElementById('preset-list');
+  const empty   = document.getElementById('preset-empty');
+  const presets = getPresets();
+  if (!presets.length) {
+    list.innerHTML = '';
+    if (!empty) { const e = document.createElement('span'); e.className='preset-empty'; e.id='preset-empty'; e.textContent='Nenhum look salvo ainda.'; list.appendChild(e); }
+    else { list.appendChild(empty); }
+    return;
+  }
+  list.innerHTML = presets.map(p => `
+    <div class="preset-chip" onclick="loadPreset(${JSON.stringify(p.name)})">
+      <span class="preset-chip-name">${esc(p.name)}</span>
+      <span class="preset-chip-del" title="Remover" onclick="event.stopPropagation();deletePreset(${JSON.stringify(p.name)})">✕</span>
+    </div>
+  `).join('');
+}
+
+renderPresets();
 </script>
 </body>
 </html>
