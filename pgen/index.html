@@ -410,6 +410,23 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
           <button class="mbtn" onclick="applyCombo('nsfw_cheerleader')">📣 Cheerleader NSFW</button>
           <button class="mbtn" onclick="applyCombo('nsfw_secretary')">💼 Secretária NSFW</button>
           <button class="mbtn" onclick="applyCombo('nsfw_police')">👮 Policial NSFW</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🔥 Poses sensuais →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_mirror_straddle')">🪞 Espelho straddling</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_bathtub_luxury')">🛁 Banheira luxo</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_rain_wet')">🌧️ Chuva molhada</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_floor_arched')">🐍 Chão arqueada</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_crawling_latex')">😼 Engatinhando latex</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_bridge_pose')">🌉 Bridge pose</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_hands_wall')">🧱 Mãos na parede</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_overtable')">🍑 Por cima da mesa</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_standing_split')">🤸 Spagat em pé</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_neon_dance')">💜 Neon dançando</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_smoke_portrait')">🌫️ Retrato com fumaça</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_infinity_pool')">🏊 Infinity pool</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_loft_leather')">🏭 Loft couro</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_mirror_selfie')">📱 Selfie espelho</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_garden_backlit')">🌿 Jardim contraluz</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_night_beach_wet')">🌊 Praia noturna molhada</button>
         </div>
       </div>
     </div>
@@ -1819,6 +1836,86 @@ const COMBOS = {
     echips: ['photoreal','urban','night','dramatic'],
     achip:  'low', pchip: 'wallon', cchips: ['closeup_chest'],
     ochip:  'police', hchip: 'short',
+  },
+  nsfw_mirror_straddle: {
+    echips: ['photoreal','boudoir','mirror','lowkey'],
+    achip:  'bust', pchip: 'straddling', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'lingerie', hchip: 'long',
+  },
+  nsfw_bathtub_luxury: {
+    echips: ['photoreal','boudoir','luxury','hotel','wet'],
+    achip:  'overhead', pchip: 'lyingback', cchips: ['closeup_chest','closeup_waist'],
+    ochip:  'sheer', hchip: 'long',
+  },
+  nsfw_rain_wet: {
+    echips: ['photoreal','rain','outdoor','wet','dramatic'],
+    achip:  'low', pchip: 'wallon', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'bikini_micro', hchip: 'long',
+  },
+  nsfw_floor_arched: {
+    echips: ['photoreal','boudoir','darkroom','lowkey'],
+    achip:  'low', pchip: 'floorarched', cchips: ['closeup_butt','closeup_waist'],
+    ochip:  'latex_bodysuit', hchip: 'long',
+  },
+  nsfw_crawling_latex: {
+    echips: ['photoreal','darkroom','dramatic','lowkey'],
+    achip:  'low', pchip: 'crawling', cchips: ['closeup_butt','closeup_legs'],
+    ochip:  'catsuit', hchip: 'long',
+  },
+  nsfw_bridge_pose: {
+    echips: ['photoreal','boudoir','hotel','lighting'],
+    achip:  'low', pchip: 'bridge', cchips: ['closeup_waist','closeup_butt'],
+    ochip:  'yoga_pants', hchip: null,
+  },
+  nsfw_hands_wall: {
+    echips: ['photoreal','boudoir','darkroom','lowkey'],
+    achip:  'low', pchip: 'hands_wall', cchips: ['closeup_back','closeup_butt'],
+    ochip:  'bodysuit', hchip: 'long',
+  },
+  nsfw_overtable: {
+    echips: ['photoreal','boudoir','luxury','hotel'],
+    achip:  'low', pchip: 'overtable', cchips: ['closeup_butt','closeup_legs'],
+    ochip:  'miniskirt', hchip: 'long',
+  },
+  nsfw_standing_split: {
+    echips: ['photoreal','boudoir','studio','lighting'],
+    achip:  'fullbody_a', pchip: 'standing_split', cchips: ['closeup_legs','closeup_hips'],
+    ochip:  'leotard', hchip: 'tied',
+  },
+  nsfw_neon_dance: {
+    echips: ['photoreal','neon','club','night','neon_party'],
+    achip:  'fullbody_a', pchip: 'dancing', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'mesh_top', hchip: 'long',
+  },
+  nsfw_smoke_portrait: {
+    echips: ['photoreal','smoke','dramatic','lowkey','boudoir'],
+    achip:  'bust', pchip: 'leanback', cchips: ['closeup_chest','closeup_neck'],
+    ochip:  'corset', hchip: 'long',
+  },
+  nsfw_infinity_pool: {
+    echips: ['photoreal','infinity_pool','luxury','sunset','wet'],
+    achip:  'overhead', pchip: 'proneup', cchips: ['closeup_butt','closeup_back'],
+    ochip:  'bikini_micro', hchip: 'long',
+  },
+  nsfw_loft_leather: {
+    echips: ['photoreal','loft','dramatic','urban','lowkey'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: ['closeup_chest','closeup_legs'],
+    ochip:  'leather_jacket', hchip: 'short',
+  },
+  nsfw_mirror_selfie: {
+    echips: ['photoreal','mirror','hotel','boudoir'],
+    achip:  'reflection', pchip: 'standing', cchips: ['closeup_hips','closeup_chest'],
+    ochip:  'bodysuit', hchip: 'long',
+  },
+  nsfw_garden_backlit: {
+    echips: ['photoreal','garden','sunset','nature','lighting'],
+    achip:  'profile', pchip: 'backshot', cchips: ['closeup_back','closeup_butt'],
+    ochip:  'sheer', hchip: 'long',
+  },
+  nsfw_night_beach_wet: {
+    echips: ['photoreal','night_beach','night','wet','dramatic'],
+    achip:  'low', pchip: 'wallon', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'bikini_micro', hchip: 'long',
   },
   nsfw_gaming: {
     echips: ['photoreal','neon','night','lowkey'],
