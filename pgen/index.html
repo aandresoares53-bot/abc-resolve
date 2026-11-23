@@ -894,7 +894,7 @@ const BODY_MAP = {
 };
 
 const ENHANCE_MAP = {
-  photoreal: 'RAW photograph, Canon EOS R5, 85mm f/1.4 lens, ISO 400, real human skin texture, natural pores and fine lines, no retouching',
+  photoreal: 'RAW photograph, real human skin texture, natural pores and imperfections, photorealistic, no CGI',
   lighting:  'natural light, soft golden hour lighting',
   fashion:   'high fashion photography, Vogue editorial style, luxury fashion shoot',
   boudoir:   'boudoir photography, intimate setting, soft bedroom lighting, tasteful and sensual',
@@ -1107,8 +1107,10 @@ async function generate() {
   out.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
   setTimeout(() => out.scrollIntoView({behavior:'smooth',block:'nearest'}), 60);
 
-  const safeDesc = sanitizeGPT(desc);
-  const enDesc = await translateDesc(safeDesc);
+  // MJ recebe a descrição original (traduzida sem censura)
+  const enDescMJ  = await translateDesc(desc);
+  // GPT recebe versão sanitizada
+  const enDescGPT = await translateDesc(sanitizeGPT(desc));
 
   const chips      = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   const angleChip  = document.querySelector('.achip.on');
@@ -1132,8 +1134,8 @@ async function generate() {
     sref:     document.getElementById('sref-input').value.trim(),
   };
 
-  generatedMJ  = buildMJ(enDesc, chips, angle, outfitMJ,  hair, bodyChips, mjParams);
-  generatedGPT = buildGPT(enDesc, chips, angle, outfitGPT, hair, bodyChips);
+  generatedMJ  = buildMJ(enDescMJ,  chips, angle, outfitMJ,  hair, bodyChips, mjParams);
+  generatedGPT = buildGPT(enDescGPT, chips, angle, outfitGPT, hair, bodyChips);
 
   saveToHistory(desc, generatedMJ, generatedGPT, generatedNEG);
   renderResult(desc, generatedMJ.length);
@@ -1145,20 +1147,20 @@ async function generate() {
 function buildMJ(enDesc, chips, angle, outfit, hair, bodyArr, params) {
   const loiraPrefix   = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const realismoExtra = realismoMax
-    ? 'shot on Hasselblad X2D 100C, 110mm f/2 Zeiss lens, 100MP medium format, Kodak Portra 400 film scan, natural grain'
-    : 'shot on Canon EOS R5, 85mm f/1.4 prime lens, RAW file, ISO 400, natural grain';
+    ? 'extreme hyperrealism, ultra-detailed skin texture, every pore visible, 100MP medium format camera, Hasselblad X2D, Zeiss 110mm f/2 lens'
+    : 'real human photography, shot on Canon EOS R5 85mm f/1.4 lens, RAW photo, ISO 400';
 
   const parts = [
     angle, loiraPrefix, hair, ...bodyArr, enDesc, outfit,
     ...chips,
     realismoExtra,
-    'real skin pores, visible fine lines, natural skin imperfections, subsurface scattering',
-    'candid unposed moment, documentary photography, unretouched, natural facial asymmetry',
-    'editorial photography, no filters, no post-processing, authentic'
+    'real skin pores, natural skin imperfections, authentic human skin texture, subsurface skin scattering',
+    'candid documentary style, unretouched film, sharp focus on eyes, natural facial asymmetry',
+    'hyperrealistic, photojournalism quality, no filters, no post-processing'
   ];
 
-  const neg = '--no plastic skin, waxy skin, airbrushed, over-smoothed, ai art, cgi, 3d render, hyperrealistic render, photorealistic render, digital painting, illustration, anime, cartoon, mannequin, doll, porcelain skin, beauty filter, instagram filter, oversharpened, HDR oversaturated, watermark, text, logo, fake skin, smooth skin, flawless skin, perfect skin';
-  generatedNEG = 'plastic skin, waxy skin, airbrushed, over-smoothed, ai art, cgi, 3d render, hyperrealistic render, photorealistic render, digital painting, illustration, anime, cartoon, mannequin, doll, porcelain skin, beauty filter, instagram filter, oversharpened, HDR oversaturated, watermark, text, logo, fake skin, smooth skin, flawless skin, perfect skin';
+  const neg = '--no ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
+  generatedNEG = 'ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
 
   let cmd = parts.filter(Boolean).join(', ')
     + ` --ar ${params.ar} --style raw --v 6.1 --stylize ${params.stylize}`;
@@ -1214,14 +1216,13 @@ function sanitizeGPT(text) {
 }
 
 function buildGPT(enDesc, chips, angle, outfit, hair, bodyArr) {
-  const safeDesc    = sanitizeGPT(enDesc);
   const safeOutfit  = sanitizeGPT(outfit || '');
   const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const parts = [
     'Professional fashion photography, Vogue editorial portrait',
-    angle, loiraPrefix, hair, ...bodyArr, safeDesc, safeOutfit,
+    angle, loiraPrefix, hair, ...bodyArr, enDesc, safeOutfit,
     ...chips,
-    'sharp focus, editorial photography, high resolution, natural skin',
+    'sharp focus, editorial photography, natural skin, high resolution',
     'no text, no watermark, 9:16 vertical'
   ];
   return parts.filter(Boolean).join(', ') + '.';
