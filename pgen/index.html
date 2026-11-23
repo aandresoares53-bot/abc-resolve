@@ -1107,8 +1107,10 @@ async function generate() {
   out.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
   setTimeout(() => out.scrollIntoView({behavior:'smooth',block:'nearest'}), 60);
 
-  const safeDesc = sanitizeGPT(desc);
-  const enDesc = await translateDesc(safeDesc);
+  // MJ recebe a descrição original (traduzida sem censura)
+  const enDescMJ  = await translateDesc(desc);
+  // GPT recebe versão sanitizada
+  const enDescGPT = await translateDesc(sanitizeGPT(desc));
 
   const chips      = [...document.querySelectorAll('.echip.on')].map(c => ENHANCE_MAP[c.dataset.key]).filter(Boolean);
   const angleChip  = document.querySelector('.achip.on');
@@ -1132,8 +1134,8 @@ async function generate() {
     sref:     document.getElementById('sref-input').value.trim(),
   };
 
-  generatedMJ  = buildMJ(enDesc, chips, angle, outfitMJ,  hair, bodyChips, mjParams);
-  generatedGPT = buildGPT(enDesc, chips, angle, outfitGPT, hair, bodyChips);
+  generatedMJ  = buildMJ(enDescMJ,  chips, angle, outfitMJ,  hair, bodyChips, mjParams);
+  generatedGPT = buildGPT(enDescGPT, chips, angle, outfitGPT, hair, bodyChips);
 
   saveToHistory(desc, generatedMJ, generatedGPT, generatedNEG);
   renderResult(desc, generatedMJ.length);
@@ -1214,14 +1216,13 @@ function sanitizeGPT(text) {
 }
 
 function buildGPT(enDesc, chips, angle, outfit, hair, bodyArr) {
-  const safeDesc    = sanitizeGPT(enDesc);
   const safeOutfit  = sanitizeGPT(outfit || '');
   const loiraPrefix = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const parts = [
     'Professional fashion photography, Vogue editorial portrait',
-    angle, loiraPrefix, hair, ...bodyArr, safeDesc, safeOutfit,
+    angle, loiraPrefix, hair, ...bodyArr, enDesc, safeOutfit,
     ...chips,
-    'sharp focus, photorealistic, high resolution',
+    'sharp focus, editorial photography, natural skin, high resolution',
     'no text, no watermark, 9:16 vertical'
   ];
   return parts.filter(Boolean).join(', ') + '.';
