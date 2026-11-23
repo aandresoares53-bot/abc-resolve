@@ -240,6 +240,19 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
   cursor:pointer;transition:opacity .12s;line-height:1}
 .preset-chip-del:hover{opacity:1;color:#e74c3c}
 .preset-empty{font-size:.68rem;color:var(--muted);opacity:.4;font-style:italic}
+
+/* Collapsible sections */
+.section-toggle{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.7rem;padding:2px 6px;border-radius:6px;transition:all .14s;float:right;margin-top:-2px}
+.section-toggle:hover{color:var(--text);background:var(--card)}
+.collapsible-body{overflow:hidden;transition:max-height .3s ease,opacity .2s ease;max-height:9999px;opacity:1}
+.collapsible-body.collapsed{max-height:0;opacity:0}
+/* Combo tabs */
+.combo-tabs{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.combo-tab{padding:4px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:Georgia,serif;font-size:.65rem;cursor:pointer;transition:all .14s}
+.combo-tab.on{border-color:var(--gold);color:var(--gold);background:var(--gold-glow)}
+.combo-pane{display:none}
+.combo-pane.on{display:flex;flex-wrap:wrap;gap:7px}
 </style>
 </head>
 <body>
@@ -273,72 +286,132 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       rows="4" oninput="updateCharCount()"></textarea>
     <div class="char-counter" id="char-counter">0 caracteres</div>
 
-    <!-- Ângulo da câmera -->
-    <div class="enhance-row" id="angle-row">
-      <span class="enhance-label">Ângulo da câmera →</span>
-      <div class="achip" data-angle="frontal">👁️ Frontal</div>
-      <div class="achip" data-angle="closeup_face">🎯 Close rosto</div>
-      <div class="achip" data-angle="bust">🪞 Busto</div>
-      <div class="achip" data-angle="waist">📸 Meio corpo</div>
-      <div class="achip" data-angle="american">🎬 Plano americano</div>
-      <div class="achip" data-angle="fullbody_a">🧍 Corpo inteiro</div>
-      <div class="achip" data-angle="profile">👤 Perfil</div>
-      <div class="achip" data-angle="threequarter">🔄 3/4</div>
-      <div class="achip" data-angle="low">🔽 Ângulo baixo</div>
-      <div class="achip" data-angle="high">🔼 Ângulo alto</div>
-      <div class="achip" data-angle="overhead">🛸 Aéreo/Top</div>
-      <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
-      <div class="achip" data-angle="dutch">📐 Dutch angle</div>
-      <div class="achip" data-angle="through_glass">🪟 Através do vidro</div>
-      <div class="achip" data-angle="reflection">🪞 Reflexo/Espelho</div>
-      <div class="achip" data-angle="macro_skin">🔬 Macro pele</div>
-      <div class="achip" data-angle="telephoto">🔭 Teleobjetiva</div>
-      <div class="achip" data-angle="wide_angle">🌐 Grande angular</div>
-      <span class="enhance-label" style="margin-top:8px">Close-ups (multi) →</span>
-      <div class="cchip" data-angle="closeup_lips">👄 Close lábios</div>
-      <div class="cchip" data-angle="closeup_eyes">👁️ Close olhos</div>
-      <div class="cchip" data-angle="closeup_neck">🌸 Close pescoço/colo</div>
-      <div class="cchip" data-angle="closeup_chest">💎 Close decote</div>
-      <div class="cchip" data-angle="closeup_waist">⌛ Close cintura</div>
-      <div class="cchip" data-angle="closeup_hips">🍑 Close quadril</div>
-      <div class="cchip" data-angle="closeup_butt">🔥 Close glúteos</div>
-      <div class="cchip" data-angle="closeup_legs">🦵 Close pernas</div>
-      <div class="cchip" data-angle="closeup_feet">👣 Close pés</div>
-      <div class="cchip" data-angle="closeup_back">🌊 Close costas</div>
-      <div class="cchip" data-angle="closeup_hands">🤲 Close mãos</div>
-    </div>
-
-    <!-- Poses e posições -->
-    <div class="enhance-row" id="pose-row">
-      <span class="enhance-label">Pose / Posição →</span>
-      <div class="pchip" data-pose="backshot">🔙 De costas</div>
-      <div class="pchip" data-pose="sitting">🪑 Sentada frontal</div>
-      <div class="pchip" data-pose="sitlegs">🦵 Sentada pernas abertas</div>
-      <div class="pchip" data-pose="squat">⬇️ Agachada</div>
-      <div class="pchip" data-pose="wallon">🧱 Apoiada na parede</div>
-      <div class="pchip" data-pose="lyingback">😴 Deitada de costas</div>
-      <div class="pchip" data-pose="kneeling">🧎 De joelhos</div>
-      <div class="pchip" data-pose="backover">↩️ Costas olhando</div>
-      <div class="pchip" data-pose="crosslegs">🧘 Pernas cruzadas</div>
-      <div class="pchip" data-pose="window">🪟 Debruçada janela</div>
-      <div class="pchip" data-pose="lyingside">🌙 Deitada de lado</div>
-      <div class="pchip" data-pose="arch">🌉 Arqueada</div>
-      <div class="pchip" data-pose="bentover">🫦 Dobrada p/ frente</div>
-      <div class="pchip" data-pose="proneup">🍑 Deitada de bruços</div>
-      <div class="pchip" data-pose="handsknees">🐆 De quatro</div>
-      <div class="pchip" data-pose="handskneesbk">🐆 De quatro costas</div>
-      <div class="pchip" data-pose="straddling">🪑 Sentada cavalgando</div>
-      <div class="pchip" data-pose="leanback">🛋️ Reclinada</div>
-      <div class="pchip" data-pose="floorarched">🌊 Arqueada no chão</div>
-      <div class="pchip" data-pose="overtable">🍽️ Sobre a mesa</div>
-      <div class="pchip" data-pose="standing_split">🤸 Divisão em pé</div>
-      <div class="pchip" data-pose="bridge">🌉 Ponte/Bridge</div>
-      <div class="pchip" data-pose="seated_side">🌙 Sentada de lado</div>
-      <div class="pchip" data-pose="hands_wall">🧱 Mãos na parede</div>
-      <div class="pchip" data-pose="dancing">💃 Dançando</div>
-      <div class="pchip" data-pose="crawling">🐈 Rastejando</div>
-      <div class="pchip" data-pose="tiptoe">👠 Na ponta dos pés</div>
-      <div class="pchip" data-pose="hugging_pillow">🛌 Abraçando travesseiro</div>
+    <!-- Quick combos — topo -->
+    <div class="enhance-row" style="margin-top:16px">
+      <span class="combo-label" style="display:flex;align-items:center;justify-content:space-between;width:100%">
+        <span>⚡ Quick combo</span>
+        <button class="section-toggle" onclick="toggleSection('combo-body','combo-arrow')"><span id="combo-arrow">▾</span> recolher</button>
+      </span>
+      <div id="combo-body" class="collapsible-body" style="width:100%">
+        <div class="combo-tabs">
+          <button class="combo-tab on" id="ctab-sfw" onclick="switchComboTab('sfw')">SFW</button>
+          <button class="combo-tab" id="ctab-nsfw" onclick="switchComboTab('nsfw')">NSFW (MJ)</button>
+        </div>
+        <!-- SFW pane -->
+        <div class="combo-pane on" id="cpane-sfw">
+          <span class="enhance-label" style="width:100%;margin-bottom:3px">🌟 Destaques →</span>
+          <button class="mbtn" onclick="applyCombo('editorial')">✨ Editorial</button>
+          <button class="mbtn" onclick="applyCombo('praia')">🏖️ Praia verão</button>
+          <button class="mbtn" onclick="applyCombo('gamer')">🎮 Gamer night</button>
+          <button class="mbtn" onclick="applyCombo('dark')">🌑 Dark / Gótico</button>
+          <button class="mbtn" onclick="applyCombo('fantasy')">🧙 Fantasia mágica</button>
+          <button class="mbtn" onclick="applyCombo('sport')">💪 Fit / Sport</button>
+          <button class="mbtn" onclick="applyCombo('vintage_glam')">📻 Vintage Glam</button>
+          <button class="mbtn" onclick="applyCombo('neon_cyberpunk')">🔮 Cyberpunk</button>
+          <button class="mbtn" onclick="applyCombo('pool_party')">🌊 Pool Party</button>
+          <button class="mbtn" onclick="applyCombo('angel_fantasy')">👼 Anjo / Fada</button>
+          <button class="mbtn" onclick="applyCombo('devil_bad')">😈 Diabinha</button>
+          <button class="mbtn" onclick="applyCombo('yacht_luxury')">⛵ Luxury Yacht</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">👗 Moda / Looks →</span>
+          <button class="mbtn" onclick="applyCombo('blazer_chic')">👔 Blazer chic</button>
+          <button class="mbtn" onclick="applyCombo('denim_street')">👖 Denim street</button>
+          <button class="mbtn" onclick="applyCombo('overalls_casual')">🩱 Overalls</button>
+          <button class="mbtn" onclick="applyCombo('gown_gala')">👗 Gala gown</button>
+          <button class="mbtn" onclick="applyCombo('longdress_elegant')">🌸 Long dress</button>
+          <button class="mbtn" onclick="applyCombo('bodysuit_fashion')">🖤 Bodysuit</button>
+          <button class="mbtn" onclick="applyCombo('catsuit_sleek')">🐱 Catsuit</button>
+          <button class="mbtn" onclick="applyCombo('leather_biker')">🏍️ Leather biker</button>
+          <button class="mbtn" onclick="applyCombo('miniskirt_fashion')">💃 Miniskirt</button>
+          <button class="mbtn" onclick="applyCombo('crop_top_street')">🌟 Crop top</button>
+          <button class="mbtn" onclick="applyCombo('shorts_summer')">☀️ Shorts verão</button>
+          <button class="mbtn" onclick="applyCombo('jeans_street')">🛣️ Jeans street</button>
+          <button class="mbtn" onclick="applyCombo('tshirt_casual')">👕 T-shirt casual</button>
+          <button class="mbtn" onclick="applyCombo('choker_edgy')">🖤 Choker edgy</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🏖️ Praia / Piscina →</span>
+          <button class="mbtn" onclick="applyCombo('swimsuit_pool')">🏊 Swimsuit pool</button>
+          <button class="mbtn" onclick="applyCombo('sarong_beach')">🌴 Sarong praia</button>
+          <button class="mbtn" onclick="applyCombo('swimcover_resort')">🏖️ Swimcover resort</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🎮 Gamer / Tech →</span>
+          <button class="mbtn" onclick="applyCombo('esport_gaming')">🕹️ Esport</button>
+          <button class="mbtn" onclick="applyCombo('headset_streamer')">🎧 Headset stream</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🧸 Casual / Cozy →</span>
+          <button class="mbtn" onclick="applyCombo('hoodie_cozy')">🧸 Hoodie cozy</button>
+          <button class="mbtn" onclick="applyCombo('zip_hoodie_casual')">🤐 Zip hoodie</button>
+          <button class="mbtn" onclick="applyCombo('molletom_lounge')">😌 Molletom lounge</button>
+          <button class="mbtn" onclick="applyCombo('uni_sweat_campus')">🎓 Uni sweat</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🧙 Fantasias →</span>
+          <button class="mbtn" onclick="applyCombo('superheroine_action')">🦸 Super-heroína</button>
+          <button class="mbtn" onclick="applyCombo('vampire_gothic')">🧛 Vampira gótica</button>
+          <button class="mbtn" onclick="applyCombo('warrior_epic')">⚔️ Guerreira épica</button>
+          <button class="mbtn" onclick="applyCombo('elven_forest')">🌲 Elfa floresta</button>
+          <button class="mbtn" onclick="applyCombo('witch_dark')">🔮 Bruxa sombria</button>
+          <button class="mbtn" onclick="applyCombo('pirate_adventure')">🏴‍☠️ Pirata</button>
+          <button class="mbtn" onclick="applyCombo('cheerleader_field')">📣 Cheerleader</button>
+          <button class="mbtn" onclick="applyCombo('kimono_oriental')">🌸 Kimono</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">👮 Uniforme →</span>
+          <button class="mbtn" onclick="applyCombo('secretary_office')">💼 Secretária</button>
+          <button class="mbtn" onclick="applyCombo('police_uniform')">👮 Policial</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">💪 Fitness →</span>
+          <button class="mbtn" onclick="applyCombo('yoga_fitness')">🧘 Yoga fitness</button>
+        </div>
+        <!-- NSFW pane -->
+        <div class="combo-pane" id="cpane-nsfw">
+          <span class="enhance-label" style="width:100%;margin-bottom:3px">🔥 Destaques →</span>
+          <button class="mbtn" onclick="applyCombo('sensual')">🔥 Sensual</button>
+          <button class="mbtn" onclick="applyCombo('boudoir')">🛁 Boudoir</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_beach')">🌊 Praia NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_latex')">🖤 Latex/BDSM</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_shower')">🚿 Shower</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_nude_art')">🌿 Nude art</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_topless')">🌸 Topless outdoor</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_pole')">💃 Pole dancer</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_schoolgirl')">🎓 Colegial</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_maid')">🧹 Maid</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_nurse')">💊 Enfermeira</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_bunny')">🐰 Bunny</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🩱 Lingerie / Boudoir →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_lingerie')">🩱 Lingerie boudoir</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_babydoll')">🌙 Babydoll</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_nightgown')">💤 Nightgown</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_corset')">🎀 Corset</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_stockings')">🦵 Stockings</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_thong')">🍑 Thong back</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_sheer')">👁️ Sheer</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🌊 Praia / Piscina →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_microbikini')">👙 Microbikini</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_swimsuit')">🌊 Swimsuit NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_wetshirt')">💦 Wet shirt</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">😈 Looks sensuais →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_mesh')">🕸️ Mesh club</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_catsuit')">😸 Catsuit NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_bodysuit')">🖤 Bodysuit NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_leather')">🏍️ Leather NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_yoga')">🍑 Yoga NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_overalls')">🩱 Overalls open</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_tshirtonly')">👕 T-shirt only</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_blazer')">👔 Blazer NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_denim_open')">👖 Denim open</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_hoodie')">🧸 Hoodie NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_zipopen')">🤐 Zip open</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_molletom')">😈 Molletom open</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_gaming')">🎮 Gaming NSFW</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🌸 Oriental →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_kimono')">🌸 Kimono NSFW</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🧙 Fantasias →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_angel')">👼 Anjo NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_devil')">😈 Diabinha NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_fairy')">🧚 Fada NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_vampire')">🧛 Vampira NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_witch')">🔮 Bruxa NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_warrior')">⚔️ Guerreira NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_superheroine')">🦸 Heroína NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_pirate')">🏴‍☠️ Pirata NSFW</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">👮 Uniforme →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_cheerleader')">📣 Cheerleader NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_secretary')">💼 Secretária NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_police')">👮 Policial NSFW</button>
+        </div>
+      </div>
     </div>
 
     <!-- Roupa -->
@@ -410,6 +483,74 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="ochip" data-outfit="elven">🌿 Elfa</div>
     </div>
 
+    <!-- Poses e posições -->
+    <div class="enhance-row" id="pose-row">
+      <span class="enhance-label">Pose / Posição →</span>
+      <div class="pchip" data-pose="backshot">🔙 De costas</div>
+      <div class="pchip" data-pose="sitting">🪑 Sentada frontal</div>
+      <div class="pchip" data-pose="sitlegs">🦵 Sentada pernas abertas</div>
+      <div class="pchip" data-pose="squat">⬇️ Agachada</div>
+      <div class="pchip" data-pose="wallon">🧱 Apoiada na parede</div>
+      <div class="pchip" data-pose="lyingback">😴 Deitada de costas</div>
+      <div class="pchip" data-pose="kneeling">🧎 De joelhos</div>
+      <div class="pchip" data-pose="backover">↩️ Costas olhando</div>
+      <div class="pchip" data-pose="crosslegs">🧘 Pernas cruzadas</div>
+      <div class="pchip" data-pose="window">🪟 Debruçada janela</div>
+      <div class="pchip" data-pose="lyingside">🌙 Deitada de lado</div>
+      <div class="pchip" data-pose="arch">🌉 Arqueada</div>
+      <div class="pchip" data-pose="bentover">🫦 Dobrada p/ frente</div>
+      <div class="pchip" data-pose="proneup">🍑 Deitada de bruços</div>
+      <div class="pchip" data-pose="handsknees">🐆 De quatro</div>
+      <div class="pchip" data-pose="handskneesbk">🐆 De quatro costas</div>
+      <div class="pchip" data-pose="straddling">🪑 Sentada cavalgando</div>
+      <div class="pchip" data-pose="leanback">🛋️ Reclinada</div>
+      <div class="pchip" data-pose="floorarched">🌊 Arqueada no chão</div>
+      <div class="pchip" data-pose="overtable">🍽️ Sobre a mesa</div>
+      <div class="pchip" data-pose="standing_split">🤸 Divisão em pé</div>
+      <div class="pchip" data-pose="bridge">🌉 Ponte/Bridge</div>
+      <div class="pchip" data-pose="seated_side">🌙 Sentada de lado</div>
+      <div class="pchip" data-pose="hands_wall">🧱 Mãos na parede</div>
+      <div class="pchip" data-pose="dancing">💃 Dançando</div>
+      <div class="pchip" data-pose="crawling">🐈 Rastejando</div>
+      <div class="pchip" data-pose="tiptoe">👠 Na ponta dos pés</div>
+      <div class="pchip" data-pose="hugging_pillow">🛌 Abraçando travesseiro</div>
+    </div>
+
+    <!-- Ângulo da câmera -->
+    <div class="enhance-row" id="angle-row">
+      <span class="enhance-label">Ângulo da câmera →</span>
+      <div class="achip" data-angle="frontal">👁️ Frontal</div>
+      <div class="achip" data-angle="closeup_face">🎯 Close rosto</div>
+      <div class="achip" data-angle="bust">🪞 Busto</div>
+      <div class="achip" data-angle="waist">📸 Meio corpo</div>
+      <div class="achip" data-angle="american">🎬 Plano americano</div>
+      <div class="achip" data-angle="fullbody_a">🧍 Corpo inteiro</div>
+      <div class="achip" data-angle="profile">👤 Perfil</div>
+      <div class="achip" data-angle="threequarter">🔄 3/4</div>
+      <div class="achip" data-angle="low">🔽 Ângulo baixo</div>
+      <div class="achip" data-angle="high">🔼 Ângulo alto</div>
+      <div class="achip" data-angle="overhead">🛸 Aéreo/Top</div>
+      <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
+      <div class="achip" data-angle="dutch">📐 Dutch angle</div>
+      <div class="achip" data-angle="through_glass">🪟 Através do vidro</div>
+      <div class="achip" data-angle="reflection">🪞 Reflexo/Espelho</div>
+      <div class="achip" data-angle="macro_skin">🔬 Macro pele</div>
+      <div class="achip" data-angle="telephoto">🔭 Teleobjetiva</div>
+      <div class="achip" data-angle="wide_angle">🌐 Grande angular</div>
+      <span class="enhance-label" style="margin-top:8px">Close-ups (multi) →</span>
+      <div class="cchip" data-angle="closeup_lips">👄 Close lábios</div>
+      <div class="cchip" data-angle="closeup_eyes">👁️ Close olhos</div>
+      <div class="cchip" data-angle="closeup_neck">🌸 Close pescoço/colo</div>
+      <div class="cchip" data-angle="closeup_chest">💎 Close decote</div>
+      <div class="cchip" data-angle="closeup_waist">⌛ Close cintura</div>
+      <div class="cchip" data-angle="closeup_hips">🍑 Close quadril</div>
+      <div class="cchip" data-angle="closeup_butt">🔥 Close glúteos</div>
+      <div class="cchip" data-angle="closeup_legs">🦵 Close pernas</div>
+      <div class="cchip" data-angle="closeup_feet">👣 Close pés</div>
+      <div class="cchip" data-angle="closeup_back">🌊 Close costas</div>
+      <div class="cchip" data-angle="closeup_hands">🤲 Close mãos</div>
+    </div>
+
     <!-- Cabelo -->
     <div class="enhance-row">
       <span class="enhance-label">Cabelo →</span>
@@ -440,9 +581,13 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="bchip" data-body="latina">💃 Latina</div>
     </div>
 
-    <!-- Estilo / Ambiente -->
-    <div class="enhance-row">
-      <span class="enhance-label">Estilo / Ambiente →</span>
+    <!-- Estilo / Ambiente (collapsible) -->
+    <div class="enhance-row" style="margin-top:14px">
+      <span class="enhance-label" style="display:flex;align-items:center;justify-content:space-between;width:100%">
+        <span>Estilo / Ambiente →</span>
+        <button class="section-toggle" onclick="toggleSection('env-body','env-arrow')"><span id="env-arrow">▾</span> recolher</button>
+      </span>
+      <div id="env-body" class="collapsible-body" style="width:100%;display:flex;flex-wrap:wrap;gap:7px">
       <div class="echip on" data-key="photoreal">📷 Fotorrealista</div>
       <div class="echip on" data-key="lighting">💡 Luz natural</div>
       <div class="echip" data-key="closeup">🎯 Close no rosto</div>
@@ -496,7 +641,8 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="echip" data-key="ocean_sunset">🌊 Pôr do sol no mar</div>
       <div class="echip" data-key="library">📚 Biblioteca/Livraria</div>
       <div class="echip" data-key="cathedral">⛪ Catedral/Igreja</div>
-    </div>
+      </div><!-- /env-body -->
+    </div><!-- /enhance-row estilo -->
 
     <!-- Parâmetros MJ -->
     <div class="params-row">
@@ -700,6 +846,20 @@ let generatedNEG = '';
 let loiraFixed   = false;
 let realismoMax  = false;
 let histTab      = 'all';
+
+function toggleSection(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  const collapsed = body.classList.toggle('collapsed');
+  if (arrow) arrow.textContent = collapsed ? '▸' : '▾';
+}
+
+function switchComboTab(tab) {
+  document.querySelectorAll('.combo-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.combo-pane').forEach(p => p.classList.remove('on'));
+  document.getElementById('ctab-' + tab).classList.add('on');
+  document.getElementById('cpane-' + tab).classList.add('on');
+}
 
 const OUTFIT_MAP = {
   bikini:   { mj: 'wearing a tiny bikini', gpt: 'wearing a swimsuit' },
