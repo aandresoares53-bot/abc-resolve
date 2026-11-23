@@ -894,7 +894,7 @@ const BODY_MAP = {
 };
 
 const ENHANCE_MAP = {
-  photoreal: 'RAW photograph, real human skin texture, natural pores and imperfections, photorealistic, no CGI',
+  photoreal: 'RAW photograph, Canon EOS R5, 85mm f/1.4 lens, ISO 400, real human skin texture, natural pores and fine lines, no retouching',
   lighting:  'natural light, soft golden hour lighting',
   fashion:   'high fashion photography, Vogue editorial style, luxury fashion shoot',
   boudoir:   'boudoir photography, intimate setting, soft bedroom lighting, tasteful and sensual',
@@ -1147,20 +1147,20 @@ async function generate() {
 function buildMJ(enDesc, chips, angle, outfit, hair, bodyArr, params) {
   const loiraPrefix   = loiraFixed ? 'blonde hair, blue eyes, fair skin' : '';
   const realismoExtra = realismoMax
-    ? 'extreme hyperrealism, ultra-detailed skin texture, every pore visible, 100MP medium format camera, Hasselblad X2D, Zeiss 110mm f/2 lens'
-    : 'real human photography, shot on Canon EOS R5 85mm f/1.4 lens, RAW photo, ISO 400';
+    ? 'Hasselblad X2D 100C, Zeiss 110mm f/2 lens, 100MP medium format, Kodak Portra 400 film scan, natural film grain'
+    : 'Canon EOS R5, 85mm f/1.4 prime lens, RAW file, ISO 400, natural grain, Lightroom edit';
 
   const parts = [
     angle, loiraPrefix, hair, ...bodyArr, enDesc, outfit,
     ...chips,
     realismoExtra,
-    'real skin pores, natural skin imperfections, authentic human skin texture, subsurface skin scattering',
-    'candid documentary style, unretouched film, sharp focus on eyes, natural facial asymmetry',
-    'hyperrealistic, photojournalism quality, no filters, no post-processing'
+    'visible skin pores, natural skin texture, fine lines, subsurface scattering',
+    'candid unposed moment, documentary photography, unretouched, natural facial asymmetry',
+    'editorial photography, no filters, authentic'
   ];
 
-  const neg = '--no ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
-  generatedNEG = 'ai art, cgi, 3d render, plastic skin, waxy skin, airbrushed, over-smoothed skin, digital painting, illustration, anime, cartoon, unrealistic, fake, mannequin, doll, porcelain skin, retouched skin, beauty filter, instagram filter, oversharpened, HDR, oversaturated, watermark, text, logo';
+  const neg = '--no plastic skin, waxy skin, smooth skin, perfect skin, flawless skin, airbrushed, over-smoothed, beauty filter, instagram filter, ai art, cgi, 3d render, digital painting, illustration, anime, cartoon, mannequin, doll, porcelain skin, hyperrealistic render, photorealistic render, oversharpened, HDR oversaturated, watermark, text, logo';
+  generatedNEG = 'plastic skin, waxy skin, smooth skin, perfect skin, flawless skin, airbrushed, over-smoothed, beauty filter, instagram filter, ai art, cgi, 3d render, digital painting, illustration, anime, cartoon, mannequin, doll, porcelain skin, hyperrealistic render, photorealistic render, oversharpened, HDR oversaturated, watermark, text, logo';
 
   let cmd = parts.filter(Boolean).join(', ')
     + ` --ar ${params.ar} --style raw --v 6.1 --stylize ${params.stylize}`;
