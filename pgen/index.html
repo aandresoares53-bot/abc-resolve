@@ -353,6 +353,20 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
           <button class="mbtn" onclick="applyCombo('police_uniform')">👮 Policial</button>
           <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">💪 Fitness →</span>
           <button class="mbtn" onclick="applyCombo('yoga_fitness')">🧘 Yoga fitness</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🏠 Ambientes internos →</span>
+          <button class="mbtn" onclick="applyCombo('living_room_cozy')">🛋️ Sala de estar</button>
+          <button class="mbtn" onclick="applyCombo('kitchen_morning')">🍳 Cozinha manhã</button>
+          <button class="mbtn" onclick="applyCombo('bathroom_modern')">🚿 Banheiro moderno</button>
+          <button class="mbtn" onclick="applyCombo('balcony_sunset')">🌆 Varanda pôr do sol</button>
+          <button class="mbtn" onclick="applyCombo('penthouse_view')">🏙️ Cobertura panorâmica</button>
+          <button class="mbtn" onclick="applyCombo('spa_zen')">🧖 Spa zen</button>
+          <button class="mbtn" onclick="applyCombo('restaurant_dinner')">🍷 Jantar restaurante</button>
+          <button class="mbtn" onclick="applyCombo('home_office_chic')">💻 Home office</button>
+          <button class="mbtn" onclick="applyCombo('dressing_room_glam')">💄 Closet glamour</button>
+          <button class="mbtn" onclick="applyCombo('sunroom_bright')">🌞 Solário/Jardim de inverno</button>
+          <button class="mbtn" onclick="applyCombo('staircase_fashion')">🏛️ Escadaria fashion</button>
+          <button class="mbtn" onclick="applyCombo('greenhouse_botanical')">🌱 Estufa botânica</button>
+          <button class="mbtn" onclick="applyCombo('art_studio_creative')">🎨 Ateliê criativo</button>
         </div>
         <!-- NSFW pane -->
         <div class="combo-pane" id="cpane-nsfw">
@@ -427,6 +441,17 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
           <button class="mbtn" onclick="applyCombo('nsfw_mirror_selfie')">📱 Selfie espelho</button>
           <button class="mbtn" onclick="applyCombo('nsfw_garden_backlit')">🌿 Jardim contraluz</button>
           <button class="mbtn" onclick="applyCombo('nsfw_night_beach_wet')">🌊 Praia noturna molhada</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🏠 Ambientes sensuais →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_living_room')">🛋️ Sala sensual</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_kitchen')">🍳 Cozinha provocante</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_bathroom')">🚿 Banheiro sensual</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_balcony')">🌆 Varanda noturna</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_penthouse')">🏙️ Cobertura luxo</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_spa')">🧖 Spa sensual</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_dressing_room')">💄 Closet/Camarim</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_sauna')">♨️ Sauna vapor</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_staircase')">🏛️ Escadaria dramática</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_rooftop_pool')">🌃 Piscina no rooftop</button>
         </div>
       </div>
     </div>
@@ -658,6 +683,22 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="echip" data-key="ocean_sunset">🌊 Pôr do sol no mar</div>
       <div class="echip" data-key="library">📚 Biblioteca/Livraria</div>
       <div class="echip" data-key="cathedral">⛪ Catedral/Igreja</div>
+      <div class="echip" data-key="living_room">🛋️ Sala de estar</div>
+      <div class="echip" data-key="kitchen">🍳 Cozinha</div>
+      <div class="echip" data-key="bathroom">🚿 Banheiro moderno</div>
+      <div class="echip" data-key="balcony">🌆 Varanda/Sacada</div>
+      <div class="echip" data-key="staircase">🏛️ Escadaria</div>
+      <div class="echip" data-key="corridor">🚪 Corredor/Hall</div>
+      <div class="echip" data-key="penthouse">🏙️ Cobertura/Penthouse</div>
+      <div class="echip" data-key="spa">🧖 Spa/Wellness</div>
+      <div class="echip" data-key="restaurant">🍷 Restaurante</div>
+      <div class="echip" data-key="rooftop_pool">🌃 Piscina no rooftop</div>
+      <div class="echip" data-key="sunroom">🌞 Solário/Jardim de inverno</div>
+      <div class="echip" data-key="home_office">💻 Home office</div>
+      <div class="echip" data-key="dressing_room">💄 Closet/Camarim</div>
+      <div class="echip" data-key="sauna">♨️ Sauna</div>
+      <div class="echip" data-key="greenhouse">🌱 Estufa/Jardim botânico</div>
+      <div class="echip" data-key="art_studio">🎨 Ateliê de arte</div>
       </div><!-- /env-body -->
     </div><!-- /enhance-row estilo -->
 
@@ -906,6 +947,22 @@ const ENHANCE_MAP = {
   ocean_sunset: 'dramatic ocean sunset, golden and pink sky, waves at horizon, warm sea breeze atmosphere',
   library:   'grand library setting, tall bookshelves, vintage books, warm reading lamp, intellectual ambiance',
   cathedral: 'gothic cathedral or church interior, stained glass windows, stone arches, divine ethereal light',
+  living_room: 'modern living room interior, cozy sofa, warm ambient lighting, stylish home décor, residential setting',
+  kitchen:   'contemporary kitchen setting, marble countertops, ambient under-cabinet lighting, culinary home environment',
+  bathroom:  'sleek modern bathroom, glass shower, clean tiles, vanity mirror lighting, fresh and bright interior',
+  balcony:   'private apartment balcony or terrace, city view, golden hour light, urban residential outdoor',
+  staircase: 'dramatic interior staircase, architectural lines, marble or wood steps, elegant building interior',
+  corridor:  'long hotel or mansion corridor, symmetrical perspective, ambient wall sconces, luxurious hallway',
+  penthouse: 'high-rise penthouse interior, floor-to-ceiling windows, panoramic city view, ultra-modern luxury living',
+  spa:       'luxury spa or wellness center, zen atmosphere, warm stone, candles and water features, serene calm',
+  restaurant: 'upscale restaurant interior, dim intimate lighting, table settings, elegant fine dining ambiance',
+  rooftop_pool: 'rooftop infinity pool at night, city lights reflection on water, luxury urban resort atmosphere',
+  sunroom:   'bright sunroom or glass conservatory, natural daylight flooding in, lush plants, airy greenhouse feel',
+  home_office: 'stylish home office, clean desk setup, bookshelves, warm natural window light, productive modern space',
+  dressing_room: 'glamorous dressing room or vanity area, ring lights, mirrors everywhere, Hollywood glam prep room',
+  sauna:     'steamy wooden sauna interior, birch wood walls, warm amber glow, misty hot steam atmosphere',
+  greenhouse: 'tropical greenhouse or botanical garden interior, exotic plants, glass roof, lush green humidity',
+  art_studio: 'artist studio or atelier, canvases and paint, creative chaos, natural north-facing skylight, bohemian vibe',
 };
 
 const ANGLE_MAP = {
@@ -1915,6 +1972,123 @@ const COMBOS = {
   nsfw_night_beach_wet: {
     echips: ['photoreal','night_beach','night','wet','dramatic'],
     achip:  'low', pchip: 'wallon', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'bikini_micro', hchip: 'long',
+  },
+  // SFW — ambientes internos
+  living_room_cozy: {
+    echips: ['photoreal','living_room','lighting','casual'],
+    achip:  'fullbody_a', pchip: 'sitting', cchips: [],
+    ochip:  'dress_midi', hchip: 'long',
+  },
+  kitchen_morning: {
+    echips: ['photoreal','kitchen','lighting','candid'],
+    achip:  'waist', pchip: 'standing', cchips: [],
+    ochip:  'crop_shirt', hchip: 'tied',
+  },
+  bathroom_modern: {
+    echips: ['photoreal','bathroom','lighting','fashion'],
+    achip:  'bust', pchip: 'wallon', cchips: [],
+    ochip:  'dress_casual', hchip: 'long',
+  },
+  balcony_sunset: {
+    echips: ['photoreal','balcony','sunset','urban'],
+    achip:  'fullbody_a', pchip: 'leanback', cchips: [],
+    ochip:  'dress_maxi', hchip: 'long',
+  },
+  penthouse_view: {
+    echips: ['photoreal','penthouse','luxury','urban','night'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: [],
+    ochip:  'dress_midi', hchip: 'long',
+  },
+  spa_zen: {
+    echips: ['photoreal','spa','fog','lighting'],
+    achip:  'bust', pchip: 'seated_side', cchips: [],
+    ochip:  'towel_wrap', hchip: 'tied',
+  },
+  restaurant_dinner: {
+    echips: ['photoreal','restaurant','luxury','night','glamour'],
+    achip:  'fullbody_a', pchip: 'sitting', cchips: [],
+    ochip:  'dress_midi', hchip: 'long',
+  },
+  home_office_chic: {
+    echips: ['photoreal','home_office','lighting','fashion'],
+    achip:  'waist', pchip: 'sitting', cchips: [],
+    ochip:  'blazer_formal', hchip: 'tied',
+  },
+  dressing_room_glam: {
+    echips: ['photoreal','dressing_room','glamour','lighting'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: [],
+    ochip:  'dress_mini', hchip: 'long',
+  },
+  sunroom_bright: {
+    echips: ['photoreal','sunroom','nature','lighting','fashion'],
+    achip:  'fullbody_a', pchip: 'leanback', cchips: [],
+    ochip:  'dress_maxi', hchip: 'long',
+  },
+  staircase_fashion: {
+    echips: ['photoreal','staircase','luxury','dramatic','editorial'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: [],
+    ochip:  'dress_mini', hchip: 'long',
+  },
+  greenhouse_botanical: {
+    echips: ['photoreal','greenhouse','nature','lighting'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: [],
+    ochip:  'dress_maxi', hchip: 'long',
+  },
+  art_studio_creative: {
+    echips: ['photoreal','art_studio','lighting','candid'],
+    achip:  'fullbody_a', pchip: 'sitting', cchips: [],
+    ochip:  'crop_shirt', hchip: 'long',
+  },
+  // NSFW — ambientes sensuais
+  nsfw_living_room: {
+    echips: ['photoreal','living_room','boudoir','lowkey'],
+    achip:  'low', pchip: 'sitlegs', cchips: ['closeup_legs','closeup_chest'],
+    ochip:  'lingerie', hchip: 'long',
+  },
+  nsfw_kitchen: {
+    echips: ['photoreal','kitchen','lighting','candid'],
+    achip:  'waist', pchip: 'wallon', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'tshirt_only', hchip: 'tied',
+  },
+  nsfw_bathroom: {
+    echips: ['photoreal','bathroom','wet','boudoir'],
+    achip:  'bust', pchip: 'wallon', cchips: ['closeup_chest','closeup_neck'],
+    ochip:  'sheer', hchip: 'long',
+  },
+  nsfw_balcony: {
+    echips: ['photoreal','balcony','night','urban','lowkey'],
+    achip:  'fullbody_a', pchip: 'leanback', cchips: ['closeup_chest','closeup_legs'],
+    ochip:  'bodysuit', hchip: 'long',
+  },
+  nsfw_penthouse: {
+    echips: ['photoreal','penthouse','luxury','night','dramatic'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'lingerie', hchip: 'long',
+  },
+  nsfw_spa: {
+    echips: ['photoreal','spa','fog','boudoir','lighting'],
+    achip:  'bust', pchip: 'lyingback', cchips: ['closeup_chest','closeup_back'],
+    ochip:  'towel_wrap', hchip: 'tied',
+  },
+  nsfw_dressing_room: {
+    echips: ['photoreal','dressing_room','mirror','glamour','boudoir'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'lingerie', hchip: 'long',
+  },
+  nsfw_sauna: {
+    echips: ['photoreal','sauna','wet','boudoir','lowkey'],
+    achip:  'bust', pchip: 'seated_side', cchips: ['closeup_chest','closeup_back'],
+    ochip:  'towel_wrap', hchip: 'tied',
+  },
+  nsfw_staircase: {
+    echips: ['photoreal','staircase','luxury','dramatic','lowkey'],
+    achip:  'fullbody_a', pchip: 'standing', cchips: ['closeup_legs','closeup_hips'],
+    ochip:  'miniskirt', hchip: 'long',
+  },
+  nsfw_rooftop_pool: {
+    echips: ['photoreal','rooftop_pool','night','luxury','wet'],
+    achip:  'fullbody_a', pchip: 'proneup', cchips: ['closeup_butt','closeup_back'],
     ochip:  'bikini_micro', hchip: 'long',
   },
   nsfw_gaming: {
