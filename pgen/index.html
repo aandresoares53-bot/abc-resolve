@@ -1197,22 +1197,51 @@ function searchChips(q) {
   btn.classList.toggle('visible', q.length > 0);
   const term = q.trim().toLowerCase();
 
-  // remove highlights and restore all first
+  // restore everything first
   document.querySelectorAll('.search-hidden').forEach(el => el.classList.remove('search-hidden'));
   document.querySelectorAll('.search-highlight').forEach(el => el.classList.remove('search-highlight'));
+  document.querySelectorAll('.collapsible-body').forEach(el => el.style.removeProperty('display'));
+  // restore combo panes to their original state (only the .on one visible)
+  document.querySelectorAll('.combo-pane').forEach(el => el.style.removeProperty('display'));
+  document.querySelectorAll('.combo-tabs').forEach(el => el.classList.remove('search-hidden'));
 
   if (!term) return;
 
-  // open all collapsible sections so hidden matches are visible
-  document.querySelectorAll('.collapsible-body').forEach(el => { el.style.display = 'flex'; });
-  document.querySelectorAll('.combo-pane').forEach(el => { el.style.display = 'flex'; });
+  // open all collapsible bodies so matches are reachable
+  document.querySelectorAll('.collapsible-body').forEach(el => {
+    el.style.display = 'flex';
+    el.style.flexWrap = 'wrap';
+    el.style.gap = '7px';
+  });
 
+  // show all combo panes so their mbtns are searchable
+  document.querySelectorAll('.combo-pane').forEach(el => {
+    el.style.display = 'flex';
+    el.style.flexWrap = 'wrap';
+    el.style.gap = '7px';
+  });
+
+  // filter chips and combo buttons
   const selectors = '.echip,.achip,.pchip,.cchip,.ochip,.hchip,.bchip,.mbtn';
   document.querySelectorAll(selectors).forEach(el => {
     const txt = el.textContent.toLowerCase();
     const matches = txt.includes(term);
     el.classList.toggle('search-hidden', !matches);
     if (matches) el.classList.add('search-highlight');
+  });
+
+  // hide the combo tab nav (SFW/NSFW switcher) during search
+  document.querySelectorAll('.combo-tabs').forEach(el => el.classList.add('search-hidden'));
+
+  // hide enhance-labels that have no visible sibling buttons
+  document.querySelectorAll('.enhance-label').forEach(label => {
+    const parent = label.parentElement;
+    if (!parent) return;
+    const hasSibling = Array.from(parent.children).some(ch =>
+      ch !== label && !ch.classList.contains('search-hidden') &&
+      ch.matches(selectors)
+    );
+    if (!hasSibling) label.classList.add('search-hidden');
   });
 }
 
