@@ -300,6 +300,13 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       rows="4" oninput="updateCharCount()"></textarea>
     <div class="char-counter" id="char-counter">0 caracteres</div>
 
+    <!-- Busca global de chips/combos -->
+    <div class="search-bar" style="margin-top:14px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="chip-search" placeholder="Buscar pose, estilo, roupa, combo..." oninput="searchChips(this.value)" autocomplete="off" spellcheck="false">
+      <button class="clear-search" id="clear-search-btn" onclick="clearSearch()" title="Limpar busca">✕</button>
+    </div>
+
     <!-- Quick combos — topo -->
     <div class="enhance-row" style="margin-top:16px">
       <span class="combo-label" style="display:flex;align-items:center;justify-content:space-between;width:100%">
@@ -716,13 +723,6 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="bchip" data-body="dark">🌙 Pele negra</div>
       <div class="bchip" data-body="asian">🌸 Asiática</div>
       <div class="bchip" data-body="latina">💃 Latina</div>
-    </div>
-
-    <!-- Busca global de chips/combos -->
-    <div class="search-bar" style="margin-top:14px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="chip-search" placeholder="Buscar pose, estilo, roupa, combo..." oninput="searchChips(this.value)" autocomplete="off" spellcheck="false">
-      <button class="clear-search" id="clear-search-btn" onclick="clearSearch()" title="Limpar busca">✕</button>
     </div>
 
     <!-- Estilo / Ambiente (collapsible) -->
