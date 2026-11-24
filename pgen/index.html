@@ -79,6 +79,20 @@ main{flex:1;width:100%;max-width:680px;padding:24px 16px 60px;display:flex;flex-
 .bchip:hover{border-color:#1abc9c55;color:var(--text)}
 .bchip.on{border-color:#1abc9c;color:#1abc9c;background:rgba(26,188,156,.12)}
 
+.search-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:22px;
+  padding:7px 14px;transition:border-color .2s}
+.search-bar:focus-within{border-color:var(--gold)}
+.search-bar svg{width:14px;height:14px;flex-shrink:0;opacity:.5}
+.search-bar input{flex:1;background:none;border:none;outline:none;color:var(--text);
+  font-size:.78rem;font-family:inherit}
+.search-bar input::placeholder{color:var(--muted)}
+.search-bar .clear-search{background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:.85rem;padding:0;line-height:1;display:none}
+.search-bar .clear-search.visible{display:block}
+.search-highlight{outline:2px solid var(--gold)!important;outline-offset:1px}
+.search-hidden{display:none!important}
+
 .suggest-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .sqchip{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;
   color:var(--muted);font-family:Georgia,serif;font-size:.68rem;cursor:pointer;
@@ -704,6 +718,13 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="bchip" data-body="latina">💃 Latina</div>
     </div>
 
+    <!-- Busca global de chips/combos -->
+    <div class="search-bar" style="margin-top:14px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="chip-search" placeholder="Buscar pose, estilo, roupa, combo..." oninput="searchChips(this.value)" autocomplete="off" spellcheck="false">
+      <button class="clear-search" id="clear-search-btn" onclick="clearSearch()" title="Limpar busca">✕</button>
+    </div>
+
     <!-- Estilo / Ambiente (collapsible) -->
     <div class="enhance-row" style="margin-top:14px">
       <span class="enhance-label" style="display:flex;align-items:center;justify-content:space-between;width:100%">
@@ -1169,6 +1190,37 @@ function updateCharCount() {
   const el = document.getElementById('char-counter');
   el.textContent = len + ' caracteres';
   el.classList.toggle('warn', len > 300);
+}
+
+function searchChips(q) {
+  const btn = document.getElementById('clear-search-btn');
+  btn.classList.toggle('visible', q.length > 0);
+  const term = q.trim().toLowerCase();
+
+  // remove highlights and restore all first
+  document.querySelectorAll('.search-hidden').forEach(el => el.classList.remove('search-hidden'));
+  document.querySelectorAll('.search-highlight').forEach(el => el.classList.remove('search-highlight'));
+
+  if (!term) return;
+
+  // open all collapsible sections so hidden matches are visible
+  document.querySelectorAll('.collapsible-body').forEach(el => { el.style.display = 'flex'; });
+  document.querySelectorAll('.combo-pane').forEach(el => { el.style.display = 'flex'; });
+
+  const selectors = '.echip,.achip,.pchip,.cchip,.ochip,.hchip,.bchip,.mbtn';
+  document.querySelectorAll(selectors).forEach(el => {
+    const txt = el.textContent.toLowerCase();
+    const matches = txt.includes(term);
+    el.classList.toggle('search-hidden', !matches);
+    if (matches) el.classList.add('search-highlight');
+  });
+}
+
+function clearSearch() {
+  const input = document.getElementById('chip-search');
+  input.value = '';
+  searchChips('');
+  input.focus();
 }
 
 function toggleLoira() {
