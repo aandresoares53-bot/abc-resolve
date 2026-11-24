@@ -353,6 +353,7 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
           <button class="mbtn" onclick="applyCombo('police_uniform')">👮 Policial</button>
           <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">💪 Fitness →</span>
           <button class="mbtn" onclick="applyCombo('yoga_fitness')">🧘 Yoga fitness</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🎭 Poses &amp; Ângulos →</span>
           <button class="mbtn" onclick="applyCombo('doorframe_portrait')">🚪 Retrato na porta</button>
           <button class="mbtn" onclick="applyCombo('stairs_editorial')">🏛️ Escadaria editorial</button>
           <button class="mbtn" onclick="applyCombo('counter_kitchen_chic')">🍽️ Balcão chique</button>
@@ -461,6 +462,7 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
           <button class="mbtn" onclick="applyCombo('nsfw_sauna')">♨️ Sauna vapor</button>
           <button class="mbtn" onclick="applyCombo('nsfw_staircase')">🏛️ Escadaria dramática</button>
           <button class="mbtn" onclick="applyCombo('nsfw_rooftop_pool')">🌃 Piscina no rooftop</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🎭 Poses &amp; Ângulos →</span>
           <button class="mbtn" onclick="applyCombo('nsfw_reverse_straddle')">🔄 Cavalgando costas</button>
           <button class="mbtn" onclick="applyCombo('nsfw_spread_eagle')">🦅 Deitada aberta</button>
           <button class="mbtn" onclick="applyCombo('nsfw_prone_hips_up')">🍑 Quadril levantado</button>
@@ -552,94 +554,104 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
     <!-- Poses e posições -->
     <div class="enhance-row" id="pose-row">
       <span class="enhance-label">Pose / Posição →</span>
-      <div class="pchip" data-pose="backshot">🔙 De costas</div>
-      <div class="pchip" data-pose="sitting">🪑 Sentada frontal</div>
-      <div class="pchip" data-pose="sitlegs">🦵 Sentada pernas abertas</div>
-      <div class="pchip" data-pose="squat">⬇️ Agachada</div>
+      <span class="enhance-label" style="width:100%;margin-top:4px;opacity:.6">🧍 Em pé →</span>
       <div class="pchip" data-pose="wallon">🧱 Apoiada na parede</div>
-      <div class="pchip" data-pose="lyingback">😴 Deitada de costas</div>
-      <div class="pchip" data-pose="kneeling">🧎 De joelhos</div>
-      <div class="pchip" data-pose="backover">↩️ Costas olhando</div>
-      <div class="pchip" data-pose="crosslegs">🧘 Pernas cruzadas</div>
-      <div class="pchip" data-pose="window">🪟 Debruçada janela</div>
-      <div class="pchip" data-pose="lyingside">🌙 Deitada de lado</div>
       <div class="pchip" data-pose="arch">🌉 Arqueada</div>
-      <div class="pchip" data-pose="bentover">🫦 Dobrada p/ frente</div>
-      <div class="pchip" data-pose="proneup">🍑 Deitada de bruços</div>
-      <div class="pchip" data-pose="handsknees">🐆 De quatro</div>
-      <div class="pchip" data-pose="handskneesbk">🐆 De quatro costas</div>
-      <div class="pchip" data-pose="straddling">🪑 Sentada cavalgando</div>
-      <div class="pchip" data-pose="leanback">🛋️ Reclinada</div>
-      <div class="pchip" data-pose="floorarched">🌊 Arqueada no chão</div>
-      <div class="pchip" data-pose="overtable">🍽️ Sobre a mesa</div>
-      <div class="pchip" data-pose="standing_split">🤸 Divisão em pé</div>
-      <div class="pchip" data-pose="bridge">🌉 Ponte/Bridge</div>
-      <div class="pchip" data-pose="seated_side">🌙 Sentada de lado</div>
       <div class="pchip" data-pose="hands_wall">🧱 Mãos na parede</div>
-      <div class="pchip" data-pose="dancing">💃 Dançando</div>
-      <div class="pchip" data-pose="crawling">🐈 Rastejando</div>
       <div class="pchip" data-pose="tiptoe">👠 Na ponta dos pés</div>
-      <div class="pchip" data-pose="hugging_pillow">🛌 Abraçando travesseiro</div>
-      <div class="pchip" data-pose="reverse_straddle">🔄 Cavalgando costas</div>
+      <div class="pchip" data-pose="dancing">💃 Dançando</div>
       <div class="pchip" data-pose="doorframe_lean">🚪 Encostada na porta</div>
-      <div class="pchip" data-pose="floor_extended">🧘 Sentada pernas estendidas</div>
-      <div class="pchip" data-pose="over_shoulder_standing">↩️ Em pé olhando ombro</div>
       <div class="pchip" data-pose="against_counter">🍽️ Apoiada no balcão</div>
       <div class="pchip" data-pose="curtsy_dip">🎭 Reverência/Dip</div>
-      <div class="pchip" data-pose="spread_eagle">🦅 Deitada aberta</div>
+      <div class="pchip" data-pose="over_shoulder_standing">↩️ Em pé olhando ombro</div>
+      <div class="pchip" data-pose="standing_tiptoe_back">🔙 Ponta pés costas</div>
+      <div class="pchip" data-pose="leaning_forward_arms">💪 Inclinada p/ frente</div>
+      <div class="pchip" data-pose="standing_split">🤸 Divisão em pé</div>
+      <div class="pchip" data-pose="backshot">🔙 De costas</div>
+      <div class="pchip" data-pose="backover">↩️ Costas olhando</div>
+      <div class="pchip" data-pose="window">🪟 Debruçada janela</div>
+      <span class="enhance-label" style="width:100%;margin-top:6px;opacity:.6">🪑 Sentada / Ajoelhada →</span>
+      <div class="pchip" data-pose="sitting">🪑 Sentada frontal</div>
+      <div class="pchip" data-pose="sitlegs">🦵 Sentada pernas abertas</div>
+      <div class="pchip" data-pose="crosslegs">🧘 Pernas cruzadas</div>
+      <div class="pchip" data-pose="straddling">🪑 Cavalgando</div>
+      <div class="pchip" data-pose="leanback">🛋️ Reclinada</div>
+      <div class="pchip" data-pose="seated_side">🌙 Sentada de lado</div>
+      <div class="pchip" data-pose="floor_extended">🧘 Pernas estendidas</div>
       <div class="pchip" data-pose="knees_to_chest">🫂 Joelhos ao peito</div>
       <div class="pchip" data-pose="sitting_stairs">🏛️ Sentada nos degraus</div>
-      <div class="pchip" data-pose="prone_hips_up">🍑 Deitada quadril elevado</div>
-      <div class="pchip" data-pose="standing_tiptoe_back">🔙 Ponta dos pés costas</div>
-      <div class="pchip" data-pose="leaning_forward_arms">💪 Inclinada braços cruzados</div>
-      <div class="pchip" data-pose="seated_legs_hanging">🪑 Sentada pernas pendentes</div>
+      <div class="pchip" data-pose="seated_legs_hanging">🪑 Pernas pendentes</div>
+      <div class="pchip" data-pose="hugging_pillow">🛌 Abraçando travesseiro</div>
+      <div class="pchip" data-pose="kneeling">🧎 De joelhos</div>
+      <div class="pchip" data-pose="squat">⬇️ Agachada</div>
+      <span class="enhance-label" style="width:100%;margin-top:6px;opacity:.6">😴 Deitada →</span>
+      <div class="pchip" data-pose="lyingback">😴 De costas</div>
+      <div class="pchip" data-pose="lyingside">🌙 De lado</div>
+      <div class="pchip" data-pose="spread_eagle">🦅 Aberta</div>
+      <div class="pchip" data-pose="prone_hips_up">🍑 Quadril elevado</div>
       <div class="pchip" data-pose="side_arch">🌊 Arqueada de lado</div>
-      <div class="pchip" data-pose="floor_prone_legs_up">🦵 Deitada pernas erguidas</div>
+      <div class="pchip" data-pose="floorarched">🌊 Arqueada no chão</div>
+      <div class="pchip" data-pose="bridge">🌉 Ponte/Bridge</div>
+      <div class="pchip" data-pose="floor_prone_legs_up">🦵 Pernas erguidas</div>
+      <span class="enhance-label" style="width:100%;margin-top:6px;opacity:.6">🐆 De quatro / Solo →</span>
+      <div class="pchip" data-pose="handsknees">🐆 De quatro (frente)</div>
+      <div class="pchip" data-pose="handskneesbk">🐆 De quatro (costas)</div>
+      <div class="pchip" data-pose="crawling">🐈 Rastejando</div>
+      <div class="pchip" data-pose="proneup">🍑 Deitada de bruços</div>
+      <div class="pchip" data-pose="bentover">🫦 Dobrada p/ frente</div>
+      <div class="pchip" data-pose="overtable">🍽️ Sobre a mesa</div>
+      <div class="pchip" data-pose="reverse_straddle">🔄 Cavalgando costas</div>
     </div>
 
     <!-- Ângulo da câmera -->
     <div class="enhance-row" id="angle-row">
       <span class="enhance-label">Ângulo da câmera →</span>
-      <div class="achip" data-angle="frontal">👁️ Frontal</div>
+      <span class="enhance-label" style="width:100%;margin-top:4px;opacity:.6">📸 Enquadramento →</span>
       <div class="achip" data-angle="closeup_face">🎯 Close rosto</div>
       <div class="achip" data-angle="bust">🪞 Busto</div>
       <div class="achip" data-angle="waist">📸 Meio corpo</div>
       <div class="achip" data-angle="american">🎬 Plano americano</div>
       <div class="achip" data-angle="fullbody_a">🧍 Corpo inteiro</div>
+      <span class="enhance-label" style="width:100%;margin-top:6px;opacity:.6">🔄 Perspectiva →</span>
+      <div class="achip" data-angle="frontal">👁️ Frontal</div>
       <div class="achip" data-angle="profile">👤 Perfil</div>
       <div class="achip" data-angle="threequarter">🔄 3/4</div>
+      <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
       <div class="achip" data-angle="low">🔽 Ângulo baixo</div>
       <div class="achip" data-angle="high">🔼 Ângulo alto</div>
+      <div class="achip" data-angle="hip_level">📐 Nível do quadril</div>
       <div class="achip" data-angle="overhead">🛸 Aéreo/Top</div>
-      <div class="achip" data-angle="shoulder">👀 Sobre o ombro</div>
+      <div class="achip" data-angle="worms_eye">🐛 Minhoca (extremo baixo)</div>
+      <div class="achip" data-angle="birds_eye_tight">🦅 Ave/tight crop</div>
       <div class="achip" data-angle="dutch">📐 Dutch angle</div>
+      <span class="enhance-label" style="width:100%;margin-top:6px;opacity:.6">✨ Especiais →</span>
       <div class="achip" data-angle="through_glass">🪟 Através do vidro</div>
       <div class="achip" data-angle="reflection">🪞 Reflexo/Espelho</div>
+      <div class="achip" data-angle="peekaboo">👀 Peekaboo/portal</div>
+      <div class="achip" data-angle="pov_close">🤳 POV próximo</div>
       <div class="achip" data-angle="macro_skin">🔬 Macro pele</div>
       <div class="achip" data-angle="telephoto">🔭 Teleobjetiva</div>
       <div class="achip" data-angle="wide_angle">🌐 Grande angular</div>
-      <div class="achip" data-angle="worms_eye">🐛 Minhoca (extremo baixo)</div>
-      <div class="achip" data-angle="birds_eye_tight">🦅 Ave/tight crop</div>
-      <div class="achip" data-angle="peekaboo">👀 Peekaboo/portal</div>
-      <div class="achip" data-angle="hip_level">📐 Nível do quadril</div>
-      <div class="achip" data-angle="pov_close">🤳 POV próximo</div>
-      <span class="enhance-label" style="margin-top:8px">Close-ups (multi) →</span>
-      <div class="cchip" data-angle="closeup_lips">👄 Close lábios</div>
-      <div class="cchip" data-angle="closeup_eyes">👁️ Close olhos</div>
-      <div class="cchip" data-angle="closeup_neck">🌸 Close pescoço/colo</div>
-      <div class="cchip" data-angle="closeup_chest">💎 Close decote</div>
-      <div class="cchip" data-angle="closeup_waist">⌛ Close cintura</div>
-      <div class="cchip" data-angle="closeup_hips">🍑 Close quadril</div>
-      <div class="cchip" data-angle="closeup_butt">🔥 Close glúteos</div>
-      <div class="cchip" data-angle="closeup_legs">🦵 Close pernas</div>
-      <div class="cchip" data-angle="closeup_feet">👣 Close pés</div>
-      <div class="cchip" data-angle="closeup_back">🌊 Close costas</div>
-      <div class="cchip" data-angle="closeup_hands">🤲 Close mãos</div>
-      <div class="cchip" data-angle="closeup_abs">⚡ Close abdômen</div>
-      <div class="cchip" data-angle="closeup_shoulder">🩵 Close ombro/clavícula</div>
-      <div class="cchip" data-angle="closeup_thighs">🦵 Close coxas</div>
-      <div class="cchip" data-angle="closeup_ankles">👣 Close tornozelos</div>
-      <div class="cchip" data-angle="closeup_spine">🌊 Close coluna</div>
+      <span class="enhance-label" style="width:100%;margin-top:8px;opacity:.8">Close-ups (multi) →</span>
+      <span class="enhance-label" style="width:100%;margin-top:4px;opacity:.6">👁️ Rosto / Colo →</span>
+      <div class="cchip" data-angle="closeup_eyes">👁️ Olhos</div>
+      <div class="cchip" data-angle="closeup_lips">👄 Lábios</div>
+      <div class="cchip" data-angle="closeup_neck">🌸 Pescoço/colo</div>
+      <div class="cchip" data-angle="closeup_shoulder">🩵 Ombro/clavícula</div>
+      <div class="cchip" data-angle="closeup_chest">💎 Decote</div>
+      <span class="enhance-label" style="width:100%;margin-top:6px;opacity:.6">⌛ Torso →</span>
+      <div class="cchip" data-angle="closeup_abs">⚡ Abdômen</div>
+      <div class="cchip" data-angle="closeup_waist">⌛ Cintura</div>
+      <div class="cchip" data-angle="closeup_hips">🍑 Quadril</div>
+      <div class="cchip" data-angle="closeup_back">🌊 Costas</div>
+      <div class="cchip" data-angle="closeup_spine">🌊 Coluna</div>
+      <div class="cchip" data-angle="closeup_hands">🤲 Mãos</div>
+      <span class="enhance-label" style="width:100%;margin-top:6px;opacity:.6">🦵 Inferior →</span>
+      <div class="cchip" data-angle="closeup_butt">🔥 Glúteos</div>
+      <div class="cchip" data-angle="closeup_thighs">🦵 Coxas</div>
+      <div class="cchip" data-angle="closeup_legs">🦵 Pernas</div>
+      <div class="cchip" data-angle="closeup_ankles">👣 Tornozelos</div>
+      <div class="cchip" data-angle="closeup_feet">👣 Pés</div>
     </div>
 
     <!-- Cabelo -->
@@ -2223,7 +2235,7 @@ const COMBOS = {
   },
   hip_level_fashion: {
     echips: ['photoreal','outdoor','golden_hour'],
-    achip:  'hip_level', pchip: 'walking', cchips: ['closeup_hips','closeup_abs'],
+    achip:  'hip_level', pchip: 'tiptoe', cchips: ['closeup_hips','closeup_abs'],
     ochip:  'miniskirt', hchip: 'long',
   },
   pov_intimate_portrait: {
