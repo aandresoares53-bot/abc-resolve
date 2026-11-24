@@ -725,6 +725,13 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
       <div class="bchip" data-body="latina">💃 Latina</div>
     </div>
 
+    <!-- Busca global de chips/combos -->
+    <div class="search-bar" style="margin-top:14px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="chip-search" placeholder="Buscar pose, estilo, roupa, combo..." oninput="searchChips(this.value)" autocomplete="off" spellcheck="false">
+      <button class="clear-search" id="clear-search-btn" onclick="clearSearch()" title="Limpar busca">✕</button>
+    </div>
+
     <!-- Estilo / Ambiente (collapsible) -->
     <div class="enhance-row" style="margin-top:14px">
       <span class="enhance-label" style="display:flex;align-items:center;justify-content:space-between;width:100%">
@@ -1201,7 +1208,6 @@ function searchChips(q) {
   document.querySelectorAll('.search-hidden').forEach(el => el.classList.remove('search-hidden'));
   document.querySelectorAll('.search-highlight').forEach(el => el.classList.remove('search-highlight'));
   document.querySelectorAll('.collapsible-body').forEach(el => el.style.removeProperty('display'));
-  // restore combo panes to their original state (only the .on one visible)
   document.querySelectorAll('.combo-pane').forEach(el => el.style.removeProperty('display'));
   document.querySelectorAll('.combo-tabs').forEach(el => el.classList.remove('search-hidden'));
 
@@ -1221,7 +1227,6 @@ function searchChips(q) {
     el.style.gap = '7px';
   });
 
-  // filter chips and combo buttons
   const selectors = '.echip,.achip,.pchip,.cchip,.ochip,.hchip,.bchip,.mbtn';
   document.querySelectorAll(selectors).forEach(el => {
     const txt = el.textContent.toLowerCase();
