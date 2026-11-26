@@ -245,42 +245,21 @@ async function fetchOgImage(url: string): Promise<string | null> {
 }
 
 export async function fetchPixabayPhotos(hotel: HotelLike): Promise<PhotoSet> {
-  const key = process.env.PIXABAY_API_KEY;
-  if (!key) return getHotelPhotosFallback(hotel);
+  // Use curated Unsplash sets as primary source (reliable, no referrer issues)
+  const photos = getHotelPhotosFallback(hotel);
+  const seen = new Set(photos.map(p => p.url));
 
-  const queries = buildQueries(hotel);
-  const seen = new Set<string>();
-  const photos: PhotoSet = [{ url: hotel.image, caption: hotel.name }];
-  seen.add(hotel.image);
-
-  // For OSM hotels: try og:image from their website first
+  // For OSM hotels with a website: try og:image and insert as second photo
   if (hotel.website) {
-    const ogImg = await fetchOgImage(hotel.website);
-    if (ogImg && !seen.has(ogImg)) {
-      photos.splice(1, 0, { url: ogImg, caption: hotel.name });
-      seen.add(ogImg);
-    }
-  }
-
-  for (const q of queries) {
-    if (photos.length >= 10) break;
     try {
-      const url = `https://pixabay.com/api/?key=${key}&q=${encodeURIComponent(q)}&image_type=photo&per_page=5&safesearch=true&orientation=horizontal&min_width=800&editors_choice=false&order=popular`;
-      const res = await fetch(url, { next: { revalidate: 86400 } });
-      if (!res.ok) continue;
-      const data = await res.json();
-      if (!data.hits?.length) continue;
-      for (const hit of data.hits) {
-        const imgUrl: string = hit.webformatURL || hit.largeImageURL;
-        if (!imgUrl || seen.has(imgUrl)) continue;
-        seen.add(imgUrl);
-        photos.push({ url: imgUrl, caption: hit.tags?.split(",")[0]?.trim() || q });
-        if (photos.length >= 10) break;
+      const ogImg = await fetchOgImage(hotel.website);
+      if (ogImg && !seen.has(ogImg)) {
+        photos.splice(1, 0, { url: ogImg, caption: hotel.name });
       }
     } catch {}
   }
 
-  return photos.length >= 3 ? photos.slice(0, 12) : getHotelPhotosFallback(hotel);
+  return photos.slice(0, 12);
 }
 
 export function getHotelPhotos(hotel: HotelLike): PhotoSet {
