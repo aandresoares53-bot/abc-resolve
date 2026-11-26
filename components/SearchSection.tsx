@@ -15,11 +15,20 @@ const AMENITY_OPTIONS = ["Wi-Fi", "Piscina", "Spa", "Café da manhã", "Estacion
 
 type SortOption = "relevancia" | "menor-preco" | "maior-avaliacao" | "maior-desconto" | "mais-estrelas";
 
+type SearchIntent = {
+  typeOverride?: string;
+  packageFor?: string;
+  amenityBoosts: string[];
+  envBoosts: string[];
+};
+
 type SearchResult = {
   results: Hotel[];
   total: number;
   aiSuggestion: string;
   query: string;
+  detectedCity?: string;
+  intent?: SearchIntent | null;
 };
 
 function toInputDate(d: Date) {
@@ -271,12 +280,24 @@ export default function SearchSection() {
   }
 
   const exampleSearches = [
-    "Campos do Jordão",
-    "Gramado inverno",
-    "Porto de Galinhas",
-    "Búzios casal",
-    "Foz do Iguaçu família",
-    "Praia em Fortaleza",
+    "Chalé com piscina em Gramado",
+    "Pousada pet friendly na praia",
+    "Hotel barato para família em Fortaleza",
+    "Pousada romântica em Búzios",
+    "Resort all-inclusive nordeste",
+    "Chalé na serra para casal",
+  ];
+
+  // Quick-intent chips for pre-search inspiration
+  const quickIntents = [
+    { label: "🏊 Com piscina", q: "hotel com piscina" },
+    { label: "🐾 Pet friendly", q: "pousada pet friendly" },
+    { label: "☕ Café incluso", q: "hotel com café da manhã" },
+    { label: "💑 Para casal", q: "pousada para casal" },
+    { label: "👨‍👩‍👧 Família", q: "hotel para família" },
+    { label: "🏔 Serra/montanha", q: "chalé na serra" },
+    { label: "🏖 Na praia", q: "pousada na praia" },
+    { label: "💎 Luxo", q: "hotel de luxo" },
   ];
 
   // Nearby hotels when no results
@@ -346,7 +367,7 @@ export default function SearchSection() {
                 if (query.length >= 2) { setShowSuggestions(true); setShowHistory(false); }
                 else if (searchHistory.length > 0) { setShowHistory(true); setShowSuggestions(false); }
               }}
-              placeholder='Ex: "Pousada com piscina em Trancoso"...'
+              placeholder='Ex: "Chalé com piscina em Gramado", "Pousada pet friendly na praia"...'
               className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base transition-all"
             />
 
@@ -604,15 +625,28 @@ export default function SearchSection() {
         </div>{/* end flex row */}
 
         {/* Quick examples */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <span className="text-gray-400 text-sm self-center">Exemplos:</span>
+        <div className="flex flex-wrap gap-2 mb-2">
+          <span className="text-gray-400 text-xs self-center font-medium">Exemplos:</span>
           {exampleSearches.map(ex => (
             <button
               key={ex}
-              onClick={() => { setQuery(ex); }}
+              onClick={() => { setQuery(ex); handleSearch(ex); }}
               className="text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-700 text-gray-600 px-3 py-1.5 rounded-full transition-colors"
             >
               {ex}
+            </button>
+          ))}
+        </div>
+        {/* Quick intent chips */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="text-gray-400 text-xs self-center font-medium">Busca rápida:</span>
+          {quickIntents.map(qi => (
+            <button
+              key={qi.label}
+              onClick={() => { setQuery(qi.q); handleSearch(qi.q); }}
+              className="text-xs bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1.5 rounded-full transition-colors font-medium"
+            >
+              {qi.label}
             </button>
           ))}
         </div>
@@ -788,13 +822,45 @@ export default function SearchSection() {
         )}
       </div>
 
-      {/* AI Suggestion */}
+      {/* AI Suggestion + Detected Intent */}
       {result?.aiSuggestion && (
-        <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-2xl flex gap-3 items-start">
+        <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-2xl flex gap-3 items-start">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shrink-0 text-sm">
             🤖
           </div>
           <p className="text-gray-700 text-sm">{result.aiSuggestion}</p>
+        </div>
+      )}
+
+      {/* Detected intent badges */}
+      {result && (result.detectedCity || result.intent?.typeOverride || (result.intent?.amenityBoosts?.length ?? 0) > 0 || (result.intent?.envBoosts?.length ?? 0) > 0 || result.intent?.packageFor) && (
+        <div className="mb-4 flex flex-wrap gap-2 items-center">
+          <span className="text-xs text-gray-400 font-medium">Busca entendida como:</span>
+          {result.detectedCity && (
+            <span className="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-full">
+              📍 {result.detectedCity}
+            </span>
+          )}
+          {result.intent?.typeOverride && (
+            <span className="inline-flex items-center gap-1 text-xs bg-purple-100 text-purple-700 font-semibold px-3 py-1 rounded-full">
+              {result.intent.typeOverride === "pousada" ? "🏡" : result.intent.typeOverride === "hostel" ? "🛏" : "🏠"} {result.intent.typeOverride === "espaco-inteiro" ? "Chalé/Bangalô" : result.intent.typeOverride}
+            </span>
+          )}
+          {result.intent?.packageFor && (
+            <span className="inline-flex items-center gap-1 text-xs bg-orange-100 text-orange-700 font-semibold px-3 py-1 rounded-full">
+              {result.intent.packageFor === "Família" ? "👨‍👩‍👧" : result.intent.packageFor === "Casal" ? "💑" : result.intent.packageFor === "Aventura" ? "🧗" : "🌿"} Para {result.intent.packageFor}
+            </span>
+          )}
+          {result.intent?.amenityBoosts?.map(a => (
+            <span key={a} className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-full">
+              {a === "Piscina" ? "🏊" : a === "Pet Friendly" ? "🐾" : a === "Café da Manhã" ? "☕" : a === "Spa" ? "💆" : a === "Wi-Fi" ? "📶" : "✓"} {a}
+            </span>
+          ))}
+          {result.intent?.envBoosts?.map(e => (
+            <span key={e} className="inline-flex items-center gap-1 text-xs bg-teal-100 text-teal-700 font-semibold px-3 py-1 rounded-full">
+              {e === "Praia" ? "🏖" : e === "Serra" ? "🏔" : e === "Centro" ? "🏙" : e === "Natureza" ? "🌿" : e === "Fazenda" ? "🌾" : "📍"} {e}
+            </span>
+          ))}
         </div>
       )}
 
@@ -964,11 +1030,31 @@ export default function SearchSection() {
               </div>
             </div>
           )}
-          <div className="text-center py-10">
-            <p className="text-gray-400 text-lg">Use a busca acima para encontrar hotéis e pousadas ✨</p>
+          <div className="text-center py-8">
+            <p className="text-gray-500 text-base mb-5">Ou escolha um destino e perfil de viagem:</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto mb-6">
+              {[
+                { label: "🏖 Praia nordeste", q: "hotel na praia nordeste" },
+                { label: "🏔 Serra gaúcha", q: "pousada na serra gaúcha" },
+                { label: "🌴 Florianópolis", q: "pousada em Florianópolis" },
+                { label: "🌊 Búzios casal", q: "pousada em Búzios para casal" },
+                { label: "🏡 Chalé Gramado", q: "chalé em Gramado" },
+                { label: "🌿 Chapada", q: "pousada na chapada" },
+                { label: "🐾 Pet friendly", q: "hotel pet friendly" },
+                { label: "💎 Luxo piscina", q: "hotel de luxo com piscina" },
+              ].map(d => (
+                <button
+                  key={d.label}
+                  onClick={() => { setQuery(d.q); handleSearch(d.q); }}
+                  className="px-3 py-2.5 bg-white border border-gray-200 hover:border-orange-400 hover:bg-orange-50 text-gray-700 hover:text-orange-700 text-sm font-medium rounded-xl transition-all"
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
             <button
               onClick={() => handleSearch()}
-              className="mt-4 px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl transition-all"
+              className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl transition-all"
             >
               Ver todas as opções
             </button>
