@@ -245,15 +245,17 @@ async function fetchOgImage(url: string): Promise<string | null> {
 }
 
 export async function fetchPixabayPhotos(hotel: HotelLike): Promise<PhotoSet> {
-  // Try TripAdvisor for real hotel photos first
-  const { fetchTripAdvisorPhotos } = await import("@/lib/tripadvisor");
-  const taPhotos = await fetchTripAdvisorPhotos(hotel.name, hotel.city);
+  // Try Pexels for real contextual photos first
+  const { fetchPexelsPhotos } = await import("@/lib/pexels");
+  const pexelsPhotos = await fetchPexelsPhotos(hotel.name, hotel.city, hotel.state, hotel.tags);
 
-  if (taPhotos.length >= 2) {
+  if (pexelsPhotos.length >= 2) {
     const fallback = getHotelPhotosFallback(hotel);
-    const taSeen = new Set(taPhotos.map(p => p.url));
-    const extra = fallback.filter(p => !taSeen.has(p.url)).slice(0, 4);
-    return [...taPhotos, ...extra].slice(0, 12);
+    const seen = new Set(pexelsPhotos.map(p => p.url));
+    const extra = fallback.filter(p => !seen.has(p.url)).slice(0, 4);
+    // Put hotel's own image first, then Pexels, then Unsplash extras
+    const first = { url: hotel.image, caption: hotel.name };
+    return [first, ...pexelsPhotos, ...extra].slice(0, 12);
   }
 
   // Fallback: curated Unsplash sets
