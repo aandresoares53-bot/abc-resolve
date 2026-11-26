@@ -1,11 +1,9 @@
 import { hotelsData } from "@/lib/hotels-data";
-import { fetchPixabayPhotos } from "@/lib/hotel-photos";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import HotelCard from "@/components/HotelCard";
 import Header from "@/components/Header";
 import WeatherWidget from "@/components/WeatherWidget";
-import PhotoGallery from "@/components/PhotoGallery";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -35,8 +33,6 @@ export default async function HotelPage({ params, searchParams }: { params: { id
   const similar = hotelsData
     .filter(h => h.id !== hotel.id && (h.city === hotel.city || h.state === hotel.state))
     .slice(0, 3);
-
-  const photos = await fetchPixabayPhotos(hotel!);
 
   // Use dates from search params or default to tomorrow/day-after
   const today = new Date();
@@ -100,9 +96,16 @@ export default async function HotelPage({ params, searchParams }: { params: { id
         </Link>
       </div>
 
-      {/* Photo Gallery */}
+      {/* Hotel main image */}
       <div className="max-w-5xl mx-auto px-4 mb-8">
-        <PhotoGallery photos={photos} hotelName={hotel.name} />
+        <div className="relative rounded-2xl overflow-hidden bg-gray-100" style={{ maxHeight: 420 }}>
+          <img
+            src={hotel.image}
+            alt={hotel.name}
+            className="w-full object-cover"
+            style={{ maxHeight: 420 }}
+          />
+        </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 pb-16">
@@ -199,22 +202,22 @@ export default async function HotelPage({ params, searchParams }: { params: { id
 
                   if (isChale) {
                     rooms = [
-                      { icon: "🏡", name: needsFamily ? "Chalé Família" : isRomantic ? "Chalé Romântico" : "Chalé Standard", desc: needsFamily ? `Chalé amplo para ${totalGuests} pessoas com varanda` : isRomantic ? "Chalé privativo com banheira e varanda" : "Chalé privativo com varanda e jardim", capacity: `${totalGuests} pessoas`, photo: photos[1]?.url || photos[0].url, recommended: true },
-                      { icon: "🛏️", name: "Suíte com Varanda", desc: "Suíte com varanda e vista panorâmica", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
-                      { icon: "🏡", name: "Chalé Luxo", desc: "Chalé premium com hidromassagem", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
+                      { icon: "🏡", name: needsFamily ? "Chalé Família" : isRomantic ? "Chalé Romântico" : "Chalé Standard", desc: needsFamily ? `Chalé amplo para ${totalGuests} pessoas com varanda` : isRomantic ? "Chalé privativo com banheira e varanda" : "Chalé privativo com varanda e jardim", capacity: `${totalGuests} pessoas`, photo: hotel.image, recommended: true },
+                      { icon: "🛏️", name: "Suíte com Varanda", desc: "Suíte com varanda e vista panorâmica", capacity: "2 adultos", photo: hotel.image },
+                      { icon: "🏡", name: "Chalé Luxo", desc: "Chalé premium com hidromassagem", capacity: "2 adultos", photo: hotel.image },
                     ];
                   } else if (hotel.type === "pousada") {
                     rooms = [
-                      { icon: needsFamily ? "👨‍👩‍👧" : isRomantic ? "💑" : "🛏️", name: needsFamily ? "Quarto Família" : isRomantic ? "Quarto Casal" : "Quarto Standard", desc: needsFamily ? `Quarto espaçoso para ${totalGuests} pessoas` : isRomantic ? "Cama queen com decoração romântica" : "Quarto confortável com café da manhã", capacity: `${totalGuests} pessoas`, photo: photos[1]?.url || photos[0].url, recommended: true },
-                      { icon: "⭐", name: "Suíte Superior", desc: "Suíte com área de estar e vista", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
-                      { icon: "🛏️", name: "Quarto Standard", desc: "Quarto aconchegante com café da manhã", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
+                      { icon: needsFamily ? "👨‍👩‍👧" : isRomantic ? "💑" : "🛏️", name: needsFamily ? "Quarto Família" : isRomantic ? "Quarto Casal" : "Quarto Standard", desc: needsFamily ? `Quarto espaçoso para ${totalGuests} pessoas` : isRomantic ? "Cama queen com decoração romântica" : "Quarto confortável com café da manhã", capacity: `${totalGuests} pessoas`, photo: hotel.image, recommended: true },
+                      { icon: "⭐", name: "Suíte Superior", desc: "Suíte com área de estar e vista", capacity: "2 adultos", photo: hotel.image },
+                      { icon: "🛏️", name: "Quarto Standard", desc: "Quarto aconchegante com café da manhã", capacity: "2 adultos", photo: hotel.image },
                     ];
                   } else {
                     rooms = [
-                      { icon: needsFamily ? "👨‍👩‍👧" : isRomantic ? "💑" : "🛏️", name: needsFamily ? "Apartamento Família" : isRomantic ? "Quarto Casal Superior" : "Standard", desc: needsFamily ? `Apartamento para ${totalGuests} pessoas` : isRomantic ? "Cama king, vista e frigobar" : "Quarto confortável com todas comodidades", capacity: `${totalGuests} pessoas`, photo: photos[1]?.url || photos[0].url, recommended: true },
-                      { icon: "👑", name: "Suíte Executiva", desc: "Suíte com sala de estar e banheira", capacity: "2 adultos", photo: photos[2]?.url || photos[0].url },
-                      { icon: "🛏️", name: "Standard", desc: "Quarto standard com vista interna", capacity: "2 adultos", photo: photos[3]?.url || photos[0].url },
-                      { icon: "⭐", name: "Superior", desc: "Quarto superior com vista privilegiada", capacity: "2 adultos", photo: photos[4]?.url || photos[0].url },
+                      { icon: needsFamily ? "👨‍👩‍👧" : isRomantic ? "💑" : "🛏️", name: needsFamily ? "Apartamento Família" : isRomantic ? "Quarto Casal Superior" : "Standard", desc: needsFamily ? `Apartamento para ${totalGuests} pessoas` : isRomantic ? "Cama king, vista e frigobar" : "Quarto confortável com todas comodidades", capacity: `${totalGuests} pessoas`, photo: hotel.image, recommended: true },
+                      { icon: "👑", name: "Suíte Executiva", desc: "Suíte com sala de estar e banheira", capacity: "2 adultos", photo: hotel.image },
+                      { icon: "🛏️", name: "Standard", desc: "Quarto standard com vista interna", capacity: "2 adultos", photo: hotel.image },
+                      { icon: "⭐", name: "Superior", desc: "Quarto superior com vista privilegiada", capacity: "2 adultos", photo: hotel.image },
                     ];
                   }
 
