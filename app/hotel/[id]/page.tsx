@@ -263,7 +263,7 @@ export default async function HotelPage({ params, searchParams }: { params: { id
                 {partners.map((p) => (
                   <a key={p.platform} href={p.url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:border-blue-400 hover:bg-blue-50 transition-all">
-                    <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" />
                     <span className="flex-1 text-left">{p.platform}</span>
                     <span className="text-blue-600 text-xs font-bold">Ver →</span>
                   </a>
