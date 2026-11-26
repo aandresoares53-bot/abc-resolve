@@ -20,6 +20,7 @@ export type Hotel = {
   packageFor?: string[];
   aliases?: string[];
   bookingUrl?: string;
+  website?: string;
 };
 
 export const hotelsData: Hotel[] = [

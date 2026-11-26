@@ -7,6 +7,7 @@ type HotelLike = {
   city: string;
   state: string;
   image: string;
+  website?: string;
 };
 
 export type PhotoSet = { url: string; caption: string }[];
@@ -223,6 +224,26 @@ function buildQueries(hotel: HotelLike): string[] {
   return queries;
 }
 
+async function fetchOgImage(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(3000),
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; encontrar-hoteis-bot/1.0)" },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const match =
+      html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
+      html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+    const imgUrl = match?.[1];
+    if (imgUrl && imgUrl.startsWith("http")) return imgUrl;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchPixabayPhotos(hotel: HotelLike): Promise<PhotoSet> {
   const key = process.env.PIXABAY_API_KEY;
   if (!key) return getHotelPhotosFallback(hotel);
@@ -230,6 +251,16 @@ export async function fetchPixabayPhotos(hotel: HotelLike): Promise<PhotoSet> {
   const queries = buildQueries(hotel);
   const seen = new Set<string>();
   const photos: PhotoSet = [{ url: hotel.image, caption: hotel.name }];
+  seen.add(hotel.image);
+
+  // For OSM hotels: try og:image from their website first
+  if (hotel.website) {
+    const ogImg = await fetchOgImage(hotel.website);
+    if (ogImg && !seen.has(ogImg)) {
+      photos.splice(1, 0, { url: ogImg, caption: hotel.name });
+      seen.add(ogImg);
+    }
+  }
 
   for (const q of queries) {
     if (photos.length >= 10) break;

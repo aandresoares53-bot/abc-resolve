@@ -109,6 +109,19 @@ out center tags;`;
       if (stars >= 4) hotelTags.push("Luxo");
       if (tags.rooms && parseInt(tags.rooms) < 20) hotelTags.push("Boutique");
 
+      // Real photo from OSM tags
+      let realImage: string | undefined;
+      if (tags.image && tags.image.startsWith("http")) {
+        realImage = tags.image;
+      } else if (tags.wikimedia_commons) {
+        const fileName = tags.wikimedia_commons.replace(/^(File:|Category:)/i, "");
+        realImage = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=800`;
+      }
+
+      // Website for og:image fetching on detail page
+      const website: string | undefined =
+        tags.website || tags["contact:website"] || tags["contact:url"] || undefined;
+
       results.push({
         id: `osm-${el.id}`,
         name,
@@ -121,7 +134,7 @@ out center tags;`;
         reviews: 10 + Math.floor(Math.random() * 300),
         priceFrom,
         priceTo,
-        image: pickImage(state),
+        image: realImage ?? pickImage(state),
         tags: hotelTags.slice(0, 5),
         amenities: Array.from(new Set(amenities)).slice(0, 7),
         description: tags.description
@@ -131,6 +144,7 @@ out center tags;`;
         seasonal: [],
         packageFor: type === "pousada" ? ["Casal"] : ["Negócios"],
         aliases: [],
+        website,
       });
     }
 
