@@ -4,26 +4,7 @@ import Link from "next/link";
 import { Hotel } from "@/lib/hotels-data";
 
 function getExtraImages(hotel: Hotel): string[] {
-  const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  const collections: Record<string, string[]> = {
-    hotel: [
-      `https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80`,
-      `https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80`,
-      `https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80`,
-      `https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80`,
-      `https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80`,
-    ],
-    pousada: [
-      `https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80`,
-      `https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=800&q=80`,
-      `https://images.unsplash.com/photo-1501117716987-c8c394bb29df?w=800&q=80`,
-      `https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&q=80`,
-      `https://images.unsplash.com/photo-1521782462922-9318be7a97b1?w=800&q=80`,
-    ],
-  };
-  const pool = collections[hotel.type] || collections.hotel;
-  const start = seed % pool.length;
-  return [hotel.image, pool[start], pool[(start + 1) % pool.length], pool[(start + 2) % pool.length]];
+  return [hotel.image];
 }
 
 function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn: string, checkOut: string) {
