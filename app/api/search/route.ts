@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hotelsData, Hotel } from "@/lib/hotels-data";
 import { fetchOSMHotels, normalizeNameForDedup } from "@/lib/overpass";
+import Groq from "groq-sdk";
 
 function normalizeText(text: string): string {
   return text.toLowerCase()
@@ -225,7 +226,7 @@ export async function GET(request: NextRequest) {
 
   const cityCount = detectedCity ? hotelsData.filter(h => h.city === detectedCity).length : 0;
   const hasNearby = detectedCity && results.length > cityCount;
-  const aiSuggestion = generateAISuggestion(query, results.length, filters, detectedCity, detectedHotel?.name, hasNearby ? cityCount : undefined);
+  const aiSuggestion = await generateAISuggestion(query, results.length, filters, detectedCity, detectedHotel?.name, hasNearby ? cityCount : undefined);
 
   return NextResponse.json({
     results,
@@ -235,7 +236,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
-function generateAISuggestion(query: string, count: number, filters: Record<string, string | number | undefined>, detectedCity?: string | null, detectedHotelName?: string, cityOnlyCount?: number): string {
+function generateAISuggestionStatic(query: string, count: number, filters: Record<string, string | number | undefined>, detectedCity?: string | null, detectedHotelName?: string, cityOnlyCount?: number): string {
   const parts: string[] = [];
   if (detectedCity) parts.push(`em ${detectedCity}`);
   else if (detectedHotelName) parts.push(`"${detectedHotelName}"`);
@@ -254,4 +255,44 @@ function generateAISuggestion(query: string, count: number, filters: Record<stri
   }
 
   return `Encontrei ${count} opção${count > 1 ? "s" : ""} ${parts.join(", ")}. Resultados ordenados por relevância e avaliação dos hóspedes.`;
+}
+
+async function generateAISuggestion(
+  query: string,
+  count: number,
+  filters: Record<string, string | number | undefined>,
+  detectedCity?: string | null,
+  detectedHotelName?: string,
+  cityOnlyCount?: number
+): Promise<string> {
+  const groqKey = process.env.GROQ_API_KEY;
+  if (!groqKey) {
+    return generateAISuggestionStatic(query, count, filters, detectedCity, detectedHotelName, cityOnlyCount);
+  }
+  try {
+    const groq = new Groq({ apiKey: groqKey });
+    const context: string[] = [];
+    if (detectedCity) context.push(`cidade: ${detectedCity}`);
+    else if (query) context.push(`busca: "${query}"`);
+    if (filters.state && filters.state !== "Todos") context.push(`estado: ${filters.state}`);
+    if (filters.packageFor) context.push(`viagem para: ${filters.packageFor}`);
+    if (count === 0) context.push("nenhum resultado encontrado");
+    else context.push(`${count} acomodações encontradas`);
+    if (cityOnlyCount !== undefined && cityOnlyCount < count)
+      context.push(`${cityOnlyCount} na cidade, ${count - cityOnlyCount} em destinos próximos`);
+
+    const prompt = `Você é um assistente de viagens brasileiro simpático e prestativo. Contexto da busca: ${context.join(", ")}. Gere uma mensagem curta (máximo 2 frases) em português brasileiro que seja útil, animada e específica para este contexto. Não repita os números de forma robótica. Seja natural e convide o usuário a explorar as opções.`;
+
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 120,
+      temperature: 0.8,
+    });
+
+    return completion.choices[0]?.message?.content?.trim() ||
+      generateAISuggestionStatic(query, count, filters, detectedCity, detectedHotelName, cityOnlyCount);
+  } catch {
+    return generateAISuggestionStatic(query, count, filters, detectedCity, detectedHotelName, cityOnlyCount);
+  }
 }
