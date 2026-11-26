@@ -258,26 +258,17 @@ export default async function HotelPage({ params, searchParams }: { params: { id
                 )}
               </div>
 
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Compare preços — {partners.length} parceiros</p>
-              <div className="space-y-2 mb-3">
-                {partners.map((p, i) => (
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">🔍 Buscar este hotel em:</p>
+              <div className="space-y-2">
+                {partners.map((p) => (
                   <a key={p.platform} href={p.url} target="_blank" rel="noopener noreferrer"
-                    className={`flex items-center gap-2 w-full px-3 py-2 rounded-xl border text-sm font-semibold transition-all hover:shadow-sm ${i === 0 ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent" : "bg-white border-gray-200 text-gray-700 hover:border-blue-400"}`}>
-                    <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" />
+                    className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:border-blue-400 hover:bg-blue-50 transition-all">
+                    <img src={p.logo} alt="" className="w-4 h-4 rounded shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     <span className="flex-1 text-left">{p.platform}</span>
-                    <span className={i === 0 ? "text-white font-black" : "text-blue-700 font-black"}>R$ {p.price}</span>
-                    {i === 0 && <span className="text-xs bg-yellow-300 text-yellow-900 px-1.5 rounded font-bold">⭐ RECOMENDADO</span>}
+                    <span className="text-blue-600 text-xs font-bold">Ver →</span>
                   </a>
                 ))}
               </div>
-              {partners[0]?.badges && partners[0].badges.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {partners[0].badges.map(b => (
-                    <span key={b} className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">{b}</span>
-                  ))}
-                </div>
-              )}
-              <p className="text-xs text-gray-400 text-center">Preços estimados · sujeitos a disponibilidade</p>
             </div>
           </div>
         </div>
