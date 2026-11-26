@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hotelsData, Hotel } from "@/lib/hotels-data";
+import { fetchOSMHotels, normalizeNameForDedup } from "@/lib/overpass";
 
 function normalizeText(text: string): string {
   return text.toLowerCase()
@@ -188,6 +189,19 @@ export async function GET(request: NextRequest) {
       results = [...sorted, ...nearby];
     } else {
       results = sorted;
+    }
+
+    // Augment with live OpenStreetMap data (5s timeout so it never blocks)
+    const cityState = sorted[0]?.state ?? (state !== "Todos" ? state : "");
+    if (cityState) {
+      const existingNames = new Set(results.map(h => normalizeNameForDedup(h.name)));
+      const osmResults = await Promise.race([
+        fetchOSMHotels(detectedCity, cityState, existingNames),
+        new Promise<Hotel[]>(resolve => setTimeout(() => resolve([]), 5000)),
+      ]);
+      if (osmResults.length > 0) {
+        results = [...results, ...osmResults];
+      }
     }
   } else {
     // No city detected: score across all hotels using filters
