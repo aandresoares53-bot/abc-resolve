@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Hotel } from "@/lib/hotels-data";
 
@@ -7,100 +7,8 @@ function getExtraImages(hotel: Hotel): string[] {
   return [hotel.image];
 }
 
-function getPriceOptions(hotel: Hotel, adults: number, children: number, checkIn: string, checkOut: string) {
-  const seed = hotel.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  const base = hotel.priceFrom;
-  const rooms = getRooms(adults, children);
-  const name = hotel.name;
-  const city = hotel.city;
-  const state = hotel.state;
-  // "Nome do Hotel, Cidade, Estado" — busca o mais específica possível
-  const nameEnc       = encodeURIComponent(name);
-  const nameCityState = encodeURIComponent(`${name}, ${city}, ${state}`);
-  const nameCity      = encodeURIComponent(`${name} ${city}`);
-  const cityStateEnc  = encodeURIComponent(`${city}, ${state}`);
-  const cityEnc       = encodeURIComponent(city);
-
-  // Booking.com: ss = "Nome, Cidade" + dest_type=hotel força busca de propriedade exata
-  const bookingUrl = `https://www.booking.com/searchresults.pt-br.html?ss=${nameCityState}&dest_type=hotel&checkin=${checkIn}&checkout=${checkOut}&group_adults=${adults}&group_children=${children}&no_rooms=${rooms}&lang=pt-br&sb_travel_purpose=leisure`;
-
-  // Hotels.com: q-query com nome + cidade aumenta precisão
-  const hotelsUrl = `https://www.hotels.com/search.do?q-query=${nameCity}&q-check-in=${checkIn}&q-check-out=${checkOut}&q-rooms=${rooms}&q-room-0-adults=${adults}&q-room-0-children=${children}&sort-order=BEST_SELLER`;
-
-  // Expedia: destination = "Nome, Cidade, Estado" + type=hotel
-  const expediaUrl = `https://www.expedia.com.br/Hotel-Search?destination=${nameCityState}&startDate=${checkIn}&endDate=${checkOut}&adults=${adults}&children=${children}&rooms=${rooms}&sort=RECOMMENDED`;
-
-  // Decolar: rota com cidade + query = nome exato
-  const decolarUrl = `https://www.decolar.com/hospedagens/busca/${cityEnc}/${checkIn}/${checkOut}/${adults}/${children}?q=${nameEnc}&sortBy=PRICE`;
-
-  // Kayak: busca por nome + cidade como destino
-  const kayakUrl = `https://www.kayak.com.br/hotels/${nameCity}/${checkIn}/${checkOut}/${adults}adults?sort=price_a`;
-
-  // TripAdvisor: q = "Nome, Cidade" — aparece como primeira sugestão de propriedade
-  const tripUrl = `https://www.tripadvisor.com.br/Search?q=${nameCity}&searchSessionId=&date=${checkIn}&enddate=${checkOut}&adult=${adults}&child=${children}&geo=&searchNearby=false`;
-
-  // Airbnb: query = "Nome" dentro da cidade exata
-  const airbnbUrl = `https://www.airbnb.com.br/s/${cityStateEnc}/homes?query=${nameEnc}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}&refinement_paths[]=%2Fhomes`;
-
-  // Hurb: q = "Nome Cidade"
-  const hurbUrl = `https://www.hurb.com/search?q=${nameCity}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}&type=hotel`;
-
-  // CVC: busca com nome do hotel em destaque
-  const cvcUrl = `https://www.cvc.com.br/hoteis/busca?q=${nameCityState}&dataIda=${checkIn}&dataVolta=${checkOut}&adultos=${adults}&criancas=${children}`;
-
-  // Submarino Viagens
-  const submarinoUrl = `https://www.submarinoviagens.com.br/hoteis/?q=${nameCity}&checkin=${checkIn}&checkout=${checkOut}&adults=${adults}&children=${children}`;
-
-  // Google Hotels: pesquisa "Nome Hotel Cidade" → aparece como ficha do estabelecimento
-  const googleUrl = `https://www.google.com/travel/hotels?q=${nameCityState}&dates=${checkIn},${checkOut}&adults=${adults}&ved=0`;
-
-  // Trivago: query = "Nome, Cidade" para máxima precisão
-  const trivagoUrl = `https://www.trivago.com.br/pt-BR/lm/hotel-search?search%5Bquery%5D=${nameCity}&search%5BcheckIn%5D=${checkIn}&search%5BcheckOut%5D=${checkOut}&search%5BnumAdults%5D=${adults}&search%5BnumChildren%5D=${children}`;
-
-  // Conditions shown as badges — cashback/cancelamento grátis/parcelamento/fidelidade
-  // dealScore = preço efetivo após benefícios (menor = melhor negócio)
-  const allOptions = [
-    {
-      platform: "Booking.com",       logo: "https://cf.bstatic.com/static/img/favicon/favicon-32x32.ico",
-      url: bookingUrl,   price: Math.round(base * (1.00 + ((seed % 9) * 0.01))),
-      badges: ["Cancelamento grátis", "Pague no hotel"],
-      note: "Cancelamento grátis disponível",
-      cashbackPct: 0, dealBonus: 5,
-    },
-    {
-      platform: "Google Hotels",     logo: "https://www.google.com/favicon.ico",
-      url: googleUrl,    price: Math.round(base * (0.87 + ((seed % 9) * 0.01))),
-      badges: ["Menor preço garantido", "Direto do hotel"],
-      note: "Compara todos os sites em tempo real",
-      cashbackPct: 0, dealBonus: 10,
-    },
-    {
-      platform: "Expedia",           logo: "https://www.expedia.com.br/favicon.ico",
-      url: expediaUrl,   price: Math.round(base * (0.94 + ((seed % 9) * 0.01))),
-      badges: ["Pacote hotel+voo", "One Key Rewards"],
-      note: "Economize até 20% combinando voo + hotel",
-      cashbackPct: 0, dealBonus: 8,
-    },
-  ];
-
-  const ownSite = {
-    platform: "encontrarhoteis.com.br",
-    logo: "/favicon.ico",
-    url: `/hotel/${hotel.id}?adults=${adults}&children=${children}&checkIn=${checkIn}&checkOut=${checkOut}&nights=${Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000))}`,
-    price: base,
-    badges: ["🏆 Resultado exato", "Ver detalhes completos"],
-    note: "Veja fotos, comodidades e compare todos os preços aqui",
-    cashbackPct: 0,
-    dealBonus: 0,
-    dealScore: -Infinity, // sempre primeiro
-    isOwn: true,
-  };
-
-  const ranked = allOptions
-    .map(o => ({ ...o, dealScore: o.price * (1 - o.cashbackPct / 100) - o.dealBonus, isOwn: false }))
-    .sort((a, b) => a.dealScore - b.dealScore);
-
-  return [ownSite, ...ranked];
+function getDetailUrl(hotel: Hotel, adults: number, children: number, checkIn: string, checkOut: string, nights: number) {
+  return `/hotel/${hotel.id}?adults=${adults}&children=${children}&checkIn=${checkIn}&checkOut=${checkOut}&nights=${nights}`;
 }
 
 function getRooms(adults: number, children: number): number {
@@ -162,7 +70,6 @@ export default function HotelCard({
   const co = checkOut || todayPlusStr(2);
   const n = nights ?? 1;
 
-  const [open, setOpen] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
   const [fav, setFav] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -178,16 +85,7 @@ export default function HotelCard({
     } catch {}
   }, [hotel.id]);
 
-  const ref = useRef<HTMLDivElement>(null);
   const images = getExtraImages(hotel);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    if (open) document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
 
   function toggleFav(e: React.MouseEvent) {
     e.stopPropagation();
@@ -234,15 +132,8 @@ export default function HotelCard({
   const viewCount = 5 + (seed % 23);
   const availRooms = 1 + (seed % 4);
   const locationCtx = getLocationContext(hotel.tags);
-
-  const rawOptions = getPriceOptions(hotel, adults, children, ci, co);
-  const options = preferredPlatform
-    ? [...rawOptions].sort((a, b) => a.platform === preferredPlatform ? -1 : b.platform === preferredPlatform ? 1 : 0)
-    : rawOptions;
-  const cheapest = options[0].price;
   const rooms = getRooms(adults, children);
-  const totalNightly = cheapest * rooms;
-  const totalStay = totalNightly * n;
+  const detailUrl = getDetailUrl(hotel, adults, children, ci, co, n);
 
   function fmtDate(s: string) {
     const d = new Date(s + "T12:00:00");
@@ -382,24 +273,24 @@ export default function HotelCard({
                 </p>
               )}
               <p className="text-gray-400 text-xs">a partir de</p>
-              <p className="text-2xl font-black text-gray-900">R$ {cheapest}</p>
+              <p className="text-2xl font-black text-gray-900">R$ {hotel.priceFrom}</p>
               <p className="text-xs text-gray-400">/noite · {fmtDate(ci)} – {fmtDate(co)}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Total estimado: <span className="font-semibold">R$ {totalStay}</span></p>
+              <p className="text-xs text-gray-500 mt-0.5">Total estimado: <span className="font-semibold">R$ {hotel.priceFrom * rooms * n}</span></p>
             </div>
 
             {/* Action buttons */}
             <div className="flex flex-col gap-2 w-full">
               {/* Row 1: main CTA + icon buttons */}
               <div className="flex items-center gap-2 flex-wrap">
-                <button
-                  onClick={() => setOpen(v => !v)}
+                <Link
+                  href={detailUrl}
                   className="flex-1 min-w-0 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm rounded-lg transition-colors flex items-center justify-center gap-1.5"
                 >
-                  Ver oferta
-                  <svg className={`w-3.5 h-3.5 transition-transform shrink-0 ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  Ver detalhes
+                  <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                   </svg>
-                </button>
+                </Link>
 
                 <button onClick={shareWhatsApp} title="Compartilhar no WhatsApp"
                   className="w-9 h-9 bg-green-500 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors shrink-0">
@@ -454,98 +345,6 @@ export default function HotelCard({
         </div>
       </div>
 
-      {/* Price comparison panel — full-width accordion below card */}
-      {open && (
-        <div className="border-t border-gray-100" ref={ref}>
-          <div className="px-4 py-3 bg-gray-50 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold text-gray-700 uppercase tracking-wide">Comparar preços</p>
-              <p className="text-xs text-gray-400 mt-0.5">📅 {fmtDate(ci)} → {fmtDate(co)} · {n} noite{n !== 1 ? "s" : ""} · {rooms} quarto{rooms !== 1 ? "s" : ""}</p>
-            </div>
-            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {options.map((opt, idx) => {
-              const isOwn = (opt as any).isOwn === true;
-              const isBest = !isOwn && idx === 1; // idx 0 = próprio site, idx 1 = melhor parceiro
-              const optTotal = isOwn ? opt.price : opt.price * rooms * n;
-              const partnerBestTotal = options[1] ? options[1].price * rooms * n : optTotal;
-              const isPreferred = !isOwn && opt.platform === preferredPlatform;
-              const hasCashback = !isOwn && (opt as any).cashbackPct > 0;
-              const effectiveTotal = hasCashback
-                ? Math.round(optTotal * (1 - (opt as any).cashbackPct / 100))
-                : optTotal;
-
-              if (isOwn) {
-                return (
-                  <Link key="own" href={opt.url} onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-4 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-colors">
-                    <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-blue-700 font-black text-xs shrink-0">★</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-black text-white">{hotel.name}</p>
-                        <span className="text-xs bg-white text-blue-700 px-2 py-0.5 rounded-full font-bold leading-none">Resultado exato</span>
-                      </div>
-                      <p className="text-xs text-blue-200 mt-0.5">Ver fotos, comodidades e todos os preços comparados</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-base font-black text-white">R$ {opt.price}</p>
-                      <p className="text-xs text-blue-200">Ver detalhes →</p>
-                    </div>
-                  </Link>
-                );
-              }
-
-              const extIdx = idx; // mantém posição real na lista
-              return (
-                <a key={opt.platform} href={opt.url} target="_blank" rel="noopener noreferrer"
-                  onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3.5 transition-colors ${isPreferred ? "bg-orange-50 hover:bg-orange-100" : isBest ? "bg-green-50 hover:bg-green-100" : "hover:bg-gray-50"}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shrink-0 ${isBest ? "bg-green-500 text-white" : isPreferred ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"}`}>
-                    {extIdx}
-                  </div>
-                  <img src={opt.logo} alt={opt.platform} className="w-5 h-5 rounded object-contain shrink-0"
-                    onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <p className="text-sm font-bold text-gray-800">{opt.platform}</p>
-                      {isBest && <span className="text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full font-semibold leading-none">Melhor negócio</span>}
-                      {isPreferred && !isBest && <span className="text-xs bg-orange-500 text-white px-1.5 py-0.5 rounded-full font-semibold leading-none">Preferida</span>}
-                    </div>
-                    <p className="text-xs text-gray-400 mt-0.5">{opt.note}</p>
-                    {(opt as any).badges?.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {(opt as any).badges.map((b: string) => (
-                          <span key={b} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium leading-none">{b}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-right shrink-0">
-                    {hasCashback ? (
-                      <>
-                        <p className="text-xs text-gray-400 line-through">R$ {optTotal}</p>
-                        <p className="text-base font-black text-green-600">R$ {effectiveTotal}</p>
-                        <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">-{(opt as any).cashbackPct}% cashback</span>
-                      </>
-                    ) : (
-                      <>
-                        <p className={`text-base font-black ${isBest ? "text-green-600" : "text-gray-700"}`}>R$ {optTotal}</p>
-                        {isBest
-                          ? <span className="text-xs text-green-600 font-semibold">Menor preço</span>
-                          : <span className="text-xs text-gray-400">+R$ {optTotal - partnerBestTotal}</span>}
-                      </>
-                    )}
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-          <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-400">Abre com datas e hóspedes preenchidos ✓</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
