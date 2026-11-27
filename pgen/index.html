@@ -369,6 +369,13 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
           <button class="mbtn" onclick="applyCombo('pirate_adventure')">🏴‍☠️ Pirata</button>
           <button class="mbtn" onclick="applyCombo('cheerleader_field')">📣 Cheerleader</button>
           <button class="mbtn" onclick="applyCombo('kimono_oriental')">🌸 Kimono</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🖤 Gótica / Dark →</span>
+          <button class="mbtn" onclick="applyCombo('gothic_candles')">🕯️ Velas góticas</button>
+          <button class="mbtn" onclick="applyCombo('gothic_cathedral')">⛪ Catedral sombria</button>
+          <button class="mbtn" onclick="applyCombo('gothic_lolita')">🎀 Gothic lolita</button>
+          <button class="mbtn" onclick="applyCombo('dark_queen')">👑 Rainha sombria</button>
+          <button class="mbtn" onclick="applyCombo('dark_forest_witch')">🌲 Floresta da bruxa</button>
+          <button class="mbtn" onclick="applyCombo('dark_smoke_portrait')">💨 Fumaça dramática</button>
           <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">👮 Uniforme →</span>
           <button class="mbtn" onclick="applyCombo('secretary_office')">💼 Secretária</button>
           <button class="mbtn" onclick="applyCombo('police_uniform')">👮 Policial</button>
@@ -460,6 +467,14 @@ kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padd
           <button class="mbtn" onclick="applyCombo('nsfw_warrior')">⚔️ Guerreira NSFW</button>
           <button class="mbtn" onclick="applyCombo('nsfw_superheroine')">🦸 Heroína NSFW</button>
           <button class="mbtn" onclick="applyCombo('nsfw_pirate')">🏴‍☠️ Pirata NSFW</button>
+          <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">🖤 Gótica Sensual →</span>
+          <button class="mbtn" onclick="applyCombo('nsfw_gothic_candles')">🕯️ Velas góticas NSFW</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_gothic_latex')">🖤 Látex gótico</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_dark_queen_throne')">👑 Rainha no trono</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_gothic_bodysuit')">🕷️ Macacão gótico</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_dark_altar')">🌙 Altar sombrio</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_vampire_seductive')">🧛 Vampira sedutora</button>
+          <button class="mbtn" onclick="applyCombo('nsfw_dark_smoke_nude')">💨 Fumaça sombria</button>
           <span class="enhance-label" style="width:100%;margin-top:8px;margin-bottom:3px">👮 Uniforme →</span>
           <button class="mbtn" onclick="applyCombo('nsfw_cheerleader')">📣 Cheerleader NSFW</button>
           <button class="mbtn" onclick="applyCombo('nsfw_secretary')">💼 Secretária NSFW</button>
@@ -2517,6 +2532,73 @@ const COMBOS = {
     echips: ['photoreal','hotel','boudoir','lighting'],
     achip:  'low', pchip: 'leanback', cchips: ['closeup_chest','closeup_legs'],
     ochip:  'corset', hchip: 'long',
+  },
+  // SFW gothic combos
+  gothic_candles: {
+    echips: ['photoreal','darkroom','smoke','dramatic','lowkey'],
+    achip:  'bust', pchip: 'arch', cchips: ['closeup_face','closeup_shoulder'],
+    ochip:  'vampire', hchip: 'black',
+  },
+  gothic_cathedral: {
+    echips: ['photoreal','cathedral','smoke','dramatic','lighting'],
+    achip:  'fullbody_a', pchip: 'wallon', cchips: ['closeup_face','closeup_shoulder'],
+    ochip:  'witch', hchip: 'black',
+  },
+  gothic_lolita: {
+    echips: ['photoreal','darkroom','lighting','dramatic','editorial'],
+    achip:  'fullbody_a', pchip: 'tiptoe', cchips: ['closeup_face','closeup_shoulder'],
+    ochip:  'dress', hchip: 'black',
+  },
+  dark_queen: {
+    echips: ['photoreal','castle','smoke','dramatic','lighting'],
+    achip:  'low', pchip: 'sitting', cchips: ['closeup_face','closeup_shoulder'],
+    ochip:  'dress', hchip: 'black',
+  },
+  dark_forest_witch: {
+    echips: ['photoreal','forest_night','fog','smoke','dramatic'],
+    achip:  'fullbody_a', pchip: 'wallon', cchips: ['closeup_face','closeup_shoulder'],
+    ochip:  'witch', hchip: 'long',
+  },
+  dark_smoke_portrait: {
+    echips: ['photoreal','darkroom','smoke','dramatic','backlighting'],
+    achip:  'bust', pchip: 'arch', cchips: ['closeup_face','closeup_shoulder'],
+    ochip:  'dress', hchip: 'black',
+  },
+  // NSFW gothic combos
+  nsfw_gothic_candles: {
+    echips: ['photoreal','darkroom','smoke','dramatic','lowkey'],
+    achip:  'low', pchip: 'arch', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'lingerie', hchip: 'black',
+  },
+  nsfw_gothic_latex: {
+    echips: ['photoreal','darkroom','smoke','dramatic','lowkey'],
+    achip:  'fullbody_a', pchip: 'wallon', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'latex', hchip: 'black',
+  },
+  nsfw_dark_queen_throne: {
+    echips: ['photoreal','castle','smoke','dramatic','lighting'],
+    achip:  'low', pchip: 'sitting', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'corset', hchip: 'black',
+  },
+  nsfw_gothic_bodysuit: {
+    echips: ['photoreal','darkroom','smoke','dramatic','backlighting'],
+    achip:  'fullbody_a', pchip: 'arch', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'bodysuit', hchip: 'black',
+  },
+  nsfw_dark_altar: {
+    echips: ['photoreal','darkroom','smoke','dramatic','lowkey'],
+    achip:  'low', pchip: 'kneeling', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'lingerie', hchip: 'black',
+  },
+  nsfw_vampire_seductive: {
+    echips: ['photoreal','castle','darkroom','smoke','dramatic'],
+    achip:  'bust', pchip: 'leanback', cchips: ['closeup_face','closeup_chest'],
+    ochip:  'vampire', hchip: 'black',
+  },
+  nsfw_dark_smoke_nude: {
+    echips: ['photoreal','darkroom','smoke','dramatic','backlighting'],
+    achip:  'low', pchip: 'arch', cchips: ['closeup_chest','closeup_hips'],
+    ochip:  'thong', hchip: 'black',
   },
 };
 
